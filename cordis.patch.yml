@@ -1,0 +1,32 @@
+# dsh-expert-library bundle patch: mounts the expert library plugin into the
+# host composition of a dsh profile. Forked from the dsh-agent-teams plugin
+# and independently iterated: every registration surface uses its own names
+# (expert_teams_* tools, expert-teams/* session events, /plugins/dsh-expert-library/*
+# routes), so it can even coexist with the original plugin in one profile.
+#
+# Install: `dsh plugin --profile <name> add <this package>` (a local path).
+# The `dsh plugin` command pnpm-installs the package into the profile and
+# reconciles it into the profile's `dsh.profile.bundles` layer list.
+- insert:
+    - id: expert-library
+      # Node-resolvable package name — must stay in sync with package.json
+      # `name`. Quoted because `@` is a reserved indicator in YAML and cannot
+      # open a plain scalar.
+      name: '@zhijian/dsh-expert-library'
+      config:
+        # Team state lives under `<session workspace>/<stateDir>/<teamId>/`
+        # (team.json + inbox/*.jsonl mailboxes).
+        stateDir: .expert-teams
+        # Knowledge pack root, resolved against each captain's workspace:
+        #   <knowledgeDir>/experts/<expertId>/   expert-specific material
+        #   <knowledgeDir>/scenarios/<scenarioId>/ scenario material
+        #   <knowledgeDir>/shared/                shared material
+        knowledgeDir: knowledge
+        # Provider used to spawn member subagents ('spawn' or 'fork').
+        memberProvider: spawn
+        # Default model applied to every expert member that has no preset
+        # route of its own (provider/model must exist in the LLM registry).
+        # memberModel:
+        #   provider: deepseek-official
+        #   model: deepseek-v4-flash
+        #   reasoningEffort: max

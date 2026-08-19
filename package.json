@@ -1,0 +1,83 @@
+{
+  "name": "@zhijian/dsh-expert-library",
+  "version": "0.1.0",
+  "description": "Expert Library for DeepSeek Harness: an AgentTeams-based expert system with preset task scenarios, per-expert AI model routing, and knowledge pack folders",
+  "type": "module",
+  "main": "lib/index.js",
+  "types": "lib/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/types/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "knowledge",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "zhijian"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "expert",
+    "expert-library",
+    "agent-teams",
+    "multi-agent",
+    "scenario"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1-rc.1",
+    "@deepseek-ai/dsh-agent": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-session": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-subagent": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-system-prompt": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-tools": "^0.1.0-rc.6",
+    "@deepseek-ai/dsh-workspace": "^0.1.0-rc.6",
+    "@deepseek-ai/schemastery": "^3.18.1-rc.1"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/cordis": { "optional": true },
+    "@deepseek-ai/dsh-agent": { "optional": true },
+    "@deepseek-ai/dsh-llm": { "optional": true },
+    "@deepseek-ai/dsh-session": { "optional": true },
+    "@deepseek-ai/dsh-subagent": { "optional": true },
+    "@deepseek-ai/dsh-system-prompt": { "optional": true },
+    "@deepseek-ai/dsh-tools": { "optional": true },
+    "@deepseek-ai/dsh-workspace": { "optional": true },
+    "@deepseek-ai/schemastery": { "optional": true }
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "@deepseek-ai/dsh-agent": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-llm": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-session": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-subagent": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-system-prompt": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-tools": "0.1.0-rc.6",
+    "@deepseek-ai/dsh-workspace": "0.1.0-rc.6",
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "@types/node": "^24.13.3",
+    "typescript": "^5.9.3"
+  }
+}

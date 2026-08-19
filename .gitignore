@@ -1,0 +1,5 @@
+node_modules/
+lib/
+*.log
+.expert-teams/
+.DS_Store
