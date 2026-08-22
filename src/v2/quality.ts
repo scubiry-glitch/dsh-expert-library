@@ -61,6 +61,17 @@ export interface GateInput {
   readonly artifactHashes?: Readonly<Record<string, string>>
   /** Provenance available to semantic gates (provider records, citations…). */
   readonly provenance?: Readonly<Record<string, unknown>>
+  /**
+   * The bound output template's schema contract (media + required section
+   * markers), when the caller supplies it — the schema-structure gate
+   * validates the artifact against it (JSON shape / required sections for
+   * markdown templates) instead of (or on top of) its config.
+   */
+  readonly outputTemplate?: Readonly<{
+    readonly id: string
+    readonly media: readonly string[]
+    readonly sections: ReadonlyArray<{ readonly id: string; readonly required: boolean }>
+  }>
 }
 
 /** Context handed to every evaluator call. */
@@ -88,6 +99,9 @@ export interface GateArtifact {
   readonly hashes?: Readonly<Record<string, string>>
 }
 
+/** Output-schema contract passed to gate evaluators (`GateInput.outputTemplate`). */
+export type GateOutputTemplate = NonNullable<GateInput['outputTemplate']>
+
 export interface QualityChainInput {
   /** Compiled gates (already chain-ordered) or raw policy specs. */
   readonly gates: readonly CompiledGate[] | readonly QualityGateSpec[]
@@ -104,6 +118,12 @@ export interface QualityChainInput {
   readonly now?: () => string
   /** ExecutionPlan id attached to the report, when known. */
   readonly planId?: string
+  /**
+   * taskId → the bound output template's schema contract; handed to the
+   * schema-structure gate so it validates the submitted task output against
+   * the plan's declared output schema (JSON shape / required section markers).
+   */
+  readonly taskOutputTemplates?: Readonly<Record<string, GateOutputTemplate>>
 }
 
 /* ------------------------------------------------------------------ */
@@ -313,6 +333,7 @@ function evaluateGate(
   evaluators: GateEvaluatorMap,
   target: TargetArtifact | undefined,
   now: () => string,
+  taskOutputTemplates: Readonly<Record<string, GateOutputTemplate>> | undefined,
 ): GateResult {
   const evaluator = evaluators[gate.gateId] ?? evaluators[gate.compiledId]
   if (evaluator === undefined) {
@@ -344,6 +365,13 @@ function evaluateGate(
     artifact: target.content,
     ...(target.isDeliverable ? { deliverableId: target.id } : { taskId: target.id }),
     artifactHashes: { [target.id]: hashArtifact(target.content), ...target.hashes },
+    // The completing task's bound output-template contract (schema-structure
+    // validation); composed deliverables have no single task schema.
+    ...(!target.isDeliverable
+      && taskOutputTemplates !== undefined
+      && taskOutputTemplates[target.id] !== undefined
+      ? { outputTemplate: taskOutputTemplates[target.id] }
+      : {}),
   }
   const raw = evaluator(input, { spec: gate.spec, now })
   // Guarantee the artifact hash is reported even when the evaluator omits it;
@@ -435,7 +463,7 @@ export function runQualityChain(input: QualityChainInput): QualityChainResult {
       // `gate-artifact-missing` — never concatenate unrelated artifacts.
       const list = targets.length > 0 ? targets : [undefined]
       for (const target of list) {
-        evaluated.push({ gate, result: evaluateGate(gate, input.evaluators, target, now), target })
+        evaluated.push({ gate, result: evaluateGate(gate, input.evaluators, target, now, input.taskOutputTemplates), target })
       }
     }
     const failures = buildFailures(evaluated)

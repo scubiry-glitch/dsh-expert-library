@@ -720,6 +720,8 @@ export interface MethodPack {
  */
 export interface SkillPackageManifest {
   readonly id: SafeId
+  /** Display name (SKILL.md frontmatter `name:`), when it differs from the id; optional. */
+  readonly name?: string
   readonly version: VersionString
   readonly schemaVersion: typeof SCHEMA_VERSION
   readonly source: {

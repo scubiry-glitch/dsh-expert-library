@@ -16,6 +16,7 @@
  * ├── knowledge-providers/{local-knowledge,zhijian-expert-memory}.json
  * ├── domain-knowledge/zhijian.expert-memory.json
  * ├── method-packs/zhijian.method.{review-protocol,framework-a..e}.json
+ * ├── skill-packages/{finesse-ui,gsap-*,video-shotcraft}.json   # bundled local skills inventory
  * ├── routing/routing.json             # pack-adjacent overlay (topics/stance pairs/constraints)
  * ├── source/                          # lossless original source (raw Profile JSONs + docs + library)
  * │   ├── raw-profiles/*.json          #   original 32 Profile JSONs, byte-identical to the zip
@@ -371,7 +372,7 @@ export async function emitPack(outDir, options = {}) {
   if (srcDir !== undefined) {
     await rm(outDir, { recursive: true, force: true })
   } else {
-    for (const part of ['pack.json', 'README.md', 'experts', 'scenarios', 'team-templates', 'output-templates', 'quality-policies', 'knowledge-providers', 'domain-knowledge', 'method-packs', 'routing', 'generated']) {
+    for (const part of ['pack.json', 'README.md', 'experts', 'scenarios', 'team-templates', 'output-templates', 'quality-policies', 'knowledge-providers', 'domain-knowledge', 'method-packs', 'skill-packages', 'routing', 'generated']) {
       await rm(join(outDir, part), { recursive: true, force: true })
     }
   }
@@ -397,6 +398,7 @@ export async function emitPack(outDir, options = {}) {
   for (const entity of pack.knowledgeProviders) await writeJson(`knowledge-providers/${entity.id}.json`, entity)
   for (const entity of pack.domainKnowledge) await writeJson(`domain-knowledge/${entity.id}.json`, entity)
   for (const entity of pack.methodPacks) await writeJson(`method-packs/${entity.id}.json`, entity)
+  for (const entity of pack.skillPackages) await writeJson(`skill-packages/${entity.id}.json`, entity)
 
   // ── routing overlay (pack-adjacent; not a DomainPackV2 section) ────────────
   await writeJson('routing/routing.json', {
@@ -444,6 +446,7 @@ export async function emitPack(outDir, options = {}) {
     knowledgeProviders: pack.knowledgeProviders.length,
     domainKnowledge: pack.domainKnowledge.length,
     methodPacks: pack.methodPacks.length,
+    skillPackages: pack.skillPackages.length,
   }
   await writeJson('generated/verify.json', {
     ok: loaded.ok,
@@ -527,7 +530,7 @@ async function main() {
     const result = await emitPack(args.out, { srcDir: args.srcDir })
     console.log(`pack emitted → ${args.out}`)
     console.log(`  ${result.expertCount} experts, ${result.entityCounts.scenarios} scenarios, ${result.entityCounts.teamTemplates} team templates, ${result.entityCounts.outputTemplates} output templates`)
-    console.log(`  ${result.entityCounts.qualityPolicies} quality policy, ${result.entityCounts.knowledgeProviders} knowledge providers, ${result.entityCounts.domainKnowledge} domain knowledge, ${result.entityCounts.methodPacks} method packs`)
+    console.log(`  ${result.entityCounts.qualityPolicies} quality policy, ${result.entityCounts.knowledgeProviders} knowledge providers, ${result.entityCounts.domainKnowledge} domain knowledge, ${result.entityCounts.methodPacks} method packs, ${result.entityCounts.skillPackages} skill packages`)
     console.log(`  loadPackFromDir: ok=${result.ok} errors=${result.errorCount} warnings=${result.warningCount}`)
     console.log(`  tree sha256 (non-generated): ${result.hash}`)
     console.log(`  source assets: ${result.hasSource ? 'copied + hashed' : 'verified (existing)'}`)

@@ -1,0 +1,383 @@
+/**
+ * Expert Library settings card chrome — styled with the DSH settings design
+ * language so the card reads as a sibling of the official Shell / Agent loop /
+ * Plugins cards instead of bare HTML.
+ *
+ * Token handling mirrors the family conventions: the DSW alias vocabulary is
+ * bridged inside this surface with fallbacks (the ActivityPanel pattern), and
+ * the layout/typography follow the ui-settings PluginCard chrome (card border
+ * + layer background, section headings, label-left/control-right rows, pill
+ * status, monospace digests, primary/secondary buttons).
+ */
+
+.card {
+  /* Bridge the DSW alias vocabulary locally (never mutates the host theme). */
+  --elc-bg: var(--dsw-alias-bg-layer-3, #ffffff);
+  --elc-bg-soft: var(--dsw-alias-bg-module-platform, #f2f3f5);
+  --elc-border: var(--dsw-alias-border-l2, var(--dsw-alias-line-normal, #e7e9ee));
+  --elc-label: var(--dsw-alias-label-primary, #1f2329);
+  --elc-label-secondary: var(--dsw-alias-label-secondary, #4b5563);
+  --elc-label-dim: var(--dsw-alias-label-tertiary, #6b7280);
+  --elc-brand: var(--dsw-alias-brand-primary, var(--dsw-alias-state-business-primary, #4d6bfe));
+  --elc-success: var(--dsw-alias-state-success-primary, #12a150);
+  --elc-warning: var(--dsw-alias-state-warn-primary, #e08700);
+  --elc-danger: var(--dsw-alias-state-error-primary, #e5484d);
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 720px;
+  box-sizing: border-box;
+  border: 1px solid var(--elc-border);
+  border-radius: 12px;
+  background: var(--elc-bg);
+  color: var(--elc-label);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── Card header ─────────────────────────────────────────────────────────── */
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--elc-border);
+}
+
+.title {
+  margin: 0;
+  color: var(--elc-label);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.subtitle {
+  color: var(--elc-label-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ── Body / section headings ─────────────────────────────────────────────── */
+
+.body {
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px 16px;
+}
+
+.sectionTitle {
+  margin: 16px 0 4px;
+  color: var(--elc-label);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.sectionHint {
+  margin: 0 0 6px;
+  color: var(--elc-label-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ── Provider rows (数据源) ──────────────────────────────────────────────── */
+
+.provider {
+  margin-top: 8px;
+  border: 1px solid var(--elc-border);
+  border-radius: 10px;
+  background: var(--elc-bg-soft);
+  padding: 10px 12px;
+}
+
+.providerHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* Emoji status dots are kept (aria-label intact) but sized/aligned as real
+ * dots instead of inline text. */
+.statusDot {
+  flex: none;
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  line-height: 1;
+}
+
+.providerName {
+  min-width: 0;
+  color: var(--elc-label);
+  font-weight: 600;
+}
+
+.statusLabel {
+  margin-left: auto;
+  color: var(--elc-label-dim);
+  font-size: 12px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.statusLabel[data-status='ok'] {
+  color: var(--elc-success);
+}
+
+.statusLabel[data-status='warn'] {
+  color: var(--elc-warning);
+}
+
+.statusLabel[data-status='error'] {
+  color: var(--elc-danger);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.probeResult {
+  margin: 8px 0 0;
+  color: var(--elc-label-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ── Form rows: label left, control right ───────────────────────────────── */
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.fieldLabel {
+  flex: 1;
+  min-width: 0;
+  color: var(--elc-label-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.input {
+  flex: 0 1 55%;
+  min-width: 0;
+  height: 34px;
+  box-sizing: border-box;
+  border: 1px solid var(--elc-border);
+  border-radius: 8px;
+  background: var(--elc-bg);
+  color: var(--elc-label);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 0 12px;
+}
+
+.input::placeholder {
+  color: var(--elc-label-dim);
+}
+
+.input:focus-visible {
+  border-color: var(--elc-brand);
+  outline: none;
+}
+
+.checkRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  color: var(--elc-label-secondary);
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.checkbox {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  accent-color: var(--elc-brand);
+}
+
+/* ── Pack section ────────────────────────────────────────────────────────── */
+
+.packToolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.packTable {
+  width: 100%;
+  margin-top: 8px;
+  border-collapse: collapse;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.packTable th {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--elc-border);
+  color: var(--elc-label-dim);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.packTable td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--elc-border);
+  color: var(--elc-label-secondary);
+  vertical-align: top;
+}
+
+.packTable tr:last-child td {
+  border-bottom: none;
+}
+
+.packName {
+  display: block;
+  min-width: 0;
+  color: var(--elc-label);
+  font-weight: 600;
+}
+
+.packId {
+  display: block;
+  min-width: 0;
+  color: var(--elc-label-dim);
+  font-size: 11px;
+  line-height: 1.5;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+}
+
+.packTable td[data-severity='pass'] {
+  color: var(--elc-success);
+}
+
+.packTable td[data-severity='fail'] {
+  color: var(--elc-danger);
+}
+
+.packTable td[data-drift='clean'] {
+  color: var(--elc-success);
+}
+
+.packTable td[data-drift='dirty'] {
+  color: var(--elc-danger);
+}
+
+.packTable td[data-drift='unknown'] {
+  color: var(--elc-label-dim);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+
+.button {
+  appearance: none;
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--elc-border);
+  border-radius: 8px;
+  padding: 5px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--elc-label-secondary);
+  background: transparent;
+  transition: border-color 0.12s ease, color 0.12s ease, opacity 0.12s ease;
+}
+
+.button:hover:not(:disabled) {
+  color: var(--elc-label);
+  border-color: var(--elc-label-dim);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--elc-brand);
+  outline-offset: 1px;
+}
+
+.buttonPrimary {
+  border-color: transparent;
+  background: var(--elc-label);
+  color: var(--elc-bg);
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  opacity: 0.88;
+  border-color: transparent;
+}
+
+/* ── Status / messages / footer ──────────────────────────────────────────── */
+
+.hint {
+  margin: 0;
+  color: var(--elc-label-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.statusError {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  color: var(--elc-danger);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.packsNote {
+  margin: 8px 0 0;
+  color: var(--elc-label-dim);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--elc-border);
+}
+
+.message {
+  margin-right: auto;
+  color: var(--elc-label-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .buttonPrimary {
+    transition: none;
+  }
+}

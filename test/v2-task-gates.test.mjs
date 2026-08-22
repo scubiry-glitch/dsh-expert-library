@@ -24,6 +24,11 @@
  *   tool result, `output/result.json` and `TeamTask` (null/0 for no-policy
  *   teams), even when the member output never mentions them, and repair_count
  *   increments across blocked retries;
+ * - output-schema enforcement: when the policy declares schema-structure and
+ *   the task binds a resolvable output-template contract, the injected
+ *   schema-structure gate blocks outputs missing required sections (or invalid
+ *   JSON) with correction guidance; legacy/collab/ad-hoc teams get no
+ *   injection;
  * - `stampQualityPlan` round-trips through the durable team record.
  *
  * All hermetic: pure core functions against in-memory/temp-dir fixtures, no network,
@@ -132,10 +137,17 @@ function syntheticStamp(gates, overrides = {}) {
   }
 }
 
-const COMPLIANCE_LEAK = '## 结论\n顾云昌认为市场不会暴涨暴跌。'
-const COMPLIANCE_FIXED = '## 结论\n政策制度领域专家（首字母 G）认为市场不会暴涨暴跌。'
-const UNCITED_NUMBER = '## 结论\n上海二手房价环比上涨3.2%，成交量增加5%。'
-const CITED_NUMBER = '## 结论\n上海二手房价环比上涨3.2%（来源：贝壳，口径：成交价，2026-07）。'
+// Zhijian framework-A output template declares five REQUIRED section markers
+// (['一句话定性', '指标 2-3 项', '趋势预测', '不确定性', '关注指标']). The
+// contract-driven schema-structure gate is injected at completion, so every
+// zhijian test output must carry them (or the structure gate blocks first).
+const ZHIJIAN_HEAD = ['一句话定性', '指标 2-3 项', '趋势预测', '不确定性', '关注指标'].map(section => `${section}：`).join('\n')
+const COMPLIANCE_LEAK = `${ZHIJIAN_HEAD}\n顾云昌认为市场不会暴涨暴跌。`
+const COMPLIANCE_FIXED = `${ZHIJIAN_HEAD}\n政策制度领域专家（首字母 G）认为市场不会暴涨暴跌。`
+const UNCITED_NUMBER = `${ZHIJIAN_HEAD}\n上海二手房价环比上涨3.2%，成交量增加5%。`
+const CITED_NUMBER = `${ZHIJIAN_HEAD}\n上海二手房价环比上涨3.2%（来源：贝壳，口径：成交价，2026-07）。`
+/** Zhijian framework-A output that deliberately omits every required section. */
+const NO_SECTIONS = '上海二手房市场筑底迹象明显，成交量回升。'
 
 /* ---------------------------------------------------------------------------
  * Stamp
@@ -156,6 +168,14 @@ test('stampQualityPlan copies the compiled gate chain (zhijian binds t2)', () =>
   assert.deepEqual(stamp.deliverables, [{ id: 'd1', fromTasks: ['t2'] }])
   // Zhijian policy declares maxRepairRounds 2 — the design cap.
   assert.equal(stamp.maxRepairRounds, 2)
+  // Output-schema contracts are stamped so completion can validate the output
+  // against the declared template (framework A: five required section markers).
+  assert.deepEqual(stamp.outputTemplates.map(template => template.id), ['zhijian.output.A'])
+  assert.deepEqual(stamp.taskOutputSchemas, { t1: 'zhijian.output.A', t2: 'zhijian.output.A' })
+  assert.ok(stamp.schemaStructure !== undefined, 'zhijian policy declares schema-structure')
+  assert.equal(stamp.schemaStructure?.severity, 'hard')
+  const contract = stamp.outputTemplates[0]
+  assert.ok(contract?.sections.some(section => section.id === '一句话定性' && section.required === true))
 })
 
 test('zhijianComplianceTerms cover real names and the deceased expert bk-022', () => {
@@ -191,14 +211,14 @@ test('completion blocked: real expert name in the output fails compliance-anonym
 test('deceased expert (bk-022) real name is blocked even in a current-sounding citation; historical form without the real name passes', () => {
   const team = teamFixture(zhijianPlan())
   // Real name without a historical marker: blocked (deceased-cited-as-current too).
-  const blocked = evaluateTaskCompletionGates(team, fusionTask(), '## 结论\n顾云昌 2026年指出市场见底。')
+  const blocked = evaluateTaskCompletionGates(team, fusionTask(), `${ZHIJIAN_HEAD}\n顾云昌 2026年指出市场见底。`)
   assert.ok(blocked?.blocked !== undefined)
   assert.equal(blocked?.blocked.gateId, 'compliance-anonymization')
   // A live expert's real name is blocked as well (领域·首字母 rule).
-  const live = evaluateTaskCompletionGates(team, fusionTask(), '## 结论\n陶琦认为挂牌量将上升。')
+  const live = evaluateTaskCompletionGates(team, fusionTask(), `${ZHIJIAN_HEAD}\n陶琦认为挂牌量将上升。`)
   assert.ok(live?.blocked !== undefined)
   // Historical citation without the real name (领域·首字母 + 曾 marker) passes.
-  const historical = evaluateTaskCompletionGates(team, fusionTask(), '## 结论\n已故政策制度领域专家（首字母 G）曾指出：市场不会暴涨暴跌。')
+  const historical = evaluateTaskCompletionGates(team, fusionTask(), `${ZHIJIAN_HEAD}\n已故政策制度领域专家（首字母 G）曾指出：市场不会暴涨暴跌。`)
   assert.ok(historical !== undefined)
   assert.equal(historical.blocked, undefined)
   assert.deepEqual(historical.warnings, [])
@@ -283,13 +303,14 @@ test('deriveQualityScore: hard all pass = 80 + soft pass ratio ×20; hard fail =
   // no soft gates): hard all pass, no soft ⇒ soft ratio 1 ⇒ 100.
   const clean = evaluateTaskCompletionGates(team, fusionTask(), COMPLIANCE_FIXED)
   assert.equal(clean?.score, 100)
-  // Compliance fails (hard), data passes: hard fail ⇒ 59 × (1 passed / 2 gates).
+  // Compliance fails (hard), schema + data pass (injected schema-structure
+  // gate is part of the chain): hard fail ⇒ 59 × (2 passed / 3 gates).
   const blocked = evaluateTaskCompletionGates(team, fusionTask(), COMPLIANCE_LEAK)
-  assert.equal(blocked?.blocked?.score, 30)
-  assert.equal(blocked?.score, 30)
-  // Both hard gates fail: 59 × (0 / 2) = 0.
-  const doubleHard = evaluateTaskCompletionGates(team, fusionTask(), '## 结论\n顾云昌 2026年指出市场环比上涨3.2%。')
-  assert.equal(doubleHard?.blocked?.score, 0)
+  assert.equal(blocked?.blocked?.score, 39)
+  assert.equal(blocked?.score, 39)
+  // Data + compliance both fail (schema passes): 59 × (1 / 3) = 20.
+  const doubleHard = evaluateTaskCompletionGates(team, fusionTask(), `${ZHIJIAN_HEAD}\n顾云昌 2026年指出市场环比上涨3.2%。`)
+  assert.equal(doubleHard?.blocked?.score, 20)
   // Soft gate warns (style-lint phrase-density): hard all pass, soft ratio 0/1
   // ⇒ 80 + 20×0 = 80.
   const stamp = syntheticStamp([
@@ -345,6 +366,71 @@ test('deriveQualityScore rule constants are the documented bands', () => {
   assert.equal(QUALITY_BASE_SCORE, 80)
   assert.equal(QUALITY_SOFT_WEIGHT, 20)
   assert.equal(QUALITY_HARD_FAIL_MAX, 59)
+})
+
+/* ---------------------------------------------------------------------------
+ * Output-schema validation (schema-structure vs the plan's outputTemplate)
+ * ------------------------------------------------------------------------- */
+
+test('output violating the declared output schema fails the injected schema-structure gate with correction', () => {
+  const team = teamFixture(zhijianPlan())
+  // NO_SECTIONS omits every required section marker of zhijian.output.A.
+  const outcome = evaluateTaskCompletionGates(team, fusionTask(), NO_SECTIONS)
+  assert.ok(outcome?.blocked !== undefined, 'missing required sections must block completion')
+  assert.equal(outcome.blocked.gateId, 'schema-structure')
+  assert.ok(outcome.blocked.reason.includes('missing-section'), `reason must cite the issue code: ${outcome.blocked.reason}`)
+  assert.ok(
+    outcome.blocked.corrections.includes('补充必填章节 "一句话定性"'),
+    'corrections must name the missing required section',
+  )
+  // The empty artifact is caught by the structure gate too.
+  const empty = evaluateTaskCompletionGates(team, fusionTask(), '')
+  assert.equal(empty?.blocked?.gateId, 'schema-structure')
+  assert.ok(empty?.blocked?.reason.includes('empty-artifact'))
+})
+
+test('output satisfying every required section passes the schema-structure gate', () => {
+  const team = teamFixture(zhijianPlan())
+  const outcome = evaluateTaskCompletionGates(team, fusionTask(), COMPLIANCE_FIXED)
+  assert.ok(outcome !== undefined)
+  assert.equal(outcome.blocked, undefined)
+  assert.equal(outcome.score, 100)
+})
+
+test('JSON output-template contract: invalid JSON fails with correction, valid JSON passes', () => {
+  const stamp = syntheticStamp([], {
+    outputTemplates: [{ id: 'test.json', media: ['json'], sections: [] }],
+    taskOutputSchemas: { t2: 'test.json' },
+    schemaStructure: { policyId: 'test.quality', severity: 'hard' },
+  })
+  const team = teamFixture(zhijianPlan(), { qualityPlan: stamp })
+  const bad = evaluateTaskCompletionGates(team, fusionTask(), '{ 不是 JSON }')
+  assert.ok(bad?.blocked !== undefined)
+  assert.equal(bad.blocked.gateId, 'schema-structure')
+  assert.ok(bad.blocked.reason.includes('invalid-json'), `reason must cite invalid-json: ${bad.blocked.reason}`)
+  assert.ok(bad.blocked.corrections.some(line => line.includes('JSON')), 'correction must guide JSON repair')
+  const good = evaluateTaskCompletionGates(team, fusionTask(), JSON.stringify({ conclusion: '市场筑底', trend: '企稳' }))
+  assert.equal(good?.blocked, undefined)
+})
+
+test('ad-hoc / legacy teams get no schema-structure injection (no policy declares the gate)', () => {
+  // Ad-hoc: no qualityPlan at all → undefined (today's behavior).
+  const adhoc = {
+    id: 'team-adhoc', name: '自由团队', captainSessionId: 'sess-captain', createdAt: 1,
+    members: [], tasks: [fusionTask()], taskSeq: 1,
+  }
+  assert.equal(evaluateTaskCompletionGates(adhoc, fusionTask(), NO_SECTIONS), undefined)
+  // Legacy scenario team: legacy quality policy has no gates → undefined.
+  const legacy = {
+    id: 'team-legacy', name: '旧场景团队', captainSessionId: 'sess-captain', createdAt: 1,
+    scenarioId: 'market-research',
+    planRef: { planId: 'ep-legacy', digest: 'x', templateId: 'market-research.legacy-team', templateVersion: '0.0.0-legacy' },
+    members: [], tasks: [fusionTask()], taskSeq: 1,
+  }
+  assert.equal(evaluateTaskCompletionGates(legacy, fusionTask(), NO_SECTIONS), undefined)
+  // A stamped plan whose policy declares no schema-structure gate: no injection.
+  const noSchema = teamFixture(zhijianPlan(), { qualityPlan: syntheticStamp([]) })
+  assert.equal(evaluateTaskCompletionGates(noSchema, fusionTask(), NO_SECTIONS), undefined)
 })
 
 test('subjectWithQualityMark is idempotent — replaces the old marker, never stacks', () => {
@@ -429,17 +515,17 @@ test('tool: repair_count increments across blocked retries and stays accurate af
     const exec = { agent: member, session: member.session, signal: new AbortController().signal }
     const complete = (output) => tool.execute({ task_id: 't2', status: 'completed', output, attempt_id: 'a1' }, exec)
 
-    // 1st blocked attempt → repairCount 1, score 30 (59 × 1/2), marker 硬门未过.
+    // 1st blocked attempt → repairCount 1, score 39 (59 × 2/3), marker 硬门未过.
     await assert.rejects(complete(COMPLIANCE_LEAK), /compliance-anonymization/)
     let loaded = await readTeam(stateRoot, 'team-tool')
     assert.equal(loaded?.tasks[0]?.repairCount, 1)
-    assert.equal(loaded?.tasks[0]?.qualityScore, 30)
+    assert.equal(loaded?.tasks[0]?.qualityScore, 39)
 
     // 2nd blocked attempt → repairCount 2 (budget not yet spent).
     await assert.rejects(complete(COMPLIANCE_LEAK), /compliance-anonymization/)
     loaded = await readTeam(stateRoot, 'team-tool')
     assert.equal(loaded?.tasks[0]?.repairCount, 2)
-    assert.equal(loaded?.tasks[0]?.qualityScore, 30)
+    assert.equal(loaded?.tasks[0]?.qualityScore, 39)
 
     // Fixed pass: repair rounds used stay 2, score 100 — record reflects both.
     const fixed = await complete(COMPLIANCE_FIXED)
@@ -567,7 +653,7 @@ test('score enters the evaluation result and the durable subject through the too
       /compliance-anonymization/,
     )
     let team = await readTeam(join(workspace, '.expert-teams'), 'team-tool')
-    assert.equal(team?.tasks[0]?.subject, '融合成稿 〔质 30·硬门未过〕')
+    assert.equal(team?.tasks[0]?.subject, '融合成稿 〔质 39·硬门未过〕')
 
     // Fixed retry: marker replaced (single, no stacking), score 100.
     const fixed = await tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)

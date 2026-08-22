@@ -87,6 +87,19 @@ export interface StampedGate {
  * policy change between compile and run can never silently alter what a team
  * is held to.
  */
+/**
+ * JSON-safe subset of the V2 `OutputTemplate` stamped onto the team record so
+ * the schema-structure gate can validate a task's submitted output against the
+ * plan's declared output schema (required section markers for markdown
+ * templates, JSON shape for JSON templates) without re-reading the pack.
+ */
+export interface StampedOutputTemplate {
+  readonly id: string
+  readonly media: readonly ('markdown' | 'html' | 'pdf' | 'pptx' | 'json')[]
+  /** Section markers; `required: true` sections must appear in the output. */
+  readonly sections: ReadonlyArray<{ readonly id: string; readonly required: boolean }>
+}
+
 export interface StampedQualityPlan {
   readonly planId: string
   /** Policy refs the compiled plan bound (`bindings.qualityPolicies`). */
@@ -102,6 +115,27 @@ export interface StampedQualityPlan {
    * policy's `maxRepairRounds` at apply time, defaulting to the design cap.
    */
   readonly maxRepairRounds: number
+  /**
+   * Output-schema contracts of the plan's bound output templates, resolved at
+   * apply time (JSON-safe subset). Empty when the templates are not resolvable
+   * from the builtin/zhijian packs (e.g. collab templates) — schema-structure
+   * validation then falls back to gate config only.
+   */
+  readonly outputTemplates: readonly StampedOutputTemplate[]
+  /** Logical task id → bound output template id (from `CompiledTask.outputSchema`). */
+  readonly taskOutputSchemas: Readonly<Record<string, string>>
+  /**
+   * The `schema-structure` gate instance declared by the bound quality policy
+   * (zhijian declares one, hard). When present, task completion injects a
+   * contract-driven schema-structure gate into the chain (unless the template
+   * already bound one to the task) so the plan's declared output schema is
+   * actually enforced. Absent when no bound policy declares the gate.
+   */
+  readonly schemaStructure?: {
+    readonly policyId: string
+    readonly severity: 'hard' | 'soft'
+    readonly config?: Readonly<Record<string, unknown>>
+  }
 }
 
 /** One task of a team's task list. */

@@ -7,9 +7,10 @@
  */
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, mkdtemp, writeFile, rm, realpath } from 'node:fs/promises'
+import { mkdir, mkdtemp, writeFile, rm, realpath, symlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { basename, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import {
   builtinLoadedPack,
@@ -20,6 +21,10 @@ import {
   summarizePack,
 } from '../lib/v2/index.js'
 import { ZHIJIAN_PACK_ID, ZHIJIAN_PACK_SNAPSHOT } from '../lib/v2/index.js'
+
+/** Repo root — the plugin module root whose shipped domain-packs/ a
+ * module-root workspace would rediscover. */
+const REPO_ROOT = fileURLToPath(new URL('..', import.meta.url))
 
 /** A minimal, fully validator-clean pack used as the fixture base. */
 function validPack(overrides = {}) {
@@ -205,6 +210,45 @@ test('listDomainPacks reports a broken workspace pack with health and zero count
     assert.equal(broken.ok, false)
     assert.ok(broken.errorCount >= 1)
     assert.equal(broken.counts.experts, 0)
+  })
+})
+
+// --- Physical-dir dedupe ------------------------------------------------------
+
+test('listDomainPacks dedupes a workspace dir that realpaths to the builtin pack dir (内置 row wins)', async () => {
+  await withTmp(async root => {
+    // A workspace rooted at the plugin module root (simulated with a symlink —
+    // readdir follows intermediate path symlinks) rediscovers the shipped
+    // builtin pack dir as a workspace pack: the same physical dir must not be
+    // listed twice, and the 内置 layer label wins over the 工作区 row.
+    const ws = join(root, 'module-root-ws')
+    await symlink(REPO_ROOT, ws, 'dir')
+    const list = await listDomainPacks(fakeCtx([ws]))
+    const zhijianRows = list.packs.filter((pack) => pack.id === ZHIJIAN_PACK_ID)
+    assert.equal(zhijianRows.length, 1, 'the same physical dir must appear exactly once')
+    assert.equal(zhijianRows[0].layer, 'builtin', 'the 内置 row wins over the 工作区 row')
+    assert.equal(list.packs[0].id, ZHIJIAN_PACK_ID, 'the builtin row stays first')
+    assert.equal(list.packs[0].layer, 'builtin')
+    assert.ok(
+      !list.packs.some((pack) => pack.layer === 'workspace' && pack.id === ZHIJIAN_PACK_ID),
+      'no 工作区 row for the builtin pack physical dir',
+    )
+  })
+})
+
+test('listDomainPacks dedupes one physical dir discovered via two workspace roots', async () => {
+  await withTmp(async root => {
+    const packDir = await writeWorkspacePack(root, 'shared-pack')
+    // A second workspace root that is a symlink to the first resolves to the
+    // same physical pack dirs — discovery must collapse them to one row.
+    const other = join(root, 'other-workspace')
+    await symlink(root, other, 'dir')
+    const list = await listDomainPacks(fakeCtx([root, other]))
+    const shared = list.packs.filter((pack) => pack.id === 'shared-pack')
+    assert.equal(shared.length, 1, 'one physical dir via two roots appears once')
+    assert.equal(shared[0].layer, 'workspace')
+    assert.equal(list.packs.length, 2, 'builtin + one shared workspace pack')
+    assert.equal(shared[0].root, await realpath(packDir))
   })
 })
 

@@ -48,6 +48,7 @@ import { skillsGuideSection } from './skills-discovery.ts'
 import { zhijianExpertPersona } from './zhijian/persona.ts'
 import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
 import { scenarioById } from './zhijian/routing.ts'
+import { expertMemoryGuideSection } from './zhijian/expert-memory.ts'
 import type { ToolExecutionConfig, ToolExecutionMode } from './settings.ts'
 
 /** Resolved plugin config consumed by the tools. */
@@ -296,12 +297,22 @@ export async function addMemberCore(
     if (expert !== undefined) {
       const scenario = fresh.scenarioId === undefined ? undefined : (library?.scenarios.get(fresh.scenarioId))
       const guide = await knowledgeGuide(workspace, config.knowledgeDir, expert.id, fresh.scenarioId)
-      const skillsSection = skillsGuideSection(ctx, workspace, config.knowledgeDir)
-      const guideWithSkills = skillsSection === ''
+      // zhijian.expert-memory serving (pack-first): a member of a zhijian plan
+      // team whose scenario requires the memory base gets a guide section
+      // pointing at the entity records; generic teams get none; a missing pack
+      // file degrades to a warning note — never a team-creation failure.
+      const memorySection = await expertMemoryGuideSection({ workspace, packsDir: config.packsDir, scenarioId: fresh.scenarioId })
+      const guideWithMemory = memorySection === ''
         ? guide
         : guide === ''
+          ? memorySection
+          : `${guide}\n\n${memorySection}`
+      const skillsSection = skillsGuideSection(ctx, workspace, config.knowledgeDir)
+      const guideWithSkills = skillsSection === ''
+        ? guideWithMemory
+        : guideWithMemory === ''
           ? skillsSection
-          : `${guide}\n\n${skillsSection}`
+          : `${guideWithMemory}\n\n${skillsSection}`
       if (isZhijianExpertId(expert.id)) {
         const meta = zhijianMetaById(expert.id)
         if (meta !== undefined) {

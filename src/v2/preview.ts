@@ -16,8 +16,9 @@
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import { readdir } from 'node:fs/promises'
+import { readdir, realpath } from 'node:fs/promises'
 import { basename, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { isSafeKnowledgeId } from '../knowledge.ts'
 import {
   loadPackFromDir,
@@ -262,15 +263,55 @@ export async function discoverPackDirs(ctx: Context, packsDir: string = DEFAULT_
 }
 
 /**
+ * Realpath of the plugin's own shipped builtin pack dir
+ * (`<moduleRoot>/domain-packs/<ZHIJIAN_PACK_ID>` — the package's fixed
+ * `domain-packs/` layout, independent of the configured packsDir), when it
+ * exists. The builtin layer row of the pack list is served from memory, but
+ * its physical dir is what a workspace rooted at the plugin module root
+ * rediscovers — the dedupe anchor for {@link listPackSources}.
+ */
+async function builtinPackRealDir(): Promise<string | undefined> {
+  const moduleRoot = fileURLToPath(new URL('../../', import.meta.url))
+  try {
+    return await realpath(join(moduleRoot, 'domain-packs', ZHIJIAN_PACK_ID))
+  } catch {
+    return undefined
+  }
+}
+
+/**
  * Load and validate every discoverable pack: the builtin pack first, then each
  * workspace pack directory (loader + validator diagnostics combined).
+ *
+ * Physical-dir dedupe: the deployment repo dir is often BOTH the plugin module
+ * root and a registered workspace/session cwd, so the same physical pack dir
+ * can be discovered twice — once as the builtin pack's own shipped dir and
+ * once as a workspace pack (the settings card then lists 智见 twice: 内置 +
+ * 工作区). One physical dir appears once: a workspace dir that realpaths to
+ * the shipped builtin dir is skipped (the 内置 row already represents it), and
+ * workspace dirs that realpath to the same physical location across roots
+ * collapse to a single row.
  */
 export async function listPackSources(ctx: Context, packsDir: string = DEFAULT_PACKS_DIR): Promise<PackSourceResult[]> {
   const results: PackSourceResult[] = []
   const builtin = builtinLoadedPack()
   results.push({ summary: summarizePack(builtin, { snapshot: ZHIJIAN_PACK_SNAPSHOT }), loaded: builtin })
+  const builtinRealDir = await builtinPackRealDir()
+  const seenDirs = new Set<string>()
   for (const { dir, label } of await discoverPackDirs(ctx, packsDir)) {
-    // The loader realpaths the directory and records it as `source.root`.
+    // The loader realpaths the dir into `source.root`; dedupe on that so a
+    // symlinked/overlapping workspace root never double-lists one physical
+    // pack. A dir that vanished between discovery and load keeps its raw path
+    // for the seen-set and lets the loader report the missing-root diagnostic.
+    let real: string
+    try {
+      real = await realpath(dir)
+    } catch {
+      real = dir
+    }
+    if (builtinRealDir !== undefined && real === builtinRealDir) continue
+    if (seenDirs.has(real)) continue
+    seenDirs.add(real)
     const loaded = await loadPackFromDir(dir, { layer: 'workspace', label })
     results.push({ summary: summarizePack(loaded), loaded })
   }

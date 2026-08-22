@@ -45,6 +45,7 @@ import { appendFile, mkdir, readFile, rename, stat, writeFile } from 'node:fs/pr
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { dirname, join } from 'node:path'
 import type { RegistryAuditEntry, RegistryAuditKind } from '../v2/provider-runtime.ts'
+import type { DroppedSessionEvents } from '../events.ts'
 
 /** Default tail length of the audit route (`?limit=` default). */
 export const DEFAULT_AUDIT_LIMIT = 100
@@ -228,6 +229,13 @@ export interface AuditHandlerDeps {
   readonly auditLog?: AuditLogFile
   /** Resolve the live in-memory audit entries (registry's audit log). */
   readonly resolveMemory: () => readonly RegistryAuditEntry[]
+  /**
+   * Optional live snapshot of dropped session events (the closed session
+   * vocabulary in `src/events.ts`): when provided, the response also carries
+   * `eventsDropped: { total, byType }` so `expert-teams/*` session events the
+   * harness cannot durably record are observable instead of silent.
+   */
+  readonly resolveDroppedEvents?: () => DroppedSessionEvents
 }
 
 function sendJson(res: ServerResponse, status: number, body: unknown): void {
@@ -245,7 +253,9 @@ function sendJson(res: ServerResponse, status: number, body: unknown): void {
  * lines of each), deduped by record identity, in `at` order. Entries carry
  * only kind/providerId/version/operation/outcome/at + detail: credentials
  * never appear (registry records never contain them and the wire projection
- * copies only those fields).
+ * copies only those fields). When {@link AuditHandlerDeps.resolveDroppedEvents}
+ * is provided, the response additionally carries `eventsDropped`
+ * ({@link DroppedSessionEvents}) — dropped `expert-teams/*` session events.
  */
 export function createAuditHandler(deps: AuditHandlerDeps): (req: IncomingMessage, res: ServerResponse) => Promise<void> {
   return async (req, res) => {
@@ -255,7 +265,11 @@ export function createAuditHandler(deps: AuditHandlerDeps): (req: IncomingMessag
       const memory = deps.resolveMemory().slice(-limit)
       const fileTail = deps.auditLog === undefined ? [] : await deps.auditLog.readTail(limit)
       const entries = mergeAuditTails(fileTail, memory, limit)
-      sendJson(res, 200, { entries })
+      const body: Record<string, unknown> = { entries }
+      if (deps.resolveDroppedEvents !== undefined) {
+        body['eventsDropped'] = deps.resolveDroppedEvents()
+      }
+      sendJson(res, 200, body)
     } catch (error) {
       sendJson(res, 500, { error: error instanceof Error ? error.message : String(error) })
     }

@@ -90,11 +90,18 @@ async function loadCommittedPack() {
 
 // ── 1. layout acceptance + round-trip ───────────────────────────────────────
 
-test('domain-packs/zhijian-realestate loads with zero diagnostics', async () => {
+test('domain-packs/zhijian-realestate loads clean (zero errors; only the documented unlicensed-skill warning)', async () => {
   const loaded = await loadCommittedPack()
   assert.equal(loaded.ok, true)
   assert.equal(loaded.diagnostics.filter(d => d.severity === 'error').length, 0, JSON.stringify(loaded.diagnostics))
-  assert.equal(loaded.diagnostics.filter(d => d.severity === 'warning').length, 0, JSON.stringify(loaded.diagnostics))
+  // The only warning is the §3.7 missing-license note for the bundled
+  // video-shotcraft skill (frontmatter declares no license ⇒ internalOnly +
+  // warning); nothing else may warn.
+  assert.deepEqual(
+    loaded.diagnostics.filter(d => d.severity === 'warning').map(d => d.code),
+    ['missing-license'],
+    JSON.stringify(loaded.diagnostics),
+  )
   assert.ok(loaded.pack !== undefined)
 })
 

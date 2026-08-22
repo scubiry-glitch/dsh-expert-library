@@ -68,6 +68,7 @@ import {
   type PackMeta,
   type QualityPolicy,
   type ScenarioV2,
+  type SkillPackageManifest,
   type TeamTemplate,
 } from './types.ts'
 
@@ -89,6 +90,89 @@ export const ZHIJIAN_BASELINE_DATE = '2026-08-21T00:00:00Z'
 
 /** The universal reviewer capability every roster expert claims. */
 export const REVIEW_CAPABILITY = 'zhijian.review'
+
+/* ------------------------------------------------------------------ *
+ *  Bundled local skills inventory (skillPackages)
+ *
+ *  The pack is the inventory of record for the plugin's bundled local
+ *  skills (`knowledge/skills/` next to `lib/`): finesse-ui, the 8-skill GSAP
+ *  suite and video-shotcraft. These entities are LOCAL availability
+ *  declarations — id/name/version/source-root convention, never embedded
+ *  content (the on-disk SKILL.md tree is the content of record, re-verified
+ *  by `loadSkillPackageFromDir` when a package is actually installed).
+ * ------------------------------------------------------------------ */
+
+/** One declared bundled skill package (availability declaration). */
+export interface ZhijianSkillPackageDecl {
+  /** Skill id — the folder name under the plugin's `knowledge/skills/`. */
+  readonly id: string
+  /** Display name (SKILL.md frontmatter `name:`, known for the shipped set). */
+  readonly name: string
+  /**
+   * Version: the skill's own metadata version when known (finesse-ui
+   * frontmatter declares 0.20.0); otherwise the local baseline
+   * {@link LOCAL_SKILL_BASELINE_VERSION} — the shipped SKILL.md files carry
+   * no version of their own, and no upstream release is asserted.
+   */
+  readonly version: string
+  /** SPDX license from the skill's frontmatter when declared (else internalOnly). */
+  readonly license?: string
+}
+
+/** Version convention for bundled skills whose own metadata declares none. */
+export const LOCAL_SKILL_BASELINE_VERSION = '0.0.0-local'
+
+/** The pack's bundled-skill inventory, in deterministic order. */
+export const ZHIJIAN_SKILL_PACKAGES: readonly ZhijianSkillPackageDecl[] = [
+  { id: 'finesse-ui', name: 'finesse-ui', version: '0.20.0', license: 'MIT' },
+  { id: 'gsap-core', name: 'gsap-core', version: LOCAL_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-frameworks', name: 'gsap-frameworks', version: LOCAL_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-performance', name: 'gsap-performance', version: LOCAL_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-plugins', name: 'gsap-plugins', version: LOCAL_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-react', name: 'gsap-react', version: LOCAL_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-scrolltrigger', name: 'gsap-scrolltrigger', version: LOCAL_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-timeline', name: 'gsap-timeline', version: LOCAL_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-utils', name: 'gsap-utils', version: LOCAL_SKILL_BASELINE_VERSION, license: 'MIT' },
+  // video-shotcraft declares no license in its frontmatter ⇒ internalOnly.
+  { id: 'video-shotcraft', name: 'video-shotcraft', version: LOCAL_SKILL_BASELINE_VERSION },
+]
+
+/**
+ * Deterministic declaration digest: sha256 over the declaration identity
+ * (id/version/root). These entities declare availability only — the SKILL.md
+ * tree is never embedded, so the digest pins the declaration, keeping the
+ * builder pure (no I/O) and deterministic. A real on-disk package is
+ * re-verified by `loadSkillPackageFromDir` (content-tree digest) when loaded.
+ */
+function skillPackageDigest(decl: ZhijianSkillPackageDecl): string {
+  return createHash('sha256')
+    .update(`zhijian:skill-package:${decl.id}:${decl.version}:${decl.id}`)
+    .digest('hex')
+}
+
+/** One declared bundled skill → {@link SkillPackageManifest} (local-only). */
+function skillPackageManifest(decl: ZhijianSkillPackageDecl): SkillPackageManifest {
+  return {
+    id: decl.id,
+    name: decl.name,
+    version: decl.version,
+    schemaVersion: SCHEMA_VERSION,
+    source: {
+      kind: 'builtin',
+      // Root convention: relative to the plugin's bundled knowledge/skills/.
+      root: decl.id,
+      digest: skillPackageDigest(decl),
+      ...(decl.license === undefined ? {} : { license: decl.license }),
+    },
+    // Availability declarations contribute nothing to the pack's own entity
+    // sets (the skills' real contributions live in their SKILL.md bodies).
+    contributions: {},
+    permissions: {
+      execScripts: [],
+      ...(decl.license === undefined ? { internalOnly: true } : {}),
+    },
+  }
+}
 
 /**
  * Read-only data capabilities a zhijian review task may invoke through
@@ -684,7 +768,7 @@ export function buildZhijianDomainPack(options: BuildZhijianPackOptions = {}): D
       reviewProtocolMethodPack(packVersion),
       ...FRAMEWORKS.map(framework => frameworkMethodPack(framework, packVersion)),
     ],
-    skillPackages: [],
+    skillPackages: ZHIJIAN_SKILL_PACKAGES.map(skillPackageManifest),
   }
 }
 

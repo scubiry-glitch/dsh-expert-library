@@ -20,6 +20,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import type { SettingsScope } from '@deepseek-ai/dsh-client-runtime/client'
 import type { ExpertLibrarySettings } from '../settings.ts'
+import css from './settings-card.module.css'
 
 export interface ExpertLibrarySettingsCardProps {
   close: () => void
@@ -112,21 +113,25 @@ function isHealthWire(body: unknown): body is HealthWire {
     && Array.isArray(record['packs'])
 }
 
-/** Status dot + label for one provider's health row. */
-function providerStatus(provider: ProviderId, health: HealthWire | null): { readonly dot: string; readonly label: string } {
-  if (health === null) return { dot: '⚪', label: '未探测' }
+/** Status dot + label + color key for one provider's health row. */
+function providerStatus(provider: ProviderId, health: HealthWire | null): {
+  readonly dot: string
+  readonly label: string
+  readonly key: 'ok' | 'warn' | 'error' | 'idle'
+} {
+  if (health === null) return { dot: '⚪', label: '未探测', key: 'idle' }
   const entry = health.providers[provider]
-  if (!entry.registered) return { dot: '⚪', label: '未注册' }
-  if (!entry.keyPresent) return { dot: '🟠', label: '未配置凭据' }
+  if (!entry.registered) return { dot: '⚪', label: '未注册', key: 'idle' }
+  if (!entry.keyPresent) return { dot: '🟠', label: '未配置凭据', key: 'warn' }
   if (provider === 'wind') {
     const wind = health.providers.wind
-    if (!wind.cliExists) return { dot: '🔴', label: 'CLI 缺失' }
-    return { dot: '🟢', label: '就绪' }
+    if (!wind.cliExists) return { dot: '🔴', label: 'CLI 缺失', key: 'error' }
+    return { dot: '🟢', label: '就绪', key: 'ok' }
   }
   const probed = entry as ZytHealthWire | BeikeHealthWire
-  if (probed.reachable === true) return { dot: '🟢', label: '可通' }
-  if (probed.reachable === false) return { dot: '🔴', label: '探测失败' }
-  return { dot: '⚪', label: '未探测' }
+  if (probed.reachable === true) return { dot: '🟢', label: '可通', key: 'ok' }
+  if (probed.reachable === false) return { dot: '🔴', label: '探测失败', key: 'error' }
+  return { dot: '⚪', label: '未探测', key: 'idle' }
 }
 
 /** Inline result line of the latest 检测 for one provider. */
@@ -313,8 +318,12 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
     }
   }
 
-  if (snapshot.status === 'loading') return <section><p>正在读取专家库设置…</p></section>
-  if (snapshot.status === 'unavailable') return <section><h2>专家库</h2><p>当前 DSH 配置未开放 Expert Library 设置。</p></section>
+  if (snapshot.status === 'loading') {
+    return <section className={css.card}><p className={css.hint}>正在读取专家库设置…</p></section>
+  }
+  if (snapshot.status === 'unavailable') {
+    return <section className={css.card}><h2 className={css.title}>专家库</h2><p className={css.hint}>当前 DSH 配置未开放 Expert Library 设置。</p></section>
+  }
 
   const renderProviderRow = (
     provider: ProviderId,
@@ -324,12 +333,13 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
     const status = providerStatus(provider, health)
     const result = probeResultLine(provider, health)
     return (
-      <div>
-        <div>
-          <span role="img" aria-label={status.label}>{status.dot}</span>
-          <strong>{name}</strong>
-          <span>{status.label}</span>
+      <div className={css.provider}>
+        <div className={css.providerHead}>
+          <span className={css.statusDot} data-status={status.key} role="img" aria-label={status.label}>{status.dot}</span>
+          <strong className={css.providerName}>{name}</strong>
+          <span className={css.statusLabel} data-status={status.key}>{status.label}</span>
           <button
+            className={css.button}
             type="button"
             disabled={checking !== null}
             onClick={() => void fetchHealth(provider)}
@@ -337,80 +347,85 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
             {checking === provider ? '检测中…' : '检测'}
           </button>
         </div>
-        {fields}
-        {result !== '' && <p role="status">{result}</p>}
+        <div className={css.fields}>{fields}</div>
+        {result !== '' && <p className={css.probeResult} role="status">{result}</p>}
       </div>
     )
   }
 
-  return <section style={{ maxWidth: 720 }}>
-    <h2>专家库</h2>
+  return <section className={css.card}>
+    <header className={css.head}>
+      <h2 className={css.title}>专家库</h2>
+      <span className={css.subtitle}>三个外部数据源（Wind / 政研通 / 贝壳）的注册与连通状态、领域包校验，以及运行时 / 模型 / 提示词配置。</span>
+    </header>
 
-    <h3>数据源</h3>
-    <p>三个外部数据源（Wind / 政研通 / 贝壳）的注册与连通状态。留空表示继承默认配置；API Key 等秘密不会显示或写入此处。</p>
-    {healthError !== '' && <p role="status">{healthError} <button type="button" onClick={() => void fetchHealth('all')}>重试</button></p>}
-    {renderProviderRow('wind', 'Wind（行情 CLI）', (
-      <label>CLI 路径<input placeholder="~/.agents/skills/wind-mcp-skill/scripts/cli.mjs" value={draft.windCliPath} onChange={event => set('windCliPath', event.target.value)} /></label>
-    ))}
-    {renderProviderRow('zyt', '政研通 zyt', (
-      <>
-        <label>API Base URL<input placeholder="https://dss.ke.com" value={draft.zytBaseUrl} onChange={event => set('zytBaseUrl', event.target.value)} /></label>
-        <label><input type="checkbox" checked={draft.zytPreferCli} onChange={event => set('zytPreferCli', event.target.checked)} /> 优先使用 CLI</label>
-      </>
-    ))}
-    {renderProviderRow('beike', '贝壳 beike', (
-      <>
-        <label>MCP Endpoint<input placeholder="https://building.ke.com/mcp" value={draft.beikeBaseUrl} onChange={event => set('beikeBaseUrl', event.target.value)} /></label>
-        <label><input type="checkbox" checked={draft.beikePreferCli} onChange={event => set('beikePreferCli', event.target.checked)} /> 优先使用 CLI</label>
-      </>
-    ))}
+    <div className={css.body}>
+      <h3 className={css.sectionTitle}>数据源</h3>
+      <p className={css.sectionHint}>三个外部数据源（Wind / 政研通 / 贝壳）的注册与连通状态。留空表示继承默认配置；API Key 等秘密不会显示或写入此处。</p>
+      {healthError !== '' && <p className={css.statusError} role="status">{healthError} <button className={css.button} type="button" onClick={() => void fetchHealth('all')}>重试</button></p>}
+      {renderProviderRow('wind', 'Wind（行情 CLI）', (
+        <label className={css.field}><span className={css.fieldLabel}>CLI 路径</span><input className={css.input} placeholder="~/.agents/skills/wind-mcp-skill/scripts/cli.mjs" value={draft.windCliPath} onChange={event => set('windCliPath', event.target.value)} /></label>
+      ))}
+      {renderProviderRow('zyt', '政研通 zyt', (
+        <>
+          <label className={css.field}><span className={css.fieldLabel}>API Base URL</span><input className={css.input} placeholder="https://dss.ke.com" value={draft.zytBaseUrl} onChange={event => set('zytBaseUrl', event.target.value)} /></label>
+          <label className={css.checkRow}><input className={css.checkbox} type="checkbox" checked={draft.zytPreferCli} onChange={event => set('zytPreferCli', event.target.checked)} /> 优先使用 CLI</label>
+        </>
+      ))}
+      {renderProviderRow('beike', '贝壳 beike', (
+        <>
+          <label className={css.field}><span className={css.fieldLabel}>MCP Endpoint</span><input className={css.input} placeholder="https://building.ke.com/mcp" value={draft.beikeBaseUrl} onChange={event => set('beikeBaseUrl', event.target.value)} /></label>
+          <label className={css.checkRow}><input className={css.checkbox} type="checkbox" checked={draft.beikePreferCli} onChange={event => set('beikePreferCli', event.target.checked)} /> 优先使用 CLI</label>
+        </>
+      ))}
 
-    <h3>Domain Pack</h3>
-    <p>领域包校验与内容漂移状态（只读；包的增删改请使用生成器 CLI）。</p>
-    <label>包目录<input placeholder="domain-packs" value={draft.packsDir} onChange={event => set('packsDir', event.target.value)} /></label>
-    <div>
-      <button type="button" disabled={checking !== null} onClick={() => void recheckPacks()}>{checking === 'packs' ? '校验中…' : '重新校验'}</button>
-    </div>
-    {packsError !== '' && <p role="status">{packsError}</p>}
-    {packs !== null && packs.length === 0 && <p>暂无领域包</p>}
-    {packs !== null && packs.length > 0 && (
-      <table>
-        <thead>
-          <tr><th>包</th><th>层级</th><th>校验</th><th>专家/场景</th><th>漂移</th><th>sha256</th></tr>
-        </thead>
-        <tbody>
-          {packs.map((pack) => {
-            const drift = health?.packs.find((candidate) => candidate.id === pack.id)
-            return (
-              <tr key={`${pack.layer}:${pack.id}`}>
-                <td>{pack.name} <code>{pack.id}@{pack.version}</code></td>
-                <td>{LAYER_LABEL[pack.layer] ?? pack.layer}</td>
-                <td data-severity={pack.ok ? 'pass' : 'fail'}>{pack.ok ? '通过' : `${pack.errorCount} 错误`}</td>
-                <td>{pack.counts['experts'] ?? 0} / {pack.counts['scenarios'] ?? 0}</td>
-                <td data-drift={drift?.drift ?? 'unknown'}>{drift === undefined ? '—' : DRIFT_LABEL[drift.drift]}</td>
-                <td>{drift === undefined ? '—' : <code>{drift.sha256.slice(0, 12)}</code>}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    )}
+      <h3 className={css.sectionTitle}>Domain Pack</h3>
+      <p className={css.sectionHint}>领域包校验与内容漂移状态（只读；包的增删改请使用生成器 CLI）。</p>
+      <label className={css.field}><span className={css.fieldLabel}>包目录</span><input className={css.input} placeholder="domain-packs" value={draft.packsDir} onChange={event => set('packsDir', event.target.value)} /></label>
+      <div className={css.packToolbar}>
+        <button className={css.button} type="button" disabled={checking !== null} onClick={() => void recheckPacks()}>{checking === 'packs' ? '校验中…' : '重新校验'}</button>
+      </div>
+      {packsError !== '' && <p className={css.statusError} role="status">{packsError}</p>}
+      {packs !== null && packs.length === 0 && <p className={css.packsNote}>暂无领域包</p>}
+      {packs !== null && packs.length > 0 && (
+        <table className={css.packTable}>
+          <thead>
+            <tr><th>包</th><th>层级</th><th>校验</th><th>专家/场景</th><th>漂移</th><th>sha256</th></tr>
+          </thead>
+          <tbody>
+            {packs.map((pack) => {
+              const drift = health?.packs.find((candidate) => candidate.id === pack.id)
+              return (
+                <tr key={`${pack.layer}:${pack.id}`}>
+                  <td><span className={css.packName}>{pack.name}</span><code className={css.packId}>{pack.id}@{pack.version}</code></td>
+                  <td>{LAYER_LABEL[pack.layer] ?? pack.layer}</td>
+                  <td data-severity={pack.ok ? 'pass' : 'fail'}>{pack.ok ? '通过' : `${pack.errorCount} 错误`}</td>
+                  <td>{pack.counts['experts'] ?? 0} / {pack.counts['scenarios'] ?? 0}</td>
+                  <td data-drift={drift?.drift ?? 'unknown'}>{drift === undefined ? '—' : DRIFT_LABEL[drift.drift]}</td>
+                  <td>{drift === undefined ? '—' : <code className={css.mono}>{drift.sha256.slice(0, 12)}</code>}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      )}
 
-    <h3>运行配置</h3>
-    <p>配置成员运行时、默认模型和提示词策略。</p>
-    <label>状态目录<input value={draft.stateDir} onChange={event => set('stateDir', event.target.value)} /></label>
-    <label>知识目录<input value={draft.knowledgeDir} onChange={event => set('knowledgeDir', event.target.value)} /></label>
-    <label>成员 Provider<input value={draft.memberProvider} onChange={event => set('memberProvider', event.target.value)} /></label>
-    <label>最大成员数<input type="number" min="1" value={draft.maxMembers} onChange={event => set('maxMembers', event.target.value)} /></label>
-    <label>提示词顺序<input type="number" min="0" value={draft.promptSectionOrder} onChange={event => set('promptSectionOrder', event.target.value)} /></label>
-    <label>默认模型 Provider<input value={draft.modelProvider} onChange={event => set('modelProvider', event.target.value)} /></label>
-    <label>默认模型<input value={draft.modelName} onChange={event => set('modelName', event.target.value)} /></label>
-    <label>默认推理强度<input value={draft.reasoningEffort} onChange={event => set('reasoningEffort', event.target.value)} /></label>
-    <label><input type="checkbox" checked={draft.announceToAgent} onChange={event => set('announceToAgent', event.target.checked)} /> 向 Agent 注入专家库使用协议</label>
-    <div>
-      <button type="button" disabled={!snapshot.writable || saving} onClick={() => void save()}>{saving ? '保存中…' : '保存'}</button>
-      <button type="button" onClick={close}>关闭</button>
-      {message !== '' && <span role="status">{message}</span>}
+      <h3 className={css.sectionTitle}>运行配置</h3>
+      <p className={css.sectionHint}>配置成员运行时、默认模型和提示词策略。</p>
+      <label className={css.field}><span className={css.fieldLabel}>状态目录</span><input className={css.input} value={draft.stateDir} onChange={event => set('stateDir', event.target.value)} /></label>
+      <label className={css.field}><span className={css.fieldLabel}>知识目录</span><input className={css.input} value={draft.knowledgeDir} onChange={event => set('knowledgeDir', event.target.value)} /></label>
+      <label className={css.field}><span className={css.fieldLabel}>成员 Provider</span><input className={css.input} value={draft.memberProvider} onChange={event => set('memberProvider', event.target.value)} /></label>
+      <label className={css.field}><span className={css.fieldLabel}>最大成员数</span><input className={css.input} type="number" min="1" value={draft.maxMembers} onChange={event => set('maxMembers', event.target.value)} /></label>
+      <label className={css.field}><span className={css.fieldLabel}>提示词顺序</span><input className={css.input} type="number" min="0" value={draft.promptSectionOrder} onChange={event => set('promptSectionOrder', event.target.value)} /></label>
+      <label className={css.field}><span className={css.fieldLabel}>默认模型 Provider</span><input className={css.input} value={draft.modelProvider} onChange={event => set('modelProvider', event.target.value)} /></label>
+      <label className={css.field}><span className={css.fieldLabel}>默认模型</span><input className={css.input} value={draft.modelName} onChange={event => set('modelName', event.target.value)} /></label>
+      <label className={css.field}><span className={css.fieldLabel}>默认推理强度</span><input className={css.input} value={draft.reasoningEffort} onChange={event => set('reasoningEffort', event.target.value)} /></label>
+      <label className={css.checkRow}><input className={css.checkbox} type="checkbox" checked={draft.announceToAgent} onChange={event => set('announceToAgent', event.target.checked)} /> 向 Agent 注入专家库使用协议</label>
+      <div className={css.footer}>
+        {message !== '' && <span className={css.message} role="status">{message}</span>}
+        <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={!snapshot.writable || saving} onClick={() => void save()}>{saving ? '保存中…' : '保存'}</button>
+        <button className={css.button} type="button" onClick={close}>关闭</button>
+      </div>
     </div>
   </section>
 }

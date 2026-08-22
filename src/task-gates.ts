@@ -31,6 +31,14 @@
  *   pass ratio) and stamps it idempotently into
  *   the task title as 「质 NN」(or 「质 NN·硬门未过」 when a hard gate blocks),
  *   so the activity panel shows the latest quality verdict on the task.
+ * - **Output-schema enforcement** — when the bound quality policy declares a
+ *   `schema-structure` gate and the task's output binds a resolvable
+ *   output-template contract (stamped from the plan's `outputTemplates`), a
+ *   contract-driven schema-structure gate is injected into the chain at
+ *   completion: the submitted output must satisfy the plan's declared output
+ *   schema (JSON templates must parse; every required section marker must
+ *   appear), with corrections naming the missing pieces. Legacy/collab and
+ *   ad-hoc teams are untouched (their policies declare no such gate).
  * - **Anonymization compliance** — the builtin evaluators receive the zhijian
  *   expert identities (real names, deceased experts) as compliance terms, so
  *   the 已故专家 (bk-022) / 领域·首字母 rules run through the same chain.
@@ -42,7 +50,7 @@
  */
 
 import type { ExecutionPlan } from './v2/compiler.ts'
-import type { DomainPackV2, GateIssue, QualityGateSpec } from './v2/types.ts'
+import type { DomainPackV2, GateIssue, OutputTemplate, QualityGateSpec, QualityPolicy } from './v2/types.ts'
 import { builtinLegacyPack } from './v2/compat.ts'
 import { buildZhijianDomainPack } from './v2/zhijian-pack.ts'
 import {
@@ -50,10 +58,11 @@ import {
   runQualityChain,
   type GateArtifact,
   type GateEvaluatorMap,
+  type GateOutputTemplate,
   type QualityChainResult,
 } from './v2/quality.ts'
 import { createBuiltinGateEvaluators, type BuiltinComplianceTerms } from './v2/builtin-gates.ts'
-import type { StampedGate, StampedQualityPlan, TeamState, TeamTask } from './types.ts'
+import type { StampedGate, StampedOutputTemplate, StampedQualityPlan, TeamState, TeamTask } from './types.ts'
 import { ZHIJIAN_EXPERTS } from './zhijian/data/experts.generated.ts'
 
 /* ------------------------------------------------------------------ */
@@ -67,20 +76,45 @@ const BUDGET_CAP = MAX_REPAIR_ROUNDS
 let zhijianPackCache: DomainPackV2 | undefined
 
 /**
+ * Resolve one bound policy entity from the resolvable packs (builtin legacy
+ * pack first — already cached by the compile path — then the zhijian
+ * builder). Deterministic for a given id/version.
+ */
+function resolvedPolicy(id: string, version: string): QualityPolicy | undefined {
+  const builtin = builtinLegacyPack()
+  let found = builtin.qualityPolicies.find(policy => policy.id === id && policy.version === version)
+  if (found === undefined) {
+    if (zhijianPackCache === undefined) zhijianPackCache = buildZhijianDomainPack()
+    found = zhijianPackCache.qualityPolicies.find(policy => policy.id === id && policy.version === version)
+  }
+  return found
+}
+
+/**
+ * Resolve one bound output template entity from the resolvable packs. The
+ * collab output template lives in the collab module (not in either pack), so
+ * collab plans resolve to `undefined` — schema-structure contract validation
+ * simply does not apply to them (they declare no schema-structure gate either).
+ */
+function resolveOutputTemplate(id: string, version: string): OutputTemplate | undefined {
+  const builtin = builtinLegacyPack()
+  let found = builtin.outputTemplates.find(template => template.id === id && template.version === version)
+  if (found === undefined) {
+    if (zhijianPackCache === undefined) zhijianPackCache = buildZhijianDomainPack()
+    found = zhijianPackCache.outputTemplates.find(template => template.id === id && template.version === version)
+  }
+  return found
+}
+
+/**
  * Resolve the bound policy's declared `maxRepairRounds` from the resolvable
- * packs (builtin legacy pack first — already cached by the compile path —
- * then the zhijian builder). Deterministic for a given id/version; defaults
- * to the design cap (2) when no policy is resolvable or it declares none.
+ * packs. Deterministic for a given id/version; defaults to the design cap (2)
+ * when no policy is resolvable or it declares none.
  */
 function policyMaxRepairRounds(policies: readonly { readonly id: string; readonly version: string }[]): number {
   const ref = policies[0]
   if (ref !== undefined) {
-    const builtin = builtinLegacyPack()
-    let found = builtin.qualityPolicies.find(policy => policy.id === ref.id && policy.version === ref.version)
-    if (found === undefined) {
-      if (zhijianPackCache === undefined) zhijianPackCache = buildZhijianDomainPack()
-      found = zhijianPackCache.qualityPolicies.find(policy => policy.id === ref.id && policy.version === ref.version)
-    }
+    const found = resolvedPolicy(ref.id, ref.version)
     if (found !== undefined) {
       return Math.min(found.maxRepairRounds ?? BUDGET_CAP, BUDGET_CAP)
     }
@@ -107,12 +141,47 @@ export function stampQualityPlan(plan: ExecutionPlan): StampedQualityPlan {
     ...(gate.implementation === undefined ? {} : { implementation: gate.implementation }),
     ...(gate.config === undefined ? {} : { config: { ...gate.config } }),
   }))
+  // Output-schema contracts of the bound templates + per-logical-task binding
+  // (from `CompiledTask.outputSchema`), so completion can validate the
+  // submitted output against the plan's declared schema without re-reading
+  // the pack.
+  const outputTemplates: StampedOutputTemplate[] = []
+  for (const ref of plan.bindings.outputTemplates) {
+    const found = resolveOutputTemplate(ref.id, ref.version)
+    if (found !== undefined) {
+      outputTemplates.push({
+        id: found.id,
+        media: [...found.media],
+        sections: found.sections.map(section => ({ id: section.id, required: section.required })),
+      })
+    }
+  }
+  const taskOutputSchemas: Record<string, string> = {}
+  for (const task of plan.tasks) taskOutputSchemas[task.id] = task.outputSchema
+  // The bound policy's schema-structure gate instance: when declared, plan
+  // teams get the contract-driven structure gate injected at completion.
+  let schemaStructure: StampedQualityPlan['schemaStructure']
+  for (const ref of plan.bindings.qualityPolicies) {
+    const policy = resolvedPolicy(ref.id, ref.version)
+    const gate = policy?.gates.find(candidate => candidate.id === 'schema-structure')
+    if (gate !== undefined) {
+      schemaStructure = {
+        policyId: ref.id,
+        severity: gate.severity,
+        ...(gate.config === undefined ? {} : { config: { ...gate.config } }),
+      }
+      break
+    }
+  }
   return {
     planId: plan.planId,
     policies: plan.bindings.qualityPolicies.map(policy => ({ id: policy.id, version: policy.version })),
     gates,
     deliverables: plan.deliverables.map(deliverable => ({ id: deliverable.id, fromTasks: [...deliverable.fromTasks] })),
     maxRepairRounds: policyMaxRepairRounds(plan.bindings.qualityPolicies),
+    outputTemplates,
+    taskOutputSchemas,
+    ...(schemaStructure === undefined ? {} : { schemaStructure }),
   }
 }
 
@@ -165,6 +234,10 @@ interface ResolvedTaskGates {
   readonly maxRepairRounds: number
   /** Deliverables compose-able now (all source tasks completed). */
   readonly compose: ReadonlyArray<{ readonly id: string; readonly fromTasks: readonly string[] }>
+  /** The bound policy's schema-structure gate instance (injection source). */
+  readonly schemaStructure?: { readonly policyId: string; readonly severity: 'hard' | 'soft'; readonly config?: Readonly<Record<string, unknown>> }
+  /** This task's bound output-template contract (schema validation), when resolvable. */
+  readonly outputContract?: StampedOutputTemplate
 }
 
 /**
@@ -233,8 +306,23 @@ function resolveTaskQualityPlan(team: TeamState, task: TeamTask): ResolvedTaskGa
   const stamped = team.qualityPlan
   if (stamped !== undefined) {
     const { gates, compose } = selectStampedGates(stamped, team, task)
-    if (gates.length === 0) return undefined
-    return { planId: stamped.planId, gates, maxRepairRounds: stamped.maxRepairRounds, compose }
+    // Resolve this task's bound output-template contract (logical plan task →
+    // outputSchema → contract), used by the injected schema-structure gate.
+    // Defensive: stamps created before the contract fields existed (or
+    // synthetic fixtures) simply have no contract — no schema injection.
+    const logicalId = task.planTask?.logicalId ?? task.id
+    const templateId = (stamped.taskOutputSchemas ?? {})[logicalId]
+    const outputContract = templateId === undefined
+      ? undefined
+      : (stamped.outputTemplates ?? []).find(template => template.id === templateId)
+    return {
+      planId: stamped.planId,
+      gates,
+      maxRepairRounds: stamped.maxRepairRounds,
+      compose,
+      ...(stamped.schemaStructure === undefined ? {} : { schemaStructure: stamped.schemaStructure }),
+      ...(outputContract === undefined ? {} : { outputContract }),
+    }
   }
   return resolveFallbackGates(team, task)
 }
@@ -415,7 +503,46 @@ export function evaluateTaskCompletionGates(
   output: string | undefined,
 ): TaskGateResult | undefined {
   const plan = resolveTaskQualityPlan(team, task)
-  if (plan === undefined || plan.gates.length === 0) return undefined
+  if (plan === undefined) return undefined
+
+  // Inject the contract-driven schema-structure gate: when the bound quality
+  // policy declares `schema-structure` AND this task's output binds a
+  // resolvable output-template contract, the declared output schema must be
+  // enforced at completion. Unless the template already bound a
+  // schema-structure gate to this task, one is injected at the head of the
+  // chain (structure phase) with the policy's severity (zhijian: hard).
+  let gates: ResolvedTaskGates['gates'] = plan.gates
+  let taskOutputTemplates: Record<string, GateOutputTemplate> | undefined
+  if (plan.schemaStructure !== undefined && plan.outputContract !== undefined) {
+    const logicalId = task.planTask?.logicalId
+    const alreadyBound = gates.some(gate => {
+      const gateId = 'gateId' in gate ? gate.gateId : gate.id
+      return gateId === 'schema-structure'
+        && gate.appliesTo.some(target => target !== 'deliverable' && (target === task.id || target === logicalId))
+    })
+    if (!alreadyBound) {
+      const injected: StampedGate = {
+        id: `${plan.schemaStructure.policyId}/schema-structure`,
+        policyId: plan.schemaStructure.policyId,
+        gateId: 'schema-structure',
+        kind: 'deterministic',
+        phase: 'structure',
+        severity: plan.schemaStructure.severity,
+        appliesTo: [task.id],
+        chainOrder: 0,
+        ...(plan.schemaStructure.config === undefined ? {} : { config: { ...plan.schemaStructure.config } }),
+      }
+      gates = [injected, ...gates]
+    }
+    taskOutputTemplates = {
+      [task.id]: {
+        id: plan.outputContract.id,
+        media: [...plan.outputContract.media],
+        sections: plan.outputContract.sections.map(section => ({ id: section.id, required: section.required })),
+      },
+    }
+  }
+  if (gates.length === 0) return undefined
 
   const artifacts: Record<string, GateArtifact> = { [task.id]: { content: output ?? '' } }
   const deliverableSources: Record<string, readonly string[]> = {}
@@ -430,18 +557,19 @@ export function evaluateTaskCompletionGates(
 
   const budget = plan.maxRepairRounds
   const result = runQualityChain({
-    gates: plan.gates,
+    gates,
     evaluators: builtinEvaluators(),
     artifacts,
     ...(Object.keys(deliverableSources).length > 0 ? { deliverableSources } : {}),
     maxRepairRounds: budget,
     ...(plan.planId === undefined ? {} : { planId: plan.planId }),
+    ...(taskOutputTemplates === undefined ? {} : { taskOutputTemplates }),
   })
 
   // Gate severity by id (from the compiled/stamped gates) so the aggregate
   // score can weight soft-gate pass ratio vs hard-gate failures correctly.
   const severityById = new Map<string, 'hard' | 'soft'>()
-  for (const gate of plan.gates) {
+  for (const gate of gates) {
     severityById.set('gateId' in gate ? gate.gateId : gate.id, gate.severity)
   }
 

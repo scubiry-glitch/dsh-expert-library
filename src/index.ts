@@ -44,6 +44,7 @@ import { fileURLToPath } from 'node:url'
 import { collectArchivedTeamsActivity, collectTeamsActivity } from './snapshot.ts'
 import { readTeam } from './state.ts'
 import type { TeamState } from './types.ts'
+import { droppedSessionEvents } from './events.ts'
 import {
   installExpertLibrarySettings,
   type ExpertLibrarySettings,
@@ -818,12 +819,15 @@ export function apply(ctx: Context, config: Config): void {
   // registry audit (first-class), deduped by record identity, bounded by
   // ?limit= (default 100, max 500). Entries carry only
   // kind/providerId/version/operation/outcome/at + detail — never credentials.
+  // Also carries `eventsDropped`: expert-teams/* session events the harness's
+  // closed session vocabulary forced the plugin to omit (see src/events.ts).
   ctx.effect(() => webServer.register({
     kind: 'exact',
     path: '/plugins/dsh-expert-library/audit',
     handler: createAuditHandler({
       auditLog,
       resolveMemory: () => providerService?.audit() ?? [],
+      resolveDroppedEvents: droppedSessionEvents,
     }),
   }), 'expert-teams: provider audit route')
 

@@ -133,13 +133,22 @@ declare module '@deepseek-ai/dsh-session/types' {
   }
 }
 
+/**
+ * The full set of `expert-teams/*` event names — the single source of truth
+ * for the {@link ExpertTeamsEventType} union (a runtime list so the drop
+ * counter in `events.ts` and tests can enumerate every type without
+ * duplicating literals).
+ */
+export const EXPERT_TEAMS_EVENT_TYPES = [
+  'expert-teams/team-created',
+  'expert-teams/member-added',
+  'expert-teams/member-removed',
+  'expert-teams/task-created',
+  'expert-teams/task-updated',
+  'expert-teams/message-sent',
+  'expert-teams/team-deleted',
+  'expert-teams/provider-called',
+] as const
+
 /** The full set of `expert-teams/*` event names. */
-export type ExpertTeamsEventType =
-  | 'expert-teams/team-created'
-  | 'expert-teams/member-added'
-  | 'expert-teams/member-removed'
-  | 'expert-teams/task-created'
-  | 'expert-teams/task-updated'
-  | 'expert-teams/message-sent'
-  | 'expert-teams/team-deleted'
-  | 'expert-teams/provider-called'
+export type ExpertTeamsEventType = typeof EXPERT_TEAMS_EVENT_TYPES[number]

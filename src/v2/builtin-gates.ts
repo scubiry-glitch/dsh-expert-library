@@ -160,10 +160,6 @@ function numericClaims(line: string): string[] {
 
 function evaluateStructure(input: GateInput, ctx: GateEvaluationContext, options: BuiltinGateOptions): GateResult {
   const config = ctx.spec.config ?? {}
-  const sections = stringList(config.sections)
-    ?? stringList(config.requiredSections)
-    ?? options.sections
-    ?? []
   const issues: GateIssue[] = []
   if (input.artifact.trim() === '') {
     issues.push({
@@ -172,17 +168,55 @@ function evaluateStructure(input: GateInput, ctx: GateEvaluationContext, options
       evidence: '交付物为空（无任何内容）',
       correction: '生成正文后再交付，不要提交空文档',
     })
-  } else {
-    for (const marker of sections) {
-      if (!input.artifact.includes(marker)) {
+    return toResult(ctx.spec.id, issues, ctx.now)
+  }
+  // Contract-driven validation: when the caller binds an output-template
+  // contract (the plan's declared output schema), the artifact must satisfy
+  // it — JSON templates must parse as JSON, and every `required` section
+  // marker must appear (markdown section headings / JSON keys / markers).
+  // This closes the "declared but not enforced" gap: the gate validates the
+  // submitted output against the plan's bound OutputTemplate, not just
+  // free-form gate config.
+  if (input.outputTemplate !== undefined) {
+    if (input.outputTemplate.media.includes('json')) {
+      try {
+        JSON.parse(input.artifact)
+      } catch (error: unknown) {
+        issues.push({
+          code: 'invalid-json',
+          severity: 'error',
+          location: '全文',
+          evidence: `输出不是合法 JSON（${String(error)}）`,
+          correction: '输出必须是可解析的 JSON 文档，按模板声明的字段结构组织',
+        })
+      }
+    }
+    for (const section of input.outputTemplate.sections) {
+      if (section.required && !input.artifact.includes(section.id)) {
         issues.push({
           code: 'missing-section',
           severity: 'error',
-          location: marker,
-          evidence: `未找到必填章节标记 "${marker}"`,
-          correction: `补充必填章节 "${marker}"`,
+          location: section.id,
+          evidence: `未找到必填章节标记 "${section.id}"`,
+          correction: `补充必填章节 "${section.id}"`,
         })
       }
+    }
+    return toResult(ctx.spec.id, issues, ctx.now)
+  }
+  const sections = stringList(config.sections)
+    ?? stringList(config.requiredSections)
+    ?? options.sections
+    ?? []
+  for (const marker of sections) {
+    if (!input.artifact.includes(marker)) {
+      issues.push({
+        code: 'missing-section',
+        severity: 'error',
+        location: marker,
+        evidence: `未找到必填章节标记 "${marker}"`,
+        correction: `补充必填章节 "${marker}"`,
+      })
     }
   }
   return toResult(ctx.spec.id, issues, ctx.now)
