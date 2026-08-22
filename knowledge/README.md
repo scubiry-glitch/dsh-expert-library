@@ -62,6 +62,7 @@ Skills 与工具使用约定分布在五层，各层的「在哪检查、在哪�
 - **当前已安装**（2026-08-22，渲染环节用）：
   - `finesse-ui` —— 高工艺 Web 界面规范（register 路由 / craft floor / 反 cheapness / 动效分层），已通过场景覆盖 `knowledge/scenarios/research-report.json` 挂载到 `research-report` 的「渲染与分型验收」任务
   - `gsap-core` / `gsap-scrolltrigger` / `gsap-timeline` / `gsap-performance` / `gsap-plugins` / `gsap-react` / `gsap-frameworks` / `gsap-utils` —— GSAP 官方技能包，动效实现参考
+  - `video-shotcraft` —— Remotion 电影感产品视频（152 镜头配方卡 + Ink Press 已验收模板 + 音频资产；demos/gallery 样片目录未装，按需补）；内置 `product-design` 场景已引用此 id
 
 ## ④ 数据源工具执行方式（Wind / zyt / 贝壳）
 
