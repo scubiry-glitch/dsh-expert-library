@@ -213,9 +213,16 @@ export function createNodeSpawnRunner(options: { readonly maxStdoutBytes?: numbe
 export function createNodeFetchRunner(options: { readonly maxBodyBytes?: number } = {}): FetchFn {
   const maxBody = options.maxBodyBytes ?? DEFAULT_MAX_BODY_BYTES
   return async (fetchOptions) => {
+    const headers = { ...fetchOptions.headers } as Record<string, string>
+    // WAF/反代（如 dss.ke.com）会拦截无浏览器 UA 的请求并返回 HTML Forbidden 页，
+    // 使 JSON 归一化器报「非 JSON 无效输出」。默认补一个浏览器 UA；调用方显式
+    // 传入的 User-Agent 优先（headers 展开在默认值之后）。
+    if (!Object.keys(headers).some(key => key.toLowerCase() === 'user-agent')) {
+      headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36'
+    }
     const response = await fetch(fetchOptions.url, {
       method: fetchOptions.method,
-      headers: { ...fetchOptions.headers } as Record<string, string>,
+      headers,
       body: fetchOptions.body,
       signal: fetchOptions.signal,
     })

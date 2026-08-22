@@ -58,6 +58,21 @@ export interface ExpertTeamsTeamDeletedData {
   readonly teamId: string
 }
 
+/** Records one `expert_provider_call` invocation (success or failure). */
+export interface ExpertTeamsProviderCalledData {
+  readonly agentId: string
+  readonly detail: {
+    readonly capability: string
+    readonly provider?: string
+    readonly operation?: string
+    readonly transportId?: string
+    readonly ok: boolean
+    readonly code?: string
+    readonly correction?: string
+    readonly retry?: string
+  }
+}
+
 /** Records one mailbox message sent between team agents. */
 export interface ExpertTeamsMessageSentData {
   readonly teamId: string
@@ -107,6 +122,12 @@ declare module '@deepseek-ai/dsh-session/types' {
      * @param data - stable team identity.
      */
     'expert-teams/team-deleted': ExpertTeamsTeamDeletedData
+    /**
+     * Records one `expert_provider_call` invocation (success or failure).
+     * @param data - agent, capability, provider, operation, ok flag, and
+     * failure code/correction when present.
+     */
+    'expert-teams/provider-called': ExpertTeamsProviderCalledData
   }
 }
 
@@ -119,3 +140,4 @@ export type ExpertTeamsEventType =
   | 'expert-teams/task-updated'
   | 'expert-teams/message-sent'
   | 'expert-teams/team-deleted'
+  | 'expert-teams/provider-called'

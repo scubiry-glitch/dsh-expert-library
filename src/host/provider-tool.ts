@@ -26,6 +26,10 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool, type InferValue } from '@deepseek-ai/dsh-tools'
+import { join } from 'node:path'
+import { appendTeamEvent, captainSessionOf } from '../events.ts'
+import { findTeamByParticipant } from '../state.ts'
+import type { ExpertTeamsProviderCalledData } from '../event-types.ts'
 import type { ProviderTransportService } from './provider-service.ts'
 import type { ProviderEnvelope } from '../v2/provider-runtime.ts'
 
@@ -198,7 +202,50 @@ async function executeProviderCall(
   } catch (error) {
     return fail('PROVIDER_CALL_ERROR', error instanceof Error ? error.message : String(error))
   }
-  return summarizeEnvelope(envelope, args.capability)
+  const result = summarizeEnvelope(envelope, args.capability)
+  // 审计埋点：provider 调用（含失败）写入团队事件流，队长/活动面板可追踪。
+  // 修复观测点「provider 失败只存在于成员口头汇报、无审计记录」。
+  try {
+    await emitProviderCallEvent(ctx, exec.agent, result)
+  } catch {
+    // 事件埋点失败不阻断调用结果返回。
+  }
+  return result
+}
+
+/**
+ * Emit an `expert-teams/provider-called` event so provider invocations
+ * (especially failures) are visible to the captain and activity panel
+ * instead of living only in the member's free-text report.
+ */
+async function emitProviderCallEvent(ctx: Context, agent: unknown, result: ProviderCallResult): Promise<void> {
+  const session = (agent as { session?: { id?: string; header?: { cwd?: string } } } | undefined)?.session
+  const agentId = session?.id
+  if (agentId === undefined || session === undefined) return
+  const workspace = session.header?.cwd ?? process.cwd()
+  const error = result.error as Record<string, unknown> | undefined
+  const detail: ExpertTeamsProviderCalledData['detail'] = {
+    capability: result.capability,
+    ...(result.provider === undefined ? {} : { provider: result.provider }),
+    ...(result.operation === undefined ? {} : { operation: result.operation }),
+    ...(result.transportId === undefined ? {} : { transportId: result.transportId }),
+    ok: result.ok,
+    ...(error !== undefined && typeof error['code'] === 'string' ? { code: error['code'] } : {}),
+    ...(error !== undefined && typeof error['correction'] === 'string' ? { correction: error['correction'] } : {}),
+    ...(error !== undefined && typeof error['retry'] === 'string' ? { retry: error['retry'] } : {}),
+  }
+  try {
+    const located = await findTeamByParticipant(join(workspace, 'expert-teams'), agentId)
+    const fallback = ctx.agents.get(agentId as never)?.session
+    appendTeamEvent(
+      ctx,
+      captainSessionOf(ctx, located?.captainSessionId ?? agentId, fallback ?? (session as never)),
+      'expert-teams/provider-called',
+      { agentId, detail },
+    )
+  } catch {
+    // 事件埋点失败不阻断调用结果返回。
+  }
 }
 
 /* ------------------------------------------------------------------ *

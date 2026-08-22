@@ -91,6 +91,20 @@
       "subject": "融合成文",
       "description": "整合全部研判输出完整研报：标题、摘要、正文（背景/分析/展望）、结论、风险提示、附录（数据与口径）。",
       "legacySource": "v1"
+    },
+    {
+      "id": "t5",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t4"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "research-report.legacy-output",
+      "retryPolicy": "never",
+      "subject": "渲染与分型验收",
+      "description": "将研报 markdown 渲染为 HTML5→PDF（A4、页脚「98wiki ｜ 智见 / 行业研究报告」、封面 4 KPI），并按 wiki-gated-research 分型验收：Part B 主文（12 页级骨架 / 正文≥10000 中文字 / 表格 / 机制图 / 量化模型 / 决策树 / 无溢出）+ Part C 逻辑附件（logic-annex-v2：15 速览卡 + 15 逻辑卡 + ≥12 逻辑图 + 白话总结 + Key Takeaways + 替代解释 + 独立补数协议）；生成 render_check（哈希 + 首/中/末页截图）与 GATE 文件，双 PASS 后追加 INDEX。",
+      "legacySource": "v1"
     }
   ],
   "gates": [],
@@ -102,7 +116,8 @@
         "t1",
         "t2",
         "t3",
-        "t4"
+        "t4",
+        "t5"
       ]
     }
   ],
