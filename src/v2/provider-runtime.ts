@@ -139,11 +139,13 @@ function makeProvenance(input: ProvenanceInput): ProviderProvenance {
   return {
     provider: input.provider,
     operation: input.operation,
-    transportId: input.transportId,
+    ...(input.transportId === undefined ? {} : { transportId: input.transportId }),
     fetchedAt: input.fetchedAt ?? new Date().toISOString(),
     source: input.source,
-    caliber: input.caliber,
-    unit: input.unit,
+    // 显式 undefined 键会让 lossless JSON 校验失败（键存在但值无效）——
+    // caliber/unit 缺省时整体不写键。
+    ...(input.caliber === undefined ? {} : { caliber: input.caliber }),
+    ...(input.unit === undefined ? {} : { unit: input.unit }),
   }
 }
 
