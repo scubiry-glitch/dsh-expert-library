@@ -277,9 +277,9 @@ export const BUILTIN_SCENARIOS: readonly Scenario[] = [
     description: 'PPT 生成：先做内容架构（听众/目标/大纲），再供给领域内容，最后产出逐页文案与演讲备注（markdown 结构化，可直接导入 PPT 工具）。',
     experts: ['docs-coordinator', 'designer', 'bk-024'],
     skill: {
-      repo: 'Vincentwei1021/video-shotcraft',
+      id: 'video-shotcraft',
       name: 'video-shotcraft',
-      purpose: '可选增强：若用户同时需要产品视频/宣传片（Remotion 电影感视频），按该 skill 制作；其 SKILL.md 作为参考。',
+      purpose: '可选增强：若用户同时需要产品视频/宣传片（Remotion 电影感视频），按该 skill 制作；需先本地安装到 knowledge/skills/video-shotcraft/。',
     },
     tasks: [
       {

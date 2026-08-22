@@ -6,11 +6,18 @@
  */
 import test from 'node:test'
 import assert from 'node:assert/strict'
+import { mkdtemp, mkdir, writeFile, readFile, rm, symlink } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join, dirname, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
 import { isSafeKnowledgeId } from '../lib/knowledge.js'
-import { isValidRepo, MAX_SKILL_BYTES } from '../lib/skills.js'
+import { isSafeSkillId, resolveSkill, MAX_SKILL_BYTES } from '../lib/skills.js'
 import { topicRouteFor, scenarioForTopic } from '../lib/zhijian/routing.js'
 import { routeRequest } from '../lib/zhijian/tools.js'
+
+/** Minimal stand-in plugin context: a logger that records nothing. */
+const fakeCtx = { logger: { warn() {}, info() {} } }
 
 test('isSafeKnowledgeId rejects traversal and accepts domain ids', () => {
   assert.equal(isSafeKnowledgeId('bk-004'), true)
@@ -24,16 +31,89 @@ test('isSafeKnowledgeId rejects traversal and accepts domain ids', () => {
   assert.equal(isSafeKnowledgeId('x'.repeat(65)), false)
 })
 
-test('isValidRepo accepts strict owner/repo and rejects everything else', () => {
-  assert.equal(isValidRepo('Vincentwei1021/video-shotcraft'), true)
-  assert.equal(isValidRepo('a/b'), true)
-  assert.equal(isValidRepo('owner/repo/extra'), false)
-  assert.equal(isValidRepo('../escape'), false)
-  assert.equal(isValidRepo('owner/'), false)
-  assert.equal(isValidRepo('owner /repo'), false)
-  assert.equal(isValidRepo('https://github.com/owner/repo'), false)
-  assert.equal(isValidRepo('owner/repo?x=1'), false)
+test('isSafeSkillId accepts local skill ids and rejects repo/path forms', () => {
+  assert.equal(isSafeSkillId('video-shotcraft'), true)
+  assert.equal(isSafeSkillId('gsap-skills'), true)
+  assert.equal(isSafeSkillId('owner/repo'), false, 'repo form must be rejected — skills are local ids')
+  assert.equal(isSafeSkillId('../escape'), false)
+  assert.equal(isSafeSkillId('a/b'), false)
+  assert.equal(isSafeSkillId(''), false)
+  assert.equal(isSafeSkillId('x'.repeat(65)), false)
   assert.ok(MAX_SKILL_BYTES > 0 && MAX_SKILL_BYTES <= 4 * 1024 * 1024)
+})
+
+test('resolveSkill reads an installed local skill under knowledge/skills', async () => {
+  const workspace = await mkdtemp(join(tmpdir(), 'skills-ok-'))
+  try {
+    const skillDir = join(workspace, 'knowledge', 'skills', 'good-skill')
+    await mkdir(skillDir, { recursive: true })
+    await writeFile(join(skillDir, 'SKILL.md'), '# Good Skill\n本地方法论文本。', 'utf8')
+    const resolved = await resolveSkill(fakeCtx, workspace, 'knowledge', 'good-skill')
+    assert.ok(resolved.path !== undefined, 'installed skill resolves to a path')
+    assert.ok(resolved.unavailable === undefined)
+    assert.equal(resolved.id, 'good-skill')
+    const text = await readFile(resolved.path, 'utf8')
+    assert.match(text, /Good Skill/)
+  } finally {
+    await rm(workspace, { recursive: true, force: true })
+  }
+})
+
+test('resolveSkill reports missing and invalid skills as locally-installable only', async () => {
+  const workspace = await mkdtemp(join(tmpdir(), 'skills-missing-'))
+  try {
+    const missing = await resolveSkill(fakeCtx, workspace, 'knowledge', 'not-installed')
+    assert.equal(missing.path, undefined)
+    assert.ok(missing.unavailable !== undefined)
+    assert.match(missing.unavailable, /本地/)
+
+    const invalid = await resolveSkill(fakeCtx, workspace, 'knowledge', '../escape')
+    assert.equal(invalid.path, undefined)
+    assert.ok(invalid.unavailable !== undefined)
+    assert.match(invalid.unavailable, /非法/)
+  } finally {
+    await rm(workspace, { recursive: true, force: true })
+  }
+})
+
+test('resolveSkill rejects an oversized SKILL.md', async () => {
+  const workspace = await mkdtemp(join(tmpdir(), 'skills-big-'))
+  try {
+    const skillDir = join(workspace, 'knowledge', 'skills', 'big-skill')
+    await mkdir(skillDir, { recursive: true })
+    await writeFile(join(skillDir, 'SKILL.md'), 'x'.repeat(MAX_SKILL_BYTES + 1), 'utf8')
+    const resolved = await resolveSkill(fakeCtx, workspace, 'knowledge', 'big-skill')
+    assert.equal(resolved.path, undefined)
+    assert.match(resolved.unavailable, /KiB 体积限制/)
+  } finally {
+    await rm(workspace, { recursive: true, force: true })
+  }
+})
+
+test('resolveSkill rejects a skill directory that symlinks outside the skills root', async () => {
+  const workspace = await mkdtemp(join(tmpdir(), 'skills-link-'))
+  const outside = await mkdtemp(join(tmpdir(), 'skills-outside-'))
+  try {
+    await mkdir(join(outside, 'evil-skill'), { recursive: true })
+    await writeFile(join(outside, 'evil-skill', 'SKILL.md'), '# Escaped\n外部内容', 'utf8')
+    const skillsRoot = join(workspace, 'knowledge', 'skills')
+    await mkdir(skillsRoot, { recursive: true })
+    await symlink(join(outside, 'evil-skill'), join(skillsRoot, 'evil-skill'))
+    const resolved = await resolveSkill(fakeCtx, workspace, 'knowledge', 'evil-skill')
+    assert.equal(resolved.path, undefined, 'symlinked skill escaping the root must not resolve')
+    assert.match(resolved.unavailable, /逃逸/)
+  } finally {
+    await rm(workspace, { recursive: true, force: true })
+    await rm(outside, { recursive: true, force: true })
+  }
+})
+
+test('skills resolver performs no network access (source-level guarantee)', async () => {
+  const libPath = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'lib', 'skills.js')
+  const source = await readFile(libPath, 'utf8')
+  assert.equal(/\bfetch\s*\(/.test(source), false, 'lib/skills.js must not call fetch')
+  assert.equal(/githubusercontent/.test(source), false, 'lib/skills.js must not reference GitHub raw URLs')
+  assert.equal(/\bhttps?:\/\//.test(source), false, 'lib/skills.js must not contain remote endpoints')
 })
 
 test('topicRouteFor falls back to the question text', () => {

@@ -23,6 +23,7 @@ import {
   archiveTeamDir,
   beginTaskAttempt,
   CAPTAIN_KEY,
+  commitTaskUpdate,
   createMessage,
   createTaskProject,
   createTeamDir,
@@ -38,7 +39,6 @@ import {
   sanitizeKey,
   transitionError,
   unsatisfiedDependencies,
-  writeTaskProjectOutput,
   withTeamLock,
   writeTeam,
 } from './state.ts'
@@ -49,6 +49,7 @@ import {
   installMemberSelectionRuntime,
   interruptMember,
   memberActivity,
+  memberRouteRequest,
   resolveMemberLlmSelection,
   spawnMember,
   type MemberRuntimeConfig,
@@ -366,33 +367,15 @@ export async function addMemberCore(
     }
 
     // Model route precedence: preset expert route > explicit arguments >
-    // plugin memberModel default > captain's current route.
-    const hasExplicitRoute = args.provider !== undefined || args.model !== undefined
-    const selection = await resolveMemberLlmSelection(ctx, captain, expert?.model !== undefined
-      ? {
-          provider: expert.model.provider,
-          model: expert.model.model,
-          ...expert.model.reasoningEffort !== undefined ? { reasoningEffort: expert.model.reasoningEffort } : {},
-        }
-      : hasExplicitRoute
-        ? {
-            provider: args.provider,
-            model: args.model,
-            defaultModel: config.memberModel?.model,
-            ...args.reasoning_effort !== undefined ? { reasoningEffort: args.reasoning_effort } : {},
-          }
-        : config.memberModel !== undefined
-          ? {
-              provider: config.memberModel.provider,
-              model: config.memberModel.model,
-              ...config.memberModel.reasoningEffort !== undefined ? { reasoningEffort: config.memberModel.reasoningEffort } : {},
-            }
-          : {
-              provider: args.provider,
-              model: args.model,
-              ...args.reasoning_effort !== undefined ? { reasoningEffort: args.reasoning_effort } : {},
-            },
-    signal)
+    // plugin memberModel default > captain's current route (see
+    // memberRouteRequest — a lone explicit reasoning_effort rides on top of
+    // whichever provider/model won instead of being dropped).
+    const selection = await resolveMemberLlmSelection(
+      ctx,
+      captain,
+      memberRouteRequest(args, expert?.model, config.memberModel),
+      signal,
+    )
 
     const member: TeamMember = {
       id: '',
@@ -589,7 +572,7 @@ export async function scenarioApplyCore(
   }
   let skillBlock = ''
   if (scenario.skill !== undefined) {
-    const resolved = await resolveSkill(ctx, workspace, config.knowledgeDir, scenario.skill.repo, scenario.skill.name)
+    const resolved = await resolveSkill(ctx, workspace, config.knowledgeDir, scenario.skill.id, scenario.skill.name)
     skillBlock = `\n\n${skillDescriptionBlock(resolved, scenario.skill.purpose)}`
   }
   const team = await createTeamCore(ctx, config, captain, {
@@ -1242,6 +1225,12 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             ...task.output !== undefined ? { output: task.output } : {},
           }
         }
+        // Pre-update snapshot for the compensating commit below (project
+        // files are restored from it when the team write fails).
+        const snapshot: TeamTask = {
+          ...task,
+          ...task.project === undefined ? {} : { project: { ...task.project } },
+        }
         if (args.status !== undefined) {
           const transition = transitionError(task.status, args.status)
           if (transition !== undefined) throw new Error(transition)
@@ -1249,8 +1238,9 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         }
         if (args.output !== undefined) task.output = args.output
         task.updatedAt = Date.now()
-        await writeTeam(stateRoot, fresh)
-        await writeTaskProjectOutput(stateRoot, fresh.id, task)
+        // Compensating commit: project output first, team record second, with
+        // a snapshot rollback when the team write fails (see commitTaskUpdate).
+        await commitTaskUpdate(stateRoot, fresh, task, snapshot)
         appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, caller.session), 'expert-teams/task-updated', {
           teamId: fresh.id,
           taskId: task.id,

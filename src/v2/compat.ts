@@ -1,0 +1,519 @@
+/**
+ * V1 → V2 adapters (Phase 1 compatibility views).
+ *
+ * These adapters **create no new source of truth**: a V2 object produced
+ * here is a derived view over the live V1 `Expert`/`Scenario` registry and
+ * must always carry `legacySource: 'v1'` so consumers (and the validator's
+ * diagnostics readers) treat its fields conservatively.
+ *
+ * Conservative mapping rules (never fabricate):
+ * - V1 has no capability data. The adapter emits exactly one *legacy hint*
+ *   claim per derivable string (`legacy.role.<slug>` from the role, plus
+ *   `legacy.scenario.<slug>` per suitedFor entry), each with the proficiency
+ *   **floor** 1 ("unassessed"), coverage `low`, and an evidence ref
+ *   `legacy:v1`. It never guesses real capabilities like
+ *   `market.timeseries`.
+ * - V1 has no initials/publicLabel; instead of inventing them the adapter
+ *   copies the internal name into `publicLabel` only as a `legacy:`-marked
+ *   placeholder and emits `initials: 'legacy'`, signalling "not
+ *   anonymization-ready". The compliance gate must refuse external delivery
+ *   of legacy experts until a real pack supplies initials.
+ * - V1 model routes map 1:1 to `modelPolicy`.
+ * - Scenario task DAGs map to a generated `TeamTemplate` (ids `t1..tn`,
+ *   roles from task.expert), and the deliverable string maps to a minimal
+ *   legacy `OutputTemplate` with one unspecified section. Neither is
+ *   invented content — both are mechanical projections of V1 data.
+ * @module dsh-expert-library/v2/compat
+ */
+
+import type { Expert, Scenario } from '../expert-library/types.ts'
+import { compileExecutionPlan, type CompileResult } from './compiler.ts'
+import { validateDomainPack } from './validate.ts'
+import { SCHEMA_VERSION, type CapabilityClaim, type DomainPackV2, type ExpertV2, type KnowledgeProviderManifest, type OutputTemplate, type PackDiagnostic, type QualityPolicy, type ScenarioV2, type TaskTemplate, type TeamTemplate } from './types.ts'
+
+/** Version stamp for every adapter-produced object. */
+const LEGACY_VERSION = '0.0.0-legacy'
+
+/** Fold a free-form string into a lowercase kebab slug for legacy hint ids. */
+function slug(value: string): string {
+  const folded = value.normalize('NFKD').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '-')
+  const trimmed = folded.replace(/^-+|-+$/g, '')
+  return trimmed === '' ? 'unnamed' : trimmed.slice(0, 48)
+}
+
+/** The single conservative capability claim the adapter may synthesize. */
+function legacyHint(capability: string): CapabilityClaim {
+  return {
+    capability,
+    proficiency: 1, // unassessed floor — the adapter never claims skill
+    coverage: 'low',
+    evidenceRefs: ['legacy:v1'],
+    legacySource: 'v1',
+  }
+}
+
+/**
+ * Adapt one V1 {@link Expert} into an {@link ExpertV2} view.
+ * Identity, background, principles, deliverable hints and the model route
+ * survive verbatim; everything V2 knows that V1 did not is marked legacy.
+ */
+export function adaptV1Expert(expert: Expert): ExpertV2 {
+  const hintCapabilities: CapabilityClaim[] = [legacyHint(`legacy.role.${slug(expert.role)}`)]
+  for (const scenarioId of expert.suitedFor ?? []) {
+    hintCapabilities.push(legacyHint(`legacy.scenario.${slug(scenarioId)}`))
+  }
+  return {
+    id: expert.id,
+    version: LEGACY_VERSION,
+    schemaVersion: SCHEMA_VERSION,
+    display: {
+      internalName: expert.name,
+      // V1 carries no public label or initials. These placeholders are
+      // explicitly not anonymization-ready; compliance gates must treat
+      // legacy experts as internal-only until a real pack supplies them.
+      publicLabel: expert.name,
+      initials: 'legacy',
+    },
+    domains: ['legacy.v1'],
+    capabilities: hintCapabilities,
+    persona: {
+      style: [...expert.principles],
+      mentalModels: [],
+      signaturePhrases: [],
+      antiPatterns: [],
+      legacySource: 'v1',
+    },
+    methods: [],
+    knowledgeBindings: [{ providerId: 'local-knowledge', scope: `experts/${expert.id}`, legacySource: 'v1' }],
+    toolAffinities: [], // unknown in V1 — never guessed
+    ...(expert.model === undefined ? {} : { modelPolicy: { ...expert.model } }),
+    compliance: {}, // unknown in V1 — flags absent means "not asserting", not "cleared"
+    legacySource: 'v1',
+  }
+}
+
+/** Deterministic generated-template id convention for a V1 scenario. */
+function legacyTeamTemplateId(scenarioId: string): string {
+  return `${scenarioId}.legacy-team`
+}
+
+function legacyOutputTemplateId(scenarioId: string): string {
+  return `${scenarioId}.legacy-output`
+}
+
+function legacyQualityPolicyId(scenarioId: string): string {
+  return `${scenarioId}.legacy-quality`
+}
+
+/**
+ * Project a V1 {@link Scenario}'s task DAG into a {@link TeamTemplate}.
+ *
+ * Mechanical mapping only: array-order task ids become `t1..tn` (matching
+ * V1's `t${index+1}` runtime convention), `dependsOn` indexes become task-id
+ * references, and each task's expert (when set) becomes a role slot
+ * `role.<expertId>`; tasks without an expert share the `role.shared` slot.
+ *
+ * V1 assembly-roster semantics: `scenario.experts` is the *assembly* roster —
+ * every entry gets a `role.<expertId>` slot (cardinality 0..1) even when the
+ * expert owns no task, so a compiled plan can roster the full team. The
+ * `role.shared` slot (min 0) is for expert-less tasks and stays unassigned
+ * unless a caller explicitly fills it.
+ */
+export function adaptV1ScenarioTeamTemplate(scenario: Scenario): TeamTemplate {
+  const slotIds = new Set<string>()
+  // Assembly roster: every scenario.experts entry is a potential member,
+  // task-ownership notwithstanding.
+  for (const expertId of scenario.experts) {
+    slotIds.add(`role.${expertId}`)
+  }
+  const tasks: TaskTemplate[] = scenario.tasks.map((task, index) => {
+    const taskId = `t${index + 1}`
+    const role = task.expert === undefined ? 'role.shared' : `role.${task.expert}`
+    slotIds.add(role)
+    return {
+      id: taskId,
+      role,
+      dependsOn: (task.dependsOn ?? []).map(depIndex => `t${depIndex + 1}`),
+      inputs: [],
+      allowedCapabilities: [],
+      outputSchema: legacyOutputTemplateId(scenario.id),
+      retryPolicy: 'never', // V1 had no per-task retry semantics
+      ...(task.subject !== undefined ? { subject: task.subject } : {}),
+      ...(task.description !== undefined ? { description: task.description } : {}),
+      legacySource: 'v1',
+    }
+  })
+  return {
+    id: legacyTeamTemplateId(scenario.id),
+    version: LEGACY_VERSION,
+    schemaVersion: SCHEMA_VERSION,
+    slots: [...slotIds].sort().map(role => ({
+      id: role,
+      capabilities: [], // V1 has no capability data — resolver treats as unconstrained
+      cardinality: { min: 0, max: 1 },
+    })),
+    tasks,
+    gates: [], // no gates in V1
+    deliverables: [
+      {
+        id: `${scenario.id}.deliverable`,
+        outputTemplate: legacyOutputTemplateId(scenario.id),
+        fromTasks: tasks.map(task => task.id),
+      },
+    ],
+    legacySource: 'v1',
+  }
+}
+
+/**
+ * Adapt one V1 {@link Scenario} into a {@link ScenarioV2} view. The three
+ * V2 references point at the deterministic legacy template/policy ids that
+ * {@link buildLegacyDomainPack} generates alongside.
+ */
+export function adaptV1Scenario(scenario: Scenario): ScenarioV2 {
+  return {
+    id: scenario.id,
+    version: LEGACY_VERSION,
+    schemaVersion: SCHEMA_VERSION,
+    domain: 'legacy.v1',
+    intents: [slug(scenario.name)],
+    requiredCapabilities: [],
+    routingPolicy: {
+      candidateHints: [...scenario.experts],
+    },
+    teamTemplate: legacyTeamTemplateId(scenario.id),
+    outputTemplate: legacyOutputTemplateId(scenario.id),
+    qualityPolicy: legacyQualityPolicyId(scenario.id),
+    knowledgePolicy: {
+      required: ['local-knowledge'],
+      ...(scenario.knowledge === undefined ? {} : { optional: [`local-knowledge:${scenario.knowledge}`] }),
+    },
+    toolPolicy: { allowed: [] },
+    legacySource: 'v1',
+  }
+}
+
+/**
+ * Build a complete, validator-clean legacy {@link DomainPackV2} view over a
+ * V1 registry slice. The pack references only the `local-knowledge`
+ * provider manifest (already the runtime convention for V1 knowledge
+ * folders). Nothing here is persisted — call sites treat it as a projection.
+ */
+export function buildLegacyDomainPack(input: {
+  experts: readonly Expert[]
+  scenarios: readonly Scenario[]
+  packName?: string
+}): DomainPackV2 {
+  const { experts, scenarios } = input
+  const localKnowledge: KnowledgeProviderManifest = {
+    id: 'local-knowledge',
+    version: LEGACY_VERSION,
+    schemaVersion: SCHEMA_VERSION,
+    kind: 'files',
+    capabilities: ['read'],
+    freshness: 'static',
+    scopes: ['experts', 'scenarios', 'shared'],
+  }
+  const outputTemplates: OutputTemplate[] = scenarios.map(scenario => ({
+    id: legacyOutputTemplateId(scenario.id),
+    version: LEGACY_VERSION,
+    schemaVersion: SCHEMA_VERSION,
+    media: ['markdown'],
+    sections: [
+      {
+        id: 'legacy-deliverable',
+        required: true,
+      },
+    ],
+    renderModes: { final: { anonymize: false } },
+    legacySource: 'v1',
+  }))
+  const qualityPolicies: QualityPolicy[] = scenarios.map(scenario => ({
+    id: legacyQualityPolicyId(scenario.id),
+    version: LEGACY_VERSION,
+    schemaVersion: SCHEMA_VERSION,
+    gates: [], // V1 had no executable gates; policies exist so references resolve
+    maxRepairRounds: 0,
+    legacySource: 'v1',
+  }))
+  return {
+    pack: {
+      id: 'legacy-v1-view',
+      version: LEGACY_VERSION,
+      schemaVersion: SCHEMA_VERSION,
+      name: input.packName ?? 'Legacy V1 registry view',
+      description: 'Derived projection of the V1 expert/scenario registry; not a source of truth.',
+    },
+    experts: experts.map(adaptV1Expert),
+    teamTemplates: scenarios.map(adaptV1ScenarioTeamTemplate),
+    outputTemplates,
+    qualityPolicies,
+    scenarios: scenarios.map(adaptV1Scenario),
+    toolProviders: [],
+    knowledgeProviders: [localKnowledge],
+    // V1 had no structured domain knowledge bases — empty, never invented.
+    domainKnowledge: [],
+    // V1 had no methodology libraries or skill packages — empty, never invented.
+    methodPacks: [],
+    skillPackages: [],
+  }
+}
+
+/** Whether a parsed JSON value is a plain record. */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+/**
+ * Result of {@link migrateDomainPack}.
+ *
+ * `ok` mirrors {@link ValidationResult.ok}: true only when the returned pack
+ * passes `validateDomainPack` with no error-severity diagnostics. `migrated`
+ * is true only when the input was a recognized legacy (v1) registry that was
+ * routed through {@link buildLegacyDomainPack} — a failed projection (e.g. a
+ * legacy expert missing its name) still reports `migrated: true` because the
+ * migration path was taken; a shape that cannot be migrated reports
+ * `migrated: false`. `sourceVersion` is the detected input version: `2` for
+ * V2 packs, `1` for legacy registries (including absent `schemaVersion`),
+ * `undefined` when the input was not a record or carried an unsupported
+ * version.
+ */
+export interface MigrationResult {
+  readonly ok: boolean
+  /** The validated V2 pack; present iff `ok`. */
+  readonly value?: DomainPackV2
+  /** Whether the input was a legacy (v1) registry migrated via {@link buildLegacyDomainPack}. */
+  readonly migrated: boolean
+  /** Detected input schema version (`1` legacy | `2` V2); undefined when undetectable. */
+  readonly sourceVersion?: 1 | 2
+  readonly diagnostics: readonly PackDiagnostic[]
+}
+
+/**
+ * Migrate an unknown document into a validated {@link DomainPackV2}.
+ *
+ * Dispatch (Phase 1 version migrator, NEXT-GENERATION-ARCHITECTURE.md §11):
+ *
+ * - A V2 pack is detected **structurally**: `isRecord(input.pack) &&
+ *   input.pack.schemaVersion === 2` (DomainPackV2 carries its schemaVersion
+ *   on the pack metadata, never on the document root). It is passed through
+ *   {@link validateDomainPack} and returned idempotently (`migrated: false`).
+ * - A `pack` record with a missing or unsupported nested schemaVersion is a
+ *   malformed V2 pack: diagnostics with code `schema-version-missing` are
+ *   reported at the nested path `pack.schemaVersion` (pack presence wins
+ *   over any root schemaVersion).
+ * - Without a `pack` record, the **root** `schemaVersion` is a
+ *   legacy-registry signal only: `1` (or absent) with the explicit legacy
+ *   registry shape
+ *   `{ schemaVersion?: 1, packName?, experts: Expert[], scenarios: Scenario[] }`
+ *   — delegated to {@link buildLegacyDomainPack}, the projection is
+ *   validated, and the result is returned with `migrated: true`. The
+ *   conservative `adaptV1*` rules are untouched: legacy experts carry
+ *   `legacySource: 'v1'`, the anonymization placeholders (`initials:
+ *   'legacy'`) and floor-1 capability hints.
+ * - any other root `schemaVersion` (2, 0, 3, `'2'`, …) without a pack
+ *   record — diagnostics with code `unsupported-schema-version`; a legacy
+ *   shape with non-object entries reports `invalid-legacy-item`.
+ *
+ * This function never throws: every branch returns structured diagnostics.
+ */
+export function migrateDomainPack(input: unknown): MigrationResult {
+  if (!isRecord(input)) {
+    return {
+      ok: false,
+      migrated: false,
+      diagnostics: [{
+        code: 'invalid-shape',
+        path: 'input',
+        message: 'migration input must be a JSON object (a V2 domain pack or a legacy registry)',
+        severity: 'error',
+      }],
+    }
+  }
+  const schemaVersion = input['schemaVersion']
+  // V2 detection is purely structural: a DomainPackV2 carries its
+  // schemaVersion on the pack metadata (`pack.pack.schemaVersion`), never on
+  // the document root (all valid-pack fixtures have no root schemaVersion).
+  // The root `schemaVersion` field is a legacy-registry signal only
+  // (`schemaVersion?: 1`).
+  const packMeta = isRecord(input['pack']) ? input['pack'] : undefined
+  const packVersion = packMeta === undefined ? undefined : packMeta['schemaVersion']
+
+  // V2 pack: validate and return idempotently (no transformation).
+  if (packMeta !== undefined && packVersion === SCHEMA_VERSION) {
+    const result = validateDomainPack(input)
+    return {
+      ok: result.ok,
+      ...(result.value === undefined ? {} : { value: result.value }),
+      migrated: false,
+      sourceVersion: 2,
+      diagnostics: result.diagnostics,
+    }
+  }
+
+  // A `pack` record with a missing/unsupported nested schemaVersion is a
+  // malformed V2 pack — report the nested path, never the root. Pack
+  // presence wins over any root schemaVersion.
+  if (packMeta !== undefined) {
+    return {
+      ok: false,
+      migrated: false,
+      diagnostics: [{
+        code: 'schema-version-missing',
+        path: 'pack.schemaVersion',
+        message: `V2-shaped document must declare schemaVersion ${SCHEMA_VERSION} on its pack metadata, got ${String(packVersion)}`,
+        severity: 'error',
+      }],
+    }
+  }
+
+  // No pack record: the root schemaVersion is a legacy-registry signal only
+  // (1, or absent — the V2 convention is that a persisted document without
+  // schemaVersion is not V2).
+  if (schemaVersion === 1 || schemaVersion === undefined) {
+    const experts = input['experts']
+    const scenarios = input['scenarios']
+    if (!Array.isArray(experts) || !Array.isArray(scenarios)) {
+      return {
+        ok: false,
+        migrated: false,
+        diagnostics: [{
+          code: 'invalid-legacy-input',
+          path: 'input',
+          message: 'legacy registry must be shaped { schemaVersion?: 1, packName?, experts: Expert[], scenarios: Scenario[] }',
+          severity: 'error',
+        }],
+      }
+    }
+    // Non-object entries would throw inside the adapters — reject them up
+    // front so migration keeps its never-throw contract.
+    const diagnostics: PackDiagnostic[] = []
+    const badExpertIndex = experts.findIndex(item => !isRecord(item))
+    const badScenarioIndex = scenarios.findIndex(item => !isRecord(item))
+    if (badExpertIndex !== -1) {
+      diagnostics.push({
+        code: 'invalid-legacy-item',
+        path: `experts[${badExpertIndex}]`,
+        message: 'legacy expert entries must be objects',
+        severity: 'error',
+      })
+    }
+    if (badScenarioIndex !== -1) {
+      diagnostics.push({
+        code: 'invalid-legacy-item',
+        path: `scenarios[${badScenarioIndex}]`,
+        message: 'legacy scenario entries must be objects',
+        severity: 'error',
+      })
+    }
+    if (diagnostics.length > 0) {
+      return { ok: false, migrated: false, diagnostics }
+    }
+
+    const packName = typeof input['packName'] === 'string' ? input['packName'] : undefined
+    let projected: DomainPackV2
+    try {
+      projected = buildLegacyDomainPack({
+        experts: experts as unknown as readonly Expert[],
+        scenarios: scenarios as unknown as readonly Scenario[],
+        ...(packName === undefined ? {} : { packName }),
+      })
+    } catch (error: unknown) {
+      // Defense in depth: adaptV1* is intentionally left conservative, so a
+      // malformed-but-object-shaped entry (e.g. an expert without a role)
+      // can still throw inside the projection. Convert it to diagnostics —
+      // migration never throws.
+      return {
+        ok: false,
+        migrated: true,
+        diagnostics: [{
+          code: 'migration-failed',
+          path: 'input',
+          message: `legacy registry could not be projected: ${String(error)}`,
+          severity: 'error',
+        }],
+      }
+    }
+    const result = validateDomainPack(projected)
+    return {
+      ok: result.ok,
+      ...(result.value === undefined ? {} : { value: result.value }),
+      migrated: true,
+      sourceVersion: 1,
+      diagnostics: result.diagnostics,
+    }
+  }
+
+  // Unknown / future schema version: diagnostics, never throw. A root
+  // schemaVersion is only meaningful for legacy registries (1); a V2 pack
+  // must declare schemaVersion 2 on its pack metadata instead.
+  return {
+    ok: false,
+    migrated: false,
+    diagnostics: [{
+      code: 'unsupported-schema-version',
+      path: 'schemaVersion',
+      message: `unsupported schemaVersion ${String(schemaVersion)} (a legacy registry declares 1 at the root; a V2 pack must declare ${SCHEMA_VERSION} on pack.pack)`,
+      severity: 'error',
+    }],
+  }
+}
+
+/**
+ * Compile one V1 {@link Scenario} into a V2 {@link ExecutionPlan} through
+ * the TeamTemplate compiler — a compatibility bridge that establishes
+ * compiler-backed migration with **zero behavioral risk** to the legacy
+ * runtime (the `expert_teams_*` / `expert_review_*` tools are untouched).
+ *
+ * Bridge steps:
+ * 1. `buildLegacyDomainPack` projects the given experts + this one scenario
+ *    into a validator-clean legacy {@link DomainPackV2} (conservative
+ *    `adaptV1*` views, `legacySource: 'v1'`);
+ * 2. explicit roster assignments cover **every** `scenario.experts` entry —
+ *    slot `role.<expertId>` gets exactly `[expertId]`, including experts that
+ *    own no task (V1 assembly-roster semantics; the compiler compiles
+ *    explicit assignments on unreferenced slots). `role.shared` (expert-less
+ *    tasks) receives an explicit empty assignment `[]`, so it stays
+ *    unassigned (min 0) and is never auto-filled;
+ * 3. `compileExecutionPlan` runs on the legacy template
+ *    (`<scenarioId>.legacy-team`) with those assignments;
+ * 4. the exact {@link CompileResult} is returned unchanged.
+ *
+ * Because the legacy template maps tasks 1:1 (`t1..tn` in array order) and
+ * `dependsOn` indexes become `t{n+1}` references, the compiled plan's task
+ * ids / dependencies / subjects are isomorphic to the V1 DAG — the golden
+ * contract covered by `test/v2-v1-bridge.test.mjs`.
+ */
+export function compileV1ScenarioExecutionPlan(
+  experts: readonly Expert[],
+  scenario: Scenario,
+): CompileResult {
+  const pack = buildLegacyDomainPack({ experts, scenarios: [scenario] })
+  const assignments: Record<string, readonly string[]> = {}
+  // V1 assembly-roster semantics: every scenario.experts entry is assigned,
+  // task-ownership notwithstanding.
+  for (const expertId of scenario.experts) {
+    const slot = `role.${expertId}`
+    if (assignments[slot] === undefined) {
+      assignments[slot] = [expertId]
+    }
+  }
+  for (const task of scenario.tasks) {
+    const expertId = task.expert
+    if (expertId === undefined) continue // expert-less tasks share the role.shared slot
+    const slot = `role.${expertId}`
+    if (assignments[slot] === undefined) {
+      assignments[slot] = [expertId]
+    }
+  }
+  // role.shared (min 0) stays empty/unassigned — never auto-filled.
+  if (scenario.tasks.some(task => task.expert === undefined)) {
+    assignments['role.shared'] = []
+  }
+  return compileExecutionPlan({
+    pack,
+    templateId: legacyTeamTemplateId(scenario.id),
+    scenarioId: scenario.id,
+    binding: { assignments },
+  })
+}

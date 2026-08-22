@@ -70,14 +70,14 @@ dsh plugin --profile web add .
 
 > 后 4 个协作场景另有参数化工具（`expert_teams_debate` / `expert_teams_roundtable` / `expert_teams_ppt` / `expert_teams_report`），可按任意专家组合动态组队。
 
-### 场景 ↔ 外部 skill 绑定
+### 场景 ↔ 外部 skill 绑定（仅本地）
 
-场景（或 `expert_teams_ppt` 的 `skill_repo` 参数）可绑定 GitHub 上的任意 skill：
+场景（或 `expert_teams_ppt` 的 `skill_id` 参数）可绑定**本地安装**的 skill：
 
-- 应用场景时自动拉取该 repo 的 `SKILL.md`，缓存到 `<workspace>/knowledge/skills/<owner>-<repo>/SKILL.md`（首次联网拉取，之后离线可用）
-- 缓存路径注入团队描述，成员用文件工具自行阅读参考
-- 拉取失败优雅降级（提示手动放置，不阻断建队）
-- 实例：`ppt-gen` 场景绑定 `Vincentwei1021/video-shotcraft`（Remotion 电影感产品视频）作为可选增强
+- skill 内容由用户预先放置到 `<workspace>/knowledge/skills/<skillId>/SKILL.md`；运行时**不联网、不自动下载、不自动更新**（上游 GitHub 来源仅作为离线引入时的审计记录，运行时不可访问）
+- 路径注入团队描述，成员用文件工具自行阅读参考
+- 未安装/非法 id/路径逃逸/超限（1 MiB）时优雅降级为安装提示，不阻断建队
+- 实例：`ppt-gen` 场景绑定本地 `video-shotcraft`（Remotion 电影感产品视频）作为可选增强
 
 ```yaml
 # 自定义场景 JSON 示例（knowledge/scenarios/<id>.json）
@@ -86,7 +86,7 @@ dsh plugin --profile web add .
   "name": "My PPT",
   "description": "…",
   "experts": ["docs-coordinator", "bk-024"],
-  "skill": { "repo": "Vincentwei1021/video-shotcraft", "purpose": "可选增强" },
+  "skill": { "id": "video-shotcraft", "purpose": "可选增强" },
   "tasks": [ { "subject": "…" } ],
   "deliverable": "…"
 }
@@ -103,7 +103,7 @@ dsh plugin --profile web add .
 
 - 成员 persona 会注入知识指引（列出其目录与文件清单），成员用文件/阅读工具自行查阅；
 - 自定义专家/场景 JSON（`experts/<id>.json`、`scenarios/<id>.json`）可覆盖内置定义，字段见 `src/expert-library/types.ts`；
-- **输入校验**：专家/场景 id 必须是安全路径段（字母/数字开头，仅 `._-`，≤64 字符，禁止 `..` 与路径分隔符）；场景任务的 `dependsOn` 只能引用前序任务索引（自依赖/前向引用/循环一律拒绝整个 pack）；`skill.repo` 必须是严格 GitHub `owner/repo` 格式，SKILL.md 下载上限 1 MiB；非法 pack 跳过并告警，不会导致插件挂载失败；
+- **输入校验**：专家/场景 id 必须是安全路径段（字母/数字开头，仅 `._-`，≤64 字符，禁止 `..` 与路径分隔符）；场景任务的 `dependsOn` 只能引用前序任务索引（自依赖/前向引用/循环一律拒绝整个 pack）；`skill.id` 必须是安全本地 skill id，SKILL.md 读取上限 1 MiB（仅本地读取，运行时不联网）；非法 pack 跳过并告警，不会导致插件挂载失败；
 - 详见 `knowledge/README.md`。
 
 ## 模型路由优先级
@@ -133,6 +133,16 @@ dsh plugin --profile web add .
         maxMembers: 8
 ```
 
+## V2 能力基座（`@zhijian/dsh-expert-library/v2`）
+
+> Phase 1–4 的 V2 数据/编译/门控层已作为公共子路径导出（`import … from '@zhijian/dsh-expert-library/v2'`；纯数据 + 纯函数，运行时零网络）。**现有 V1 工具（`expert_teams_*` / `expert_review_*` / 协作模式）不受影响、继续可用**；Host 注册与 Web UI 迁移按 `NEXT-GENERATION-ARCHITECTURE.md` 分阶段进行，尚未接线。
+
+- **领域包**：`buildZhijianDomainPack()` 由 32 位专家原生数据构建 `zhijian-realestate` 包；`validateDomainPack()` 做结构/交叉引用校验；`migrateDomainPack()` / `buildLegacyDomainPack()` 提供 V1→V2 兼容迁移（保守映射，均带 `legacySource: 'v1'`）；`loadPackFromDir()` / `loadPackFromFile()` / `mergePackLayers()` 本地装载与确定性覆盖合并（builtin < domain-pack < workspace < request，含 id/版本冲突诊断）。
+- **Provider 运行时**：`ProviderRegistry` 按 capability 索引注册 provider manifest（含审计）；`CapabilityResolver` 按 `任务 ∩ 角色 ∩ 已装 provider ∩ 凭据/口径` 解析绑定；`ProviderInvoker` 是 **Host 注入的适配器接口**——v2 模块自身不启动进程、不开网络，具体 transport 适配（mcp-stdio/mcp-http/http-api/local-cli）由 Host 侧接线，尚未内置。
+- **模板编译**：`compileExecutionPlan()` 将 TeamTemplate + 场景策略编译为**不可变 ExecutionPlan**（roster + 任务 DAG + 输入/gate/deliverable 绑定 + digest）；每个逻辑任务**盖章其角色槽位的 `expertIds`**（roster 顺序），由后续执行适配器在保持 DAG 依赖的前提下按专家 id **确定性扇出**物理任务（编译器本身不展开物理任务）；同模板 + 同绑定 ⇒ 同构 DAG（可做 golden 对比）。
+- **质量门控**：`runQualityChain()` 执行固定门控链（结构 → 数据/引用 → 合规/匿名 → 格式 → 风格 → 语义 → 修复 ≤2 轮 → 终检）；`createBuiltinGateEvaluators()` 提供内置确定性 gate（`schema-structure` / `data-citation` / `compliance-anonymization` / `style-lint`）。
+- 阶段迁移与验收见 `NEXT-GENERATION-ARCHITECTURE.md` §11；回归测试见 `test/v2-*.test.mjs`。
+
 ## 项目结构
 
 ```
@@ -145,7 +155,7 @@ src/
 ├── snapshot.ts / events.ts / event-types.ts   # 面板快照与会话事件（移植）
 ├── types.ts                  # TeamState（新增 scenarioId 字段）
 ├── knowledge.ts              # 知识包目录约定与成员知识指引
-├── skills.ts                 # ★ 外部 skill 绑定：拉取/缓存/降级（场景可挂 skill）
+├── skills.ts                 # ★ 外部 skill 绑定：仅本地解析/降级（场景可挂 skill，运行时不联网）
 ├── expert-library/           # 通用专家库：类型/内置专家/内置场景/注册表
 ├── zhijian/                  # ★ 智见点评领域子系统（原生数据）
 │   ├── types.ts              # 领域类型（专家 meta/路由/框架/ReviewMeta）

@@ -271,7 +271,7 @@ export function registerCollabTools(
       audience: { type: 'string', description: '目标听众（如"管理层""投资客户"），缺省由架构专家判断。' },
       page_count: { type: 'number', description: '预计页数（默认 10-15 页）。' },
       data: { type: 'string', description: '可用素材/数据（数字带口径）。' },
-      skill_repo: { type: 'string', description: '可选：外部 skill 的 GitHub repo（owner/repo），其 SKILL.md 会缓存到 knowledge/skills/ 供成员参考（如 Vincentwei1021/video-shotcraft）。' },
+      skill_id: { type: 'string', description: '可选：本地 skill id（需预先安装于 knowledge/skills/<id>/SKILL.md，运行时不联网），其内容供成员参考。' },
       team_name: { type: 'string', description: '团队名（默认"PPT·<主题>"）。' },
     },
     output: {
@@ -315,9 +315,9 @@ export function registerCollabTools(
       const audienceLine = args.audience === undefined ? '' : `\n听众：${args.audience}`
       const pagesLine = args.page_count === undefined ? '' : `\n预计页数：${args.page_count}`
       let skillBlock = ''
-      if (args.skill_repo !== undefined) {
+      if (args.skill_id !== undefined) {
         const workspace = captain.session.header.cwd ?? process.cwd()
-        const resolved = await resolveSkill(ctx, workspace, config.knowledgeDir, args.skill_repo.trim())
+        const resolved = await resolveSkill(ctx, workspace, config.knowledgeDir, args.skill_id.trim())
         skillBlock = `\n\n${skillDescriptionBlock(resolved)}`
       }
       const tasks: CollabTaskDraft[] = [

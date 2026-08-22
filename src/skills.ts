@@ -1,154 +1,140 @@
 /**
- * External skill binding: fetch/read a skill's SKILL.md and make it available
- * to a team as reference material.
+ * Local skill resolver: read an already-installed skill's SKILL.md and make
+ * it available to a team as reference material.
  *
- * Cache layout (workspace-level, so it survives restarts and works offline
- * after the first fetch):
- *   <workspace>/<knowledgeDir>/skills/<owner>-<repo>/SKILL.md
+ * Skills are LOCAL-ONLY. The runtime never fetches from GitHub or any HTTP
+ * endpoint and never auto-updates: a skill must be installed beforehand at
+ *   <workspace>/<knowledgeDir>/skills/<safeSkillId>/SKILL.md
+ * (builtin packs may also install skills into that folder offline). This
+ * module performs no mkdir/write/network calls — resolution is strictly
+ * read-only, and a missing/invalid skill degrades to an "unavailable" hint
+ * telling the user how to install it locally.
  *
- * The team description points members at the cached file; members read it
- * with their own file tools. A fetch failure degrades to a warning (the
- * skill is an enhancement, never a blocker for the team flow) unless the
- * caller opts into strict mode.
+ * Path safety: the skill id must pass {@link isSafeSkillId} (single safe
+ * path segment), and the resolved real path must stay under the real skills
+ * root — a symlinked skill directory pointing outside the root is rejected.
+ * The SKILL.md must be a regular file within the {@link MAX_SKILL_BYTES}
+ * size cap (checked via stat before reading).
  * @module dsh-expert-library/skills
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { readFile, realpath, stat } from 'node:fs/promises'
 import { join } from 'node:path'
+import { isSafeKnowledgeId } from './knowledge.ts'
 
-/** Cache directory name under the knowledge root. */
+/** Skills directory name under the knowledge root. */
 const SKILLS_DIR = 'skills'
 
-/** Maximum SKILL.md size we download and cache (1 MiB). */
+/** Maximum SKILL.md size we read (1 MiB). */
 export const MAX_SKILL_BYTES = 1024 * 1024
 
 /**
- * Strict GitHub repo validation: exactly `owner/repo` with safe path
- * segments — owner `[A-Za-z0-9-]` (1–39 chars), repo `[A-Za-z0-9._-]`
- * (1–100 chars). Anything else (extra slashes, whitespace, control
- * characters, traversal attempts) is rejected before any fetch or path use.
+ * Whether a skill id is safe as a single path segment under the skills
+ * root: unicode letters/digits, `._-` inside, ≤64 chars — no separators,
+ * no `..`, no whitespace, no `owner/repo` forms. Anything else is rejected
+ * before any path is built.
  */
-export function isValidRepo(repo: string): boolean {
-  return /^[A-Za-z0-9][A-Za-z0-9-]{0,38}\/[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/.test(repo)
+export function isSafeSkillId(id: string): boolean {
+  return isSafeKnowledgeId(id)
 }
 
-/** One resolved skill reference. */
+/** One resolved local skill reference. */
 export interface ResolvedSkill {
+  /** Skill id (the folder name under `<knowledgeDir>/skills/`). */
+  readonly id: string
   /** Skill display name. */
   readonly name: string
-  /** Source repo (`owner/repo`). */
-  readonly repo: string
-  /** Absolute path of the cached SKILL.md (present when resolved). */
+  /** Absolute path of the local SKILL.md (present when resolved). */
   readonly path?: string
   /** Why the skill is unavailable, when resolution failed. */
   readonly unavailable?: string
 }
 
-/** Fold a repo (`owner/repo`) into a safe cache directory name. */
-function cacheDirFor(repo: string): string {
-  return repo.replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'skill'
-}
-
-/** Fetch result: either the SKILL.md text, or a failure (optionally over the size cap). */
-type SkillFetchResult =
-  | { readonly ok: true; readonly text: string }
-  | { readonly ok: false; readonly tooLarge?: boolean }
-
-/**
- * Fetch the SKILL.md of a GitHub repo (default branch `main`, fallback
- * `master`). The body is read with a hard size cap: once the download
- * exceeds {@link MAX_SKILL_BYTES} the reader is cancelled and the fetch
- * fails, so an oversized file is never buffered or cached.
- */
-async function fetchSkillMarkdown(repo: string): Promise<SkillFetchResult> {
-  for (const branch of ['main', 'master']) {
-    const url = `https://raw.githubusercontent.com/${repo}/${branch}/SKILL.md`
-    try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(15_000) })
-      if (!response.ok || response.body === null) continue
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let total = 0
-      let text = ''
-      for (;;) {
-        const { done, value } = await reader.read()
-        if (done) break
-        total += value.byteLength
-        if (total > MAX_SKILL_BYTES) {
-          await reader.cancel()
-          return { ok: false, tooLarge: true }
-        }
-        text += decoder.decode(value, { stream: true })
-      }
-      return { ok: true, text: text + decoder.decode() }
-    } catch {
-      // try next branch / surface later
-    }
-  }
-  return { ok: false }
+/** Install hint used by every unavailable-skill message. */
+function installHint(workspace: string, knowledgeDir: string, id: string): string {
+  return `请将 skill 本地安装到 ${join(workspace, knowledgeDir, SKILLS_DIR, id, 'SKILL.md')}（运行时不联网、不自动下载）。`
 }
 
 /**
- * Resolve a skill binding for one captain workspace: read the local cache,
- * or fetch from GitHub and cache it.
+ * Resolve one locally-installed skill: strict id validation, real-path
+ * containment under the skills root, regular-file check, size cap, then a
+ * read-only fetch of the text. No network, no writes, no directory
+ * creation — resolution failure is reported as unavailable, never thrown.
+ *
  * @param ctx - the plugin context (for logging).
  * @param workspace - the captain's workspace directory.
  * @param knowledgeDir - configured knowledge directory name.
- * @param repo - GitHub repo (`owner/repo`) of the skill.
- * @param fallbackName - skill display name when the repo short name is unclear.
+ * @param id - local skill id (folder name under `<knowledgeDir>/skills/`).
+ * @param fallbackName - skill display name when the id alone is unclear.
  * @returns the resolved skill (path set on success, unavailable set otherwise).
  */
 export async function resolveSkill(
   ctx: Context,
   workspace: string,
   knowledgeDir: string,
-  repo: string,
+  id: string,
   fallbackName?: string,
 ): Promise<ResolvedSkill> {
-  const repoId = repo.trim()
-  if (!isValidRepo(repoId)) {
-    ctx.logger.warn(`expert-library: skill repo "${repo}" is not a valid owner/repo`)
+  const skillId = id.trim()
+  const name = fallbackName ?? skillId
+  if (!isSafeSkillId(skillId)) {
+    ctx.logger.warn(`expert-library: skill id "${id}" is not a safe local skill id`)
     return {
-      name: fallbackName ?? repoId,
-      repo: repoId,
-      unavailable: `非法 skill repo「${repoId}」：必须是 GitHub owner/repo 格式（如 Vincentwei1021/video-shotcraft）。`,
+      id: skillId,
+      name,
+      unavailable: `非法 skill id「${id}」：必须是单个安全目录名（字母/数字/._-，不能包含路径分隔符或 ..）。`,
     }
   }
-  const name = fallbackName ?? repoId.split('/').pop() ?? repoId
-  const dir = join(workspace, knowledgeDir, SKILLS_DIR, cacheDirFor(repoId))
-  const file = join(dir, 'SKILL.md')
+
+  const skillsRoot = join(workspace, knowledgeDir, SKILLS_DIR)
+  const file = join(skillsRoot, skillId, 'SKILL.md')
 
   try {
-    const cached = await readFile(file, 'utf8')
-    return { name, repo: repoId, path: file }
-  } catch {
-    // not cached yet — fetch below
-  }
-
-  try {
-    const fetched = await fetchSkillMarkdown(repoId)
-    if (!fetched.ok) {
-      const reason = fetched.tooLarge === true
-        ? `SKILL.md 超过 ${MAX_SKILL_BYTES / 1024} KiB 体积限制`
-        : `无法拉取 ${repoId} 的 SKILL.md（网络不可用？）`
-      ctx.logger.warn(`expert-library: skill "${name}" (${repoId}) ${fetched.tooLarge === true ? 'exceeds the size limit' : 'could not be fetched'}`)
+    // Real-path containment: a symlinked skill folder (or SKILL.md) that
+    // resolves outside the skills root is rejected — the skill stays local.
+    const [realFile, realRoot] = await Promise.all([realpath(file), realpath(skillsRoot)])
+    if (realFile !== realRoot && !realFile.startsWith(realRoot + '/') && !realFile.startsWith(realRoot + '\\')) {
+      ctx.logger.warn(`expert-library: skill "${skillId}" resolves outside the skills root (symlink?) and was rejected`)
       return {
+        id: skillId,
         name,
-        repo: repoId,
-        unavailable: `${reason}。可手动将 SKILL.md 放到 ${file} 后重试。`,
+        unavailable: `skill「${skillId}」的真实路径逃逸了 skills 根目录（符号链接指向外部？），已拒绝。${installHint(workspace, knowledgeDir, skillId)}`,
       }
     }
-    await mkdir(dir, { recursive: true })
-    await writeFile(file, fetched.text, 'utf8')
-    ctx.logger.info(`expert-library: cached skill "${name}" from ${repoId}`)
-    return { name, repo: repoId, path: file }
-  } catch (error: unknown) {
-    ctx.logger.warn(`expert-library: skill "${name}" resolution failed: ${String(error)}`)
+    const stats = await stat(realFile)
+    if (!stats.isFile()) {
+      return {
+        id: skillId,
+        name,
+        unavailable: `skill「${skillId}」的 SKILL.md 不是常规文件。${installHint(workspace, knowledgeDir, skillId)}`,
+      }
+    }
+    if (stats.size > MAX_SKILL_BYTES) {
+      ctx.logger.warn(`expert-library: skill "${skillId}" exceeds the size limit (${stats.size} bytes)`)
+      return {
+        id: skillId,
+        name,
+        unavailable: `SKILL.md 超过 ${MAX_SKILL_BYTES / 1024} KiB 体积限制。`,
+      }
+    }
+    const text = await readFile(realFile, 'utf8')
+    if (text.length === 0) {
+      return {
+        id: skillId,
+        name,
+        unavailable: `skill「${skillId}」的 SKILL.md 为空文件。${installHint(workspace, knowledgeDir, skillId)}`,
+      }
+    }
+    return { id: skillId, name, path: realFile }
+  } catch {
+    // ENOENT (skill not installed) and any other read failure degrade to
+    // an unavailable hint — a skill is an enhancement, never a blocker.
+    ctx.logger.info(`expert-library: local skill "${skillId}" is not installed`)
     return {
+      id: skillId,
       name,
-      repo: repoId,
-      unavailable: `skill ${repoId} 解析失败（${String(error)}）。可手动将 SKILL.md 放到 ${file} 后重试。`,
+      unavailable: `本地未安装 skill「${skillId}」。${installHint(workspace, knowledgeDir, skillId)}`,
     }
   }
 }
@@ -157,7 +143,7 @@ export async function resolveSkill(
 export function skillDescriptionBlock(skill: ResolvedSkill, purpose?: string): string {
   const purposeLine = purpose === undefined ? '' : `（用途：${purpose}）`
   if (skill.path !== undefined) {
-    return `外部 skill：${skill.name}${purposeLine} — SKILL.md 已缓存到 ${skill.path}，成员可用文件工具阅读并按需参考（若任务涉及该 skill 的产出物）。`
+    return `外部 skill：${skill.name}${purposeLine} — SKILL.md 位于本地 ${skill.path}，成员可用文件工具阅读并按需参考（若任务涉及该 skill 的产出物）。`
   }
   return `外部 skill：${skill.name}${purposeLine} — ${skill.unavailable ?? '当前不可用'}`
 }

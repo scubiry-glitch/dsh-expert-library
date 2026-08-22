@@ -83,6 +83,25 @@ function nextReadyTask(tasks: readonly TeamTask[], memberName: string): TeamTask
     ?? ready.find(task => task.assignee === undefined)
 }
 
+/**
+ * Whether one terminal task may be returned to the pending pool by the
+ * automatic requeue pass.
+ *
+ * Explicit cancellation is always final — a user who cancelled work must
+ * never see it resurrected by the scheduler. Legacy `attempt: 0` failed
+ * records (created before attempts were tracked) stay terminal too, because
+ * their failure budget cannot be judged. Only a genuinely retried failure
+ * (attempt 1 or 2, so the next pass still fits the 3-attempt budget)
+ * auto-requeues. Explicit user-driven retries go through
+ * `expert_teams_reassign_task`, which is unaffected by this predicate.
+ * Exported for unit testing at the pure boundary.
+ */
+export function shouldAutoRetryTask(task: TeamTask): boolean {
+  if (task.status !== 'failed') return false
+  const attempt = task.attempt ?? 0
+  return attempt >= 1 && attempt < 3
+}
+
 /** Return retryable terminal work to the pending pool before the next scheduling pass. */
 async function requeueRetryableTasks(stateRoot: string, teamId: string): Promise<void> {
   await withTeamLock(teamLockKey(stateRoot, teamId), async () => {
@@ -90,8 +109,7 @@ async function requeueRetryableTasks(stateRoot: string, teamId: string): Promise
     if (fresh === undefined) return
     let changed = false
     for (const task of fresh.tasks) {
-      const attempts = task.attempt ?? 0
-      if ((task.status !== 'failed' && task.status !== 'cancelled') || attempts >= 3) continue
+      if (!shouldAutoRetryTask(task)) continue
       task.status = 'pending'
       task.output = undefined
       task.attemptId = undefined

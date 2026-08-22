@@ -20,7 +20,7 @@ import { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
 import type { SessionId } from '@deepseek-ai/dsh-session'
 import { join } from 'node:path'
 import { readRetiredMemberIds, readTeamSync } from './state.ts'
-import type { Expert } from './expert-library/types.ts'
+import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
 import type { TeamMember, TeamState } from './types.ts'
 
 /** Captain-only Expert Teams tools hidden from newly spawned members. */
@@ -82,6 +82,67 @@ export interface MemberSelectionRuntime {
     selection: MemberLlmSelection,
     operation: () => Promise<T>,
   ): Promise<T>
+}
+
+/** Model-route inputs of one add-member call (explicit tool arguments only). */
+export interface MemberRouteArgs {
+  /** Explicit provider requested by the caller. */
+  readonly provider?: string
+  /** Explicit model requested by the caller. */
+  readonly model?: string
+  /** Explicit reasoning effort requested by the caller. */
+  readonly reasoning_effort?: string
+}
+
+/**
+ * Build the member LLM selection request, applying the documented route
+ * precedence: preset expert route > explicit arguments > plugin memberModel
+ * default > captain's current route.
+ *
+ * A lone explicit `reasoning_effort` rides on top of whichever provider/model
+ * won — when only an effort was given and the plugin default route exists,
+ * the request combines the default provider/model with the explicit effort
+ * (overriding the default effort) instead of silently dropping it.
+ * Exported for unit testing at the pure boundary.
+ */
+export function memberRouteRequest(
+  args: MemberRouteArgs,
+  expertModel: ExpertModelRoute | undefined,
+  memberModel: ExpertModelRoute | undefined,
+): MemberLlmSelectionRequest {
+  if (expertModel !== undefined) {
+    return {
+      provider: expertModel.provider,
+      model: expertModel.model,
+      ...expertModel.reasoningEffort !== undefined ? { reasoningEffort: expertModel.reasoningEffort } : {},
+    }
+  }
+  const explicitRoute = args.provider !== undefined || args.model !== undefined
+  if (explicitRoute) {
+    return {
+      provider: args.provider,
+      model: args.model,
+      defaultModel: memberModel?.model,
+      ...args.reasoning_effort !== undefined ? { reasoningEffort: args.reasoning_effort } : {},
+    }
+  }
+  if (memberModel !== undefined) {
+    return {
+      provider: memberModel.provider,
+      model: memberModel.model,
+      reasoningEffort: args.reasoning_effort !== undefined
+        ? args.reasoning_effort
+        : memberModel.reasoningEffort,
+    }
+  }
+  // Only reachable when no explicit provider/model was given, so the keys
+  // are emitted only when present — a lone effort never carries undefined
+  // provider/model placeholders. The caller applies the captain's route.
+  return {
+    ...args.provider !== undefined ? { provider: args.provider } : {},
+    ...args.model !== undefined ? { model: args.model } : {},
+    ...args.reasoning_effort !== undefined ? { reasoningEffort: args.reasoning_effort } : {},
+  }
 }
 
 const MEMBER_LABEL_PREFIX = 'expert-teams:'

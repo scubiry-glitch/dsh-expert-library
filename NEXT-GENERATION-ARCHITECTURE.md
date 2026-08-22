@@ -67,7 +67,7 @@
 
 ---
 
-## 3. 六个一等公民对象（结构化契约）
+## 3. 一等公民对象（结构化契约）：Expert / ToolProvider / KnowledgeProvider / Scenario / TeamTemplate / OutputTemplate + QualityGate / SkillPackage
 
 ### 3.1 ExpertV2 —— 身份与能力分离
 
@@ -99,17 +99,26 @@ interface CapabilityClaim {
 
 路由顺序：`任务所需能力 → capability 索引检索候选 → 覆盖度/口径/立场互补/模型成本排序 → 策略要求的 approval gate（用户拍板）`。知识覆盖度权重（旧包"高=专家知识 60-70%"）变成可计算 routing score 并输出评分解释。
 
-### 3.2 ToolProvider —— 具体工具隐藏在能力之后
+### 3.2 ToolProvider —— 具体工具隐藏在能力之后；Tool 与 Skill 分离
+
+**硬边界：Tool 与 Skill 是两类东西。** Tool 是运行时调用外部能力的通道，允许联网；Skill 是本地装载的静态方法/知识内容，运行时禁止任何 GitHub/HTTP 拉取、禁止 remote repo source、禁止自动更新（见 §3.7）。凭据只以 `credentialRef` 指向凭据层，manifest 永不保存密钥。
 
 ```ts
 interface ToolProvider {
   id: string; version: string
-  capabilities: ToolCapability[]            // capability + 输入输出 schema + 口径
-  execution: { modes: ('api'|'cli'|'auto')[]; readOnlyDefault: boolean }
-  auth: AuthDescriptor                      // 指向凭据层，不存密钥
+  capabilities: ToolCapability[]            // capability + operation + transportId + 输入输出 schema + 口径
+  transports: ToolTransport[]               // 非空；capability 绑定到具体 transport id
   discovery?: DiscoveryDescriptor           // 动态 inputSchema（如 wind list-tools）
   invoke(request: CapabilityRequest): Promise<ProviderEnvelope>
 }
+
+type ToolTransport =
+  | { kind: 'mcp-stdio'; id; command; args?; timeoutMs?; readOnly?; auth? }   // 本地 MCP（stdio）
+  | { kind: 'mcp-http';   id; endpoint; timeoutMs?; readOnly?; auth? }        // 远程/本地 MCP（HTTP）
+  | { kind: 'http-api';   id; baseUrl; timeoutMs?; readOnly?; auth? }         // HTTP API（如 zyt /openapi/v1）
+  | { kind: 'local-cli';  id; command; workingDirectory?; timeoutMs?; readOnly?; auth? }  // 受控本地 CLI
+
+// 每个 transport：id 在 Provider 内唯一；auth = { credentialRef } 指向凭据层，不存密钥
 
 interface ProviderEnvelope {                // 所有 Provider 归一化的返回信封
   ok: boolean
@@ -120,7 +129,7 @@ interface ProviderEnvelope {                // 所有 Provider 归一化的返�
 }
 ```
 
-场景写 `financial.stock.snapshot` → Resolver 绑定 Wind；写 `realestate.indicators.timeseries` → 绑定政研通；写 `realestate.listing.search` → 绑定贝壳。工具名、认证、CLI 参数不进入 persona 或场景 DAG。
+场景写 `financial.stock.snapshot` → Resolver 绑定 Wind；写 `realestate.indicators.timeseries` → 绑定政研通；写 `realestate.listing.search` → 绑定贝壳。工具名、认证、transport 参数不进入 persona 或场景 DAG。
 
 ### 3.3 KnowledgeProvider —— 知识系统不是目录
 
@@ -130,6 +139,7 @@ interface KnowledgeProvider {
   kind: 'files'|'structured-wiki'|'search-index'|'database'|'stream'
   capabilities: ('search'|'read'|'cite'|'history'|'write'|'validate')[]
   freshness: 'static'|'monthly'|'daily'|'realtime'
+  domainKnowledgeIds?: string[]            // 服务哪些结构化领域知识库（pack 内解析）
   query(request: KnowledgeQuery): Promise<KnowledgeResult>
 }
 
@@ -143,6 +153,65 @@ interface KnowledgeResult {
 ```
 
 规划实例：`local-knowledge`（现有 knowledge/ 目录，只读索引）、`zhijian-expert-memory`（Profile 基线 + 月度增量 + 观点漂移事件）、`99wiki`（实体/版本/引用/写入/验收）。输出不得只写"根据资料"——必须落到 citation + snapshotId。
+
+#### 3.3.1 领域知识库（DomainKnowledgeManifest）——结构定义
+
+普通知识目录只有文件；领域知识库有**机器可校验的结构**：边界、本体、集合、快照、检索方式、使用策略。Expert 只绑定 scope（`knowledgeBindings`），从不复制知识内容。
+
+```ts
+interface DomainKnowledgeManifest {
+  id: string; version: string
+  domain: string                    // 覆盖领域（如 realestate.research）
+  boundary: string                  // 边界断言：什么属于库内
+  ontology: {                       // 受控词表：实体与关系
+    entities: { id: string; description: string }[]
+    relations?: { id: string; from: string; to: string; description?: string }[]
+  }
+  collections: { id: string; root: string; format?: string; description?: string }[]  // root 为库内安全相对路径
+  snapshot: { id: string; takenAt: string; digest: string; recordCount: number }      // 当前不可变快照
+  retrievalProfiles: { id: string; method: 'keyword'|'semantic'|'graph'|'full-read'; config?: object }[]
+  policies: { citation: 'required'|'optional'; freshness: 'static'|'monthly'|'daily'|'realtime'; access: 'readonly'|'append' }
+}
+
+interface KnowledgeRecordMetadata {   // 每条入库记录必须携带（Data gate 的校验基础）
+  id: string
+  source: string                     // 来源（provider id / URL / 文件）
+  observedAt?: string                // 观测时点
+  validTime?: { from?: string; to?: string }  // 事实有效期
+  region?: string                    // 地域（如 上海）
+  unit?: string                      // 数量单位
+  caliber?: string                   // 口径（克而瑞口径 / 贝壳成出口径…）
+  sensitivity: 'public'|'internal'|'confidential'
+  checksum: string                   // 内容校验和
+}
+```
+
+建议目录布局（本地、随 pack 或 overlay 安装）：
+
+```text
+<knowledgeDir>/domain/<kbId>/
+├── manifest.json            # DomainKnowledgeManifest
+├── ontology.json            # 实体/关系词表（可并入 manifest）
+├── sources/                 # 原始来源（只读留存，含来源与许可记录）
+├── documents/               # 归一化后的文档（collections 的实体）
+├── snapshots/               # 不可变快照：<snapId>/（records + digest + recordCount）
+├── indexes/                 # 检索索引（keyword/semantic/graph 产物，可重建）
+└── policies.json            # citation/freshness/access 策略
+```
+
+**知识入库流水线**（离线/受控执行，成员不直接跑）：
+
+```text
+ingest（sources 落盘）
+  → normalize（统一格式 + 记录级 metadata：source/observedAt/validTime/region/unit/caliber/sensitivity）
+  → dedupe（id + checksum 去重）
+  → validate（schema/边界断言/敏感级检查）
+  → snapshot（生成 <snapId>/，计算 digest 与 recordCount，不可变）
+  → index（按 retrievalProfiles 重建索引）
+  → publish（manifest.snapshot 指向新快照；旧快照保留供 citation 追溯）
+```
+
+Expert 通过 `knowledgeBindings: [{ providerId, scope }]` 绑定知识库的某个 scope（集合/实体域），运行时按任务渐进检索；**persona 永不内嵌知识内容**。引用必须落到 `recordId + snapshotId`，Data gate 据此核对数字的口径/时段/地域/单位。
 
 ### 3.4 ScenarioV2 —— 任务意图，不手写执行细节
 
@@ -227,6 +296,65 @@ interface GateResult {
 
 门控链固定顺序：`Schema/Structure → Data & Citation → Compliance/Anonymization → Format/DOM/Visual → Style Lint → Semantic Review → Repair(≤2轮) → Final Gate`。
 
+### 3.7 SkillPackage / MethodPack —— skill 是本地发行容器，不是万能 Provider
+
+> 依据：Ponytail、GSAP Skills、Finesse、video-shotcraft 四仓结构调研（2026-08）。
+>
+> **Skill 仅本地装载（硬约束）**：运行时**禁止** GitHub/HTTP 拉取、禁止 remote repo source、禁止自动更新。skill 内容只能来自插件 builtin 目录或 workspace overlay 本地目录（`<knowledgeDir>/skills/<id>/`），按 `id/digest/license` 管理。上游 GitHub 来源仅作为**离线引入时的审计记录**（`upstreamProvenance`，纯字符串，loader 永不访问）。运行时解析器只读本地文件、校验安全 id 与真实路径不逃逸、限制体积，缺失时提示本地安装方式。
+
+**核心判断**：skill（`SKILL.md` + references + examples + 脚本）本质是一个**带来源、版本、权限与依赖声明的发行容器**，不是第七个一等公民 Provider。**离线安装**（落盘到本地 skills 目录）之后，它向系统**贡献**已有的一等公民对象，而不是自己成为新的运行时类型：
+
+```text
+SkillPackage（发行容器，本地）
+ ├── MethodPack            → agent-instructions 资产：任务编译时渐进加载（不进 persona）
+ ├── KnowledgeProvider manifest → 只读渐进加载的 references/examples
+ ├── OutputTemplate        → 可选：交付结构
+ ├── QualityPolicy/Gate    → 可选：验收规则
+ ├── Tool requirements     → 可选：声明所需 capability（不自带执行）
+ └── TeamTemplate          → 可选：推荐组队方式
+```
+
+**边界规则**：
+
+1. **可执行脚本 ≠ 静态内容**：skill 内的脚本（如 Finesse 的 `detect.mjs`）若要被成员调用，必须**单独注册为受控 ToolProvider**（进入 allowlist、readOnly/审批门、错误信封规范化）；SKILL.md/references/examples 是静态知识，保持只读、按需注入 prompt，**永不执行**。
+2. **内容不进 persona**：skill 的方法论文本是 `mediaType: 'agent-instructions'`、`load: 'progressive'` 的 MethodPack 资产——**任务编译时**按需拼入具体任务的指引，而不是把整份 SKILL.md 复制进每个专家 persona（吸取智见包"框架复制进 32 份 persona"的教训）。
+3. **大媒体懒加载**：视频/图片素材（如 video-shotcraft 的样片）不随包加载，KnowledgeProvider 按引用惰性读取本地文件，manifest 记录字节数与 SHA-256；不联网下载。
+4. **来源可追溯（本地）**：每个 SkillPackage 记录 `source: { kind: 'builtin'|'workspace', root, digest, license?, upstreamProvenance? }`——`root` 是本地安全相对路径，`digest` 为整包 SHA-256；无 license 或 license 不明确的包默认 `internalOnly: true`，不外发产出。
+5. **离线晋级**：升级 = 用户离线重新安装新版本（上游 CI/测试通过是建议前置）；loader 重新校验 digest、重跑受影响 gate 基准样本后才启用。运行时不提供任何"检查更新"路径。
+
+**四仓映射表**：
+
+| Skill 仓库 | 定位 | 贡献对象 | 关键取舍 |
+|---|---|---|---|
+| **Ponytail** | 方法论 skill | MethodPack（评审/分析方法）+ review/audit QualityGate | 纯方法论文本，无脚本；gate 规则直接可执行化 |
+| **GSAP Skills** | 领域知识 skill | KnowledgeProvider（references）+ framework MethodPack + best-practices gate | 大量最佳实践文档渐进加载；不复制进 persona |
+| **Finesse** | 渐进式 SkillPackage | 渐进加载协议样板；`detect.mjs` 单独注册为受控 audit ToolProvider；Design Read/asset sourcing 走 approval gate | 展示"静态内容懒加载 + 脚本受控执行"的分界标准做法 |
+| **video-shotcraft** | 交付型 skill | MethodPack（拍摄方法）+ OutputTemplate（分镜/成片结构）+ Gate + Knowledge | 重渲染管线暂不注册 ToolProvider（无稳定 CLI 契约），先作为方法论与模板来源 |
+
+```ts
+interface SkillPackageManifest {
+  schemaVersion: 2
+  id: string; version: string
+  source: {
+    kind: 'builtin' | 'workspace'   // 只允许本地来源；remote 一律拒绝
+    root: string                    // 本地安全相对路径（如 skills/video-shotcraft）
+    digest: string                  // 整包 SHA-256，重装必须复验
+    license?: string                // 缺失 ⇒ internalOnly
+    upstreamProvenance?: { repository: string; revision: string }  // 仅审计字符串，loader 禁网络
+  }
+  contributions: {
+    methodPacks?: string[]          // 引用本包 MethodPack id（agent-instructions，渐进加载）
+    knowledgeProviders?: string[]   // 引用 KnowledgeProvider manifest id
+    outputTemplates?: string[]
+    qualityPolicies?: string[]
+    toolRequirements?: string[]     // 声明所需 capability，不自带执行
+    teamTemplates?: string[]
+  }
+  lazyMedia?: Array<{ path: string; bytes: number; sha256: string }>
+  permissions: { execScripts: string[]; internalOnly?: boolean }
+}
+```
+
 ---
 
 ## 4. 统一 Capability Resolver 与 TeamTemplate Compiler
@@ -259,7 +387,62 @@ template + params
 
 编译失败的类别必须可区分：参数错（不重试）、provider 不可用（换源或降级）、gate 硬失败（禁止交付）。
 
----
+### 4.3 系统时序与 Pipeline 状态机
+
+端到端阶段序列（每个阶段是一次状态迁移，产物不可变、可审计）：
+
+```text
+RawRequest          用户原始请求（自然语言 + 附件/数据）
+  → TaskSpec        结构化任务：领域/目标/交付物/口径要求/权限边界
+  → ScenarioDecision 场景判定：匹配 ScenarioV2（intents/受控词表）或判定为直接回答
+  → CapabilityPlan  能力计划：所需 capability × 基数 × 约束（allowedProviders/口径适配）
+  → BindingPlan     绑定计划：capability → provider.operation + transport；专家/slot 候选与排序；知识库 scope 绑定
+  → ExecutionPlan   编译产物（不可变）：roster + 任务 DAG + 输入绑定 + gate 绑定 + deliverable 声明
+  → TeamState       建队落盘（事务化，失败全回滚）；ExecutionPlan 摘要写入 team 记录
+  → TaskResults     各任务产出（attempt 代际、artifact 清单、provenance）
+  → GateReport      门控链执行结果（含修复轮次、逐 gate 诊断与哈希）
+  → Deliverable     最终交付（render mode、citation、provenance、gate report 附卷）
+```
+
+**Pipeline 是阶段状态机**：`RawRequest → Deliverable` 每个阶段有明确的入口契约与出口产物，阶段内可重入（如 repair 回到 TaskResults），但产物一旦进入下一阶段即不可变（快照 + digest）。
+
+**TeamTemplate 是执行阶段的声明式 DAG**：它只描述"执行阶段怎么组织"——slots（角色槽位）、tasks（依赖图）、inputs（task-output/knowledge/tool-capability/parameter 四类绑定）、gates（何时验什么）、deliverables（从哪些任务产出什么）。它不含执行细节（成员名、模型路由、transport 参数）。
+
+**Compiler 把后者编译成不可变 ExecutionPlan**：`TeamTemplate + ScenarioPolicy + BindingPlan + params` 一次性解析所有引用（role→专家、capability→provider.operation+transportId、knowledge→scope+snapshot），产出冻结的 ExecutionPlan；执行期只消费该计划，不再回改模板或绑定。同一模板 + 同一绑定 ⇒ 同构 DAG（可做 golden/snapshot 对比测试）。
+
+### 4.4 端到端示例：城市月度市场分析（DAG）
+
+以"上海 2026-07 二手房市场月度研判"为例（口径校准 → 并行采集 → 独立研判 → 融合 → 渲染 → 门控 → 定向修复）：
+
+```text
+[t1 口径校准]（analyst slot）
+    输入：TaskSpec.city/period + 各 provider 的 caliber 声明（zyt dataView、贝壳成出口径、克而瑞/中指对照）
+    输出：CaliberSheet——本报告统一口径与单位、各源换算规则、禁用绝对量的来源标注
+    ↓（CaliberSheet 是所有采集与研判任务的输入绑定）
+[t2a zyt 指标采集] ‖ [t2b 贝壳成交采集] ‖ [t2c Wind 宏观采集] ‖ [t2d 本地领域知识检索]
+    各自按 allowedCapabilities 调用对应 provider；每条数字带 provenance（provider/operation/caliber/fetchedAt）
+    ↓
+[t3 独立研判 ×N]（expert slots 并行，框架按 routingPolicy 主答+互补立场）
+    每位专家只读 t1 口径 + t2 采集产物 + 自己 knowledgeBindings 的 scope 快照；独立出判断
+    ↓
+[t4 融合]（fusion slot；主基调为锚，偏离观点降级为边界条件，禁止和稀泥并列）
+    ↓
+[t5 渲染]（render slot；OutputTemplate A/B/C + renderMode discussion/final）
+    ↓
+[t6 门控链] Data/Citation → Semantic → Format（对 deliverable 执行）
+    仅失败 gate 生成定向 repair task（如"修复引用缺失：表 3 第 2 行"），插回 DAG 对应节点重跑
+    修复 ≤2 轮；仍 hard fail ⇒ BLOCKED，不交付
+```
+
+要点：t2 四路采集是纯 Provider 调用（互不依赖、可并行）；t3 专家互不读取对方产出（独立研判）；repair task 是**定向**的（只修失败 gate 指向的章节/任务），不是整链重跑。
+
+### 4.5 失败 / 重试 / 审批 / 溯源 / 取消语义
+
+- **failure 分类**：参数错（用户输入，不重试，直接反馈）；provider 不可用（transport 失败/凭据缺失——按 Scenario 声明 fallback 或降级为"缺该源"继续，禁止静默编数）；gate 硬失败（禁止交付，进入修复）；成员崩溃（attempt 代际失效，任务回池或重派）。
+- **retry 三级**：transport 级（遵循 provider 错误信封的 retry 指令：never/correct-input/backoff，不统一重试三次）；任务级（attempt 预算 3 次；`cancelled` 是终态、永不自动复活——Phase 0 已实现 `shouldAutoRetryTask`）；质量级（gate 失败 → 定向 repair task，≤2 轮，之后 BLOCKED 或降级交付需人工确认）。
+- **approval**：两类门——建队前 approval gate（roster/参数，用户拍板，来自 `approvalPolicy`/slot.approval）；运行中 approval gate（写操作、external 资产引用、internalOnly 内容外发——升级到 captain/用户，不得自动通过）。审批请求挂起时对应任务处于 blocked-for-approval，不占调度。
+- **provenance**：ExecutionPlan 摘要（模板/绑定/参数 digest）、每次 provider 调用（provider/operation/transport/caliber/fetchedAt）、每条引用（recordId+snapshotId）、每轮 gate（gateId/issues/artifactHashes）全部写入 team 记录；交付物附 provenance 卷宗，可回答"这个数字从哪来"。
+- **cancellation**：用户/队长显式取消 ⇒ 任务与团队进入 `cancelled` 终态（不可自动重试）；团队成员被中断回收，已发布 artifact 保留（可审计），未提交产出丢弃；团队删除前归档 team.json + gate report。子任务级取消不取消父团队；父团队取消级联标记所有未终态任务。
 
 ## 5. Provider 调研结论与接入契约
 
@@ -483,7 +666,7 @@ Provider Contract → 事实从哪里来、错误如何解释
 | Phase | 内容 | 出口标准 |
 |---|---|---|
 | **0 一致性修复**（短期） | cancelled 任务不被调度器复活；单独 reasoning_effort 不被 memberModel 吞掉；team 终态与 project output 提交一致性；ARCHITECTURE-COMPARISON 过期数据刷新 | 缺陷回归测试全绿 |
-| **1 Schema 与 Pack** | V2 schemas + 版本迁移器；智见 Profile JSON 定唯一事实源，生成 V1 兼容视图；routing/output/gate overlay；设置页只读预览校验 | 32 专家 pack 化，V1 行为不变 |
+| **1 Schema 与 Pack** | V2 schemas + 版本迁移器；智见 Profile JSON 定唯一事实源，生成 V1 兼容视图；routing/output/gate overlay；skill-package-loader（本地装载校验、digest/license 记录、contributions 解析、静态/脚本分界，**零网络**）；设置页只读预览校验 | 32 专家 pack 化，V1 行为不变；SkillPackage 校验/懒加载就绪 |
 | **2 Provider Runtime** | Provider Registry + CapabilityResolver + ProviderEnvelope + provenance 审计；接入 Wind（discovery/call）与 zyt（JSON CLI/API）；local-files 与 99wiki KnowledgeProvider | Wind/zyt 契约测试通过；错误码/口径/单位不丢失 |
 | **3 TeamTemplate Compiler** | 迁移顺序：research-report → roundtable/debate/ppt → 智见 A–E；旧工具变参数适配器；snapshot 对比 | 同模板三入口产出同构 DAG |
 | **4 Quality Gate Runtime** | 确定性 gates → 语义 Reviewer + 两轮修复；激活 emm/rubrics；gate 版本与基准样本集 | hard fail 不可交付；报告含定位/证据 |
@@ -493,8 +676,9 @@ Provider Contract → 事实从哪里来、错误如何解释
 
 ## 12. 代码任务拆分
 
-1. `schema-v2`：ExpertV2/Provider/ScenarioV2/TeamTemplate/OutputTemplate/GatePolicy schema 与版本验证。
+1. `schema-v2`：ExpertV2/Provider/ScenarioV2/TeamTemplate/OutputTemplate/GatePolicy/SkillPackage schema 与版本验证。
 2. `zhijian-pack-migrator`：旧 Profile JSON → V2 pack；markdown/总表/索引生成器。
+3. `skill-package-loader`：skill 包**本地装载**校验（builtin/workspace 来源、安全相对路径、digest/license 记录、upstreamProvenance 仅审计）、contributions 解析（MethodPack/KnowledgeProvider/OutputTemplate/QualityPolicy/Tool requirements/TeamTemplate）、静态内容与可执行脚本分界、大媒体懒加载清单；**运行时零网络**，升级=离线重装+digest 复验。
 3. `provider-runtime`：Registry、CapabilityResolver、ProviderEnvelope、provenance 审计。
 4. `provider-wind`：manifest discovery、MCP 双层信封规范化、retry/circuit_breaker 透传。
 5. `provider-zyt`：身份/dataView、指标/城市/政策/报告、退出码与 JSON 错误规范化。
@@ -512,15 +696,16 @@ Provider Contract → 事实从哪里来、错误如何解释
 | 能力 | 验收标准 |
 |---|---|
 | 100+ 专家 | 启动 prompt 不增长；capability 检索可诊断 id/version 冲突 |
-| Provider | Wind/zyt 契约测试通过；错误码/口径/单位/provenance 不丢失；retry/circuit breaker 遵循 provider 指令 |
+| Provider | Wind/zyt 契约测试通过；错误码/口径/单位/provenance 不丢失；retry/circuit breaker 遵循 provider 指令；transports 只出现 mcp-stdio/mcp-http/http-api/local-cli 四类且凭据仅 credentialRef |
 | 贝壳 | 静态契约已完成（独立 Provider、与 zyt 互补已定稿）；剩余：Linux/macOS 实测响应 schema、错误行为、口径固化 |
-| 知识库 | 99wiki snapshot/citation/version 可追溯；本地文件惰性生效 |
+| 知识库 | 99wiki snapshot/citation/version 可追溯；本地文件惰性生效；领域知识库 manifest（边界/本体/集合/快照/检索/策略）+ 记录级 metadata（source/observedAt/validTime/region/unit/caliber/sensitivity/checksum）可校验；ingest→publish 流水线产物带 digest |
 | 模板 | 同一 TeamTemplate 经 CLI/API/模型入口调用产出同构 DAG |
 | 回滚 | spawn/task/provider/gate 任一故障不留下活动半团队 |
 | 门控 | hard gate 失败不得交付；两轮修复后状态明确；报告含定位与证据；B/C 分型正确 |
 | 匿名化 | public 输出无实名（确定性测试）；deceased/internalOnly 规则生效 |
 | 兼容 | V1 专家/场景继续可用；旧工具输出 schema 迁移期不破坏 |
 | 可追溯 | 每次交付的专家/工具/知识快照/模板/gate 版本可查 |
+| SkillPackage | 来源仅 builtin/workspace 本地路径（零网络，源代码级测试保证）；digest/license/upstreamProvenance 完整；静态内容只读懒加载、脚本必须经受控 ToolProvider；contributions 引用全部可解析；无 license 默认 internalOnly |
 
 ---
 

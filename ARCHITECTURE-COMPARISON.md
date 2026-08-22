@@ -2,6 +2,7 @@
 
 > 版本：原插件 `@nanmicoder/dsh-agent-teams` v0.1.7（fork 基线） vs 新插件 `@zhijian/dsh-expert-library` v0.1.0（当前迭代）
 > 日期：2026-08-19 · 依据：双方完整源码（Host + Client）
+> Phase 0 刷新（2026-08-22）：调度器/状态层已加硬化（cancelled 终态、补偿事务），skill 绑定改为仅本地，代码规模与打包状态按当前源码更新。
 
 ---
 
@@ -26,13 +27,13 @@
 | 领域路由 | 无 | **原生路由表**（11 话题 → 框架 → 主责领域 → 候选专家） |
 | 输出框架 | 无 | **5 套**（A 五维 / B 四段 / C 用户视角 / D 融合 / E 顾问） |
 | 知识包 | 无（成员可读工作区文件，但无指引机制） | **knowledge/** 目录约定 + persona 自动注入知识指引 |
-| 外部 skill 绑定 | 无 | **场景/工具可挂 GitHub skill**（拉取 + 缓存 + 降级） |
+| 外部 skill 绑定 | 无 | **场景/工具可挂本地安装 skill**（仅本地解析，运行时不联网、不自动更新） |
 | 成员 persona | 单一模板（worker 规则 + role） | 三级：通用 worker → 专家 persona → **智见 Profile 烘焙**（风格/金句/禁区/步骤） |
 | 会话事件 | `agent-teams/*`（7 种） | `expert-teams/*`（7 种，已改名） |
 | HTTP 路由 | `/plugins/dsh-agent-teams/{state,assets}` | `/plugins/dsh-expert-library/{state,assets}` |
 | 状态目录 | `<workspace>/.agent-teams/` | `<workspace>/.expert-teams/` |
-| 客户端 UI | 完整（ActivityPanel + 会话卡片，1246 行） | 源码保留未打包（后续版本） |
-| Host 代码量 | 3567 行 / 9 文件 | 8195 行 / 24 文件 |
+| 客户端 UI | 完整（ActivityPanel + 会话卡片，1246 行） | 已打包（`lib/client.js` + exports `./client`）：活动面板 + 会话卡片 + 文件视图 + 设置卡片（4070 行 tsx/ts + 1841 行 CSS） |
+| Host 代码量 | 3567 行 / 9 文件 | 11423 行 / 30 文件 |
 | 依赖关系 | 独立插件 | fork 后独立迭代，注册面全部改名，互不冲突 |
 
 ---
@@ -79,9 +80,12 @@
 | 知识指引 | 无 | 成员 persona 自动注入其知识包目录与文件清单 |
 | 退役守卫/冷恢复 | 有（不变） | 有（继承） |
 
-### 3.5 状态与调度层（继承不变）
+### 3.5 状态与调度层（继承 + Phase 0 硬化）
 
-`state.ts`（锁/原子写/JSON 校验/任务状态机/attempt 代际/邮箱租约/归档）与 `scheduler.ts`（事件驱动领取 + 冷恢复重试 + 投递失败精确回滚）**原样继承**。新插件仅：
+`state.ts`（锁/原子写/JSON 校验/任务状态机/attempt 代际/邮箱租约/归档）与 `scheduler.ts`（事件驱动领取 + 冷恢复重试 + 投递失败精确回滚）继承自原插件，并在 Phase 0 硬化：
+
+- 调度器新增 `shouldAutoRetryTask`：**cancelled 是终态、永不自动复活**；仅 failed 且 attempt ∈ {1,2}（预算 3 次内）才回池，旧数据（attempt 0）保持终态。
+- 状态层新增 `commitTaskUpdate` 补偿事务：先写任务 project 输出、后提交 team 记录；team 写失败时用快照回滚 project 文件，杜绝"team 记录声明了 project 没有的输出"。
 - TeamState 新增 `scenarioId`（场景溯源，persona 据此推断框架）
 - 状态目录改名 `.expert-teams`（与原名隔离）
 
@@ -104,7 +108,7 @@ dsh-agent-teams                     dsh-expert-library
                                     ├─ collab/ 协作模式 ★           │
                                     │   （辩论/圆桌/PPT/研报 DAG）    │
                                     ├─ knowledge.ts 知识包指引 ★     │
-                                    └─ skills.ts 外部 skill 绑定 ★   │
+                                    └─ skills.ts 本地 skill 绑定 ★   │
                                     └──────────────────────────────┘
 ```
 
@@ -133,6 +137,8 @@ dsh-agent-teams                     dsh-expert-library
 | 冷恢复续跑 | ✅ | ✅ | 继承 |
 | 双通道消息（steer/followup + 邮箱） | ✅ | ✅ | 继承 |
 | 调度器事件驱动领取 | ✅ | ✅ | 继承 |
+| 失败自动重试（attempt 预算 3 次） | — | ✅ Phase 0：`shouldAutoRetryTask`，cancelled 终态永不复活 | 新增硬化 |
+| 任务提交补偿事务 | — | ✅ Phase 0：`commitTaskUpdate`（project 先写、team 后提交、失败回滚） | 新增硬化 |
 | 删除归档（archive/） | ✅ | ✅ | 继承 |
 | 专家注册表 | — | ✅ 40 位，用户 JSON 可覆盖 | 新增 |
 | 场景任务 DAG | — | ✅ 10 个 | 新增 |
@@ -140,7 +146,7 @@ dsh-agent-teams                     dsh-expert-library
 | persona 三级烘焙 | — | ✅ 通用/专家/智见 | 新增 |
 | 模型路由三级预置 | — | ✅ | 新增 |
 | 知识包指引 | — | ✅ 惰性生效 | 新增 |
-| 外部 skill 绑定 | — | ✅ 拉取+缓存+降级 | 新增 |
+| 外部 skill 绑定 | — | ✅ 仅本地解析 + 降级（运行时不联网） | 新增 |
 
 ---
 
@@ -170,14 +176,14 @@ dsh-agent-teams                     dsh-expert-library
 
 | 模块 | 原 | 新 | 说明 |
 |---|---|---|---|
-| tools.ts | 1160 行 / 10 工具 | 1475 行 / 11 工具 + 核心提取 | 增量小，核心复用 |
-| members.ts | 490 行 | 545 行 | +专家 persona / 烘焙钩子 |
-| state.ts | 882 行 | 883 行 | +scenarioId 校验 |
-| scheduler.ts | 265 行 | 265 行 | 未动 |
-| index.ts | 224 行 | 275 行 | +协议/注册 |
-| 新模块 | — | +3345 行 | 专家数据 1745 + 路由/框架/工具/知识/skill 1600 |
-| Host 合计 | 3567 行 | 8195 行 | 2.3×（其中 21% 为生成数据） |
-| Client | 1246 行 | 保留未打包 | 后续版本 |
+| tools.ts | 1160 行 / 10 工具 | 1599 行 / 11 工具 + 核心提取 | 增量小，核心复用 |
+| members.ts | 490 行 | 603 行 | +专家 persona / 烘焙钩子 / memberRouteRequest 路由优先级 |
+| state.ts | 882 行 | 1104 行 | +scenarioId 校验 / commitTaskUpdate 补偿事务 |
+| scheduler.ts | 265 行 | 330 行 | +shouldAutoRetryTask（cancelled 终态 / attempt 预算） |
+| index.ts | 224 行 | 618 行 | +协议/注册/领域工具清单 |
+| 新模块 | — | +7169 行 | 专家数据 1745 + 路由/框架/工具/知识/skill 3532 + v2 schema 基础 1892 |
+| Host 合计 | 3567 行 / 9 文件 | 11423 行 / 30 文件 | 3.2×（其中 15% 为生成数据） |
+| Client | 1246 行 | 4070 行 tsx/ts + 1841 行 CSS（已打包） | 活动面板/会话卡片/文件视图/设置卡片 |
 
 ---
 
@@ -187,7 +193,7 @@ dsh-agent-teams                     dsh-expert-library
 2. **从"单一人设"到"persona 三级烘焙"**：worker → 专家 → 领域 Profile，越具体越少依赖模型对资料的自主解析，越接近"真正的专家分身"。
 3. **从"prompt 约束"到"结构化约束"**：原插件依赖系统提示文本约束行为；新插件把约束（字数闸门、四要素、数字核实、匿名化、已故专家）下沉为数据与任务描述，协议变薄。
 4. **组合爆炸的收敛**：若按"专家为主入口"，40 专家 × 10 产出 = 400 组合无法选择；以场景为主入口 + 专家为参数 + 路由收敛 + 用户拍板，组合被结构化消解。
-5. **可插拔性**：知识包（数据）、自定义专家/场景（JSON）、外部 skill（repo）三层可插拔，全部惰性生效——插件本体不动，能力持续增长。
+5. **可插拔性**：知识包（数据）、自定义专家/场景（JSON）、外部 skill（本地安装，运行时不联网）三层可插拔，全部惰性生效——插件本体不动，能力持续增长。
 6. **兼容性策略**：注册面全部改名换取共存能力，机制层保持同源（继承成熟度），这是"独立迭代"的稳妥路径。
 
 ---
@@ -199,7 +205,7 @@ dsh-agent-teams                     dsh-expert-library
 | 能否共存 | ✅ 可以。注册面（工具/事件/路由/状态目录）全部独立，互不干扰 |
 | 是否建议同时启用 | ⚠️ 不建议。两套队长协议同时在系统提示中会让模型混淆入口；按需二选一 |
 | 迁移成本 | 低。机制同源，原团队数据（`.agent-teams/`）可通过改目录名导入新插件（scenarioId 缺失不影响） |
-| 新插件的代价 | 体积 2.3×（含 1745 行生成数据）、客户端 UI 暂缺、协议更长 |
+| 新插件的代价 | 体积 3.2×（含 1745 行生成数据 + v2 schema 基础 1892 行）、协议更长 |
 
 ---
 

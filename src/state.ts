@@ -236,6 +236,54 @@ export async function writeTaskProjectOutput(
   await atomicWriteText(join(teamDir, task.project.path, 'project.json'), JSON.stringify({ ...task.project, taskId: task.id, status: task.status, updatedAt: task.updatedAt }, null, 2))
 }
 
+/** Injectable write operations of {@link commitTaskUpdate}; defaults write real files. */
+export interface TaskCommitPrimitives {
+  /** Writes one task's project output files (default: {@link writeTaskProjectOutput}). */
+  readonly writeProject?: (task: TeamTask) => Promise<void>
+  /** Persists the team record (default: {@link writeTeam}). */
+  readonly writeTeamRecord?: () => Promise<void>
+}
+
+/**
+ * In-process compensating transaction for one task mutation: write the task's
+ * project output first, then commit the team record. When the team write
+ * fails, the project files are restored from the pre-update snapshot so the
+ * durable record never claims an output the project does not hold; a failure
+ * while restoring surfaces as an {@link AggregateError} alongside the
+ * original error.
+ *
+ * This is a best-effort in-process compensation, not a crash-safe protocol:
+ * a process death between the project write and the team write can leave a
+ * written-but-uncommitted project output (harmless in practice — the team
+ * record stays authoritative until it is successfully written). Closing that
+ * window requires a write-ahead journal of task commits, planned for a later
+ * phase; do not widen this helper beyond compensation.
+ */
+export async function commitTaskUpdate(
+  stateRoot: string,
+  team: TeamState,
+  task: TeamTask,
+  snapshot: TeamTask,
+  primitives: TaskCommitPrimitives = {},
+): Promise<void> {
+  const writeProject = primitives.writeProject ?? ((current: TeamTask) => writeTaskProjectOutput(stateRoot, team.id, current))
+  const writeTeamRecord = primitives.writeTeamRecord ?? (() => writeTeam(stateRoot, team))
+  await writeProject(task)
+  try {
+    await writeTeamRecord()
+  } catch (error: unknown) {
+    try {
+      await writeProject(snapshot)
+    } catch (restoreError: unknown) {
+      throw new AggregateError(
+        [error, restoreError],
+        `task ${task.id} commit failed and the project rollback failed too; the team record was not committed`,
+      )
+    }
+    throw error
+  }
+}
+
 export async function createTeamDir(stateRoot: string, state: TeamState): Promise<void> {
   const dir = join(stateRoot, state.id)
   await mkdir(join(dir, 'inbox'), { recursive: true })

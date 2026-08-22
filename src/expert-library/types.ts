@@ -60,13 +60,14 @@ export interface ScenarioTaskTemplate {
 
 /**
  * Optional external skill binding of a scenario: when applied, the plugin
- * fetches (or reads from the local cache) the skill's SKILL.md and makes it
- * available to the team as reference material.
+ * reads the locally-installed skill's SKILL.md and makes it available to
+ * the team as reference material. Skills are local-only — the runtime
+ * never fetches from GitHub or any HTTP endpoint.
  */
 export interface ScenarioSkillBinding {
-  /** GitHub repo (`owner/repo`) hosting the skill. */
-  readonly repo: string
-  /** Skill name; defaults to the repo short name. */
+  /** Local skill id: the folder name under `<knowledgeDir>/skills/`. */
+  readonly id: string
+  /** Skill display name; defaults to the id. */
   readonly name?: string
   /** One-line purpose note injected into the team description. */
   readonly purpose?: string

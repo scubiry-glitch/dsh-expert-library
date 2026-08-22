@@ -15,7 +15,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { isSafeKnowledgeId } from '../knowledge.ts'
-import { isValidRepo } from '../skills.ts'
+import { isSafeSkillId } from '../skills.ts'
 import { BUILTIN_EXPERT_BY_ID } from './builtin-experts.ts'
 import { BUILTIN_SCENARIO_BY_ID } from './builtin-scenarios.ts'
 import { ZHIJIAN_EXPERT_BY_ID } from '../zhijian/registry.ts'
@@ -93,8 +93,9 @@ function parseExpert(value: unknown): Expert | undefined {
  *   cycles structurally impossible (tasks are created in array order and a
  *   task can only depend on already-created ones); duplicate entries are also
  *   rejected, matching the strict task-creation boundary in `tools.ts`;
- * - an optional `skill` binding is validated strictly: `repo` must match the
- *   GitHub owner/repo format and `appliesToTaskIndex` must be in range.
+ * - an optional `skill` binding is validated strictly: `id` must be a safe
+ *   local skill id (folder under `<knowledgeDir>/skills/`) and
+ *   `appliesToTaskIndex` must be in range.
  *
  * Exported for unit testing at the pure input boundary.
  */
@@ -148,15 +149,16 @@ export function parseScenario(value: unknown): Scenario | undefined {
 }
 
 /**
- * Validate one scenario skill binding: `repo` must be a strict GitHub
- * owner/repo, `name`/`purpose` must be strings when present, and
+ * Validate one scenario skill binding: `id` must be a safe local skill id
+ * (a single path segment under `<knowledgeDir>/skills/`; never a repo URL
+ * or `owner/repo`), `name`/`purpose` must be strings when present, and
  * `appliesToTaskIndex` must be an integer inside the task array. Returns
  * undefined when the binding is absent; rejects the whole scenario when a
  * present binding is malformed.
  */
 function parseScenarioSkill(value: unknown, taskCount: number): ScenarioSkillBinding | undefined {
   if (value === undefined) return undefined
-  if (!isRecord(value) || typeof value['repo'] !== 'string' || !isValidRepo(value['repo'])) {
+  if (!isRecord(value) || typeof value['id'] !== 'string' || !isSafeSkillId(value['id'])) {
     return undefined
   }
   const name = value['name']
@@ -172,7 +174,7 @@ function parseScenarioSkill(value: unknown, taskCount: number): ScenarioSkillBin
     return undefined
   }
   return {
-    repo: value['repo'],
+    id: value['id'],
     ...(typeof name === 'string' ? { name } : {}),
     ...(typeof purpose === 'string' ? { purpose } : {}),
     ...(typeof appliesToTaskIndex === 'number' ? { appliesToTaskIndex } : {}),

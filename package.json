@@ -15,6 +15,10 @@
       "types": "./lib/types/preset.d.ts",
       "default": "./lib/preset.js"
     },
+    "./v2": {
+      "types": "./lib/types/v2/index.d.ts",
+      "default": "./lib/v2/index.js"
+    },
     "./client": "./lib/client.js",
     "./package.json": "./package.json"
   },
