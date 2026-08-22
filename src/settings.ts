@@ -97,6 +97,12 @@ export interface ExpertLibrarySettings {
   defaultModel?: ExpertModelRoute
   /** Per-tool execution policy (API vs CLI vs auto). */
   toolExecution?: Record<string, ToolExecutionConfig>
+  /** Provider path/endpoint configuration (wind/zyt/beike); env/probe defaults apply when absent. */
+  providers?: {
+    wind?: { cliPath?: string }
+    zyt?: { baseUrl?: string; cliCommand?: string; preferCli?: boolean }
+    beike?: { baseUrl?: string; cliCommand?: string; preferCli?: boolean }
+  }
 }
 
 const modelRouteSchema = z.object({
@@ -125,6 +131,10 @@ const toolExecutionSchema = z.dict(z.object({
   preferredRoles: z.array(z.string()),
 }))
 
+const providerWindSchema = z.object({ cliPath: z.string() })
+const providerZytSchema = z.object({ baseUrl: z.string(), cliCommand: z.string(), preferCli: z.boolean() })
+const providerBeikeSchema = z.object({ baseUrl: z.string(), cliCommand: z.string(), preferCli: z.boolean() })
+
 /**
  * Schema resolving the expert-library settings namespace. Mirrors the plugin
  * `Config` shape (the entry config is the composition `base` layer); fields are
@@ -141,6 +151,11 @@ export const ExpertLibrarySettingsSchema: z<ExpertLibrarySettings> = z.object({
   announceToAgent: z.boolean(),
   defaultModel: modelRouteSchema,
   toolExecution: toolExecutionSchema,
+  providers: z.object({
+    wind: providerWindSchema,
+    zyt: providerZytSchema,
+    beike: providerBeikeSchema,
+  }),
 })
 
 /** Hooks the consumer hands to {@link installExpertLibrarySettings}. */

@@ -84,6 +84,13 @@ export interface TeamTask {
   handoffId?: string
   /** A handoff is quiescing the old owner; the scheduler must not dispatch it yet. */
   reassigning?: boolean
+  /** Provenance: the compiled V2 plan task this physical task derives from (apply bridge). */
+  planTask?: {
+    /** Logical CompiledTask id inside the ExecutionPlan. */
+    logicalId: string
+    /** Position among the logical task's rostered expert ids (fan-out), when expanded. */
+    fanOutIndex?: number
+  }
   createdAt: number
   updatedAt: number
 }
@@ -139,6 +146,19 @@ export interface TeamState {
   createdAt: number
   /** Scenario id this team was assembled from (Expert Library), when any. */
   scenarioId?: string
+  /** Provenance: the compiled ExecutionPlan this team was assembled from (apply bridge). */
+  planRef?: {
+    planId: string
+    digest: string
+    templateId: string
+    templateVersion: string
+    scenarioId?: string
+  }
+  /** Optional audit snapshot: normalized compile params + the compiler decision trail. */
+  planProvenance?: {
+    params: Record<string, unknown>
+    compile: readonly { step: string; detail: string }[]
+  }
   /** Teammates only; the captain is implicit (the owning session). */
   members: TeamMember[]
   tasks: TeamTask[]

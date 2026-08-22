@@ -402,6 +402,10 @@ function validateTransport(diags: Diagnostics, value: unknown, path: string): { 
       if (!isNonEmptyString(value['command'])) {
         diags.add('invalid-field', `${path}.command`, 'local-cli transport needs a non-empty command')
       }
+      const args = value['args']
+      if (args !== undefined && !isStringArray(args)) {
+        diags.add('invalid-field', `${path}.args`, 'local-cli args must be a string array when present')
+      }
       const workingDirectory = value['workingDirectory']
       if (workingDirectory !== undefined && typeof workingDirectory !== 'string') {
         diags.add('invalid-field', `${path}.workingDirectory`, 'local-cli workingDirectory must be a string when present')

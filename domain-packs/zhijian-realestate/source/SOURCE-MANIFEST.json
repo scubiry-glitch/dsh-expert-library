@@ -1,0 +1,108 @@
+{
+  "packId": "zhijian-realestate",
+  "packVersion": "1.0.0",
+  "schemaVersion": 2,
+  "baseline": {
+    "source": "智见点评_skill_20260819.zip",
+    "date": "2026-08-19T00:00:00Z",
+    "snapshot": "zhijian-v1-2026-08-19",
+    "zipTotalFiles": 156,
+    "expertCount": 32,
+    "note": "Original 2026-08-19 zip baseline (BK-002..BK-033). Archive: /root/.openclaw/media/outbound/智见点评_skill_20260819.zip"
+  },
+  "rawProfiles": {
+    "count": 32,
+    "files": {
+      "廖俊平_专家Profile_BK-002.json": "f3a542a1dd485cf21bfa562f8abe2e62f1433fd02792f325f84948dd7e1285c9",
+      "仇保兴_专家Profile_BK-003.json": "748777b4d5b1c06321929aab286cb00f369c00b50c11d1d094a3f4619058f1ea",
+      "邢自强_专家Profile_BK-004.json": "220494f0b7e1e8b92a7eba551718828b25f08b42c5e073278e4b900dcec3f347",
+      "任泽平_专家Profile_BK-005.json": "0add7b15402d84d3830ef0e8687bf0eeeed529fe90b25b8b3984b651b7d4f350",
+      "李宇嘉_专家Profile_BK-006.json": "a7a19e71fdfc9dab366177e68641280e90dbfa4f66138e1dacb8c582c5eacccd",
+      "张明_专家Profile_BK-007.json": "298fcb664a7583aa8e33af7e796355a4078bd2c7d12c023d1a3b1c4247fbf4cd",
+      "付鹏_专家Profile_BK-008.json": "0a6571b75cc68de7db02b725b79c176509f50d1c084e90068c394afd678bdf81",
+      "罗志恒_专家Profile_BK-009.json": "f41078ca5f3f7aefd0334254a0c90413f79c685c1787766950cdf28f126bd55c",
+      "夏磊_专家Profile_BK-010.json": "92f508be4fd5feb4cca7a216ad472528cbcedc138b43332311987e34004336a1",
+      "吴璟_专家Profile_BK-011.json": "1696bdd57c7858b4133d38e7aa78056d7b5f549ee660b5a8b08aa44879675119",
+      "刘琳_专家Profile_BK-012.json": "1180be4fe59bc37650c19d6f026ac0d2fb9e79caa4945ef5b3f4078a8b9ae3a5",
+      "况伟大_专家Profile_BK-013.json": "77ac09727d0fb641fe62de1ed542685ee378fbec8edc0ffe44064c658c235f38",
+      "盛松成_专家Profile_BK-014.json": "15466abad6b36c4185515d37ccb0a748d7379746791e9bee3682966cb1945c23",
+      "马光远_专家Profile_BK-015.json": "5025410f877521df3f9d07a790e91baaf988f923d5714ee89eeb33c69ee0dc1c",
+      "黄奇帆_专家Profile_BK-016.json": "588a7ad28b5db4203471720f904e684d63581250c1f133ec013a553da267158d",
+      "陆铭_专家Profile_BK-017.json": "e01d6c8c5eca78175eb7bf6c3ff93e8b83afdde2ff27fa54d8fc9ce1df4ec4b9",
+      "柴强_专家Profile_BK-018.json": "1450f1ffa201b2ee37274c37f1c79746a07b33c970d2ea0b85e2147e21af8553",
+      "徐斌_专家Profile_BK-019.json": "e218251343b8981a5e86a48c3f10bb1c9dc0bc98fc996e611ba8064b432957df",
+      "陈淮_专家Profile_BK-020.json": "cc045e0d92796d0fa440188016c42bab50ecd2296c9792ae2808a79f78faafb4",
+      "秦虹_专家Profile_BK-021.json": "5560e2bd4f397c55b1cdb2d56139fb8863535e071c49addfac92247715566182",
+      "顾云昌_专家Profile_BK-022.json": "be595e97485e346b69602f52741000ede298cd47ab660ebe55cbdfa3ef4628e1",
+      "赵燕菁_专家Profile_BK-023.json": "1d9e629fc19277fe9cd219d630ebf2f82b3f4f4b0893fde72d41f896e90bd975",
+      "丁祖昱_专家Profile_BK-024.json": "162361516da9fe9d354bee26fbdbc35265b368e7be690d1e597742b7cb651f9e",
+      "黄瑜_专家Profile_BK-025.json": "c98d1979b84153f3381c96997ea903010a526a8d10aafddde12981d3053baf8c",
+      "刘洪玉_专家Profile_BK-026.json": "60c5005dc1263e2ec2a687e85f701b49ff4d0c2ac4884237be10d95b8b552859",
+      "冯俊_专家Profile_BK-027.json": "b891656abf166e3c3865bb91211c82dd63429d28646afc98ea19bda2f604cdb9",
+      "赵晖_专家Profile_BK-028.json": "da42871f94c0ef770ae864b89fe256fe0b19cdcb16164bac9ae8b982a2c65a20",
+      "伍戈_专家Profile_BK-029.json": "1b89dd7cba921df86c5ae86353b32004e6122642648e48655253ad3e6724105a",
+      "李铁_专家Profile_BK-030.json": "cb1311086c3a1824ce0c791c59274059c69decb056ad595344b2df1365826150",
+      "陶琦_专家Profile_BK-031.json": "34a01d03c20371c9472edd4073b3dc579c676ccc53f2894a17da4c74a0779a5e",
+      "楼继伟_专家Profile_BK-032.json": "89549eeb4d80f89c1e8e611df2be8c619f911a0720b025498e7324e3b9618f5f",
+      "杨现领_专家Profile_BK-033.json": "d0e485856d26bd70cc7297ac7c934a57aea4f92cc2f289f7a19433aba0cfff66"
+    }
+  },
+  "docs": {
+    "count": 6,
+    "files": {
+      "SKILL.md": "bdcde3ae101270340fd0c0631f0a221ffddc4770c343c9a805b6bfddf6366fc4",
+      "专家分类框架_v1.md": "7f9a9476a515fa2c55e2096eb7c9b2556e4ca29ea3a5a6d5f9dc071569abfcf7",
+      "专家总表.md": "e0ee8b20140de8d2461b2739d16d0f3fea1ffe50436808985bcd2fef18e91756",
+      "专家输出框架规范_20260809.md": "afe5fae99ec5bcdde5a9c52decb1495a07bb7df5081a77c65652b8c9e045a663",
+      "资料更新规范.md": "b1bb7ae6fed68e209885118f85a4e24a93b715c2a04475652be5e76e783e9814",
+      "路由规则.md": "5d80f9c00567537a369d03ad9aadba177dd617d46c1a642b15fdfb920d45e136"
+    }
+  },
+  "library": {
+    "count": 32,
+    "files": {
+      "BK-002_廖俊平.md": "a407cd19e8ef6648da365ba5824820d54ee3b43f6c323f554f789fec6c162d3e",
+      "BK-003_仇保兴.md": "2e37a9c40184cb6da04c9c8f0c9ce729b6e6e594df759bd8ad9b6ddf1562ace8",
+      "BK-004_邢自强.md": "a9e4a902d80c0ddc56b7dc8457b5daca4a426525510ba5b5456e22bca6b73ead",
+      "BK-005_任泽平.md": "6d140f324821a6dcc3a41b3ac50a0c263433f0cc4bb142c186bfbd31694dd3a9",
+      "BK-006_李宇嘉.md": "c0646491562081d762a6a4724d19a8eb901c348d585df279f9e9d4066afab171",
+      "BK-007_张明.md": "73e4cc4b54e738abfbe800f18a64b9202bc7632fb133e4f24c28ae07c364ddf2",
+      "BK-008_付鹏.md": "8d279b39f2315763ff63661dfb8338c8787fc3ba287c6c09c64748621449084b",
+      "BK-009_罗志恒.md": "2d6328d043f5d2904dd7e2a1d8bb3b6e72f66932f9ab2fe920a5b53312ed961f",
+      "BK-010_夏磊.md": "57d7d18e1dc3f0b315f6fe0e499a1ba33022ef356b4cacffe753eb866de5ca1a",
+      "BK-011_吴璟.md": "cddb1c9dad491f92351925b968f16d067790ab3c3b672d800ede910bbfe6e004",
+      "BK-012_刘琳.md": "333e9495eabafccfb0f9a7f7cd4a8da7aeb4326dc4f8fa8ebb01a3cdc8f4b203",
+      "BK-013_况伟大.md": "33fe0fd7ce87da60b8b0cd814fc2fadba413150bb4f6adff203c4a6ac890206f",
+      "BK-014_盛松成.md": "e7c6a859b5fb93240848c78e75e1ac23d99ca28e043ea842533d62f1b6c30cda",
+      "BK-015_马光远.md": "352cbb90766e81e685757b3e7bf5b7b31e5b113f9d23423222269b09c03a0d76",
+      "BK-016_黄奇帆.md": "c7819460fd820924f774d71bcbca14e1de30b05e32274b4c4f888fe1e281b5ab",
+      "BK-017_陆铭.md": "3ee6b3d597e4ff67d0e8f9611e0ca7bda0e5768ab8cf6f04e188cec274c47e03",
+      "BK-018_柴强.md": "dae98501459ef9b977bf7877e580081b9bff24cedb19c68d219a513a2ac9176e",
+      "BK-019_徐斌.md": "6ebbe2b197b1eada2aecd0fdcc4fe4351a3a72ac7f5825e77e0c594f18a91581",
+      "BK-020_陈淮.md": "c1a06545b90a91e36d838cbedb5b51f8b0a3859bb42ce4583f05e1df20b9e623",
+      "BK-021_秦虹.md": "a6b19a1d214b139047f01ba3b7b61ef4a070359ff0b649f7b2bbcacc55aef131",
+      "BK-022_顾云昌.md": "d338d4e1b8c0450027a2817dca679228cf122fa6ffa9de994726aee4c907364f",
+      "BK-023_赵燕菁.md": "8701fa697a3f05c7f2e5f022941b188fc78256a1c705a47b18b86eea46afd9a3",
+      "BK-024_丁祖昱.md": "1139c651cb3e36d549358308d68c502d79d4781fb73375ba5e9f5dfe406568d3",
+      "BK-025_黄瑜.md": "a352180cf92bbe7ff514762242c126adccd49a7537a5e3638baef7efaef6359c",
+      "BK-026_刘洪玉.md": "207f8385834a93e2322a610ccebd7897f5144c4e4999660583d4654a7c07a33f",
+      "BK-027_冯俊.md": "9ba11bd22bcf87b30569ec7c88085eb9bac34d4ca22b749ef539bf532e6e7b88",
+      "BK-028_赵晖.md": "df25755f851eddc13d24f57a39091261002248ff2d0a5473c736f852b8a5b433",
+      "BK-029_伍戈.md": "f81dec4762f18ed48bd05fedfaad96e741b3f6b43eae31750504fb2f2619e98f",
+      "BK-030_李铁.md": "d5d62240978d8cdaca5efe36e9b2ef719fddb1248b07373f851dcbf5f958e4e2",
+      "BK-031_陶琦.md": "671cd1a3dcda7a09cf443eec1c1f73689b24c804be30bf4495770b669225890d",
+      "BK-032_楼继伟.md": "14e06b208e88422323c3de65ffc517d998b38c765828736453f3a467e8108efe",
+      "BK-033_杨现领.md": "f516102ae931fb413d5ba6739de5c22f5fb1ee8610ca6ec03774402d757043c2"
+    }
+  },
+  "deferredUpgrades": [
+    {
+      "version": "1.1.0",
+      "adds": [
+        "bk-034 陈杰"
+      ],
+      "source": "/root/.openclaw/workspace/skills/智见点评 (unpacked copy, updated 2026-08-20/21)",
+      "reason": "BK-034 was added to the unpacked source on 2026-08-20 (专家总表.md 33 rows, 路由规则.md candidates updated 2026-08-21). NOT merged into 1.0.0 to preserve compatibility with the in-repo 32-expert runtime baseline. Apply by regenerating the pack from that source and bumping the pack version."
+    }
+  ]
+}

@@ -276,7 +276,21 @@ function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: str
           description: '用户拍板选定的专家 id（bk-*），1-5 位',
         },
         data: { type: 'string', description: '数据本体（指标/数值/口径/城市/时段）' },
-        outputForm: { type: 'string', enum: ['discussion', 'final'] },
+        outputForm: { type: 'string', enum: ['discussion', 'final'], description: '输出形态' },
+        // Runtime-shape params: the review adapter folds the framework spec +
+        // the request context into these, and the apply bridge interpolates
+        // them into the placeholder-based task copy below. This keeps the
+        // template declarative while reproducing the V1 review copy exactly
+        // (framework steps/constraints numbered, word-limit line conditional,
+        // fusion rules from GLOBAL_OUTPUT_RULES with the literal `5. ` prefix).
+        dataContext: { type: 'string', description: '数据本体/来源/城市/时段上下文（适配器组装）' },
+        frameworkName: { type: 'string', description: '框架名称（framework.name）' },
+        frameworkSteps: { type: 'string', description: '框架步骤（编号 1..n 拼接）' },
+        frameworkConstraints: { type: 'string', description: '框架约束（编号 1..n 拼接）' },
+        wordLimitLine: { type: 'string', description: '字数约束行（含换行前缀；无约束为空串）' },
+        frameworkWordLimitParen: { type: 'string', description: '括号内的字数约束（用于融合任务；无约束为空串）' },
+        outputFormText: { type: 'string', description: '输出形态中文（讨论稿/正式稿）' },
+        fusionExtraRules: { type: 'string', description: '融合任务附加规则行（GLOBAL_OUTPUT_RULES 过滤，字面 `5. ` 前缀）' },
       },
       required: ['selectedExpertIds', 'data'],
     },
@@ -292,7 +306,12 @@ function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: str
       {
         id: 'role.fusion',
         capabilities: [REVIEW_CAPABILITY],
-        cardinality: { min: 1, max: 1 },
+        // min 0: the fusion task stays UNASSIGNED (shared pool) exactly like
+        // the V1 `expert_review_apply` runtime — an optional slot auto-fills
+        // zero experts, so no extra member is rostered and no expert is pinned
+        // to the fusion task. (min 1 would auto-fill the top-ranked reviewer,
+        // adding a member and assigning the fusion task — a behavior change.)
+        cardinality: { min: 0, max: 1 },
       },
     ],
     tasks: [
@@ -304,11 +323,21 @@ function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: str
           { kind: 'parameter', ref: 'data' },
           { kind: 'parameter', ref: 'selectedExpertIds' },
         ],
-        allowedCapabilities: [REVIEW_CAPABILITY],
+        // The review capability is a ROSTER requirement (scenario
+        // requiredCapabilities), never a tool: leaving it out of
+        // allowedCapabilities keeps the template compilable WITHOUT a
+        // scenario (the adapter's "no standard scenario" note branch) — a
+        // scenario-less compile treats every allowedCapability as tool-allowed
+        // and would demand a tool provider for `zhijian.review`.
+        allowedCapabilities: [],
         outputSchema: outputTemplate,
         retryPolicy: 'quality-repair',
-        subject: '专家独立研判（逻辑任务：编译后按 expertIds 扇出为每位选定专家一个物理执行）',
-        description: `以选定专家的身份独立研判，输出框架 ${framework.name}（${framework.appliesTo}）。结论先行、数字带口径、匿名标注「领域·首字母」。`,
+        // Logical reviewer task: compiled `expertIds` = the selected experts;
+        // the apply bridge fans out one physical review per expert id and
+        // interpolates the per-expert placeholders from the adapter-supplied
+        // expertDisplay ({expertName}/{expertField}/{expertInitials}).
+        subject: '专家研判：{expertName}（{expertField}·{expertInitials}）',
+        description: '以专家「{expertName}」身份独立研判，输出框架 {frameworkName}。\n\n{dataContext}\n\n{frameworkSteps}{wordLimitLine}\n约束：{frameworkConstraints}\n匿名标注：文内身份只标「{expertField}·{expertInitials}」。完成后提交完整点评文本到 output。',
       },
       {
         id: 't2',
@@ -319,7 +348,7 @@ function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: str
         outputSchema: outputTemplate,
         retryPolicy: 'quality-repair',
         subject: '融合合成与渲染（讨论稿/正式稿）',
-        description: '主基调为锚：支撑主基调的论证保留，偏离观点降级为边界条件/风险提示（"若 X 成立，基调需下修"）；匿名化按 renderMode 处理（讨论稿标「领域·首字母」，正式稿去标注仅留数据来源）。',
+        description: '综合以下专家研判任务：{dependencies}（用 expert_teams_status 读取各任务 output）。\n框架：{frameworkName}{frameworkWordLimitParen}\n输出形态：{outputFormText}。\n融合规则（主基调为锚）：\n1. 先定主基调 keynote（据数据事实判定；用户指定基调则严格跟随）。\n2. 支撑主基调的论证保留；偏离的观点降级为边界条件/风险提示（"若 X 成立，基调需下修"），不作"另一派"并列。\n3. 结论/归因/展望自洽，不前后矛盾。\n4. 匿名化：讨论稿正文关键处标「领域·首字母」+ 文末框架/口径/心智模型元信息；正式稿去全部标注仅留一行数据来源。\n{fusionExtraRules}\n完成后把全文写入 output。',
       },
     ],
     gates: [

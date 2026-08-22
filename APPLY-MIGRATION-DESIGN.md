@@ -526,19 +526,21 @@ existing validators), and an old team without them reads back unchanged.
 
 ## 10. Rollout order and risks
 
-1. `src/team-core.ts` extraction — full suite green (no behavior change).
-2. `src/apply.ts` + tests A, F — new code, nothing wired yet.
-3. `src/collab/templates.ts` + collab adapter + tests B.
-4. `src/v2/zhijian-pack.ts` template changes + review adapter + tests C + test E
-   (D4's assertion change is atomic with the template change).
-5. `scenarioApplyCore` rewrite + tests D.
-6. Full `pnpm test` + `pnpm typecheck`; verify `lib/` rebuild.
+Implemented in this order (per the migration directive "scenario_apply + expert_review_apply first"):
 
-**Risks and mitigations:** import cycle (mitigated by team-core split; in-tools.ts
-fallback noted); template-text drift (golden tests D lock every string); D3 rejections
-(adapter pre-validation keeps familiar messages; deltas documented and tested); D4
-(one-line assertion update, atomic with the template change); `state.ts` validators
-tolerate additive fields (test F).
+1. `src/team-core.ts` extraction (4 cores + helpers + `ToolsConfig`/`ExpertToolsCore`) — full suite green (no behavior change).
+2. `src/apply.ts` (`expandExecutionPlan` pure + `applyExecutionPlan` with rollback + planRef persistence) + provenance fields in `src/types.ts` + tests A/F.
+3. `scenarioApplyCore` → `compileV1ScenarioExecutionPlan` + `applyExecutionPlan` (memberOrder = scenario.experts order; taskSuffixes for skill blocks).
+4. `src/v2/zhijian-pack.ts` template changes (`role.fusion` min:0, runtime-shape params, placeholder copy, `allowedCapabilities: []` — see note below) + `expert_review_apply` → compile `zhijian.team.<framework>` + apply.
+5. `src/collab/templates.ts` (5 declarative TeamTemplates + `buildCollabDomainPack`) + collab modes → compile + apply.
+6. Tests (A–F) + updated assertions; full `pnpm build` + `pnpm test` + `pnpm typecheck` green (374/374).
+
+**Implementation discoveries (beyond the design):**
+- `frameworkTeamTemplate` tasks must declare `allowedCapabilities: []`: the compiler treats a scenario-less compile's task capabilities as tool-allowed and would demand a tool provider for `zhijian.review` (no-scenario compiles are the review adapter's "未匹配到标准场景" note branch). The review capability stays a roster requirement via the scenario's `requiredCapabilities`.
+- The collab `role.note-taker` slot gets an explicit `[]` assignment when no note_taker is given, so the 纪要 task stays deterministically unassigned.
+- The single-expert report path uses the `collab.research-report-single` variant (the compiler cannot drop the analyst task).
+
+**Risks and mitigations:** import cycle (mitigated by the team-core split); template-text drift (golden tests D lock every string); D3 rejections (adapter pre-validation keeps familiar messages; deltas documented and tested); D4 (one-line assertion update, atomic with the template change); `state.ts` validators tolerate additive fields (test F).
 
 **Out of scope (deliberately):** replacing the model-visible tool surface
 (`expert_template_apply` unification, §9.1), MethodPack progressive loading into task

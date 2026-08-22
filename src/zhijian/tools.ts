@@ -19,7 +19,10 @@ import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type { ExpertToolsCore, ToolsConfig } from '../tools.ts'
-import { createTeamCore, addMemberCore, createTaskCore, steerCaptainReport } from '../tools.ts'
+import { steerCaptainReport } from '../tools.ts'
+import { applyExecutionPlan, compileErrorOf } from '../apply.ts'
+import { compileExecutionPlan } from '../v2/compiler.ts'
+import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
 import { frameworkById, GLOBAL_OUTPUT_RULES } from './frameworks.ts'
 import { ZHIJIAN_EXPERTS } from './data/experts.generated.ts'
 import {
@@ -211,7 +214,6 @@ export function registerZhijianTools(
     },
     async execute(args, exec) {
       const captain = requireCaptain(exec)
-      const workspace = captain.session.header.cwd ?? process.cwd()
       const signal = exec.signal
       const frameworkId = args.framework as ZhijianFrameworkId
       const framework = frameworkById(frameworkId)
@@ -229,7 +231,6 @@ export function registerZhijianTools(
       }
 
       // 2. Route context for the team scenario id.
-      const route = topicRouteFor(args.topic_type)
       const scenario = scenarioForTopic(args.topic_type, frameworkId)
       const dataContext = [
         `数据本体：${args.data}`,
@@ -240,70 +241,71 @@ export function registerZhijianTools(
       const outputForm = args.output_form === 'final' ? '正式稿' : '讨论稿'
       const teamName = args.team_name?.trim() || `智见点评·${args.topic_type.slice(0, 20)}`
 
-      // 3. Create the team (scenario id keeps the framework for personas).
-      const team = await createTeamCore(ctx, config, captain, {
-        name: teamName,
+      // 3. Compile the framework TeamTemplate (zhijian.team.<framework>) with
+      // the runtime-shape params. The compiler's user-sign-off flow
+      // (params.selectedExpertIds → the unique `user-signoff` reviewer slot)
+      // drives the roster; framework steps/constraints and the data context
+      // are folded into params and interpolated into the task copy by the
+      // apply bridge, so the DAG is declarative while the strings match the
+      // previous imperative assembler exactly.
+      const steps = framework.steps.map((step, index) => `${index + 1}. ${step}`).join('\n')
+      const constraints = framework.constraints.map((rule, index) => `${index + 1}. ${rule}`).join('\n')
+      const wordLimitLine = framework.wordLimit === undefined ? '' : `\n字数约束：${framework.wordLimit}`
+      const wordLimitParen = framework.wordLimit === undefined ? '' : `（${framework.wordLimit}）`
+      const fusionExtraRules = GLOBAL_OUTPUT_RULES
+        .filter(rule => rule.includes('数字') || rule.includes('文风'))
+        .map(rule => `5. ${rule}`)
+        .join('\n')
+      const compiled = compileExecutionPlan({
+        pack: buildZhijianDomainPack(),
+        templateId: `zhijian.team.${frameworkId}`,
+        ...(scenario === undefined ? {} : { scenarioId: scenario.id }),
+        params: {
+          selectedExpertIds: selected,
+          data: args.data,
+          outputForm: args.output_form ?? 'discussion',
+          dataContext,
+          frameworkName: framework.name,
+          frameworkSteps: steps,
+          frameworkConstraints: constraints,
+          wordLimitLine,
+          frameworkWordLimitParen: wordLimitParen,
+          outputFormText: outputForm,
+          fusionExtraRules,
+        },
+      })
+      if (!compiled.ok) throw compileErrorOf(compiled)
+
+      // 4. Apply through the common plan adapter: create → members → tasks →
+      //    kick, with the whole assembly inside one try block so any failure
+      //    rolls the half-built team back (the imperative assembler had no
+      //    rollback and could wedge the captain's slot).
+      const expertDisplay = new Map<string, { name: string; field: string; initials: string }>()
+      for (const meta of metas) {
+        expertDisplay.set(meta!.id, { name: meta!.name, field: meta!.field, initials: meta!.initials })
+      }
+      const applied = await applyExecutionPlan(ctx, config, captain, compiled.plan, {
+        teamName,
         description: [
           `智见点评任务：${args.topic_type}（框架 ${framework.name}）`,
           `输出形态：${outputForm}`,
           dataContext,
           `基调融合：先定主基调 keynote（据数据事实判定；用户指定基调则严格跟随），偏离观点降级为边界条件/风险提示。`,
         ].join('\n\n'),
-        ...(scenario !== undefined ? { scenarioId: scenario.id } : {}),
-      }, signal)
-
-      // 4. Add the chosen experts (personas baked with the framework).
-      const members: string[] = []
-      for (const meta of metas) {
-        const added = await addMemberCore(ctx, config, captain, { expert: meta!.id }, signal, core.memberSelections)
-        members.push(added.member_name)
-      }
-
-      // 5. Seed the framework task DAG: parallel reviews → fusion → render.
-      const tasks: { task_id: string; subject: string; assignee?: string }[] = []
-      const reviewTaskIds: string[] = []
-      for (const [index, meta] of metas.entries()) {
-        const created = await createTaskCore(ctx, config, captain, {
-          subject: `专家研判：${meta!.name}（${meta!.field}·${meta!.initials}）`,
-          description: `以专家「${meta!.name}」身份独立研判，输出框架 ${framework.name}。\n\n${dataContext}\n\n${framework.steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}${framework.wordLimit !== undefined ? `\n字数约束：${framework.wordLimit}` : ''}\n约束：${framework.constraints.map((rule, i) => `${i + 1}. ${rule}`).join('\n')}\n匿名标注：文内身份只标「${meta!.field}·${meta!.initials}」。完成后提交完整点评文本到 output。`,
-        }, signal)
-        tasks.push({ task_id: created.task_id, subject: created.subject, assignee: members[index] })
-        reviewTaskIds.push(created.task_id)
-      }
-
-      // Fusion task: synthesize under the keynote, anonymized, rendered.
-      const fusion = await createTaskCore(ctx, config, captain, {
-        subject: '融合合成与渲染（讨论稿/正式稿）',
-        description: [
-          `综合以下专家研判任务：${reviewTaskIds.join(', ')}（用 expert_teams_status 读取各任务 output）。`,
-          `框架：${framework.name}${framework.wordLimit !== undefined ? `（${framework.wordLimit}）` : ''}`,
-          `输出形态：${outputForm}。`,
-          '融合规则（主基调为锚）：',
-          '1. 先定主基调 keynote（据数据事实判定；用户指定基调则严格跟随）。',
-          '2. 支撑主基调的论证保留；偏离的观点降级为边界条件/风险提示（"若 X 成立，基调需下修"），不作"另一派"并列。',
-          '3. 结论/归因/展望自洽，不前后矛盾。',
-          '4. 匿名化：讨论稿正文关键处标「领域·首字母」+ 文末框架/口径/心智模型元信息；正式稿去全部标注仅留一行数据来源。',
-          ...GLOBAL_OUTPUT_RULES.filter(rule => rule.includes('数字') || rule.includes('文风')).map(rule => `5. ${rule}`),
-          '完成后把全文写入 output。',
-        ].join('\n'),
-        dependencies: reviewTaskIds,
-      }, signal)
-      tasks.push({ task_id: fusion.task_id, subject: fusion.subject })
-
-      // Kick once: idle experts pick up their parallel reviews now.
-      await core.scheduler.kickTeam(workspace, team.team_id, captain)
+        expertDisplay,
+      }, signal, core)
 
       // Direct the first expert to start (parallelism seed, best effort).
-      if (members.length > 0) {
+      if (applied.members.length > 0) {
         steerCaptainReport(captain, 'expert-library', `点评团队已组建，请通过 expert_teams_status 跟踪进度；等待专家完成后整理融合稿呈现给用户。`)
       }
 
       return {
-        team_id: team.team_id,
-        team_name: team.team_name,
+        team_id: applied.team_id,
+        team_name: applied.team_name,
         framework: framework.id,
-        members,
-        tasks,
+        members: applied.members.map(member => member.member_name),
+        tasks: applied.tasks,
         ...(scenario === undefined
           ? { note: `未匹配到标准场景（候选由路由规则 §一 直接判定），任务 DAG 按框架 ${framework.id} 生成。` }
           : {}),

@@ -1,0 +1,21 @@
+[
+  { "argv": ["身份"], "plan": { "command": "身份", "method": "GET", "path": "/openapi/v1/me", "query": {}, "body": null } },
+  { "argv": ["me"], "plan": { "command": "身份", "method": "GET", "path": "/openapi/v1/me", "query": {}, "body": null } },
+  { "argv": ["指标目录"], "plan": { "command": "指标目录", "method": "GET", "path": "/openapi/v1/indicators/catalog", "query": {}, "body": null } },
+  { "argv": ["indicators", "catalog"], "plan": { "command": "指标目录", "method": "GET", "path": "/openapi/v1/indicators/catalog", "query": {}, "body": null } },
+  { "argv": ["指标时序", "--城市", "北京", "--指标", "SH_PRICE", "--期数", "6"], "plan": { "command": "指标时序", "method": "GET", "path": "/openapi/v1/indicators/series", "query": { "city": "北京", "code": "SH_PRICE", "limit": "6" }, "body": null } },
+  { "argv": ["indicators", "series", "--city", "上海", "--code", "SH_VOL", "--granularity", "district", "--district", "浦东新区"], "plan": { "command": "指标时序", "method": "GET", "path": "/openapi/v1/indicators/series", "query": { "city": "上海", "code": "SH_VOL", "granularity": "district", "district": "浦东新区" }, "body": null } },
+  { "argv": ["批量时序", "--city", "北京", "--queries", "[{\"code\":\"SH_PRICE\"}]", "--limit", "3"], "plan": { "command": "批量时序", "method": "POST", "path": "/openapi/v1/indicators/batch-series", "query": {}, "body": { "city": "北京", "queries": [{ "code": "SH_PRICE" }], "limit": 3 } } },
+  { "argv": ["多城对比", "--城市列表", "北京,上海", "--指标", "SH_VOL"], "plan": { "command": "多城对比", "method": "GET", "path": "/openapi/v1/indicators/compare", "query": { "cities": "北京,上海", "code": "SH_VOL" }, "body": null } },
+  { "argv": ["地理数据包", "--city", "北京", "--含同级"], "plan": { "command": "地理数据包", "method": "GET", "path": "/openapi/v1/geo/scope-bundle", "query": { "city": "北京", "includePeers": "1" }, "body": null } },
+  { "argv": ["地理时序", "--city", "北京", "--指标", "SH_PRICE"], "plan": { "command": "地理时序", "method": "GET", "path": "/openapi/v1/geo/series", "query": { "city": "北京", "code": "SH_PRICE" }, "body": null } },
+  { "argv": ["地理树", "--城市", "北京"], "plan": { "command": "地理树", "method": "GET", "path": "/openapi/v1/geo/tree", "query": { "city": "北京" }, "body": null } },
+  { "argv": ["地理搜索", "--city", "北京", "--关键词", "望京"], "plan": { "command": "地理搜索", "method": "GET", "path": "/openapi/v1/geo/search", "query": { "city": "北京", "q": "望京" }, "body": null } },
+  { "argv": ["行政区分布", "--city", "北京"], "plan": { "command": "行政区分布", "method": "GET", "path": "/openapi/v1/districts", "query": { "city": "北京" }, "body": null } },
+  { "argv": ["市场快照", "--城市", "北京", "--月份", "2026-06"], "plan": { "command": "市场快照", "method": "GET", "path": "/openapi/v1/market-snapshot", "query": { "city": "北京", "period": "2026-06" }, "body": null } },
+  { "argv": ["报告列表", "--city", "北京"], "plan": { "command": "报告列表", "method": "GET", "path": "/openapi/v1/reports", "query": { "city": "北京" }, "body": null } },
+  { "argv": ["报告详情", "rep-1"], "plan": { "command": "报告详情", "method": "GET", "path": "/openapi/v1/reports/rep-1", "query": {}, "body": null } },
+  { "argv": ["政策列表", "--城市", "北京", "--分类", "限购"], "plan": { "command": "政策列表", "method": "GET", "path": "/openapi/v1/policies", "query": { "city": "北京", "category": "限购" }, "body": null } },
+  { "argv": ["geo", "search", "--city", "北京", "--q", "望京"], "plan": { "command": "地理搜索", "method": "GET", "path": "/openapi/v1/geo/search", "query": { "city": "北京", "q": "望京" }, "body": null } },
+  { "argv": ["reports", "get", "rep-1"], "plan": { "command": "报告详情", "method": "GET", "path": "/openapi/v1/reports/rep-1", "query": {}, "body": null } }
+]

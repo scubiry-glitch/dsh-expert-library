@@ -601,6 +601,8 @@ export interface InvokeAdapterRequest {
   readonly input: unknown
   /** Audit context (task/plan id…) forwarded to the adapter for logging. */
   readonly context?: string
+  /** Caller cancellation signal forwarded to the Host transport runner. */
+  readonly signal?: AbortSignal
 }
 
 /**
@@ -626,6 +628,8 @@ export interface ProviderInvocationRequest {
   readonly approved?: boolean
   /** Audit context (task/plan id…). */
   readonly context?: string
+  /** Caller cancellation signal forwarded to the invoker's transport runner. */
+  readonly signal?: AbortSignal
 }
 
 export type AttachResult =
@@ -862,6 +866,7 @@ export class ProviderRegistry {
         transportId: binding.transportId,
         input: request.input,
         ...(request.context === undefined ? {} : { context: request.context }),
+        ...(request.signal === undefined ? {} : { signal: request.signal }),
       })
     } catch (error: unknown) {
       return fail('invoker-threw', 'invoker threw', 'provider adapter crashed; check the invoker implementation', { message: error instanceof Error ? error.message : String(error) })

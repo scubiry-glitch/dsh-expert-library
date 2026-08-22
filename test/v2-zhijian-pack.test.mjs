@@ -187,6 +187,16 @@ test('four team templates (A-D) model one logical review → fusion render; E ha
     assert.deepEqual(tasks[1].dependsOn, ['t1'], 'fusion depends on the logical review task')
     assert.equal(template.slots[0].approval, 'user-signoff')
     assert.deepEqual(template.slots[0].cardinality, { min: 1, max: 5 })
+    // role.fusion is optional (min 0): the fusion task stays unassigned
+    // (shared pool), matching the V1 review runtime — no auto-filled member.
+    assert.deepEqual(template.slots[1].cardinality, { min: 0, max: 1 })
+    // The reviewer subject carries per-expert placeholders resolved by the
+    // apply bridge from the adapter-supplied expertDisplay.
+    assert.equal(tasks[0].subject, '专家研判：{expertName}（{expertField}·{expertInitials}）')
+    // The runtime-shape params the review adapter folds into the compile.
+    for (const param of ['dataContext', 'frameworkName', 'frameworkSteps', 'frameworkConstraints', 'wordLimitLine', 'frameworkWordLimitParen', 'outputFormText', 'fusionExtraRules']) {
+      assert.ok(template.parameters.properties[param] !== undefined, `template must declare param ${param}`)
+    }
     assert.ok(template.deliverables[0].outputTemplate.startsWith('zhijian.output.'))
     assert.deepEqual(template.deliverables[0].fromTasks, ['t2'])
     assert.ok(template.gates.length >= 2)

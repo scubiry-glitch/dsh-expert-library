@@ -22,6 +22,9 @@ export { validateDomainPack } from './validate.ts'
 export { adaptV1Expert, adaptV1Scenario, adaptV1ScenarioTeamTemplate, buildLegacyDomainPack, migrateDomainPack, compileV1ScenarioExecutionPlan } from './compat.ts'
 export type { MigrationResult } from './compat.ts'
 export * from './provider-runtime.ts'
+export * from './providers/wind.ts'
+export * from './providers/zyt.ts'
+export * from './providers/beike.ts'
 export {
   buildZhijianDomainPack,
   zhijianMetaToExpertV2,

@@ -220,6 +220,11 @@ export interface LocalCliTransport extends ToolTransportBase {
   readonly kind: 'local-cli'
   /** Executable command. */
   readonly command: string
+  /**
+   * Static launch arguments prepended by the Host transport runner before the
+   * adapter's operation-specific args (e.g. `[cli.mjs]` for a `node` command).
+   */
+  readonly args?: readonly string[]
   /** Working directory for the command. */
   readonly workingDirectory?: string
 }

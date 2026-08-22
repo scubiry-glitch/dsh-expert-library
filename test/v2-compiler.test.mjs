@@ -562,7 +562,10 @@ test('roster-only requiredCapabilities do not force a ToolProvider (zhijian pack
   const t1 = result.plan.tasks.find(t => t.id === 't1')
   const t2 = result.plan.tasks.find(t => t.id === 't2')
   assert.deepEqual(t1.expertIds, ['bk-024', 'bk-025'])
-  assert.deepEqual(t2.expertIds, ['bk-002']) // fusion slot auto-fills (claims zhijian.review)
+  // role.fusion is an optional slot (min 0): the fusion task stays in the
+  // shared pool (unassigned), matching the V1 `expert_review_apply` runtime —
+  // no auto-filled member is pinned to it.
+  assert.deepEqual(t2.expertIds, [])
   assert.deepEqual(result.plan.executionOrder, ['t1', 't2'])
 })
 

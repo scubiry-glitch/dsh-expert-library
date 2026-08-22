@@ -113,3 +113,51 @@ test('readTeam rejects a task assigned to a nonexistent member', async () => {
     await rm(root, { recursive: true, force: true })
   }
 })
+
+// ── Apply-bridge provenance fields (additive-optional) ─────────────────────
+
+test('planRef/planProvenance on TeamState and planTask on TeamTask round-trip through readTeam', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'expert-teams-state-'))
+  try {
+    await writeTeamFixture(root, 'team1', {
+      planRef: {
+        planId: 'ep-abc123',
+        digest: 'deadbeef',
+        templateId: 'collab.roundtable',
+        templateVersion: '1.0.0-collab',
+        scenarioId: 'roundtable',
+      },
+      planProvenance: {
+        params: { topic: '市场是否见底', noteTaker: 'bk-004' },
+        compile: [{ step: 'roster.assign', detail: 'slot=role.speaker experts=[bk-004,bk-005]' }],
+      },
+      tasks: [
+        { id: 't1', subject: 'a', status: 'completed', dependencies: [], attempt: 0, createdAt: 1, updatedAt: 1, planTask: { logicalId: 't1', fanOutIndex: 0 } },
+        { id: 't2', subject: 'b', status: 'pending', dependencies: ['t1'], assignee: 'alice', attempt: 0, createdAt: 1, updatedAt: 1 },
+      ],
+    })
+    const team = await readTeam(root, 'team1')
+    assert.equal(team?.planRef?.planId, 'ep-abc123')
+    assert.equal(team?.planRef?.scenarioId, 'roundtable')
+    assert.deepEqual(team?.planProvenance?.params, { topic: '市场是否见底', noteTaker: 'bk-004' })
+    assert.equal(team?.tasks[0]?.planTask?.logicalId, 't1')
+    assert.equal(team?.tasks[0]?.planTask?.fanOutIndex, 0)
+    // Optional fields are not required: a legacy record without them still reads.
+    assert.equal(team?.tasks[1]?.planTask, undefined)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('a legacy team record without provenance fields reads back unchanged', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'expert-teams-state-'))
+  try {
+    await writeTeamFixture(root, 'legacy', {})
+    const team = await readTeam(root, 'legacy')
+    assert.equal(team?.planRef, undefined)
+    assert.equal(team?.planProvenance, undefined)
+    assert.equal(team?.tasks.every(task => task.planTask === undefined), true)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})

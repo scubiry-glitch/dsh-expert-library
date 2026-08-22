@@ -1,0 +1,48 @@
+{
+  "id": "zhijian-institution",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "realestate",
+  "intents": [
+    "institution-design"
+  ],
+  "requiredCapabilities": [
+    {
+      "capability": "zhijian.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    },
+    {
+      "capability": "realestate.policy.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    }
+  ],
+  "routingPolicy": {
+    "assertions": [
+      "顾云昌 bk-022 已故：仅可引用历史观点。"
+    ],
+    "candidateHints": [
+      "bk-020",
+      "bk-022",
+      "bk-026",
+      "bk-016",
+      "bk-032",
+      "bk-021"
+    ]
+  },
+  "teamTemplate": "zhijian.team.B",
+  "outputTemplate": "zhijian.output.B",
+  "qualityPolicy": "zhijian.quality",
+  "knowledgePolicy": {
+    "required": [
+      "zhijian-expert-memory"
+    ],
+    "optional": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  }
+}

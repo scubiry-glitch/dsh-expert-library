@@ -1,0 +1,156 @@
+{
+  "id": "zhijian.team.B",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "selectedExpertIds": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "maxItems": 5,
+        "description": "用户拍板选定的专家 id（bk-*），1-5 位"
+      },
+      "data": {
+        "type": "string",
+        "description": "数据本体（指标/数值/口径/城市/时段）"
+      },
+      "outputForm": {
+        "type": "string",
+        "enum": [
+          "discussion",
+          "final"
+        ],
+        "description": "输出形态"
+      },
+      "dataContext": {
+        "type": "string",
+        "description": "数据本体/来源/城市/时段上下文（适配器组装）"
+      },
+      "frameworkName": {
+        "type": "string",
+        "description": "框架名称（framework.name）"
+      },
+      "frameworkSteps": {
+        "type": "string",
+        "description": "框架步骤（编号 1..n 拼接）"
+      },
+      "frameworkConstraints": {
+        "type": "string",
+        "description": "框架约束（编号 1..n 拼接）"
+      },
+      "wordLimitLine": {
+        "type": "string",
+        "description": "字数约束行（含换行前缀；无约束为空串）"
+      },
+      "frameworkWordLimitParen": {
+        "type": "string",
+        "description": "括号内的字数约束（用于融合任务；无约束为空串）"
+      },
+      "outputFormText": {
+        "type": "string",
+        "description": "输出形态中文（讨论稿/正式稿）"
+      },
+      "fusionExtraRules": {
+        "type": "string",
+        "description": "融合任务附加规则行（GLOBAL_OUTPUT_RULES 过滤，字面 `5. ` 前缀）"
+      }
+    },
+    "required": [
+      "selectedExpertIds",
+      "data"
+    ]
+  },
+  "slots": [
+    {
+      "id": "role.reviewer",
+      "capabilities": [
+        "zhijian.review"
+      ],
+      "cardinality": {
+        "min": 1,
+        "max": 5
+      },
+      "approval": "user-signoff"
+    },
+    {
+      "id": "role.fusion",
+      "capabilities": [
+        "zhijian.review"
+      ],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.reviewer",
+      "dependsOn": [],
+      "inputs": [
+        {
+          "kind": "parameter",
+          "ref": "data"
+        },
+        {
+          "kind": "parameter",
+          "ref": "selectedExpertIds"
+        }
+      ],
+      "allowedCapabilities": [],
+      "outputSchema": "zhijian.output.B",
+      "retryPolicy": "quality-repair",
+      "subject": "专家研判：{expertName}（{expertField}·{expertInitials}）",
+      "description": "以专家「{expertName}」身份独立研判，输出框架 {frameworkName}。\n\n{dataContext}\n\n{frameworkSteps}{wordLimitLine}\n约束：{frameworkConstraints}\n匿名标注：文内身份只标「{expertField}·{expertInitials}」。完成后提交完整点评文本到 output。"
+    },
+    {
+      "id": "t2",
+      "role": "role.fusion",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [
+        {
+          "kind": "task-output",
+          "ref": "t1"
+        }
+      ],
+      "allowedCapabilities": [],
+      "outputSchema": "zhijian.output.B",
+      "retryPolicy": "quality-repair",
+      "subject": "融合合成与渲染（讨论稿/正式稿）",
+      "description": "综合以下专家研判任务：{dependencies}（用 expert_teams_status 读取各任务 output）。\n框架：{frameworkName}{frameworkWordLimitParen}\n输出形态：{outputFormText}。\n融合规则（主基调为锚）：\n1. 先定主基调 keynote（据数据事实判定；用户指定基调则严格跟随）。\n2. 支撑主基调的论证保留；偏离的观点降级为边界条件/风险提示（\"若 X 成立，基调需下修\"），不作\"另一派\"并列。\n3. 结论/归因/展望自洽，不前后矛盾。\n4. 匿名化：讨论稿正文关键处标「领域·首字母」+ 文末框架/口径/心智模型元信息；正式稿去全部标注仅留一行数据来源。\n{fusionExtraRules}\n完成后把全文写入 output。"
+    }
+  ],
+  "gates": [
+    {
+      "policy": "zhijian.quality",
+      "gate": "compliance-anonymization",
+      "appliesTo": [
+        "t2"
+      ]
+    },
+    {
+      "policy": "zhijian.quality",
+      "gate": "data-citation",
+      "appliesTo": [
+        "t2"
+      ]
+    }
+  ],
+  "deliverables": [
+    {
+      "id": "d1",
+      "outputTemplate": "zhijian.output.B",
+      "fromTasks": [
+        "t2"
+      ],
+      "renderMode": "discussion"
+    }
+  ]
+}

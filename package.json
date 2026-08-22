@@ -26,6 +26,7 @@
     "lib",
     "assets",
     "knowledge",
+    "domain-packs",
     "cordis.patch.yml",
     "README.md"
   ],
@@ -64,6 +65,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.client.json && tsdown",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
+    "build:pack": "node scripts/build-zhijian-pack.mjs",
+    "check:pack": "node scripts/build-zhijian-pack.mjs --check",
     "test": "pnpm build && node --test test/"
   },
   "peerDependencies": {

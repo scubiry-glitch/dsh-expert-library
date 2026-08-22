@@ -1,0 +1,47 @@
+{
+  "id": "zhijian-finance",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "realestate",
+  "intents": [
+    "financial-risk"
+  ],
+  "requiredCapabilities": [
+    {
+      "capability": "zhijian.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    },
+    {
+      "capability": "realestate.macro.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    }
+  ],
+  "routingPolicy": {
+    "assertions": [
+      "房企信用风险归行业研究（刘洪玉 bk-026、冯俊 bk-027）。"
+    ],
+    "candidateHints": [
+      "bk-007",
+      "bk-014",
+      "bk-029",
+      "bk-032",
+      "bk-004"
+    ]
+  },
+  "teamTemplate": "zhijian.team.B",
+  "outputTemplate": "zhijian.output.B",
+  "qualityPolicy": "zhijian.quality",
+  "knowledgePolicy": {
+    "required": [
+      "zhijian-expert-memory"
+    ],
+    "optional": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  }
+}

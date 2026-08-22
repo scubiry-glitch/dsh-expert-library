@@ -49,6 +49,11 @@ import {
   type ExpertLibrarySettings,
   type ToolExecutionConfig,
 } from './settings.ts'
+import {
+  ProviderTransportService,
+  resolveProviderServiceOptions,
+  type ProviderConfigInput,
+} from './host/provider-service.ts'
 import { listDomainPacks, previewDomainPack } from './v2/preview.ts'
 
 /**
@@ -200,6 +205,15 @@ export interface Config {
   defaultModel?: { provider: string; model: string; reasoningEffort?: string }
   /** Per-tool execution policy (API vs CLI vs auto) for external capabilities. */
   toolExecution?: Record<string, ToolExecutionConfig>
+  /** Provider path/endpoint configuration (wind/zyt/beike); env/probe defaults apply when absent. */
+  providers?: {
+    /** Wind skill CLI path (`scripts/cli.mjs`); default probes `~/.agents/skills/wind-mcp-skill/scripts/cli.mjs` / `WIND_SKILL_CLI`. */
+    wind?: { cliPath?: string }
+    /** zyt API base URL + optional CLI binary; defaults `https://dss.ke.com` / `ZYT_BASE_URL` / `ZYT_CLI`. */
+    zyt?: { baseUrl?: string; cliCommand?: string; preferCli?: boolean }
+    /** beike MCP endpoint + optional CLI binary; defaults `https://building.ke.com/mcp` / `BEIKE_MCP_BASE_URL` / `BEIKE_CLI`. */
+    beike?: { baseUrl?: string; cliCommand?: string; preferCli?: boolean }
+  }
 }
 
 const memberModelSchema = z.object({
@@ -224,6 +238,22 @@ const toolExecutionEntrySchema = z.object({
   preferredRoles: z.array(z.string()),
 })
 
+const providerWindSchema = z.object({
+  cliPath: z.string(),
+})
+
+const providerZytSchema = z.object({
+  baseUrl: z.string(),
+  cliCommand: z.string(),
+  preferCli: z.boolean(),
+})
+
+const providerBeikeSchema = z.object({
+  baseUrl: z.string(),
+  cliCommand: z.string(),
+  preferCli: z.boolean(),
+})
+
 export const Config: z<Config> = z.object({
   stateDir: z.string().default('expert-teams'),
   memberProvider: z.string().default('spawn'),
@@ -236,6 +266,11 @@ export const Config: z<Config> = z.object({
   announceToAgent: z.boolean().default(true),
   defaultModel: memberModelSchema,
   toolExecution: z.dict(toolExecutionEntrySchema),
+  providers: z.object({
+    wind: providerWindSchema,
+    zyt: providerZytSchema,
+    beike: providerBeikeSchema,
+  }),
 })
 
 /** The model-facing usage policy: when and how to drive the Expert Library. */
@@ -317,6 +352,28 @@ export function apply(ctx: Context, config: Config): void {
   registerZhijianTools(ctx, runtimeConfig, core)
   registerCollabTools(ctx, runtimeConfig, core)
 
+  // Provider transport runtime (Phase 2): registers the wind/zyt/beike
+  // manifests and attaches invokers. Registered once under the
+  // `providerTransport` service; rebuilt when the effective settings change
+  // (the settings namespace may edit toolExecution overlays at runtime). The
+  // service is optional for the rest of the plugin — a webless/headless
+  // profile simply never resolves provider capabilities.
+  let providerService: ProviderTransportService | undefined
+  const syncProviders = (): void => {
+    const value = current()
+    const options = resolveProviderServiceOptions(value as ProviderConfigInput)
+    if (providerService === undefined) {
+      providerService = new ProviderTransportService(ctx, options)
+      ctx.effect(() => ctx.provide('providerTransport', providerService), 'expert-library: provider transport service')
+    } else {
+      try {
+        providerService.reconfigure(options)
+      } catch (error: unknown) {
+        ctx.logger.warn(`expert-library: provider reconfigure failed: ${String(error)}`)
+      }
+    }
+  }
+
   // The usage policy section is injected while the plugin is announced to
   // agents; turning the announcement off (settings or entry config) removes it
   // so non-expert sessions are not polluted.
@@ -349,6 +406,7 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
     runtimeConfig.toolExecution = value.toolExecution
     syncAnnounce()
+    syncProviders()
   }
 
   // Optional settings wiring: while a settings service exists, the

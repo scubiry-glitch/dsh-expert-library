@@ -9,7 +9,7 @@
  * so routing, personas and the expert registry are native plugin data —
  * the model never has to parse the raw JSON itself.
  *
- * Parsing is hardened (scripts/lib/zhijian-source.mjs): any roster/profile
+ * Parsing is hardened (scripts/zhijian-source.mjs): any roster/profile
  * inconsistency — a Profile JSON without a roster row, a roster row without
  * a Profile, a material dir without a Profile, an unparseable Profile, a
  * name/persona mismatch, a duplicate BK id — is FATAL and aborts the build
@@ -22,7 +22,7 @@
  */
 import { writeFile, mkdir } from 'node:fs/promises'
 import { dirname } from 'node:path'
-import { parseZhijianSource, emitExpertsTs } from './lib/zhijian-source.mjs'
+import { parseZhijianSource, emitExpertsTs } from './zhijian-source.mjs'
 
 const [, , skillDir] = process.argv
 if (!skillDir) {
