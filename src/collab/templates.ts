@@ -27,7 +27,9 @@
 
 import type { DomainPackV2, OutputTemplate, QualityPolicy, RoleSlot, ScenarioV2, TaskTemplate, TeamTemplate } from '../v2/types.ts'
 import { SCHEMA_VERSION } from '../v2/types.ts'
-import { buildLegacyDomainPack } from '../v2/compat.ts'
+import { adaptV1Expert, builtinLegacyPack } from '../v2/compat.ts'
+import { BUILTIN_EXPERT_BY_ID } from '../expert-library/builtin-experts.ts'
+import { ZHIJIAN_EXPERT_BY_ID } from '../zhijian/registry.ts'
 import type { Expert } from '../expert-library/types.ts'
 
 /** Version stamp of every collab V2 asset. */
@@ -249,14 +251,30 @@ export const COLLAB_SCENARIOS: readonly ScenarioV2[] = [
  * Build the compile pack for one collab apply: the resolved library experts
  * projected through the conservative V1 adapter, plus the collab templates,
  * the shared output template/quality policy and the four mode scenarios.
+ *
+ * V1 dual-track consolidation: the expert entities come from the shared
+ * process-wide {@link builtinLegacyPack} cache (built once from the full
+ * builtin library) instead of a second per-call `buildLegacyDomainPack`
+ * projection — builtin registry objects are reused by reference, and only
+ * experts the cache does not cover (user-pack overrides, workspace packs,
+ * test fixtures) are re-adapted so their content stays authoritative.
  */
 export function buildCollabDomainPack(experts: readonly Expert[]): DomainPackV2 {
-  const legacy = buildLegacyDomainPack({ experts, scenarios: [] })
+  const cached = builtinLegacyPack()
+  const cachedById = new Map(cached.experts.map(expert => [expert.id, expert]))
+  const mergedExperts = experts.map(expert => {
+    if (BUILTIN_EXPERT_BY_ID.get(expert.id) === expert || ZHIJIAN_EXPERT_BY_ID.get(expert.id) === expert) {
+      const cachedExpert = cachedById.get(expert.id)
+      if (cachedExpert !== undefined) return cachedExpert
+    }
+    return adaptV1Expert(expert)
+  })
   return {
-    ...legacy,
+    ...cached,
+    experts: mergedExperts,
     teamTemplates: COLLAB_TEAM_TEMPLATES,
-    outputTemplates: [COLLAB_OUTPUT_TEMPLATE, ...legacy.outputTemplates],
-    qualityPolicies: [COLLAB_QUALITY_POLICY, ...legacy.qualityPolicies],
+    outputTemplates: [COLLAB_OUTPUT_TEMPLATE, ...cached.outputTemplates],
+    qualityPolicies: [COLLAB_QUALITY_POLICY, ...cached.qualityPolicies],
     scenarios: COLLAB_SCENARIOS,
   }
 }

@@ -91,29 +91,43 @@ export const SOURCE_DOCS = [
   '路由规则.md',
 ]
 
-/** Baseline facts of the 1.0.0 pack (fixed; not derived from the run). */
-export const PACK_BASELINE = {
-  source: '智见点评_skill_20260819.zip',
-  date: ZHIJIAN_BASELINE_DATE,
-  snapshot: ZHIJIAN_PACK_SNAPSHOT,
-  zipTotalFiles: 156,
-  expertCount: 32,
-  note: 'Original 2026-08-19 zip baseline (BK-002..BK-033). Archive: /root/.openclaw/media/outbound/智见点评_skill_20260819.zip',
-}
-
 /**
- * Deferred upgrades — recorded, never silently merged. BK-034 陈杰 was added
- * to the unpacked workspace source on 2026-08-20 (专家总表.md grew to 33 rows,
- * 路由规则.md candidates updated) but is deliberately NOT part of the 1.0.0
- * pack so the 32-expert runtime baseline stays untouched. Migrating to 1.1.0
- * means regenerating from that source and bumping the pack version.
+ * Both source baselines of the pack, oldest first. 1.0.0 shipped the original
+ * 2026-08-19 zip (32 experts); 1.1.0 is regenerated from the newer unpacked
+ * workspace copy (2026-08-20/21, adds 陈杰 BK-034). SOURCE-MANIFEST.json
+ * records both, so the provenance chain stays complete.
  */
-export const PACK_DEFERRED_UPGRADES = [
+export const PACK_BASELINES = [
+  {
+    version: '1.0.0',
+    source: '智见点评_skill_20260819.zip',
+    date: '2026-08-19T00:00:00Z',
+    snapshot: 'zhijian-v1-2026-08-19',
+    zipTotalFiles: 156,
+    expertCount: 32,
+    note: 'Original 2026-08-19 zip baseline (BK-002..BK-033). Archive: /root/.openclaw/media/outbound/智见点评_skill_20260819.zip',
+  },
   {
     version: '1.1.0',
+    source: '/root/.openclaw/workspace/skills/智见点评 (unpacked workspace copy, updated 2026-08-20/21)',
+    date: ZHIJIAN_BASELINE_DATE,
+    snapshot: ZHIJIAN_PACK_SNAPSHOT,
+    zipTotalFiles: 160,
+    expertCount: 33,
+    note: 'Unpacked revision: adds 陈杰 BK-034 (专家总表.md 33 rows, 路由规则.md candidates updated 2026-08-21). The original 32 Profile JSONs are byte-identical to the 1.0.0 zip.',
+  },
+]
+
+/**
+ * Upgrade history — the 1.0.0 pack explicitly deferred BK-034; 1.1.0 merges
+ * it. Recorded in SOURCE-MANIFEST.json so the decision stays auditable.
+ */
+export const PACK_UPGRADE_HISTORY = [
+  {
+    from: '1.0.0',
+    to: '1.1.0',
     adds: ['bk-034 陈杰'],
-    source: '/root/.openclaw/workspace/skills/智见点评 (unpacked copy, updated 2026-08-20/21)',
-    reason: 'BK-034 was added to the unpacked source on 2026-08-20 (专家总表.md 33 rows, 路由规则.md candidates updated 2026-08-21). NOT merged into 1.0.0 to preserve compatibility with the in-repo 32-expert runtime baseline. Apply by regenerating the pack from that source and bumping the pack version.',
+    reason: '1.0.0 deliberately kept the 32-expert runtime baseline and recorded BK-034 as a deferred upgrade (2026-08-20 addition to the unpacked source). 1.1.0 regenerates from that newer source: 33 experts, routing candidates updated (政策/制度/金融公积金视角), rich Profile detail projected into ExpertV2.',
   },
 ]
 
@@ -194,9 +208,13 @@ export async function copySourceAssets(parsed, srcDir, outDir) {
     docs[name] = await copyBytes(source, join(sourceRoot, 'docs', name))
   }
 
-  // library: flattened 专家库 pages — every roster BK must have exactly one page
+  // library: flattened 专家库 pages — every page must belong to the roster;
+  // a roster BK WITHOUT a page is a documented source gap (1.1.0: 陈杰 BK-034
+  // has no 专家库 page), recorded in the manifest, never fatal and never
+  // fabricated.
   const libDir = parsed.layout === 'zip' ? join(parsed.root, '专家库') : join(srcDir, 'library')
   const library = {}
+  const libraryMissing = []
   let libEntries = []
   try {
     libEntries = await readdir(libDir)
@@ -220,7 +238,7 @@ export async function copySourceAssets(parsed, srcDir, outDir) {
   }
   for (const bk of [...parsed.roster.keys()].sort()) {
     if (!libraryBks.has(bk)) {
-      errors.push({ code: 'library-missing-bk', message: `专家库 has no page for roster row ${bk} (${parsed.roster.get(bk)?.name})` })
+      libraryMissing.push(`${bk} ${parsed.roster.get(bk)?.name}`)
     }
   }
   for (const bk of [...libraryBks].sort()) {
@@ -235,11 +253,15 @@ export async function copySourceAssets(parsed, srcDir, outDir) {
     packId: ZHIJIAN_PACK_ID,
     packVersion: ZHIJIAN_PACK_VERSION,
     schemaVersion: 2,
-    baseline: { ...PACK_BASELINE },
+    baselines: PACK_BASELINES,
+    upgradeHistory: PACK_UPGRADE_HISTORY,
     rawProfiles: { count: profileEntries.length, files: rawFiles },
     docs: { count: Object.keys(docs).length, files: docs },
-    library: { count: Object.keys(library).length, files: library },
-    deferredUpgrades: PACK_DEFERRED_UPGRADES,
+    library: {
+      count: Object.keys(library).length,
+      files: library,
+      ...(libraryMissing.length > 0 ? { missing: libraryMissing } : {}),
+    },
   }
   await writeFile(join(sourceRoot, 'SOURCE-MANIFEST.json'), `${JSON.stringify(manifest, null, 2)}\n`)
   return manifest
@@ -278,10 +300,11 @@ export async function verifySourceAssets(outDir) {
 
 /** Regenerate the roster markdown table from the expert metas (derived view). */
 export function emitRosterMd(experts) {
+  const current = PACK_BASELINES[PACK_BASELINES.length - 1]
   const rows = experts.map(e => `| ${e.bk} | ${e.name} | ${e.personaName} | ${e.field}${e.secondaryField ? ` / ${e.secondaryField}` : ''} | ${e.stance} | ${e.tags.join('/')} | ${e.summary} |`)
   return `# 专家总表（生成视图 · ${experts.length} 位）
 
-> 由 scripts/build-zhijian-pack.mjs 从专家 Meta 确定性生成，非手工维护；源：${PACK_BASELINE.source}。
+> 由 scripts/build-zhijian-pack.mjs 从专家 Meta 确定性生成，非手工维护；源：${current.source}（v${current.version}）。
 
 | BK | 姓名 | 人设名 | 领域 | 立场 | 标签 | 摘要 |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -290,21 +313,26 @@ ${rows.join('\n')}
 }
 
 /** README constant written into the pack root. */
-const PACK_README = `# zhijian-realestate（智见点评·房地产领域包）v${ZHIJIAN_PACK_VERSION}
+function packReadme(experts) {
+  const current = PACK_BASELINES[PACK_BASELINES.length - 1]
+  const first = experts[0]?.bk ?? 'BK-002'
+  const last = experts[experts.length - 1]?.bk ?? 'BK-033'
+  return `# zhijian-realestate（智见点评·房地产领域包）v${ZHIJIAN_PACK_VERSION}
 
-32 位房地产领域专家基线（BK-002 ~ BK-033，五大领域），由
-\`scripts/build-zhijian-pack.mjs\` 从 ${PACK_BASELINE.source} 确定性生成。
+${experts.length} 位房地产领域专家基线（${first} ~ ${last}，五大领域），由
+\`scripts/build-zhijian-pack.mjs\` 确定性生成。
 
 - \`pack.json\` + 各实体目录：\`loadPackFromDir\` 可装载的 DomainPackV2 布局
   （metadata-only pack.json + 每实体一个 JSON，文件名 == 实体 id）。
 - \`source/raw-profiles/\`：原始 Profile JSON，逐字节保留（sha-256 见
   \`source/SOURCE-MANIFEST.json\`）。
+- \`source/SOURCE-MANIFEST.json\`：记录两个基线（1.0.0 原始 2026-08-19 zip
+  32 位；1.1.0 工作区副本 2026-08-20/21，新增陈杰 BK-034）与升级历史。
 - \`generated/\`：派生视图（V1 金样、总表、校验报告、树摘要），可随时重建。
-- 重建：\`pnpm build && node scripts/build-zhijian-pack.mjs\`；漂移检查：
-  \`node scripts/build-zhijian-pack.mjs --check\`。
-- BK-034（陈杰，2026-08-20 加入工作区副本）**未合并**：记录为 1.1.0 延期
-  升级，见 \`source/SOURCE-MANIFEST.json\` 的 deferredUpgrades。
+- 重建：\`pnpm build && node scripts/build-zhijian-pack.mjs --src <源目录>\`；
+  漂移检查：\`node scripts/build-zhijian-pack.mjs --check\`。
 `
+}
 
 /**
  * Emit the complete domain pack into `outDir`.
@@ -400,7 +428,7 @@ export async function emitPack(outDir, options = {}) {
   generatedFiles.push('generated/v1/scenarios.json')
   await writeFile(join(outDir, 'generated/roster.md'), emitRosterMd(metas))
   generatedFiles.push('generated/roster.md')
-  await writeFile(join(outDir, 'README.md'), PACK_README)
+  await writeFile(join(outDir, 'README.md'), packReadme(metas))
   written.push('README.md')
 
   // ── self-verification through the real loader ──────────────────────────────

@@ -119,11 +119,11 @@ test('builtin pack loads as validator-clean and summarizes without profile prose
   assert.equal(loaded.source.label, `builtin/${ZHIJIAN_PACK_ID}`)
   const summary = summarizePack(loaded, { snapshot: ZHIJIAN_PACK_SNAPSHOT })
   assert.equal(summary.id, ZHIJIAN_PACK_ID)
-  assert.equal(summary.version, '1.0.0')
+  assert.equal(summary.version, '1.1.0')
   assert.equal(summary.snapshot, ZHIJIAN_PACK_SNAPSHOT)
   assert.equal(summary.ok, true)
   assert.equal(summary.errorCount, 0)
-  assert.equal(summary.counts.experts, 32)
+  assert.equal(summary.counts.experts, 33)
   // The wire summary never carries persona/profile prose.
   assert.ok(!('persona' in summary))
   assert.ok(!('capabilities' in summary))

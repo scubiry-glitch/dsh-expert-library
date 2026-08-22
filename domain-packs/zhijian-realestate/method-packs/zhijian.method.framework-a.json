@@ -1,6 +1,6 @@
 {
   "id": "zhijian.method.framework-a",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "name": "输出框架 A（五维递进）",
   "mediaType": "agent-instructions",

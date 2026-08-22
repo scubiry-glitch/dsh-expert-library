@@ -547,3 +547,38 @@ Implemented in this order (per the migration directive "scenario_apply + expert_
 copy (the method packs already exist in the zhijian pack but are not spliced — a later
 phase can switch without DAG changes), provider/gate execution, and any change to the
 pure V2 surface other than the two zhijian-pack template edits.
+
+---
+
+## 11. V1 retirement (dual-track consolidation)
+
+The apply migration still depends on the V1 runtime data (`Expert`/`Scenario`
+registries in `src/expert-library/*` and `src/zhijian/*`) through the
+`adaptV1*` compatibility views. Retiring them is a two-step track:
+
+**Step 1 — DONE (this round): stop re-projecting the builtin library per call.**
+- `src/v2/compat.ts` now holds a process-wide lazy singleton
+  `builtinLegacyPack()`: the full builtin library (8 通用 + 32 智见 bk-* experts,
+  all 10 builtin scenarios) is projected via `buildLegacyDomainPack` once and
+  never invalidated during the process (inputs are static generated code).
+- `compileV1ScenarioExecutionPlan` reuses that cache: for a builtin scenario
+  (reference- or content-identical) its legacy TeamTemplate is looked up
+  directly — zero per-call projection; for caller-provided variants (user-pack
+  scenarios, fixtures) the legacy template + scenario view are derived from the
+  passed object and spliced into the cached pack, byte-identical to the old
+  per-call `buildLegacyDomainPack`. Only experts the cache does not cover
+  (user overrides / fixtures) are re-adapted, so preset model routes and user
+  content stay authoritative. Export signature and V1 roster-assignment
+  semantics unchanged — golden bridge tests stay green byte-for-byte
+  (digest-equality locked by `test/v2-v1-consolidation.test.mjs`).
+- `buildCollabDomainPack` (collab projection) reuses the cached expert
+  entities by reference instead of a second `buildLegacyDomainPack` call.
+
+**Step 2 — FUTURE WORK (not done): deleting the builtin V1 sources entirely.**
+Removing `BUILTIN_*` / `ZHIJIAN_*` V1 registries and the `adaptV1*` views
+requires a real pack home for the generic (non-zhijian) scenarios — the V2
+pack/overlay format (`DomainPackV2` + `pack-loader`, workspace overlays) must
+ship code-review / market-research / product-design / fullstack-build /
+security-audit / documentation as first-class V2 packs before the V1
+projection can be dropped. Until then the cached legacy projection is the
+single V1↔V2 bridge and stays authoritative.

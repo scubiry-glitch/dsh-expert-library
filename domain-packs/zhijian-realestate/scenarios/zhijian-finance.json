@@ -1,6 +1,6 @@
 {
   "id": "zhijian-finance",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "domain": "realestate",
   "intents": [
@@ -20,7 +20,7 @@
   ],
   "routingPolicy": {
     "assertions": [
-      "房企信用风险归行业研究（刘洪玉 bk-026、冯俊 bk-027）。"
+      "房企信用风险归行业研究（刘洪玉 bk-026、冯俊 bk-027）。住房金融/公积金制度视角（辅）：陈杰 bk-034（公积金政策性金融、REITs、收储资金）。"
     ],
     "candidateHints": [
       "bk-007",

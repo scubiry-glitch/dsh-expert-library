@@ -61,6 +61,7 @@ import {
   type DomainPackV2,
   type ExpertV2,
   type KnowledgeProviderManifest,
+  type MentalModel,
   type MethodPack,
   type ModelPolicy,
   type OutputTemplate,
@@ -74,13 +75,17 @@ import {
 export const ZHIJIAN_PACK_ID = 'zhijian-realestate'
 
 /** Baseline pack version (semver). Per-expert versions arrive with monthly deltas. */
-export const ZHIJIAN_PACK_VERSION = '1.0.0'
+export const ZHIJIAN_PACK_VERSION = '1.1.0'
 
-/** Snapshot id of the 2026-08-19 profile baseline (zip date). */
-export const ZHIJIAN_PACK_SNAPSHOT = 'zhijian-v1-2026-08-19'
+/**
+ * Snapshot id of the current profile baseline. 1.1.0 = the 2026-08-20/21
+ * unpacked revision (adds 陈杰 BK-034 to the original 2026-08-19 zip
+ * baseline; the pack's SOURCE-MANIFEST records both baselines).
+ */
+export const ZHIJIAN_PACK_SNAPSHOT = 'zhijian-v1-2026-08-21'
 
-/** Immutable baseline timestamp of the source skill package. */
-export const ZHIJIAN_BASELINE_DATE = '2026-08-19T00:00:00Z'
+/** Immutable baseline timestamp of the current source skill package revision. */
+export const ZHIJIAN_BASELINE_DATE = '2026-08-21T00:00:00Z'
 
 /** The universal reviewer capability every roster expert claims. */
 export const REVIEW_CAPABILITY = 'zhijian.review'
@@ -159,6 +164,42 @@ function complianceFor(meta: ZhijianExpertMeta): ComplianceInfo {
 }
 
 /**
+ * Copy a JSON-safe detail object into fresh plain objects/arrays so the pack
+ * never shares the metas' readonly arrays (conservative ownership, no change
+ * of shape or values).
+ */
+function copyDetail<T>(value: T): T {
+  if (Array.isArray(value)) return value.map(item => copyDetail(item)) as unknown as T
+  if (typeof value === 'object' && value !== null) {
+    const out: Record<string, unknown> = {}
+    for (const [key, item] of Object.entries(value as Record<string, unknown>)) out[key] = copyDetail(item)
+    return out as unknown as T
+  }
+  return value
+}
+
+/**
+ * Rich mental models for ExpertV2.persona: prefer the Profile JSON's
+ * `persona.cognition.mentalModels` (name/summary/evidence/applicationContext/
+ * failureCondition) when present; fall back to the name-only
+ * `method.frameworks` list with empty summaries (schema requires `summary`).
+ * Never invents summaries the source did not assert.
+ */
+function richMentalModels(meta: ZhijianExpertMeta): MentalModel[] {
+  const rich = meta.personaDetail?.cognition?.mentalModels
+  if (rich !== undefined && rich.length > 0) {
+    return rich.map(model => ({
+      name: model.name,
+      summary: model.summary ?? '',
+      ...(model.evidence !== undefined ? { evidence: [...model.evidence] } : {}),
+      ...(model.applicationContext !== undefined ? { applicationContext: model.applicationContext } : {}),
+      ...(model.failureCondition !== undefined ? { failureCondition: model.failureCondition } : {}),
+    }))
+  }
+  return meta.mentalModels.map(name => ({ name, summary: '' }))
+}
+
+/**
  * Project one generated Zhijian meta into an {@link ExpertV2}.
  * Identity/anonymization/compliance come from the meta itself; capabilities
  * derive from roster-asserted field + tags; nothing is fabricated.
@@ -195,9 +236,15 @@ export function zhijianMetaToExpertV2(
     capabilities: claims,
     persona: {
       style: [...meta.style],
-      // The metas carry mental-model names only — the summaries are empty
-      // until zhijian-expert-memory supplies them (schema requires the field).
-      mentalModels: meta.mentalModels.map(name => ({ name, summary: '' })),
+      ...(meta.personaDetail?.tone !== undefined ? { tone: meta.personaDetail.tone } : {}),
+      ...(meta.personaDetail?.bias !== undefined ? { bias: [...meta.personaDetail.bias] } : {}),
+      ...(meta.personaDetail?.values !== undefined ? { values: copyDetail(meta.personaDetail.values) } : {}),
+      ...(meta.personaDetail?.taste !== undefined ? { taste: copyDetail(meta.personaDetail.taste) } : {}),
+      ...(meta.personaDetail?.voice !== undefined ? { voice: copyDetail(meta.personaDetail.voice) } : {}),
+      // Rich mental models from persona.cognition.mentalModels (1.1.0); the
+      // metas previously carried name-only method.frameworks entries.
+      mentalModels: richMentalModels(meta),
+      ...(meta.personaDetail?.blindSpots !== undefined ? { blindSpots: copyDetail(meta.personaDetail.blindSpots) } : {}),
       signaturePhrases: [...meta.signaturePhrases],
       antiPatterns: [...meta.antiPatterns],
     },
@@ -207,6 +254,12 @@ export function zhijianMetaToExpertV2(
       { providerId: 'local-knowledge', scope: `experts/${meta.id}` },
     ],
     toolAffinities: [], // unknown in the metas — never guessed
+    // 1.1.0 rich projection: only source-asserted detail is carried verbatim
+    // (absent stays absent — no fabrication).
+    ...(meta.methodDetail !== undefined ? { methodProfile: copyDetail(meta.methodDetail) } : {}),
+    ...(meta.emm !== undefined ? { emm: copyDetail(meta.emm) } : {}),
+    ...(meta.constraints !== undefined ? { constraints: copyDetail(meta.constraints) } : {}),
+    ...(meta.outputSchema !== undefined ? { outputSchema: copyDetail(meta.outputSchema) } : {}),
     ...(options.modelPolicy === undefined ? {} : { modelPolicy: options.modelPolicy }),
     compliance: complianceFor(meta),
   }
@@ -509,7 +562,7 @@ function knowledgeProviders(packVersion: string): KnowledgeProviderManifest[] {
   ]
 }
 
-/** Structured knowledge base over the 32 expert profile records (§3.3.1). */
+/** Structured knowledge base over the expert profile records (§3.3.1). */
 function domainKnowledgeManifest(packVersion: string): DomainKnowledgeManifest {
   const digest = createHash('sha256').update(JSON.stringify(ZHIJIAN_EXPERTS)).digest('hex')
   return {
@@ -517,10 +570,10 @@ function domainKnowledgeManifest(packVersion: string): DomainKnowledgeManifest {
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     domain: 'realestate.research',
-    boundary: '智见点评 32 位房地产专家 Profile 基线（2026-08-19）：身份、领域、立场、风格、心智模型、金句、禁区、分析步骤；不含实时市场数据。',
+    boundary: `智见点评 ${ZHIJIAN_EXPERTS.length} 位房地产专家 Profile 基线（2026-08-21 更新：原 2026-08-19 基线 32 位 + 新增陈杰 BK-034）：身份、领域、立场、风格、心智模型、金句、禁区、分析步骤、方法细节（reviewLens/dataPreference/evidenceStandard/agenticProtocol）、评估模型（emm 加权+一票否决）、输出约束与 rubric；不含实时市场数据。`,
     ontology: {
       entities: [
-        { id: 'expert', description: '领域专家（bk-002~bk-033）' },
+        { id: 'expert', description: `领域专家（${ZHIJIAN_EXPERTS[0]?.id ?? 'bk-002'}~${ZHIJIAN_EXPERTS[ZHIJIAN_EXPERTS.length - 1]?.id ?? 'bk-033'}）` },
         { id: 'field', description: '五大主领域（宏观经济/政策制度/行业研究/城市发展/居住服务）' },
         { id: 'stance', description: '专家立场标签' },
         { id: 'capability-tag', description: '能力标签（数据/研判/解读/理论/实操）' },
@@ -557,9 +610,9 @@ export interface BuildZhijianPackOptions {
 }
 
 /**
- * Build the complete `zhijian-realestate` domain pack from the 32 in-repo
- * generated metas. The result is JSON-safe, deterministic, and passes
- * {@link validateDomainPack} with zero error diagnostics.
+ * Build the complete `zhijian-realestate` domain pack from the in-repo
+ * generated metas (33 since 1.1.0). The result is JSON-safe, deterministic,
+ * and passes {@link validateDomainPack} with zero error diagnostics.
  */
 export function buildZhijianDomainPack(options: BuildZhijianPackOptions = {}): DomainPackV2 {
   const packVersion = options.packVersion ?? ZHIJIAN_PACK_VERSION
@@ -568,7 +621,7 @@ export function buildZhijianDomainPack(options: BuildZhijianPackOptions = {}): D
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     name: '智见点评·房地产领域包',
-    description: '32 位房地产领域专家基线（bk-002~bk-033，五大领域）。V2 投影源为 src/zhijian/data/experts.generated.ts + routing/frameworks 表；V1 视图与运行行为不变。',
+    description: `${ZHIJIAN_EXPERTS.length} 位房地产领域专家基线（${ZHIJIAN_EXPERTS[0]?.id ?? 'bk-002'}~${ZHIJIAN_EXPERTS[ZHIJIAN_EXPERTS.length - 1]?.id ?? 'bk-033'}，五大领域）。V2 投影源为 src/zhijian/data/experts.generated.ts + routing/frameworks 表；V1 视图与运行行为不变。1.1.0：新增陈杰 bk-034，并投影完整 Profile 细节（persona/method/emm/constraints/output_schema）。`,
     caliberDeclarations: {
       '克而瑞': '克而瑞/普睿监测口径',
       '中指': '中指院口径',

@@ -1,6 +1,6 @@
 {
   "id": "zhijian.method.review-protocol",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "name": "智见点评·研判协议（基调融合/匿名化/数字核实）",
   "mediaType": "agent-instructions",

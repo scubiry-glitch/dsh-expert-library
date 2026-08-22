@@ -54,6 +54,110 @@ export interface ZhijianExpertMeta {
   readonly analysisSteps: readonly string[]
   /** Deceased experts may only be cited for historical views. */
   readonly deceased?: boolean
+  /** 1.1.0: rich persona detail lifted verbatim from the Profile JSON (absent stays absent). */
+  readonly personaDetail?: ZhijianPersonaDetail
+  /** 1.1.0: rich method detail (reviewLens/dataPreference/evidenceStandard/agenticProtocol). */
+  readonly methodDetail?: ZhijianMethodDetail
+  /** 1.1.0: evaluation model (emm) — factor hierarchy + veto rules + aggregation. */
+  readonly emm?: ZhijianEmm
+  /** 1.1.0: output constraints (must_conclude / allow_assumption). */
+  readonly constraints?: ZhijianExpertConstraints
+  /** 1.1.0: output schema (format / sections / rubrics). */
+  readonly outputSchema?: ZhijianOutputSchema
+}
+
+/** One rich mental model from `persona.cognition.mentalModels`. */
+export interface ZhijianMentalModelDetail {
+  readonly name: string
+  readonly summary?: string
+  readonly evidence?: readonly string[]
+  readonly applicationContext?: string
+  readonly failureCondition?: string
+}
+
+/** Rich persona detail from the Profile JSON `persona` section (conservative projection). */
+export interface ZhijianPersonaDetail {
+  readonly tone?: string
+  readonly bias?: readonly string[]
+  readonly values?: {
+    readonly excites?: readonly string[]
+    readonly irritates?: readonly string[]
+    readonly qualityBar?: string
+    readonly dealbreakers?: readonly string[]
+  }
+  readonly taste?: {
+    readonly admires?: readonly string[]
+    readonly disdains?: readonly string[]
+    readonly benchmark?: string
+  }
+  readonly voice?: {
+    readonly disagreementStyle?: string
+    readonly praiseStyle?: string
+  }
+  readonly cognition?: {
+    readonly mentalModel?: string
+    readonly mentalModels?: readonly ZhijianMentalModelDetail[]
+    readonly decisionStyle?: string
+    readonly riskAttitude?: string
+    readonly timeHorizon?: string
+  }
+  readonly blindSpots?: {
+    readonly knownBias?: readonly string[]
+    readonly weakDomains?: readonly string[]
+    readonly selfAwareness?: string
+    readonly confidenceThreshold?: string
+  }
+}
+
+/** Rich method detail from the Profile JSON `method` section (conservative projection). */
+export interface ZhijianMethodDetail {
+  /** Most experts carry a structured lens; BK-034 carries a plain string — both kept verbatim. */
+  readonly reviewLens?: {
+    readonly firstGlance?: string
+    readonly deepDive?: readonly string[]
+    readonly killShot?: string
+    readonly bonusPoints?: readonly string[]
+  } | string
+  readonly dataPreference?: string
+  readonly evidenceStandard?: string
+  readonly agenticProtocol?: {
+    readonly requiresResearch?: boolean
+    readonly researchSteps?: readonly string[]
+    readonly noGuessPolicy?: boolean
+  }
+}
+
+/** Evaluation model (emm): weighted factor hierarchy + veto rules + aggregation. */
+export interface ZhijianEmm {
+  readonly criticalFactors?: readonly string[]
+  readonly factorHierarchy?: Readonly<Record<string, number>>
+  readonly vetoRules?: readonly string[]
+  readonly aggregationLogic?: string
+}
+
+/** Output constraints from the Profile JSON `constraints` section. */
+export interface ZhijianExpertConstraints {
+  readonly mustConclude?: boolean
+  readonly allowAssumption?: boolean
+}
+
+/** One rubric level of an object-shaped rubric ({score: 1..5, description}). */
+export interface ZhijianRubricLevel {
+  readonly score?: number
+  readonly description?: string
+}
+
+/** Object-shaped rubric ({dimension, levels[]}); string rubrics are plain strings. */
+export interface ZhijianRubric {
+  readonly dimension?: string
+  readonly levels?: readonly ZhijianRubricLevel[]
+}
+
+/** Output schema from the Profile JSON `output_schema` section. */
+export interface ZhijianOutputSchema {
+  readonly format?: string
+  readonly sections?: readonly string[]
+  readonly rubrics?: ReadonlyArray<string | ZhijianRubric>
 }
 
 /** One topic type of the routing table (路由规则.md §一). */

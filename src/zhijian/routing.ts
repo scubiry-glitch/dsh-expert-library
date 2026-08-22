@@ -98,8 +98,8 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     name: '政策解读',
     framework: 'B',
     primaryField: '政策制度',
-    candidates: ['bk-020', 'bk-021', 'bk-022', 'bk-006', 'bk-012', 'bk-013', 'bk-028', 'bk-003'],
-    constraints: '涉货币/财税的政策联动到宏观经济（邢自强 bk-004、盛松成 bk-014、楼继伟 bk-032、罗志恒 bk-009）。顾云昌 bk-022 已故：仅可引用历史观点。',
+    candidates: ['bk-020', 'bk-021', 'bk-022', 'bk-006', 'bk-034', 'bk-012', 'bk-013', 'bk-028', 'bk-003'],
+    constraints: '涉货币/财税的政策联动到宏观经济（邢自强 bk-004、盛松成 bk-014、楼继伟 bk-032、罗志恒 bk-009）。顾云昌 bk-022 已故：仅可引用历史观点。陈杰 bk-034：制度研究（九字方针/公积金政策性金融）。',
   },
   {
     id: 'zhijian-macro',
@@ -114,7 +114,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '宏观经济',
     candidates: ['bk-007', 'bk-014', 'bk-029', 'bk-032', 'bk-004'],
-    constraints: '房企信用风险归行业研究（刘洪玉 bk-026、冯俊 bk-027）。',
+    constraints: '房企信用风险归行业研究（刘洪玉 bk-026、冯俊 bk-027）。住房金融/公积金制度视角（辅）：陈杰 bk-034（公积金政策性金融、REITs、收储资金）。',
   },
   {
     id: 'zhijian-city',
@@ -144,8 +144,8 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     name: '制度设计/长效机制',
     framework: 'B',
     primaryField: '政策制度',
-    candidates: ['bk-020', 'bk-022', 'bk-026', 'bk-016', 'bk-032', 'bk-021'],
-    constraints: '顾云昌 bk-022 已故：仅可引用历史观点。',
+    candidates: ['bk-020', 'bk-034', 'bk-022', 'bk-026', 'bk-016', 'bk-032', 'bk-021'],
+    constraints: '顾云昌 bk-022 已故：仅可引用历史观点。陈杰 bk-034：公积金政策性金融、REITs、收储资金视角。',
   },
 ]
 

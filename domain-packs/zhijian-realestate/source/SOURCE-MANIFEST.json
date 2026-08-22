@@ -1,17 +1,39 @@
 {
   "packId": "zhijian-realestate",
-  "packVersion": "1.0.0",
+  "packVersion": "1.1.0",
   "schemaVersion": 2,
-  "baseline": {
-    "source": "智见点评_skill_20260819.zip",
-    "date": "2026-08-19T00:00:00Z",
-    "snapshot": "zhijian-v1-2026-08-19",
-    "zipTotalFiles": 156,
-    "expertCount": 32,
-    "note": "Original 2026-08-19 zip baseline (BK-002..BK-033). Archive: /root/.openclaw/media/outbound/智见点评_skill_20260819.zip"
-  },
+  "baselines": [
+    {
+      "version": "1.0.0",
+      "source": "智见点评_skill_20260819.zip",
+      "date": "2026-08-19T00:00:00Z",
+      "snapshot": "zhijian-v1-2026-08-19",
+      "zipTotalFiles": 156,
+      "expertCount": 32,
+      "note": "Original 2026-08-19 zip baseline (BK-002..BK-033). Archive: /root/.openclaw/media/outbound/智见点评_skill_20260819.zip"
+    },
+    {
+      "version": "1.1.0",
+      "source": "/root/.openclaw/workspace/skills/智见点评 (unpacked workspace copy, updated 2026-08-20/21)",
+      "date": "2026-08-21T00:00:00Z",
+      "snapshot": "zhijian-v1-2026-08-21",
+      "zipTotalFiles": 160,
+      "expertCount": 33,
+      "note": "Unpacked revision: adds 陈杰 BK-034 (专家总表.md 33 rows, 路由规则.md candidates updated 2026-08-21). The original 32 Profile JSONs are byte-identical to the 1.0.0 zip."
+    }
+  ],
+  "upgradeHistory": [
+    {
+      "from": "1.0.0",
+      "to": "1.1.0",
+      "adds": [
+        "bk-034 陈杰"
+      ],
+      "reason": "1.0.0 deliberately kept the 32-expert runtime baseline and recorded BK-034 as a deferred upgrade (2026-08-20 addition to the unpacked source). 1.1.0 regenerates from that newer source: 33 experts, routing candidates updated (政策/制度/金融公积金视角), rich Profile detail projected into ExpertV2."
+    }
+  ],
   "rawProfiles": {
-    "count": 32,
+    "count": 33,
     "files": {
       "廖俊平_专家Profile_BK-002.json": "f3a542a1dd485cf21bfa562f8abe2e62f1433fd02792f325f84948dd7e1285c9",
       "仇保兴_专家Profile_BK-003.json": "748777b4d5b1c06321929aab286cb00f369c00b50c11d1d094a3f4619058f1ea",
@@ -44,18 +66,19 @@
       "李铁_专家Profile_BK-030.json": "cb1311086c3a1824ce0c791c59274059c69decb056ad595344b2df1365826150",
       "陶琦_专家Profile_BK-031.json": "34a01d03c20371c9472edd4073b3dc579c676ccc53f2894a17da4c74a0779a5e",
       "楼继伟_专家Profile_BK-032.json": "89549eeb4d80f89c1e8e611df2be8c619f911a0720b025498e7324e3b9618f5f",
-      "杨现领_专家Profile_BK-033.json": "d0e485856d26bd70cc7297ac7c934a57aea4f92cc2f289f7a19433aba0cfff66"
+      "杨现领_专家Profile_BK-033.json": "d0e485856d26bd70cc7297ac7c934a57aea4f92cc2f289f7a19433aba0cfff66",
+      "陈杰_专家Profile_BK-034.json": "b354e7fd772cddb0aa402f6727454035d7b575c9157e9c80e4c11fa8a9cf214f"
     }
   },
   "docs": {
     "count": 6,
     "files": {
       "SKILL.md": "bdcde3ae101270340fd0c0631f0a221ffddc4770c343c9a805b6bfddf6366fc4",
-      "专家分类框架_v1.md": "7f9a9476a515fa2c55e2096eb7c9b2556e4ca29ea3a5a6d5f9dc071569abfcf7",
-      "专家总表.md": "e0ee8b20140de8d2461b2739d16d0f3fea1ffe50436808985bcd2fef18e91756",
+      "专家分类框架_v1.md": "8f51549d59cc790ec8f36a8d01d922becba1a989b5066bd5deb312e88437f083",
+      "专家总表.md": "0dc31cccdc794cce6143ff8246c7f0b80e50656686b520a34a8833b490d168cc",
       "专家输出框架规范_20260809.md": "afe5fae99ec5bcdde5a9c52decb1495a07bb7df5081a77c65652b8c9e045a663",
       "资料更新规范.md": "b1bb7ae6fed68e209885118f85a4e24a93b715c2a04475652be5e76e783e9814",
-      "路由规则.md": "5d80f9c00567537a369d03ad9aadba177dd617d46c1a642b15fdfb920d45e136"
+      "路由规则.md": "324e62ac43fb951e2b457e5a9c1a39ccec9bd490db0ba084309d108951edd755"
     }
   },
   "library": {
@@ -93,16 +116,9 @@
       "BK-031_陶琦.md": "671cd1a3dcda7a09cf443eec1c1f73689b24c804be30bf4495770b669225890d",
       "BK-032_楼继伟.md": "14e06b208e88422323c3de65ffc517d998b38c765828736453f3a467e8108efe",
       "BK-033_杨现领.md": "f516102ae931fb413d5ba6739de5c22f5fb1ee8610ca6ec03774402d757043c2"
-    }
-  },
-  "deferredUpgrades": [
-    {
-      "version": "1.1.0",
-      "adds": [
-        "bk-034 陈杰"
-      ],
-      "source": "/root/.openclaw/workspace/skills/智见点评 (unpacked copy, updated 2026-08-20/21)",
-      "reason": "BK-034 was added to the unpacked source on 2026-08-20 (专家总表.md 33 rows, 路由规则.md candidates updated 2026-08-21). NOT merged into 1.0.0 to preserve compatibility with the in-repo 32-expert runtime baseline. Apply by regenerating the pack from that source and bumping the pack version."
-    }
-  ]
+    },
+    "missing": [
+      "BK-034 陈杰"
+    ]
+  }
 }

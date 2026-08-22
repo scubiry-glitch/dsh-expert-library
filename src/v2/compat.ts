@@ -27,6 +27,9 @@
  */
 
 import type { Expert, Scenario } from '../expert-library/types.ts'
+import { BUILTIN_EXPERT_BY_ID } from '../expert-library/builtin-experts.ts'
+import { BUILTIN_SCENARIO_BY_ID } from '../expert-library/builtin-scenarios.ts'
+import { ZHIJIAN_EXPERT_BY_ID } from '../zhijian/registry.ts'
 import { compileExecutionPlan, type CompileResult } from './compiler.ts'
 import { validateDomainPack } from './validate.ts'
 import { SCHEMA_VERSION, type CapabilityClaim, type DomainPackV2, type ExpertV2, type KnowledgeProviderManifest, type OutputTemplate, type PackDiagnostic, type QualityPolicy, type ScenarioV2, type TaskTemplate, type TeamTemplate } from './types.ts'
@@ -103,6 +106,38 @@ function legacyOutputTemplateId(scenarioId: string): string {
 
 function legacyQualityPolicyId(scenarioId: string): string {
   return `${scenarioId}.legacy-quality`
+}
+
+/** Minimal legacy OutputTemplate for one scenario id (id-constant content). */
+function legacyOutputTemplateFor(scenarioId: string): OutputTemplate {
+  return {
+    id: legacyOutputTemplateId(scenarioId),
+    version: LEGACY_VERSION,
+    schemaVersion: SCHEMA_VERSION,
+    media: ['markdown'],
+    sections: [{ id: 'legacy-deliverable', required: true }],
+    renderModes: { final: { anonymize: false } },
+    legacySource: 'v1',
+  }
+}
+
+/** Minimal legacy QualityPolicy for one scenario id (no executable gates). */
+function legacyQualityPolicyFor(scenarioId: string): QualityPolicy {
+  return {
+    id: legacyQualityPolicyId(scenarioId),
+    version: LEGACY_VERSION,
+    schemaVersion: SCHEMA_VERSION,
+    gates: [],
+    maxRepairRounds: 0,
+    legacySource: 'v1',
+  }
+}
+
+/** Replace an item by id in a list, or append it when absent. */
+function replaceOrAppend<T extends { readonly id: string }>(list: readonly T[], item: T): T[] {
+  return list.some(candidate => candidate.id === item.id)
+    ? list.map(candidate => candidate.id === item.id ? item : candidate)
+    : [...list, item]
 }
 
 /**
@@ -214,28 +249,8 @@ export function buildLegacyDomainPack(input: {
     freshness: 'static',
     scopes: ['experts', 'scenarios', 'shared'],
   }
-  const outputTemplates: OutputTemplate[] = scenarios.map(scenario => ({
-    id: legacyOutputTemplateId(scenario.id),
-    version: LEGACY_VERSION,
-    schemaVersion: SCHEMA_VERSION,
-    media: ['markdown'],
-    sections: [
-      {
-        id: 'legacy-deliverable',
-        required: true,
-      },
-    ],
-    renderModes: { final: { anonymize: false } },
-    legacySource: 'v1',
-  }))
-  const qualityPolicies: QualityPolicy[] = scenarios.map(scenario => ({
-    id: legacyQualityPolicyId(scenario.id),
-    version: LEGACY_VERSION,
-    schemaVersion: SCHEMA_VERSION,
-    gates: [], // V1 had no executable gates; policies exist so references resolve
-    maxRepairRounds: 0,
-    legacySource: 'v1',
-  }))
+  const outputTemplates: OutputTemplate[] = scenarios.map(scenario => legacyOutputTemplateFor(scenario.id))
+  const qualityPolicies: QualityPolicy[] = scenarios.map(scenario => legacyQualityPolicyFor(scenario.id))
   return {
     pack: {
       id: 'legacy-v1-view',
@@ -460,38 +475,75 @@ export function migrateDomainPack(input: unknown): MigrationResult {
 }
 
 /**
- * Compile one V1 {@link Scenario} into a V2 {@link ExecutionPlan} through
- * the TeamTemplate compiler — a compatibility bridge that establishes
- * compiler-backed migration with **zero behavioral risk** to the legacy
- * runtime (the `expert_teams_*` / `expert_review_*` tools are untouched).
+ * V1 → V2 legacy projection of the **full builtin library**, built once per
+ * process and never invalidated: the inputs (builtin experts, the 32 zhijian
+ * bk-* experts, and the builtin scenarios) are static generated code, so the
+ * projection is stable for the lifetime of the process.
  *
- * Bridge steps:
- * 1. `buildLegacyDomainPack` projects the given experts + this one scenario
- *    into a validator-clean legacy {@link DomainPackV2} (conservative
- *    `adaptV1*` views, `legacySource: 'v1'`);
- * 2. explicit roster assignments cover **every** `scenario.experts` entry —
- *    slot `role.<expertId>` gets exactly `[expertId]`, including experts that
- *    own no task (V1 assembly-roster semantics; the compiler compiles
- *    explicit assignments on unreferenced slots). `role.shared` (expert-less
- *    tasks) receives an explicit empty assignment `[]`, so it stays
- *    unassigned (min 0) and is never auto-filled;
- * 3. `compileExecutionPlan` runs on the legacy template
- *    (`<scenarioId>.legacy-team`) with those assignments;
- * 4. the exact {@link CompileResult} is returned unchanged.
- *
- * Because the legacy template maps tasks 1:1 (`t1..tn` in array order) and
- * `dependsOn` indexes become `t{n+1}` references, the compiled plan's task
- * ids / dependencies / subjects are isomorphic to the V1 DAG — the golden
- * contract covered by `test/v2-v1-bridge.test.mjs`.
+ * This is the shared entity source for every per-call V1 compile — the V1
+ * scenario bridge (`compileV1ScenarioExecutionPlan`) and the collab
+ * projection (`buildCollabDomainPack`) both reuse its expert entities instead
+ * of re-projecting the whole library on every invocation. Callers must treat
+ * the returned pack as read-only (the compile path never mutates it — it
+ * spreads/derives fresh objects — but a mutation here would poison the cache
+ * for the whole process).
  */
-export function compileV1ScenarioExecutionPlan(
-  experts: readonly Expert[],
-  scenario: Scenario,
-): CompileResult {
-  const pack = buildLegacyDomainPack({ experts, scenarios: [scenario] })
+export function builtinLegacyPack(): DomainPackV2 {
+  if (cachedBuiltinPack === undefined) {
+    cachedBuiltinPack = buildLegacyDomainPack({
+      experts: [...BUILTIN_EXPERT_BY_ID.values(), ...ZHIJIAN_EXPERT_BY_ID.values()],
+      scenarios: [...BUILTIN_SCENARIO_BY_ID.values()],
+    })
+  }
+  return cachedBuiltinPack
+}
+
+let cachedBuiltinPack: DomainPackV2 | undefined
+
+/** Whether a V1 Expert is one of the builtin registry objects (not an override/fixture). */
+function isBuiltinExpertObject(expert: Expert): boolean {
+  return BUILTIN_EXPERT_BY_ID.get(expert.id) === expert || ZHIJIAN_EXPERT_BY_ID.get(expert.id) === expert
+}
+
+/** Structural equality over JSON-shaped values (key-order invariant). */
+function deepEqualJson(a: unknown, b: unknown): boolean {
+  if (a === b) return true
+  if (typeof a !== typeof b) return false
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return a.length === b.length && a.every((item, index) => deepEqualJson(item, b[index]))
+  }
+  if (isRecord(a) && isRecord(b)) {
+    const ka = Object.keys(a).sort()
+    const kb = Object.keys(b).sort()
+    return ka.length === kb.length && ka.every((key, index) => key === kb[index] && deepEqualJson(a[key], b[key]))
+  }
+  return false
+}
+
+/**
+ * Reuse the cached pack's expert entities; re-adapt only the passed experts
+ * the cache does not already cover byte-for-byte (user-pack overrides,
+ * workspace packs, test fixtures) so their content — including preset model
+ * routes — stays authoritative. Order is irrelevant to the compiler (roster
+ * order comes from slot assignment order, never from `pack.experts` order).
+ */
+function mergeCachedExperts(cached: DomainPackV2, experts: readonly Expert[]): readonly ExpertV2[] {
+  const byId = new Map<string, ExpertV2>(cached.experts.map(expert => [expert.id, expert]))
+  for (const expert of experts) {
+    if (isBuiltinExpertObject(expert)) continue
+    byId.set(expert.id, adaptV1Expert(expert))
+  }
+  return [...byId.values()]
+}
+
+/**
+ * V1 assembly-roster semantics: every `scenario.experts` entry gets a
+ * `role.<expertId>` assignment (task-ownership notwithstanding), task owners
+ * get theirs, and expert-less tasks put `role.shared` at an explicit empty
+ * assignment (min 0 — never auto-filled).
+ */
+function v1RosterAssignments(scenario: Scenario): Record<string, readonly string[]> {
   const assignments: Record<string, readonly string[]> = {}
-  // V1 assembly-roster semantics: every scenario.experts entry is assigned,
-  // task-ownership notwithstanding.
   for (const expertId of scenario.experts) {
     const slot = `role.${expertId}`
     if (assignments[slot] === undefined) {
@@ -510,6 +562,67 @@ export function compileV1ScenarioExecutionPlan(
   if (scenario.tasks.some(task => task.expert === undefined)) {
     assignments['role.shared'] = []
   }
+  return assignments
+}
+
+/**
+ * Compile one V1 {@link Scenario} into a V2 {@link ExecutionPlan} through
+ * the TeamTemplate compiler — a compatibility bridge that establishes
+ * compiler-backed migration with **zero behavioral risk** to the legacy
+ * runtime (the `expert_teams_*` / `expert_review_*` tools are untouched).
+ *
+ * Bridge steps (V1 dual-track consolidation):
+ * 1. the shared process-wide {@link builtinLegacyPack} projection of the full
+ *    builtin library is reused instead of rebuilding a per-call pack; only
+ *    experts the cache does not cover (user overrides / fixtures) are
+ *    re-adapted, so preset model routes and user content stay authoritative;
+ * 2. when the passed scenario **is** the builtin one (reference- or
+ *    content-identical), its legacy TeamTemplate is looked up in the cached
+ *    pack directly — zero per-call projection; otherwise (user-pack scenario
+ *    or a caller-provided variant) the legacy template + scenario view are
+ *    derived from the passed object, byte-identical to the pre-consolidation
+ *    per-call `buildLegacyDomainPack` projection;
+ * 3. explicit roster assignments cover **every** `scenario.experts` entry —
+ *    slot `role.<expertId>` gets exactly `[expertId]`, including experts that
+ *    own no task (V1 assembly-roster semantics; the compiler compiles
+ *    explicit assignments on unreferenced slots). `role.shared` (expert-less
+ *    tasks) receives an explicit empty assignment `[]`, so it stays
+ *    unassigned (min 0) and is never auto-filled;
+ * 4. `compileExecutionPlan` runs on the legacy template
+ *    (`<scenarioId>.legacy-team`) with those assignments;
+ * 5. the exact {@link CompileResult} is returned unchanged.
+ *
+ * Because the legacy template maps tasks 1:1 (`t1..tn` in array order) and
+ * `dependsOn` indexes become `t{n+1}` references, the compiled plan's task
+ * ids / dependencies / subjects are isomorphic to the V1 DAG — the golden
+ * contract covered by `test/v2-v1-bridge.test.mjs` and the digest-equality
+ * contract covered by `test/v2-v1-consolidation.test.mjs`.
+ */
+export function compileV1ScenarioExecutionPlan(
+  experts: readonly Expert[],
+  scenario: Scenario,
+): CompileResult {
+  const cached = builtinLegacyPack()
+  const assignments = v1RosterAssignments(scenario)
+  let pack: DomainPackV2 = { ...cached, experts: mergeCachedExperts(cached, experts) }
+
+  const builtin = BUILTIN_SCENARIO_BY_ID.get(scenario.id)
+  const sameAsBuiltin = builtin !== undefined && (builtin === scenario || deepEqualJson(builtin, scenario))
+  if (!sameAsBuiltin) {
+    // User-pack scenario (or a caller-provided variant of a builtin id):
+    // derive its legacy TeamTemplate + ScenarioV2 + output/quality refs from
+    // the passed object and splice them in (replacing the cached entry for
+    // that id, or appending) — byte-identical to the pre-consolidation
+    // per-call `buildLegacyDomainPack` projection.
+    pack = {
+      ...pack,
+      teamTemplates: replaceOrAppend(pack.teamTemplates, adaptV1ScenarioTeamTemplate(scenario)),
+      scenarios: replaceOrAppend(pack.scenarios, adaptV1Scenario(scenario)),
+      outputTemplates: replaceOrAppend(pack.outputTemplates, legacyOutputTemplateFor(scenario.id)),
+      qualityPolicies: replaceOrAppend(pack.qualityPolicies, legacyQualityPolicyFor(scenario.id)),
+    }
+  }
+
   return compileExecutionPlan({
     pack,
     templateId: legacyTeamTemplateId(scenario.id),

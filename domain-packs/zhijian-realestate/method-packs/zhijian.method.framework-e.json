@@ -1,6 +1,6 @@
 {
   "id": "zhijian.method.framework-e",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "name": "输出框架 E（专家式顾问）",
   "mediaType": "agent-instructions",

@@ -67,18 +67,18 @@ async function writeZipFixture(root, { roster = MINI_ROSTER, profiles = [] }) {
   }
 }
 
-const EXPECTED_FIELD_COUNTS = { '宏观经济': 9, '政策制度': 8, '行业研究': 8, '城市发展': 3, '居住服务': 4 }
+const EXPECTED_FIELD_COUNTS = { '宏观经济': 9, '政策制度': 9, '行业研究': 8, '城市发展': 3, '居住服务': 4 }
 
 // ── 1. the pack's embedded source ───────────────────────────────────────────
 
-test('pack source parses clean: 32 experts, ids bk-002..bk-033, field counts, deceased bk-022', async () => {
+test('pack source parses clean: 33 experts, ids bk-002..bk-034, field counts, deceased bk-022', async () => {
   const parsed = await parseZhijianSource(PACK_SOURCE)
   assert.equal(parsed.ok, true, JSON.stringify(parsed.errors))
   assert.equal(parsed.layout, 'pack')
-  assert.equal(parsed.experts.length, 32)
+  assert.equal(parsed.experts.length, 33)
   const ids = parsed.experts.map(e => e.id)
-  assert.deepEqual(ids, Array.from({ length: 32 }, (_, i) => `bk-${String(i + 2).padStart(3, '0')}`))
-  assert.ok(!ids.includes('bk-034'), 'BK-034 must not be silently merged into the 1.0.0 baseline')
+  assert.deepEqual(ids, Array.from({ length: 33 }, (_, i) => `bk-${String(i + 2).padStart(3, '0')}`))
+  assert.ok(ids.includes('bk-034'), 'BK-034 陈杰 is part of the 1.1.0 baseline')
   const fieldCounts = {}
   for (const e of parsed.experts) fieldCounts[e.field] = (fieldCounts[e.field] ?? 0) + 1
   assert.deepEqual(fieldCounts, EXPECTED_FIELD_COUNTS)
@@ -93,6 +93,41 @@ test('embedded source regenerates experts.generated.ts byte-identically', async 
   const { readFile } = await import('node:fs/promises')
   const committed = await readFile(GENERATED_TS, 'utf8')
   assert.equal(regenerated, committed, 'regeneration from the embedded source must be byte-identical to the committed TS')
+})
+
+// ── 1b. 1.1.0 rich-field extraction ─────────────────────────────────────────
+
+test('rich fields are extracted verbatim from the raw profiles (persona/method/emm/constraints/output_schema)', async () => {
+  const parsed = await parseZhijianSource(PACK_SOURCE)
+  assert.equal(parsed.ok, true)
+  for (const expert of parsed.experts) {
+    // every 1.1.0 profile asserts the five rich groups
+    assert.ok(expert.personaDetail !== undefined, `${expert.bk} personaDetail`)
+    assert.ok(expert.methodDetail !== undefined, `${expert.bk} methodDetail`)
+    assert.ok(expert.emm !== undefined, `${expert.bk} emm`)
+    assert.ok(expert.constraints !== undefined, `${expert.bk} constraints`)
+    assert.ok(expert.outputSchema !== undefined, `${expert.bk} outputSchema`)
+    // cognition.mentalModels are rich (summary/evidence/…), not name-only
+    assert.ok(expert.personaDetail.cognition.mentalModels.length > 0, `${expert.bk} cognition.mentalModels`)
+    for (const model of expert.personaDetail.cognition.mentalModels) {
+      assert.ok(model.name.length > 0)
+      assert.ok(model.summary !== undefined && model.summary.length > 0, `${expert.bk}/${model.name} summary`)
+    }
+  }
+  const e4 = parsed.experts.find(e => e.bk === 'BK-004')
+  assert.equal(typeof e4.personaDetail.tone, 'string')
+  assert.ok(e4.personaDetail.bias.length >= 3)
+  assert.deepEqual(Object.keys(e4.emm.factorHierarchy).length, 4)
+  assert.ok(e4.emm.vetoRules.length >= 3)
+  assert.equal(e4.constraints.mustConclude, true)
+  assert.equal(typeof e4.methodDetail.reviewLens, 'object')
+  // BK-034 carries a string reviewLens verbatim (no structural fabrication)
+  const e34 = parsed.experts.find(e => e.bk === 'BK-034')
+  assert.equal(typeof e34.methodDetail.reviewLens, 'string')
+  assert.ok(e34.outputSchema.rubrics.every(r => typeof r === 'string'))
+  // object-shaped rubrics survive (BK-003)
+  const e3 = parsed.experts.find(e => e.bk === 'BK-003')
+  assert.ok(e3.outputSchema.rubrics.some(r => typeof r === 'object' && r.dimension !== undefined))
 })
 
 // ── 2. determinism ──────────────────────────────────────────────────────────

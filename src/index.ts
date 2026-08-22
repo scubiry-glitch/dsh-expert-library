@@ -54,6 +54,10 @@ import {
   resolveProviderServiceOptions,
   type ProviderConfigInput,
 } from './host/provider-service.ts'
+import {
+  providerCallToolEligible,
+  registerProviderCallTool,
+} from './host/provider-tool.ts'
 import { listDomainPacks, previewDomainPack } from './v2/preview.ts'
 
 /**
@@ -372,6 +376,18 @@ export function apply(ctx: Context, config: Config): void {
         ctx.logger.warn(`expert-library: provider reconfigure failed: ${String(error)}`)
       }
     }
+    syncProviderTool()
+  }
+
+  // The member-level `expert_provider_call` tool is registered only once the
+  // provider service is available with at least one registered provider —
+  // webless/headless profiles skip it silently (the tool body also fails
+  // closed at execute time if the service ever loses all providers).
+  let providerToolRegistered = false
+  const syncProviderTool = (): void => {
+    if (providerToolRegistered || !providerCallToolEligible(providerService)) return
+    registerProviderCallTool(ctx)
+    providerToolRegistered = true
   }
 
   // The usage policy section is injected while the plugin is announced to

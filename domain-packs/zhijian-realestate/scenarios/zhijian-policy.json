@@ -1,6 +1,6 @@
 {
   "id": "zhijian-policy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "domain": "realestate",
   "intents": [
@@ -20,13 +20,14 @@
   ],
   "routingPolicy": {
     "assertions": [
-      "涉货币/财税的政策联动到宏观经济（邢自强 bk-004、盛松成 bk-014、楼继伟 bk-032、罗志恒 bk-009）。顾云昌 bk-022 已故：仅可引用历史观点。"
+      "涉货币/财税的政策联动到宏观经济（邢自强 bk-004、盛松成 bk-014、楼继伟 bk-032、罗志恒 bk-009）。顾云昌 bk-022 已故：仅可引用历史观点。陈杰 bk-034：制度研究（九字方针/公积金政策性金融）。"
     ],
     "candidateHints": [
       "bk-020",
       "bk-021",
       "bk-022",
       "bk-006",
+      "bk-034",
       "bk-012",
       "bk-013",
       "bk-028",

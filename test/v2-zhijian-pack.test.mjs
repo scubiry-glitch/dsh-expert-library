@@ -1,8 +1,8 @@
 /**
  * Phase 1 Zhijian V2 Domain Pack projection tests.
  *
- * Verifies that the 32 in-repo generated expert metas project into a
- * validator-clean `zhijian-realestate` DomainPackV2 with derived
+ * Verifies that the in-repo generated expert metas (33 since 1.1.0) project
+ * into a validator-clean `zhijian-realestate` DomainPackV2 with derived
  * output/team/scenario/quality assets — and that V1 runtime data is not
  * touched. Runs against the built `lib/` output (see `pnpm test`).
  */
@@ -40,19 +40,20 @@ function hasLegacyMarker(value, key = '') {
 
 // ── 1. Pack validity ─────────────────────────────────────────────────────────
 
-test('zhijian pack validates clean with 32 experts', () => {
+test('zhijian pack validates clean with 33 experts', () => {
   const pack = build()
   const result = validateDomainPack(pack)
   assert.equal(result.ok, true, JSON.stringify(result.diagnostics.filter(d => d.severity === 'error')))
   assert.equal(result.diagnostics.filter(d => d.severity === 'error').length, 0)
-  assert.equal(pack.experts.length, 32)
+  assert.equal(pack.experts.length, 33)
 })
 
-test('expert ids exactly match the V1 roster ids (bk-002..bk-033)', () => {
+test('expert ids exactly match the V1 roster ids (bk-002..bk-034)', () => {
   const ids = build().experts.map(expert => expert.id)
   assert.deepEqual(ids, [...ZHIJIAN_EXPERT_IDS])
   assert.equal(ids[0], 'bk-002')
-  assert.equal(ids[ids.length - 1], 'bk-033')
+  assert.equal(ids[ids.length - 1], 'bk-034')
+  assert.ok(ids.includes('bk-034'), 'BK-034 (陈杰) is merged in 1.1.0')
 })
 
 test('every derived expert maps 1:1 to a V1 Expert in the registry (runtime untouched)', () => {
@@ -62,7 +63,7 @@ test('every derived expert maps 1:1 to a V1 Expert in the registry (runtime unto
     assert.ok(v1 !== undefined, `missing V1 expert ${expert.id}`)
     assert.equal(v1.name, expert.display.internalName)
   }
-  assert.equal(ZHIJIAN_EXPERT_BY_ID.size, 32)
+  assert.equal(ZHIJIAN_EXPERT_BY_ID.size, 33)
 })
 
 // ── 2. No fabrication / no legacy markers ────────────────────────────────────
@@ -130,12 +131,62 @@ test('persona fields mirror the generated meta verbatim (style/phrases/anti-patt
     assert.deepEqual(expert.persona.style, [...meta.style])
     assert.deepEqual(expert.persona.signaturePhrases, [...meta.signaturePhrases])
     assert.deepEqual(expert.persona.antiPatterns, [...meta.antiPatterns])
+    // 1.1.0: persona.mentalModels come from the rich
+    // persona.cognition.mentalModels when the profile asserts them (all 33
+    // do); otherwise they fall back to the name-only method.frameworks list.
+    const rich = meta.personaDetail?.cognition?.mentalModels
+    const expectedNames = rich !== undefined && rich.length > 0
+      ? rich.map(model => model.name)
+      : meta.mentalModels
     assert.deepEqual(
       (expert.persona.mentalModels ?? []).map(model => model.name),
-      meta.mentalModels,
+      expectedNames,
     )
   }
 })
+
+test('1.1.0 rich projection: persona/method/emm/constraints/outputSchema mirror the raw Profile detail', () => {
+  const pack = build()
+  for (const expert of pack.experts) {
+    const meta = ZHIJIAN_EXPERTS.find(item => item.id === expert.id)
+    assert.ok(meta !== undefined)
+    const detail = meta.personaDetail
+    if (detail?.tone !== undefined) assert.equal(expert.persona.tone, detail.tone)
+    if (detail?.bias !== undefined) assert.deepEqual(expert.persona.bias, [...detail.bias])
+    if (detail?.values !== undefined) assert.deepEqual(expert.persona.values, detail.values)
+    if (detail?.taste !== undefined) assert.deepEqual(expert.persona.taste, detail.taste)
+    if (detail?.voice !== undefined) assert.deepEqual(expert.persona.voice, detail.voice)
+    if (detail?.blindSpots !== undefined) assert.deepEqual(expert.persona.blindSpots, detail.blindSpots)
+    if (meta.methodDetail !== undefined) assert.deepEqual(expert.methodProfile, meta.methodDetail)
+    if (meta.emm !== undefined) assert.deepEqual(expert.emm, meta.emm)
+    if (meta.constraints !== undefined) assert.deepEqual(expert.constraints, meta.constraints)
+    if (meta.outputSchema !== undefined) assert.deepEqual(expert.outputSchema, meta.outputSchema)
+  }
+  // Concrete spot checks on bk-004 (rich structured data).
+  const e4 = pack.experts.find(expert => expert.id === 'bk-004')
+  assert.ok(e4.persona.tone.includes('理性克制'))
+  assert.ok(e4.persona.blindSpots.knownBias.length >= 3)
+  const mm = e4.persona.mentalModels.find(model => model.name === '低物价循环')
+  assert.ok(mm !== undefined)
+  assert.ok(mm.summary.length > 0)
+  assert.ok(Array.isArray(mm.evidence) && mm.evidence.length > 0)
+  assert.equal(e4.constraints.mustConclude, true)
+  assert.deepEqual(Object.keys(e4.emm.factorHierarchy).length, 4)
+  assert.ok(e4.emm.vetoRules.length >= 3)
+  // bk-034 carries a string reviewLens verbatim (no fabrication of structure).
+  const e34 = pack.experts.find(expert => expert.id === 'bk-034')
+  assert.equal(typeof e34.methodProfile.reviewLens, 'string')
+  assert.deepEqual(e34.constraints, { mustConclude: true, allowAssumption: false })
+  // Absent fields stay absent: the projection never adds keys the meta lacks.
+  for (const expert of pack.experts) {
+    if (expert.persona.tone !== undefined) assert.ok(metaTone(expert.id), `tone must come from the source for ${expert.id}`)
+  }
+})
+
+function metaTone(id) {
+  const meta = ZHIJIAN_EXPERTS.find(item => item.id === id)
+  return meta.personaDetail?.tone !== undefined
+}
 
 test('compliance assertions match the roster rules (deceased bk-022, internalOnly bk-031, caliber policies)', () => {
   const pack = build()
@@ -268,7 +319,7 @@ test('knowledge providers and the domain knowledge manifest are self-describing'
   assert.ok(providerIds.includes('zhijian-expert-memory'))
   const kb = pack.domainKnowledge[0]
   assert.equal(kb.id, 'zhijian.expert-memory')
-  assert.equal(kb.snapshot.recordCount, 32)
+  assert.equal(kb.snapshot.recordCount, 33)
   const expectedDigest = createHash('sha256').update(JSON.stringify(ZHIJIAN_EXPERTS)).digest('hex')
   assert.equal(kb.snapshot.digest, expectedDigest, 'snapshot digest is computed over the source metas')
   for (const expert of pack.experts) {

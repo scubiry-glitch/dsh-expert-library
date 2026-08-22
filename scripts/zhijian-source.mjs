@@ -316,6 +316,14 @@ export async function parseZhijianSource(src) {
       ? method.analysis_steps.map(s => String(s))
       : []
 
+    // 1.1.0 rich detail: only present source sections are carried (absent stays
+    // absent — no fabrication). Deterministic: same source ⇒ same fields.
+    const personaDetail = extractPersonaDetail(p)
+    const methodDetail = extractMethodDetail(p)
+    const emm = extractEmm(p)
+    const constraints = extractConstraints(p)
+    const outputSchema = extractOutputSchema(p)
+
     experts.push({
       id: bk.toLowerCase(),
       bk,
@@ -333,6 +341,11 @@ export async function parseZhijianSource(src) {
       antiPatterns: Array.isArray(p.anti_patterns) ? p.anti_patterns.map(s => String(s)) : [],
       analysisSteps,
       ...(DECEASED.has(bk) ? { deceased: true } : {}),
+      ...(personaDetail !== undefined ? { personaDetail } : {}),
+      ...(methodDetail !== undefined ? { methodDetail } : {}),
+      ...(emm !== undefined ? { emm } : {}),
+      ...(constraints !== undefined ? { constraints } : {}),
+      ...(outputSchema !== undefined ? { outputSchema } : {}),
     })
   }
 
@@ -347,6 +360,204 @@ export async function parseZhijianSource(src) {
     profiles,
     experts,
   }
+}
+
+/**
+ * Rich-field extraction (1.1.0): conservatively lift the raw Profile JSON
+ * sections that the V1 metas never carried into the meta as optional grouped
+ * detail objects — `personaDetail` / `methodDetail` / `emm` / `constraints` /
+ * `outputSchema`. Only fields present in the source are emitted (absent stays
+ * absent); everything is a verbatim camelCase projection, never invented.
+ */
+
+/** String array helper: only present, non-empty arrays of strings. */
+function pickStrings(value) {
+  if (!Array.isArray(value)) return undefined
+  const out = value.map(item => String(item)).filter(s => s !== '')
+  return out.length > 0 ? out : undefined
+}
+
+/** `persona.{tone,bias,values,taste,voice,cognition,blindSpots}` → detail object. */
+function extractPersonaDetail(p) {
+  const persona = isRecord(p.persona) ? p.persona : undefined
+  if (persona === undefined) return undefined
+  const out = {}
+  if (typeof persona.tone === 'string' && persona.tone !== '') out.tone = persona.tone
+  const bias = pickStrings(persona.bias)
+  if (bias !== undefined) out.bias = bias
+
+  const values = isRecord(persona.values) ? persona.values : undefined
+  if (values !== undefined) {
+    const v = {}
+    const excites = pickStrings(values.excites)
+    if (excites !== undefined) v.excites = excites
+    const irritates = pickStrings(values.irritates)
+    if (irritates !== undefined) v.irritates = irritates
+    if (typeof values.qualityBar === 'string' && values.qualityBar !== '') v.qualityBar = values.qualityBar
+    const dealbreakers = pickStrings(values.dealbreakers)
+    if (dealbreakers !== undefined) v.dealbreakers = dealbreakers
+    if (Object.keys(v).length > 0) out.values = v
+  }
+
+  const taste = isRecord(persona.taste) ? persona.taste : undefined
+  if (taste !== undefined) {
+    const t = {}
+    const admires = pickStrings(taste.admires)
+    if (admires !== undefined) t.admires = admires
+    const disdains = pickStrings(taste.disdains)
+    if (disdains !== undefined) t.disdains = disdains
+    if (typeof taste.benchmark === 'string' && taste.benchmark !== '') t.benchmark = taste.benchmark
+    if (Object.keys(t).length > 0) out.taste = t
+  }
+
+  const voice = isRecord(persona.voice) ? persona.voice : undefined
+  if (voice !== undefined) {
+    const v = {}
+    if (typeof voice.disagreementStyle === 'string' && voice.disagreementStyle !== '') v.disagreementStyle = voice.disagreementStyle
+    if (typeof voice.praiseStyle === 'string' && voice.praiseStyle !== '') v.praiseStyle = voice.praiseStyle
+    if (Object.keys(v).length > 0) out.voice = v
+  }
+
+  const cognition = isRecord(persona.cognition) ? persona.cognition : undefined
+  if (cognition !== undefined) {
+    const c = {}
+    if (typeof cognition.mentalModel === 'string' && cognition.mentalModel !== '') c.mentalModel = cognition.mentalModel
+    if (Array.isArray(cognition.mentalModels)) {
+      const models = cognition.mentalModels
+        .filter(item => isRecord(item) && typeof item.name === 'string' && item.name !== '')
+        .map(item => {
+          const model = { name: item.name }
+          if (typeof item.summary === 'string' && item.summary !== '') model.summary = item.summary
+          const evidence = pickStrings(item.evidence)
+          if (evidence !== undefined) model.evidence = evidence
+          if (typeof item.applicationContext === 'string' && item.applicationContext !== '') model.applicationContext = item.applicationContext
+          if (typeof item.failureCondition === 'string' && item.failureCondition !== '') model.failureCondition = item.failureCondition
+          return model
+        })
+      if (models.length > 0) c.mentalModels = models
+    }
+    if (typeof cognition.decisionStyle === 'string' && cognition.decisionStyle !== '') c.decisionStyle = cognition.decisionStyle
+    if (typeof cognition.riskAttitude === 'string' && cognition.riskAttitude !== '') c.riskAttitude = cognition.riskAttitude
+    if (typeof cognition.timeHorizon === 'string' && cognition.timeHorizon !== '') c.timeHorizon = cognition.timeHorizon
+    if (Object.keys(c).length > 0) out.cognition = c
+  }
+
+  const blindSpots = isRecord(persona.blindSpots) ? persona.blindSpots : undefined
+  if (blindSpots !== undefined) {
+    const b = {}
+    const knownBias = pickStrings(blindSpots.knownBias)
+    if (knownBias !== undefined) b.knownBias = knownBias
+    const weakDomains = pickStrings(blindSpots.weakDomains)
+    if (weakDomains !== undefined) b.weakDomains = weakDomains
+    if (typeof blindSpots.selfAwareness === 'string' && blindSpots.selfAwareness !== '') b.selfAwareness = blindSpots.selfAwareness
+    if (typeof blindSpots.confidenceThreshold === 'string' && blindSpots.confidenceThreshold !== '') b.confidenceThreshold = blindSpots.confidenceThreshold
+    if (Object.keys(b).length > 0) out.blindSpots = b
+  }
+
+  return Object.keys(out).length > 0 ? out : undefined
+}
+
+/** `method.{reviewLens,dataPreference,evidenceStandard,agenticProtocol}` → detail object. */
+function extractMethodDetail(p) {
+  const method = isRecord(p.method) ? p.method : undefined
+  if (method === undefined) return undefined
+  const out = {}
+
+  const reviewLens = method.reviewLens
+  if (typeof reviewLens === 'string' && reviewLens !== '') {
+    // 陈杰 BK-034 carries reviewLens as a plain string — keep it verbatim.
+    out.reviewLens = reviewLens
+  } else if (isRecord(reviewLens)) {
+    const r = {}
+    if (typeof reviewLens.firstGlance === 'string' && reviewLens.firstGlance !== '') r.firstGlance = reviewLens.firstGlance
+    const deepDive = pickStrings(reviewLens.deepDive)
+    if (deepDive !== undefined) r.deepDive = deepDive
+    if (typeof reviewLens.killShot === 'string' && reviewLens.killShot !== '') r.killShot = reviewLens.killShot
+    const bonusPoints = pickStrings(reviewLens.bonusPoints)
+    if (bonusPoints !== undefined) r.bonusPoints = bonusPoints
+    if (Object.keys(r).length > 0) out.reviewLens = r
+  }
+  if (typeof method.dataPreference === 'string' && method.dataPreference !== '') out.dataPreference = method.dataPreference
+  if (typeof method.evidenceStandard === 'string' && method.evidenceStandard !== '') out.evidenceStandard = method.evidenceStandard
+
+  const agenticProtocol = isRecord(method.agenticProtocol) ? method.agenticProtocol : undefined
+  if (agenticProtocol !== undefined) {
+    const a = {}
+    if (typeof agenticProtocol.requiresResearch === 'boolean') a.requiresResearch = agenticProtocol.requiresResearch
+    const researchSteps = pickStrings(agenticProtocol.researchSteps)
+    if (researchSteps !== undefined) a.researchSteps = researchSteps
+    if (typeof agenticProtocol.noGuessPolicy === 'boolean') a.noGuessPolicy = agenticProtocol.noGuessPolicy
+    if (Object.keys(a).length > 0) out.agenticProtocol = a
+  }
+
+  return Object.keys(out).length > 0 ? out : undefined
+}
+
+/** `emm{critical_factors,factor_hierarchy,veto_rules,aggregation_logic}` → detail object. */
+function extractEmm(p) {
+  const emm = isRecord(p.emm) ? p.emm : undefined
+  if (emm === undefined) return undefined
+  const out = {}
+  const criticalFactors = pickStrings(emm.critical_factors)
+  if (criticalFactors !== undefined) out.criticalFactors = criticalFactors
+  const factorHierarchy = isRecord(emm.factor_hierarchy) ? emm.factor_hierarchy : undefined
+  if (factorHierarchy !== undefined) {
+    const fh = {}
+    for (const [key, value] of Object.entries(factorHierarchy)) {
+      if (typeof value === 'number' && Number.isFinite(value)) fh[key] = value
+    }
+    if (Object.keys(fh).length > 0) out.factorHierarchy = fh
+  }
+  const vetoRules = pickStrings(emm.veto_rules)
+  if (vetoRules !== undefined) out.vetoRules = vetoRules
+  if (typeof emm.aggregation_logic === 'string' && emm.aggregation_logic !== '') out.aggregationLogic = emm.aggregation_logic
+  return Object.keys(out).length > 0 ? out : undefined
+}
+
+/** `constraints{must_conclude,allow_assumption}` → detail object. */
+function extractConstraints(p) {
+  const constraints = isRecord(p.constraints) ? p.constraints : undefined
+  if (constraints === undefined) return undefined
+  const out = {}
+  if (typeof constraints.must_conclude === 'boolean') out.mustConclude = constraints.must_conclude
+  if (typeof constraints.allow_assumption === 'boolean') out.allowAssumption = constraints.allow_assumption
+  return Object.keys(out).length > 0 ? out : undefined
+}
+
+/** `output_schema{format,sections,rubrics}` → detail object (rubrics: strings or {dimension,levels}). */
+function extractOutputSchema(p) {
+  const schema = isRecord(p.output_schema) ? p.output_schema : undefined
+  if (schema === undefined) return undefined
+  const out = {}
+  if (typeof schema.format === 'string' && schema.format !== '') out.format = schema.format
+  const sections = pickStrings(schema.sections)
+  if (sections !== undefined) out.sections = sections
+  if (Array.isArray(schema.rubrics)) {
+    const rubrics = schema.rubrics
+      .map(rubric => {
+        if (typeof rubric === 'string') return rubric
+        if (isRecord(rubric)) {
+          const r = {}
+          if (typeof rubric.dimension === 'string' && rubric.dimension !== '') r.dimension = rubric.dimension
+          if (Array.isArray(rubric.levels)) {
+            const levels = rubric.levels
+              .filter(level => isRecord(level))
+              .map(level => {
+                const l = {}
+                if (typeof level.score === 'number' && Number.isFinite(level.score)) l.score = level.score
+                if (typeof level.description === 'string' && level.description !== '') l.description = level.description
+                return l
+              })
+            if (levels.length > 0) r.levels = levels
+          }
+          return Object.keys(r).length > 0 ? r : undefined
+        }
+        return undefined
+      })
+      .filter(rubric => rubric !== undefined)
+    if (rubrics.length > 0) out.rubrics = rubrics
+  }
+  return Object.keys(out).length > 0 ? out : undefined
 }
 
 /** Whether a path exists as a regular file. */

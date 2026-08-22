@@ -714,11 +714,13 @@ Provider Contract → 事实从哪里来、错误如何解释
 | 结论 | 置信级别 |
 |---|---|
 | Wind CLI 位置/命令面/7域39工具/双层信封/三种错误码/Key 可用 | 【实测】 |
+| Wind 经 V2 transport 栈真实取数（600519.SH 行情；`cli_meta.completeness:'not_asserted'` 漂移补偿；`data.unit` 列→单位对象映射） | 【实测 2026-08-22，scripts/live-smoke-wind.mjs】 |
 | Wind AUTH_ERROR/批量≤50/并发≤10 的运行时强制方式 | 【源码+文档，待触发验证】 |
 | zyt 命令面/--json/X-Api-Key/退出码/dataView/buildRequestPlan | 【源码契约，本机不可执行】 |
-| zyt 实际可用性（安装/联调） | 【待验证】 |
+| zyt HTTP API 直连（`/openapi/v1/me`，X-Api-Key；`dataView: internal` → caliber `zyt.internal(真实绝对量)` 进入 provenance） | 【实测 2026-08-22，scripts/live-smoke-zyt.mjs】 |
 | 贝壳独立 CLI 存在性、命令面、MCP 双模式、认证路径、与 zyt 非同源 | 【二进制静态分析（strings/符号），zip 已收到】 |
-| 贝壳响应 JSON schema、错误行为、数据口径 | 【待实测——二进制为 macOS arm64，本机 Linux 不可执行】 |
+| 贝壳 MCP HTTP 直连（Bearer 认证；serverInfo 布丁MCP服务 3.4.6；17 个线上工具；工具名与 CLI 静态分析推导不同，capability→工具映射以实测为准；house_search 真实房源召回） | 【实测 2026-08-22，scripts/live-smoke-beike.mjs】 |
+| 贝壳逐响应 schema 的完整字段枚举与 DataGate 口径规则 | 【部分实测（单一工具），随业务使用固化】 |
 | 智见包结构与 schema/债务 | 【实测（zip 解析）】 |
 | 99wiki 分型门控规则 | 【规范文档，来自 wiki-gated-research skill】 |
 | V2 对象契约/分层/迁移路线 | 【设计】 |

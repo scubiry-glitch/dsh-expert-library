@@ -1,14 +1,14 @@
 {
   "id": "zhijian.expert-memory",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "domain": "realestate.research",
-  "boundary": "智见点评 32 位房地产专家 Profile 基线（2026-08-19）：身份、领域、立场、风格、心智模型、金句、禁区、分析步骤；不含实时市场数据。",
+  "boundary": "智见点评 33 位房地产专家 Profile 基线（2026-08-21 更新：原 2026-08-19 基线 32 位 + 新增陈杰 BK-034）：身份、领域、立场、风格、心智模型、金句、禁区、分析步骤、方法细节（reviewLens/dataPreference/evidenceStandard/agenticProtocol）、评估模型（emm 加权+一票否决）、输出约束与 rubric；不含实时市场数据。",
   "ontology": {
     "entities": [
       {
         "id": "expert",
-        "description": "领域专家（bk-002~bk-033）"
+        "description": "领域专家（bk-002~bk-034）"
       },
       {
         "id": "field",
@@ -51,10 +51,10 @@
     }
   ],
   "snapshot": {
-    "id": "zhijian-v1-2026-08-19",
-    "takenAt": "2026-08-19T00:00:00Z",
-    "digest": "cd27adf923acf699359a20118445a706d9ae0fea8e684b6a1da7ab37bbe8c78a",
-    "recordCount": 32
+    "id": "zhijian-v1-2026-08-21",
+    "takenAt": "2026-08-21T00:00:00Z",
+    "digest": "6d363039dbaa788080a48ee85b3cf448e7e5f40e6ef1418aaebad0ab2736c69d",
+    "recordCount": 33
   },
   "retrievalProfiles": [
     {

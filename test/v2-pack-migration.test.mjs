@@ -1,18 +1,19 @@
 /**
  * zhijian-realestate domain pack migration tests (Phase 1 §7.3).
  *
- * Covers the entity Domain Pack at `domain-packs/zhijian-realestate`:
+ * Covers the entity Domain Pack at `domain-packs/zhijian-realestate` (v1.1.0):
  * - the layout is accepted by `loadPackFromDir` with zero diagnostics and the
  *   loaded pack deep-equals the in-memory V2 projection (round-trip);
- * - the pack pins the 2026-08-19 zip baseline: exactly 32 experts
- *   (bk-002..bk-033) and BK-034 recorded as a deferred 1.1.0 upgrade — never
- *   silently merged;
+ * - the pack pins both baselines: 1.0.0 = the 2026-08-19 zip (32 experts),
+ *   1.1.0 = the 2026-08-20/21 unpacked revision (33 experts, BK-034 陈杰
+ *   merged); SOURCE-MANIFEST records both and the upgrade history;
  * - the original Profile JSONs are lossless (sha-256 against
- *   SOURCE-MANIFEST.json);
- * - fidelity: pack entities mirror the runtime metas, the frozen V1 golden
- *   (`generated/v1/`) matches the live registry, the routing overlay matches
- *   the in-repo routing tables, and no legacy markers / fabricated fields
- *   exist;
+ *   SOURCE-MANIFEST.json; the 32 originals stay byte-identical to the zip);
+ * - fidelity: pack entities mirror the runtime metas (incl. the 1.1.0 rich
+ *   persona/method/emm/constraints/output_schema projection), the frozen V1
+ *   golden (`generated/v1/`) matches the live registry, the routing overlay
+ *   matches the in-repo routing tables, and no legacy markers / fabricated
+ *   fields exist;
  * - determinism: the generator re-emits a byte-identical tree — both without
  *   a source (entities only) and from the embedded source (full tree);
  * - compiler golden: the round-tripped pack compiles framework templates to
@@ -36,7 +37,7 @@ import { ZHIJIAN_EXPERTS } from '../lib/zhijian/data/experts.generated.js'
 import { ZHIJIAN_EXPERT_BY_ID, ZHIJIAN_ROUTE } from '../lib/zhijian/registry.js'
 import { ROUTE_TOPICS, STANCE_TABLE, SPECIAL_ROUTING, ROUTING_CONSTRAINTS } from '../lib/zhijian/routing.js'
 import { BUILTIN_SCENARIOS } from '../lib/expert-library/builtin-scenarios.js'
-import { emitPack, compareTrees, PACK_BASELINE, PACK_DEFERRED_UPGRADES } from '../scripts/build-zhijian-pack.mjs'
+import { emitPack, compareTrees, PACK_BASELINES, PACK_UPGRADE_HISTORY } from '../scripts/build-zhijian-pack.mjs'
 
 /** Absolute path of the committed domain pack. */
 const PACK_DIR = new URL('../domain-packs/zhijian-realestate', import.meta.url).pathname
@@ -105,21 +106,21 @@ test('round-trip: loaded pack equals the in-memory V2 projection (content per id
 test('pack.json is metadata-only; entity sections live in directories', async () => {
   const packJson = JSON.parse(await readFile(join(PACK_DIR, 'pack.json'), 'utf8'))
   assert.equal(packJson.id, 'zhijian-realestate')
-  assert.equal(packJson.version, '1.0.0')
+  assert.equal(packJson.version, '1.1.0')
   assert.equal(packJson.schemaVersion, 2)
   for (const key of ['experts', 'scenarios', 'teamTemplates', 'outputTemplates', 'qualityPolicies', 'methodPacks']) {
     assert.ok(!(key in packJson), `pack.json must stay metadata-only (no ${key} inline)`)
   }
 })
 
-// ── 2. baseline pinning: 32 experts, BK-034 deferred ────────────────────────
+// ── 2. baseline pinning: 33 experts (BK-034 merged in 1.1.0) ────────────────
 
-test('exactly 32 experts, ids bk-002..bk-033, no bk-034 (deferred, not merged)', async () => {
+test('exactly 33 experts, ids bk-002..bk-034 (BK-034 merged in 1.1.0)', async () => {
   const loaded = await loadCommittedPack()
   const ids = loaded.pack.experts.map(e => e.id)
-  assert.equal(ids.length, 32)
-  assert.deepEqual(ids, Array.from({ length: 32 }, (_, i) => `bk-${String(i + 2).padStart(3, '0')}`))
-  assert.ok(!ids.includes('bk-034'), 'BK-034 must not be silently merged into the 1.0.0 pack')
+  assert.equal(ids.length, 33)
+  assert.deepEqual(ids, Array.from({ length: 33 }, (_, i) => `bk-${String(i + 2).padStart(3, '0')}`))
+  assert.ok(ids.includes('bk-034'), 'BK-034 陈杰 is part of the 1.1.0 pack')
   // every expert id has a matching raw profile below
   const manifest = JSON.parse(await readFile(join(PACK_DIR, 'source', 'SOURCE-MANIFEST.json'), 'utf8'))
   assert.deepEqual(Object.keys(manifest.rawProfiles.files).sort(), ids.map(id => {
@@ -128,20 +129,28 @@ test('exactly 32 experts, ids bk-002..bk-033, no bk-034 (deferred, not merged)',
   }).sort())
 })
 
-test('SOURCE-MANIFEST records the 2026-08-19 baseline and defers bk-034 to 1.1.0', async () => {
+test('SOURCE-MANIFEST records both baselines (1.0.0 zip / 1.1.0 unpacked) and the upgrade history', async () => {
   const manifest = JSON.parse(await readFile(join(PACK_DIR, 'source', 'SOURCE-MANIFEST.json'), 'utf8'))
   assert.equal(manifest.packId, 'zhijian-realestate')
-  assert.equal(manifest.packVersion, '1.0.0')
-  assert.equal(manifest.baseline.source, PACK_BASELINE.source)
-  assert.equal(manifest.baseline.date, PACK_BASELINE.date)
-  assert.equal(manifest.baseline.expertCount, 32)
-  assert.equal(manifest.rawProfiles.count, 32)
-  const deferred = manifest.deferredUpgrades
-  assert.equal(deferred.length, 1)
-  assert.equal(deferred[0].version, '1.1.0')
-  assert.deepEqual(deferred[0].adds, ['bk-034 陈杰'])
-  // the exported constant is what the generator writes (no drift between code and manifest)
-  assert.deepEqual(deferred, PACK_DEFERRED_UPGRADES)
+  assert.equal(manifest.packVersion, '1.1.0')
+  // both baselines recorded, oldest first
+  assert.deepEqual(manifest.baselines, PACK_BASELINES)
+  assert.equal(manifest.baselines.length, 2)
+  assert.equal(manifest.baselines[0].version, '1.0.0')
+  assert.equal(manifest.baselines[0].expertCount, 32)
+  assert.equal(manifest.baselines[0].source, '智见点评_skill_20260819.zip')
+  assert.equal(manifest.baselines[1].version, '1.1.0')
+  assert.equal(manifest.baselines[1].expertCount, 33)
+  assert.equal(manifest.rawProfiles.count, 33)
+  // upgrade history: 1.0.0 deferred bk-034, 1.1.0 merged it
+  assert.deepEqual(manifest.upgradeHistory, PACK_UPGRADE_HISTORY)
+  assert.equal(manifest.upgradeHistory.length, 1)
+  assert.equal(manifest.upgradeHistory[0].from, '1.0.0')
+  assert.equal(manifest.upgradeHistory[0].to, '1.1.0')
+  assert.deepEqual(manifest.upgradeHistory[0].adds, ['bk-034 陈杰'])
+  // BK-034 has no 专家库 flattened page in the source — recorded as a
+  // documented gap, never fabricated.
+  assert.ok((manifest.library.missing ?? []).some(entry => entry.includes('BK-034')), JSON.stringify(manifest.library))
 })
 
 // ── 3. lossless original Profile JSONs ──────────────────────────────────────
@@ -149,7 +158,7 @@ test('SOURCE-MANIFEST records the 2026-08-19 baseline and defers bk-034 to 1.1.0
 test('raw profiles are lossless: every file matches its sha-256 in the manifest', async () => {
   const manifest = JSON.parse(await readFile(join(PACK_DIR, 'source', 'SOURCE-MANIFEST.json'), 'utf8'))
   const entries = Object.entries(manifest.rawProfiles.files)
-  assert.equal(entries.length, 32)
+  assert.equal(entries.length, 33)
   for (const [name, expected] of entries) {
     const actual = createHash('sha256').update(await readFile(join(PACK_DIR, 'source', 'raw-profiles', name))).digest('hex')
     assert.equal(actual, expected, `sha-256 mismatch for ${name}`)
@@ -162,6 +171,7 @@ test('raw profiles are lossless: every file matches its sha-256 in the manifest'
     }
   }
   assert.equal(Object.keys(manifest.docs.files).length, 6)
+  // 专家库 still has 32 pages (BK-034 has no flattened page; documented gap).
   assert.equal(Object.keys(manifest.library.files).length, 32)
 })
 
@@ -188,9 +198,13 @@ test('pack contains no legacySource markers and no fabricated proficiency', asyn
       assert.equal(claim.proficiency, 1, 'metas assert membership, not level — floor 1 only')
       assert.deepEqual(claim.evidenceRefs, ['zhijian:roster'])
     }
-    // mental-model summaries stay '' — the metas carry names only; nothing is invented
+    // 1.1.0: rich mental models carry real summaries from the raw profiles
+    // (all 33 assert persona.cognition.mentalModels); a summary is never
+    // invented — it is empty only when the source lacks the model detail.
     for (const model of expert.persona.mentalModels ?? []) {
-      assert.equal(model.summary, '')
+      const meta = ZHIJIAN_EXPERTS.find(item => item.id === expert.id)
+      const rich = meta.personaDetail?.cognition?.mentalModels?.find(m => m.name === model.name)
+      assert.equal(model.summary, rich?.summary ?? '', `summary for ${expert.id}/${model.name} must mirror the source`)
     }
   }
 })
@@ -207,7 +221,15 @@ test('fidelity: pack experts mirror the runtime metas verbatim', async () => {
     assert.deepEqual(expert.persona.style, [...meta.style])
     assert.deepEqual(expert.persona.signaturePhrases, [...meta.signaturePhrases])
     assert.deepEqual(expert.persona.antiPatterns, [...meta.antiPatterns])
-    assert.deepEqual((expert.persona.mentalModels ?? []).map(m => m.name), meta.mentalModels)
+    // 1.1.0: mental-model names come from the rich persona.cognition list.
+    const rich = meta.personaDetail?.cognition?.mentalModels
+    const expectedNames = rich !== undefined && rich.length > 0 ? rich.map(m => m.name) : meta.mentalModels
+    assert.deepEqual((expert.persona.mentalModels ?? []).map(m => m.name), expectedNames)
+    // 1.1.0 rich projection mirrors the meta detail (absent stays absent).
+    if (meta.methodDetail !== undefined) assert.deepEqual(expert.methodProfile, meta.methodDetail)
+    if (meta.emm !== undefined) assert.deepEqual(expert.emm, meta.emm)
+    if (meta.constraints !== undefined) assert.deepEqual(expert.constraints, meta.constraints)
+    if (meta.outputSchema !== undefined) assert.deepEqual(expert.outputSchema, meta.outputSchema)
     assert.deepEqual(expert.modelPolicy, ZHIJIAN_ROUTE)
   }
 })
@@ -215,7 +237,7 @@ test('fidelity: pack experts mirror the runtime metas verbatim', async () => {
 test('fidelity: generated/v1/experts.json matches the live V1 registry (frozen golden)', async () => {
   const golden = JSON.parse(await readFile(join(PACK_DIR, 'generated', 'v1', 'experts.json'), 'utf8'))
   assert.equal(canonicalJson(golden), canonicalJson([...ZHIJIAN_EXPERT_BY_ID.values()]))
-  assert.equal(golden.length, 32)
+  assert.equal(golden.length, 33)
 })
 
 test('fidelity: generated/v1/scenarios.json matches the bk-* builtin scenarios', async () => {

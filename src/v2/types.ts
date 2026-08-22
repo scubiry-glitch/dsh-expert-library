@@ -80,9 +80,29 @@ export interface PersonaProfile {
   readonly bias?: readonly string[]
   readonly mentalModels?: readonly MentalModel[]
   readonly blindSpots?: {
-    readonly knownBias?: string
+    readonly knownBias?: readonly string[]
     readonly weakDomains?: readonly string[]
     readonly selfAwareness?: string
+    /** Confidence threshold (zhijian profiles): conditions under which the expert hedges. */
+    readonly confidenceThreshold?: string
+  }
+  /** Values (1.1.0, zhijian profiles): what excites/irritates the expert, quality bar, dealbreakers. */
+  readonly values?: {
+    readonly excites?: readonly string[]
+    readonly irritates?: readonly string[]
+    readonly qualityBar?: string
+    readonly dealbreakers?: readonly string[]
+  }
+  /** Taste (1.1.0, zhijian profiles): admired/disdained practice and benchmarks. */
+  readonly taste?: {
+    readonly admires?: readonly string[]
+    readonly disdains?: readonly string[]
+    readonly benchmark?: string
+  }
+  /** Voice (1.1.0, zhijian profiles): disagreement/praise style. */
+  readonly voice?: {
+    readonly disagreementStyle?: string
+    readonly praiseStyle?: string
   }
   /** Signature phrases; injected only into internal rendering. */
   readonly signaturePhrases?: readonly string[]
@@ -137,6 +157,59 @@ export interface ExpertDisplay {
   readonly initials: string
 }
 
+/** Review lens (zhijian `method.reviewLens`): structured, or a plain string (BK-034). */
+export interface ReviewLens {
+  readonly firstGlance?: string
+  readonly deepDive?: readonly string[]
+  readonly killShot?: string
+  readonly bonusPoints?: readonly string[]
+}
+
+/** Method profile (1.1.0, zhijian `method` section) — additive, absent stays absent. */
+export interface MethodProfile {
+  readonly reviewLens?: ReviewLens | string
+  readonly dataPreference?: string
+  readonly evidenceStandard?: string
+  readonly agenticProtocol?: {
+    readonly requiresResearch?: boolean
+    readonly researchSteps?: readonly string[]
+    readonly noGuessPolicy?: boolean
+  }
+}
+
+/** Evaluation model (zhijian `emm`): weighted factor hierarchy + veto rules. */
+export interface EmmProfile {
+  readonly criticalFactors?: readonly string[]
+  readonly factorHierarchy?: Readonly<Record<string, number>>
+  readonly vetoRules?: readonly string[]
+  readonly aggregationLogic?: string
+}
+
+/** Output constraints (zhijian `constraints`): conclusion/assumption policy. */
+export interface ExpertOutputConstraints {
+  readonly mustConclude?: boolean
+  readonly allowAssumption?: boolean
+}
+
+/** One rubric level of an object-shaped rubric ({score: 1..5, description}). */
+export interface ExpertRubricLevel {
+  readonly score?: number
+  readonly description?: string
+}
+
+/** Object-shaped rubric ({dimension, levels[]}); string rubrics are plain strings. */
+export interface ExpertRubric {
+  readonly dimension?: string
+  readonly levels?: readonly ExpertRubricLevel[]
+}
+
+/** Output schema (zhijian `output_schema`): format/sections/rubrics. */
+export interface ExpertOutputSchema {
+  readonly format?: string
+  readonly sections?: readonly string[]
+  readonly rubrics?: ReadonlyArray<string | ExpertRubric>
+}
+
 /** V2 expert: identity separated from scenario roles. */
 export interface ExpertV2 {
   readonly id: SafeId
@@ -154,6 +227,14 @@ export interface ExpertV2 {
   readonly toolAffinities: readonly string[]
   readonly modelPolicy?: ModelPolicy
   readonly compliance: ComplianceInfo
+  /** Method profile (1.1.0): review lens / data preference / evidence standard / agentic protocol. */
+  readonly methodProfile?: MethodProfile
+  /** Evaluation model (1.1.0): factor hierarchy + veto rules (future quality-gate input). */
+  readonly emm?: EmmProfile
+  /** Output constraints (1.1.0). */
+  readonly constraints?: ExpertOutputConstraints
+  /** Output schema (1.1.0): format/sections/rubrics. */
+  readonly outputSchema?: ExpertOutputSchema
   /** Set when adapted from V1: consumers must treat fields conservatively. */
   readonly legacySource?: LegacySource
 }
