@@ -13,7 +13,7 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type { ExpertToolsCore, ToolsConfig } from '../tools.ts'
-import { createTeamCore, addMemberCore, createTaskCore } from '../tools.ts'
+import { createTeamCore, addMemberCore, createTaskCore, rollbackTeamAssembly } from '../tools.ts'
 import { resolveLibrary } from '../expert-library/registry.ts'
 import { resolveSkill, skillDescriptionBlock } from '../skills.ts'
 
@@ -83,30 +83,38 @@ async function buildCollabTeam(
     ...opts.scenarioId !== undefined ? { scenarioId: opts.scenarioId } : {},
   }, signal)
 
-  const memberNameByExpert = new Map<string, string>()
-  const members: string[] = []
-  for (const id of opts.expertIds) {
-    const added = await addMemberCore(ctx, config, captain, { expert: id }, signal, core.memberSelections)
-    memberNameByExpert.set(id, added.member_name)
-    members.push(added.member_name)
-  }
+  // Transactional assembly: any failure mid-build (spawn error, task write
+  // error, …) rolls the half-built team back instead of wedging the
+  // captain's one-team slot with orphan members.
+  try {
+    const memberNameByExpert = new Map<string, string>()
+    const members: string[] = []
+    for (const id of opts.expertIds) {
+      const added = await addMemberCore(ctx, config, captain, { expert: id }, signal, core.memberSelections)
+      memberNameByExpert.set(id, added.member_name)
+      members.push(added.member_name)
+    }
 
-  const tasks: { task_id: string; subject: string; assignee?: string }[] = []
-  for (const draft of opts.tasks) {
-    const assignee = draft.assigneeExpertId === undefined
-      ? undefined
-      : memberNameByExpert.get(draft.assigneeExpertId)
-    const created = await createTaskCore(ctx, config, captain, {
-      subject: draft.subject,
-      ...draft.description !== undefined ? { description: draft.description } : {},
-      ...draft.dependencies !== undefined && draft.dependencies.length > 0 ? { dependencies: [...draft.dependencies] } : {},
-      ...assignee !== undefined ? { assignee } : {},
-    }, signal)
-    tasks.push({ task_id: created.task_id, subject: created.subject, ...assignee !== undefined ? { assignee } : {} })
-  }
+    const tasks: { task_id: string; subject: string; assignee?: string }[] = []
+    for (const draft of opts.tasks) {
+      const assignee = draft.assigneeExpertId === undefined
+        ? undefined
+        : memberNameByExpert.get(draft.assigneeExpertId)
+      const created = await createTaskCore(ctx, config, captain, {
+        subject: draft.subject,
+        ...draft.description !== undefined ? { description: draft.description } : {},
+        ...draft.dependencies !== undefined && draft.dependencies.length > 0 ? { dependencies: [...draft.dependencies] } : {},
+        ...assignee !== undefined ? { assignee } : {},
+      }, signal)
+      tasks.push({ task_id: created.task_id, subject: created.subject, ...assignee !== undefined ? { assignee } : {} })
+    }
 
-  await core.scheduler.kickTeam(workspace, team.team_id, captain)
-  return { team_id: team.team_id, team_name: team.team_name, members, tasks }
+    await core.scheduler.kickTeam(workspace, team.team_id, captain)
+    return { team_id: team.team_id, team_name: team.team_name, members, tasks }
+  } catch (error) {
+    await rollbackTeamAssembly(ctx, config, captain, team.team_id, signal)
+    throw error
+  }
 }
 
 /** Register the four collaboration mode tools. */
@@ -156,18 +164,25 @@ export function registerCollabTools(
     },
     async execute(args, exec) {
       const captain = requireCaptain(exec)
+      const proExpert = args.pro_expert.trim()
+      const conExpert = args.con_expert.trim()
+      if (proExpert === '' || conExpert === '') throw new Error('正方和反方专家不能为空')
+      if (proExpert === conExpert) throw new Error('正方与反方必须选择不同专家，不能使用同一 expert')
       const moderator = args.moderator?.trim() || 'team-lead'
+      // Role dedup: the moderator may coincide with a debater (e.g. pro is
+      // team-lead) — never add the same expert twice as two members.
+      const roster = [...new Set([moderator, proExpert, conExpert])]
       const dataBlock = args.data === undefined ? '' : `\n\n辩题背景数据：\n${args.data}`
       const result = await buildCollabTeam(ctx, config, captain, core, exec.signal, {
         teamName: args.team_name?.trim() || `辩论·${args.topic.slice(0, 20)}`,
         description: `交叉辩论：${args.topic}${dataBlock}\n\n输出要求：辩论纪要（双方核心论点、交锋点、共识、分歧、裁判结论）。对外引用身份只标「领域·首字母」。`,
         scenarioId: 'cross-debate',
-        expertIds: [moderator, args.pro_expert, args.con_expert],
+        expertIds: roster,
         tasks: [
           { subject: '辩题与规则确认', description: `明确辩题「${args.topic}」、双方立场与判定标准（论据须带口径与来源），输出辩论议程。`, assigneeExpertId: moderator },
-          { subject: `正方立论（${args.pro_expert}）`, description: `陈述立场与核心论据（数据带口径、引用来源）：立场声明 → 论据 2-3 条 → 预期对方弱点。`, dependencies: [], assigneeExpertId: args.pro_expert },
-          { subject: `反方反驳（${args.con_expert}）`, description: '逐条反驳正方论据并给出反论据：反驳点 → 反论据（带口径）→ 正方立场中的漏洞。', dependencies: ['t2'], assigneeExpertId: args.con_expert },
-          { subject: `正方回应（${args.pro_expert}）`, description: '回应反驳：承认有效点、澄清误解、强化核心立场。', dependencies: ['t3'], assigneeExpertId: args.pro_expert },
+          { subject: `正方立论（${proExpert}）`, description: `陈述立场与核心论据（数据带口径、引用来源）：立场声明 → 论据 2-3 条 → 预期对方弱点。`, dependencies: ['t1'], assigneeExpertId: proExpert },
+          { subject: `反方反驳（${conExpert}）`, description: '逐条反驳正方论据并给出反论据：反驳点 → 反论据（带口径）→ 正方立场中的漏洞。', dependencies: ['t2'], assigneeExpertId: conExpert },
+          { subject: `正方回应（${proExpert}）`, description: '回应反驳：承认有效点、澄清误解、强化核心立场。', dependencies: ['t3'], assigneeExpertId: proExpert },
           { subject: '裁判总结', description: '输出辩论纪要：双方核心论点、交锋点、共识、分歧、判定逻辑与最终观点（不强制二选一，可给条件性结论）。', dependencies: ['t4'], assigneeExpertId: moderator },
         ],
       })
@@ -218,6 +233,13 @@ export function registerCollabTools(
       const experts = [...new Set(args.experts)]
       if (experts.length < 2) throw new Error('圆桌研讨至少需要 2 位专家')
       if (experts.length > 5) throw new Error('圆桌研讨最多 5 位专家')
+      const noteTaker = args.note_taker?.trim()
+      // An independent note_taker (not among the speakers) is automatically
+      // added to the roster so the 纪要 task has an actual member; when it
+      // coincides with a speaker the roster stays deduplicated.
+      const roster = noteTaker === undefined
+        ? experts
+        : experts.includes(noteTaker) ? experts : [...experts, noteTaker]
       const dataBlock = args.data === undefined ? '' : `\n\n议题背景数据：\n${args.data}`
       const tasks: CollabTaskDraft[] = experts.map((id, index) => ({
         subject: `专家发言（${id}）`,
@@ -227,13 +249,13 @@ export function registerCollabTools(
         subject: '圆桌纪要整理',
         description: `综合全部发言整理纪要（用 expert_teams_status 读取各任务 output）：共识点、分歧点（含各自依据）、开放问题、后续可验证的观察指标。议题：${args.topic}`,
         dependencies: experts.map((_id, index) => `t${index + 1}`),
-        ...(args.note_taker !== undefined ? { assigneeExpertId: args.note_taker } : {}),
+        ...(noteTaker !== undefined ? { assigneeExpertId: noteTaker } : {}),
       })
       const result = await buildCollabTeam(ctx, config, captain, core, exec.signal, {
         teamName: args.team_name?.trim() || `圆桌·${args.topic.slice(0, 20)}`,
         description: `圆桌研讨：${args.topic}${dataBlock}\n\n输出要求：圆桌纪要（各专家核心观点、共识、分歧、开放问题、观察指标）。对外引用身份只标「领域·首字母」。`,
         scenarioId: 'roundtable',
-        expertIds: experts,
+        expertIds: roster,
         tasks,
       })
       return result
@@ -376,21 +398,25 @@ export function registerCollabTools(
       const writer = args.writer?.trim() || 'docs-coordinator'
       const roster = experts.includes(writer) ? experts : [...experts, writer]
       const dataBlock = args.data === undefined ? '' : `\n\n可用素材：\n${args.data}`
+      // The provided data is carried explicitly in every task description so
+      // members working the DAG see it in their assignment prompt, not only in
+      // the team description.
+      const dataLine = args.data === undefined ? '' : `\n可用素材/数据（带口径）：\n${args.data}`
       const tasks: CollabTaskDraft[] = [
         {
           subject: '资料与数据梳理',
-          description: `梳理主题相关资料与数据：关键事实、数据口径、时间线、争议点。主题：${args.topic}`,
+          description: `梳理主题相关资料与数据：关键事实、数据口径、时间线、争议点。主题：${args.topic}${dataLine}`,
           assigneeExpertId: experts[0],
         },
         ...experts.slice(1).map((id, index) => ({
           subject: `专家研判（${id}）`,
-          description: `以本人立场独立研判：核心判断 → 关键事实与分析（数字带口径）→ 展望与不确定性。主题：${args.topic}`,
+          description: `以本人立场独立研判：核心判断 → 关键事实与分析（数字带口径）→ 展望与不确定性。主题：${args.topic}${dataLine}`,
           dependencies: ['t1'],
           assigneeExpertId: id,
         })),
         {
           subject: '融合成文',
-          description: `整合全部研判输出完整研报（markdown）：标题、摘要、正文（背景/分析/展望）、结论、风险提示、附录（数据与口径）。主题：${args.topic}。先定主基调 keynote，偏离观点降级为边界条件。`,
+          description: `整合全部研判输出完整研报（markdown）：标题、摘要、正文（背景/分析/展望）、结论、风险提示、附录（数据与口径）。主题：${args.topic}${dataLine}。先定主基调 keynote，偏离观点降级为边界条件。`,
           dependencies: ['t1', ...experts.slice(1).map((_id, index) => `t${index + 2}`)],
           assigneeExpertId: writer,
         },

@@ -16,8 +16,18 @@
  * @module dsh-expert-library/knowledge
  */
 
-import { readdir } from 'node:fs/promises'
+import { readdir, stat } from 'node:fs/promises'
 import { join, relative } from 'node:path'
+
+/**
+ * Whether an expert/scenario id is safe as a single knowledge folder path
+ * segment: unicode letters/digits, with `._-` allowed inside, at most 64
+ * characters. Anything else (path separators, `..`, whitespace, control
+ * characters) is rejected so an id can never escape its knowledge folder.
+ */
+export function isSafeKnowledgeId(id: string): boolean {
+  return /^[\p{L}\p{N}][\p{L}\p{N}._-]{0,63}$/u.test(id)
+}
 
 /** Knowledge pack root structure under one captain workspace. */
 export interface KnowledgeLayout {
@@ -29,7 +39,11 @@ export interface KnowledgeLayout {
   readonly sharedDir?: string
 }
 
-/** Resolve the knowledge folders under a workspace (existence-checked). */
+/**
+ * Resolve the knowledge folders under a workspace. Only real directories are
+ * recognized (a plain file with the same name is ignored), and empty folders
+ * are omitted from the layout.
+ */
 export async function resolveKnowledgeLayout(
   workspace: string,
   knowledgeDir: string,
@@ -42,11 +56,13 @@ export async function resolveKnowledgeLayout(
     ['sharedDir', 'shared'],
   ] as const) {
     try {
-      const stat = await readdir(join(root, sub))
+      const stats = await stat(join(root, sub))
+      if (!stats.isDirectory()) continue // only directories count
+      const entries = await readdir(join(root, sub))
+      if (entries.length === 0) continue // empty folder — omit
       layout[key] = join(root, sub)
-      if (stat.length === 0) delete layout[key]
     } catch {
-      // folder absent or empty — skip
+      // folder absent or unreadable — skip
     }
   }
   return layout
@@ -91,6 +107,14 @@ export async function knowledgeGuide(
   expertId: string,
   scenarioId?: string,
 ): Promise<string> {
+  // The ids become path segments below — validate before joining so a
+  // crafted id (`../`, absolute paths, …) can never escape the knowledge root.
+  if (!isSafeKnowledgeId(expertId)) {
+    throw new Error(`invalid expert id "${expertId}" — must be a safe path segment (letters/digits, ._- only)`)
+  }
+  if (scenarioId !== undefined && !isSafeKnowledgeId(scenarioId)) {
+    throw new Error(`invalid scenario id "${scenarioId}" — must be a safe path segment (letters/digits, ._- only)`)
+  }
   const layout = await resolveKnowledgeLayout(workspace, knowledgeDir)
   const lines: string[] = []
 

@@ -15,9 +15,9 @@
 
 import { createHash, randomUUID } from 'node:crypto'
 import { readFileSync } from 'node:fs'
-import { mkdir, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises'
+import { mkdir, open, readFile, readdir, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { TaskStatus, TeamMember, TeamMessage, TeamState, TeamTask } from './types.ts'
+import type { TaskArtifact, TaskArtifactRef, TaskProject, TaskStatus, TeamMember, TeamMessage, TeamState, TeamTask } from './types.ts'
 
 /** Mailbox key of the captain. */
 export const CAPTAIN_KEY = 'captain'
@@ -167,6 +167,75 @@ export function invalidateTaskAttempt(
  * @param stateRoot - resolved absolute state root directory.
  * @param state - the initial team record.
  */
+/** Create the isolated project for one task. */
+export async function createTaskProject(
+  stateRoot: string,
+  teamId: string,
+  task: Pick<TeamTask, 'id' | 'subject' | 'description' | 'dependencies' | 'createdAt'>,
+): Promise<TaskProject> {
+  const relative = join('expert-tasks', sanitizeKey(task.id))
+  const dir = join(stateRoot, teamId, relative)
+  const project: TaskProject = { path: relative, inputPath: join(relative, 'input', 'task.json'), outputPath: join(relative, 'output', 'result.json'), artifactsPath: join(relative, 'artifacts'), version: 1 }
+  await mkdir(join(dir, 'input'), { recursive: true })
+  await mkdir(join(dir, 'output'), { recursive: true })
+  await mkdir(join(dir, 'artifacts'), { recursive: true })
+  await atomicWriteText(join(dir, 'project.json'), JSON.stringify({ ...project, taskId: task.id, status: 'pending', updatedAt: Date.now() }, null, 2))
+  await atomicWriteText(join(stateRoot, teamId, project.inputPath), JSON.stringify({ taskId: task.id, subject: task.subject, description: task.description, dependencies: task.dependencies, createdAt: task.createdAt }, null, 2))
+  return project
+}
+
+/** Publish an artifact into the task Project and update its manifest. */
+export async function publishTaskArtifact(
+  stateRoot: string,
+  team: TeamState,
+  task: TeamTask,
+  input: { name: string; content: string; mediaType?: string; description?: string },
+): Promise<TaskArtifact> {
+  if (task.project === undefined) throw new Error('task has no Project; legacy tasks cannot publish artifacts')
+  const safeName = input.name.trim().replace(/[^a-zA-Z0-9._-]/g, '-')
+  if (safeName === '' || safeName === '.' || safeName === '..' || safeName.includes('..')) throw new Error('invalid artifact name')
+  const bytes = Buffer.from(input.content, 'utf8')
+  const artifact: TaskArtifact = { id: randomUUID(), taskId: task.id, attempt: task.attempt ?? 0, relativePath: safeName, ...(input.mediaType === undefined ? {} : { mediaType: input.mediaType }), ...(input.description === undefined ? {} : { description: input.description }), sha256: createHash('sha256').update(bytes).digest('hex'), sizeBytes: bytes.byteLength, createdAt: Date.now() }
+  const dir = join(stateRoot, team.id, task.project.path, 'artifacts')
+  await mkdir(dir, { recursive: true })
+  await atomicWriteText(join(dir, safeName), input.content)
+  await atomicWriteText(join(dir, 'manifest.json'), JSON.stringify([...(task.publishedArtifacts ?? []), artifact], null, 2))
+  return artifact
+}
+
+/** Validate an artifact reference against dependency and publication allowlists. */
+export function resolveAllowedArtifact(team: TeamState, task: TeamTask, ref: TaskArtifactRef): { source: TeamTask; artifact: TaskArtifact } {
+  if (!(task.dependencies ?? []).includes(ref.sourceTaskId)) throw new Error(`artifact source task "${ref.sourceTaskId}" is not a dependency of "${task.id}"`)
+  if (!(task.inputArtifacts ?? []).some(candidate => candidate.artifactId === ref.artifactId && candidate.sourceTaskId === ref.sourceTaskId)) throw new Error(`artifact "${ref.artifactId}" was not explicitly allowlisted for task "${task.id}"`)
+  const source = team.tasks.find(candidate => candidate.id === ref.sourceTaskId)
+  if (source === undefined || source.status !== 'completed') throw new Error(`source task "${ref.sourceTaskId}" is not completed`)
+  const artifact = source.publishedArtifacts?.find(candidate => candidate.id === ref.artifactId)
+  if (artifact === undefined) throw new Error(`artifact "${ref.artifactId}" is not published by source task "${ref.sourceTaskId}"`)
+  return { source, artifact }
+}
+
+
+/** Read an allowlisted artifact and verify its manifest hash. */
+export async function readAllowedTaskArtifact(stateRoot: string, team: TeamState, task: TeamTask, ref: TaskArtifactRef): Promise<{ artifact: TaskArtifact; content: string }> {
+  const resolved = resolveAllowedArtifact(team, task, ref)
+  if (resolved.source.project === undefined) throw new Error('source task has no Project')
+  const content = await readFile(join(stateRoot, team.id, resolved.source.project.artifactsPath, resolved.artifact.relativePath), 'utf8')
+  const hash = createHash('sha256').update(content).digest('hex')
+  if (hash !== resolved.artifact.sha256) throw new Error(`artifact ${resolved.artifact.id} hash mismatch`)
+  return { artifact: resolved.artifact, content }
+}
+/** Update the isolated project output and status without replacing team state. */
+export async function writeTaskProjectOutput(
+  stateRoot: string,
+  teamId: string,
+  task: TeamTask,
+): Promise<void> {
+  if (task.project === undefined) return
+  const teamDir = join(stateRoot, teamId)
+  await atomicWriteText(join(teamDir, task.project.outputPath), JSON.stringify({ taskId: task.id, status: task.status, attempt: task.attempt ?? 0, output: task.output, updatedAt: task.updatedAt }, null, 2))
+  await atomicWriteText(join(teamDir, task.project.path, 'project.json'), JSON.stringify({ ...task.project, taskId: task.id, status: task.status, updatedAt: task.updatedAt }, null, 2))
+}
+
 export async function createTeamDir(stateRoot: string, state: TeamState): Promise<void> {
   const dir = join(stateRoot, state.id)
   await mkdir(join(dir, 'inbox'), { recursive: true })
@@ -343,6 +412,70 @@ export function createMessage(from: string, to: string, content: string): TeamMe
  * @param agentKey - `captain` or a member name.
  * @param message - the message to append.
  */
+/** A mailbox lock older than this is considered crashed and gets taken over. */
+const MAILBOX_LOCK_STALE_MS = 30_000
+/** Total time a mailbox mutation waits for the cross-process lock. */
+const MAILBOX_LOCK_TIMEOUT_MS = 10_000
+/** Backoff step while waiting for a held mailbox lock. */
+const MAILBOX_LOCK_POLL_MS = 25
+
+/**
+ * Cross-process mutual exclusion for one mailbox file.
+ *
+ * The in-process `withTeamLock` queues cannot see another DSH process (or a
+ * second worker) mutating the same JSONL, and both the append and the
+ * claim/release/acknowledge mutations are read-modify-write — an interleave
+ * silently loses whichever write lands first. This lock serializes the
+ * file's readers-writers across processes with an O_EXCL lock file:
+ *
+ * - acquisition is `open(lock, 'wx')`, atomic on POSIX and Windows;
+ * - a lock whose file is older than {@link MAILBOX_LOCK_STALE_MS} belonged to
+ *   a crashed holder and is taken over (stale locks never wedge the mailbox);
+ * - after {@link MAILBOX_LOCK_TIMEOUT_MS} the mutation degrades to running
+ *   unlocked rather than failing the team flow — identical to the previous
+ *   behavior, so the lock can only help, never break delivery.
+ */
+async function withMailboxFileLock<T>(file: string, fn: () => Promise<T>): Promise<T> {
+  const lockFile = `${file}.lock`
+  const deadline = Date.now() + MAILBOX_LOCK_TIMEOUT_MS
+  let locked = false
+  while (!locked) {
+    try {
+      const handle = await open(lockFile, 'wx')
+      await handle.writeFile(`${process.pid}\n${Date.now()}\n`, 'utf8')
+      await handle.close()
+      locked = true
+      break
+    } catch (error: unknown) {
+      if (!(error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'EEXIST')) {
+        throw error
+      }
+      // Held by someone. Take over a stale (crashed-holder) lock, else wait.
+      try {
+        const stats = await stat(lockFile)
+        if (Date.now() - stats.mtimeMs > MAILBOX_LOCK_STALE_MS) {
+          await unlink(lockFile).catch(() => undefined)
+          await sleep(MAILBOX_LOCK_POLL_MS)
+          continue
+        }
+      } catch {
+        // Lock vanished between open and stat — retry acquisition.
+      }
+      if (Date.now() >= deadline) break
+      await sleep(MAILBOX_LOCK_POLL_MS)
+    }
+  }
+  if (!locked) {
+    // Degraded path: timed out waiting. Run unlocked (pre-lock behavior).
+    return await fn()
+  }
+  try {
+    return await fn()
+  } finally {
+    await unlink(lockFile).catch(() => undefined)
+  }
+}
+
 export async function appendMailbox(
   stateRoot: string,
   teamId: string,
@@ -351,16 +484,18 @@ export async function appendMailbox(
 ): Promise<void> {
   const file = join(stateRoot, teamId, 'inbox', `${sanitizeKey(agentKey)}.jsonl`)
   await mkdir(join(stateRoot, teamId, 'inbox'), { recursive: true })
-  let existing = ''
-  try {
-    existing = await readFile(file, 'utf8')
-  } catch (error: unknown) {
-    if (!(error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT')) {
-      throw error
+  await withMailboxFileLock(file, async () => {
+    let existing = ''
+    try {
+      existing = await readFile(file, 'utf8')
+    } catch (error: unknown) {
+      if (!(error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT')) {
+        throw error
+      }
     }
-  }
-  const separator = existing !== '' && !existing.endsWith('\n') ? '\n' : ''
-  await atomicWriteText(file, `${existing}${separator}${JSON.stringify(message)}\n`)
+    const separator = existing !== '' && !existing.endsWith('\n') ? '\n' : ''
+    await atomicWriteText(file, `${existing}${separator}${JSON.stringify(message)}\n`)
+  })
 }
 
 /**
@@ -430,26 +565,28 @@ async function mutateMailbox(
 ): Promise<void> {
   if (messageIds.length === 0) return
   const file = join(stateRoot, teamId, 'inbox', `${sanitizeKey(agentKey)}.jsonl`)
-  let raw: string
-  try {
-    raw = await readFile(file, 'utf8')
-  } catch (error: unknown) {
-    if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') return
-    throw error
-  }
-  const selected = new Set(messageIds)
-  const lines = raw.split('\n').map((rawLine) => {
-    const line = stripLeadingBom(rawLine)
-    if (line.trim() === '') return rawLine
+  await withMailboxFileLock(file, async () => {
+    let raw: string
     try {
-      const value: unknown = JSON.parse(line)
-      if (!isTeamMessage(value) || !selected.has(value.id)) return rawLine
-      return JSON.stringify(mutate(value))
-    } catch {
-      return rawLine
+      raw = await readFile(file, 'utf8')
+    } catch (error: unknown) {
+      if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') return
+      throw error
     }
+    const selected = new Set(messageIds)
+    const lines = raw.split('\n').map((rawLine) => {
+      const line = stripLeadingBom(rawLine)
+      if (line.trim() === '') return rawLine
+      try {
+        const value: unknown = JSON.parse(line)
+        if (!isTeamMessage(value) || !selected.has(value.id)) return rawLine
+        return JSON.stringify(mutate(value))
+      } catch {
+        return rawLine
+      }
+    })
+    await atomicWriteText(file, lines.join('\n'))
   })
-  await atomicWriteText(file, lines.join('\n'))
 }
 
 /** Lease selected fallback messages to one delivery path. */
@@ -700,6 +837,42 @@ function isTeamState(value: unknown, expectedId: string): value is TeamState {
   for (const task of tasks) {
     if (task.id === '' || taskIds.has(task.id)) return false
     taskIds.add(task.id)
+  }
+  // Referential integrity: a durable record with dangling task dependencies,
+  // a dependency cycle (which would block the scheduler forever), or a task
+  // assigned to a member that does not exist must not participate in
+  // authorization — fail the shape check so readTeam surfaces it loudly.
+  const memberNames = new Set(members.map(member => member.name))
+  const taskById = new Map(tasks.map(task => [task.id, task]))
+  for (const task of tasks) {
+    if (task.assignee !== undefined && !memberNames.has(task.assignee)) return false
+    for (const dependency of task.dependencies) {
+      if (!taskIds.has(dependency)) return false
+    }
+  }
+  // Cycle detection (iterative DFS over the dependency edges).
+  const visiting = new Set<string>()
+  const done = new Set<string>()
+  for (const root of taskIds) {
+    if (done.has(root)) continue
+    const stack: { id: string; expanded: boolean }[] = [{ id: root, expanded: false }]
+    while (stack.length > 0) {
+      const frame = stack[stack.length - 1]
+      if (frame === undefined) continue
+      if (!frame.expanded) {
+        if (done.has(frame.id)) { stack.pop(); continue }
+        if (visiting.has(frame.id)) return false
+        visiting.add(frame.id)
+        for (const dependency of taskById.get(frame.id)?.dependencies ?? []) {
+          if (taskIds.has(dependency)) stack.push({ id: dependency, expanded: false })
+        }
+        frame.expanded = true
+        continue
+      }
+      visiting.delete(frame.id)
+      done.add(frame.id)
+      stack.pop()
+    }
   }
   return true
 }

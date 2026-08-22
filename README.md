@@ -103,6 +103,7 @@ dsh plugin --profile web add .
 
 - 成员 persona 会注入知识指引（列出其目录与文件清单），成员用文件/阅读工具自行查阅；
 - 自定义专家/场景 JSON（`experts/<id>.json`、`scenarios/<id>.json`）可覆盖内置定义，字段见 `src/expert-library/types.ts`；
+- **输入校验**：专家/场景 id 必须是安全路径段（字母/数字开头，仅 `._-`，≤64 字符，禁止 `..` 与路径分隔符）；场景任务的 `dependsOn` 只能引用前序任务索引（自依赖/前向引用/循环一律拒绝整个 pack）；`skill.repo` 必须是严格 GitHub `owner/repo` 格式，SKILL.md 下载上限 1 MiB；非法 pack 跳过并告警，不会导致插件挂载失败；
 - 详见 `knowledge/README.md`。
 
 ## 模型路由优先级
@@ -160,8 +161,19 @@ scripts/
 └── build-zhijian-data.mjs    # 资料包 → 原生数据生成脚本
 ```
 
+## 开发验证
+
+```sh
+pnpm typecheck   # TS 类型检查（host + client）
+pnpm test        # 构建 + node --test（输入边界与路由回归，见 test/）
+pnpm build       # 完整构建（tsc + client bundle）
+```
+
 ## 说明
 
 - **与 dsh-agent-teams 的关系**：fork 后独立迭代，注册面全部改名——工具 `expert_teams_*`、会话事件 `expert-teams/*`、HTTP 路由 `/plugins/dsh-expert-library/*`、状态目录 `.expert-teams`。原插件与本插件**互不依赖、互不冲突**，可同时安装；是否同时启用由你决定（两套队长协议同时在系统提示中时模型可能混淆，建议按需启用其一）。
 - 状态持久化在 `<workspace>/.expert-teams/`，删除团队时归档到 `archive/` 供复盘。
-- Web 活动面板（原插件的 client 部分）本版本暂未打包，仅保留 Host 侧数据路由；UI 可在后续版本接入。
+- **建队是事务性的**：场景/协作模式组装团队时先全量校验专家引用；成员或任务创建中途失败会自动回滚（成员退役 + 中断 + 状态归档），不会留下卡住队长单团队配额的半成品团队。
+- **mailbox 跨进程安全**：邮箱 JSONL 的追加与确认经 O_EXCL 锁文件跨进程互斥（含崩溃持有者 30s 超时接管、10s 等待后降级直写），两个 DSH 进程同时投递不会丢消息。
+- **状态恢复引用完整性**：`team.json` 恢复时校验任务依赖存在性、依赖无环、assignee 必须是现存成员，损坏记录会被拒绝而不是带着悬空引用继续授权。
+- Web 活动面板（原插件的 client 部分）已随插件打包（`lib/client.js`，exports `"./client"`）：活动面板、团队卡片与设置卡片在 Web UI 插件配置页可用。

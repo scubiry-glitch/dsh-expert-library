@@ -36,9 +36,17 @@ function requireCaptain(exec: ToolRunContext): Agent {
   return exec.agent
 }
 
-/** Route one request to a framework and candidate roster. */
-function routeRequest(topic: string): ZhijianRouteResult {
-  const route = topicRouteFor(topic)
+/**
+ * Route one request to a framework and candidate roster.
+ *
+ * The free-form `question` participates in routing: when the `topic` type
+ * itself does not match any route, the question text is matched against the
+ * topic table as a fallback (see `topicRouteFor`/`scenarioForTopic`).
+ *
+ * Exported for unit testing at the pure input boundary.
+ */
+export function routeRequest(topic: string, question?: string): ZhijianRouteResult {
+  const route = topicRouteFor(topic, question)
   if (route === undefined) {
     const topics = ROUTE_TOPICS.map(item => item.topic).join('；')
     throw new Error(
@@ -46,14 +54,13 @@ function routeRequest(topic: string): ZhijianRouteResult {
       + `特殊路由：${SPECIAL_ROUTING.join('；')}`,
     )
   }
-  const scenario = scenarioForTopic(topic, route.framework)
+  const scenario = scenarioForTopic(topic, route.framework, question)
   const candidates = (scenario?.candidates ?? [])
     .map(id => ZHIJIAN_EXPERTS.find(meta => meta.id === id))
     .filter((meta): meta is NonNullable<typeof meta> => meta !== undefined)
     .map(meta => ({
       id: meta.id,
       bk: meta.bk,
-      name: meta.name,
       field: meta.field,
       stance: meta.stance,
       initials: meta.initials,
@@ -103,7 +110,6 @@ export function registerZhijianTools(
               properties: {
                 id: { type: 'string', required: true },
                 bk: { type: 'string', required: true },
-                name: { type: 'string', required: true },
                 field: { type: 'string', required: true },
                 stance: { type: 'string', required: true },
                 initials: { type: 'string', required: true },
@@ -122,7 +128,7 @@ export function registerZhijianTools(
     },
     async execute(args, exec) {
       void requireCaptain(exec)
-      const result = routeRequest(args.topic)
+      const result = routeRequest(args.topic, args.question)
       return {
         topic: result.topic,
         framework: result.framework,
@@ -130,7 +136,6 @@ export function registerZhijianTools(
         candidates: result.candidates.map(candidate => ({
           id: candidate.id,
           bk: candidate.bk,
-          name: candidate.name,
           field: candidate.field,
           stance: candidate.stance,
           initials: candidate.initials,

@@ -121,11 +121,10 @@ export interface ZhijianRouteResult {
   readonly framework: ZhijianFrameworkId
   /** Primary responsible field. */
   readonly primaryField: string
-  /** Candidate experts (anonymized presentation ready). */
+  /** Candidate experts (anonymized presentation ready — no real names). */
   readonly candidates: readonly {
     readonly id: string
     readonly bk: string
-    readonly name: string
     readonly field: string
     readonly stance: string
     readonly initials: string

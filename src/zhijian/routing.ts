@@ -203,8 +203,23 @@ export const ROUTING_CONSTRAINTS: readonly string[] = [
 ]
 
 /** Lookup helpers. */
-export function topicRouteFor(topic: string): ZhijianRouteTopic | undefined {
-  return ROUTE_TOPICS.find(route => topic.includes(route.topic) || route.topic.includes(topic))
+export function topicRouteFor(topic: string, question?: string): ZhijianRouteTopic | undefined {
+  const matched = matchTopic(topic)
+  if (matched !== undefined) return matched
+  // The free-form question also participates: when the topic type itself does
+  // not match, fall back to matching the question text against the topics.
+  return question === undefined ? undefined : matchTopic(question)
+}
+
+/** Match one text blob against the topic table (both containment directions). */
+function matchTopic(text: string): ZhijianRouteTopic | undefined {
+  return ROUTE_TOPICS.find(route => {
+    if (text.includes(route.topic) || route.topic.includes(text)) return true
+    // Topic labels carry a parenthetical elaboration ("政策解读（新政策出台…）");
+    // match the concise head too so a question embedding just "政策解读" routes.
+    const head = route.topic.replace(/（.*?）|[（(].*?[)）]/g, '').trim()
+    return head.length >= 2 && text.includes(head)
+  })
 }
 
 export function scenarioById(id: string): ZhijianRouteScenario | undefined {
@@ -214,11 +229,15 @@ export function scenarioById(id: string): ZhijianRouteScenario | undefined {
 export function scenarioForTopic(
   topic: string,
   framework: ZhijianFrameworkId,
+  question?: string,
 ): ZhijianRouteScenario | undefined {
   const byName = ROUTE_SCENARIOS.find(scenario => topic.includes(scenario.name))
+    ?? (question === undefined
+      ? undefined
+      : ROUTE_SCENARIOS.find(scenario => question.includes(scenario.name)))
   if (byName !== undefined) return byName
   // Fall back to the scenario matching the topic's primary field.
-  const route = topicRouteFor(topic)
+  const route = topicRouteFor(topic, question)
   if (route === undefined) return undefined
   return ROUTE_SCENARIOS.find(scenario => scenario.primaryField === route.primaryField)
 }

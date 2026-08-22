@@ -24,6 +24,7 @@ import {
   beginTaskAttempt,
   CAPTAIN_KEY,
   createMessage,
+  createTaskProject,
   createTeamDir,
   findTeamByCaptain,
   findTeamByParticipant,
@@ -31,10 +32,13 @@ import {
   readUnreadMailbox,
   recordRetiredMemberIds,
   releaseMailboxDelivery,
+  publishTaskArtifact,
+  readAllowedTaskArtifact,
   readTeam,
   sanitizeKey,
   transitionError,
   unsatisfiedDependencies,
+  writeTaskProjectOutput,
   withTeamLock,
   writeTeam,
 } from './state.ts'
@@ -59,6 +63,7 @@ import { resolveSkill, skillDescriptionBlock } from './skills.ts'
 import { zhijianExpertPersona } from './zhijian/persona.ts'
 import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
 import { scenarioById } from './zhijian/routing.ts'
+import { normalizeToolMode, toolExecutionOf, type ToolExecutionConfig, type ToolExecutionMode } from './settings.ts'
 
 /** Resolved plugin config consumed by the tools. */
 export interface ToolsConfig {
@@ -74,6 +79,8 @@ export interface ToolsConfig {
   maxMembers: number
   /** Knowledge pack directory name under the captain's workspace. */
   knowledgeDir: string
+  /** Per-tool execution policy (API vs CLI vs auto) for external capabilities. */
+  toolExecution?: Record<string, ToolExecutionConfig>
 }
 
 /** The caller agent, or a loud failure for non-agent callers. */
@@ -92,6 +99,30 @@ function workspaceOf(agent: Agent): string {
 /** Resolved absolute state root. */
 function stateRootOf(workspace: string, config: ToolsConfig): string {
   return join(workspace, config.stateDir)
+}
+
+/** Replace scenario task placeholders without exposing credentials or mutable state. */
+function interpolateScenarioTemplate(template: string, values: Record<string, string | undefined>): string {
+  return template.replace(/\{(goal|team_name|scenario|data|city|period)\}/g, (_match, key: string) => values[key] ?? '')
+}
+
+/**
+ * Resolve how one external tool id (e.g. `zyt`) should execute under the
+ * current config: the settings/entry `toolExecution` policy, normalized to a
+ * concrete mode (`api`/`cli`/`auto`). Unknown tool ids and unknown modes fall
+ * back to `auto` (probe the API first, then the CLI).
+ * @param config - the runtime tool config.
+ * @param toolId - external tool id, e.g. `zyt`.
+ * @returns the effective execution mode.
+ */
+export function toolExecutionModeOf(config: ToolsConfig, toolId: string): ToolExecutionMode {
+  const policy = toolExecutionOf(config.toolExecution, toolId)
+  return normalizeToolMode(policy?.mode)
+}
+
+/** Read the full execution policy for one external tool id, or undefined when unconfigured. */
+export function toolPolicyOf(config: ToolsConfig, toolId: string): ToolExecutionConfig | undefined {
+  return toolExecutionOf(config.toolExecution, toolId)
 }
 
 /** Process-local lock key scoped by workspace state root and team id. */
@@ -453,7 +484,20 @@ export async function createTaskCore(
   const team = await requireCaptainTeam(workspace, config, captain)
   const created = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
     const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
-    const dependencies = args.dependencies ?? []
+    const subject = args.subject.trim()
+    if (subject === '') throw new Error('task subject must not be empty')
+    // Dependencies: reject duplicates loudly (deduped list is stored, so a
+    // caller can never create an ambiguous DAG).
+    const rawDependencies = args.dependencies ?? []
+    const dependencies: string[] = []
+    const seen = new Set<string>()
+    for (const dependency of rawDependencies) {
+      if (seen.has(dependency)) {
+        throw new Error(`duplicate dependency "${dependency}" in task "${subject}" — dependencies must be unique`)
+      }
+      seen.add(dependency)
+      dependencies.push(dependency)
+    }
     for (const dependency of dependencies) {
       if (!fresh.tasks.some((task) => task.id === dependency)) {
         throw new Error(`dependency "${dependency}" does not exist in team "${fresh.name}"`)
@@ -462,7 +506,7 @@ export async function createTaskCore(
     if (args.assignee !== undefined) requireMember(fresh, args.assignee)
     const task: TeamTask = {
       id: `t${fresh.taskSeq + 1}`,
-      subject: args.subject,
+      subject,
       description: args.description,
       status: 'pending',
       assignee: args.assignee,
@@ -472,6 +516,7 @@ export async function createTaskCore(
       updatedAt: Date.now(),
     }
     fresh.taskSeq += 1
+    task.project = await createTaskProject(stateRoot, fresh.id, task)
     fresh.tasks.push(task)
     await writeTeam(stateRoot, fresh)
     appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, captain.session), 'expert-teams/task-created', {
@@ -491,12 +536,18 @@ export async function createTaskCore(
   return created
 }
 
-/** Core of `expert_teams_scenario_apply`: assemble a team from a scenario. */
+/** Core of `expert_teams_scenario_apply`: assemble a team from a scenario.
+ *
+ * Transactional: every expert reference is validated before the team is
+ * created, and any failure during member/task assembly rolls the team back
+ * (members retired + interrupted, state archived) before the error surfaces,
+ * so a half-built team can never wedge the captain's one-team slot.
+ */
 export async function scenarioApplyCore(
   ctx: Context,
   config: ToolsConfig,
   captain: Agent,
-  args: { scenario: string; team_name?: string; goal?: string },
+  args: { scenario: string; team_name?: string; goal?: string; data?: string; city?: string; period?: string },
   signal: AbortSignal,
   memberSelections: MemberSelectionRuntime,
 ): Promise<{
@@ -515,64 +566,140 @@ export async function scenarioApplyCore(
     throw new Error(`unknown scenario "${scenarioId}" — available: ${[...library.scenarios.keys()].join(', ')}`)
   }
 
+  // 0. Validate the full roster up front, before any durable state exists.
+  const expertIds: string[] = []
+  for (const id of [...scenario.experts, ...scenario.tasks.map(task => task.expert).filter((id): id is string => id !== undefined)]) {
+    if (library.experts.get(id) === undefined) {
+      throw new Error(`scenario "${scenario.id}" references unknown expert "${id}"`)
+    }
+    if (!expertIds.includes(id)) expertIds.push(id)
+  }
+
   // 1. Create the team (recorded with its scenario id). When the scenario
   // binds an external skill, resolve it and add it to the team description
   // so every member knows where the reference material lives.
+  const teamName = args.team_name?.trim() || scenario.name
+  const templateValues = {
+    goal: args.goal?.trim() || scenario.description,
+    team_name: teamName,
+    scenario: scenario.id,
+    data: args.data,
+    city: args.city,
+    period: args.period,
+  }
   let skillBlock = ''
   if (scenario.skill !== undefined) {
     const resolved = await resolveSkill(ctx, workspace, config.knowledgeDir, scenario.skill.repo, scenario.skill.name)
     skillBlock = `\n\n${skillDescriptionBlock(resolved, scenario.skill.purpose)}`
   }
   const team = await createTeamCore(ctx, config, captain, {
-    name: args.team_name?.trim() || scenario.name,
-    description: `${args.goal?.trim() || scenario.description}${skillBlock}`,
+    name: teamName,
+    description: `${interpolateScenarioTemplate(templateValues.goal, templateValues)}${skillBlock}`,
     scenarioId: scenario.id,
   }, signal)
 
-  // 2. Assemble every expert the scenario needs (scenario roster + task owners).
-  const expertIds: string[] = []
-  for (const id of [...scenario.experts, ...scenario.tasks.map(task => task.expert).filter((id): id is string => id !== undefined)]) {
-    if (!expertIds.includes(id)) expertIds.push(id)
-  }
-  const memberNameByExpert = new Map<string, string>()
-  const members: { expert_id: string; member_name: string; model: string }[] = []
-  for (const expertId of expertIds) {
-    const expert = library.experts.get(expertId)
-    if (expert === undefined) {
-      throw new Error(`scenario "${scenario.id}" references unknown expert "${expertId}"`)
+  try {
+    // 2. Assemble every expert the scenario needs (scenario roster + task owners).
+    const memberNameByExpert = new Map<string, string>()
+    const members: { expert_id: string; member_name: string; model: string }[] = []
+    for (const expertId of expertIds) {
+      const added = await addMemberCore(ctx, config, captain, { expert: expertId }, signal, memberSelections)
+      memberNameByExpert.set(expertId, added.member_name)
+      members.push({
+        expert_id: expertId,
+        member_name: added.member_name,
+        model: `${added.provider}/${added.model}`,
+      })
     }
-    const added = await addMemberCore(ctx, config, captain, { expert: expertId }, signal, memberSelections)
-    memberNameByExpert.set(expertId, added.member_name)
-    members.push({
-      expert_id: expertId,
-      member_name: added.member_name,
-      model: `${added.provider}/${added.model}`,
+
+    // 3. Seed the preset task DAG (dependencies by array index → task ids).
+    const tasks: { task_id: string; subject: string; assignee?: string }[] = []
+    for (const [index, template] of scenario.tasks.entries()) {
+      const dependencies = (template.dependsOn ?? []).map(depIndex => `t${depIndex + 1}`)
+      const assignee = template.expert === undefined
+        ? undefined
+        : memberNameByExpert.get(template.expert)
+      const skillTaskIndex = scenario.skill?.appliesToTaskIndex ?? (scenario.tasks.length - 1)
+      const taskSkillBlock = scenario.skill !== undefined && skillTaskIndex === index ? `\n\n${skillBlock.trim()}` : ''
+      const taskDescription = template.description === undefined
+        ? taskSkillBlock === '' ? undefined : taskSkillBlock.trim()
+        : `${interpolateScenarioTemplate(template.description, templateValues)}${taskSkillBlock}`
+      const created = await createTaskCore(ctx, config, captain, {
+        subject: interpolateScenarioTemplate(template.subject, templateValues),
+        ...taskDescription !== undefined ? { description: taskDescription } : {},
+        ...dependencies.length > 0 ? { dependencies } : {},
+        ...assignee !== undefined ? { assignee } : {},
+      }, signal)
+      tasks.push({ task_id: created.task_id, subject: created.subject, ...assignee !== undefined ? { assignee } : {} })
+    }
+
+    return {
+      scenario_id: scenario.id,
+      team_id: team.team_id,
+      team_name: team.team_name,
+      members,
+      tasks,
+      deliverable: scenario.deliverable,
+    }
+  } catch (error) {
+    await rollbackTeamAssembly(ctx, config, captain, team.team_id, signal)
+    throw error
+  }
+}
+
+/**
+ * Best-effort compensating rollback for a failed team assembly: mark every
+ * member removed, retire their durable ids, interrupt the live subagents,
+ * wait for quiescence, and archive the half-built state directory. Mirrors
+ * the `expert_teams_delete` flow but never throws — the caller surfaces the
+ * original assembly error.
+ */
+export async function rollbackTeamAssembly(
+  ctx: Context,
+  config: ToolsConfig,
+  captain: Agent,
+  teamId: string,
+  signal: AbortSignal,
+): Promise<void> {
+  try {
+    const workspace = workspaceOf(captain)
+    const stateRoot = stateRootOf(workspace, config)
+    const members = await withTeamLock(teamLockKey(stateRoot, teamId), async () => {
+      const fresh = await readTeam(stateRoot, teamId)
+      if (fresh === undefined) return []
+      const roster = fresh.members.map(member => ({ ...member }))
+      for (const member of fresh.members) {
+        if (member.status === 'removed') continue
+        member.status = 'removed'
+        for (const task of fresh.tasks) {
+          if (task.assignee === member.name && task.status !== 'completed') invalidateTaskAttempt(task)
+        }
+      }
+      await writeTeam(stateRoot, fresh)
+      return roster
     })
-  }
-
-  // 3. Seed the preset task DAG (dependencies by array index → task ids).
-  const tasks: { task_id: string; subject: string; assignee?: string }[] = []
-  for (const [index, template] of scenario.tasks.entries()) {
-    const dependencies = (template.dependsOn ?? []).map(depIndex => `t${depIndex + 1}`)
-    const assignee = template.expert === undefined
-      ? undefined
-      : memberNameByExpert.get(template.expert)
-    const created = await createTaskCore(ctx, config, captain, {
-      subject: template.subject,
-      ...template.description !== undefined ? { description: template.description } : {},
-      ...dependencies.length > 0 ? { dependencies } : {},
-      ...assignee !== undefined ? { assignee } : {},
-    }, signal)
-    tasks.push({ task_id: created.task_id, subject: created.subject, ...assignee !== undefined ? { assignee } : {} })
-  }
-
-  return {
-    scenario_id: scenario.id,
-    team_id: team.team_id,
-    team_name: team.team_name,
-    members,
-    tasks,
-    deliverable: scenario.deliverable,
+    await recordRetiredMemberIds(stateRoot, members.map(member => member.id))
+    for (const member of members) {
+      if (member.id === '') continue
+      interruptMember(ctx, captain, member.id)
+    }
+    const quiescence = await Promise.allSettled(members.map(member => waitForMemberIdle(ctx, member, signal)))
+    for (const result of quiescence) {
+      if (result.status === 'rejected') {
+        ctx.logger.warn(`expert-teams: member did not quiesce during assembly rollback: ${String(result.reason)}`)
+      }
+    }
+    await withTeamLock(teamLockKey(stateRoot, teamId), async () => {
+      const fresh = await readTeam(stateRoot, teamId)
+      if (fresh !== undefined) {
+        appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, captain.session), 'expert-teams/team-deleted', {
+          teamId: fresh.id,
+        })
+      }
+      await archiveTeamDir(stateRoot, teamId)
+    })
+  } catch (error) {
+    ctx.logger.warn(`expert-teams: assembly rollback for team "${teamId}" failed (manual expert_teams_delete may be needed): ${String(error)}`)
   }
 }
 
@@ -634,6 +761,9 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       scenario: { type: 'string', required: true, description: 'Scenario id to apply (e.g. code-review, market-research, product-design, fullstack-build, security-audit, documentation).' },
       team_name: { type: 'string', description: 'Team name; defaults to the scenario name.' },
       goal: { type: 'string', description: 'Team goal/description; defaults to the scenario description. Use this to pass the concrete target (e.g. the commit range to review).' },
+      data: { type: 'string', description: 'Optional data/material context available to task placeholders.' },
+      city: { type: 'string', description: 'Optional city or region for task placeholders.' },
+      period: { type: 'string', description: 'Optional period for task placeholders.' },
     },
     output: {
       schema: {
@@ -688,6 +818,9 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         scenario: args.scenario,
         ...args.team_name !== undefined ? { team_name: args.team_name } : {},
         ...args.goal !== undefined ? { goal: args.goal } : {},
+        ...args.data !== undefined ? { data: args.data } : {},
+        ...args.city !== undefined ? { city: args.city } : {},
+        ...args.period !== undefined ? { period: args.period } : {},
       }, exec.signal, memberSelections)
       // One final kick so every idle member picks up ready work now that the
       // full DAG is seeded (earlier per-task kicks already covered the rest).
@@ -1117,6 +1250,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         if (args.output !== undefined) task.output = args.output
         task.updatedAt = Date.now()
         await writeTeam(stateRoot, fresh)
+        await writeTaskProjectOutput(stateRoot, fresh.id, task)
         appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, caller.session), 'expert-teams/task-updated', {
           teamId: fresh.id,
           taskId: task.id,

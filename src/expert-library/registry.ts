@@ -14,10 +14,12 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
+import { isSafeKnowledgeId } from '../knowledge.ts'
+import { isValidRepo } from '../skills.ts'
 import { BUILTIN_EXPERT_BY_ID } from './builtin-experts.ts'
 import { BUILTIN_SCENARIO_BY_ID } from './builtin-scenarios.ts'
 import { ZHIJIAN_EXPERT_BY_ID } from '../zhijian/registry.ts'
-import type { Expert, ExpertLibrary, Scenario } from './types.ts'
+import type { Expert, ExpertLibrary, Scenario, ScenarioSkillBinding } from './types.ts'
 
 /** Root of a captain's knowledge packs (resolved against the workspace). */
 export interface KnowledgeRoots {
@@ -44,7 +46,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function parseExpert(value: unknown): Expert | undefined {
   if (!isRecord(value)) return undefined
   const { id, name, role, background, principles, deliverables, model, suitedFor } = value
-  if (typeof id !== 'string' || id === '') return undefined
+  // The id doubles as a knowledge folder name — only safe path segments are accepted.
+  if (typeof id !== 'string' || !isSafeKnowledgeId(id)) return undefined
   if (typeof name !== 'string' || name === '') return undefined
   if (typeof role !== 'string') return undefined
   if (typeof background !== 'string') return undefined
@@ -79,11 +82,26 @@ function parseExpert(value: unknown): Expert | undefined {
   }
 }
 
-/** Validate one scenario definition at the JSON boundary. */
-function parseScenario(value: unknown): Scenario | undefined {
+/**
+ * Validate one scenario definition at the JSON boundary.
+ *
+ * Strict rules:
+ * - the scenario id must be a safe path segment (it becomes a knowledge folder);
+ * - every `dependsOn` entry must be an integer strictly less than the task's
+ *   own index — self-dependencies, forward references, out-of-range and
+ *   non-integer entries all reject the scenario, which makes dependency
+ *   cycles structurally impossible (tasks are created in array order and a
+ *   task can only depend on already-created ones); duplicate entries are also
+ *   rejected, matching the strict task-creation boundary in `tools.ts`;
+ * - an optional `skill` binding is validated strictly: `repo` must match the
+ *   GitHub owner/repo format and `appliesToTaskIndex` must be in range.
+ *
+ * Exported for unit testing at the pure input boundary.
+ */
+export function parseScenario(value: unknown): Scenario | undefined {
   if (!isRecord(value)) return undefined
-  const { id, name, description, experts, tasks, deliverable, knowledge } = value
-  if (typeof id !== 'string' || id === '') return undefined
+  const { id, name, description, experts, tasks, deliverable, knowledge, skill } = value
+  if (typeof id !== 'string' || !isSafeKnowledgeId(id)) return undefined
   if (typeof name !== 'string' || name === '') return undefined
   if (typeof description !== 'string') return undefined
   const expertsList = Array.isArray(experts)
@@ -92,28 +110,72 @@ function parseScenario(value: unknown): Scenario | undefined {
   if (!Array.isArray(tasks) || !tasks.every(isRecord)) return undefined
   const taskList = tasks.map((task, index): Scenario['tasks'][number] | undefined => {
     const subject = task['subject']
-    if (typeof subject !== 'string' || subject === '') return undefined
+    if (typeof subject !== 'string' || subject.trim() === '') return undefined
     const descriptionText = task['description']
     const expert = task['expert']
     const dependsOn = task['dependsOn']
+    let dependsOnList: number[] | undefined
+    if (dependsOn !== undefined) {
+      if (!Array.isArray(dependsOn)) return undefined
+      const seen = new Set<number>()
+      for (const item of dependsOn) {
+        if (typeof item !== 'number' || !Number.isInteger(item) || item < 0 || item >= index) {
+          return undefined // out of range, non-integer, self-reference or cycle-forming
+        }
+        if (seen.has(item)) return undefined // duplicate dependency — reject
+        seen.add(item)
+      }
+      dependsOnList = [...dependsOn]
+    }
     return {
-      subject,
+      subject: subject.trim(),
       ...(typeof descriptionText === 'string' ? { description: descriptionText } : {}),
       ...(typeof expert === 'string' ? { expert } : {}),
-      ...(Array.isArray(dependsOn)
-        && dependsOn.every((item): item is number => typeof item === 'number' && Number.isInteger(item) && item >= 0 && item < tasks.length)
-        ? { dependsOn }
-        : {}),
-      ...(index === tasks.length - 1 && (task['subject'] ?? '') === '' ? {} : {}),
+      ...(dependsOnList === undefined ? {} : { dependsOn: dependsOnList }),
     }
   })
   if (taskList.some((task) => task === undefined)) return undefined
+  const skillBinding = parseScenarioSkill(skill, tasks.length)
+  if (skill !== undefined && skillBinding === undefined) return undefined
   return {
     id, name, description,
     experts: expertsList,
     tasks: taskList as Scenario['tasks'],
     deliverable: typeof deliverable === 'string' ? deliverable : '',
     ...(typeof knowledge === 'string' ? { knowledge } : {}),
+    ...(skillBinding === undefined ? {} : { skill: skillBinding }),
+  }
+}
+
+/**
+ * Validate one scenario skill binding: `repo` must be a strict GitHub
+ * owner/repo, `name`/`purpose` must be strings when present, and
+ * `appliesToTaskIndex` must be an integer inside the task array. Returns
+ * undefined when the binding is absent; rejects the whole scenario when a
+ * present binding is malformed.
+ */
+function parseScenarioSkill(value: unknown, taskCount: number): ScenarioSkillBinding | undefined {
+  if (value === undefined) return undefined
+  if (!isRecord(value) || typeof value['repo'] !== 'string' || !isValidRepo(value['repo'])) {
+    return undefined
+  }
+  const name = value['name']
+  const purpose = value['purpose']
+  const appliesToTaskIndex = value['appliesToTaskIndex']
+  if (name !== undefined && typeof name !== 'string') return undefined
+  if (purpose !== undefined && typeof purpose !== 'string') return undefined
+  if (appliesToTaskIndex !== undefined
+    && (typeof appliesToTaskIndex !== 'number'
+      || !Number.isInteger(appliesToTaskIndex)
+      || appliesToTaskIndex < 0
+      || appliesToTaskIndex >= taskCount)) {
+    return undefined
+  }
+  return {
+    repo: value['repo'],
+    ...(typeof name === 'string' ? { name } : {}),
+    ...(typeof purpose === 'string' ? { purpose } : {}),
+    ...(typeof appliesToTaskIndex === 'number' ? { appliesToTaskIndex } : {}),
   }
 }
 
