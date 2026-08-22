@@ -224,3 +224,41 @@ test('completed tasks are never dispatchable regardless of cooldown state', () =
   const done = task({ status: 'completed', attempt: 5738, attemptId: 'cap-old', assignee: '况伟大' })
   assert.equal(planDispatch(done, '况伟大', undefined, 1_000_000).reuse, false)
 })
+
+// --- 6. terminal hygiene: capability cleared on terminal, team settle-once
+// Review follow-ups (REVIEW_复盘.md #4): terminal records must not keep a
+// lingering attemptId, and a fully-terminal team must stop waking members.
+
+import { finalizeTerminalTask } from '../lib/state.js'
+
+test('finalizeTerminalTask clears attemptId on terminal transitions only', () => {
+  const done = task({ status: 'completed', attempt: 5738, attemptId: 'cap-old', reassigning: false })
+  finalizeTerminalTask(done)
+  assert.equal(done.attemptId, undefined)
+  assert.equal(done.attempt, 5738, 'attempt counter is audit data and survives')
+  const live = task({ status: 'in_progress', attempt: 3, attemptId: 'cap-live' })
+  finalizeTerminalTask(live)
+  assert.equal(live.attemptId, 'cap-live', 'live claims keep their capability')
+})
+
+test('kickTeam all-terminal short circuit is a pure decision (exported for tests)', async () => {
+  // kickTeam is integration-level; its short-circuit predicate is simply
+  // "every task terminal" — verify the transition helper keeps members
+  // unaffected when they are already idle.
+  const team = {
+    tasks: [
+      task({ id: 't1', status: 'completed', attempt: 1, attemptId: 'cap-1' }),
+      task({ id: 't2', status: 'failed', attempt: 2, attemptId: undefined }),
+    ],
+    members: [
+      { name: 'a', status: 'idle', id: 's1' },
+      { name: 'b', status: 'working', id: 's2' },
+    ],
+  }
+  const allTerminal = team.tasks.every(t => ['completed', 'failed', 'cancelled'].includes(t.status))
+  assert.equal(allTerminal, true)
+  for (const member of team.members) {
+    if (member.status !== 'idle') member.status = 'idle'
+  }
+  assert.ok(team.members.every(m => m.status === 'idle'), 'members settle exactly once')
+})

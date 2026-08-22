@@ -18,6 +18,7 @@ import { readFileSync } from 'node:fs'
 import { mkdir, open, readFile, readdir, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { TaskArtifact, TaskArtifactRef, TaskProject, TaskStatus, TeamMember, TeamMessage, TeamState, TeamTask } from './types.ts'
+import { TERMINAL_TASK_STATUSES } from './types.ts'
 
 /** Mailbox key of the captain. */
 export const CAPTAIN_KEY = 'captain'
@@ -142,6 +143,23 @@ export function activateTaskAttempt(task: TeamTask, assignee: string): string {
 export function beginTaskAttempt(task: TeamTask, assignee: string): string {
   task.attempt = (task.attempt ?? 0) + 1
   return activateTaskAttempt(task, assignee)
+}
+
+/**
+ * Clear the live capability once a task becomes terminal (completed/failed/
+ * cancelled). The attempt COUNTER is kept for audit and retry-budget
+ * accounting, but a lingering `attemptId` on a terminal record would make
+ * stale-claim checks and audit views mistake dead work for a live claim —
+ * exactly the residue observed on the 圆桌 team (attempts 5738/5688/5442
+ * with attemptId still set). Reassignment of failed/cancelled work opens a
+ * fresh generation anyway, so nothing is lost.
+ */
+export function finalizeTerminalTask(task: TeamTask): void {
+  if (TERMINAL_TASK_STATUSES.includes(task.status)) {
+    task.attemptId = undefined
+    task.reassigning = false
+    task.updatedAt = Date.now()
+  }
 }
 
 /**

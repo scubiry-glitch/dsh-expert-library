@@ -27,6 +27,7 @@ import {
   createMessage,
   createTaskProject,
   createTeamDir,
+  finalizeTerminalTask,
   findTeamByCaptain,
   findTeamByParticipant,
   invalidateTaskAttempt,
@@ -835,6 +836,9 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           task.status = args.status
         }
         if (args.output !== undefined) task.output = args.output
+        // Terminal work drops its live capability: stale-claim checks and
+        // audit views must never see a lingering attemptId on dead work.
+        finalizeTerminalTask(task)
         task.updatedAt = Date.now()
         // Compensating commit: project output first, team record second, with
         // a snapshot rollback when the team write fails (see commitTaskUpdate).

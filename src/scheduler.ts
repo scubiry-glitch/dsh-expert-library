@@ -236,6 +236,23 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
       if (team === undefined) return
       const captain = liveCaptain(ctx, team.captainSessionId, suppliedCaptain)
       if (captain === undefined) return
+      // All-terminal short circuit: settle member statuses ONCE and stop
+      // waking anyone. Without this, every kick during a finished team still
+      // runs the member loop, and the first member whose record says
+      // "working" triggers a residual write long after completion.
+      if (team.tasks.every(task => TERMINAL_TASK_STATUSES.includes(task.status))) {
+        let changed = false
+        for (const member of team.members) {
+          if (member.status === 'removed') continue
+          if (member.status !== 'idle') {
+            member.status = 'idle'
+            changed = true
+          }
+        }
+        if (changed) await writeTeam(stateRoot, team)
+        await notifyTeamCompletion(stateRoot, teamId)
+        return
+      }
       for (const member of team.members) {
         if (member.status === 'removed') continue
         await runtime.kickMember(workspace, teamId, member.name, captain)
