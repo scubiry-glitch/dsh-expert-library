@@ -73,8 +73,9 @@ export interface ProviderProvenance {
   readonly source?: string
   /** Data caliber note (e.g. `zyt.external(指数化)`, `贝壳成出口径`). */
   readonly caliber?: string
-  /** Quantity unit of the payload (Wind `data.unit`, zyt `unit`). */
-  readonly unit?: string
+  /** Quantity unit of the payload (Wind `data.unit`, zyt `unit`); Wind ships
+   * column→unit maps as objects — both shapes are mirrored verbatim. */
+  readonly unit?: string | Readonly<Record<string, unknown>>
 }
 
 /** One non-fatal observation attached to an envelope. */
@@ -130,7 +131,8 @@ export interface ProvenanceInput {
   readonly fetchedAt?: string
   readonly source?: string
   readonly caliber?: string
-  readonly unit?: string
+  /** Quantity unit (string or column→unit map), mirrored verbatim. */
+  readonly unit?: string | Readonly<Record<string, unknown>>
 }
 
 function makeProvenance(input: ProvenanceInput): ProviderProvenance {
@@ -318,7 +320,12 @@ export function normalizeWindEnvelope(raw: WindCliEnvelope, options: WindNormali
     }
   }
   const data = inner['data']
-  const unit = isRecord(data) && typeof data['unit'] === 'string' ? data['unit'] : undefined
+  // Wind ships `unit` either as a plain string (zyt-style) or as a
+  // column→unit map ({"最新成交价":"元",…}); mirror both verbatim.
+  const rawUnit = isRecord(data) ? data['unit'] : undefined
+  const unit = (typeof rawUnit === 'string' && rawUnit !== '') || isRecord(rawUnit)
+    ? rawUnit as string | Readonly<Record<string, unknown>>
+    : undefined
   return okEnvelope(inner, { ...provenance, unit }, warnings)
 }
 

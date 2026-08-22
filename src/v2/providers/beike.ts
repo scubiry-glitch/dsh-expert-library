@@ -37,23 +37,35 @@ import { SCHEMA_VERSION } from '../types.ts'
 
 /** Read operations (bind the read-only MCP HTTP transport). */
 export const BEIKE_READ_OPERATIONS: Readonly<Record<string, string>> = {
-  'realestate.listing.search': 'buy.search',
-  'realestate.listing.detail': 'buy.detail',
-  'realestate.deal.search': 'buy.sold',
-  'realestate.resblock.profile': 'buy.resblock',
-  'realestate.market.trend': 'buy.market',
-  'realestate.rent.search': 'rent.search',
-  'realestate.rent.detail': 'rent.detail',
-  'realestate.policy.search': 'policy.search',
-  'realestate.geo.code': 'map.geo',
+  'realestate.listing.search': 'house_search',
+  'realestate.newhouse.search': 'newhouse_search',
+  'realestate.resblock.profile': 'resblock_search',
+  'realestate.plate.search': 'plate_search',
+  'realestate.rent.search': 'rent_house_search',
+  'realestate.policy.search': 'policy_search',
+  'realestate.decor.search': 'decorate_search',
+  'realestate.rank.house': 'house_rank_search',
+  'realestate.rank.resblock': 'resblock_rank_search',
+  'realestate.agent.search': 'agent_search',
+  'realestate.store.search': 'store_search',
+  'realestate.entity.resolve': 'entity_resolution',
+  'realestate.entity.detail': 'entity_detail',
+  'realestate.entity.material': 'entity_material',
+  'realestate.geo.code': 'entity_resolution',
+  'realestate.decor.store.search': 'decor_store_search',
+  'realestate.decor.price.query': 'decor_price_query',
 }
 
-/** Write / sensitive operations (bind the write transport; approval required). */
+/**
+ * Write / sensitive operations (bind the write transport; approval
+ * required). The live MCP surface's only contact/sensitive tool is
+ * `wecom_add_contact_qrcode`（添加经纪人企业微信，涉个人信息）— the
+ * appoint/contact capabilities all gate through it.
+ */
 export const BEIKE_WRITE_OPERATIONS: Readonly<Record<string, string>> = {
-  'realestate.rent.appoint': 'rent.appoint',
-  'realestate.sell.list': 'sell.list',
-  'realestate.agent.contact': 'agent.contact',
-  'realestate.decor.contact': 'decor.contact',
+  'realestate.rent.appoint': 'wecom_add_contact_qrcode',
+  'realestate.agent.contact': 'wecom_add_contact_qrcode',
+  'realestate.decor.contact': 'wecom_add_contact_qrcode',
 }
 
 /** Every operation this provider serves. */
@@ -72,10 +84,11 @@ export const BEIKE_OPERATION_BY_OPERATION: Readonly<Record<string, string>> = Ob
 )
 
 const BEIKE_CAVEATS: readonly string[] = [
-  '二进制为 macOS arm64，本机 Linux 不可执行；命令面/工具名来自静态分析，响应 schema 与口径待实测',
+  '【实测 2026-08-22】MCP 端点 building.ke.com/mcp（serverInfo 布丁MCP服务 3.4.6，protocolVersion 2025-03-26），Authorization: Bearer 认证，17 个工具枚举核对；工具名与 CLI 静态分析推导不同，以本表实测名为准',
+  'CLI 二进制为 macOS arm64，本机 Linux 不可执行；CLI transport 仅在配置了可用二进制时声明',
   '无稳定业务错误码（clap 参数错 exit 2，panic 101）；以 --json 输出与 stderr 判定成败，retry 由调用方决定',
-  '写/敏感操作（rent appoint / sell / agent contact / decor contact）readOnly=false，必须审批',
-  '统计口径（成交/均价）由服务端定义，待实测确认后写入 DataGate',
+  '写/敏感操作（rent appoint / agent contact / decor contact → wecom_add_contact_qrcode，涉个人信息）readOnly=false，必须审批',
+  '统计口径（成交/均价）由服务端定义；逐响应 schema 已实测可解析，DataGate 口径规则随业务使用固化',
 ]
 
 function isRecord(value: unknown): value is Record<string, unknown> {

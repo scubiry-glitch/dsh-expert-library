@@ -94,7 +94,7 @@ test('beike manifest: reads bind mcp-http, writes bind mcp-http-write and are ga
   const read = resolver.resolve({ capability: 'realestate.listing.search' })
   assert.equal(read.status, 'bound')
   assert.equal(read.binding.transportId, 'mcp-http')
-  assert.equal(read.binding.operation, 'beike.buy.search')
+  assert.equal(read.binding.operation, 'beike.house_search')
 
   // Write ops are blocked by default (readOnly policy)…
   const blocked = resolver.resolve({ capability: 'realestate.rent.appoint' })
@@ -109,11 +109,12 @@ test('beike manifest: reads bind mcp-http, writes bind mcp-http-write and are ga
   assert.match(writeTransport.auth.credentialRef, /BEIKE_MCP_API_KEY/)
 })
 
-test('wind/zyt/beike caveats declare the unverified zyt/beike live schema', () => {
+test('zyt caveats mark live gaps; beike caveats carry the 2026-08-22 live verification', () => {
   const zyt = buildZytManifest()
   assert.ok(zyt.caveats.some(c => c.includes('待实测')), 'zyt live schema marked unverified')
   const beike = buildBeikeManifest()
-  assert.ok(beike.caveats.some(c => c.includes('待实测')), 'beike live schema marked unverified')
+  assert.ok(beike.caveats.some(c => c.includes('【实测 2026-08-22】')), 'beike live verification recorded')
+  assert.ok(beike.caveats.some(c => c.includes('17 个工具')), 'live tool count recorded')
 })
 
 /* ---------------------------------------------------------------------------
@@ -321,12 +322,12 @@ test('beike MCP HTTP result unwraps content[0].text; JSON-RPC errors map with th
   assert.equal(httpError.error.retry, 'never', 'caller decides; never invented')
 })
 
-test('beike planners produce MCP call params and CLI argv (unverified surface)', () => {
+test('beike planners produce MCP call params and CLI argv (live-verified surface)', () => {
   const call = beikeMCPCallParams('realestate.listing.search', { city: '上海' })
   assert.equal(call.method, 'tools/call')
-  assert.equal(call.params.name, 'buy.search')
+  assert.equal(call.params.name, 'house_search')
   assert.deepEqual(call.params.arguments, { city: '上海' })
 
-  assert.deepEqual(beikeCliArgv('realestate.listing.search', { city: '上海' }), ['buy', 'search', '--city', '上海'])
+  assert.deepEqual(beikeCliArgv('realestate.listing.search', { city: '上海' }), ['house_search', '--city', '上海'])
   assert.throws(() => beikeMCPCallParams('unknown.beike.op', {}), /unknown beike operation/)
 })

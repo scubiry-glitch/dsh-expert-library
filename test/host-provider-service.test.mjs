@@ -293,7 +293,7 @@ test('beike read invoke performs the MCP initialize + tools/call handshake', asy
   assert.equal(fetchCalls.length, 2)
   assert.equal(fetchCalls[0].url, 'https://building.ke.com/mcp')
   assert.equal(fetchCalls[1].headers.Authorization, `Bearer ${FAKE_SECRET}`)
-  assert.deepEqual(JSON.parse(fetchCalls[1].body).params, { name: 'buy.search', arguments: { city: '上海' } })
+  assert.deepEqual(JSON.parse(fetchCalls[1].body).params, { name: 'house_search', arguments: { city: '上海' } })
 })
 
 test('write invoke without an approval service stays blocked at registry.invoke', async () => {

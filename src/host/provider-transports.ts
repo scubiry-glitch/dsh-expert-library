@@ -445,7 +445,9 @@ export class ProviderTransports {
       const query = isRecord(input['query']) ? input['query'] as Record<string, string> : undefined
       const url = new URL(path, base)
       for (const [key, value] of Object.entries(query ?? {})) url.searchParams.set(key, value)
-      const body = input['body'] !== undefined
+      // `null` means "no body" in a request plan (GET endpoints carry
+      // `body: null`); treat it as absent so fetch never sees a GET body.
+      const body = input['body'] !== undefined && input['body'] !== null
         ? (typeof input['body'] === 'string' ? input['body'] : JSON.stringify(input['body']))
         : undefined
       const result = await this.fetchFn({
