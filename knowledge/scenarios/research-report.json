@@ -1,0 +1,43 @@
+{
+  "id": "research-report",
+  "name": "Research Report Team",
+  "description": "研报生成：资料梳理先行，多位专家并行研判（宏观/风险等视角），融合成结构完整的研报（摘要/正文/结论/风险/附录），渲染环节参考 finesse-ui 高工艺标准。",
+  "experts": ["researcher", "bk-004", "bk-007", "docs-coordinator"],
+  "tasks": [
+    {
+      "subject": "资料与数据梳理",
+      "description": "梳理主题相关资料与数据：关键事实、数据口径、时间线、争议点。",
+      "expert": "researcher"
+    },
+    {
+      "subject": "宏观研判",
+      "description": "从宏观经济视角研判：周期定位、政策路径、量化测算（数据带口径）。",
+      "dependsOn": [0],
+      "expert": "bk-004"
+    },
+    {
+      "subject": "风险与债务视角",
+      "description": "从债务金融视角研判：风险点、债务-通缩风险、关键监控指标。",
+      "dependsOn": [0],
+      "expert": "bk-007"
+    },
+    {
+      "subject": "融合成文",
+      "description": "整合全部研判输出完整研报：标题、摘要、正文（背景/分析/展望）、结论、风险提示、附录（数据与口径）。",
+      "dependsOn": [1, 2],
+      "expert": "docs-coordinator"
+    },
+    {
+      "subject": "渲染与分型验收",
+      "description": "将研报 markdown 渲染为 HTML5→PDF（A4、页脚「98wiki ｜ 智见 / 行业研究报告」、封面 4 KPI）。渲染前先完整阅读 knowledge/skills/finesse-ui/SKILL.md 并按其规范执行：本交付物属 h5/product 混编 register（报告页 = product 读密度 + 封面/关键图 = brand 冲击），严守 universal craft floor（tinted neutrals、禁 #fff/#000 纯色、translucent/hairline 边框、对比度下限）与 cheapness 黑名单；需要滚动叙事/数字动效时按 finesse 动效分层选路线，GSAP 实现的正确用法参考 knowledge/skills/gsap-core、gsap-scrolltrigger、gsap-timeline 的 SKILL.md。随后按 wiki-gated-research 分型验收：Part B 主文（12 页级骨架 / 正文≥10000 中文字 / 表格 / 机制图 / 量化模型 / 决策树 / 无溢出）+ Part C 逻辑附件（logic-annex-v2：15 速览卡 + 15 逻辑卡 + ≥12 逻辑图 + 白话总结 + Key Takeaways + 替代解释 + 独立补数协议）；生成 render_check（哈希 + 首/中/末页截图）与 GATE 文件，双 PASS 后追加 INDEX。",
+      "dependsOn": [3],
+      "expert": "docs-coordinator"
+    }
+  ],
+  "deliverable": "完整研报（markdown）+ 渲染成品（HTML5→PDF，Part B 主文 + Part C 逻辑附件）+ GATE 验收文件。",
+  "skill": {
+    "id": "finesse-ui",
+    "purpose": "渲染环节的高工艺界面规范：register 路由（本研报 = product 主体 + brand 封面）、craft floor、反 cheapness 黑名单、动效分层路线选择；GSAP 细分参考见 knowledge/skills/gsap-*。",
+    "appliesToTaskIndex": 4
+  }
+}

@@ -58,7 +58,10 @@ Skills 与工具使用约定分布在五层，各层的「在哪检查、在哪�
 
 - **定义**：`src/skills.ts` —— 技能**纯本地、只读解析**，从 `<workspace>/knowledge/skills/<id>/SKILL.md` 读取（≤1MiB，安全路径校验），不联网、不自动更新；场景可通过 `skill: {id, purpose}` 引用。
 - **检查**：`<workspace>/knowledge/skills/` 目录清单；全局技能在 `~/.agents/skills/`（如 wind-mcp-skill、98/99wiki、wind-find-finance-skill）。
-- **设置**：往 `knowledge/skills/<id>/SKILL.md` 放文件即安装；引用关系改场景定义或 pack 源。
+- **设置**：往 `knowledge/skills/<id>/SKILL.md` 放文件即安装（连同其 references/ 子目录）；引用关系改场景定义或 pack 源。
+- **当前已安装**（2026-08-22，渲染环节用）：
+  - `finesse-ui` —— 高工艺 Web 界面规范（register 路由 / craft floor / 反 cheapness / 动效分层），已通过场景覆盖 `knowledge/scenarios/research-report.json` 挂载到 `research-report` 的「渲染与分型验收」任务
+  - `gsap-core` / `gsap-scrolltrigger` / `gsap-timeline` / `gsap-performance` / `gsap-plugins` / `gsap-react` / `gsap-frameworks` / `gsap-utils` —— GSAP 官方技能包，动效实现参考
 
 ## ④ 数据源工具执行方式（Wind / zyt / 贝壳）
 
