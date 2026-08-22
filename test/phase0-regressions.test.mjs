@@ -183,3 +183,44 @@ test('production defaults write real files: project output, then team.json stays
     await rm(root, { recursive: true, force: true })
   }
 })
+
+// --- 5. scheduler: dispatch-storm guard (idempotent re-delivery + cooldown)
+// Regression for the 圆桌 team incident: repeated kicks during the
+// delivery→turn-start gap re-opened attempt generations thousands of times,
+// invalidating queued prompts as stale and stacking duplicate dispatches.
+
+import { planDispatch, DISPATCH_COOLDOWN_MS } from '../lib/scheduler.js'
+
+test('planDispatch re-delivers the SAME capability for an owned claimed task', () => {
+  const owned = task({ status: 'claimed', attempt: 3351, attemptId: 'cap-1', assignee: '况伟大' })
+  const decision = planDispatch(owned, '况伟大', undefined, 1_000_000)
+  assert.deepEqual(decision, { blocked: false, reuse: true })
+})
+
+test('planDispatch opens a fresh generation for a pending task (never reuse)', () => {
+  const pending = task({ status: 'pending', attempt: 1, attemptId: undefined, assignee: '况伟大' })
+  const decision = planDispatch(pending, '况伟大', undefined, 1_000_000)
+  assert.deepEqual(decision, { blocked: false, reuse: false })
+})
+
+test('planDispatch never reuses a task owned by someone else or without a capability', () => {
+  const foreign = task({ status: 'claimed', attempt: 2, attemptId: 'cap-2', assignee: '别人' })
+  assert.deepEqual(planDispatch(foreign, '况伟大', undefined, 1_000_000), { blocked: false, reuse: false })
+  const noCap = task({ status: 'claimed', attempt: 2, attemptId: undefined, assignee: '况伟大' })
+  assert.deepEqual(planDispatch(noCap, '况伟大', undefined, 1_000_000), { blocked: false, reuse: false })
+})
+
+test('planDispatch blocks re-dispatch inside the cooldown window and frees it after', () => {
+  const owned = task({ status: 'claimed', attempt: 5, attemptId: 'cap-3', assignee: '况伟大' })
+  const now = 10_000_000
+  assert.deepEqual(planDispatch(owned, '况伟大', now - (DISPATCH_COOLDOWN_MS - 1), now), { blocked: true })
+  const after = planDispatch(owned, '况伟大', now - DISPATCH_COOLDOWN_MS, now)
+  assert.deepEqual(after, { blocked: false, reuse: true })
+})
+
+test('completed tasks are never dispatchable regardless of cooldown state', () => {
+  // The selection filters exclude terminal tasks; planDispatch with a
+  // completed task must never claim reuse either (defense in depth).
+  const done = task({ status: 'completed', attempt: 5738, attemptId: 'cap-old', assignee: '况伟大' })
+  assert.equal(planDispatch(done, '况伟大', undefined, 1_000_000).reuse, false)
+})

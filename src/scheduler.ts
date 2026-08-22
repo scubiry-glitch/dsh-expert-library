@@ -50,6 +50,48 @@ interface DispatchTicket {
   readonly previousAssignee?: string
   readonly subject: string
   readonly description?: string
+  /**
+   * True when this ticket re-delivers an EXISTING live capability (the member
+   * already owns the claimed/in-progress task and holds its attempt_id). A
+   * failed re-delivery must NOT roll the task back to pending — the member may
+   * still hold a queued prompt carrying that attempt_id, and invalidating it
+   * would produce a stale-claim storm.
+   */
+  readonly reuse?: boolean
+}
+
+/**
+ * Minimum interval between two dispatches of the same (member, task) pair.
+ * Without it, the "lost turn recovery" path re-dispatches a member's claimed
+ * task on every kick the moment the live agent still reports idle (the window
+ * between delivery acceptance and the member's turn starting), stacking
+ * duplicate prompts and inflating `attempt` thousands of times.
+ */
+export const DISPATCH_COOLDOWN_MS = 30_000
+
+/**
+ * Pure dispatch decision for one (member, task): whether the cooldown blocks
+ * a re-dispatch, and whether the ticket re-delivers the member's EXISTING
+ * capability (`reuse`) or opens a fresh attempt generation. Exported for unit
+ * testing at the pure boundary.
+ */
+export function planDispatch(
+  task: TeamTask,
+  memberName: string,
+  lastDispatchAt: number | undefined,
+  now: number = Date.now(),
+): { readonly blocked: true } | { readonly blocked: false; readonly reuse: boolean } {
+  if (lastDispatchAt !== undefined && now - lastDispatchAt < DISPATCH_COOLDOWN_MS) {
+    return { blocked: true }
+  }
+  // Reuse only a LIVE claim (claimed/in_progress owned by this member with a
+  // capability). Terminal statuses must never be re-delivered even if a stale
+  // attemptId lingers on the record (defense in depth behind the selection
+  // filters, which already exclude terminal tasks).
+  const reuse = (task.status === 'claimed' || task.status === 'in_progress')
+    && task.assignee === memberName
+    && task.attemptId !== undefined
+  return { blocked: false, reuse }
 }
 
 function stateRootOf(workspace: string, config: SchedulerConfig): string {
@@ -166,6 +208,8 @@ function fallbackMailboxPrompt(messages: Awaited<ReturnType<typeof readUnreadMai
 /** Install one scheduler and its member activity observer. */
 export function installTeamScheduler(ctx: Context, config: SchedulerConfig): TeamScheduler {
   const memberQueues = new Map<string, Promise<unknown>>()
+  /** Last dispatch timestamp per `${stateRoot}\u0000${teamId} ${member} ${task}` (in-memory cooldown guard). */
+  const lastDispatchAt = new Map<string, number>()
 
   const serializeMember = async <T>(key: string, operation: () => Promise<T>): Promise<T> => {
     const previous = memberQueues.get(key) ?? Promise.resolve()
@@ -254,17 +298,33 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
             }
             return undefined
           }
+          // Cooldown: re-dispatching the same (member, task) pair within the
+          // window is the dispatch-storm amplifier — every kick during the
+          // delivery→turn-start gap (agent still reports idle) would stack
+          // another prompt for the member.
+          const cooldownKey = `${stateRoot}\u0000${team!.id}\u0000${currentMember.name}\u0000${task.id}`
+          const decision = planDispatch(task, currentMember.name, lastDispatchAt.get(cooldownKey))
+          if (decision.blocked) return undefined
+
+          // Lost-turn recovery for a task the member already owns with a live
+          // capability re-delivers the SAME attempt_id (idempotent: claim is a
+          // no-op for the owner, update_task keeps working). NEVER open a new
+          // generation here — a fresh attempt_id invalidates every prompt
+          // already queued for the member and cascades into stale claims.
+          const attemptId = decision.reuse
+            ? task.attemptId!
+            : beginTaskAttempt(task, currentMember.name)
           const previousAssignee = task.assignee
-          const attemptId = beginTaskAttempt(task, currentMember.name)
           currentMember.status = 'working'
           await writeTeam(stateRoot, fresh)
+          lastDispatchAt.set(cooldownKey, Date.now())
           return {
             taskId: task.id,
             memberName: currentMember.name,
             memberId: currentMember.id,
             attempt: task.attempt ?? 1,
             attemptId,
-            previousAssignee,
+            ...(decision.reuse ? { reuse: true } : { previousAssignee }),
             subject: task.subject,
             description: task.description,
           }
@@ -281,11 +341,21 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
         if (accepted) return
 
         // Roll back only our exact failed dispatch. A concurrent captain
-        // handoff has already changed the capability and wins.
+        // handoff has already changed the capability and wins. A REUSE ticket
+        // re-delivered a live capability the member still owns: never roll the
+        // task back to pending — the member may hold a queued prompt carrying
+        // that same attempt_id; invalidating it re-arms the stale-claim storm.
         await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
           const fresh = await readTeam(stateRoot, team!.id)
           if (fresh === undefined) return
           const task = fresh.tasks.find(candidate => candidate.id === ticket.taskId)
+          if (ticket.reuse === true) {
+            // Keep the claim and its capability; the cooldown damps retries.
+            const currentMember = fresh.members.find(candidate => candidate.name === ticket.memberName)
+            if (currentMember !== undefined && currentMember.status !== 'removed') currentMember.status = 'idle'
+            await writeTeam(stateRoot, fresh)
+            return
+          }
           if (task?.attemptId !== ticket.attemptId) return
           task.status = 'pending'
           task.assignee = ticket.previousAssignee
