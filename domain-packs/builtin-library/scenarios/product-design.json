@@ -1,0 +1,29 @@
+{
+  "id": "product-design",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "product-design-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "researcher",
+      "designer",
+      "docs-coordinator"
+    ]
+  },
+  "teamTemplate": "product-design.legacy-team",
+  "outputTemplate": "product-design.legacy-output",
+  "qualityPolicy": "product-design.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

@@ -554,11 +554,11 @@ pure V2 surface other than the two zhijian-pack template edits.
 
 The apply migration still depends on the V1 runtime data (`Expert`/`Scenario`
 registries in `src/expert-library/*` and `src/zhijian/*`) through the
-`adaptV1*` compatibility views. Retiring them is a two-step track:
+`adaptV1*` compatibility views. Retiring them is a three-step track:
 
 **Step 1 — DONE (this round): stop re-projecting the builtin library per call.**
 - `src/v2/compat.ts` now holds a process-wide lazy singleton
-  `builtinLegacyPack()`: the full builtin library (8 通用 + 32 智见 bk-* experts,
+  `builtinLegacyPack()`: the full builtin library (8 通用 + 33 智见 bk-* experts,
   all 10 builtin scenarios) is projected via `buildLegacyDomainPack` once and
   never invalidated during the process (inputs are static generated code).
 - `compileV1ScenarioExecutionPlan` reuses that cache: for a builtin scenario
@@ -574,11 +574,45 @@ registries in `src/expert-library/*` and `src/zhijian/*`) through the
 - `buildCollabDomainPack` (collab projection) reuses the cached expert
   entities by reference instead of a second `buildLegacyDomainPack` call.
 
-**Step 2 — FUTURE WORK (not done): deleting the builtin V1 sources entirely.**
-Removing `BUILTIN_*` / `ZHIJIAN_*` V1 registries and the `adaptV1*` views
-requires a real pack home for the generic (non-zhijian) scenarios — the V2
-pack/overlay format (`DomainPackV2` + `pack-loader`, workspace overlays) must
-ship code-review / market-research / product-design / fullstack-build /
-security-audit / documentation as first-class V2 packs before the V1
-projection can be dropped. Until then the cached legacy projection is the
-single V1↔V2 bridge and stays authoritative.
+**Step 2 — DONE (this round): the generic builtin library has a static V2 pack home
+and the runtime is pack-first.**
+- `scripts/build-builtin-pack.mjs` (mirrors `build-zhijian-pack.mjs` conventions:
+  deterministic, fatal-on-mismatch self-check through the real loader,
+  `--check` drift guard; `pnpm build:builtin` / `pnpm check:builtin`) projects
+  the **generic builtin library only** — 8 generic experts + all 10 builtin
+  scenarios; the 33 zhijian bk-* experts are NOT included (zhijian already has
+  its own pack, `domain-packs/zhijian-realestate/`) — into
+  `domain-packs/builtin-library/` (pack.json, `experts/*.json`,
+  `team-templates/*.json` via `adaptV1ScenarioTeamTemplate`, plus
+  scenarios/output/quality/knowledge-provider dirs and
+  `generated/verify.json` + `generated/pack.sha256`). The entities are the
+  **byte-exact** `buildLegacyDomainPack` projection — the same adaptation
+  functions the runtime fallback uses, imported from `lib/` at generation
+  time, never forked — so the scenario → TeamTemplate mapping is identical to
+  `compileV1ScenarioExecutionPlan`'s legacy semantics and compiled plans are
+  digest-identical on both paths.
+- Runtime cutover in `compat.ts`: `builtinLegacyPack()` now loads
+  `domain-packs/builtin-library/` pack-first via the new sync loader
+  `loadPackFromDirSync` (a pack-loader twin for trusted static roots with the
+  same layout/validation semantics), appends the zhijian bk-* experts from the
+  V1 registry (the generated pack is generic-only, but the builtin scenarios
+  reference bk-* experts), and falls back to the direct adaptV1 projection
+  ONLY when the pack directory is absent (e.g. a published package without
+  domain-packs); a present-but-invalid pack is a loud failure, never a silent
+  fallback. `loadBuiltinLegacyPack(packDir?)` is exported for the fallback
+  test (injectable path).
+- Golden contract `test/v2-builtin-pack.test.mjs`: generator `--check` clean;
+  pack round-trips validator-clean; per-scenario digest equality pack-path vs
+  adapt-path for **all 10** builtin scenarios; fallback works with an injected
+  bad path and compiles digest-identically; runtime cache is pack-first (the
+  generic experts are the loaded objects, not re-adapted).
+
+**Step 3 — FUTURE WORK (not done): full deletion of the `adaptV1*` runtime paths.**
+The V1 TypeScript (`BUILTIN_EXPERT_BY_ID` / `BUILTIN_SCENARIO_BY_ID` /
+`ZHIJIAN_EXPERT_BY_ID`) is now retained **solely as the authored generator
+input** (the same pattern as the zhijian source): the runtime no longer
+re-projects the builtin library per call, and the projection only exists as a
+fallback when the pack dir is absent. Deleting the V1 registries and the
+runtime `adaptV1*` bridge entirely still needs a consumer-by-consumer cutover
+of `resolveLibrary` (the V1 Expert/Scenario maps that personas, scenario
+validation and collab roster validation still read) — future work.

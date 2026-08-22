@@ -1,0 +1,29 @@
+{
+  "id": "security-audit",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "security-audit-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "security-reviewer",
+      "engineer",
+      "docs-coordinator"
+    ]
+  },
+  "teamTemplate": "security-audit.legacy-team",
+  "outputTemplate": "security-audit.legacy-output",
+  "qualityPolicy": "security-audit.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

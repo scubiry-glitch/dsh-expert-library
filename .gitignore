@@ -1,5 +1,5 @@
 node_modules/
-lib/
+/lib/
 *.log
 .expert-teams/
 .DS_Store

@@ -1,0 +1,110 @@
+{
+  "id": "research-report.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.bk-004",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.bk-007",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.docs-coordinator",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.researcher",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.researcher",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "research-report.legacy-output",
+      "retryPolicy": "never",
+      "subject": "资料与数据梳理",
+      "description": "梳理主题相关资料与数据：关键事实、数据口径、时间线、争议点。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.bk-004",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "research-report.legacy-output",
+      "retryPolicy": "never",
+      "subject": "宏观研判",
+      "description": "从宏观经济视角研判：周期定位、政策路径、量化测算（数据带口径）。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.bk-007",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "research-report.legacy-output",
+      "retryPolicy": "never",
+      "subject": "风险与债务视角",
+      "description": "从债务金融视角研判：风险点、债务-通缩风险、关键监控指标。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t2",
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "research-report.legacy-output",
+      "retryPolicy": "never",
+      "subject": "融合成文",
+      "description": "整合全部研判输出完整研报：标题、摘要、正文（背景/分析/展望）、结论、风险提示、附录（数据与口径）。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "research-report.deliverable",
+      "outputTemplate": "research-report.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

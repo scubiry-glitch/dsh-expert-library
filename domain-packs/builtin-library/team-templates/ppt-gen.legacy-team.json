@@ -1,0 +1,87 @@
+{
+  "id": "ppt-gen.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.bk-024",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.designer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.docs-coordinator",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.docs-coordinator",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "ppt-gen.legacy-output",
+      "retryPolicy": "never",
+      "subject": "内容架构",
+      "description": "确定听众、目标与篇幅（页数/时长），输出 PPT 大纲：章节结构 + 每页标题与要点。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.bk-024",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "ppt-gen.legacy-output",
+      "retryPolicy": "never",
+      "subject": "领域内容供给",
+      "description": "按大纲供给关键数据、结论与案例（数字带口径与来源），标注每页建议引用。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t1",
+        "t2"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "ppt-gen.legacy-output",
+      "retryPolicy": "never",
+      "subject": "逐页文案生成",
+      "description": "按大纲与内容产出逐页文案：封面/目录/每页标题+要点（每页≤5 条）/图表建议/演讲备注，markdown 结构化输出。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "ppt-gen.deliverable",
+      "outputTemplate": "ppt-gen.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

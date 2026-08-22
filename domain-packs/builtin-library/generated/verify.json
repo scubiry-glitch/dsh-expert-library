@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "errorCount": 0,
+  "warningCount": 0,
+  "diagnostics": [],
+  "entityCounts": {
+    "experts": 8,
+    "scenarios": 10,
+    "teamTemplates": 10,
+    "outputTemplates": 10,
+    "qualityPolicies": 10,
+    "knowledgeProviders": 1
+  }
+}

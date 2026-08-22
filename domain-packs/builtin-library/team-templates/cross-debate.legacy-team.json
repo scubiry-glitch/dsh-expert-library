@@ -1,0 +1,116 @@
+{
+  "id": "cross-debate.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.bk-008",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.bk-024",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.team-lead",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.team-lead",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "cross-debate.legacy-output",
+      "retryPolicy": "never",
+      "subject": "辩题与规则确认",
+      "description": "明确辩题、双方立场与判定标准（论据须带口径与来源），输出辩论议程。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.bk-024",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "cross-debate.legacy-output",
+      "retryPolicy": "never",
+      "subject": "正方立论",
+      "description": "陈述立场与核心论据（数据带口径、引用来源），结构：立场声明 → 论据 2-3 条 → 预期对方弱点。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.bk-008",
+      "dependsOn": [
+        "t2"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "cross-debate.legacy-output",
+      "retryPolicy": "never",
+      "subject": "反方反驳",
+      "description": "逐条反驳正方论据并给出反论据，结构：反驳点 → 反论据（带口径）→ 正方立场中的漏洞。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.bk-024",
+      "dependsOn": [
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "cross-debate.legacy-output",
+      "retryPolicy": "never",
+      "subject": "正方回应",
+      "description": "回应反驳：承认有效点、澄清误解、强化核心立场。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t5",
+      "role": "role.team-lead",
+      "dependsOn": [
+        "t4"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "cross-debate.legacy-output",
+      "retryPolicy": "never",
+      "subject": "裁判总结",
+      "description": "输出辩论纪要：双方核心论点、交锋点、共识、分歧、判定逻辑与最终观点（不强制二选一，可给条件性结论）。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "cross-debate.deliverable",
+      "outputTemplate": "cross-debate.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

@@ -31,6 +31,7 @@
  */
 
 import { createHash } from 'node:crypto'
+import { readFileSync, readdirSync, statSync, type Dirent } from 'node:fs'
 import { readFile, readdir, realpath, stat } from 'node:fs/promises'
 import { join, resolve, sep } from 'node:path'
 import { isSafeKnowledgeId } from '../knowledge.ts'
@@ -644,6 +645,156 @@ export async function loadPackFromDir(
     diagnostics: diags.items,
     ok,
   }
+}
+
+/**
+ * Synchronous twin of {@link loadPackFromDir} for **trusted, static pack
+ * roots** — e.g. the committed `domain-packs/builtin-library/` projection
+ * loaded by the process-wide V1 cache (whose public API is synchronous).
+ *
+ * Same accepted layouts (pack.json meta or full-pack form, section
+ * directories with kebab/camel names, `index.json` or one file per entity,
+ * `<section>.json` array files), same per-entity filename/id validation and
+ * the same `validateDomainPack` gate — but plain synchronous reads and NO
+ * realpath containment (the root is resolved from the module itself, never
+ * from data, so symlink-escape checks are not applicable). A missing root
+ * reports `pack-root-missing`; a present-but-invalid pack reports the loader
+ * + validator diagnostics with `ok: false` (callers decide loud vs fallback).
+ */
+export function loadPackFromDirSync(
+  dir: string,
+  source?: Omit<PackSourceInfo, 'root'>,
+): LoadedPack {
+  const root = resolve(dir)
+  const diags = new Diagnostics()
+  const missingRoot: LoadedPack = {
+    pack: undefined,
+    source: { layer: source?.layer ?? 'domain-pack', label: source?.label ?? root },
+    diagnostics: [{ code: 'pack-root-missing', path: 'pack', message: `pack directory "${root}" does not exist`, severity: 'error' }],
+    ok: false,
+  }
+  try {
+    if (!statSync(root).isDirectory()) return missingRoot
+  } catch (error: unknown) {
+    if (isEnoent(error)) return missingRoot
+    throw error
+  }
+
+  let packJson: unknown
+  try {
+    packJson = JSON.parse(readFileSync(join(root, 'pack.json'), 'utf8'))
+  } catch (error: unknown) {
+    if (isEnoent(error)) {
+      diags.add('pack-meta-missing', 'pack.pack', `pack directory "${root}" has no pack.json`)
+    } else {
+      diags.add('json-parse-error', 'pack.pack', `pack.json is not valid JSON: ${String(error)}`)
+    }
+  }
+
+  let assembled: Record<string, unknown>
+  if (isRecord(packJson) && isRecord(packJson['pack'])) {
+    assembled = { ...packJson }
+  } else {
+    assembled = { pack: packJson ?? undefined }
+    for (const [key, sectionDirs] of PACK_SECTIONS) {
+      assembled[key] = readSectionSync(diags, root, key, sectionDirs)
+    }
+  }
+
+  const validation = validateDomainPack(assembled)
+  diags.items.push(...validation.diagnostics)
+  const ok = !diags.hasErrors
+  return {
+    pack: ok ? validation.value : undefined,
+    source: { layer: source?.layer ?? 'domain-pack', label: source?.label ?? root, root },
+    diagnostics: diags.items,
+    ok,
+  }
+}
+
+/** Sync twin of {@link readSection} (trusted roots; no realpath containment). */
+function readSectionSync(
+  diags: Diagnostics,
+  root: string,
+  key: string,
+  sectionDirs: readonly string[],
+): unknown[] {
+  for (const sectionDir of sectionDirs) {
+    const folder = join(root, sectionDir)
+    let folderStat
+    try {
+      folderStat = statSync(folder)
+    } catch (error: unknown) {
+      if (!isEnoent(error)) throw error
+      folderStat = undefined
+    }
+    if (folderStat?.isDirectory() === true) {
+      // index.json, when present.
+      let indexJson: unknown
+      try {
+        indexJson = JSON.parse(readFileSync(join(folder, 'index.json'), 'utf8'))
+      } catch (error: unknown) {
+        if (!isEnoent(error)) {
+          diags.add('json-parse-error', `pack.${key}`, `section index "${sectionDir}/index.json" is not valid JSON: ${String(error)}`)
+          return []
+        }
+      }
+      if (Array.isArray(indexJson)) return indexJson
+      // one file per entity (sorted; filename == entity id, validated).
+      const entities: unknown[] = []
+      let entries: Dirent<string>[] = []
+      try {
+        entries = readdirSync(folder, { withFileTypes: true })
+      } catch (error: unknown) {
+        if (!isEnoent(error)) throw error
+      }
+      entries.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0))
+      for (const entry of entries) {
+        if (entry.isDirectory() || (!entry.isFile() && !entry.isSymbolicLink())) continue
+        if (!entry.name.endsWith('.json') || entry.name === 'index.json') continue
+        const stem = entry.name.slice(0, -'.json'.length)
+        if (stem === '' || !isSafeKnowledgeId(stem)) {
+          diags.add('unsafe-file-name', `pack.${key}`, `section file "${entry.name}" is not a safe id (letters/digits, ._- inside, ≤64 chars)`)
+          continue
+        }
+        let value: unknown
+        try {
+          value = JSON.parse(readFileSync(join(folder, entry.name), 'utf8'))
+        } catch (error: unknown) {
+          diags.add('json-parse-error', `pack.${key}.${stem}`, `file "${entry.name}" is not valid JSON: ${String(error)}`)
+          continue
+        }
+        if (isRecord(value) && typeof value['id'] === 'string' && value['id'] !== stem) {
+          diags.add('filename-id-mismatch', `pack.${key}.${stem}.id`, `entity id "${value['id']}" does not match its file name "${stem}"`, 'warning')
+        }
+        entities.push(value)
+      }
+      return entities
+    }
+    // Array-file form: `<root>/<sectionDir>.json`.
+    let arrayStat
+    try {
+      arrayStat = statSync(join(root, `${sectionDir}.json`))
+    } catch (error: unknown) {
+      if (!isEnoent(error)) throw error
+      arrayStat = undefined
+    }
+    if (arrayStat?.isFile() === true) {
+      let value: unknown
+      try {
+        value = JSON.parse(readFileSync(join(root, `${sectionDir}.json`), 'utf8'))
+      } catch (error: unknown) {
+        diags.add('json-parse-error', `pack.${key}`, `section file "${sectionDir}.json" is not valid JSON: ${String(error)}`)
+        return []
+      }
+      if (Array.isArray(value)) return value
+      if (value !== undefined) {
+        diags.add('invalid-shape', `pack.${key}`, `section file "${sectionDir}.json" must contain a JSON array`)
+      }
+      return []
+    }
+  }
+  return []
 }
 
 // --- Overlay merging ---------------------------------------------------------

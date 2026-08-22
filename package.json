@@ -67,6 +67,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
     "build:pack": "node scripts/build-zhijian-pack.mjs",
     "check:pack": "node scripts/build-zhijian-pack.mjs --check",
+    "build:builtin": "node scripts/build-builtin-pack.mjs",
+    "check:builtin": "node scripts/build-builtin-pack.mjs --check",
     "test": "pnpm build && node --test test/"
   },
   "peerDependencies": {

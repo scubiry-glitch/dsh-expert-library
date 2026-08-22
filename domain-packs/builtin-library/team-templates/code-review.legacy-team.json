@@ -1,0 +1,127 @@
+{
+  "id": "code-review.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.engineer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.qa-engineer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.researcher",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.security-reviewer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.researcher",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "code-review.legacy-output",
+      "retryPolicy": "never",
+      "subject": "梳理变更全貌",
+      "description": "列出变更范围（提交/文件/模块）、变更意图与风险面，供后续审查分工使用。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.engineer",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "code-review.legacy-output",
+      "retryPolicy": "never",
+      "subject": "性能与实现审查",
+      "description": "审查实现质量：算法复杂度、资源使用、并发与错误处理、可维护性。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.security-reviewer",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "code-review.legacy-output",
+      "retryPolicy": "never",
+      "subject": "安全审查",
+      "description": "从攻击者视角审查输入处理、鉴权、密钥、注入面与供应链风险，给出严重级别与缓解方案。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.qa-engineer",
+      "dependsOn": [
+        "t2",
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "code-review.legacy-output",
+      "retryPolicy": "never",
+      "subject": "测试与回归审查",
+      "description": "评估测试覆盖，设计补充测试用例，验证变更是否破坏既有行为。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t5",
+      "role": "role.researcher",
+      "dependsOn": [
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "code-review.legacy-output",
+      "retryPolicy": "never",
+      "subject": "汇总审查报告",
+      "description": "合并各审查结论，输出按严重级别排序的问题清单、结论与修改建议。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "code-review.deliverable",
+      "outputTemplate": "code-review.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

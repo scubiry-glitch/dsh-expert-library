@@ -1,0 +1,28 @@
+{
+  "id": "documentation",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "documentation-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "researcher",
+      "docs-coordinator"
+    ]
+  },
+  "teamTemplate": "documentation.legacy-team",
+  "outputTemplate": "documentation.legacy-output",
+  "qualityPolicy": "documentation.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

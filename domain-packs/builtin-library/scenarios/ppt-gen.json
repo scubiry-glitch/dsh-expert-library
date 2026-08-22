@@ -1,0 +1,29 @@
+{
+  "id": "ppt-gen",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "ppt-generation-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "docs-coordinator",
+      "designer",
+      "bk-024"
+    ]
+  },
+  "teamTemplate": "ppt-gen.legacy-team",
+  "outputTemplate": "ppt-gen.legacy-output",
+  "qualityPolicy": "ppt-gen.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

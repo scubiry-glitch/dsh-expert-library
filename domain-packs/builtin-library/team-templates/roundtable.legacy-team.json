@@ -1,0 +1,107 @@
+{
+  "id": "roundtable.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.bk-004",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.bk-005",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.bk-008",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.docs-coordinator",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.bk-004",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "roundtable.legacy-output",
+      "retryPolicy": "never",
+      "subject": "专家发言：邢自强",
+      "description": "以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.bk-005",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "roundtable.legacy-output",
+      "retryPolicy": "never",
+      "subject": "专家发言：任泽平",
+      "description": "以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.bk-008",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "roundtable.legacy-output",
+      "retryPolicy": "never",
+      "subject": "专家发言：付鹏",
+      "description": "以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "roundtable.legacy-output",
+      "retryPolicy": "never",
+      "subject": "圆桌纪要整理",
+      "description": "综合全部发言整理纪要：共识点、分歧点（含各自依据）、开放问题、后续可验证的观察指标。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "roundtable.deliverable",
+      "outputTemplate": "roundtable.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

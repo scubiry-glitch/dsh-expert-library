@@ -1,0 +1,30 @@
+{
+  "id": "code-review",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "code-review-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "researcher",
+      "engineer",
+      "qa-engineer",
+      "security-reviewer"
+    ]
+  },
+  "teamTemplate": "code-review.legacy-team",
+  "outputTemplate": "code-review.legacy-output",
+  "qualityPolicy": "code-review.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

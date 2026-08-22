@@ -26,11 +26,13 @@
  * @module dsh-expert-library/v2/compat
  */
 
+import { fileURLToPath } from 'node:url'
 import type { Expert, Scenario } from '../expert-library/types.ts'
 import { BUILTIN_EXPERT_BY_ID } from '../expert-library/builtin-experts.ts'
 import { BUILTIN_SCENARIO_BY_ID } from '../expert-library/builtin-scenarios.ts'
 import { ZHIJIAN_EXPERT_BY_ID } from '../zhijian/registry.ts'
 import { compileExecutionPlan, type CompileResult } from './compiler.ts'
+import { loadPackFromDirSync } from './pack-loader.ts'
 import { validateDomainPack } from './validate.ts'
 import { SCHEMA_VERSION, type CapabilityClaim, type DomainPackV2, type ExpertV2, type KnowledgeProviderManifest, type OutputTemplate, type PackDiagnostic, type QualityPolicy, type ScenarioV2, type TaskTemplate, type TeamTemplate } from './types.ts'
 
@@ -475,10 +477,68 @@ export function migrateDomainPack(input: unknown): MigrationResult {
 }
 
 /**
- * V1 → V2 legacy projection of the **full builtin library**, built once per
- * process and never invalidated: the inputs (builtin experts, the 32 zhijian
- * bk-* experts, and the builtin scenarios) are static generated code, so the
- * projection is stable for the lifetime of the process.
+ * Default pack dir for the generic builtin library: `domain-packs/builtin-library/`
+ * resolved relative to the module root (mirrors the module-root resolution
+ * used for bundled assets).
+ */
+function defaultBuiltinPackDir(): string {
+  return fileURLToPath(new URL('../../domain-packs/builtin-library/', import.meta.url))
+}
+
+/**
+ * Load the generic builtin library as a {@link DomainPackV2} — V1 retirement
+ * step 2 runtime cutover, pack-first:
+ *
+ * - when `domain-packs/builtin-library/` is present, the generated static
+ *   pack is loaded via {@link loadPackFromDirSync} and the zhijian bk-*
+ *   experts are appended (the generated pack intentionally contains ONLY the
+ *   generic library — zhijian has its own pack — but the builtin scenarios
+ *   reference bk-* experts, so the runtime cache keeps them from the V1
+ *   registry, byte-identical to the pre-cutover projection);
+ * - when the pack directory is absent (e.g. a published package without
+ *   domain-packs), the direct adaptV1 projection is used — the fallback;
+ * - a present-but-invalid pack is a loud failure (drift guard), never a
+ *   silent fallback.
+ *
+ * Both paths yield **digest-identical** compiled plans for every builtin
+ * scenario (the generated entities are byte-equal to the projection outputs;
+ * golden loop in `test/v2-builtin-pack.test.mjs`).
+ */
+export function loadBuiltinLegacyPack(packDir?: string): DomainPackV2 {
+  const dir = packDir ?? defaultBuiltinPackDir()
+  const loaded = loadPackFromDirSync(dir)
+  if (loaded.pack !== undefined) return withZhijianExperts(loaded.pack)
+  if (loaded.diagnostics.some(diagnostic => diagnostic.code === 'pack-root-missing')) {
+    // Pack dir absent → the pre-cutover adaptV1 projection.
+    return projectBuiltinLegacyPack()
+  }
+  const lines = loaded.diagnostics
+    .filter(diagnostic => diagnostic.severity === 'error')
+    .map(diagnostic => `${diagnostic.code} @${diagnostic.path}: ${diagnostic.message}`)
+  throw new Error(`builtin pack "${dir}" is present but invalid (${lines.length} error(s)): ${lines.join('; ')}`)
+}
+
+/** The pre-pack fallback: direct adaptV1 projection of the full builtin library. */
+function projectBuiltinLegacyPack(): DomainPackV2 {
+  return buildLegacyDomainPack({
+    experts: [...BUILTIN_EXPERT_BY_ID.values(), ...ZHIJIAN_EXPERT_BY_ID.values()],
+    scenarios: [...BUILTIN_SCENARIO_BY_ID.values()],
+  })
+}
+
+/** Append the zhijian bk-* experts (their V1 adaptation) to a generic pack. */
+function withZhijianExperts(pack: DomainPackV2): DomainPackV2 {
+  const existing = new Set(pack.experts.map(expert => expert.id))
+  const zhijian = [...ZHIJIAN_EXPERT_BY_ID.values()]
+    .filter(expert => !existing.has(expert.id))
+    .map(adaptV1Expert)
+  if (zhijian.length === 0) return pack
+  return { ...pack, experts: [...pack.experts, ...zhijian] }
+}
+
+/**
+ * The process-wide, lazily-built cache of the full builtin library
+ * (generic pack + zhijian experts); never invalidated during the process.
  *
  * This is the shared entity source for every per-call V1 compile — the V1
  * scenario bridge (`compileV1ScenarioExecutionPlan`) and the collab
@@ -489,12 +549,7 @@ export function migrateDomainPack(input: unknown): MigrationResult {
  * for the whole process).
  */
 export function builtinLegacyPack(): DomainPackV2 {
-  if (cachedBuiltinPack === undefined) {
-    cachedBuiltinPack = buildLegacyDomainPack({
-      experts: [...BUILTIN_EXPERT_BY_ID.values(), ...ZHIJIAN_EXPERT_BY_ID.values()],
-      scenarios: [...BUILTIN_SCENARIO_BY_ID.values()],
-    })
-  }
+  if (cachedBuiltinPack === undefined) cachedBuiltinPack = loadBuiltinLegacyPack()
   return cachedBuiltinPack
 }
 

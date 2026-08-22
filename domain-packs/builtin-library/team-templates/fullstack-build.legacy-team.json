@@ -1,0 +1,116 @@
+{
+  "id": "fullstack-build.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.designer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.engineer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.qa-engineer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.designer",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "fullstack-build.legacy-output",
+      "retryPolicy": "never",
+      "subject": "设计实现方案",
+      "description": "把需求转成实现方案：界面结构、数据流、接口约定、技术选型。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.engineer",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "fullstack-build.legacy-output",
+      "retryPolicy": "never",
+      "subject": "后端/数据层实现",
+      "description": "按方案实现服务端与数据层，保证接口与数据约定一致。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.engineer",
+      "dependsOn": [
+        "t2"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "fullstack-build.legacy-output",
+      "retryPolicy": "never",
+      "subject": "前端/交互实现",
+      "description": "按方案实现前端界面与交互，对接后端接口。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.qa-engineer",
+      "dependsOn": [
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "fullstack-build.legacy-output",
+      "retryPolicy": "never",
+      "subject": "测试与验证",
+      "description": "按需求设计并执行测试，覆盖主流程与边界，输出测试结果。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t5",
+      "role": "role.qa-engineer",
+      "dependsOn": [
+        "t4"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "fullstack-build.legacy-output",
+      "retryPolicy": "never",
+      "subject": "交付说明",
+      "description": "汇总实现成果：功能清单、如何运行、已知问题与后续建议。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "fullstack-build.deliverable",
+      "outputTemplate": "fullstack-build.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "t5"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

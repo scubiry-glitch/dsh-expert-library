@@ -1,0 +1,29 @@
+{
+  "id": "cross-debate",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "cross-debate-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "team-lead",
+      "bk-024",
+      "bk-008"
+    ]
+  },
+  "teamTemplate": "cross-debate.legacy-team",
+  "outputTemplate": "cross-debate.legacy-output",
+  "qualityPolicy": "cross-debate.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

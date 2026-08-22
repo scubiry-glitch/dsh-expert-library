@@ -1,0 +1,101 @@
+{
+  "id": "market-research.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.data-analyst",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.docs-coordinator",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.researcher",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.researcher",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "market-research.legacy-output",
+      "retryPolicy": "never",
+      "subject": "界定调研问题",
+      "description": "把目标转成可回答的调研问题清单，确定信息需求与口径。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.researcher",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "market-research.legacy-output",
+      "retryPolicy": "never",
+      "subject": "资料搜集与整理",
+      "description": "按问题清单搜集资料（市场报告、竞品、用户反馈），记录来源与日期。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.data-analyst",
+      "dependsOn": [
+        "t2"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "market-research.legacy-output",
+      "retryPolicy": "never",
+      "subject": "数据分析",
+      "description": "对可量化的数据做统计与分析（规模、增速、份额、价格带），说明口径与假设。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "market-research.legacy-output",
+      "retryPolicy": "never",
+      "subject": "撰写调研报告",
+      "description": "整合资料与数据，输出结构化调研报告：结论、依据、风险与开放问题。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "market-research.deliverable",
+      "outputTemplate": "market-research.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}
