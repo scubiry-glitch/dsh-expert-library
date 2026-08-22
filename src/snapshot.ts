@@ -21,6 +21,31 @@ import type { MemberStatus, TeamState, TeamTask } from './types.ts'
 /** Visual task state for the activity panel. */
 export type VisualTaskState = 'blocked' | 'open' | 'running' | 'completed'
 
+/**
+ * One output document of an expert member: either the task deliverable record
+ * (`output/result.json`) or a published artifact file the member produced.
+ * `url` points at the plugin's project route, which serves the file from the
+ * team's isolated task project directory.
+ */
+export interface MemberDocument {
+  /** Which task produced the document. */
+  readonly taskId: string
+  /** Human title of the producing task. */
+  readonly taskSubject: string
+  /** `output` = the task deliverable record; `artifact` = a published file. */
+  readonly kind: 'output' | 'artifact'
+  /** File name as stored inside the task project. */
+  readonly name: string
+  /** Absolute URL the panel can open in a new tab. */
+  readonly url: string
+  /** First characters of the deliverable text (`kind: 'output'` only). */
+  readonly preview?: string
+  /** Artifact byte size (`kind: 'artifact'` only). */
+  readonly sizeBytes?: number
+  /** Artifact publication time (`kind: 'artifact'` only). */
+  readonly updatedAt?: number
+}
+
 /** One member row of the activity snapshot. */
 export interface TeamActivityMember {
   readonly id: string
@@ -33,6 +58,8 @@ export interface TeamActivityMember {
   readonly total: number
   readonly currentTask: string
   readonly unread: number
+  /** Output documents this member produced (task outputs + published artifacts). */
+  readonly documents: readonly MemberDocument[]
 }
 
 /** One task row of the activity snapshot. */
@@ -79,6 +106,59 @@ function currentTaskOf(memberName: string, tasks: readonly TeamTask[]): string {
     if (task.status === 'in_progress' && task.assignee === memberName) return task.id
   }
   return ''
+}
+
+/** Base path of the plugin's task-project file route. */
+const PROJECT_ROUTE = '/plugins/dsh-expert-library/project'
+
+/** Short readable preview of a task deliverable (kept tiny for the 1s poll). */
+const DOC_PREVIEW_MAX = 180
+
+function documentPreview(output: string | undefined): string | undefined {
+  if (output === undefined) return undefined
+  const cleaned = output.replace(/\s+/gu, ' ').trim()
+  if (cleaned === '') return undefined
+  return cleaned.length > DOC_PREVIEW_MAX ? `${cleaned.slice(0, DOC_PREVIEW_MAX)}…` : cleaned
+}
+
+/**
+ * Project the output documents one member produced onto the activity panel.
+ *
+ * Everything is derived from the already-loaded team record (task projects,
+ * `output` texts, published artifact manifests), so the 1s poll adds no
+ * filesystem reads. Only finished deliverables count: a task must be
+ * `completed` and carry a project; artifacts come from the task's published
+ * manifest.
+ */
+function memberDocuments(memberName: string, tasks: readonly TeamTask[], teamId: string): MemberDocument[] {
+  const documents: MemberDocument[] = []
+  for (const task of tasks) {
+    if (task.assignee !== memberName || task.status !== 'completed') continue
+    if (task.project === undefined) continue
+    const taskRef = `team=${encodeURIComponent(teamId)}&task=${encodeURIComponent(task.id)}`
+    documents.push({
+      taskId: task.id,
+      taskSubject: task.subject,
+      kind: 'output',
+      name: 'result.json',
+      url: `${PROJECT_ROUTE}?${taskRef}&dir=output&file=result.json`,
+      ...(documentPreview(task.output) === undefined ? {} : { preview: documentPreview(task.output) }),
+    })
+    for (const artifact of task.publishedArtifacts ?? []) {
+      const safeName = artifact.relativePath.split('/').pop() ?? artifact.relativePath
+      if (safeName === '') continue
+      documents.push({
+        taskId: task.id,
+        taskSubject: task.subject,
+        kind: 'artifact',
+        name: safeName,
+        url: `${PROJECT_ROUTE}?${taskRef}&dir=artifacts&file=${encodeURIComponent(safeName)}`,
+        sizeBytes: artifact.sizeBytes,
+        updatedAt: artifact.createdAt,
+      })
+    }
+  }
+  return documents
 }
 
 /**
@@ -146,6 +226,7 @@ export async function assembleTeamSnapshot(
       total: owned.length,
       currentTask: currentTaskOf(member.name, tasks),
       unread: unreadByMember.get(member.name) ?? 0,
+      documents: memberDocuments(member.name, tasks, state.id),
     }
   })
   const captainInbox = await readUnreadMailbox(stateRoot, state.id, CAPTAIN_KEY)

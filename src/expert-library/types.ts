@@ -70,6 +70,8 @@ export interface ScenarioSkillBinding {
   readonly name?: string
   /** One-line purpose note injected into the team description. */
   readonly purpose?: string
+  /** Zero-based task index that should receive the skill reference; defaults to the final task. */
+  readonly appliesToTaskIndex?: number
 }
 
 /**

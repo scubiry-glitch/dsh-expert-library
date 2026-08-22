@@ -14,12 +14,18 @@ import { useEffect, useMemo, useState } from 'react'
 import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import type { ActivityTeam } from './ActivityPanel.tsx'
-import type { ExpertTeamsCardData } from './expert-teams-card-definition.ts'
+import type { ExpertTeamsCardData } from './agent-teams-card-definition.ts'
 import { LEAD_ART, memberArtUrl } from './artwork.ts'
-import css from './ExpertTeamsCard.module.css'
+import css from './AgentTeamsCard.module.css'
 
 /** Window event name the floater listens for to open itself. */
 export const OPEN_PANEL_EVENT = 'expert-teams:open-panel'
+
+/** Payload carried by the open-panel event; `memberName` jumps straight to
+ * that expert's output documents list when the floater opens. */
+export interface ExpertTeamsOpenPanelDetail extends ExpertTeamsCardData {
+  readonly memberName?: string
+}
 
 /** Navigation action injected from the plugin's own SessionsService access. */
 export interface ExpertTeamsCardInjected {
@@ -35,14 +41,16 @@ export type ExpertTeamsCardProps =
 
 /** Re-activate the top-right activity panel, carrying this team's summary
  * so the panel can show it even when the team no longer exists on disk
- * (historical session review). */
-function openActivityPanel(data: ExpertTeamsCardData): void {
-  window.dispatchEvent(new CustomEvent(OPEN_PANEL_EVENT, {
+ * (historical session review). An optional `memberName` makes the panel land
+ * directly on that expert's output documents list. */
+function openActivityPanel(data: ExpertTeamsCardData, memberName?: string): void {
+  window.dispatchEvent(new CustomEvent<ExpertTeamsOpenPanelDetail>(OPEN_PANEL_EVENT, {
     detail: {
       teamId: data.teamId,
       captainSessionId: data.captainSessionId,
       teamName: data.teamName,
       members: data.members,
+      ...(memberName === undefined ? {} : { memberName }),
     },
   }))
 }
@@ -108,8 +116,8 @@ export function ExpertTeamsCard({ node, openSession, currentSessionId }: ExpertT
               type="button"
               key={member.id}
               className={css.member}
-              onClick={() => { if (member.id !== '') openSession(member.id as SessionId) }}
-              title={member.role === '' ? member.name : `${member.name} · ${member.role}`}
+              onClick={() => { openActivityPanel(resolved, member.name) }}
+              title={member.role === '' ? `查看 ${member.name} 的产出文档` : `查看 ${member.name}（${member.role}）的产出文档`}
             >
               {memberArtUrl(member.name, member.role) !== null ? (
                 <img className={css.memberArt} src={memberArtUrl(member.name, member.role) ?? ''} alt="" aria-hidden />

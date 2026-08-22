@@ -1,0 +1,7 @@
+{
+  "taskId": "t6",
+  "subject": "等待用户确认与后续复核",
+  "description": "保持专家活动面板显示。终稿复核已完成；请领取后将状态保持为in_progress并等待队长后续消息，不要标记completed，直到用户明确要求关闭面板。",
+  "dependencies": [],
+  "createdAt": 1787320070250
+}

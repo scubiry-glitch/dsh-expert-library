@@ -215,7 +215,7 @@ export function installMemberSelectionRuntime(ctx: Context, stateDir: string): M
       const memberName = identity.slice(separator + 1)
       const workspace = child.session.header.cwd ?? process.cwd()
       const team = readTeamSync(join(workspace, stateDir), teamId)
-      if (team?.captainSessionId !== parentSessionId) return () => undefined
+      if (team === undefined || team.captainSessionId !== parentSessionId) return () => undefined
       selection = selectionFromMember(team.members.find(member => member.name === memberName))
       // An old team record has no provider/reasoning snapshot. Its durable
       // Harness descriptor still restores provider/model, so leave it alone.

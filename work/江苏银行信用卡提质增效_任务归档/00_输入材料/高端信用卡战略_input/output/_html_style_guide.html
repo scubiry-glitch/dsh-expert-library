@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>江苏银行高端信用卡与卡组织合作战略 · 完整报告</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --navy:#0b1f3a; --blue:#0b4da2; --blue2:#4da2ff; --line:#dfe7f2; --bg:#f7fafd;
+    --fact:#0b6e4f; --assume:#b26a00; --infer:#5a3fb2; --tbc:#c0392b; --conflict:#c0392b;
+    --fact-bg:#eef7f1; --assume-bg:#fff6e8; --infer-bg:#f2eefb; --tbc-bg:#fdf0ee;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei","Droid Sans Fallback",sans-serif;
+    color:#1a2332; background:#eef1f6; font-size:14px; line-height:1.7;
+  }
+  .page { width:210mm; min-height:297mm; padding:18mm 20mm; margin:0 auto 6mm; background:#fff;
+    box-shadow:0 2px 14px rgba(11,31,58,.10); position:relative; page-break-after:always; }
+  .page:last-child { page-break-after:auto; }
+
+  /* ===== 封面 ===== */
+  .cover { display:flex; flex-direction:column; justify-content:center; min-height:260mm; }
+  .cover .tag { display:inline-block; background:#0b4da2; color:#fff; font-size:12px; padding:4px 14px;
+    border-radius:20px; letter-spacing:2px; margin-bottom:30px; align-self:flex-start; }
+  .cover h1 { font-size:32px; line-height:1.4; font-weight:800; margin-bottom:14px; color:#0b1f3a; }
+  .cover h2 { font-size:18px; font-weight:500; color:#4a5a72; margin-bottom:40px; line-height:1.6; }
+  .cover .bigbox { background:#f0f6ff; border-left:6px solid #0b4da2; border-radius:8px; padding:20px 24px; margin-bottom:16px; }
+  .cover .bigbox .label { font-size:12px; color:#0b4da2; font-weight:700; letter-spacing:3px; margin-bottom:8px; }
+  .cover .bigbox p { font-size:16px; font-weight:700; line-height:1.75; }
+  .cover .meta { margin-top:32px; font-size:12px; color:#8a97ab; line-height:1.9; }
+
+  /* ===== 目录 ===== */
+  .toc { padding-top:6mm; }
+  .toc a { display:block; color:#1a2332; text-decoration:none; padding:7px 4px; border-bottom:1px dashed #e2eaf5; }
+  .toc a:hover { color:#0b4da2; background:#f0f6ff; }
+  .toc .l1 { font-weight:800; font-size:14.5px; }
+  .toc .l2 { padding-left:20px; font-size:13px; color:#4a5a72; }
+
+  /* ===== 通用 ===== */
+  .kicker { font-size:12px; color:#0b4da2; font-weight:700; letter-spacing:3px; margin-bottom:6px; }
+  h3.section { font-size:21px; font-weight:800; color:#0b1f3a; margin-bottom:6px; }
+  h4.subsec { font-size:16px; font-weight:800; color:#0b1f3a; margin:18px 0 8px; padding-left:10px; border-left:4px solid #0b4da2; }
+  .sub { font-size:13px; color:#5a6a80; margin-bottom:14px; }
+  .divider { height:3px; background:linear-gradient(90deg,#0b4da2,#4da2ff); border-radius:2px; margin:10px 0 18px; }
+
+  .concl { background:#f7fbff; border:1px solid #d6e6ff; border-radius:10px; padding:16px 20px; margin-bottom:14px; }
+  .concl .n { display:inline-block; background:#0b4da2; color:#fff; border-radius:50%; width:24px; height:24px;
+    text-align:center; line-height:24px; font-size:13px; font-weight:700; margin-right:8px; }
+  .concl p { font-size:15px; font-weight:700; line-height:1.75; }
+  .concl .detail { font-size:13px; font-weight:400; color:#3d4d63; margin-top:6px; line-height:1.7; }
+
+  table { width:100%; border-collapse:collapse; margin:10px 0 16px; font-size:12px; }
+  th { background:#0b4da2; color:#fff; padding:8px 10px; text-align:left; font-weight:600; font-size:12px; }
+  td { border:1px solid #dfe7f2; padding:7px 9px; vertical-align:top; }
+  tr:nth-child(even) td { background:#f7fafd; }
+  .num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+
+  /* ===== 三态标注徽标 ===== */
+  .tag-fact { display:inline-block; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:10px;
+    color:var(--fact); background:var(--fact-bg); border:1px solid #bfe3cf; }
+  .tag-assume { display:inline-block; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:10px;
+    color:var(--assume); background:var(--assume-bg); border:1px solid #f0d4a3; }
+  .tag-infer { display:inline-block; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:10px;
+    color:var(--infer); background:var(--infer-bg); border:1px solid #d7caf0; }
+  .tag-tbc { display:inline-block; font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:10px;
+    color:var(--tbc); background:var(--tbc-bg); border:1px solid #f2c3bd; }
+  .src { color:#8a97ab; font-size:11px; }
+
+  .warn { background:#fff5f0; border:1px solid #f5c6b0; border-radius:10px; padding:12px 16px; margin:8px 0 12px; }
+  .warn .t { font-size:14px; font-weight:800; color:#b3421f; margin-bottom:6px; }
+  .warn p,.warn li { font-size:12.5px; color:#6a3a28; line-height:1.7; }
+
+  .cards { display:flex; gap:12px; margin:12px 0 18px; flex-wrap:wrap; }
+  .card { flex:1 1 22%; min-width:150px; background:#fff; border:1px solid #dfe7f2; border-radius:10px; padding:14px; box-shadow:0 1px 4px rgba(11,77,162,.06); }
+  .card .t { font-size:12px; color:#0b4da2; font-weight:700; margin-bottom:4px; }
+  .card .v { font-size:19px; font-weight:800; color:#0b1f3a; }
+  .card .d { font-size:11px; color:#6a7a90; margin-top:3px; line-height:1.5; }
+
+  .decision { border:1px solid #d6e6ff; border-radius:10px; margin-bottom:10px; overflow:hidden; }
+  .decision .head { background:#eef5ff; padding:7px 16px; font-weight:700; font-size:14px; display:flex; align-items:center; gap:10px; }
+  .decision .head .dn { background:#0b4da2; color:#fff; border-radius:6px; padding:2px 10px; font-size:12px; }
+  .decision .head .when { margin-left:auto; font-size:11px; color:#5a6a80; font-weight:500; }
+  .decision .body { padding:9px 16px; }
+  .decision .body .ask { font-size:12px; color:#5a6a80; margin-bottom:6px; }
+  .decision .body .ans { font-size:14px; font-weight:700; color:#0b1f3a; line-height:1.6; }
+  .decision .body .why { font-size:12px; color:#4a5a72; margin-top:6px; line-height:1.6; }
+
+  .timeline { margin:12px 0 16px; }
+  .tl-row { display:flex; align-items:stretch; margin-bottom:8px; }
+  .tl-time { width:96px; font-weight:800; color:#0b4da2; font-size:13px; padding-top:2px; flex-shrink:0; }
+  .tl-line { width:14px; position:relative; flex-shrink:0; }
+  .tl-line .dot { width:10px; height:10px; background:#0b4da2; border-radius:50%; position:absolute; top:6px; left:2px; }
+  .tl-line .bar { width:2px; background:#c9d9ef; position:absolute; top:18px; bottom:-8px; left:6px; }
+  .tl-row:last-child .tl-line .bar { display:none; }
+  .tl-card { flex:1; background:#f7fafd; border:1px solid #e2eaf5; border-radius:8px; padding:10px 14px; }
+  .tl-card .tt { font-weight:700; font-size:13.5px; }
+  .tl-card .dd { font-size:12px; color:#5a6a80; margin-top:3px; }
+
+  .foot { position:absolute; bottom:10mm; left:20mm; right:20mm; font-size:10px; color:#9aa7b8;
+    border-top:1px solid #eef2f7; padding-top:6px; display:flex; justify-content:space-between; }
+  ul.tight { padding-left:18px; margin:8px 0 14px; }
+  ul.tight li { margin-bottom:4px; font-size:12.5px; line-height:1.6; }
+  .small { font-size:11px; color:#6a7a90; }
+</style>
+</head>
+<body>
+<!-- 正文由 Docs Coordinator 按提纲填充；本文件为结构与样式基线 -->
+</body>
+</html>

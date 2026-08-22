@@ -16,7 +16,9 @@ import { join } from 'node:path'
 import { deliverToMember } from './members.ts'
 import {
   acknowledgeMailbox,
+  appendMailbox,
   beginTaskAttempt,
+  createMessage,
   claimMailboxDelivery,
   findTeamByParticipant,
   readTeam,
@@ -26,7 +28,7 @@ import {
   withTeamLock,
   writeTeam,
 } from './state.ts'
-import type { TeamMember, TeamTask } from './types.ts'
+import { TERMINAL_TASK_STATUSES, type TeamMember, type TeamTask } from './types.ts'
 
 export interface SchedulerConfig {
   readonly stateDir: string
@@ -81,11 +83,52 @@ function nextReadyTask(tasks: readonly TeamTask[], memberName: string): TeamTask
     ?? ready.find(task => task.assignee === undefined)
 }
 
+/** Return retryable terminal work to the pending pool before the next scheduling pass. */
+async function requeueRetryableTasks(stateRoot: string, teamId: string): Promise<void> {
+  await withTeamLock(teamLockKey(stateRoot, teamId), async () => {
+    const fresh = await readTeam(stateRoot, teamId)
+    if (fresh === undefined) return
+    let changed = false
+    for (const task of fresh.tasks) {
+      const attempts = task.attempt ?? 0
+      if ((task.status !== 'failed' && task.status !== 'cancelled') || attempts >= 3) continue
+      task.status = 'pending'
+      task.output = undefined
+      task.attemptId = undefined
+      task.handoffId = undefined
+      task.reassigning = false
+      task.updatedAt = Date.now()
+      changed = true
+    }
+    if (changed) await writeTeam(stateRoot, fresh)
+  })
+}
+
+/** Emit one durable captain notice when every task reaches a terminal state. */
+async function notifyTeamCompletion(stateRoot: string, teamId: string): Promise<void> {
+  await withTeamLock(teamLockKey(stateRoot, teamId), async () => {
+    const fresh = await readTeam(stateRoot, teamId)
+    if (fresh === undefined || fresh.tasks.length === 0 || fresh.completionNotifiedAt !== undefined) return
+    if (!fresh.tasks.every(task => TERMINAL_TASK_STATUSES.includes(task.status))) return
+    fresh.completionNotifiedAt = Date.now()
+    await writeTeam(stateRoot, fresh)
+    const counts = fresh.tasks.reduce<Record<string, number>>((acc, task) => {
+      acc[task.status] = (acc[task.status] ?? 0) + 1
+      return acc
+    }, {})
+    await appendMailbox(stateRoot, fresh.id, 'captain', createMessage(
+      'scheduler',
+      'captain',
+      'Team "' + fresh.name + '" has reached a terminal state for every task. Summary: ' + JSON.stringify(counts) + '. Review outputs and deliver the final artifact.',
+    ))
+  })
+}
+
 function assignmentPrompt(ticket: DispatchTicket, stateDir: string, teamId: string): string {
   const description = ticket.description === undefined ? '' : `\n\n${ticket.description}`
   return `Expert Teams automatic task assignment from the shared task list.
 
-Task: ${ticket.taskId} — ${ticket.subject}${description}
+Task: ${ticket.taskId} — ${ticket.subject}${description}\n\nProject isolation: work only inside the current task project. Read input/task.json and write the result through expert_teams_update_task; do not inspect other expert-task project directories.
 Attempt: ${ticket.attempt}
 Attempt id: ${ticket.attemptId}
 
@@ -124,7 +167,10 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
   const runtime: TeamScheduler = {
     async kickTeam(workspace, teamId, suppliedCaptain) {
       const stateRoot = stateRootOf(workspace, config)
-      const team = await readTeam(stateRoot, teamId)
+      let team = await readTeam(stateRoot, teamId)
+      if (team === undefined) return
+      await requeueRetryableTasks(stateRoot, teamId)
+      team = await readTeam(stateRoot, teamId)
       if (team === undefined) return
       const captain = liveCaptain(ctx, team.captainSessionId, suppliedCaptain)
       if (captain === undefined) return
@@ -132,6 +178,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
         if (member.status === 'removed') continue
         await runtime.kickMember(workspace, teamId, member.name, captain)
       }
+      await notifyTeamCompletion(stateRoot, teamId)
     },
 
     async kickMember(workspace, teamId, memberName, suppliedCaptain) {

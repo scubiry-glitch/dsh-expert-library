@@ -1,0 +1,210 @@
+# -*- coding: utf-8 -*-
+"""
+任务B：单卡收益模型（年费+回佣+分期）测算
+口径：元/卡/年；除注明外为 2026 年时点；区分 事实(F)/假设(A)/推断(I)
+"""
+import json
+
+# ---------- 事实参数（材料） ----------
+# 167: 卡均收入 61.49 元/月(2026-07)；分期息费占比65.74%、利息28.45%、佣金1.85%
+# 231: 境内回佣发卡行约 2‰(千二)；境外约 14‰(千十四)
+# 236: 运通境外线下商户费率2-3%(部分4%)，分给发卡行回佣平均约1%
+# 230/234: 境外客群 76,243 户 / 4.6 亿元/年 → 户均境外消费 6,033 元/年
+# 167: 卡均消费 573 元/月(全卡)、户均透支余额 5,739 元、损失率 2.56%、不良率 3.41%
+FACT = {
+    'card_income_month': 61.49,      # 元/月/卡, 2026-07, 银数167
+    'installment_share': 0.6574,     # 分期息费占比
+    'fee_retail_dom': 0.002,         # 境内回佣 2‰ (231)
+    'fee_retail_os': 0.01,           # 运通境外回佣约1% (236)；V/M 1.4% (231)
+    'os_spend_per_household': 6033,  # 元/年 户均境外消费 (230/234: 4.6亿/76243)
+    'dom_spend_per_card_month': 573, # 元/月 全卡均消费 (167)
+    'loss_rate': 0.0256,             # 损失率(仅本金) 2.56% (167)
+    'npl': 0.0341,                   # 不良率 3.41% (167)
+    'active_rate_bank': 0.261,       # 行内活跃率(30天) 26.10% (167)
+    'active_rate_pufa': 0.60,        # 浦发运通白金活卡率 60% (236)
+    'pufa_monthly_spend': 20000,     # 浦发卡均月消费约2万 (236)
+    'os_share_pufa_plat': 0.08,      # 浦发运通白金境外消费占比约8% (236)
+    'os_share_pufa_super': 0.26,     # 浦发超白金境外占比26% (236，材料前后口径有矛盾待核)
+}
+
+# ---------- 接入成本两套口径（235/236） ----------
+# A 银数通道·蓝盒子：科技100万+测试费15万(一次性)，银数运维费(材料未披露→假设20万/年)，蓝盒子授权费未披露→基准0
+# B 银数通道·百夫长：A + 品牌授权费数百万/年(→假设300万/年；2026首年减免)
+# C 直连：400万(9.0报告估算)+30万/年运维(235)；授权费按档位
+CHANNELS = {
+    # 蓝盒子授权费材料未披露；0 仅为显式基准假设，不代表免费，也不继承百夫长条款。
+    'A_银数_蓝盒子': {'fix0': 115e4, 'ops_y': 20e4, 'license_y': 0,   'license_y1': 0, 'license_status': 'AS-08-蓝盒子授权费=0基准/0-100万敏感性'},
+    'B_银数_百夫长': {'fix0': 115e4, 'ops_y': 20e4, 'license_y': 300e4, 'license_y1': 0},  # 2026首年减免
+    'C_直连':       {'fix0': 400e4, 'ops_y': 30e4, 'license_y': 0,   'license_y1': 0},
+}
+
+# ---------- 假设参数（A） ----------
+ASSUME = {
+    'fee_tiers': [3600, 2000, 880],       # 年费三档（235对标：百夫长白金/世界卡3600；蓝盒子档待定；农行AI 880）
+    'fee_retention': [0.4, 0.6, 0.8],     # 年费留存率(续卡且实收比例，含积分抵扣折算)，基准0.6
+    'benefit_cost_active': {3600: 800, 2000: 500, 880: 200},  # 权益成本元/活卡/年（贵宾厅/礼宾/返现，假设）
+    'card_produce': 80,                   # 制卡元/卡 一次性（金属卡更高，假设）
+    'acq_cost': 300,                      # 获客元/卡 一次性（定向邀约，假设）
+    'ops_card_year': 50,                  # 运营元/卡/年（假设）
+    'avg_balance_high': 20000,            # 高端卡户均透支余额元（浦发额度30万起，实际使用率假设~7%）
+    'high_loss_rate': 0.0128,             # 高端卡损失率（行内2.56%减半，商旅客群风险低，236）
+    'installment_mult': 1.0,              # 分期倍数（高端客群分期需求，0.75-1.5敏感性）
+    'dom_retail_mix': 0.002,              # 境内回佣率基准2‰
+    'os_retail_amex': 0.01,               # 运通境外回佣1%（236事实，作为基准）
+    'os_retail_vm': 0.014,                # V/M境外回佣14‰（231事实）
+}
+
+# ---------- 消费场景 ----------
+SCEN = {
+    'S1_浦发白金_境外8%':  dict(os_share=0.08, os_spend=20000*12*0.08, dom_spend=20000*12*0.92),
+    'S2_浦发超白金_境外26%': dict(os_share=0.26, os_spend=20000*12*0.26, dom_spend=20000*12*0.74),
+    # FIX(r3): 573 元/月是全卡总消费，不是境内消费；S3 统一采用单卡口径且不再叠加户均境外消费。
+    # 6876 元/卡/年取 FB-BUS-0011×12；保守按境内回佣计，目标卡境内外拆分仍待客户/卡明细核实。
+    'S3_我行保守_卡均':    dict(os_share=0.0, os_spend=0.0, dom_spend=573*12),
+}
+
+def card_cf(fee, a, r, scen, ch, m_inst=1.0):
+    """单卡年现金流: 返回 (cf1, cft)  首年(免年费)与之后各年"""
+    os_spend, dom_spend = scen['os_spend'], scen['dom_spend']
+    # 回佣（只对活卡产生消费）
+    rc = os_spend*ASSUME['os_retail_amex'] + dom_spend*ASSUME['dom_retail_mix']
+    inst = FACT['card_income_month']*12*FACT['installment_share']*m_inst   # 分期全卡均
+    benefit = ASSUME['benefit_cost_active'][fee]*a
+    bad = ASSUME['avg_balance_high']*ASSUME['high_loss_rate']*a
+    ops = ASSUME['ops_card_year']
+    oneoff = ASSUME['card_produce'] + ASSUME['acq_cost']
+    y1 = rc*a + inst - (benefit + ops + bad) - oneoff
+    yt = fee*a*r + rc*a + inst - (benefit + ops + bad)
+    return y1, yt
+
+def cum_fixed(ch, T):
+    c = CHANNELS[ch]
+    total = c['fix0']
+    for t in range(1, T+1):
+        lic = c['license_y1'] if t==1 else c['license_y']
+        total += c['ops_y'] + lic
+    return total
+
+def breakeven_N(ch, fee, a, r, scen, T=3, m_inst=1.0):
+    cf1, cft = card_cf(fee, a, r, scen, ch, m_inst)
+    cum_cf = cf1 + cft*(T-1)
+    fc = cum_fixed(ch, T)
+    return fc/cum_cf, cum_cf
+
+def payback(ch, fee, a, r, scen, N, m_inst=1.0):
+    cf1, cft = card_cf(fee, a, r, scen, ch, m_inst)
+    fc0 = CHANNELS[ch]['fix0']
+    cum = -fc0
+    for t in range(1, 10):
+        lic = CHANNELS[ch]['license_y1'] if t==1 else CHANNELS[ch]['license_y']
+        cum += N*(cf1 if t==1 else cft) - (CHANNELS[ch]['ops_y'] + lic)
+        if cum >= 0:
+            # 线性插值
+            # FIX(r3): 线性插值应从本年末累计值反推跨过零点的年内比例；旧式多算约1年。
+            flow = N*(cf1 if t==1 else cft) - (CHANNELS[ch]['ops_y']+lic)
+            return t - cum/flow
+    return None
+
+# ============ 输出1：单卡三源收入（基准：活卡率60%、年费留存60%） ============
+print("="*100)
+print("表1 单卡三源收入（元/卡/年；活卡率60%、年费留存60%、首年免年费）")
+print("="*100)
+for scen_name, scen in SCEN.items():
+    for fee in ASSUME['fee_tiers']:
+        y1, yt = card_cf(fee, 0.6, 0.6, scen, 'A_银数_蓝盒子')
+        rc_a = scen['os_spend']*0.01 + scen['dom_spend']*0.002
+        inst = FACT['card_income_month']*12*FACT['installment_share']
+        fee_inc = fee*0.6*0.6
+        print(f"{scen_name:22s} 年费{fee:5d}: 年费收入={fee_inc:7.0f} 回佣(活卡均)={rc_a*0.6:6.1f} "
+              f"分期={inst:6.1f} | 首年(免年费)净现金流={y1:8.1f} 之后各年净现金流={yt:8.1f}")
+
+# ============ 输出2：盈亏平衡发卡量（张）============
+print()
+print("="*100)
+print("表2 盈亏平衡发卡量阈值（张）——3年回本（口径A银数蓝盒子，授权费0；含固定成本）")
+print("="*100)
+for scen_name, scen in SCEN.items():
+    for fee in ASSUME['fee_tiers']:
+        for a, aname in [(0.6,'活卡率60%'), (0.26,'活卡率26%')]:
+            N3, _ = breakeven_N('A_银数_蓝盒子', fee, a, 0.6, scen, T=3)
+            N2, _ = breakeven_N('A_银数_蓝盒子', fee, a, 0.6, scen, T=2)
+            print(f"{scen_name:22s} 年费{fee:5d} {aname}: 2年回本需≥{N2:7.0f}张 | 3年回本需≥{N3:7.0f}张")
+
+print()
+print("="*100)
+print("表3 三种接入口径×年费档 3年回本阈值（张；活卡率60%、年费留存60%、S1浦发白金场景）")
+print("="*100)
+scen = SCEN['S1_浦发白金_境外8%']
+for ch in CHANNELS:
+    for fee in ASSUME['fee_tiers']:
+        N3, _ = breakeven_N(ch, fee, 0.6, 0.6, scen, T=3)
+        N2, _ = breakeven_N(ch, fee, 0.6, 0.6, scen, T=2)
+        print(f"{ch:14s} 年费{fee:5d}: 2年≥{N2:7.0f}张 | 3年≥{N3:7.0f}张")
+
+# ============ 输出3：特定发卡量的回本周期（年）============
+print()
+print("="*100)
+print("表4 回本周期（年）——口径A银数蓝盒子，S1浦发白金场景，活卡率60%，年费留存60%")
+print("="*100)
+for fee in ASSUME['fee_tiers']:
+    for N in [500, 1000, 1200, 1500, 2000]:
+        pb = payback('A_银数_蓝盒子', fee, 0.6, 0.6, SCEN['S1_浦发白金_境外8%'], N)
+        print(f"年费{fee:5d} 发卡{N:5d}张: 回本周期 ≈ {pb:5.2f} 年")
+
+print()
+print("="*100)
+print("表5 敏感性：境外占比/回佣率/年费留存率对3年回本阈值的影响（口径A、年费3600、活卡率60%）")
+print("="*100)
+base_scen = SCEN['S1_浦发白金_境外8%']
+for label, mod in [
+    ('境外占比8%→26%(超白金)', dict(os_share=0.26, os_spend=20000*12*0.26, dom_spend=20000*12*0.74)),
+    ('境外回佣1%→1.4%(V/M)', None),
+    ('年费留存40%', None), ('年费留存80%', None),
+    ('分期倍数1.0→0.75', None), ('分期倍数1.0→1.5', None),
+    ('权益成本800→500/活卡', None), ('高端损失率减半→行内2.56%', None),
+]:
+    sc = dict(mod) if mod else dict(base_scen)
+    r = 0.6; m = 1.0
+    if label.startswith('年费留存40'): r = 0.4
+    if label.startswith('年费留存80'): r = 0.8
+    if label.startswith('分期倍数1.0→0.75'): m = 0.75
+    if label.startswith('分期倍数1.0→1.5'): m = 1.5
+    if label.startswith('境外回佣1%→1.4'): ASSUME['os_retail_amex']=0.014
+    if label.startswith('权益成本800→500'): ASSUME['benefit_cost_active'][3600]=500
+    if label.startswith('高端损失率减半→行内'): ASSUME['high_loss_rate']=0.0256
+    N3, _ = breakeven_N('A_银数_蓝盒子', 3600, 0.6, r, sc, T=3, m_inst=m)
+    # 复原
+    ASSUME['os_retail_amex']=0.01; ASSUME['benefit_cost_active'][3600]=800; ASSUME['high_loss_rate']=0.0128
+    print(f"{label:32s}: 3年回本需≥{N3:7.0f}张（基准635张）")
+
+# 基准行
+N3b,_ = breakeven_N('A_银数_蓝盒子', 3600, 0.6, 0.6, base_scen, T=3)
+print(f"{'基准(境外8%/回佣1%/留存60%/分期1.0/权益800/损失率1.28%)':32s}: 3年回本需≥{N3b:7.0f}张")
+
+# ============ 输出4：H5/H6 量化 ============
+print()
+print("="*100)
+print("H5：银数通道 vs 直连 固定成本对比")
+print("="*100)
+for ch in CHANNELS:
+    c = CHANNELS[ch]
+    print(f"{ch:14s}: 初始={c['fix0']/1e4:.0f}万 + 运维{c['ops_y']/1e4:.0f}万/年 + 授权费{c['license_y']/1e4:.0f}万/年(首年{c['license_y1']/1e4:.0f}) | 3年累计={cum_fixed(ch,3)/1e4:.0f}万 | 5年累计={cum_fixed(ch,5)/1e4:.0f}万")
+
+print()
+print("="*100)
+print("H6：佣金收入占比 1.85%→9.06% 的量化含义")
+print("="*100)
+month_income = 20293e4  # 167: 本月总收入 20,293 万元
+comm_now = month_income*0.0185
+comm_target = month_income*0.0906
+print(f"全行月收入(2026-07)=20,293万；现佣金≈{comm_now/1e4:.0f}万/月≈{comm_now*12/1e4:.0f}万/年；")
+print(f"9.06%目标佣金≈{comm_target/1e4:.0f}万/月≈{comm_target*12/1e4:.0f}万/年；缺口≈{(comm_target-comm_now)*12/1e4:.0f}万/年")
+os_total = 4.6e8
+print(f"全行境外消费4.6亿/年：若回佣率由境内2‰提至境外14‰(V/M)，增量={os_total*0.012/1e4:.0f}万/年；")
+# FIX(r3): 删除“境外扩至30亿元可达目标”错误结论；静态缺口仅可反推规模，且新增交易会改变收入分母。
+print(f"若按运通1%：增量={os_total*0.008/1e4:.0f}万/年；静态填补缺口约需境外消费={((comm_target-comm_now)*12/0.008)/1e8:.1f}亿元（收入分母不变假设）")
+print(f"若按V/M 1.4%：静态填补缺口约需境外消费={((comm_target-comm_now)*12/0.012)/1e8:.1f}亿元（收入分母不变假设）")
+# 试点贡献
+for scen_name, scen in [('S1_境外8%', SCEN['S1_浦发白金_境外8%']), ('S2_境外26%', SCEN['S2_浦发超白金_境外26%'])]:
+    rc = scen['os_spend']*0.01 + scen['dom_spend']*0.002
+    print(f"试点2000张(活卡率60%)回佣年收入({scen_name})≈{rc*0.6*2000/1e4:.1f}万/年")

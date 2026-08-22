@@ -17,7 +17,8 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import {
-  IconBranchOutline16, IconCloseOutline16,
+  IconBranchOutline16, IconChevronLeftOutline14, IconCloseOutline16,
+  IconDownloadOutline16, IconListPenOutline16,
 } from '@deepseek-ai/dsh-client-ui-primitives'
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import type { ObservableSnapshot, SessionListState } from '@deepseek-ai/dsh-client-runtime/client'
@@ -31,8 +32,9 @@ import {
   usesParallelTaskGrid,
 } from './activity-model.ts'
 import { ACTION_ART, LEAD_ART, memberArtUrl } from './artwork.ts'
-import { OPEN_PANEL_EVENT } from './ExpertTeamsCard.tsx'
-import type { ExpertTeamsCardData } from './expert-teams-card-definition.ts'
+import { OPEN_PANEL_EVENT } from './AgentTeamsCard.tsx'
+import type { ExpertTeamsOpenPanelDetail } from './AgentTeamsCard.tsx'
+import type { ExpertTeamsCardData } from './agent-teams-card-definition.ts'
 import css from './ActivityPanel.module.css'
 
 /** Poll cadence for the host snapshot route. */
@@ -50,6 +52,18 @@ const STATE_URL = '/plugins/dsh-expert-library/state'
 /** Root marker shared with the panel CSS while the portal is expanded. */
 const PANEL_OPEN_ATTRIBUTE = 'data-expert-teams-panel-open'
 
+/** One output document of an expert (mirrors the host MemberDocument). */
+export interface MemberDocument {
+  readonly taskId: string
+  readonly taskSubject: string
+  readonly kind: 'output' | 'artifact'
+  readonly name: string
+  readonly url: string
+  readonly preview?: string
+  readonly sizeBytes?: number
+  readonly updatedAt?: number
+}
+
 /** One member row of a host snapshot. */
 export interface ActivityMember {
   readonly id: string
@@ -62,6 +76,7 @@ export interface ActivityMember {
   readonly total: number
   readonly currentTask: string
   readonly unread: number
+  readonly documents?: readonly MemberDocument[]
 }
 
 /** One task row of a host snapshot. */
@@ -204,6 +219,106 @@ function compactTaskLabel(subject: string): string {
   const withoutVerb = subject.replace(/^开发\s*/u, '').replace(/^\d+[-_.、\s]*/u, '')
   const head = withoutVerb.split(/[（(·：:]/u)[0]?.trim() ?? withoutVerb
   return head.length > 18 ? `${head.slice(0, 17)}…` : head
+}
+
+/** Human file size for artifact rows. */
+function formatDocumentSize(bytes: number | undefined): string {
+  if (bytes === undefined || bytes < 0) return ''
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+/** Kind label + document-count summary for the view header. */
+function documentKindLabel(kind: MemberDocument['kind']): string {
+  return kind === 'output' ? '产出' : '附件'
+}
+
+/**
+ * Per-expert output documents view: the "jump target" when an expert row is
+ * clicked in the activity window. Lists every deliverable the member produced
+ * — the task output record and any published artifact files — as openable
+ * links served by the plugin's project route. A back control returns to the
+ * team overview; a small transcript button keeps the old member-session
+ * navigation reachable.
+ */
+function MemberDocumentsView({ team, member, onBack, onTranscript }: {
+  readonly team: ActivityTeam
+  readonly member: ActivityMember
+  readonly onBack: () => void
+  readonly onTranscript: () => void
+}) {
+  const documents = member.documents ?? []
+  const completed = team.tasks.filter((task) => task.assignee === member.name && task.status === 'completed')
+  return (
+    <div className={css.documentsView} data-expert-teams-documents>
+      <header className={css.documentsHead}>
+        <button type="button" className={css.documentsBack} onClick={onBack} aria-label="返回团队概览" title="返回团队概览">
+          <IconChevronLeftOutline14 />
+        </button>
+        <span className={css.documentsExpert}>
+          {memberArtUrl(member.name, member.role) !== null ? (
+            <img className={css.documentsArt} src={memberArtUrl(member.name, member.role) ?? ''} alt="" aria-hidden />
+          ) : (
+            <span className={css.documentsInitial} style={{ background: accentOf(member.id) }}>{memberInitial(member.name)}</span>
+          )}
+          <span className={css.documentsExpertInfo}>
+            <span className={css.documentsExpertName}>{member.name}</span>
+            {member.role !== '' && <span className={css.documentsExpertRole}>{member.role}</span>}
+          </span>
+        </span>
+        <span className={css.documentsCount}>
+          <IconListPenOutline16 />
+          {documents.length} 份产出
+        </span>
+      </header>
+      <div className={css.documentsBody}>
+        {documents.length === 0 ? (
+          <div className={css.documentsEmpty}>
+            <span className={css.documentsEmptyTitle}>暂无产出文档</span>
+            <span className={css.documentsEmptyHint}>
+              {completed.length > 0
+                ? '任务已完成，产出记录正在同步中，稍后刷新即可看到。'
+                : '成员完成任务并发布产出（result.json 或附件）后，文档会出现在这里。'}
+            </span>
+          </div>
+        ) : (
+          <ul className={css.documentsList}>
+            {documents.map((document) => (
+              <li key={`${document.taskId}:${document.kind}:${document.name}`}>
+                <a
+                  className={css.documentRow}
+                  href={document.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={document.name}
+                >
+                  <span className={css.documentKind} data-kind={document.kind}>{documentKindLabel(document.kind)}</span>
+                  <span className={css.documentInfo}>
+                    <span className={css.documentName}>{document.name}</span>
+                    <span className={css.documentTask}>{document.taskId} · {compactTaskLabel(document.taskSubject)}</span>
+                    {document.kind === 'output' && document.preview !== undefined && (
+                      <span className={css.documentPreview}>{document.preview}</span>
+                    )}
+                    {document.kind === 'artifact' && formatDocumentSize(document.sizeBytes) !== '' && (
+                      <span className={css.documentMeta}>{formatDocumentSize(document.sizeBytes)}</span>
+                    )}
+                  </span>
+                  <IconDownloadOutline16 className={css.documentOpen} />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+      <footer className={css.documentsFoot}>
+        <button type="button" className={css.documentsTranscript} onClick={onTranscript}>
+          <IconBranchOutline16 />
+          打开成员对话
+        </button>
+      </footer>
+    </div>
+  )
 }
 
 function taskSummary(team: ActivityTeam): string {
@@ -372,10 +487,12 @@ function DependencyMap({ tasks }: { readonly tasks: readonly ActivityTask[] }) {
   )
 }
 
-function TeamSection({ team, onNavigate, historic = false }: {
+function TeamSection({ team, onNavigate, onOpenDocuments, historic = false }: {
   readonly team: ActivityTeam
   /** Navigate to a member transcript (floater hides immediately). */
   readonly onNavigate: (id: SessionId) => void
+  /** Jump to one expert's output documents list. */
+  readonly onOpenDocuments: (member: ActivityMember) => void
   readonly historic?: boolean
 }) {
   const [membersOpen, setMembersOpen] = useState(true)
@@ -427,33 +544,47 @@ function TeamSection({ team, onNavigate, historic = false }: {
             return (
               <div key={member.id} className={css.memberBlock} data-activity={member.activity}>
                 <span className={css.memberBranch} aria-hidden><span /></span>
-                <button
-                  type="button"
-                  className={css.memberRow}
-                  data-activity={member.activity}
-                  onClick={() => { if (member.id !== '') onNavigate(member.id as SessionId) }}
-                >
-                  <span className={css.memberAvatar} data-unread={member.unread > 0}>
-                    {memberArtUrl(member.name, member.role) !== null ? (
-                      <img className={css.memberArt} src={memberArtUrl(member.name, member.role) ?? ''} alt="" aria-hidden />
-                    ) : (
-                      <span className={css.memberInitial} style={{ background: accentOf(member.id) }}>{memberInitial(member.name)}</span>
-                    )}
-                    <img className={css.stateArt} data-activity={member.activity} src={ACTION_ART[member.activity]} alt="" aria-hidden />
-                  </span>
-                  <span className={css.memberInfo}>
-                    <span className={css.memberLine}>
-                      <span className={css.memberName}>{member.name}</span>
-                      {member.role !== '' && <span className={css.memberRole}>{member.role}</span>}
-                      <span className={css.memberState} data-activity={member.activity}>
-                        <WorkGlyph active={member.activity === 'working'} />
-                        {memberStateLabel(member, team.tasks, historic)}
-                      </span>
+                <div className={css.memberRowWrap}>
+                  <button
+                    type="button"
+                    className={css.memberRow}
+                    data-activity={member.activity}
+                    onClick={() => { onOpenDocuments(member) }}
+                    title={`查看 ${member.name} 的产出文档`}
+                  >
+                    <span className={css.memberAvatar} data-unread={member.unread > 0}>
+                      {memberArtUrl(member.name, member.role) !== null ? (
+                        <img className={css.memberArt} src={memberArtUrl(member.name, member.role) ?? ''} alt="" aria-hidden />
+                      ) : (
+                        <span className={css.memberInitial} style={{ background: accentOf(member.id) }}>{memberInitial(member.name)}</span>
+                      )}
+                      <img className={css.stateArt} data-activity={member.activity} src={ACTION_ART[member.activity]} alt="" aria-hidden />
                     </span>
-                    <span className={css.memberStatusLine}>{memberStatusText(member, team.tasks)}</span>
-                  </span>
-                  <span className={css.memberCount}>{member.done}/{member.total}</span>
-                </button>
+                    <span className={css.memberInfo}>
+                      <span className={css.memberLine}>
+                        <span className={css.memberName}>{member.name}</span>
+                        {member.role !== '' && <span className={css.memberRole}>{member.role}</span>}
+                        <span className={css.memberState} data-activity={member.activity}>
+                          <WorkGlyph active={member.activity === 'working'} />
+                          {memberStateLabel(member, team.tasks, historic)}
+                        </span>
+                      </span>
+                      <span className={css.memberStatusLine}>{memberStatusText(member, team.tasks)}</span>
+                    </span>
+                    <span className={css.memberCount}>{member.done}/{member.total}</span>
+                  </button>
+                  {member.id !== '' && (
+                    <button
+                      type="button"
+                      className={css.memberTranscript}
+                      onClick={() => { onNavigate(member.id as SessionId) }}
+                      aria-label={`打开 ${member.name} 的对话`}
+                      title={`打开 ${member.name} 的对话`}
+                    >
+                      <IconBranchOutline16 />
+                    </button>
+                  )}
+                </div>
                 <div className={css.assignmentLine}>
                   <span className={css.assignmentLabel}>队长派发</span>
                   <span className={css.assignmentTasks}>
@@ -494,6 +625,7 @@ function historicCardTeam(data: ExpertTeamsCardData, owner: string): ActivityTea
       total: 0,
       currentTask: '',
       unread: 0,
+      documents: [],
     })),
     tasks: [],
     messageCount: 0,
@@ -514,6 +646,7 @@ export function ActivityPanel({ sessionsList, openSession }: {
   const navigateToSession = (id: SessionId): void => {
     setOpen(false)
     setWasActive(false)
+    setDocsFocus(null)
     openSession(id)
   }
   const [teams, setTeams] = useState<readonly ActivityTeam[]>([])
@@ -523,6 +656,8 @@ export function ActivityPanel({ sessionsList, openSession }: {
   const [autoOpened, setAutoOpened] = useState(false)
   const [wasActive, setWasActive] = useState(false)
   const [historic, setHistoric] = useState<ReadonlyMap<string, { data: ExpertTeamsCardData; owner: string }>>(new Map())
+  /** Per-expert documents view: which expert the panel is currently showing. */
+  const [docsFocus, setDocsFocus] = useState<{ teamId: string; memberName: string } | null>(null)
   const current = useSyncExternalStore(
     sessionsList.subscribe,
     sessionsList.getSnapshot,
@@ -542,6 +677,7 @@ export function ActivityPanel({ sessionsList, openSession }: {
     setOpenOwner(undefined)
     setWasActive(false)
     setAutoOpened(false)
+    setDocsFocus(null)
   }, [current, openOwner])
 
   // The activity panel is a body portal, so announce its open state on body.
@@ -593,7 +729,7 @@ export function ActivityPanel({ sessionsList, openSession }: {
       if (activeSession === undefined) return
       setOpenOwner(activeSession)
       setOpen(true)
-      const detail = (event as CustomEvent<ExpertTeamsCardData>).detail
+      const detail = (event as CustomEvent<ExpertTeamsOpenPanelDetail>).detail
       if (detail?.teamId !== undefined) {
         // A card from a log that predates captainSessionId belongs to the
         // session that activated it (the current one at injection time).
@@ -604,6 +740,11 @@ export function ActivityPanel({ sessionsList, openSession }: {
           next.set(teamKey, { data: detail, owner })
           return next
         })
+        // The card's member click carries the expert name: land the floater
+        // directly on that expert's output documents list.
+        if (detail.memberName !== undefined) {
+          setDocsFocus({ teamId: detail.teamId, memberName: detail.memberName })
+        }
       }
     }
     window.addEventListener(OPEN_PANEL_EVENT, onOpenPanel)
@@ -640,6 +781,30 @@ export function ActivityPanel({ sessionsList, openSession }: {
   )
   const visibleCount = visibleTeams.length + visibleArchived.length + visibleHistoric.length
 
+  // Resolve the docs-focus expert against the current snapshots: the poll
+  // replaces team/member objects every tick, so the documents view always
+  // re-reads the latest member (new documents appear live). If the team or
+  // expert vanished (deleted/removed), the focus resolves to nothing and the
+  // view falls back to the team overview.
+  const focusedMember = useMemo(() => {
+    if (docsFocus === null) return null
+    const candidates: ActivityTeam[] = [
+      ...visibleTeams,
+      ...visibleArchived,
+      ...visibleHistoric.map(({ data, owner }) => historicCardTeam(data, owner)),
+    ]
+    for (const team of candidates) {
+      if (team.teamId !== docsFocus.teamId) continue
+      const member = team.members.find((candidate) => candidate.name === docsFocus.memberName)
+      if (member !== undefined) return { team, member }
+    }
+    return null
+  }, [docsFocus, visibleTeams, visibleArchived, visibleHistoric])
+
+  useEffect(() => {
+    if (docsFocus !== null && focusedMember === null) setDocsFocus(null)
+  }, [docsFocus, focusedMember])
+
   useEffect(() => {
     if (visibleCount > 0) {
       setWasActive(true)
@@ -658,6 +823,7 @@ export function ActivityPanel({ sessionsList, openSession }: {
       setOpen(false)
       setOpenOwner(undefined)
       setWasActive(false)
+      setDocsFocus(null)
       // Re-arm auto-expand: a later activity (new team, new session) may
       // open the panel on its own again.
       setAutoOpened(false)
@@ -695,6 +861,7 @@ export function ActivityPanel({ sessionsList, openSession }: {
               onClick={() => {
                 setOpen(false)
                 setOpenOwner(undefined)
+                setDocsFocus(null)
               }}
               aria-label="关闭"
             >
@@ -702,22 +869,47 @@ export function ActivityPanel({ sessionsList, openSession }: {
             </button>
           </header>
           <div className={css.teams}>
-            {visibleCount === 0
+            {focusedMember !== null ? (
+              <MemberDocumentsView
+                team={focusedMember.team}
+                member={focusedMember.member}
+                onBack={() => { setDocsFocus(null) }}
+                onTranscript={() => {
+                  if (focusedMember.member.id !== '') navigateToSession(focusedMember.member.id as SessionId)
+                }}
+              />
+            ) : visibleCount === 0
               ? <span className={css.emptyHint}>暂无团队活动</span>
               : (
                 <>
                   {visibleTeams.map((team) => (
-                    <TeamSection key={team.teamId} team={team} onNavigate={navigateToSession} />
+                    <TeamSection
+                      key={team.teamId}
+                      team={team}
+                      onNavigate={navigateToSession}
+                      onOpenDocuments={(member) => { setDocsFocus({ teamId: team.teamId, memberName: member.name }) }}
+                    />
                   ))}
                   {visibleArchived.map((team) => (
                     <div key={`${team.captainSessionId}:${team.teamId}`} data-team-id={team.teamId} data-historic className={css.archivedWrap}>
-                      <TeamSection team={team} onNavigate={navigateToSession} historic />
+                      <TeamSection
+                        team={team}
+                        onNavigate={navigateToSession}
+                        onOpenDocuments={(member) => { setDocsFocus({ teamId: team.teamId, memberName: member.name }) }}
+                        historic
+                      />
                     </div>
                   ))}
                   {visibleHistoric.map(({ data: team, owner }) => {
                     const teamKey = `${owner}:${team.teamId}`
                     return (
-                      <TeamSection key={teamKey} team={historicCardTeam(team, owner)} onNavigate={navigateToSession} historic />
+                      <TeamSection
+                        key={teamKey}
+                        team={historicCardTeam(team, owner)}
+                        onNavigate={navigateToSession}
+                        onOpenDocuments={(member) => { setDocsFocus({ teamId: team.teamId, memberName: member.name }) }}
+                        historic
+                      />
                     )
                   })}
                 </>

@@ -38,10 +38,17 @@ import { registerZhijianTools } from './zhijian/tools.ts'
 import { registerCollabTools } from './collab/tools.ts'
 import { BUILTIN_EXPERT_BY_ID } from './expert-library/builtin-experts.ts'
 import { BUILTIN_SCENARIO_BY_ID } from './expert-library/builtin-scenarios.ts'
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { readFile, readdir, stat } from 'node:fs/promises'
+import { basename, join, resolve as resolvePath, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { collectArchivedTeamsActivity, collectTeamsActivity } from './snapshot.ts'
+import { readTeam } from './state.ts'
+import type { TeamState } from './types.ts'
+import {
+  installExpertLibrarySettings,
+  type ExpertLibrarySettings,
+  type ToolExecutionConfig,
+} from './settings.ts'
 
 /**
  * Structural slice of the web server service, compatible with both the
@@ -62,15 +69,114 @@ interface WebRouteHost {
 const WEB_SERVER_KEYS = ['webServer', 'httpServer'] as const
 /** Workspace registry service key candidates, newest first. */
 const WORKSPACE_KEYS = ['workspaceRegistry', 'workspace'] as const
+/** Session store service key candidates, newest first. */
+const SESSION_KEYS = ['sessions'] as const
 
 export const name = 'expert-library'
 export const inject = ['tools', 'llm', 'subagents', 'systemPrompt', 'agents']
+
+/**
+ * Resolve every candidate team state root: registered workspaces plus every
+ * live session's cwd. Team state lives under the captain's session cwd, which
+ * the workspace registry does not always know (e.g. a session running in the
+ * root home dir), so both sources are unioned. The display name prefers the
+ * registered workspace title.
+ */
+function discoverStateRoots(ctx: Context, runtimeConfig: ToolsConfig): { workspace: string; stateRoot: string }[] {
+  const sessions = ctx.get(SESSION_KEYS[0]) as
+    | { list(): Array<{ header: { cwd?: string } }> }
+    | undefined
+  const workspaceRegistry = (ctx.get(WORKSPACE_KEYS[0]) ?? ctx.get(WORKSPACE_KEYS[1])) as WorkspaceRegistry | undefined
+  const rootByState = new Map<string, string>()
+  for (const workspace of workspaceRegistry?.list() ?? []) {
+    rootByState.set(join(workspace.path, runtimeConfig.stateDir), workspace.title || basename(workspace.path) || workspace.path)
+  }
+  for (const session of sessions?.list() ?? []) {
+    const cwd = session.header.cwd
+    if (cwd === undefined) continue
+    const stateRoot = join(cwd, runtimeConfig.stateDir)
+    if (!rootByState.has(stateRoot)) rootByState.set(stateRoot, basename(cwd) || cwd)
+  }
+  return [...rootByState].map(([stateRoot, title]) => ({
+    workspace: title,
+    stateRoot,
+  }))
+}
+
+/**
+ * Structural slice of the host sessions service: `get(id)` plus `list()` rows
+ * carrying the session's `header.cwd`. Duck-typed because the host service
+ * interface is not a peer dependency of this plugin.
+ */
+interface SessionsSlice {
+  get?(id: string): { header: { cwd?: string } } | undefined
+  list(): Array<{ id?: string; sessionId?: string; header: { cwd?: string } }>
+}
+
+/** Resolve one session's workspace cwd, when the session is known to the host. */
+function sessionCwdOf(ctx: Context, sessionId: string): string | undefined {
+  const sessions = ctx.get(SESSION_KEYS[0]) as SessionsSlice | undefined
+  const direct = sessions?.get?.(sessionId)
+  if (direct !== undefined) return direct.header.cwd
+  for (const session of sessions?.list() ?? []) {
+    if ((session.id ?? session.sessionId) === sessionId) return session.header.cwd
+  }
+  return undefined
+}
+
+/** Cap for the conversation-files listing (the tab is a monitor, not a browser). */
+const SESSION_FILES_CAP = 200
+
+/** One input-file row of the conversation files route. */
+export interface SessionInputFile {
+  readonly name: string
+  /** Path relative to the session cwd (what the client sends back). */
+  readonly relPath: string
+  readonly sizeBytes: number
+  readonly updatedAt: number
+}
+
+/** Recursively list files under `root`, recording cwd-relative paths. */
+async function collectSessionFiles(
+  cwd: string,
+  dir: string,
+  out: SessionInputFile[],
+): Promise<void> {
+  if (out.length >= SESSION_FILES_CAP) return
+  let entries
+  try {
+    entries = await readdir(dir, { withFileTypes: true })
+  } catch {
+    return
+  }
+  for (const entry of entries) {
+    if (out.length >= SESSION_FILES_CAP) return
+    const absolute = join(dir, entry.name)
+    if (entry.isDirectory()) {
+      await collectSessionFiles(cwd, absolute, out)
+      continue
+    }
+    if (!entry.isFile()) continue
+    try {
+      const info = await stat(absolute)
+      out.push({
+        name: entry.name,
+        relPath: absolute.slice(cwd.length + 1),
+        sizeBytes: info.size,
+        updatedAt: info.mtimeMs,
+      })
+    } catch {
+      // vanished mid-scan; skip
+    }
+  }
+}
 
 /** Plugin configuration. */
 export interface Config {
   /**
    * State directory name under the captain's workspace; team state lives at
-   * `<workspace>/<stateDir>/<teamId>/` (default `.expert-teams`).
+   * `<workspace>/<stateDir>/<teamId>/` (default `expert-teams`, visible:
+   * 任务单目录运行——input/output/artifacts 与交付物同处一个可见目录).
    */
   stateDir?: string
   /** `ctx.subagents` provider used to spawn members; must support continuable children and personas (default `spawn`). */
@@ -85,6 +191,12 @@ export interface Config {
   knowledgeDir?: string
   /** Prompt-section order for the usage policy (default `117`, after delegation policy). */
   promptSectionOrder?: number
+  /** Whether the usage policy section is announced to agents (default `true`). */
+  announceToAgent?: boolean
+  /** Library-wide default model route for members without a preset route (alias of `memberModel`). */
+  defaultModel?: { provider: string; model: string; reasoningEffort?: string }
+  /** Per-tool execution policy (API vs CLI vs auto) for external capabilities. */
+  toolExecution?: Record<string, ToolExecutionConfig>
 }
 
 const memberModelSchema = z.object({
@@ -93,14 +205,33 @@ const memberModelSchema = z.object({
   reasoningEffort: z.string(),
 })
 
+const toolExecutionEntrySchema = z.object({
+  mode: z.string(),
+  api: z.object({
+    baseUrl: z.string(),
+    timeoutMs: z.natural(),
+    maxRetries: z.natural(),
+  }),
+  cli: z.object({
+    command: z.string(),
+    workingDirectory: z.string(),
+    timeoutMs: z.natural(),
+  }),
+  readOnly: z.boolean(),
+  preferredRoles: z.array(z.string()),
+})
+
 export const Config: z<Config> = z.object({
-  stateDir: z.string().default('.expert-teams'),
+  stateDir: z.string().default('expert-teams'),
   memberProvider: z.string().default('spawn'),
   memberModel: memberModelSchema,
   memberMaxDepth: z.natural().default(1),
   maxMembers: z.natural().min(1).default(8),
   knowledgeDir: z.string().default('knowledge'),
   promptSectionOrder: z.natural().default(117),
+  announceToAgent: z.boolean().default(true),
+  defaultModel: memberModelSchema,
+  toolExecution: z.dict(toolExecutionEntrySchema),
 })
 
 /** The model-facing usage policy: when and how to drive the Expert Library. */
@@ -138,13 +269,17 @@ Tools: ${toolNames}`
 }
 
 export function apply(ctx: Context, config: Config): void {
-  const resolved: ToolsConfig = {
-    stateDir: config.stateDir ?? '.expert-teams',
+  // Runtime knobs consumed by the tools. The object is mutated in place when
+  // the settings source changes, so tools registered once always read the
+  // latest authoritative values (entry config or the settings scope).
+  const runtimeConfig: ToolsConfig = {
+    stateDir: config.stateDir ?? 'expert-teams',
     memberProvider: config.memberProvider ?? 'spawn',
-    memberModel: config.memberModel,
+    memberModel: config.defaultModel ?? config.memberModel,
     memberMaxDepth: config.memberMaxDepth ?? 1,
     maxMembers: config.maxMembers ?? 8,
     knowledgeDir: config.knowledgeDir ?? 'knowledge',
+    toolExecution: config.toolExecution,
   }
 
   // Provider registration is a sibling plugin's effect (`subagent-spawn` /
@@ -172,15 +307,52 @@ export function apply(ctx: Context, config: Config): void {
     'expert_teams_ppt',
     'expert_teams_report',
   ].join(', ')
-  ctx.systemPrompt.section({
-    name: 'expert-library:usage',
-    order: config.promptSectionOrder ?? 117,
-    text: usageSectionText(toolNames),
-  })
 
-  const core = registerExpertTeamsTools(ctx, resolved)
-  registerZhijianTools(ctx, resolved, core)
-  registerCollabTools(ctx, resolved, core)
+  const core = registerExpertTeamsTools(ctx, runtimeConfig)
+  registerZhijianTools(ctx, runtimeConfig, core)
+  registerCollabTools(ctx, runtimeConfig, core)
+
+  // The usage policy section is injected while the plugin is announced to
+  // agents; turning the announcement off (settings or entry config) removes it
+  // so non-expert sessions are not polluted.
+  let disposeSection: (() => void) | undefined
+  const syncAnnounce = (): void => {
+    const value = current()
+    const announce = value.announceToAgent ?? true
+    if (announce && disposeSection === undefined) {
+      disposeSection = ctx.systemPrompt.section({
+        name: 'expert-library:usage',
+        order: value.promptSectionOrder ?? 117,
+        text: usageSectionText(toolNames),
+      })
+    } else if (!announce && disposeSection !== undefined) {
+      disposeSection()
+      disposeSection = undefined
+    }
+  }
+
+  let current: () => Config = () => config
+  const applySource = (source: () => Config): void => {
+    current = source
+    const value = current()
+    runtimeConfig.stateDir = value.stateDir ?? 'expert-teams'
+    runtimeConfig.memberProvider = value.memberProvider ?? 'spawn'
+    runtimeConfig.memberModel = value.defaultModel ?? value.memberModel
+    runtimeConfig.memberMaxDepth = value.memberMaxDepth ?? 1
+    runtimeConfig.maxMembers = value.maxMembers ?? 8
+    runtimeConfig.knowledgeDir = value.knowledgeDir ?? 'knowledge'
+    runtimeConfig.toolExecution = value.toolExecution
+    syncAnnounce()
+  }
+
+  // Optional settings wiring: while a settings service exists, the
+  // `expert-library` namespace overrides the entry config; otherwise the entry
+  // is the only source and everything behaves exactly as composed.
+  installExpertLibrarySettings(ctx, config ?? {}, {
+    setSource: (source) => applySource(source as () => Config),
+    onChange: () => syncAnnounce(),
+  })
+  applySource(() => config)
 
   // The activity panel data/artwork routes need the Web server and the
   // workspace registry, which headless profiles do not mount; under
@@ -203,10 +375,7 @@ export function apply(ctx: Context, config: Config): void {
     path: '/plugins/dsh-expert-library/state',
     handler: async (req, res) => {
       const url = new URL(req.url ?? '/', 'http://x')
-      const roots = workspaceRegistry.list().map((workspace) => ({
-        workspace: workspace.title,
-        stateRoot: join(workspace.path, resolved.stateDir),
-      }))
+      const roots = discoverStateRoots(ctx, runtimeConfig)
       // ?archived=1 serves teams moved to archive/ (post-delete review).
       const snapshots = url.searchParams.get('archived') === '1'
         ? await collectArchivedTeamsActivity(ctx, roots)
@@ -263,12 +432,186 @@ export function apply(ctx: Context, config: Config): void {
       }
       },
     }), 'expert-teams: artwork route')
+
+  // Task-project document route: serves output/artifact files from a team's
+  // isolated task project so the activity panel's document list can open each
+  // expert deliverable. Access is scoped to the plugin's own projects: the
+  // team id must resolve to a real team, the task must exist in that team's
+  // durable record, and the file must be a single segment inside the fixed
+  // `output`/`artifacts` directory of the task project — no traversal, no
+  // internal manifests, no workspace files outside the team.
+  const PROJECT_CONTENT_TYPES: Record<string, string> = {
+    '.json': 'application/json; charset=utf-8',
+    '.md': 'text/markdown; charset=utf-8',
+    '.markdown': 'text/markdown; charset=utf-8',
+    '.txt': 'text/plain; charset=utf-8',
+    '.text': 'text/plain; charset=utf-8',
+    '.html': 'text/html; charset=utf-8',
+    '.htm': 'text/html; charset=utf-8',
+    '.csv': 'text/csv; charset=utf-8',
+    '.yaml': 'text/yaml; charset=utf-8',
+    '.yml': 'text/yaml; charset=utf-8',
+    '.pdf': 'application/pdf',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.svg': 'image/svg+xml',
+    '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.pptx': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    '.zip': 'application/zip',
+  }
+    ctx.effect(() => webServer.register({
+      kind: 'exact',
+      path: '/plugins/dsh-expert-library/project',
+      handler: async (req, res) => {
+        const url = new URL(req.url ?? '/', 'http://x')
+        const teamId = url.searchParams.get('team') ?? ''
+        const taskId = url.searchParams.get('task') ?? ''
+        const dir = url.searchParams.get('dir') ?? ''
+        const file = url.searchParams.get('file') ?? ''
+        // Strict single-segment checks: team ids may keep unicode letters and
+        // digits (sanitizeKey) but never path separators; files must be one
+        // plain segment inside a fixed directory.
+        const teamIdOk = /^[\p{L}\p{N}][\p{L}\p{N}-]{0,119}$/u.test(teamId)
+        const fileOk = file !== '' && file !== '.' && file !== '..' && file.length <= 200
+          && !file.includes('/') && !file.includes('\\')
+        const dirOk = dir === 'output' || dir === 'artifacts'
+        if (!teamIdOk || taskId === '' || !dirOk || !fileOk) {
+          res.writeHead(400)
+          res.end()
+          return
+        }
+        // Internal bookkeeping files are not expert documents.
+        if (dir === 'artifacts' && (file === 'manifest.json' || file === 'project.json')) {
+          res.writeHead(404)
+          res.end()
+          return
+        }
+        // Locate the team across every candidate state root (ids are unique
+        // per workspace, so the first hit wins) and resolve the task project.
+        let dirPath: string | undefined
+        for (const { stateRoot } of discoverStateRoots(ctx, runtimeConfig)) {
+          let state: TeamState | undefined
+          try {
+            state = await readTeam(stateRoot, teamId)
+          } catch {
+            state = undefined
+          }
+          if (state === undefined) continue
+          const task = state.tasks.find((candidate) => candidate.id === taskId)
+          if (task === undefined || task.project === undefined) continue
+          dirPath = join(stateRoot, state.id, task.project.path, dir)
+          break
+        }
+        if (dirPath === undefined) {
+          res.writeHead(404)
+          res.end()
+          return
+        }
+        const absolute = join(dirPath, file)
+        if (!absolute.startsWith(dirPath + sep)) {
+          res.writeHead(400)
+          res.end()
+          return
+        }
+        try {
+          const data = await readFile(absolute)
+          const extension = absolute.slice(absolute.lastIndexOf('.'))
+          res.writeHead(200, {
+            'content-type': PROJECT_CONTENT_TYPES[extension] ?? 'application/octet-stream',
+            'cache-control': 'no-store',
+          })
+          res.end(data)
+        } catch {
+          res.writeHead(404)
+          res.end()
+        }
+      },
+    }), 'expert-teams: project route')
+
+  // Conversation files: the 文件 tab. `session-files` lists the documents the
+  // user uploaded into this conversation (dsh-files stores them under
+  // `<sessionCwd>/.dsh-filess/<sessionId>/`); `workspace-file` serves one file
+  // inside the session cwd raw so the tab can preview text/markdown/images/
+  // PDFs inline. Office documents (xlsx/docx/pptx/univer) are previewed by the
+  // univer plugin's own /univer-api/state viewer instead.
+  ctx.effect(() => webServer.register({
+    kind: 'exact',
+    path: '/plugins/dsh-expert-library/session-files',
+    handler: async (req, res) => {
+      const url = new URL(req.url ?? '/', 'http://x')
+      const sessionId = url.searchParams.get('sessionId') ?? ''
+      const files: SessionInputFile[] = []
+      if (sessionId !== '') {
+        const cwd = sessionCwdOf(ctx, sessionId)
+        if (cwd !== undefined) {
+          await collectSessionFiles(cwd, join(cwd, '.dsh-filess', sessionId), files)
+        }
+      }
+      res.writeHead(200, {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+      })
+      res.end(JSON.stringify({ files }))
+    },
+  }), 'expert-teams: session files route')
+
+  ctx.effect(() => webServer.register({
+    kind: 'exact',
+    path: '/plugins/dsh-expert-library/workspace-file',
+    handler: async (req, res) => {
+      const url = new URL(req.url ?? '/', 'http://x')
+      const sessionId = url.searchParams.get('sessionId') ?? ''
+      const rawPath = url.searchParams.get('path') ?? ''
+      if (sessionId === '' || rawPath === '') {
+        res.writeHead(400)
+        res.end()
+        return
+      }
+      const cwd = sessionCwdOf(ctx, sessionId)
+      if (cwd === undefined) {
+        res.writeHead(404)
+        res.end()
+        return
+      }
+      // Containment: the served file must resolve strictly inside the session
+      // workspace (no traversal, no absolute escapes).
+      const absolute = resolvePath(cwd, rawPath)
+      if (!absolute.startsWith(cwd + sep)) {
+        res.writeHead(403)
+        res.end()
+        return
+      }
+      try {
+        const info = await stat(absolute)
+        if (!info.isFile()) {
+          res.writeHead(404)
+          res.end()
+          return
+        }
+        const data = await readFile(absolute)
+        const extension = absolute.slice(absolute.lastIndexOf('.'))
+        res.writeHead(200, {
+          'content-type': PROJECT_CONTENT_TYPES[extension] ?? 'application/octet-stream',
+          'cache-control': 'no-store',
+        })
+        res.end(data)
+      } catch {
+        res.writeHead(404)
+        res.end()
+      }
+    },
+  }), 'expert-teams: workspace file route')
   }
 
   registerWebSurface()
   ctx.on('internal/service', (name) => {
     if (WEB_SERVER_KEYS.includes(name as (typeof WEB_SERVER_KEYS)[number])
-      || WORKSPACE_KEYS.includes(name as (typeof WORKSPACE_KEYS)[number])) {
+      || WORKSPACE_KEYS.includes(name as (typeof WORKSPACE_KEYS)[number])
+      || SESSION_KEYS.includes(name as (typeof SESSION_KEYS)[number])) {
       registerWebSurface()
     }
   })

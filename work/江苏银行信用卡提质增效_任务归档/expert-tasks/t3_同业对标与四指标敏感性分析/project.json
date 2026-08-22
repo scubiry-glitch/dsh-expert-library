@@ -1,0 +1,10 @@
+{
+  "path": "expert-tasks/t3_同业对标与四指标敏感性分析",
+  "inputPath": "expert-tasks/t3_同业对标与四指标敏感性分析/input/task.json",
+  "outputPath": "expert-tasks/t3_同业对标与四指标敏感性分析/output/result.json",
+  "artifactsPath": "expert-tasks/t3_同业对标与四指标敏感性分析/artifacts",
+  "version": 1,
+  "taskId": "t3",
+  "status": "completed",
+  "updatedAt": 1787290710335
+}

@@ -20,6 +20,41 @@ export type TaskStatus =
 /** Statuses after which a task can no longer be claimed or worked on. */
 export const TERMINAL_TASK_STATUSES: readonly TaskStatus[] = ['completed', 'failed', 'cancelled']
 
+/** Durable isolated project for one expert task. */
+export interface TaskProject {
+  /** Relative path from the team directory. */
+  readonly path: string
+  /** Relative input document path inside the project. */
+  readonly inputPath: string
+  /** Relative output document path inside the project. */
+  readonly outputPath: string
+  /** Relative artifact directory inside the project. */
+  readonly artifactsPath: string
+  /** Project schema version. */
+  readonly version: 1
+}
+
+/** A published artifact owned by one task attempt. */
+export interface TaskArtifact {
+  readonly id: string
+  readonly taskId: string
+  readonly attempt: number
+  /** Path relative to the task Project's artifacts directory. */
+  readonly relativePath: string
+  readonly mediaType?: string
+  readonly description?: string
+  readonly sha256: string
+  readonly sizeBytes: number
+  readonly createdAt: number
+}
+
+/** Explicit reference granting a task access to one upstream artifact. */
+export interface TaskArtifactRef {
+  readonly artifactId: string
+  readonly sourceTaskId: string
+  readonly purpose?: string
+}
+
 /** One task of a team's task list. */
 export interface TeamTask {
   /** Stable task id within the team (`t1`, `t2`, …). */
@@ -35,6 +70,12 @@ export interface TeamTask {
   dependencies: string[]
   /** The worker's written result, set when the task completes or fails. */
   output?: string
+  /** Isolated project metadata; optional for legacy tasks. */
+  project?: TaskProject
+  /** Artifacts this task explicitly publishes; optional for legacy tasks. */
+  publishedArtifacts?: TaskArtifact[]
+  /** Upstream artifacts this task is explicitly allowed to read. */
+  inputArtifacts?: TaskArtifactRef[]
   /** Monotonic execution generation. Reassignment/retry invalidates every older attempt. */
   attempt?: number
   /** Capability for the current claimed/in-progress attempt. Members must present it when updating. */
@@ -103,4 +144,6 @@ export interface TeamState {
   tasks: TeamTask[]
   /** Monotonic task id counter. */
   taskSeq: number
+  /** Set after the scheduler emits the one-time all-tasks-terminal notice. */
+  completionNotifiedAt?: number
 }

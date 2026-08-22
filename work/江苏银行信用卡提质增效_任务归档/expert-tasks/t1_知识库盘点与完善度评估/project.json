@@ -1,0 +1,10 @@
+{
+  "path": "expert-tasks/t1_知识库盘点与完善度评估",
+  "inputPath": "expert-tasks/t1_知识库盘点与完善度评估/input/task.json",
+  "outputPath": "expert-tasks/t1_知识库盘点与完善度评估/output/result.json",
+  "artifactsPath": "expert-tasks/t1_知识库盘点与完善度评估/artifacts",
+  "version": 1,
+  "taskId": "t1",
+  "status": "completed",
+  "updatedAt": 1787290710335
+}

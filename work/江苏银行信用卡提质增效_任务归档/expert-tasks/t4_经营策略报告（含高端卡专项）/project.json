@@ -1,0 +1,10 @@
+{
+  "path": "expert-tasks/t4_经营策略报告（含高端卡专项）",
+  "inputPath": "expert-tasks/t4_经营策略报告（含高端卡专项）/input/task.json",
+  "outputPath": "expert-tasks/t4_经营策略报告（含高端卡专项）/output/result.json",
+  "artifactsPath": "expert-tasks/t4_经营策略报告（含高端卡专项）/artifacts",
+  "version": 1,
+  "taskId": "t4",
+  "status": "completed",
+  "updatedAt": 1787290710335
+}

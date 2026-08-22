@@ -15,8 +15,9 @@
       name: '@zhijian/dsh-expert-library'
       config:
         # Team state lives under `<session workspace>/<stateDir>/<teamId>/`
-        # (team.json + inbox/*.jsonl mailboxes).
-        stateDir: .expert-teams
+        # (team.json + inbox/*.jsonl mailboxes). 可见目录：任务单目录运行、
+        # input/output/artifacts 直接可见，交付物也写入团队目录，无需事后归档。
+        stateDir: expert-teams
         # Knowledge pack root, resolved against each captain's workspace:
         #   <knowledgeDir>/experts/<expertId>/   expert-specific material
         #   <knowledgeDir>/scenarios/<scenarioId>/ scenario material

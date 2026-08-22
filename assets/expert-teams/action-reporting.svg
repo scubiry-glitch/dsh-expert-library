@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#94D82D"/>
+      <stop offset="1" stop-color="#66A80F"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" fill="url(#bg)"/>
+  <g opacity="0.18" fill="#ffffff">
+    <circle cx="210" cy="52" r="46"/>
+    <circle cx="30" cy="210" r="34"/>
+  </g>
+  <!-- water spout -->
+  <g stroke="#ffffff" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.92">
+    <path d="M108 60 Q104 44 108 28"/>
+    <path d="M122 58 Q127 40 132 24"/>
+    <path d="M92 66 Q88 52 84 40"/>
+  </g>
+  <!-- tail -->
+  <path d="M166 128 Q206 96 218 108 Q207 128 218 148 Q206 160 166 128 Z" fill="#ffffff"/>
+  <!-- body -->
+  <path d="M58 128 Q58 86 100 78 Q146 68 178 86 Q206 100 206 128 Q206 156 178 172 Q146 190 100 180 Q58 172 58 128 Z" fill="#ffffff"/>
+  <!-- belly -->
+  <path d="M78 148 Q104 174 156 174 Q182 174 194 158 Q182 184 142 186 Q98 188 78 148 Z" fill="#e7ebf0"/>
+  <!-- eye -->
+  <circle cx="94" cy="120" r="6.5" fill="#1f2733"/>
+  <!-- smile -->
+  <path d="M86 144 Q100 154 118 152" stroke="#1f2733" stroke-width="5" stroke-linecap="round" fill="none"/>
+  <g stroke="#ffffff" stroke-width="7" stroke-linecap="round" fill="none"><path d="M168 132 v20 M164 140 h20 M172 132 v28"/></g>
+</svg>
