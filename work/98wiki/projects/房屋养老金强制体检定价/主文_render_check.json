@@ -1,0 +1,21 @@
+{
+  "part": "PartB_主文",
+  "pdf": "主文_房屋养老金强制体检定价.pdf",
+  "pdf_sha256": "a3b17ee07b629f3f3863e497a93316bea408a6686846d5d1f8fad893ddac4cd1",
+  "html": "主文_房屋养老金强制体检定价.html",
+  "html_sha256": "247a5ae368a91fc9a6439601bf5afe7c31076987e2f9010ee3dcbd2fec074d0a",
+  "pages": 14,
+  "checked_pages": [
+    1,
+    7,
+    14
+  ],
+  "screenshots": {
+    "1": "主文_render_check_p01.png",
+    "7": "主文_render_check_p07.png",
+    "14": "主文_render_check_p14.png"
+  },
+  "rendered_at": "2026-08-22 22:17:47",
+  "render_method": "weasyprint 69 (md->html5->pdf, A4)",
+  "note": "Part B/C 分别用各自验收器; 本记录随渲染同步生成"
+}
