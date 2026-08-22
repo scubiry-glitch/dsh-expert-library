@@ -68,6 +68,7 @@ import {
   type FetchFn,
   type SpawnFn,
 } from './provider-transports.ts'
+import type { AuditLogFile } from './audit-log.ts'
 import { normalizeToolMode, type ToolExecutionConfig } from '../settings.ts'
 
 /* ------------------------------------------------------------------ *
@@ -86,6 +87,14 @@ export interface ProviderServiceOptions {
   readonly fetch?: FetchFn
   readonly credentials?: CredentialFn
   readonly approval?: ApprovalLike
+  /**
+   * Optional JSONL audit log: when provided, every newly-recorded `invoke`
+   * audit entry of the registry is appended fire-and-forget (the plugin entry
+   * wires a process-wide file; tests wire temp files or omit the option to
+   * keep persistence off). Audit writes are best-effort and never block or
+   * fail a provider call.
+   */
+  readonly auditLog?: AuditLogFile
 }
 
 /** Plugin-config-shaped input for {@link resolveProviderServiceOptions}. */
@@ -423,7 +432,10 @@ export class ProviderTransportService {
   private readonly transports: ProviderTransports
   private readonly credentials: CredentialFn
   private readonly approval: ApprovalLike | undefined
+  private readonly auditLog: AuditLogFile | undefined
   private enabled: string[] = []
+  /** Index into the current registry's audit log of records already persisted. */
+  private auditCursor = 0
 
   constructor(ctx: Context, options: ProviderServiceOptions) {
     this.ctx = ctx
@@ -431,6 +443,7 @@ export class ProviderTransportService {
     this.transports = new ProviderTransports({ spawn: options.spawn, fetch: options.fetch })
     this.credentials = options.credentials ?? createCredentialResolver()
     this.approval = options.approval ?? (ctx.get('approval') as ApprovalLike | undefined)
+    this.auditLog = options.auditLog
     this.rebuild()
   }
 
@@ -501,10 +514,12 @@ export class ProviderTransportService {
       }
       // no approval service → approved stays unset → registry blocks
     }
-    return this.registry_.invoke({
+    const envelope = await this.registry_.invoke({
       ...effective,
       ...(meta.signal !== undefined && effective.signal === undefined ? { signal: meta.signal } : {}),
     })
+    this.persistNewAuditEntries()
+    return envelope
   }
 
   snapshot(): RegistrySnapshot {
@@ -513,6 +528,28 @@ export class ProviderTransportService {
 
   audit(): readonly RegistryAuditEntry[] {
     return this.registry_.audit()
+  }
+
+  /**
+   * Fire-and-forget persistence of the invoke audit records the registry
+   * recorded since the last call (diff against {@link auditCursor}, so
+   * exactly the fresh entries are written). Never awaited by the invoke path
+   * and errors are swallowed with a warn — audit persistence must never break
+   * a provider call. Non-`invoke` lifecycle entries (register/attach/…) stay
+   * in-memory only.
+   */
+  private persistNewAuditEntries(): void {
+    if (this.auditLog === undefined) return
+    const entries = this.registry_.audit()
+    const total = entries.length
+    if (total <= this.auditCursor) return
+    const fresh = entries.slice(this.auditCursor)
+    this.auditCursor = total
+    const invoke = fresh.filter((entry) => entry.kind === 'invoke')
+    if (invoke.length === 0) return
+    void this.auditLog.appendAll(invoke).catch((error: unknown) => {
+      this.ctx.logger.warn(`expert-library: provider audit append failed: ${String(error)}`)
+    })
   }
 
   private rebuild(): void {
@@ -554,6 +591,9 @@ export class ProviderTransportService {
     this.registry_ = registry
     this.resolver_ = resolver
     this.enabled = enabled
+    // A fresh registry starts a fresh in-memory audit log: the persistence
+    // cursor restarts at 0 so the new registry's records are diffed anew.
+    this.auditCursor = 0
   }
 }
 

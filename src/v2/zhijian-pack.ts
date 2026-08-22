@@ -90,6 +90,38 @@ export const ZHIJIAN_BASELINE_DATE = '2026-08-21T00:00:00Z'
 /** The universal reviewer capability every roster expert claims. */
 export const REVIEW_CAPABILITY = 'zhijian.review'
 
+/**
+ * Read-only data capabilities a zhijian review task may invoke through
+ * `expert_provider_call` (the plan-level runtime gate enforces this union
+ * per member task). Wind market/financial reads + zyt indicators + beike
+ * search reads — no write capabilities are ever stamped here.
+ */
+export const ZHIJIAN_DATA_CAPABILITIES: readonly string[] = [
+  // Wind（行情/宏观/公告检索，全部只读）
+  'financial.stock.snapshot',
+  'financial.stock.quote',
+  'financial.stock.kline',
+  'financial.stock.screen',
+  'financial.fund.snapshot',
+  'financial.index.snapshot',
+  'financial.index.quote',
+  'financial.macro.query',
+  'financial.docs.search',
+  // zyt 政研通（指标/对比/快照）
+  'realestate.indicators.catalog',
+  'realestate.indicators.timeseries',
+  'realestate.indicators.batch',
+  'realestate.city.compare',
+  'realestate.market-snapshot',
+  // 贝壳（房源/小区/板块/租赁/政策检索，全部只读）
+  'realestate.listing.search',
+  'realestate.newhouse.search',
+  'realestate.resblock.profile',
+  'realestate.plate.search',
+  'realestate.rent.search',
+  'realestate.policy.search',
+]
+
 /** Roster primary fields → pack domain vocabulary (zhijian fields are data). */
 export const FIELD_DOMAINS: Readonly<Record<ZhijianField, string>> = {
   '宏观经济': 'realestate.macro',
@@ -382,7 +414,9 @@ function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: str
         // scenario (the adapter's "no standard scenario" note branch) — a
         // scenario-less compile treats every allowedCapability as tool-allowed
         // and would demand a tool provider for `zhijian.review`.
-        allowedCapabilities: [],
+        // Read-only data capabilities ARE stamped: the runtime capability
+        // gate (expert_provider_call) lets reviewers verify/fetch data.
+        allowedCapabilities: ZHIJIAN_DATA_CAPABILITIES,
         outputSchema: outputTemplate,
         retryPolicy: 'quality-repair',
         // Logical reviewer task: compiled `expertIds` = the selected experts;
@@ -397,7 +431,8 @@ function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: str
         role: 'role.fusion',
         dependsOn: ['t1'],
         inputs: [{ kind: 'task-output', ref: 't1' }],
-        allowedCapabilities: [],
+        // Fusion may re-verify quoted numbers against the read-only data set.
+        allowedCapabilities: ZHIJIAN_DATA_CAPABILITIES,
         outputSchema: outputTemplate,
         retryPolicy: 'quality-repair',
         subject: '融合合成与渲染（讨论稿/正式稿）',

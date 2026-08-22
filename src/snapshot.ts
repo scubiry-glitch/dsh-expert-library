@@ -71,6 +71,10 @@ export interface TeamActivityTask {
   readonly assignee: string
   readonly dependencies: readonly string[]
   readonly depth: number
+  /** Forced-recovery quality score (null when no policy applies); absent pre-completion. */
+  readonly qualityScore?: number | null
+  /** Repair rounds used (hard-gate blocks) at the last completion attempt. */
+  readonly repairCount?: number
 }
 
 /** One captain-inbox preview row. */
@@ -245,6 +249,8 @@ export async function assembleTeamSnapshot(
       assignee: task.assignee ?? '',
       dependencies: task.dependencies,
       depth: depths.get(task.id) ?? 0,
+      ...task.qualityScore === undefined ? {} : { qualityScore: task.qualityScore },
+      ...task.repairCount === undefined ? {} : { repairCount: task.repairCount },
     })),
     messageCount: captainInbox.length
       + members.reduce((count, member) => count + member.unread, 0),

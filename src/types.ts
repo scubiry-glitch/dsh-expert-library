@@ -55,6 +55,55 @@ export interface TaskArtifactRef {
   readonly purpose?: string
 }
 
+/**
+ * One compiled quality gate stamped onto the durable team record (a JSON-safe
+ * copy of the V2 `CompiledGate` — the fields `runQualityChain` reads when a
+ * gate list carries `chainOrder`). Stamped at apply time by
+ * `applyExecutionPlan` so task completion can evaluate the plan's gate chain
+ * without re-reading the pack or recompiling the plan.
+ */
+export interface StampedGate {
+  /** Unique in the plan: `${policyId}/${gateId}`. */
+  readonly id: string
+  readonly policyId: string
+  readonly policyVersion?: string
+  /** Gate id inside the policy (the evaluator-map key). */
+  readonly gateId: string
+  readonly kind: 'deterministic' | 'semantic' | 'visual'
+  readonly phase: 'structure' | 'data' | 'compliance' | 'format' | 'style' | 'semantic' | 'final'
+  readonly severity: 'hard' | 'soft'
+  /** Task ids (logical `t1..tn`) and/or `deliverable` this gate applies to. */
+  readonly appliesTo: readonly string[]
+  /** Deterministic 0-based position in the chain; the runtime executes in this order. */
+  readonly chainOrder: number
+  readonly implementation?: string
+  readonly config?: Readonly<Record<string, unknown>>
+}
+
+/**
+ * The compiled plan's quality surface, stamped onto the durable team record
+ * by the V2 apply bridge (see `applyExecutionPlan`). This is the team's
+ * "plan quality policy": task completion evaluates exactly these gates, so a
+ * policy change between compile and run can never silently alter what a team
+ * is held to.
+ */
+export interface StampedQualityPlan {
+  readonly planId: string
+  /** Policy refs the compiled plan bound (`bindings.qualityPolicies`). */
+  readonly policies: ReadonlyArray<{ readonly id: string; readonly version: string }>
+  /** Gates in chain order (chainOrder 0..n). */
+  readonly gates: readonly StampedGate[]
+  /** Deliverable declarations (deliverable id → source task ids). */
+  readonly deliverables: ReadonlyArray<{ readonly id: string; readonly fromTasks: readonly string[] }>
+  /**
+   * Repair-round budget honored across completion attempts (design cap
+   * {@link MAX_REPAIR_ROUNDS} = 2): after this many hard-gate blocks the next
+   * completion may proceed with a recorded warning. Resolved from the bound
+   * policy's `maxRepairRounds` at apply time, defaulting to the design cap.
+   */
+  readonly maxRepairRounds: number
+}
+
 /** One task of a team's task list. */
 export interface TeamTask {
   /** Stable task id within the team (`t1`, `t2`, …). */
@@ -91,6 +140,32 @@ export interface TeamTask {
     /** Position among the logical task's rostered expert ids (fan-out), when expanded. */
     fanOutIndex?: number
   }
+  /**
+   * Hard-gate blocks this task accumulated (repair-round budget accounting):
+   * each blocked completion increments it; once it reaches the plan policy's
+   * `maxRepairRounds` the next completion may proceed with a recorded warning.
+   * Absent on tasks that never hit a hard gate.
+   */
+  gateFailCount?: number
+  /**
+   * Quality-gate warnings attached when the task completed: soft-gate issues,
+   * or hard-gate failures waived because the repair budget ran out.
+   */
+  gateWarnings?: readonly string[]
+  /**
+   * Derived 0–100 quality score stamped at the last completion attempt; `null`
+   * when the team has no resolvable quality policy. The key is ALWAYS written
+   * to the task output record (`result.json`) and the tool result — "field
+   * always present" is the forced-recovery contract, never left to the member.
+   * Absent only on tasks that never completed through `expert_teams_update_task`.
+   */
+  qualityScore?: number | null
+  /**
+   * Repair rounds used (hard-gate blocks) at the last completion attempt:
+   * each blocked completion increments it, so a retry that passes after N
+   * blocks reports repairCount = N. 0 when no gate ever blocked the task.
+   */
+  repairCount?: number
   createdAt: number
   updatedAt: number
 }
@@ -159,6 +234,24 @@ export interface TeamState {
     params: Record<string, unknown>
     compile: readonly { step: string; detail: string }[]
   }
+  /**
+   * Per-logical-plan-task capability allowlist, persisted at apply time:
+   * logical CompiledTask id → that task's `allowedCapabilities`. Runtime
+   * enforcement (`expert_provider_call` capability gate) resolves a member's
+   * plan-linked tasks through `TeamTask.planTask.logicalId` into this map and
+   * blocks unlisted capabilities. Absent on legacy/ad-hoc teams (and plan
+   * teams created before this field existed) — the capability gate stays open
+   * for them (no regression).
+   */
+  planTaskCapabilities?: Record<string, readonly string[]>
+  /**
+   * Compiled plan quality surface stamped at apply time (see
+   * `StampedQualityPlan`): task completion evaluates this gate chain.
+   * Absent on ad-hoc teams (and compiled-plan teams created before this
+   * field existed — those fall back to the pack's legacy quality policy,
+   * which has no executable gates, so completion behavior is unchanged).
+   */
+  qualityPlan?: StampedQualityPlan
   /** Teammates only; the captain is implicit (the owning session). */
   members: TeamMember[]
   tasks: TeamTask[]

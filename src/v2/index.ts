@@ -19,7 +19,7 @@
 
 export * from './types.ts'
 export { validateDomainPack } from './validate.ts'
-export { adaptV1Expert, adaptV1Scenario, adaptV1ScenarioTeamTemplate, buildLegacyDomainPack, migrateDomainPack, compileV1ScenarioExecutionPlan, builtinLegacyPack, loadBuiltinLegacyPack, mergeCachedExperts } from './compat.ts'
+export { adaptV1Expert, adaptV1Scenario, adaptV1ScenarioTeamTemplate, buildLegacyDomainPack, migrateDomainPack, compileV1ScenarioExecutionPlan, builtinLegacyPack, invalidateBuiltinLegacyPack, loadBuiltinLegacyPack, mergeCachedExperts } from './compat.ts'
 export type { MigrationResult } from './compat.ts'
 export * from './provider-runtime.ts'
 export * from './providers/wind.ts'

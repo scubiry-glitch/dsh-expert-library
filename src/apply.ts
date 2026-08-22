@@ -35,7 +35,12 @@
  * - `planRef` (planId/digest/template/templateVersion/scenarioId) and the
  *   optional `planProvenance` snapshot (normalized params + compiler decision
  *   trail) are persisted on the durable TeamState; each physical task records
- *   its `planTask` (logicalId + fanOutIndex).
+ *   its `planTask` (logicalId + fanOutIndex); per-logical-task
+ *   `planTaskCapabilities` (allowedCapabilities) are persisted so the
+ *   `expert_provider_call` capability gate can enforce the plan at runtime;
+ *   the compiled plan's quality surface (`qualityPlan`: gates, policy refs,
+ *   deliverables, repair budget) is stamped so task completion can run the
+ *   gate chain without recompiling.
  *
  * `expandExecutionPlan` is pure (no ctx, no I/O) and is the golden-testable
  * core; `applyExecutionPlan` is the runtime composition of the existing cores.
@@ -58,6 +63,7 @@ import {
 } from './team-core.ts'
 import type { CompileFailure, ExecutionPlan } from './v2/compiler.ts'
 import type { ModelPolicy } from './v2/types.ts'
+import { stampQualityPlan } from './task-gates.ts'
 
 /** Runtime assembly metadata supplied by the thin adapters. */
 export interface ApplyPlanOptions {
@@ -330,6 +336,19 @@ export async function applyExecutionPlan(
       if (fresh === undefined) return
       fresh.planRef = expanded.planRef
       fresh.planProvenance = { params: { ...plan.params }, compile: plan.provenance }
+      // Runtime capability scoping: persist each logical task's
+      // `allowedCapabilities` so `expert_provider_call` can enforce the plan
+      // at execute time (a member may only invoke capabilities granted by
+      // their plan-linked tasks). Legacy/ad-hoc teams never carry this field,
+      // so the gate stays open for them.
+      const planTaskCapabilities: Record<string, readonly string[]> = {}
+      for (const task of plan.tasks) planTaskCapabilities[task.id] = task.allowedCapabilities
+      fresh.planTaskCapabilities = planTaskCapabilities
+      // Quality gates: stamp the compiled plan's gate chain so task
+      // completion (`expert_teams_update_task`) can evaluate it without
+      // re-reading the pack or recompiling. Ad-hoc teams never carry this
+      // field, so completion behavior is unchanged for them.
+      fresh.qualityPlan = stampQualityPlan(plan)
       for (const task of fresh.tasks) {
         const planTask = taskPlanMap.get(task.id)
         if (planTask !== undefined) task.planTask = planTask

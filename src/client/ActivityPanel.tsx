@@ -88,6 +88,10 @@ export interface ActivityTask {
   readonly assignee: string
   readonly dependencies: readonly string[]
   readonly depth: number
+  /** Forced-recovery quality score (null when no policy applies); absent pre-completion. */
+  readonly qualityScore?: number | null
+  /** Repair rounds used (hard-gate blocks) at the last completion attempt. */
+  readonly repairCount?: number
 }
 
 /** One captain-inbox preview row. */
@@ -480,6 +484,11 @@ function DependencyMap({ tasks }: { readonly tasks: readonly ActivityTask[] }) {
                   : `等待 ${waitingOn.join('、')}`}
             </span>
             <span className={css.taskDetailMeta}>{dependents.length === 0 ? '无下游任务' : `完成后解锁 ${dependents.map((task) => task.id).join('、')}`}</span>
+            {detailTask.qualityScore !== undefined && (
+              <span className={css.taskDetailMeta}>
+                质量分 {detailTask.qualityScore ?? '—'} ｜ 修复 {detailTask.repairCount ?? 0} 轮
+              </span>
+            )}
           </section>
         </>
       )}

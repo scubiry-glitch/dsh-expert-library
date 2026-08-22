@@ -67,6 +67,7 @@ import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
 import { scenarioById } from './zhijian/routing.ts'
 import { normalizeToolMode, toolExecutionOf, type ToolExecutionConfig, type ToolExecutionMode } from './settings.ts'
 import { applyExecutionPlan, compileErrorOf } from './apply.ts'
+import { evaluateTaskCompletionGates, subjectWithQualityMark, taskGateBlockedError } from './task-gates.ts'
 import { compileV1ScenarioExecutionPlan } from './v2/compat.ts'
 import {
   addMemberCore,
@@ -761,7 +762,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
 
   ctx.tools.register(defineTool({
     name: 'expert_teams_update_task',
-    description: 'Update a task status/output. Members must supply the current attempt_id returned by claim_task; stale attempts are rejected after takeover/reassignment. Terminal results are immutable. A captain must use reassign_task(assignee="captain") before updating member-owned work.',
+    description: 'Update a task status/output. Members must supply the current attempt_id returned by claim_task; stale attempts are rejected after takeover/reassignment. Terminal results are immutable. A captain must use reassign_task(assignee="captain") before updating member-owned work. Completing a task runs the team plan\'s quality gates: a failing hard gate blocks the completion with gate id, reason and correction guidance (fix the output and retry); soft-gate warnings are returned as gate_warnings; the derived 0-100 quality score is stamped into the task title as 「质 NN」(「质 NN·硬门未过」 when a hard gate blocks).',
     parameters: {
       task_id: { type: 'string', required: true, description: 'The task id to update.' },
       status: {
@@ -782,11 +783,26 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           output: { type: 'string' },
           attempt: { type: 'number', required: true },
           attempt_id: { type: 'string' },
+          gate_warnings: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Quality-gate warnings attached at completion (soft-gate issues, or hard-gate failures waived after the plan policy\'s repair budget ran out).',
+          },
+          quality_score: {
+            oneOf: [{ type: 'number' }, { type: 'null' }],
+            required: true,
+            description: 'Forced-recovery field: derived 0-100 quality score of the last gated run (null when the team has no resolvable quality policy — the key is always present).',
+          },
+          repair_count: {
+            type: 'number',
+            required: true,
+            description: 'Forced-recovery field: repair rounds used (hard-gate blocks) at the last completion attempt (0 when none).',
+          },
         },
       },
       render: (args, value) => [{
         type: 'text',
-        text: `Task ${value.task_id} attempt ${value.attempt} → ${value.status}${value.output !== undefined ? `\nOutput: ${value.output}` : ''}`,
+        text: `Task ${value.task_id} attempt ${value.attempt} → ${value.status}${value.output !== undefined ? `\nOutput: ${value.output}` : ''}\n质量分 ${value.quality_score ?? '—'} ｜ 修复 ${value.repair_count} 轮${value.gate_warnings !== undefined ? `\nQuality warnings:\n- ${value.gate_warnings.join('\n- ')}` : ''}`,
       }],
     },
     async execute(args, exec) {
@@ -822,6 +838,9 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             attempt: task.attempt ?? 0,
             ...task.attemptId === undefined ? {} : { attempt_id: task.attemptId },
             ...task.output !== undefined ? { output: task.output } : {},
+            ...task.gateWarnings !== undefined && task.gateWarnings.length > 0 ? { gate_warnings: [...task.gateWarnings] } : {},
+            quality_score: task.qualityScore ?? null,
+            repair_count: task.repairCount ?? 0,
           }
         }
         // Pre-update snapshot for the compensating commit below (project
@@ -830,12 +849,53 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           ...task,
           ...task.project === undefined ? {} : { project: { ...task.project } },
         }
+        // Quality gates on completion. The gate chain is evaluated BEFORE any
+        // status/output mutation, so a block persists ONLY the repair-budget
+        // counter, the quality-score subject marker and the forced
+        // qualityScore/repairCount fields, and leaves the task
+        // claimed/in_progress (status, output and attemptId untouched) — the
+        // member fixes the output and retries with the same attempt. Soft-gate
+        // warnings (and hard failures waived by budget exhaustion) are
+        // attached to the task result; the derived score is stamped into the
+        // task title as 「质 NN」(idempotent — repeated evaluations replace the
+        // old marker). No resolvable policy ⇒ undefined ⇒ exactly today's
+        // behavior (no marker), except the task still records
+        // qualityScore: null / repairCount: 0 — the fields are ALWAYS present
+        // (forced recovery, never left to the member's output).
+        let gateWarnings: readonly string[] | undefined
+        if (args.status === 'completed') {
+          const transition = transitionError(task.status, 'completed')
+          if (transition !== undefined) throw new Error(transition)
+          const gateResult = evaluateTaskCompletionGates(fresh, task, args.output ?? task.output)
+          if (gateResult !== undefined) {
+            if (gateResult.blocked !== undefined) {
+              task.gateFailCount = gateResult.blocked.budgetUsed
+              task.subject = subjectWithQualityMark(task.subject, gateResult.blocked.score, true)
+              task.qualityScore = gateResult.blocked.score
+              task.repairCount = gateResult.blocked.budgetUsed
+              task.updatedAt = Date.now()
+              await writeTeam(stateRoot, fresh)
+              throw taskGateBlockedError(gateResult.blocked)
+            }
+            task.subject = subjectWithQualityMark(task.subject, gateResult.score, false)
+            task.qualityScore = gateResult.score
+            task.repairCount = task.gateFailCount ?? 0
+            if (gateResult.warnings.length > 0) {
+              gateWarnings = gateResult.warnings
+            }
+          } else {
+            // No resolvable quality policy: the fields still exist (null/0).
+            task.qualityScore = null
+            task.repairCount = 0
+          }
+        }
         if (args.status !== undefined) {
           const transition = transitionError(task.status, args.status)
           if (transition !== undefined) throw new Error(transition)
           task.status = args.status
         }
         if (args.output !== undefined) task.output = args.output
+        if (gateWarnings !== undefined) task.gateWarnings = gateWarnings
         // Terminal work drops its live capability: stale-claim checks and
         // audit views must never see a lingering attemptId on dead work.
         finalizeTerminalTask(task)
@@ -849,6 +909,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           status: task.status,
           ...task.assignee !== undefined ? { assignee: task.assignee } : {},
           ...task.output !== undefined ? { output: task.output } : {},
+          ...task.gateWarnings !== undefined ? { gateWarnings: [...task.gateWarnings] } : {},
         })
         return {
           task_id: task.id,
@@ -856,6 +917,9 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           attempt: task.attempt ?? 0,
           ...task.attemptId === undefined ? {} : { attempt_id: task.attemptId },
           ...task.output !== undefined ? { output: task.output } : {},
+          ...task.gateWarnings !== undefined && task.gateWarnings.length > 0 ? { gate_warnings: [...task.gateWarnings] } : {},
+          quality_score: task.qualityScore ?? null,
+          repair_count: task.repairCount ?? 0,
         }
       })
       await scheduler.kickTeam(workspace, team.id, team.captainSessionId === caller.id ? caller : undefined)
@@ -1017,6 +1081,10 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         attempt_id: task.attemptId ?? '',
         reassigning: task.reassigning === true,
         ...task.output !== undefined ? { output: task.output } : {},
+        // Forced-recovery fields: always present in the report (null/0 when no
+        // quality policy applies or the task was never gated).
+        quality_score: task.qualityScore ?? null,
+        repair_count: task.repairCount ?? 0,
       }))
       const mailboxWarnings: string[] = []
       let mailboxWarningCount = 0
@@ -1155,7 +1223,7 @@ function renderStatus(value: JsonValue): string {
       status: string
       activity: string
     }[]
-    tasks: { id: string; subject: string; status: string; assignee: string; dependencies: string[]; attempt: number; attempt_id: string; reassigning: boolean; output?: string }[]
+    tasks: { id: string; subject: string; status: string; assignee: string; dependencies: string[]; attempt: number; attempt_id: string; reassigning: boolean; output?: string; quality_score: number | null; repair_count: number }[]
     captain_inbox: { from: string; content: string }[]
     member_inboxes: Record<string, { count: number; latest: string }>
     mailbox_warnings: string[]
@@ -1175,7 +1243,10 @@ function renderStatus(value: JsonValue): string {
       const deps = task.dependencies.length > 0 ? ` (deps: ${task.dependencies.join(',')})` : ''
       const output = task.output !== undefined ? `\n      output: ${task.output.slice(0, 300)}` : ''
       const handoff = task.reassigning ? ' (reassigning)' : ''
-      return `  - ${task.id} [${task.status}] attempt ${task.attempt}${handoff} ${task.subject} → ${task.assignee || 'unassigned'}${deps}${output}`
+      const quality = task.status === 'completed'
+        ? `\n      质量分 ${task.quality_score ?? '—'} ｜ 修复 ${task.repair_count} 轮`
+        : ''
+      return `  - ${task.id} [${task.status}] attempt ${task.attempt}${handoff} ${task.subject} → ${task.assignee || 'unassigned'}${deps}${quality}${output}`
     }),
     `Captain inbox (${team.captain_inbox.length}):`,
     ...team.captain_inbox.map((message) => `  - [${message.from}] ${message.content.slice(0, 200)}`),

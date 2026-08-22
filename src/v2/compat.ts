@@ -26,6 +26,8 @@
  * @module dsh-expert-library/v2/compat
  */
 
+import { statSync } from 'node:fs'
+import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import type { Expert, Scenario } from '../expert-library/types.ts'
 import { BUILTIN_EXPERT_BY_ID } from '../expert-library/builtin-experts.ts'
@@ -556,9 +558,50 @@ function withZhijianExperts(pack: DomainPackV2): DomainPackV2 {
   return { ...pack, experts: [...pack.experts, ...zhijian] }
 }
 
+/** One process-wide cache entry: the built pack plus the fingerprint it was built from. */
+interface BuiltinPackCacheEntry {
+  readonly pack: DomainPackV2
+  /**
+   * Mtime fingerprint of the pack dir at build time, or `undefined` when the
+   * dir could not be statted — an unstatable dir is treated as "changed" so
+   * the next access rebuilds (and fails loudly if the pack is truly gone).
+   */
+  readonly fingerprint: string | undefined
+}
+
 /**
- * The process-wide, lazily-built cache of the full builtin library
- * (generic pack + zhijian experts); never invalidated during the process.
+ * Mtime fingerprint of a builtin pack dir: the newest `mtimeMs` of `pack.json`
+ * and `generated/pack.sha256` — the two files that change whenever the pack is
+ * regenerated (`pack.sha256` is the tree digest over the non-generated
+ * content, so a content edit followed by `pnpm build:builtin` bumps it; the
+ * pack.json rewrite alone is also enough). `undefined` when either stat fails.
+ */
+function builtinPackFingerprint(dir: string): string | undefined {
+  let newest = -1
+  for (const file of [join(dir, 'pack.json'), join(dir, 'generated', 'pack.sha256')]) {
+    try {
+      const info = statSync(file)
+      if (info.mtimeMs > newest) newest = info.mtimeMs
+    } catch {
+      return undefined
+    }
+  }
+  return newest >= 0 ? String(newest) : undefined
+}
+
+/**
+ * The process-wide, lazily-built cache of the full builtin library (generic
+ * pack + zhijian experts), keyed by pack dir.
+ *
+ * - Each entry records the pack dir's mtime fingerprint; a pack regenerated
+ *   externally (pack.json / generated/pack.sha256 rewritten) is rebuilt
+ *   lazily on the next access, so pack edits take effect without a restart
+ *   (audit gap #6 fix, runtime half).
+ * - {@link invalidateBuiltinLegacyPack} drops the cache eagerly — the
+ *   settings onChange path in `src/index.ts` calls it so settings-driven pack
+ *   edits take effect immediately.
+ * - A stable fingerprint returns the **same frozen object** across calls
+ *   (identity preserved for compile speed).
  *
  * This is the shared entity source for every per-call V1 compile — the V1
  * scenario bridge (`compileV1ScenarioExecutionPlan`) and the collab
@@ -567,13 +610,37 @@ function withZhijianExperts(pack: DomainPackV2): DomainPackV2 {
  * the returned pack as read-only (the compile path never mutates it — it
  * spreads/derives fresh objects — but a mutation here would poison the cache
  * for the whole process).
+ *
+ * Workspace `domain-packs/` directories stay **preview-only**: they are
+ * discovered fresh by the preview/health surfaces, but the runtime compile
+ * consumes only this builtin pack (plus per-call user experts). Wiring
+ * workspace packs into team compile is a documented limitation (see
+ * APPLY-MIGRATION-DESIGN.md §6).
  */
-export function builtinLegacyPack(): DomainPackV2 {
-  if (cachedBuiltinPack === undefined) cachedBuiltinPack = loadBuiltinLegacyPack()
-  return cachedBuiltinPack
+export function builtinLegacyPack(packDir?: string): DomainPackV2 {
+  const dir = packDir ?? defaultBuiltinPackDir()
+  const fingerprint = builtinPackFingerprint(dir)
+  const cached = builtinPackCache.get(dir)
+  if (cached !== undefined && fingerprint !== undefined && cached.fingerprint === fingerprint) {
+    return cached.pack
+  }
+  const pack = loadBuiltinLegacyPack(dir)
+  builtinPackCache.set(dir, { pack, fingerprint })
+  return pack
 }
 
-let cachedBuiltinPack: DomainPackV2 | undefined
+/**
+ * Drop the builtin pack cache — all dirs when no argument is given, or the
+ * one dir's entry. The next `builtinLegacyPack()` access rebuilds lazily with
+ * the pack-first / loud-failure semantics unchanged (a missing or invalid pack
+ * still throws with remediation text).
+ */
+export function invalidateBuiltinLegacyPack(packDir?: string): void {
+  if (packDir === undefined) builtinPackCache.clear()
+  else builtinPackCache.delete(packDir)
+}
+
+const builtinPackCache = new Map<string, BuiltinPackCacheEntry>()
 
 /** Whether a V1 Expert is one of the builtin registry objects (not an override/fixture). */
 function isBuiltinExpertObject(expert: Expert): boolean {

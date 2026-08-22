@@ -54,8 +54,15 @@ import {
   resolveProviderServiceOptions,
   windCliPathCandidate,
   type ProviderConfigInput,
+  type ProviderServiceOptions,
 } from './host/provider-service.ts'
 import { HealthProbeCache, createHealthHandler, type PackDirLike } from './host/health.ts'
+import {
+  AuditLogFile,
+  createAuditHandler,
+  resolveAuditLogPath,
+} from './host/audit-log.ts'
+import { invalidateBuiltinLegacyPack } from './v2/compat.ts'
 import {
   providerCallToolEligible,
   registerProviderCallTool,
@@ -358,6 +365,14 @@ export function apply(ctx: Context, config: Config): void {
   registerZhijianTools(ctx, runtimeConfig, core)
   registerCollabTools(ctx, runtimeConfig, core)
 
+  // Provider-call audit persistence: one JSONL file shared across restarts
+  // (the in-memory registry audit is the live source; the file is the
+  // cross-restart memory). Path resolution: the DSH data dir when DSH_HOME is
+  // set, else `<cwd>/.expert-teams/provider-audit.jsonl` — see audit-log.ts
+  // for the documented decision. Writes are async, non-blocking, and
+  // best-effort; a failing audit log never breaks a provider call.
+  const auditLog = new AuditLogFile(resolveAuditLogPath())
+
   // Provider transport runtime (Phase 2): registers the wind/zyt/beike
   // manifests and attaches invokers. Registered once under the
   // `providerTransport` service; rebuilt when the effective settings change
@@ -367,7 +382,10 @@ export function apply(ctx: Context, config: Config): void {
   let providerService: ProviderTransportService | undefined
   const syncProviders = (): void => {
     const value = current()
-    const options = resolveProviderServiceOptions(value as ProviderConfigInput)
+    const options: ProviderServiceOptions = {
+      ...resolveProviderServiceOptions(value as ProviderConfigInput),
+      auditLog,
+    }
     if (providerService === undefined) {
       providerService = new ProviderTransportService(ctx, options)
       ctx.effect(() => ctx.provide('providerTransport', providerService), 'expert-library: provider transport service')
@@ -423,6 +441,11 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.knowledgeDir = value.knowledgeDir ?? 'knowledge'
     runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
     runtimeConfig.toolExecution = value.toolExecution
+    // Pack edits via settings take effect without a restart: drop the builtin
+    // pack cache on every settings commit — the next compile rebuilds it
+    // lazily (mtime staleness also catches external pack regeneration; see
+    // src/v2/compat.ts builtinLegacyPack).
+    invalidateBuiltinLegacyPack()
     syncAnnounce()
     syncProviders()
   }
@@ -732,6 +755,20 @@ export function apply(ctx: Context, config: Config): void {
       res.end(JSON.stringify(list))
     },
   }), 'expert-teams: domain pack preview route')
+
+  // Provider failure observability: read-only audit tail route. Merges the
+  // persisted JSONL tail (cross-restart memory) with the live in-memory
+  // registry audit (first-class), deduped by record identity, bounded by
+  // ?limit= (default 100, max 500). Entries carry only
+  // kind/providerId/version/operation/outcome/at + detail — never credentials.
+  ctx.effect(() => webServer.register({
+    kind: 'exact',
+    path: '/plugins/dsh-expert-library/audit',
+    handler: createAuditHandler({
+      auditLog,
+      resolveMemory: () => providerService?.audit() ?? [],
+    }),
+  }), 'expert-teams: provider audit route')
 
   // Health observation (设置页数据源/包健康): read-only probes of the three
   // provider data sources and the generated domain packs. All I/O lives in

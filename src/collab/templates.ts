@@ -28,6 +28,7 @@
 import type { DomainPackV2, OutputTemplate, QualityPolicy, RoleSlot, ScenarioV2, TaskTemplate, TeamTemplate } from '../v2/types.ts'
 import { SCHEMA_VERSION } from '../v2/types.ts'
 import { builtinLegacyPack, mergeCachedExperts } from '../v2/compat.ts'
+import { ZHIJIAN_DATA_CAPABILITIES } from '../v2/zhijian-pack.ts'
 import type { Expert } from '../expert-library/types.ts'
 
 /** Version stamp of every collab V2 asset. */
@@ -39,14 +40,19 @@ const COLLAB_OUTPUT_ID = 'collab.output'
 /** Shared (empty) quality policy id so template/scenario refs resolve. */
 const COLLAB_QUALITY_ID = 'collab.quality'
 
-/** One collab task: no inputs/capabilities, legacy output schema, no retry. */
+/**
+ * One collab task: no inputs, legacy output schema, no retry. Collab modes
+ * (debate/roundtable/ppt/report) are zhijian-flavored: participants may
+ * verify or fetch data through the read-only zhijian capability set (the
+ * runtime capability gate enforces this union per member task).
+ */
 function task(id: string, role: string, subject: string, description: string, dependsOn: readonly string[] = []): TaskTemplate {
   return {
     id,
     role,
     dependsOn: [...dependsOn],
     inputs: [],
-    allowedCapabilities: [],
+    allowedCapabilities: [...ZHIJIAN_DATA_CAPABILITIES],
     outputSchema: COLLAB_OUTPUT_ID,
     retryPolicy: 'never',
     subject,

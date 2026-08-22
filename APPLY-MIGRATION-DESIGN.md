@@ -647,3 +647,26 @@ and the runtime is pack-first.**
   dual projection of the builtin library, it is the runtime's expert/scenario
   map surface; cutting it over to pack entities is a consumer-by-consumer
   effort left for a later round.
+
+**Step 4 — DONE (this round, audit gap #6 runtime half): the builtin pack
+cache is invalidatable and mtime-stale-safe.**
+- `builtinLegacyPack()` is now keyed **per pack dir** and each cache entry
+  records the pack dir's mtime fingerprint (the newest `mtimeMs` of
+  `pack.json` and `generated/pack.sha256` — cheap, two stats). A pack
+  regenerated externally (e.g. `pnpm build:builtin` after editing pack
+  content) is rebuilt lazily on the next access; a stable fingerprint
+  returns the **same frozen object** (identity preserved for compile speed).
+- New export `invalidateBuiltinLegacyPack(packDir?)` drops the cache (all
+  dirs, or one). The settings onChange path in `src/index.ts` (`applySource`,
+  re-run on every settings commit) calls it, so pack edits via settings take
+  effect without a restart. Pack-first / loud-failure semantics from step 3
+  are unchanged: a missing **or** invalid pack still throws with remediation
+  text.
+- **Documented limitation (workspace packs stay preview-only):** workspace
+  `domain-packs/` directories are discovered fresh per request by the
+  preview/health surfaces (`discoverPackDirs` — no caches there), but the
+  **runtime compile path consumes only the builtin pack** (plus per-call
+  user experts via `mergeCachedExperts`). Wiring workspace packs into team
+  compile — a loader → compile-input path keyed by tree digest — is out of
+  scope for this round and remains a known gap; the settings preview is the
+  honest surface for those packs until then.

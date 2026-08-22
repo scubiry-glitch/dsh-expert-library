@@ -250,7 +250,18 @@ export async function writeTaskProjectOutput(
 ): Promise<void> {
   if (task.project === undefined) return
   const teamDir = join(stateRoot, teamId)
-  await atomicWriteText(join(teamDir, task.project.outputPath), JSON.stringify({ taskId: task.id, status: task.status, attempt: task.attempt ?? 0, output: task.output, updatedAt: task.updatedAt }, null, 2))
+  // The quality fields are ALWAYS written (qualityScore: null, repairCount: 0
+  // when the task/team has no quality policy): forced recovery — the record
+  // must carry the fields even when the member's output never mentions them.
+  await atomicWriteText(join(teamDir, task.project.outputPath), JSON.stringify({
+    taskId: task.id,
+    status: task.status,
+    attempt: task.attempt ?? 0,
+    output: task.output,
+    qualityScore: task.qualityScore ?? null,
+    repairCount: task.repairCount ?? 0,
+    updatedAt: task.updatedAt,
+  }, null, 2))
   await atomicWriteText(join(teamDir, task.project.path, 'project.json'), JSON.stringify({ ...task.project, taskId: task.id, status: task.status, updatedAt: task.updatedAt }, null, 2))
 }
 

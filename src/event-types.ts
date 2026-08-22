@@ -51,6 +51,8 @@ export interface ExpertTeamsTaskUpdatedData {
   readonly output?: string
   readonly attempt?: number
   readonly attemptId?: string
+  /** Quality-gate warnings attached at completion (soft gates / budget-exhausted). */
+  readonly gateWarnings?: readonly string[]
 }
 
 /** Closes one team record: the team was deleted. */

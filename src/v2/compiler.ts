@@ -750,8 +750,18 @@ class Compiler {
         if (input.kind === 'knowledge') addKb(input.ref)
       }
     }
+    // Capabilities referenced by a `tool-capability` input are WIRING
+    // requirements (hard fail when unbound); capabilities merely listed in
+    // `allowedCapabilities` are a permission envelope — resolution is lazy at
+    // call time, so an unbound one degrades to a warning (soft).
+    const inputReferenced = new Set<string>()
+    for (const task of template.tasks) {
+      for (const input of task.inputs) {
+        if (input.kind === 'tool-capability') inputReferenced.add(input.ref)
+      }
+    }
     for (const cap of capabilityOrder) {
-      const resolved = this.resolveToolCapability(cap, new Set())
+      const resolved = this.resolveToolCapability(cap, new Set(), !inputReferenced.has(cap))
       if (resolved !== undefined) {
         this.resolvedCapabilities.set(cap, resolved)
         this.toolBindings.push(resolved)
@@ -793,7 +803,7 @@ class Compiler {
   }
 
   /** Resolve one capability to a provider/operation/transport (deterministic). */
-  private resolveToolCapability(cap: string, visited: Set<string>): ResolvedCapability | undefined {
+  private resolveToolCapability(cap: string, visited: Set<string>, soft = false): ResolvedCapability | undefined {
     if (visited.has(cap)) {
       this.fail('binding', 'fallback-cycle', `capability fallback chain revisits "${cap}"`)
       return undefined
@@ -837,7 +847,7 @@ class Compiler {
     if (candidates.length === 0) {
       const fallback = this.scenario?.toolPolicy.fallbacks?.find(candidate => candidate.from === cap)
       if (fallback !== undefined) {
-        const fallbackResolved = this.resolveToolCapability(fallback.to, visited)
+        const fallbackResolved = this.resolveToolCapability(fallback.to, visited, soft)
         if (fallbackResolved !== undefined) {
           this.provenance.push({ step: 'binding.fallback', detail: `capability=${cap} -> ${fallback.to} (scenario fallback)` })
           // H1: the binding stays keyed by the REQUESTED capability so task
@@ -851,6 +861,15 @@ class Compiler {
             viaFallback: fallback.to,
           }
         }
+        return undefined
+      }
+      // Permission-only capabilities (from task.allowedCapabilities, not
+      // referenced by any tool-capability input) degrade to a warning when
+      // unbound: they are a permission envelope resolved lazily at call time
+      // by the CapabilityResolver, not a wiring requirement. Input-referenced
+      // capabilities stay hard failures.
+      if (soft) {
+        this.warn('unbound-allowed-capability', `capability "${cap}" is allowed but no installed tool provider declares it; the runtime CapabilityResolver reports capability-unbound if a task actually invokes it`)
         return undefined
       }
       this.fail('binding', 'unbound-capability', `capability "${cap}" is not declared by any installed tool provider${this.scenario !== undefined ? ' and no scenario fallback applies' : ''}`)
@@ -876,6 +895,10 @@ class Compiler {
     }
     const safe = candidates.filter(provider => !privilegedIds.has(provider.id))
     if (safe.length === 0) {
+      if (soft) {
+        this.warn('unbound-allowed-capability', `capability "${cap}" is allowed but offered only by privileged transports [${candidates.map(provider => provider.id).join(', ')}]; runtime resolution goes through the CapabilityResolver/approval layer`)
+        return undefined
+      }
       this.fail('binding', 'privileged-transport-requires-explicit-binding',
         `capability "${cap}" is offered only by privileged transports (readOnly:false or auth.credentialRef) on providers [${candidates.map(provider => provider.id).join(', ')}]; an explicit providerBinding from the CapabilityResolver/approval layer is required`)
       return undefined
