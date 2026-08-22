@@ -183,7 +183,7 @@ test('builtinLegacyPack loads the static pack (not the projection) when the dir 
   // Pack-first signature: the loader reads `experts/*.json` in sorted file
   // order, so the generic experts come back ALPHABETICAL — the direct
   // projection would preserve BUILTIN_EXPERT_BY_ID insertion order instead.
-  const genericIds = cached.experts.filter(expert => !expert.id.startsWith('bk-')).map(expert => expert.id)
+  const genericIds = cached.experts.filter(expert => !expert.id.startsWith('bk-') && !expert.id.startsWith('bank-')).map(expert => expert.id)
   assert.deepEqual(genericIds, [...BUILTIN_EXPERT_BY_ID.keys()].sort(), 'generic experts are the loaded pack entities (alphabetical)')
   assert.notDeepEqual(genericIds, [...BUILTIN_EXPERT_BY_ID.keys()], 'must NOT be the projection insertion order')
   // zhijian bk-* experts are appended from the V1 registry (their own pack).
@@ -206,7 +206,7 @@ test('the builtin pack resolves from a published dist layout (lib/ + domain-pack
     const dist = await import(pathToFileURL(join(root, 'lib', 'v2', 'compat.js')).href)
     const cached = dist.builtinLegacyPack()
     assert.equal(cached.experts.length, BUILTIN_EXPERT_BY_ID.size + ZHIJIAN_EXPERT_BY_ID.size)
-    const genericIds = cached.experts.filter(expert => !expert.id.startsWith('bk-')).map(expert => expert.id)
+    const genericIds = cached.experts.filter(expert => !expert.id.startsWith('bk-') && !expert.id.startsWith('bank-')).map(expert => expert.id)
     assert.deepEqual(genericIds, [...BUILTIN_EXPERT_BY_ID.keys()].sort(), 'dist layout loads the shipped pack, not a projection')
     // The dist instance compiles a builtin scenario successfully.
     const compiled = dist.compileV1ScenarioExecutionPlan(ALL_BUILTIN_EXPERTS, BUILTIN_SCENARIO_BY_ID.get('code-review'))

@@ -401,8 +401,9 @@ export async function emitPack(outDir, options = {}) {
   for (const entity of pack.skillPackages) await writeJson(`skill-packages/${entity.id}.json`, entity)
 
   // ── routing overlay (pack-adjacent; not a DomainPackV2 section) ────────────
+  // 包切片：运行时共享路由表含 bank 话题，但 zhijian 包只投影房地产切片。
   await writeJson('routing/routing.json', {
-    topics: ROUTE_TOPICS,
+    topics: ROUTE_TOPICS.filter(topic => topic.primaryField !== '零售金融' && topic.primaryField !== '银行经营'),
     stancePairs: STANCE_TABLE,
     specialRouting: SPECIAL_ROUTING,
     constraints: ROUTING_CONSTRAINTS,
@@ -422,7 +423,8 @@ export async function emitPack(outDir, options = {}) {
 
   // ── generated views (derived, always regenerable) ─────────────────────────
   const metas = parsed !== null ? parsed.experts : ZHIJIAN_EXPERTS
-  const v1Experts = [...ZHIJIAN_EXPERT_BY_ID.values()]
+  // 包切片：V1 注册表视图只含 bk-* 专家（BANK 专家归 bank-finance 包）。
+  const v1Experts = [...ZHIJIAN_EXPERT_BY_ID.values()].filter(expert => expert.id.startsWith('bk-'))
   const v1Scenarios = BUILTIN_SCENARIOS.filter(scenario => scenario.experts.some(id => id.startsWith('bk-')))
   await writeJson('generated/v1/experts.json', v1Experts)
   generatedFiles.push('generated/v1/experts.json')

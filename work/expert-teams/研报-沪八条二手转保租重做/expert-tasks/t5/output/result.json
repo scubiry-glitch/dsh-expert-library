@@ -1,0 +1,7 @@
+{
+  "taskId": "t5",
+  "status": "completed",
+  "attempt": 1,
+  "output": "t5 渲染与分型验收完成，GATE 双 PASS。交付目录 `98wiki/projects/沪八条二手转保租单元经济_重做/`：\n\n【Part B 主文】主文_沪八条二手转保租单元经济_重做.{md,html,pdf}：14 页（10-14 范围）、正文中文字符 11987（≥10000）、封面+4 KPI、14 表格、4 张 SVG 机制图（机制链/三组合判定/敏感性热力/决策树）、量化模型章节、结论/风险/附录齐全；DOM 验收 PASS 12/12（nestedP=0、overflow=0、无 JS 错误、无占位句）；页脚「98wiki ｜ 智见 / 行业研究报告」已核验。HTML sha256 6e14b220…，PDF sha256 fceb6e27…；截图 主文_render_check_p01/07/14.png。\n\n【Part C 逻辑附件】附件_partC_沪八条二手转保租单元经济_重做.{md,html,pdf}：8 页，logic_template_id=logic-annex-v2，15 速览卡 S1-S15 + 15 逻辑卡 D1-D15 + 12 张 SVG 逻辑图 L1-L12 + 15 白话总结 P1-P15 + Key Takeaways 8 条 + 替代解释 3 组（托市信号/化债腾挪/重估套利）+ 独立补数协议 10 项；DOM 验收 PASS 14/14（无旧模板类名、无第二套 summary grid、nestedP=0、overflow=0）。HTML sha256 b995bb3b…，PDF sha256 48add640…；截图 附件C_render_check_p01/04/08.png。\n\n【验收文件】主文_render_check.json / 附件C_render_check.json（哈希+页数+首中末页截图，渲染同步生成）；主文_…_accept_B.json（PASS 12/12）、附件_…_accept_C.json（PASS 14/14）；GATE=20260822_GATE_重做.md（双 PASS、文件选择硬门、页脚署名、专家来源与口径纪律）；INDEX.md 已落盘追加。\n\n工程说明：复用旧版渲染管线（build_main_redo.py 注入 HTML 封面+KPI+4 SVG 替换 ASCII 图；add_logic_diagrams_redo.py 生成 12 逻辑图；render_report.py 压缩版 CSS 使主文 16→14 页；render_check.py/accept_check.py 分型验收）。t4 源稿 workspace 根目录 研报_沪八条二手转保租单元经济_重做.md。",
+  "updatedAt": 1787414216915
+}

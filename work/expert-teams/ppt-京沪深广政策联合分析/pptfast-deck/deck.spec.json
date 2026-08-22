@@ -1,0 +1,111 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "balanced",
+    "audience": "executive"
+  },
+  "theme": "enterprise",
+  "filename": "京沪深广政策联合分析_20260823",
+  "seed": 20260823,
+  "meta": {
+    "organization": "专家库 · 智见点评",
+    "authors": [
+      {
+        "name": "李宇嘉",
+        "role": "存量循环派"
+      },
+      {
+        "name": "刘琳",
+        "role": "政策解读派"
+      },
+      {
+        "name": "陈淮",
+        "role": "均衡发展派"
+      },
+      {
+        "name": "赵晖",
+        "role": "好房子派"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "p1",
+      "type": "cover",
+      "heading": "京沪深广房地产政策联合分析",
+      "beat": "anchor"
+    },
+    {
+      "id": "p2",
+      "type": "content",
+      "heading": "核心结论：存量循环修复，非强刺激",
+      "beat": "anchor"
+    },
+    {
+      "id": "p3",
+      "type": "content",
+      "heading": "市场坐标：量先行、价筑底",
+      "beat": "dense"
+    },
+    {
+      "id": "p4",
+      "type": "content",
+      "heading": "政策演进：从全国统一给药到城市自主调理",
+      "beat": "breathing"
+    },
+    {
+      "id": "p5",
+      "type": "content",
+      "heading": "京沪8月：北京管“换得了”，上海管“换得起、退得出”",
+      "beat": "anchor"
+    },
+    {
+      "id": "p6",
+      "type": "content",
+      "heading": "范式切换：从被动止血到主动疏通",
+      "beat": "anchor"
+    },
+    {
+      "id": "p7",
+      "type": "content",
+      "heading": "工具箱对照：四城全出与“深圳留白”",
+      "beat": "dense"
+    },
+    {
+      "id": "p8",
+      "type": "content",
+      "heading": "广深下一轮：概率分层清单",
+      "beat": "anchor"
+    },
+    {
+      "id": "p9",
+      "type": "content",
+      "heading": "盯什么：三个窗口、四个信号",
+      "beat": "dense"
+    },
+    {
+      "id": "p10",
+      "type": "content",
+      "heading": "五项不确定性：成立则基调下修",
+      "beat": "dense"
+    },
+    {
+      "id": "p11",
+      "type": "content",
+      "heading": "结语：闭环是标尺，窗口在眼前",
+      "beat": "anchor"
+    },
+    {
+      "id": "p12",
+      "type": "content",
+      "heading": "数据口径与来源",
+      "beat": "breathing"
+    },
+    {
+      "id": "p13",
+      "type": "ending",
+      "heading": "谢谢 · 欢迎提问"
+    }
+  ]
+}

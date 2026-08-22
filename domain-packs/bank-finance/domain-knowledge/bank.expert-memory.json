@@ -1,0 +1,66 @@
+{
+  "id": "bank.expert-memory",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "banking.retail",
+  "boundary": "银行金融领域专家 Profile 基线（2026-08-23，BANK-09 首发）：身份（匿名）、领域（零售金融/银行经营）、立场（操盘手）、风格、心智模型（样板复制/考核绑定/政治账经济账双算/自主可控）、金句、禁区、分析步骤、评估模型（emm 加权+一票否决）与输出 rubric；不含实时业务数据。",
+  "ontology": {
+    "entities": [
+      {
+        "id": "expert",
+        "description": "银行领域专家（bank-09~）"
+      },
+      {
+        "id": "field",
+        "description": "银行主领域（零售金融/银行经营）"
+      },
+      {
+        "id": "mental-model",
+        "description": "心智模型（样板复制法/考核绑定法/双算/自主可控）"
+      }
+    ],
+    "relations": [
+      {
+        "id": "expert-belongs-to-field",
+        "from": "expert",
+        "to": "field",
+        "description": "专家属于主领域"
+      },
+      {
+        "id": "expert-uses-model",
+        "from": "expert",
+        "to": "mental-model",
+        "description": "专家使用心智模型"
+      }
+    ]
+  },
+  "collections": [
+    {
+      "id": "experts",
+      "root": "experts",
+      "format": "json",
+      "description": "每专家一个 Profile 记录"
+    }
+  ],
+  "snapshot": {
+    "id": "bank-v1-2026-08-23",
+    "takenAt": "2026-08-23T00:00:00Z",
+    "digest": "55f66dc6b67a66081d2c34ba20bdc6b3f05bad938b803f9063ca775cad206753",
+    "recordCount": 1
+  },
+  "retrievalProfiles": [
+    {
+      "id": "by-id",
+      "method": "keyword"
+    },
+    {
+      "id": "by-model",
+      "method": "keyword"
+    }
+  ],
+  "policies": {
+    "citation": "required",
+    "freshness": "monthly",
+    "access": "readonly"
+  }
+}

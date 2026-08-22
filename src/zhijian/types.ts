@@ -9,32 +9,40 @@
 /** Output framework ids (SKILL.md 框架 A/B/C/D/E). */
 export type ZhijianFrameworkId = 'A' | 'B' | 'C' | 'D' | 'E'
 
-/** Five primary fields of the expert roster. */
+/** Expert id namespace: BK = real-estate/macro/policy roster, BANK = banking/finance. */
+export type ExpertNamespace = 'bk' | 'bank'
+
+/** Five primary fields of the expert roster (BK 房地产/宏观/政策). */
 export type ZhijianField =
   | '宏观经济'
   | '政策制度'
   | '行业研究'
   | '城市发展'
   | '居住服务'
+  | '零售金融'
+  | '银行经营'
 
 /**
  * One expert meta, extracted from `<姓名>_专家Profile_BK-NNN.json` plus the
- * roster table (专家总表.md) by scripts/build-zhijian-data.mjs.
+ * roster table (专家总表.md) by scripts/build-zhijian-data.mjs (BK 命名空间)
+ * or scripts/build-bank-data.mjs (BANK 命名空间). Both namespaces share the
+ * same shape so registry / routing / persona / pack projection treat them
+ * uniformly (整合设计：单一生成数据层 + 单一注册表 + 单一路由表).
  */
 export interface ZhijianExpertMeta {
-  /** Stable expert id (`bk-004`), usable with expert_teams_add_member(expert=…). */
+  /** Stable expert id (`bk-004` / `bank-09`), usable with expert_teams_add_member(expert=…). */
   readonly id: string
-  /** Original BK id (`BK-004`). */
+  /** Original roster id (`BK-004` / `BANK-09`). */
   readonly bk: string
   /** Real name (internal routing only; output is anonymized). */
   readonly name: string
   /** Persona display name (e.g. `宏观周期派 X 首席`). */
   readonly personaName: string
-  /** Primary field. */
-  readonly field: ZhijianField
+  /** Primary field (BK 五大领域 + bank 领域). */
+  readonly field: ZhijianField | string
   /** Secondary field, when any. */
   readonly secondaryField?: string
-  /** Stance label (e.g. `宏观周期派`). */
+  /** Stance label (e.g. `宏观周期派` / `操盘手`). */
   readonly stance: string
   /** Capability tags (数据/研判/解读/理论/实操). */
   readonly tags: readonly string[]
@@ -54,6 +62,16 @@ export interface ZhijianExpertMeta {
   readonly analysisSteps: readonly string[]
   /** Deceased experts may only be cited for historical views. */
   readonly deceased?: boolean
+  /** Id namespace (absent = bk, for legacy metas). */
+  readonly namespace?: ExpertNamespace
+  /** Expert data version (P1.5; 1.0.0 起，内容变化 +0.1). */
+  readonly version?: string
+  /** Provenance of the underlying source (P1.5). */
+  readonly source?: {
+    readonly origin: string
+    readonly sha256?: string
+    readonly material?: { readonly md?: boolean; readonly raw?: boolean; readonly knowledge?: boolean }
+  }
   /** 1.1.0: rich persona detail lifted verbatim from the Profile JSON (absent stays absent). */
   readonly personaDetail?: ZhijianPersonaDetail
   /** 1.1.0: rich method detail (reviewLens/dataPreference/evidenceStandard/agenticProtocol). */

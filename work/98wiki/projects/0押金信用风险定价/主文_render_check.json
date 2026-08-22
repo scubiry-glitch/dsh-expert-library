@@ -1,0 +1,21 @@
+{
+  "part": "PartB主文",
+  "pdf": "主文_0押金信用风险定价.pdf",
+  "pdf_sha256": "cfa9b145633323a23528c062f94e7b8ada9ac9835ca515e0344e5a031ddc4296",
+  "html": "主文_0押金信用风险定价.html",
+  "html_sha256": "fa6d0ea159e2f908d71125fb750b49a4d349aab9f91f328cf72860390c6bcd02",
+  "pages": 13,
+  "checked_pages": [
+    1,
+    6,
+    13
+  ],
+  "screenshots": {
+    "1": "主文_render_check_p01.png",
+    "6": "主文_render_check_p06.png",
+    "13": "主文_render_check_p13.png"
+  },
+  "rendered_at": "2026-08-22 23:15:39",
+  "render_method": "weasyprint 69 (md->html5->pdf, A4)",
+  "note": "Part B/C 分别用各自验收器; 本记录随渲染同步生成"
+}

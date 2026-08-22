@@ -1,0 +1,35 @@
+{
+  "topics": [
+    {
+      "topic": "零售金融（零售信贷、分行经营、考核推动、外部平台合作、样板复制）",
+      "framework": "B",
+      "primaryField": "零售金融",
+      "preferredTags": [
+        "实操",
+        "解读"
+      ]
+    },
+    {
+      "topic": "银行经营（信用卡、息差、客群、负债、零售转型）",
+      "framework": "B",
+      "primaryField": "银行经营",
+      "preferredTags": [
+        "实操",
+        "数据"
+      ]
+    }
+  ],
+  "stancePairs": [
+    {
+      "topic": "零售项目全省推广",
+      "optimistic": [
+        "bank-09"
+      ],
+      "risk": [],
+      "unique": [
+        "bank-09"
+      ]
+    }
+  ],
+  "qualityPolicyId": "bank.quality"
+}

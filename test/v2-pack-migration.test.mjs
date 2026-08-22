@@ -243,7 +243,8 @@ test('fidelity: pack experts mirror the runtime metas verbatim', async () => {
 
 test('fidelity: generated/v1/experts.json matches the live V1 registry (frozen golden)', async () => {
   const golden = JSON.parse(await readFile(join(PACK_DIR, 'generated', 'v1', 'experts.json'), 'utf8'))
-  assert.equal(canonicalJson(golden), canonicalJson([...ZHIJIAN_EXPERT_BY_ID.values()]))
+  // 整合设计：注册表合并 bk+bank，zhijian 包金样只含 bk-* 切片
+  assert.equal(canonicalJson(golden), canonicalJson([...ZHIJIAN_EXPERT_BY_ID.values()].filter(e => e.id.startsWith('bk-'))))
   assert.equal(golden.length, 33)
 })
 
@@ -256,7 +257,8 @@ test('fidelity: generated/v1/scenarios.json matches the bk-* builtin scenarios',
 
 test('fidelity: routing overlay matches the in-repo routing tables', async () => {
   const overlay = JSON.parse(await readFile(join(PACK_DIR, 'routing', 'routing.json'), 'utf8'))
-  assert.equal(canonicalJson(overlay.topics), canonicalJson(ROUTE_TOPICS))
+  // 整合设计：运行时路由表含 bank 话题，zhijian 包路由覆盖只投影 bk 切片
+  assert.equal(canonicalJson(overlay.topics), canonicalJson(ROUTE_TOPICS.filter(t => t.primaryField !== '零售金融' && t.primaryField !== '银行经营')))
   assert.equal(canonicalJson(overlay.stancePairs), canonicalJson(STANCE_TABLE))
   assert.equal(canonicalJson(overlay.specialRouting), canonicalJson(SPECIAL_ROUTING))
   assert.equal(canonicalJson(overlay.constraints), canonicalJson(ROUTING_CONSTRAINTS))

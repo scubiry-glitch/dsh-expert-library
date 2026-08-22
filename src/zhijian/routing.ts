@@ -81,6 +81,18 @@ export const ROUTE_TOPICS: readonly ZhijianRouteTopic[] = [
     primaryField: '统一顾问口吻，不拆分类',
     preferredTags: [],
   },
+  {
+    topic: '零售金融（零售信贷、分行经营、考核推动、外部平台合作、样板复制）',
+    framework: 'B',
+    primaryField: '零售金融',
+    preferredTags: ['实操', '解读'],
+  },
+  {
+    topic: '银行经营（信用卡、息差、客群、负债、零售转型）',
+    framework: 'B',
+    primaryField: '银行经营',
+    preferredTags: ['实操', '数据'],
+  },
 ]
 
 /** 路由规则.md §二: 场景 → 主责领域 → 候选专家（BK 号 → 专家 id）. */
@@ -146,6 +158,22 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     primaryField: '政策制度',
     candidates: ['bk-020', 'bk-034', 'bk-022', 'bk-026', 'bk-016', 'bk-032', 'bk-021'],
     constraints: '顾云昌 bk-022 已故：仅可引用历史观点。陈杰 bk-034：公积金政策性金融、REITs、收储资金视角。',
+  },
+  {
+    id: 'bank-retail',
+    name: '零售金融/分行经营',
+    framework: 'B',
+    primaryField: '零售金融',
+    candidates: ['bank-09'],
+    constraints: '王一帆 bank-09：城商行零售信贷一线操盘手，主答分行执行/样板复制/考核推动/外部合作；政治账+经济账双算、自主可控为底线。涉信贷风险的宏观/政策联动到 BK 宏观派（bk-007/bk-014/bk-029）。',
+  },
+  {
+    id: 'bank-credit-card',
+    name: '信用卡提质增效',
+    framework: 'B',
+    primaryField: '银行经营',
+    candidates: ['bank-09'],
+    constraints: '信用卡经营以 bank-09 操盘视角主答（考核/渠道/客户分层），收益模型与资负视角联动 BK 金融数据派（bk-014/bk-029）。样例素材：work/江苏银行信用卡提质增效_任务归档。',
   },
 ]
 
@@ -246,6 +274,7 @@ export function scenarioForTopic(
 export function isZhijianField(value: string): value is ZhijianField {
   return value === '宏观经济' || value === '政策制度' || value === '行业研究'
     || value === '城市发展' || value === '居住服务'
+    || value === '零售金融' || value === '银行经营'
 }
 
 export type { ZhijianFrameworkId }

@@ -50,7 +50,7 @@ test('zhijian pack validates clean with 33 experts', () => {
 
 test('expert ids exactly match the V1 roster ids (bk-002..bk-034)', () => {
   const ids = build().experts.map(expert => expert.id)
-  assert.deepEqual(ids, [...ZHIJIAN_EXPERT_IDS])
+  assert.deepEqual(ids, [...ZHIJIAN_EXPERT_IDS].filter(id => id.startsWith('bk-')))
   assert.equal(ids[0], 'bk-002')
   assert.equal(ids[ids.length - 1], 'bk-034')
   assert.ok(ids.includes('bk-034'), 'BK-034 (陈杰) is merged in 1.1.0')
@@ -63,7 +63,9 @@ test('every derived expert maps 1:1 to a V1 Expert in the registry (runtime unto
     assert.ok(v1 !== undefined, `missing V1 expert ${expert.id}`)
     assert.equal(v1.name, expert.display.internalName)
   }
-  assert.equal(ZHIJIAN_EXPERT_BY_ID.size, 33)
+  // 整合设计：注册表含 bk+bank 双命名空间；zhijian 包投影 bk 切片（33）
+  assert.equal([...ZHIJIAN_EXPERT_BY_ID.keys()].filter(id => id.startsWith('bk-')).length, 33)
+  assert.equal(ZHIJIAN_EXPERT_BY_ID.size, 34)
 })
 
 // ── 2. No fabrication / no legacy markers ────────────────────────────────────

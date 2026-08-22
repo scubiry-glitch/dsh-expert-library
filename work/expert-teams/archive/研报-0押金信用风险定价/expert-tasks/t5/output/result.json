@@ -1,0 +1,7 @@
+{
+  "taskId": "t5",
+  "status": "completed",
+  "attempt": 1,
+  "output": "t5 渲染与分型验收完成，双 PASS。产物目录：expert-teams/研报-0押金信用风险定价/expert-tasks/t5/artifacts/\n\n【渲染】weasyprint 69（md→HTML5→PDF，A4，页脚「98wiki ｜ 智见 / 行业研究报告 · 第 N 页 / 共 M 页」）：\n- 主文_0押金信用风险定价.pdf：13 页（12 页级骨架达标），HTML sha256 fa6d0ea1…/PDF sha256 cfa9b145…；正文 10474 中文字（≥10000 门），封面 4 KPI、5 表格、3 机制图+1 决策树 SVG（矢量绘图 711 个，文本无越界）\n- 附件_partC_0押金信用风险定价.pdf：11 页，HTML sha256 dba054da…/PDF sha256 bca76860…；15 速览卡+15 逻辑卡+15 逻辑图 SVG+15 白话总结+Takeaways+替代解释 4 组+验证设计 9 指标+补数协议 SP-2026-01\n\n【分型验收（DOM 优先，Chromium 加载后检查）】Part B：12/12 PASS（封面+KPI=4、正文≥10000、表格≥4、SVG≥4、量化模型/决策树章节、nestedP=0、无占位句、无 JS 错误、无横向溢出）；Part C：14/14 PASS（logic-annex-v2 标识、S=15/D=15/P=15、SVG=15≥12、Key Takeaways、替代解释、补数协议、无旧模板类名、无第二套 grid、无溢出）。页脚逐页校验：主文 13/13、附件 11/11 页均含署名。\n\n【render_check 与交付文件】主文_render_check.json（p01/06/13 截图）+ 附件C_render_check.json（p01/05/11 截图），哈希+页数+渲染时间齐全；20260822_GATE.md（Part B PASS + Part C PASS = 完整研究包 PASS，含文件选择硬门）；INDEX.md 已追加。验收明细：主文_0押金信用风险定价_accept_B.json、附件_partC_0押金信用风险定价_accept_C.json。\n\n观测点：t5 首次进入 research-report DAG 验证通过（t4 完成→t5 自动分配→执行→双 PASS→追加 INDEX）。产物待队长按需归档至 98wiki/projects/。",
+  "updatedAt": 1787411797312
+}

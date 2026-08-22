@@ -1,0 +1,211 @@
+{
+  "name": "研报-沪八条二手转保租重做",
+  "id": "研报-沪八条二手转保租重做",
+  "description": "2026-08-22 98wiki 选题 1（重做）：沪八条把收购二手住房绑上保租房——中心城区二手房→保租房的资产转换单元经济是否成立。用完整 research-report 流程（t1资料→t2/t3研判→t4融合→t5渲染验收）产出研报，GATE 双 PASS。",
+  "captainSessionId": "session-870ac878-e233-4937-ae0e-6837cf9bcd71",
+  "createdAt": 1787413037238,
+  "scenarioId": "research-report",
+  "members": [
+    {
+      "id": "e60a684a-0109-41f5-8c34-6003d0a5ce29",
+      "name": "Researcher",
+      "role": "research analyst",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1787413037243,
+      "status": "idle"
+    },
+    {
+      "id": "acbef77d-854d-4596-81c9-ab90686115e0",
+      "name": "邢自强",
+      "role": "宏观经济·宏观周期派",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1787413037282,
+      "status": "idle"
+    },
+    {
+      "id": "7b8f6fb9-2ac4-41a4-8cac-edef6eff0e08",
+      "name": "张明",
+      "role": "宏观经济·债务金融派",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1787413037319,
+      "status": "idle"
+    },
+    {
+      "id": "8d356453-89b9-473d-8820-9754ca2e3fef",
+      "name": "Docs Coordinator",
+      "role": "documentation writer",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1787413037353,
+      "status": "idle"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "subject": "资料与数据梳理",
+      "description": "梳理主题相关资料与数据：关键事实、数据口径、时间线、争议点。",
+      "status": "completed",
+      "assignee": "Researcher",
+      "dependencies": [],
+      "attempt": 1,
+      "createdAt": 1787413037395,
+      "updatedAt": 1787413435508,
+      "project": {
+        "path": "expert-tasks/t1",
+        "inputPath": "expert-tasks/t1/input/task.json",
+        "outputPath": "expert-tasks/t1/output/result.json",
+        "artifactsPath": "expert-tasks/t1/artifacts",
+        "version": 1
+      },
+      "planTask": {
+        "logicalId": "t1",
+        "fanOutIndex": 0
+      },
+      "reassigning": false,
+      "output": "资料与数据梳理完成，交付《资料与数据梳理_沪八条二手转保租.md》（workspace 根目录，含 10 节 + 40+ 来源 URL）。核心增量：①政策事实链：沪八条（2026-08-20 六部门《关于优化本市房地产政策措施的通知》，8/21 施行）把 2026-02 以来试点制度化——静安/浦东/徐汇三区 551 套（2026-07-30）已扩围至全部中心城区；②首批实测锚点：静安首例 40㎡ 老房换 220 万房票（≈5.5 万/㎡收购对价）；③市场数据：2026-08-07 全市日度成交均价 3.07 万/㎡、年内累计 17.46 万套、挂牌 31.7 万套；2026-03 口径 5.13 万/㎡、核心区 10 万+/㎡；7 月成交创近 5 年同期新高；一线租金连涨 5 个月；④资金参数：再贷款 1.75%/3000 亿，5Y LPR 3.5%（15 个月不变），城投宽庭 REIT 年营收 1.84 亿；⑤制度参数：保租房租金≤市场九折（2022 规则确认）。条件式测算（标注【推断】）：8 折收购+1.75%资金+90%出租率勉强成立；9 折+3%资金+85%出租率不成立（缺口 1.4-1.6pp）——旧版\"折扣是枢纽\"结论被真实锚点支持。关键缺口（裁决性、未披露）：收购折扣率、CAPEX、纳管租金/出租率、资金结构；沪八条第 7-8 条原文；上海十五五保租房量化目标；机构口径平均租金绝对值。"
+    },
+    {
+      "id": "t2",
+      "subject": "宏观研判",
+      "description": "从宏观经济视角研判：周期定位、政策路径、量化测算（数据带口径）。",
+      "status": "completed",
+      "assignee": "邢自强",
+      "dependencies": [
+        "t1"
+      ],
+      "attempt": 1,
+      "createdAt": 1787413037404,
+      "updatedAt": 1787413524137,
+      "project": {
+        "path": "expert-tasks/t2",
+        "inputPath": "expert-tasks/t2/input/task.json",
+        "outputPath": "expert-tasks/t2/output/result.json",
+        "artifactsPath": "expert-tasks/t2/artifacts",
+        "version": 1
+      },
+      "planTask": {
+        "logicalId": "t2",
+        "fanOutIndex": 0
+      },
+      "reassigning": false,
+      "output": "【宏观研判 · 宏观周期派 X】（数据均带口径，测算项标注【推断】）\n\n一、周期定位：上海主跌段已结束，进入量先价稳的L型磨底期\n1. 调整周期：全国自2021年高点下行已约5年（2021-2026），对照国际经验（美国2006-2012、韩国等约6年主跌），主跌段接近尾声——但\"接近尾声\"仅指加速下跌结束，绝非满血复活。上海更快：二手房价格2026-03终结连续33个月下跌趋势（口径：2026-03月全市均价5.13万/㎡，环比-0.47%），是全国率先止跌城市之一。\n2. 量在价先已确认：2026-03成交量创近5年新高；7月淡季成交约2.3万套、创近5年同期新高；年内累计17.46万套（2026-08-07日度口径，日成交631套），年化约26万套、高于上海历史正常年份20-25万套区间——需求端热度是价格企稳的必要条件。\n3. K型分化：核心区黄浦/徐汇稳在10万+/㎡，全市日度成交均价仅3.07万/㎡（2026-08-07口径，含远郊、套均86㎡、总价约265万）——两个口径相差近40%，说明本轮止跌由核心区与次新领涨、远郊老破小补跌拖尾，判断全市均价筑底须看核心区先行指标。\n4. 库存-租金双指标：挂牌31.7万套（8/7口径）÷月成交约2.3万套≈13.8个月去化【推断】，仍偏高但趋势向下；租金端一线城市连涨5个月（至2026-07）、50城7月环比+0.13%——租金是基本面，连续转正是\"止跌回稳\"含金量的关键证据。\n\n二、政策路径：沪八条是\"收库存、保主体、贴按揭\"三招的上海落地，且打通了\"卖旧买新\"闭环\n1. 定性：沪八条（2026-08-20六部门《关于优化本市房地产政策措施的通知》，8/21施行）不是从零开始，而是把2026-02以来试点（静安/浦东/徐汇551套，2026-07-30口径）制度化、扩围至全部中心城区（含浦东外环内），并与\"十五五\"保租房目标绑定。\n2. 创新点：收购标的从\"存量商品房\"延伸到\"存量二手房\"，且以房票置换（静安首例40㎡老房→220万房票，收购对价约5.5万/㎡）绑定卖旧买新——一个动作同时去二手库存、稳新房需求、增中心城区保租房供给，是四两拨千斤的设计。\n3. 约束识别：①道德风险——收购折扣纪律是命门，静安首例按中心城区老破小6.2-6.9万/㎡市场带反推约8-9折【推断】，落在可行域内但须防各区竞价式抬价；②不可能三角——规模、速度、折扣/成本三者不可兼得；③财政空间——重资产模式依赖低成本资金，中央再贷款3000亿（1.75%、21家银行、可展期4次）全国额度下上海份额有限，综合资金成本2.0%-3.0%【推断】。\n4. 收益端上限锁死：保租房租金≤市场九折（2022年制度规则），纳管后毛收益率上限被制度锁定，单元经济只能靠收购折扣与资金成本两个变量撬动。\n\n三、量化测算（条件式，全部标注【推断】）\n1. 收购资金量：挂牌31.7万套、套均约264万（86㎡×3.07万/㎡）；情景A收购1.6万套（约挂牌5%、约2个月去化增量）按8.5折≈360亿元；情景B收购10万套（约年成交40%）≈2240亿元——\"制度化\"与\"放量\"之间隔着千亿级资金，决定性变量是再贷款额度分配与区财政/国企自筹比例（未披露）。\n2. 单元经济剪刀差（引用t1锚点）：组合①8折收购+1.75%资金+90%出租率→r≈2.2%-2.6%>c≈1.75%，勉强成立；组合②9折+3.0%+85%→r≈1.4%-1.6%，缺口1.4-1.6pp不成立——缺口即财政贴息需求：若500亿收购规模、贴息1.5pp，年成本约7.5亿元，相对上海年一般公共预算收入（8000亿级）不足0.1%。\"这个回报率弥补不了财务成本，但要算大账\"——换来一手去库存、一手稳新房销量与土地财政链条。\n3. 退出通道：保租房REITs闭环（城投宽庭REIT 2025营收1.84亿、2026H1可供分配6337万，年化约1.27亿【推断】）把1.75%低成本资金沉淀的重资产证券化，实现\"投融建管退\"，是单元经济从\"贴息输血\"走向\"自我循环\"的关键。\n\n四、时间表与不确定性\n1. 上海路径：量先价稳已确认→核心区价格2026Q4-2027H1环比转正（核心区已稳）→全市口径均价2027年完成筑底；全国性拐点2027年，条件是收储放量+按揭贴息到位，若政策力度不足则L型磨底延长。\n2. 裁决性不确定项（未披露）：各区收购折扣率实测、改造CAPEX（旧版口径单套8-15万/单方1000-3000元）、551套纳管后实际租金与出租率、资金结构比例——四项任一恶化（折扣<8折、出租率<85%、资金>3%）都会推翻组合①的\"勉强成立\"。\n3. 观察指标：70城上海二手环比（6/7月补数）、机构口径平均租金绝对水平、各区收购细则公告、再贷款上海投放量。"
+    },
+    {
+      "id": "t3",
+      "subject": "风险与债务视角",
+      "description": "从债务金融视角研判：风险点、债务-通缩风险、关键监控指标。",
+      "status": "completed",
+      "assignee": "张明",
+      "dependencies": [
+        "t1"
+      ],
+      "attempt": 1,
+      "createdAt": 1787413037413,
+      "updatedAt": 1787413477296,
+      "project": {
+        "path": "expert-tasks/t3",
+        "inputPath": "expert-tasks/t3/input/task.json",
+        "outputPath": "expert-tasks/t3/output/result.json",
+        "artifactsPath": "expert-tasks/t3/artifacts",
+        "version": 1
+      },
+      "planTask": {
+        "logicalId": "t3",
+        "fanOutIndex": 0
+      },
+      "reassigning": false,
+      "output": "【t3 风险与债务视角 · 债务金融派（宏观经济·Z）】\n\n① 关键性结论：沪八条把收购二手住房制度化绑定保租房，方向正确——收储中心城区、挤压过泡沫的资产，符合\"稳地产先稳一线核心区\"的次序；但单元经济仍悬在临界带：以静安首例为实测锚（40㎡→220万房票，收购对价≈5.5万/㎡，较市场公允价值约8–9折【推断】），纳管九折租金、90%出租率后租金收益率仅1.5%–2.0%（毛1.9%–2.5%折后【推断】），对1.75%再贷款勉强为正，对3.5%市场化资金倒挂约1.4–1.6个百分点。缺口必须由财政贴息承接，且须严守纪律：收储属\"化险\"，本金与贴息应来自财政与再贷款，不得混淆\"刺激\"资金，更不允许城投/国企加杠杆扩表。\n\n② 关键事实变化：其一，试点从3区551套扩至全部中心城区，但相对31.7万套挂牌存量与60万套（间）保租房底座仍是信号规模，需防\"预期先行、放量不及\"的预期落差；其二，首例以220万房票直购新房，实质是把二手流动性导入新房去化，\"卖旧—收储—买新\"形成闭环，对置换链条的提振是主要正向传导；其三，REITs退出通道已验证存在（城投宽庭2025营收1.84亿、2026H1可供分配6337万）但容量小，尚不足以承接大规模收储。\n\n③ 归因：债务-通缩循环未解除，收购折扣是把双刃剑。7.5–8折收购＋低成本资金（组合①/③），租金收益率2.2%–2.9%＞资金成本，单元经济成立，租金现金流可支撑\"发债—收储—REITs—再收储\"循环；9折以上收购等于用财政补贴业主，既击穿收储回报率门槛（≥2.5%纪律），又形成\"官方高价锚\"，加剧价格预期紊乱。真风险不在方向，而在折扣纪律、资金结构与退出通道三个执行变量。\n\n④ 收尾与监控指标：对标1998–99，本轮仍处\"试点→制度化\"前半程，力度需持续加码。建议监控：①各区收购折扣率（裁决性指标，现未披露）；②551套纳管后实际租金、出租率与收缴率；③资金结构（再贷款/区财政/国企自筹占比）；④保租房REITs发行利率与二级折价率；⑤70城上海二手房价环比与挂牌量——判断收储是否锚定价格预期。若折扣守住8折以内、REITs扩募承接退出，中心城区单元经济成立，收储可成循环引擎；反之规模跑在回报率前面，将重演国企沉淀债务、贴息刚性化的地方债务风险。稳楼市钥匙在一线率先企稳，上海方向对，生命线是回报率门槛与财政纪律。"
+    },
+    {
+      "id": "t4",
+      "subject": "融合成文",
+      "description": "整合全部研判输出完整研报：标题、摘要、正文（背景/分析/展望）、结论、风险提示、附录（数据与口径）。",
+      "status": "completed",
+      "assignee": "Docs Coordinator",
+      "dependencies": [
+        "t2",
+        "t3"
+      ],
+      "attempt": 1,
+      "createdAt": 1787413037423,
+      "updatedAt": 1787413798789,
+      "project": {
+        "path": "expert-tasks/t4",
+        "inputPath": "expert-tasks/t4/input/task.json",
+        "outputPath": "expert-tasks/t4/output/result.json",
+        "artifactsPath": "expert-tasks/t4/artifacts",
+        "version": 1
+      },
+      "planTask": {
+        "logicalId": "t4",
+        "fanOutIndex": 0
+      },
+      "reassigning": false,
+      "output": "研报融合成文完成。交付《研报_沪八条二手转保租单元经济_重做.md》（workspace 根目录 + t4/artifacts 副本，51.7KB）。\n\n结构：标题/摘要/正文（一背景·二环境·三机制模型·四宏观研判·五风险债务·六展望）/七结论/八风险提示/附录（A 数据口径总表 19 行、B 外部增量清单 13 条、C 独立补数协议 9 项、D 来源清单）。\n\n质量指标（对齐 t5 验收门）：正文（一~八）中文字符 10,117 ≥10000 门；封面 4 KPI 表；12 个一级/三级章节；128 行表格；机制链图 + 决策树（2 个代码块图）；单元经济量化模型（锚点 A-D + 三组合判定 + 4×4 敏感性矩阵 + 资金情景/贴息测算）；41 处【推断】标注，全部测算条件式、数据带口径。\n\n核心结论整合：①单元经济条件式成立——组合①（8折+1.75%+90%出租率）r≈2.2%-2.6%>c≈1.75% 勉强成立；组合②（9折+3.0%+85%）缺口 1.4-1.6pp 不成立；②周期支持（33 个月下跌终结、7 月成交近 5 年同期新高、租金连涨 5 个月）；③三个执行变量（折扣纪律/资金结构/退出通道）裁决成败，财政纪律为生命线；④两个季度验证窗口，CAPEX+空置期合计 0.8-1.7pp【推断】是\"勉强成立\"最脆弱处，已列入风险提示与补数协议。供 t5 渲染与分型验收。"
+    },
+    {
+      "id": "t5",
+      "subject": "渲染与分型验收",
+      "description": "将研报 markdown 渲染为 HTML5→PDF（A4、页脚「98wiki ｜ 智见 / 行业研究报告」、封面 4 KPI），并按 wiki-gated-research 分型验收：Part B 主文（12 页级骨架 / 正文≥10000 中文字 / 表格 / 机制图 / 量化模型 / 决策树 / 无溢出）+ Part C 逻辑附件（logic-annex-v2：15 速览卡 + 15 逻辑卡 + ≥12 逻辑图 + 白话总结 + Key Takeaways + 替代解释 + 独立补数协议）；生成 render_check（哈希 + 首/中/末页截图）与 GATE 文件，双 PASS 后追加 INDEX。",
+      "status": "completed",
+      "assignee": "Docs Coordinator",
+      "dependencies": [
+        "t4"
+      ],
+      "attempt": 1,
+      "createdAt": 1787413037440,
+      "updatedAt": 1787414216915,
+      "project": {
+        "path": "expert-tasks/t5",
+        "inputPath": "expert-tasks/t5/input/task.json",
+        "outputPath": "expert-tasks/t5/output/result.json",
+        "artifactsPath": "expert-tasks/t5/artifacts",
+        "version": 1
+      },
+      "planTask": {
+        "logicalId": "t5",
+        "fanOutIndex": 0
+      },
+      "reassigning": false,
+      "output": "t5 渲染与分型验收完成，GATE 双 PASS。交付目录 `98wiki/projects/沪八条二手转保租单元经济_重做/`：\n\n【Part B 主文】主文_沪八条二手转保租单元经济_重做.{md,html,pdf}：14 页（10-14 范围）、正文中文字符 11987（≥10000）、封面+4 KPI、14 表格、4 张 SVG 机制图（机制链/三组合判定/敏感性热力/决策树）、量化模型章节、结论/风险/附录齐全；DOM 验收 PASS 12/12（nestedP=0、overflow=0、无 JS 错误、无占位句）；页脚「98wiki ｜ 智见 / 行业研究报告」已核验。HTML sha256 6e14b220…，PDF sha256 fceb6e27…；截图 主文_render_check_p01/07/14.png。\n\n【Part C 逻辑附件】附件_partC_沪八条二手转保租单元经济_重做.{md,html,pdf}：8 页，logic_template_id=logic-annex-v2，15 速览卡 S1-S15 + 15 逻辑卡 D1-D15 + 12 张 SVG 逻辑图 L1-L12 + 15 白话总结 P1-P15 + Key Takeaways 8 条 + 替代解释 3 组（托市信号/化债腾挪/重估套利）+ 独立补数协议 10 项；DOM 验收 PASS 14/14（无旧模板类名、无第二套 summary grid、nestedP=0、overflow=0）。HTML sha256 b995bb3b…，PDF sha256 48add640…；截图 附件C_render_check_p01/04/08.png。\n\n【验收文件】主文_render_check.json / 附件C_render_check.json（哈希+页数+首中末页截图，渲染同步生成）；主文_…_accept_B.json（PASS 12/12）、附件_…_accept_C.json（PASS 14/14）；GATE=20260822_GATE_重做.md（双 PASS、文件选择硬门、页脚署名、专家来源与口径纪律）；INDEX.md 已落盘追加。\n\n工程说明：复用旧版渲染管线（build_main_redo.py 注入 HTML 封面+KPI+4 SVG 替换 ASCII 图；add_logic_diagrams_redo.py 生成 12 逻辑图；render_report.py 压缩版 CSS 使主文 16→14 页；render_check.py/accept_check.py 分型验收）。t4 源稿 workspace 根目录 研报_沪八条二手转保租单元经济_重做.md。"
+    }
+  ],
+  "taskSeq": 5,
+  "planRef": {
+    "planId": "ep-dc5d793c8b848029",
+    "digest": "dc5d793c8b84802951577d2075b18b42ded5eba04871c3977d39be9660689c6d",
+    "templateId": "research-report.legacy-team",
+    "templateVersion": "0.0.0-legacy",
+    "scenarioId": "research-report"
+  },
+  "planProvenance": {
+    "params": {},
+    "compile": [
+      {
+        "step": "roster.assign",
+        "detail": "slot=role.bk-004 experts=[bk-004]"
+      },
+      {
+        "step": "roster.assign",
+        "detail": "slot=role.bk-007 experts=[bk-007]"
+      },
+      {
+        "step": "roster.assign",
+        "detail": "slot=role.docs-coordinator experts=[docs-coordinator]"
+      },
+      {
+        "step": "roster.assign",
+        "detail": "slot=role.researcher experts=[researcher]"
+      }
+    ]
+  },
+  "completionNotifiedAt": 1787414216920
+}

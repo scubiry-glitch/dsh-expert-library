@@ -100,3 +100,11 @@
 - **现象**：t2 于 22:14:16 完成（inbox 已有通知、活动面板实时显示），但我在写 Part C 期间未消费该通知，之后 status 轮询又恰好在 t2 完成前采样，导致长时间误判"t2 仍在进行"。
 - **根因**：① 写文件期间未消费后台通知；② status 轮询是点采样，非事件流；③ 未同步检查 captain inbox 的成员完成消息。
 - **改进**：成员消息/调度器通知到达 → 立即刷新 status；把"通知到达→状态同步"作为硬性行为；必要时检查 captain inbox。
+
+---
+
+## 观测点 10：t5 渲染进 DAG 修复验证（选题 3）
+
+- research-report 场景应用返回 **Tasks (5)**：t1 资料梳理 → t2/t3 并行研判 → t4 融合成文 → **t5 渲染与分型验收**（docs-coordinator，deps:[t4]）。
+- team.json 确认：scenarioId=research-report，t5 依赖链完整，deliverable 更新为「markdown + 渲染成品（Part B/C PDF）+ GATE 验收文件」。
+- **修复生效**：渲染/验收不再游离于 DAG 之外，交付闭环进入任务图（对应修复提交 31fe80e 第 3 项）。

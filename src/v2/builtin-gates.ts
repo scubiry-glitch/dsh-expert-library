@@ -41,6 +41,7 @@ export const BUILTIN_DETERMINISTIC_GATE_IDS: readonly string[] = [
   'schema-structure',
   'data-citation',
   'compliance-anonymization',
+  'pii-redaction',
   'style-lint',
 ]
 
@@ -350,6 +351,80 @@ function evaluateStyle(input: GateInput, ctx: GateEvaluationContext, options: Bu
 }
 
 /**
+ * PII redaction gate (bank/finance policy variant): blocks customer-level
+ * personal data and bank-internal identifiers from leaving a deliverable —
+ * mainland mobile numbers, 18-digit ID-card numbers, bank card / account
+ * number runs and generic sensitive markers (账号/卡号/身份证/手机号 with an
+ * actual value following). Config accepts `extraPatterns` (regex sources) and
+ * `sensitiveMarkers`; defaults always apply. Errors are hard-blocking.
+ */
+function evaluatePiiRedaction(input: GateInput, ctx: GateEvaluationContext): GateResult {
+  const config = ctx.spec.config ?? {}
+  const issues: GateIssue[] = []
+  const lines = input.artifact.split('\n')
+  const valueRe = /[0-9Xx*]+/u
+
+  // Deterministic PII patterns, deliberately precise to avoid flagging
+  // aggregate figures (a 14-digit balance total, a 13-digit count…): the
+  // digit run must have the exact shape of the PII, be bounded by non-digits
+  // and NOT be followed by a unit/currency/percent suffix.
+  const patterns: { code: string; label: string; re: RegExp }[] = [
+    // Mainland mobile: 1[3-9] + 9 digits (unmasked; masked 138****0000 is
+    // standard masking and passes).
+    { code: 'pii-mobile', label: '手机号', re: /(?<![\d])1[3-9]\d{9}(?![\d])/u },
+    // 18-digit ID card (17 digits + digit/X check char).
+    { code: 'pii-id-card', label: '身份证号', re: /(?<![\d])\d{17}[\dXx](?![\d])/u },
+    // Bank card / account: 13–19 digit run (spaces/dashes allowed between
+    // groups), bounded by non-digits and NOT followed by unit suffixes.
+    { code: 'pii-bank-card', label: '银行卡号/账号', re: /(?<![\d])(?:\d[ -]?){12,18}\d(?![\d%‰元万亿户笔])/u },
+  ]
+  for (const extra of stringList(config.extraPatterns) ?? []) {
+    try {
+      patterns.push({ code: 'pii-extra', label: extra, re: new RegExp(extra, 'u') })
+    } catch {
+      // invalid config pattern — ignore, never crash the gate
+    }
+  }
+  const markers = stringList(config.sensitiveMarkers) ?? ['账号', '卡号', '身份证', '手机号', '余额', '客户姓名']
+  for (let index = 0; index < lines.length; index++) {
+    const raw = lines[index] ?? ''
+    const location = `line ${index + 1}`
+    const evidence = excerpt(raw)
+    for (const pattern of patterns) {
+      if (pattern.re.test(raw)) {
+        issues.push({
+          code: pattern.code,
+          severity: 'error',
+          location,
+          evidence,
+          correction: `脱敏：${pattern.label}不得出现在交付物中（保留尾号/区间/均值等聚合口径即可）`,
+        })
+      }
+    }
+    for (const marker of markers) {
+      // Marker + a following digit/value run (skip bare mentions without
+      // data, and skip aggregate amounts directly followed by a unit —
+      // "余额 8.56 亿元" is an aggregate, not a customer-level PII).
+      const idx = raw.indexOf(marker)
+      if (idx !== -1) {
+        const rest = raw.slice(idx + marker.length).trimStart()
+        const aggregate = /^\d+(?:\.\d+)?\s*[%‰元万亿]/.test(rest)
+        if (!aggregate && valueRe.test(rest)) {
+          issues.push({
+            code: 'pii-marker-value',
+            severity: 'error',
+            location,
+            evidence,
+            correction: `脱敏：${marker}不得携带真实值出现在交付物中`,
+          })
+        }
+      }
+    }
+  }
+  return toResult(ctx.spec.id, issues, ctx.now)
+}
+
+/**
  * Build the deterministic evaluator map (canonical Zhijian policy ids plus
  * short aliases). Semantic/visual gates are intentionally absent — injecting
  * them stays the caller's job and nothing here fakes a model verdict.
@@ -359,6 +434,7 @@ export function createBuiltinGateEvaluators(options: BuiltinGateOptions = {}): G
   const dataCitation: GateEvaluator = (input, ctx) => evaluateDataCitation(input, ctx, options)
   const compliance: GateEvaluator = (input, ctx) => evaluateCompliance(input, ctx, options)
   const style: GateEvaluator = (input, ctx) => evaluateStyle(input, ctx, options)
+  const pii: GateEvaluator = (input, ctx) => evaluatePiiRedaction(input, ctx)
   return {
     'schema-structure': structure,
     structure,
@@ -366,6 +442,8 @@ export function createBuiltinGateEvaluators(options: BuiltinGateOptions = {}): G
     data: dataCitation,
     'compliance-anonymization': compliance,
     compliance,
+    'pii-redaction': pii,
+    pii,
     'style-lint': style,
     style,
   }

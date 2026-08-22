@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>京沪深广房地产政策联合分析 · 存量循环修复的范式切换与广深下一轮预判</title>
+<style>
+  :root{
+    --bg:#0B1D33;            /* 深蓝主色背景 */
+    --bg2:#0F2745;
+    --panel:#123055;
+    --ink:#EAF1F9;
+    --ink2:#B9C8DC;
+    --muted:#8CA3BF;
+    --line:rgba(176,200,230,.16);
+    --accent:#E4572E;        /* 橙红强调（数据/风险） */
+    --gold:#FFC72C;
+    --blue:#4C8DFF;
+    --sh:#1F6FEB;  --bj:#E4572E;  --sz:#2FA45B;  --gz:#E07B39; /* 四城色序 沪蓝京红深绿穗橙 */
+    --tag-policy:#4C8DFF; --tag-market:#2FA45B; --tag-judge:#E0A63C;
+    --shadow:0 18px 50px rgba(0,0,0,.35);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:#050D18;font-family:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;color:var(--ink);}
+  body{padding:40px 0 80px;}
+  .deck{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:44px;align-items:center;}
+
+  .slide{
+    width:1216px;min-height:684px;background:linear-gradient(160deg,var(--bg2) 0%,var(--bg) 55%,#081426 100%);
+    border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);
+    padding:54px 64px 40px;position:relative;display:flex;flex-direction:column;overflow:hidden;
+  }
+  .slide::before{content:"";position:absolute;inset:0;background:
+     radial-gradient(900px 340px at 88% -10%, rgba(76,141,255,.14), transparent 60%),
+     radial-gradient(700px 300px at -10% 110%, rgba(228,87,46,.10), transparent 55%);
+     pointer-events:none;}
+  .slide::after{content:"";position:absolute;left:64px;right:64px;top:0;height:3px;
+    background:linear-gradient(90deg,var(--blue),var(--accent) 60%,transparent);border-radius:0 0 3px 3px;}
+
+  .head{display:flex;align-items:baseline;gap:18px;margin-bottom:6px;}
+  .pno{font-size:13px;letter-spacing:.18em;color:var(--accent);font-weight:700;}
+  .ptype{font-size:12px;letter-spacing:.14em;color:var(--muted);border:1px solid var(--line);padding:2px 10px;border-radius:999px;}
+  h1.title{font-size:34px;line-height:1.35;font-weight:800;letter-spacing:.01em;margin:10px 0 22px;max-width:1000px;}
+  h1.title .hl{background:linear-gradient(90deg,var(--gold),#fff);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .subtitle{font-size:17px;color:var(--ink2);margin-top:8px;font-weight:500;}
+
+  .body{flex:1;display:flex;flex-direction:column;gap:14px;justify-content:center;}
+  ul.pts{list-style:none;display:flex;flex-direction:column;gap:15px;}
+  ul.pts li{font-size:17.5px;line-height:1.62;color:var(--ink);padding-left:22px;position:relative;}
+  ul.pts li::before{content:"";position:absolute;left:2px;top:.72em;width:9px;height:9px;border-radius:2px;
+    background:linear-gradient(135deg,var(--blue),var(--accent));}
+  ul.pts li b{color:#fff;}
+  .small li{font-size:15.5px;color:var(--ink2);}
+
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.08em;padding:2px 9px;border-radius:6px;margin-left:8px;vertical-align:2px;}
+  .t-policy{background:rgba(76,141,255,.16);color:#9CC2FF;border:1px solid rgba(76,141,255,.4);}
+  .t-market{background:rgba(47,164,91,.14);color:#7FD9A4;border:1px solid rgba(47,164,91,.4);}
+  .t-judge{background:rgba(224,166,60,.14);color:#F0C878;border:1px solid rgba(224,166,60,.4);}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:6px 0 4px;}
+  .kpi{background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:12px;padding:18px 20px;}
+  .kpi .c{font-size:13px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .kpi .n{font-size:26px;font-weight:800;line-height:1.2;}
+  .kpi .d{font-size:12.5px;color:var(--ink2);margin-top:5px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .dot.sh{background:var(--sh);} .dot.bj{background:var(--bj);} .dot.sz{background:var(--sz);} .dot.gz{background:var(--gz);}
+
+  table.tbl{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:4px;}
+  table.tbl th{background:rgba(76,141,255,.10);color:#C9DFFF;font-weight:700;text-align:left;padding:9px 12px;border:1px solid var(--line);font-size:13px;}
+  table.tbl td{padding:8px 12px;border:1px solid var(--line);color:var(--ink);line-height:1.5;}
+  table.tbl td.mut{color:var(--muted);}
+  table.tbl tr:nth-child(even) td{background:rgba(255,255,255,.025);}
+
+  .banner{display:flex;align-items:center;gap:12px;background:rgba(228,87,46,.10);border:1px solid rgba(228,87,46,.45);
+    color:#FFB49A;padding:11px 18px;border-radius:10px;font-size:14.5px;font-weight:600;margin-bottom:18px;}
+  .banner::before{content:"⚠";font-size:17px;}
+
+  .verdict{background:linear-gradient(120deg,rgba(76,141,255,.14),rgba(228,87,46,.08));border:1px solid rgba(76,141,255,.35);
+    border-left:5px solid var(--blue);border-radius:12px;padding:20px 26px;font-size:20px;font-weight:700;color:#EAF3FF;line-height:1.55;margin-bottom:20px;}
+
+  .timeline{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-top:8px;position:relative;}
+  .timeline::before{content:"";position:absolute;left:0;right:0;top:17px;height:2px;background:linear-gradient(90deg,var(--blue),var(--accent));opacity:.5;}
+  .tl-node{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;}
+  .tl-node .t{width:36px;height:36px;border-radius:50%;background:var(--panel);border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:800;color:#C9DFFF;z-index:1;}
+  .tl-node .d{font-size:11px;color:var(--accent);font-weight:700;letter-spacing:.05em;}
+  .tl-node .c{font-size:13px;color:var(--ink2);line-height:1.5;max-width:170px;}
+  .tl-node.wide .t{border-color:var(--gold);color:var(--gold);}
+
+  .steps{display:flex;gap:14px;margin-top:10px;}
+  .step{flex:1;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:12px;padding:16px 18px;}
+  .step .s{font-size:12px;color:var(--gold);font-weight:800;letter-spacing:.1em;margin-bottom:8px;}
+  .step .t2{font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;}
+  .step .c{font-size:13.5px;color:var(--ink2);line-height:1.55;}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:6px;}
+  .cmp{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:20px 24px;}
+  .cmp.l{border-top:4px solid var(--muted);} .cmp.r{border-top:4px solid var(--blue);}
+  .cmp h3{font-size:17px;margin-bottom:12px;}
+  .cmp.l h3{color:var(--muted);} .cmp.r h3{color:#9CC2FF;}
+  .cmp ul{list-style:none;display:flex;flex-direction:column;gap:9px;}
+  .cmp ul li{font-size:14.5px;color:var(--ink2);line-height:1.55;padding-left:16px;position:relative;}
+  .cmp ul li::before{content:"";position:absolute;left:0;top:.65em;width:7px;height:7px;border-radius:50%;}
+  .cmp.l ul li::before{background:var(--muted);} .cmp.r ul li::before{background:var(--blue);}
+
+  .layers{display:flex;flex-direction:column;gap:12px;margin-top:8px;}
+  .layer{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:12px;padding:15px 20px;}
+  .layer .lv{font-size:12.5px;font-weight:800;color:var(--gold);letter-spacing:.06em;min-width:56px;padding-top:2px;}
+  .layer .lx{font-size:15px;color:var(--ink);line-height:1.55;flex:1;}
+  .layer .lx b{color:#fff;}
+
+  .footer{display:flex;justify-content:space-between;align-items:center;margin-top:26px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);}
+  .notes{display:none;}
+  @media print{
+    body{padding:0;background:#fff;}
+    .deck{gap:0;max-width:none;}
+    .slide{width:100%;min-height:0;height:calc(100vh - 0px);page-break-after:always;border:none;border-radius:0;box-shadow:none;}
+    @page{size:1280px 720px;margin:0;}
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- ══════════════ P1 封面 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P1 · 封面</span><span class="ptype">管理层 / 投资客户汇报</span></div>
+  <div class="body" style="align-items:flex-start;gap:8px;">
+    <div style="font-size:15px;letter-spacing:.35em;color:var(--accent);font-weight:700;">京 · 沪 · 深 · 广</div>
+    <h1 class="title" style="font-size:44px;margin-top:14px;">京沪深广房地产政策联合分析<br><span class="hl">存量循环修复的范式切换与广深下一轮预判</span></h1>
+    <div class="subtitle">托底与内生修复并行 · 非强刺激</div>
+    <ul class="pts small" style="margin-top:26px;">
+      <li>汇报日期：2026-08-23 ｜ 内部资料</li>
+      <li>数据截至：政策＝2026-08-20（京沪8月两轮出台后）；市场＝国家统计局70城2026年7月（8月17日发布）</li>
+      <li><b>提示</b>：本演示含「研判推断」内容（P8/P9 等），<b>非已出台政策</b></li>
+    </ul>
+  </div>
+  <div class="footer"><span>京沪深广房地产政策联合分析</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P2 核心结论 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P2 · 核心结论</span><span class="ptype">Keynote</span></div>
+  <h1 class="title">核心结论：存量循环修复，<span class="hl">非强刺激</span></h1>
+  <div class="verdict">「卖旧 → 买新 → 退出」——京沪深广2026年政策合看是一次完整的<b>存量循环修复</b>，不是新一轮强刺激。</div>
+  <div class="body">
+    <ul class="pts">
+      <li><b>性质判断</b>：补贴与额度全部带期限和盘子约束（沪穗各2亿元、用完即止）<span class="tag t-policy">政策事实</span><span class="tag t-judge">研判推断</span></li>
+      <li><b>范式切换</b>：工具重心从2024年「能不能买」（资格/杠杆）→「卖不卖得掉、换不换得起、退不退得出」（交易成本+退出通道），未触碰利率、税费等全局性工具</li>
+      <li><b>市场阶段</b>：量先行、价筑底——四城二手网签同比全正、价格同比全负（沪-2.0%＜深-3.6%＜京-4.5%＜穗-4.7%，70城2026年7月）<span class="tag t-market">市场事实</span></li>
+      <li><b>节奏特征</b>：城市自主接力（广深4月底先行 → 京沪8月跟进），而非全国统一行动<span class="tag t-policy">政策事实</span></li>
+      <li><b>前瞻</b>：广深下一轮高概率＝深圳以旧换新补贴、广州补贴续期或加码、深圳公积金带押过户扩围 <span class="tag t-judge">研判推断 · 非已出台政策 · 详见P8</span></li>
+    </ul>
+  </div>
+  <div class="footer"><span>闭环示意：带押过户/赠与豁免/收购二手 → 社保1年/降首付/公积金提额 → 房票/收储</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P3 市场数据 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P3 · 市场数据</span><span class="ptype">事实</span></div>
+  <h1 class="title">市场坐标：<span class="hl">量先行、价筑底</span></h1>
+  <div class="kpis">
+    <div class="kpi"><div class="c"><span class="dot sh"></span>上海 · 二手7月网签</div><div class="n">23,078套</div><div class="d">同比 +19.3%（1-7月累计17.04万套/+14%）</div></div>
+    <div class="kpi"><div class="c"><span class="dot bj"></span>北京 · 二手7月网签</div><div class="n">14,037套</div><div class="d">同比 +9.8%（1-7月累计10.76万套/+6.2%）</div></div>
+    <div class="kpi"><div class="c"><span class="dot sz"></span>深圳 · 二手6月网签</div><div class="n">5,093套</div><div class="d">同比 +13.1%（环比连涨5个月）</div></div>
+    <div class="kpi"><div class="c"><span class="dot gz"></span>上海 · 新房同比</div><div class="n">+3.0%</div><div class="d">四城唯一正增长（1-7月累计+3.6%）</div></div>
+  </div>
+  <div class="body">
+    <ul class="pts">
+      <li><b>量</b>：四城二手网签同比全正<span class="tag t-market">市场事实 · 官方网签口径</span>——广州网签素材未提供</li>
+      <li><b>价</b>：四城二手价格同比全负——<span class="dot gz" style="display:inline-block;margin:0 4px;"></span>广州-4.7%四城最弱<span class="tag t-market">70城2026年7月</span></li>
+      <li><b>分化第一解释变量＝流动性厚度</b>：上海7月二手网签约为北京1.6倍（23078/14037）<span class="tag t-judge">研判推断</span></li>
+      <li><b>上海＝参照系</b>：循环链条最完整最早 → 唯一新房同比正增长（+3.0%）；北京新房-0.3%/-2.3%、深圳+0.2%/-2.9%、广州+0.1%/-2.2%</li>
+      <li><b>存量时代供求结构</b>：上海一二手成交比约2:1以上，新房去化高度依赖「卖旧买新」循环<span class="tag t-market">官方口径推算</span></li>
+    </ul>
+  </div>
+  <div class="footer"><span>口径：价格=70城指数（2026-08-17发布）；网签=两市官方口径；深圳=6月</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P4 政策时间轴 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P4 · 政策时间轴</span><span class="ptype">事实</span></div>
+  <h1 class="title">政策演进：从「全国统一给药」到「<span class="hl">城市自主调理</span>」</h1>
+  <div class="timeline">
+    <div class="tl-node"><div class="t">24·5</div><div class="d">2024-05 全国</div><div class="c">「5·17新政」降首付、取消利率下限（深广跟进）</div></div>
+    <div class="tl-node"><div class="t">24·9</div><div class="d">2024-09 深/穗</div><div class="c">深取消限售、外围放开限购；穗全面取消限购（一线首个）</div></div>
+    <div class="tl-node"><div class="t">25</div><div class="d">2025 地方零星</div><div class="c">深公积金上调至家庭最高231万；穗区级房票安置</div></div>
+    <div class="tl-node"><div class="t">26·2</div><div class="d">2026-02 沪</div><div class="c">「沪七条」</div></div>
+    <div class="tl-node wide"><div class="t">26·4</div><div class="d">2026-04 广深先行</div><div class="c">深86号文（社保1年/核心区增购/公积金最高351万）；穗19号文（公积金最高360万/补贴总盘2亿/房票/收储）</div></div>
+    <div class="tl-node wide"><div class="t">26·8</div><div class="d">2026-08 京沪跟进</div><div class="c">京8·7五动作（社保1年/五环外不限套数/赠与豁免/带押过户公积金化）；沪8·20沪八条（二套首付15%/补贴最高8万/房票/收储）</div></div>
+  </div>
+  <div class="body">
+    <ul class="pts small">
+      <li>2026年节点全部<b>官方原文核验</b>（深建字〔2026〕86号、穗府办函〔2026〕19号、北京住建委、沪八条）；2024—2025年节点公开报道核验<span class="tag t-policy">政策事实</span></li>
+      <li>本质是承认四城结构失衡点不同——<b>均衡不是平均，是各治各的失衡</b><span class="tag t-judge">研判推断</span></li>
+    </ul>
+  </div>
+  <div class="footer"><span>2024全国统一救急 → 2025地方零星调整 → 2026城市接力成体系</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P5 京沪8月解读 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P5 · 京沪8月解读</span><span class="ptype">解读</span></div>
+  <h1 class="title">京沪8月：北京管「<span class="hl">换得了</span>」，上海管「<span class="hl">换得起、退得出</span>」</h1>
+  <div class="steps">
+    <div class="step"><div class="s">环节 ① 卖旧</div><div class="t2">换得了</div><div class="c">带押过户公积金化 · 赠与豁免 · 收购二手 —— 拆资格与流转摩擦（北京8·7）</div></div>
+    <div class="step"><div class="s">环节 ② 买新</div><div class="t2">换得起</div><div class="c">社保1年/五环外不限套数 · 二套首付15% · 公积金提额 —— 降门槛与成本（沪8·20）</div></div>
+    <div class="step"><div class="s">环节 ③ 退出</div><div class="t2">退得出</div><div class="c">房票安置 · 国企收购二手作保租房 —— 开退出通道（沪8·20）</div></div>
+  </div>
+  <div class="body">
+    <ul class="pts small">
+      <li><b>北京8·7</b>：社保/个税五环内2年→1年、五环外不限套数；父母赠与成年子女不再核验资格；带押过户扩至公积金贷款；公积金夫妻首套最高240万、叠加最高340万——五项全部指向「换得了」，未触碰首付/利率/税费<span class="tag t-policy">政策事实</span></li>
+      <li><b>上海8·20</b>：外环外二套首付20%→15%；以旧换新补贴（3万定额+贷款总额1%最高5万、叠加最高8万；总盘2亿元用完即止；至2027-03-31）；公积金三项扩围；房票（城中村/旧改）；中心城区收购二手作保租房<span class="tag t-policy">政策事实</span></li>
+      <li><b>补贴设计的政策语言</b>：「总盘+期限」目标是激活循环而非制造脉冲——2亿元按单套3-8万估算约对应2500-6600套<span class="tag t-judge">研判推断</span></li>
+    </ul>
+  </div>
+  <div class="footer"><span>两市均未触碰利率、税费 —— 「非强刺激」最硬证据</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P6 范式比较 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P6 · 范式比较</span><span class="ptype">分析</span></div>
+  <h1 class="title">范式切换：从「被动止血」到「<span class="hl">主动疏通</span>」</h1>
+  <div class="verdict">同一供求约束，不同政策范式 —— 2024年脉冲式放松在存量时代失效：<b>放开资格只增加挂牌、不增加接盘</b>。</div>
+  <div class="compare">
+    <div class="cmp l"><h3>2024 被动止血</h3><ul>
+      <li><b>触发</b>：价格失速、下跌中被动应对</li>
+      <li><b>解决问题</b>：「能不能买」——放开资格、降首付、降利率</li>
+      <li><b>工具性质</b>：全局性杠杆工具（利率/首付/资格）</li>
+      <li><b>政策节奏</b>：全国统一行动（5·17、9·26）</li>
+      <li><b>失效教训</b>：需求脉冲在预期走弱时解决不了循环断裂</li>
+    </ul></div>
+    <div class="cmp r"><h3>2026 主动疏通</h3><ul>
+      <li><b>触发</b>：二手量能连续正增长后的主动施策</li>
+      <li><b>解决问题</b>：「卖不卖得掉、换不换得起、退不退得出」</li>
+      <li><b>工具性质</b>：交易成本+退出通道，带期限与盘子约束</li>
+      <li><b>政策节奏</b>：城市自主接力（广深4月底→京沪8月）</li>
+      <li><b>本轮逻辑</b>：指向循环四环节——卖得掉/买得进/换得起/退得出</li>
+    </ul></div>
+  </div>
+  <div class="footer"><span>供求根源：上海一二手成交比约2:1以上，新房去化依赖卖旧买新循环（官方口径推算）</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P7 四城工具箱矩阵 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P7 · 工具箱对照</span><span class="ptype">对照</span></div>
+  <h1 class="title">工具箱对照：四城全出与「<span class="hl">深圳留白</span>」</h1>
+  <table class="tbl">
+    <tr><th style="width:16%">工具类别</th><th><span class="dot sh"></span> 上海</th><th><span class="dot bj"></span> 北京</th><th><span class="dot sz"></span> 深圳</th><th><span class="dot gz"></span> 广州</th></tr>
+    <tr><td>公积金提额</td><td>三项提取扩围</td><td>240万/叠加340万</td><td>单人70万/家庭130万 叠加最高351万</td><td>单人100万/双人200万 叠加最高360万</td></tr>
+    <tr><td>以旧换新补贴</td><td>最高8万/总盘2亿</td><td class="mut">未出台</td><td class="mut">未出台（研判：高概率）</td><td>单套最高3万/总盘2亿</td></tr>
+    <tr><td>房票安置</td><td>城中村/旧改</td><td class="mut">—</td><td class="mut">未出台（研判：中概率）</td><td>全市通兑+一二手联动</td></tr>
+    <tr><td>收购二手</td><td>中心城区作保租房</td><td class="mut">—</td><td class="mut">未出台（研判：中概率）</td><td>国企市场化收购</td></tr>
+    <tr><td>带押过户（公积金化）</td><td class="mut">—</td><td>已扩围（独有）</td><td class="mut">未出台（研判：高概率）</td><td class="mut">—</td></tr>
+    <tr><td>赠与豁免</td><td class="mut">—</td><td>已出台（独有）</td><td class="mut">—</td><td class="mut">—</td></tr>
+    <tr><td>好房子/现房</td><td class="mut">—</td><td>绿建叠加</td><td class="mut">工具空白（短板）</td><td>好房子上浮30%+现房试点</td></tr>
+    <tr><td>商转公/以需定供</td><td class="mut">—</td><td class="mut">—</td><td class="mut">—</td><td>已放宽/已明确</td></tr>
+  </table>
+  <div class="body">
+    <ul class="pts small">
+      <li><b>四城全出</b>：公积金提额＝共同底座；<b>沪穗已出、京深未出</b>：补贴/房票/收储＝循环关键件<span class="tag t-policy">政策事实</span></li>
+      <li><b>深圳＝四城中唯一既无补贴又无收储的一线</b>——下一轮政策增量空间最大；好房子工具亦空白（循环放量后的潜在短板）<span class="tag t-judge">研判推断 · 详见P8</span></li>
+    </ul>
+  </div>
+  <div class="footer"><span>矩阵是「预判的底稿」：深圳留白不是漏项，而是下一轮的弹药</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P8 广深预判 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P8 · 广深下一轮</span><span class="ptype">前瞻</span></div>
+  <div class="banner">本节全部内容为研判推断，非已出台政策；预测不构成对任何政策出台的承诺或保证。</div>
+  <h1 class="title">广深下一轮：<span class="hl">概率分层清单</span></h1>
+  <div class="body">
+    <div class="layers">
+      <div class="layer"><div class="lv" style="color:#7FD9A4;">高概率</div><div class="lx">① 深圳<b>以旧换新补贴</b>——参照穗沪（总盘2亿级、单套3-5万元），深圳是四城中唯一既无补贴又无收储的一线；② 广州<b>卖旧买新补贴续期或加码</b>——2026-12-31到期，若金九银十去化不及预期，10-11月大概率宣布续期扩容；③ 深圳<b>公积金带押过户与使用场景扩围</b>——北京已示范，9·20新公积金条例施行是技术窗口</div></div>
+      <div class="layer"><div class="lv" style="color:#F0C878;">中概率</div><div class="lx">深圳房票扩围至城中村改造；深圳国企收购二手作保租房试点；广州公积金提取扩围；广州房票一二手联动落地细则；深圳好房子/装修提取类工具</div></div>
+      <div class="layer"><div class="lv" style="color:#B9C8DC;">低概率</div><div class="lx">深圳取消核心区套数限制；首付再降；直接财政补贴（现房销售大范围铺开宜稳慎试点）</div></div>
+    </div>
+  </div>
+  <div class="footer"><span>预判框架：政策有效性看是否打通「卖旧→买新」闭环，而非放松力度</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P9 触发窗口 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P9 · 触发窗口</span><span class="ptype">前瞻</span></div>
+  <div class="banner">本页窗口排序与信号解读为研判推断，非已出台政策。</div>
+  <h1 class="title">盯什么：<span class="hl">三个窗口、四个信号</span></h1>
+  <div class="steps" style="gap:12px;">
+    <div class="step"><div class="s">窗口 ①</div><div class="t2" style="font-size:15px;">金九银十（9-10月）</div><div class="c">成交环比回落 → 补贴类工具加码的天然窗口</div></div>
+    <div class="step"><div class="s">窗口 ②</div><div class="t2" style="font-size:15px;">政治局会议（9月底-10月）</div><div class="c">若重申「止跌回稳」定调，各城工具落地潮</div></div>
+    <div class="step"><div class="s">窗口 ③</div><div class="t2" style="font-size:15px;">9·20 新公积金条例</div><div class="c">公积金类工具批量落地的技术性窗口</div></div>
+  </div>
+  <div class="body">
+    <ul class="pts small">
+      <li><b>信号①</b>：金九银十去化环比——回落则政策加码概率上升</li>
+      <li><b>信号②</b>：深圳二手网签同比——深圳是「留白最大」城市，其量能是预判风向标</li>
+      <li><b>信号③</b>：沪穗补贴盘消耗进度（各2亿元）——用完即止，消耗节奏＝置换预期温度</li>
+      <li><b>信号④</b>：广州补贴到期前（2026-12-31）的续期表态——10-11月窗口期官方口风</li>
+      <li>提醒：<b>环比连涨≠同比转正</b>——四城二手同比全面转正大概率要到2027年（基数效应）<span class="tag t-judge">研判推断</span></li>
+    </ul>
+  </div>
+  <div class="footer"><span>把三个窗口写进例会日历 —— 判断标尺：是否打通「卖旧→买新」闭环</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P10 风险 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P10 · 风险</span><span class="ptype">风险</span></div>
+  <h1 class="title">五项不确定性：<span class="hl">成立则基调下修</span></h1>
+  <div class="body">
+    <ul class="pts">
+      <li><b>① 沪补贴2亿元年内用尽</b>：追加还是提前结束，节奏难测，影响置换预期</li>
+      <li><b>② 收储价与租金回报率（3-4%基准）匹配度</b>：决定收储真实规模，匹配不足则退出通道名存实亡</li>
+      <li><b>③ 同比基数</b>：四城二手同比全面转正大概率要到2027年——勿把环比连涨误读为同比转正</li>
+      <li><b>④ 广州内生动力</b>：二手同比-4.7%四城最弱<span class="tag t-market">70城2026年7月</span>——若其补政策最激进，反提示内生动力最弱</li>
+      <li><b>⑤ 四季度量能</b>：若量能回落而补贴盘耗尽，市场重新定价——届时需收储放量与城中村货币化安置对冲，而非又一轮公积金微调</li>
+    </ul>
+    <div class="verdict" style="font-size:15.5px;padding:14px 22px;margin-top:8px;">边界条件：若出现①无盘子约束的全局性财政补贴/降利率降税费（「强刺激重启」论）；②深圳取消核心区套数限制（「总量放松」论）；③四季度量能明显回落+补贴盘耗尽+无收储对冲（「二次探底」论）——主基调需按对应框架重估 <span class="tag t-judge">研判推断</span></div>
+  </div>
+  <div class="footer"><span>风险再配置：带押过户/收储/房票是把风险转移到银行流程与政府国企资产负债表</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P11 结语 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P11 · 结语</span><span class="ptype">收束</span></div>
+  <h1 class="title">结语：<span class="hl">闭环是标尺，窗口在眼前</span></h1>
+  <div class="verdict">广深4月底先行、京沪8月跟进——四城拼成一个闭环。<b>深圳留白是下一轮的最大看点</b>。</div>
+  <div class="body">
+    <ul class="pts">
+      <li><b>范式判断</b>：托底与内生修复并行的存量循环修复，不是强刺激——期限+盘子约束、工具集中于公积金与交易环节、城市接力节奏<span class="tag t-judge">事实见P4/P5</span></li>
+      <li><b>有效性标尺</b>：看「卖旧→买新→退出」闭环是否打通——上海因循环最完整、流动性最厚，成为四城唯一新房同比正增长城市（+3.0%，70城2026年7月）<span class="tag t-market">市场事实</span></li>
+      <li><b>下一步行动</b>：金九银十成交环比（9-10月）＞政治局会议定调（9月底-10月）＞9·20新公积金条例施行——三个窗口排序观察<span class="tag t-judge">研判推断</span></li>
+      <li><b>一句话带走</b>：「四城拼成一个闭环，深圳留白是下一轮的弹药」</li>
+    </ul>
+  </div>
+  <div class="footer"><span>收束到三个问题：修什么循环？与2024有何不同？盯哪三个信号？</span><span>2026-08-23</span></div>
+</section>
+
+<!-- ══════════════ P12 数据口径 ══════════════ -->
+<section class="slide">
+  <div class="head"><span class="pno">P12 · 附录</span><span class="ptype">口径与来源</span></div>
+  <h1 class="title">数据口径与来源</h1>
+  <div class="body">
+    <ul class="pts small">
+      <li><b>价格数据</b>：国家统计局70城住宅销售价格指数，2026年7月（8月17日发布）；环比/同比均为70城指数口径</li>
+      <li><b>网签数据</b>：上海（市房地产交易中心官方口径）、北京（官方网签口径）、深圳（官方口径，6月）、广州（素材未提供）；网签为备案口径，与中介/机构统计存在差异</li>
+      <li><b>政策文本</b>：2026年节点官方原文核验（深建字〔2026〕86号、穗府办函〔2026〕19号、北京市住建委、上海「沪八条」）；2024—2025年节点公开报道核验</li>
+      <li><b>推算说明</b>：「2亿元≈2500-6600套」（按单套3-8万元）、「一二手成交比约2:1以上」（上海官方网签口径推算）均为研判推断</li>
+      <li><b>免责声明</b>：本演示「研判推断」内容（P8全部、P9、P10、P2/P6/P7解读部分）均为分析判断，非已出台政策，不构成投资建议</li>
+      <li><b>来源</b>：北京市住建委、上海市政府及房地产交易中心、深圳市住建局、广州市政府及公积金中心、广州市住建局补贴通知、央视财经、国家统计局70城、人民网深圳频道、央广网、21世纪经济报道（10项）</li>
+    </ul>
+  </div>
+  <div class="footer"><span>「所有数字都能在这页找到口径，所有预判都不是消息」</span><span>2026-08-23</span></div>
+</section>
+
+</div>
+<script>
+  // 键盘翻页（浏览器预览用）
+  document.addEventListener('keydown', e => {
+    if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();window.scrollBy({top:window.innerHeight*0.92,behavior:'smooth'});}
+    if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();window.scrollBy({top:-window.innerHeight*0.92,behavior:'smooth'});}
+  });
+</script>
+</body>
+</html>

@@ -24,7 +24,7 @@ import { applyExecutionPlan, compileErrorOf } from '../apply.ts'
 import { compileExecutionPlan } from '../v2/compiler.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
 import { frameworkById, GLOBAL_OUTPUT_RULES } from './frameworks.ts'
-import { ZHIJIAN_EXPERTS } from './data/experts.generated.ts'
+import { ALL_EXPERT_METAS } from './registry.ts'
 import {
   ROUTE_TOPICS, ROUTE_SCENARIOS, STANCE_TABLE, SPECIAL_ROUTING, ROUTING_CONSTRAINTS,
   scenarioForTopic, topicRouteFor,
@@ -59,7 +59,7 @@ export function routeRequest(topic: string, question?: string): ZhijianRouteResu
   }
   const scenario = scenarioForTopic(topic, route.framework, question)
   const candidates = (scenario?.candidates ?? [])
-    .map(id => ZHIJIAN_EXPERTS.find(meta => meta.id === id))
+    .map(id => ALL_EXPERT_METAS.find(meta => meta.id === id))
     .filter((meta): meta is NonNullable<typeof meta> => meta !== undefined)
     .map(meta => ({
       id: meta.id,
@@ -225,9 +225,9 @@ export function registerZhijianTools(
       const selected = [...new Set(args.selected_experts)]
       if (selected.length === 0) throw new Error('selected_experts 不能为空')
       if (selected.length > 5) throw new Error('一次点评最多 5 位专家')
-      const metas = selected.map(id => ZHIJIAN_EXPERTS.find(meta => meta.id === id))
+      const metas = selected.map(id => ALL_EXPERT_METAS.find(meta => meta.id === id))
       if (metas.some(meta => meta === undefined)) {
-        throw new Error(`存在未知专家 id：${selected.filter(id => !ZHIJIAN_EXPERTS.some(meta => meta.id === id)).join(', ')}`)
+        throw new Error(`存在未知专家 id：${selected.filter(id => !ALL_EXPERT_METAS.some(meta => meta.id === id)).join(', ')}`)
       }
 
       // 2. Route context for the team scenario id.

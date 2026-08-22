@@ -7,6 +7,7 @@
 
 import type { Expert, ExpertModelRoute } from '../expert-library/types.ts'
 import { ZHIJIAN_EXPERTS } from './data/experts.generated.ts'
+import { BANK_EXPERTS } from '../bank/data/experts.generated.ts'
 import type { ZhijianExpertMeta } from './types.ts'
 
 /** The preset model route applied to every Zhijian expert (environment default). */
@@ -16,6 +17,13 @@ export const ZHIJIAN_ROUTE: ExpertModelRoute = {
   reasoningEffort: 'max',
 }
 
+/**
+ * All native expert metas, both namespaces, in deterministic order
+ * (BK 智见点评 + BANK 银行金融) — one merged data set feeding the registry,
+ * routing tables, persona baker and pack projection (整合设计).
+ */
+export const ALL_EXPERT_METAS: readonly ZhijianExpertMeta[] = [...ZHIJIAN_EXPERTS, ...BANK_EXPERTS]
+
 /** Field → suited review scenarios. */
 const FIELD_SCENARIOS: Readonly<Record<string, readonly string[]>> = {
   '宏观经济': ['zhijian-macro', 'zhijian-finance'],
@@ -23,6 +31,8 @@ const FIELD_SCENARIOS: Readonly<Record<string, readonly string[]>> = {
   '行业研究': ['zhijian-monthly', 'zhijian-industry'],
   '城市发展': ['zhijian-city'],
   '居住服务': ['zhijian-services'],
+  '零售金融': ['bank-retail', 'bank-credit-card'],
+  '银行经营': ['bank-retail', 'bank-credit-card'],
 }
 
 /** Fold one meta into a native Expert definition. */
@@ -57,18 +67,18 @@ export function zhijianExpertToExpert(meta: ZhijianExpertMeta): Expert {
 
 /** Native registry map: expert id → Expert (merged into the library registry). */
 export const ZHIJIAN_EXPERT_BY_ID: ReadonlyMap<string, Expert> = new Map(
-  ZHIJIAN_EXPERTS.map(meta => [meta.id, zhijianExpertToExpert(meta)]),
+  ALL_EXPERT_METAS.map(meta => [meta.id, zhijianExpertToExpert(meta)]),
 )
 
-/** Meta lookup by expert id. */
+/** Meta lookup by expert id (both namespaces). */
 export function zhijianMetaById(id: string): ZhijianExpertMeta | undefined {
-  return ZHIJIAN_EXPERTS.find(meta => meta.id === id)
+  return ALL_EXPERT_METAS.find(meta => meta.id === id)
 }
 
-/** Whether an Expert definition is a Zhijian (bk-*) expert. */
+/** Whether an Expert definition is a native (bk-* / bank-*) expert. */
 export function isZhijianExpertId(id: string): boolean {
   return ZHIJIAN_EXPERT_BY_ID.has(id)
 }
 
-/** All Zhijian expert ids, for roster display. */
-export const ZHIJIAN_EXPERT_IDS: readonly string[] = ZHIJIAN_EXPERTS.map(meta => meta.id)
+/** All native expert ids, for roster display. */
+export const ZHIJIAN_EXPERT_IDS: readonly string[] = ALL_EXPERT_METAS.map(meta => meta.id)

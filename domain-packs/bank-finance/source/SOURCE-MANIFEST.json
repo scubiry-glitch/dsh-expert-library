@@ -1,0 +1,27 @@
+{
+  "packId": "bank-finance",
+  "packVersion": "1.0.0",
+  "schemaVersion": 2,
+  "baselines": [
+    {
+      "version": "1.0.0",
+      "source": "BANK-09_调用说明.md（paper.morning.rocks 专家库）+ bank-99 skill profile（作者整理，2026-08-23）",
+      "date": "2026-08-23T00:00:00Z",
+      "snapshot": "bank-v1-2026-08-23",
+      "expertCount": 1,
+      "note": "首发：王一帆 BANK-09（江苏银行零售信贷负责人·操盘手视角）。原始材料：99wiki/projects/专家体系/BANK-99_调用说明.md、王一帆_专家画像_BANK-09.pdf/html、skills/bank-99/references/profile.md。"
+    }
+  ],
+  "rawProfiles": {
+    "count": 1,
+    "files": {
+      "王一帆_专家Profile_BANK-09.json": "d7386a1b44140a6dc302f91c256adf73547df9f0adf9b870851ca735d3ac9bd1"
+    }
+  },
+  "docs": {
+    "count": 1,
+    "files": {
+      "专家总表.md": "d186de096becf1578ead21247bf3bc6d5653ddfd1d052fe535ebd1c0d820e443"
+    }
+  }
+}

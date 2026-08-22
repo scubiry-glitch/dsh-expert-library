@@ -46,11 +46,20 @@ export const DECEASED = new Set(['BK-022'])
 /** Roster section header: `### 1. 宏观经济（9 位）`. */
 const ROSTER_HEADER = /^### \d+\. (.+?)（\d+ 位）$|^### \d+\. (.+?)$/
 
-/** Roster data row: `| BK-004 | 邢自强 | 宏观周期派 X 首席 | … |`. */
-const ROSTER_ROW = /^\| (BK-\d+) \| ([^|]+) \| ([^|]+) \| ([^|]*) \| ([^|]*) \| ([^|]*) \| ([^|]*) \|$/
+/**
+ * Expert id in either namespace: `BK-NNN` (real-estate/macro/policy roster)
+ * or `BANK-NNN` (banking/finance roster). Both namespaces share the same
+ * meta shape, registry merge point and routing tables (consolidation: one
+ * generated data layer, one registry, one route table — see
+ * PIPELINE-100PLUS-EXPANSION-PLAN.md P0.2).
+ */
+const EXPERT_ALT = '(?:BK-\\d+|BANK-\\d+)'
 
-/** Flattened Profile file name: `<真实姓名>_专家Profile_BK-NNN.json`. */
-const PROFILE_FILE = /^(.+)_专家Profile_(BK-\d+)\.json$/
+/** Roster data row: `| BK-004 | 邢自强 | 宏观周期派 X 首席 | … |` (or BANK-…). */
+const ROSTER_ROW = new RegExp(`^\\| (${EXPERT_ALT}) \\| ([^|]+) \\| ([^|]+) \\| ([^|]*) \\| ([^|]*) \\| ([^|]*) \\| ([^|]*) \\|$`)
+
+/** Flattened Profile file name: `<真实姓名>_专家Profile_BK-NNN.json` (or BANK-…). */
+const PROFILE_FILE = new RegExp(`^(.+)_专家Profile_(${EXPERT_ALT})\\.json$`)
 
 /** Whether a value is a plain record. */
 function isRecord(value) {

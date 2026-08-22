@@ -1,0 +1,9 @@
+{
+  "taskId": "t5",
+  "subject": "渲染与分型验收",
+  "description": "将研报 markdown 渲染为 HTML5→PDF（A4、页脚「98wiki ｜ 智见 / 行业研究报告」、封面 4 KPI），并按 wiki-gated-research 分型验收：Part B 主文（12 页级骨架 / 正文≥10000 中文字 / 表格 / 机制图 / 量化模型 / 决策树 / 无溢出）+ Part C 逻辑附件（logic-annex-v2：15 速览卡 + 15 逻辑卡 + ≥12 逻辑图 + 白话总结 + Key Takeaways + 替代解释 + 独立补数协议）；生成 render_check（哈希 + 首/中/末页截图）与 GATE 文件，双 PASS 后追加 INDEX。",
+  "dependencies": [
+    "t4"
+  ],
+  "createdAt": 1787410637513
+}

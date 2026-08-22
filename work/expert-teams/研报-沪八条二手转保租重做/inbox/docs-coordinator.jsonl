@@ -1,0 +1,1 @@
+{"id":"cf57fb02-e518-499b-9df3-efe740e3dab4","from":"captain","to":"Docs Coordinator","content":"请汇报 t5「渲染与分型验收」当前进展。若渲染/验收遇到问题（如 weasyprint 报错、SVG 解析失败、验收项不达标），请说明具体情况；若已完成，请立即通过 expert_teams_update_task 提交完成状态与产物路径。渲染可复用 render_report.py / render_check.py（t4 融合成文说明已提示）。","ts":1787414162911,"deliveredAt":1787414162915,"readAt":1787414162915}

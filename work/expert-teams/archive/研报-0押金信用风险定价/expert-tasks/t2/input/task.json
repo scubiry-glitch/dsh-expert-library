@@ -1,0 +1,9 @@
+{
+  "taskId": "t2",
+  "subject": "宏观研判",
+  "description": "从宏观经济视角研判：周期定位、政策路径、量化测算（数据带口径）。",
+  "dependencies": [
+    "t1"
+  ],
+  "createdAt": 1787410637472
+}

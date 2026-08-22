@@ -1,0 +1,19 @@
+{
+  "id": "bank-expert-memory",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "kind": "database",
+  "capabilities": [
+    "search",
+    "read",
+    "cite",
+    "history"
+  ],
+  "freshness": "monthly",
+  "scopes": [
+    "experts"
+  ],
+  "domainKnowledgeIds": [
+    "bank.expert-memory"
+  ]
+}

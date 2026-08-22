@@ -1,0 +1,43 @@
+{
+  "id": "bank-retail",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "banking",
+  "intents": [
+    "retail-rollout"
+  ],
+  "requiredCapabilities": [
+    {
+      "capability": "bank.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    },
+    {
+      "capability": "bank.retail.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    }
+  ],
+  "routingPolicy": {
+    "assertions": [
+      "王一帆 bank-09：城商行零售信贷一线操盘手，主答分行执行/样板复制/考核推动/外部合作；政治账+经济账双算、自主可控为底线。"
+    ],
+    "candidateHints": [
+      "bank-09"
+    ]
+  },
+  "teamTemplate": "bank.team.B",
+  "outputTemplate": "bank.output.B",
+  "qualityPolicy": "bank.quality",
+  "knowledgePolicy": {
+    "required": [
+      "bank-expert-memory"
+    ],
+    "optional": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  }
+}

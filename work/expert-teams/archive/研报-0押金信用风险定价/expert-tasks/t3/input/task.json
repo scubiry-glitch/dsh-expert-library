@@ -1,0 +1,9 @@
+{
+  "taskId": "t3",
+  "subject": "风险与债务视角",
+  "description": "从债务金融视角研判：风险点、债务-通缩风险、关键监控指标。",
+  "dependencies": [
+    "t1"
+  ],
+  "createdAt": 1787410637483
+}

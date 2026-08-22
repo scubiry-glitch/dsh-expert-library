@@ -213,6 +213,9 @@ export const FIELD_DOMAINS: Readonly<Record<ZhijianField, string>> = {
   '行业研究': 'realestate.research',
   '城市发展': 'realestate.city',
   '居住服务': 'realestate.services',
+  // BANK 命名空间（整合设计：同一投影函数服务两个命名空间）
+  '零售金融': 'bank.retail',
+  '银行经营': 'bank.operations',
 }
 
 /** Roster capability tags → review capability vocabulary (专家总表.md tags). */
@@ -396,10 +399,14 @@ function wordLimits(wordLimit: string | undefined): { minWords?: number; maxWord
 }
 
 /** One framework spec → OutputTemplate (sections + discussion/final render modes). */
-function frameworkOutputTemplate(framework: ZhijianFrameworkSpec, packVersion: string): OutputTemplate {
+export function frameworkOutputTemplate(
+  framework: ZhijianFrameworkSpec,
+  packVersion: string,
+  prefix = 'zhijian',
+): OutputTemplate {
   const limits = wordLimits(framework.wordLimit)
   return {
-    id: `zhijian.output.${framework.id}`,
+    id: `${prefix}.output.${framework.id}`,
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     media: ['markdown'],
@@ -427,11 +434,17 @@ function frameworkOutputTemplate(framework: ZhijianFrameworkSpec, packVersion: s
  * template itself stays declarative. Framework E builds no team
  * (顾问式自由问答, handled by the captain directly).
  */
-function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: string): TeamTemplate {
-  const outputTemplate = `zhijian.output.${framework.id}`
+export function frameworkTeamTemplate(
+  framework: ZhijianFrameworkSpec,
+  packVersion: string,
+  options: { prefix?: string; qualityPolicyId?: string } = {},
+): TeamTemplate {
+  const prefix = options.prefix ?? 'zhijian'
+  const qualityPolicyId = options.qualityPolicyId ?? QUALITY_POLICY_ID
+  const outputTemplate = `${prefix}.output.${framework.id}`
   const reviewer = 'role.reviewer'
   return {
-    id: `zhijian.team.${framework.id}`,
+    id: `${prefix}.team.${framework.id}`,
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     parameters: {
@@ -524,8 +537,8 @@ function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: str
       },
     ],
     gates: [
-      { policy: QUALITY_POLICY_ID, gate: 'compliance-anonymization', appliesTo: ['t2'] },
-      { policy: QUALITY_POLICY_ID, gate: 'data-citation', appliesTo: ['t2'] },
+      { policy: qualityPolicyId, gate: 'compliance-anonymization', appliesTo: ['t2'] },
+      { policy: qualityPolicyId, gate: 'data-citation', appliesTo: ['t2'] },
     ],
     deliverables: [
       { id: 'd1', outputTemplate, fromTasks: ['t2'], renderMode: 'discussion' },
@@ -534,9 +547,13 @@ function frameworkTeamTemplate(framework: ZhijianFrameworkSpec, packVersion: str
 }
 
 /** The shared quality policy: gates derived from GLOBAL_OUTPUT_RULES + framework constraints. */
-function qualityPolicy(packVersion: string): QualityPolicy {
+export function qualityPolicy(
+  packVersion: string,
+  id = QUALITY_POLICY_ID,
+  extraGates: readonly QualityPolicy['gates'][number][] = [],
+): QualityPolicy {
   return {
-    id: QUALITY_POLICY_ID,
+    id,
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     gates: [
@@ -582,13 +599,18 @@ function qualityPolicy(packVersion: string): QualityPolicy {
         phase: 'semantic',
         config: { rule: '主基调为锚：支撑主基调的论证保留，偏离观点降级为边界条件/风险提示' },
       },
+      ...extraGates,
     ],
     maxRepairRounds: 2,
   }
 }
 
 /** One framework spec → progressive MethodPack (methodology, never persona-injected). */
-function frameworkMethodPack(framework: ZhijianFrameworkSpec, packVersion: string): MethodPack {
+export function frameworkMethodPack(
+  framework: ZhijianFrameworkSpec,
+  packVersion: string,
+  prefix = 'zhijian',
+): MethodPack {
   const steps = framework.steps.map((step, index) => `${index + 1}. ${step}`).join('\n')
   const constraints = framework.constraints.map((rule, index) => `${index + 1}. ${rule}`).join('\n')
   const body = [
@@ -602,7 +624,7 @@ function frameworkMethodPack(framework: ZhijianFrameworkSpec, packVersion: strin
     constraints,
   ].join('\n')
   return {
-    id: `zhijian.method.framework-${framework.id.toLowerCase()}`,
+    id: `${prefix}.method.framework-${framework.id.toLowerCase()}`,
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     name: `输出框架 ${framework.id}（${framework.name}）`,
@@ -760,7 +782,12 @@ export function buildZhijianDomainPack(options: BuildZhijianPackOptions = {}): D
       .map(framework => frameworkTeamTemplate(framework, packVersion)),
     outputTemplates: FRAMEWORKS.map(framework => frameworkOutputTemplate(framework, packVersion)),
     qualityPolicies: [qualityPolicy(packVersion)],
-    scenarios: ROUTE_SCENARIOS.map(scenario => scenarioV2(scenario, packVersion)),
+    // 整合设计下的包切片：运行时共享 ROUTE_SCENARIOS（含 bank-* 场景），但
+    // 每个包只投影自己的场景（房地产包 = 候选全为 bk-* 的场景；BANK 场景归
+    // bank-finance 包），保证包内交叉引用自洽、zhijian 包派生物品字节不变。
+    scenarios: ROUTE_SCENARIOS
+      .filter(scenario => scenario.candidates.every(id => id.startsWith('bk-')))
+      .map(scenario => scenarioV2(scenario, packVersion)),
     toolProviders: [], // provider runtime is Phase 2 — nothing asserted yet
     knowledgeProviders: knowledgeProviders(packVersion),
     domainKnowledge: [domainKnowledgeManifest(packVersion)],
