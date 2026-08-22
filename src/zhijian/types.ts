@@ -252,9 +252,20 @@ export interface ZhijianRouteResult {
     readonly initials: string
     readonly tags: readonly string[]
     readonly deceased?: boolean
+    /** P1.5: 专家数据版本与命名空间（provenance）. */
+    readonly version?: string
+    readonly namespace?: 'bk' | 'bank' | string
+    /** P1.1: 能力匹配增强（命中标签/分值/理由）. */
+    readonly matchedTags?: readonly string[]
+    readonly matchScore?: number
+    readonly matchReason?: string
   }[]
   /** Scenario constraints to honor. */
   readonly constraints?: string
+  /** P1.1: 能力匹配摘要（供队长展示匹配理由）. */
+  readonly capabilityNote?: string
+  /** P1.4: 心智模型注册表规模. */
+  readonly mentalModelsCount?: number
 }
 
 /** Durable review metadata stored on the team record. */

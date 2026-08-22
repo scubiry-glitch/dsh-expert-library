@@ -24,7 +24,7 @@ import { writeFile, mkdir } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 
-import { parseZhijianSource } from './zhijian-source.mjs'
+import { parseZhijianSource, stampExperts } from './zhijian-source.mjs'
 
 /** Default bank source dir (the bank-finance pack's embedded source). */
 const DEFAULT_BANK_SOURCE = 'domain-packs/bank-finance/source'
@@ -71,13 +71,13 @@ async function main() {
     console.error('no output written — fix the source (roster/profile mismatch) and retry')
     process.exit(1)
   }
-  // Namespace/provenance stamps (deterministic, derived from the source path).
-  const experts = parsed.experts.map(meta => ({
-    ...meta,
+  // Namespace/provenance stamps（与 BK 共用同一 stampExperts，确定性派生）。
+  const experts = stampExperts(parsed.experts, {
     namespace: 'bank',
     version: BANK_DATA_VERSION,
-    source: { origin: BANK_ORIGIN, material: { md: false, raw: true, knowledge: false } },
-  }))
+    origin: BANK_ORIGIN,
+    material: { md: false, raw: true, knowledge: false },
+  })
   const outFile = new URL('../src/bank/data/experts.generated.ts', import.meta.url)
   const outPath = outFile.pathname
   await mkdir(join(outPath, '..'), { recursive: true })

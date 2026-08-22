@@ -580,6 +580,24 @@ async function fileExists(path) {
 }
 
 /**
+ * P1.5: 给解析出的专家 meta 打上 provenance 戳（命名空间/数据版本/来源）。
+ * 确定性：同一输入 ⇒ 同一输出。BK 与 BANK 两个构建脚本共用此函数，保证
+ * 「解析源 → 打戳 → 生成 TS / 发射领域包」全链路一致（lib 与源永不 lib-stale）。
+ */
+export function stampExperts(experts, stamp) {
+  const { namespace, version, origin, material } = stamp
+  return experts.map(meta => ({
+    ...meta,
+    namespace,
+    version,
+    source: {
+      origin,
+      ...(material === undefined ? {} : { material }),
+    },
+  }))
+}
+
+/**
  * Emit the generated TypeScript module for `src/zhijian/data/experts.generated.ts`.
  * Deterministic: same metas ⇒ same bytes.
  */

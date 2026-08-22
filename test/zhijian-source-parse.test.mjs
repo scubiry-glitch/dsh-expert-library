@@ -18,7 +18,7 @@ import { mkdtemp, writeFile, mkdir, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-import { parseZhijianSource, parseRoster, emitExpertsTs } from '../scripts/zhijian-source.mjs'
+import { parseZhijianSource, parseRoster, emitExpertsTs, stampExperts } from '../scripts/zhijian-source.mjs'
 
 /** The domain pack's embedded source (docs/ + raw-profiles/ + library/). */
 const PACK_SOURCE = new URL('../domain-packs/zhijian-realestate/source', import.meta.url).pathname
@@ -89,7 +89,14 @@ test('pack source parses clean: 33 experts, ids bk-002..bk-034, field counts, de
 test('embedded source regenerates experts.generated.ts byte-identically', async () => {
   const parsed = await parseZhijianSource(PACK_SOURCE)
   assert.equal(parsed.ok, true)
-  const regenerated = emitExpertsTs(parsed.experts)
+  // P1.5: 与构建脚本同一打戳后重生成（stampExperts 是唯一打戳入口）。
+  const stamped = stampExperts(parsed.experts, {
+    namespace: 'bk',
+    version: '1.1.0',
+    origin: '智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）',
+    material: { md: false, raw: true, knowledge: false },
+  })
+  const regenerated = emitExpertsTs(stamped)
   const { readFile } = await import('node:fs/promises')
   const committed = await readFile(GENERATED_TS, 'utf8')
   assert.equal(regenerated, committed, 'regeneration from the embedded source must be byte-identical to the committed TS')

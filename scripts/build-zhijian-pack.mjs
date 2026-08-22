@@ -63,7 +63,7 @@ import { dirname, join, resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 
-import { parseZhijianSource, emitExpertsTs } from './zhijian-source.mjs'
+import { parseZhijianSource, emitExpertsTs, stampExperts } from './zhijian-source.mjs'
 import {
   buildZhijianDomainPack,
   ZHIJIAN_PACK_ID,
@@ -356,6 +356,13 @@ export async function emitPack(outDir, options = {}) {
   if (srcDir !== undefined) {
     parsed = await parseZhijianSource(srcDir)
     if (!parsed.ok) throw new PackGenError(parsed.errors)
+    // P1.5: 与 build-zhijian-data.mjs 同一打戳（lib 与源永不 lib-stale）。
+    parsed.experts = stampExperts(parsed.experts, {
+      namespace: 'bk',
+      version: '1.1.0',
+      origin: '智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）',
+      material: { md: false, raw: true, knowledge: false },
+    })
     const tsPath = new URL('../src/zhijian/data/experts.generated.ts', import.meta.url).pathname
     if (writeSrc) await writeFile(tsPath, emitExpertsTs(parsed.experts))
     if (canonicalJson(ZHIJIAN_EXPERTS) !== canonicalJson(parsed.experts)) {

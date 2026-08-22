@@ -22,7 +22,7 @@
  */
 import { writeFile, mkdir } from 'node:fs/promises'
 import { dirname } from 'node:path'
-import { parseZhijianSource, emitExpertsTs } from './zhijian-source.mjs'
+import { parseZhijianSource, emitExpertsTs, stampExperts } from './zhijian-source.mjs'
 
 const [, , skillDir] = process.argv
 if (!skillDir) {
@@ -40,11 +40,20 @@ if (!parsed.ok) {
   process.exit(1)
 }
 
+// P1.5 provenance stamps（与 build-bank-data.mjs 对齐，确定性派生）：
+// BK 命名空间 + 数据版本 1.1.0（与 ZHIJIAN_PACK_VERSION 一致）+ 来源 manifest。
+const stamped = stampExperts(parsed.experts, {
+  namespace: 'bk',
+  version: '1.1.0',
+  origin: '智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）',
+  material: { md: false, raw: true, knowledge: false },
+})
+
 const outFile = new URL('../src/zhijian/data/experts.generated.ts', import.meta.url)
 const outPath = outFile.pathname
 await mkdir(dirname(outPath), { recursive: true })
-await writeFile(outPath, emitExpertsTs(parsed.experts))
-console.log(`wrote ${outPath} (${parsed.experts.length} experts, layout ${parsed.layout})`)
-for (const e of parsed.experts) {
+await writeFile(outPath, emitExpertsTs(stamped))
+console.log(`wrote ${outPath} (${stamped.length} experts, layout ${parsed.layout})`)
+for (const e of stamped) {
   console.log(`  ${e.bk} ${e.name} [${e.field}·${e.stance}] 首字母=${e.initials} tags=${e.tags.join('/')}${e.deceased ? ' (已故)' : ''}`)
 }

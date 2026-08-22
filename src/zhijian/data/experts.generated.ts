@@ -314,6 +314,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -596,6 +606,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -884,6 +904,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -1182,6 +1212,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -1488,6 +1528,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -1783,6 +1833,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -2088,6 +2148,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -2377,6 +2447,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -2690,6 +2770,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -2994,6 +3084,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -3295,6 +3395,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -3601,6 +3711,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -3903,6 +4023,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -4209,6 +4339,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -4515,6 +4655,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -4827,6 +4977,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -5138,6 +5298,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -5388,6 +5558,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -5683,6 +5863,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -5990,6 +6180,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -6319,6 +6519,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -6640,6 +6850,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
           ]
         }
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -6891,6 +7111,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -7144,6 +7374,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -7402,6 +7642,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -7656,6 +7906,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -7917,6 +8177,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -8180,6 +8450,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -8454,6 +8734,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -8810,6 +9100,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -9066,6 +9366,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -9306,6 +9616,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "风险与前提",
         "行动建议"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   },
   {
@@ -9550,6 +9870,16 @@ export const ZHIJIAN_EXPERTS: readonly ZhijianExpertMeta[] = [
         "制度依据必须可溯源",
         "不预测政策时点"
       ]
+    },
+    "namespace": "bk",
+    "version": "1.1.0",
+    "source": {
+      "origin": "智见点评 skill 包（2026-08-20/21 工作区副本，含陈杰 bk-034）",
+      "material": {
+        "md": false,
+        "raw": true,
+        "knowledge": false
+      }
     }
   }
 ]

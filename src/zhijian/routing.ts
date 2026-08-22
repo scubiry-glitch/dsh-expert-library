@@ -239,6 +239,29 @@ export function topicRouteFor(topic: string, question?: string): ZhijianRouteTop
   return question === undefined ? undefined : matchTopic(question)
 }
 
+/**
+ * P1.3: 立场对照配对（专家总表.md 立场对照结构化）。按话题/问题文本匹配
+ * STANCE_TABLE（双向包含 + 简洁头匹配 + 关键词回退），返回该议题的
+ * 乐观/底部派与风险揭示派建议专家。供 debate 自动配对与同题多专家对比使用。
+ */
+export function stancePairForTopic(topic: string, question?: string): ZhijianStancePair | undefined {
+  const text = `${topic} ${question ?? ''}`
+  const direct = STANCE_TABLE.find(pair => {
+    if (text.includes(pair.topic) || pair.topic.includes(text)) return true
+    const head = pair.topic.replace(/（.*?）|[（(].*?[)）]/g, '').trim()
+    return head.length >= 2 && text.includes(head)
+  })
+  if (direct !== undefined) return direct
+  // 关键词回退：去掉「是否/市场/城市/跌幅/取向/方向」等泛词后，议题中的
+  // 关键词（见底/归因/政策/分化/产品）出现在问题文本里即命中。
+  const stopwords = ['是否', '市场', '城市', '跌幅', '取向', '方向']
+  return STANCE_TABLE.find(pair => {
+    let core = pair.topic.replace(/（.*?）|[（(].*?[)）]/g, '').trim()
+    for (const word of stopwords) core = core.replaceAll(word, '')
+    return core.length >= 2 && text.includes(core)
+  })
+}
+
 /** Match one text blob against the topic table (both containment directions). */
 function matchTopic(text: string): ZhijianRouteTopic | undefined {
   return ROUTE_TOPICS.find(route => {

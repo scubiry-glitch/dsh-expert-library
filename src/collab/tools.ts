@@ -23,6 +23,7 @@ import { compileExecutionPlan } from '../v2/compiler.ts'
 import { resolveLibrary } from '../expert-library/registry.ts'
 import { resolveSkill, skillDescriptionBlock } from '../skills.ts'
 import { buildCollabDomainPack } from './templates.ts'
+import { stancePairForTopic, STANCE_TABLE } from '../zhijian/routing.ts'
 
 /** The calling agent, or a loud failure. */
 function requireCaptain(exec: ToolRunContext): Agent {
@@ -101,11 +102,11 @@ export function registerCollabTools(
 ): void {
   ctx.tools.register(defineTool({
     name: 'expert_teams_debate',
-    description: '交叉辩论：两位立场对立的专家就同一议题立论-反驳-回应，主持专家裁判总结，输出辩论纪要（论点/交锋点/共识/分歧/裁判结论）。',
+    description: '交叉辩论：两位立场对立的专家就同一议题立论-反驳-回应，主持专家裁判总结，输出辩论纪要（论点/交锋点/共识/分歧/裁判结论）。pro_expert/con_expert 可省略——省略时按立场对照表（乐观/底部派 vs 风险揭示派）自动配对。',
     parameters: {
       topic: { type: 'string', required: true, description: '辩题（如"一线城市是否已见底"）。' },
-      pro_expert: { type: 'string', required: true, description: '正方专家 id（立场偏乐观/支持方）。' },
-      con_expert: { type: 'string', required: true, description: '反方专家 id（立场偏风险/反对方），须与正方立场对立。' },
+      pro_expert: { type: 'string', description: '正方专家 id（立场偏乐观/支持方）；省略时按立场对照表自动选乐观/底部派。' },
+      con_expert: { type: 'string', description: '反方专家 id（立场偏风险/反对方）；省略时按立场对照表自动选风险揭示派。' },
       moderator: { type: 'string', description: '主持/裁判专家 id（默认 team-lead）。' },
       data: { type: 'string', description: '辩题相关的数据/背景（数字带口径；可缺省时由双方自行引用）。' },
       team_name: { type: 'string', description: '团队名（默认"辩论·<辩题>"）。' },
@@ -131,18 +132,31 @@ export function registerCollabTools(
             },
             required: true,
           },
+          paired: { type: 'string', description: '自动配对说明（当 pro/con 省略时）。' },
         },
       },
       render: (_args, value) => [{
         type: 'text',
-        text: `辩论团队已组建：${value.team_name}（${value.team_id}）。成员：${value.members.join('、')}\n任务：${value.tasks.map(t => `${t.task_id}(${t.assignee ?? '共享'}) ${t.subject}`).join('；')}`,
+        text: `辩论团队已组建：${value.team_name}（${value.team_id}）。成员：${value.members.join('、')}\n任务：${value.tasks.map(t => `${t.task_id}(${t.assignee ?? '共享'}) ${t.subject}`).join('；')}${value.paired !== undefined ? `\n立场配对：${value.paired}` : ''}`,
       }],
     },
     async execute(args, exec) {
       const captain = requireCaptain(exec)
-      const proExpert = args.pro_expert.trim()
-      const conExpert = args.con_expert.trim()
-      if (proExpert === '' || conExpert === '') throw new Error('正方和反方专家不能为空')
+      // P1.3: 立场自动配对 — 省略 pro/con 时按立场对照表选 乐观/底部派 vs 风险揭示派。
+      let pairedNote: string | undefined
+      let proExpert = args.pro_expert?.trim() ?? ''
+      let conExpert = args.con_expert?.trim() ?? ''
+      if (proExpert === '' && conExpert === '') {
+        const pair = stancePairForTopic(args.topic)
+        if (pair === undefined || pair.optimistic.length === 0 || pair.risk.length === 0) {
+          throw new Error(`话题「${args.topic}」未命中立场对照表（${STANCE_TABLE.map(p => p.topic).join('；')}），请显式提供 pro_expert/con_expert`)
+        }
+        proExpert = pair.optimistic[0]!
+        conExpert = pair.risk[0]!
+        pairedNote = `自动配对（立场对照·${pair.topic}）：${proExpert}（乐观/底部） vs ${conExpert}（风险揭示）`
+      } else if (proExpert === '' || conExpert === '') {
+        throw new Error('正方与反方专家必须同时提供，或同时省略以自动配对')
+      }
       if (proExpert === conExpert) throw new Error('正方与反方必须选择不同专家，不能使用同一 expert')
       const moderator = args.moderator?.trim() || 'team-lead'
       // Role dedup: the moderator may coincide with a debater (e.g. pro is
@@ -168,7 +182,7 @@ export function registerCollabTools(
           'role.con': [conExpert],
         },
       })
-      return result
+      return { ...result, ...(pairedNote === undefined ? {} : { paired: pairedNote }) }
     },
   }))
 

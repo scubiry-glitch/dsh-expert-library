@@ -25,6 +25,7 @@ import { compileExecutionPlan } from '../v2/compiler.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
 import { frameworkById, GLOBAL_OUTPUT_RULES } from './frameworks.ts'
 import { ALL_EXPERT_METAS } from './registry.ts'
+import { matchExperts, mentalModelCatalog } from './capability.ts'
 import {
   ROUTE_TOPICS, ROUTE_SCENARIOS, STANCE_TABLE, SPECIAL_ROUTING, ROUTING_CONSTRAINTS,
   scenarioForTopic, topicRouteFor,
@@ -58,24 +59,45 @@ export function routeRequest(topic: string, question?: string): ZhijianRouteResu
     )
   }
   const scenario = scenarioForTopic(topic, route.framework, question)
+  // P1.1/P1.4: 能力匹配结果（按标签/领域命中打分，≤5）与心智模型目录规模，
+  // 叠加在既有候选之上——不替换原有场景候选，只做增强（整合设计）。
+  const capabilityMatches = matchExperts(topic, question, { limit: 5 })
+  const matchById = new Map(capabilityMatches.map(match => [match.id, match]))
+  const catalogSize = mentalModelCatalog().length
   const candidates = (scenario?.candidates ?? [])
     .map(id => ALL_EXPERT_METAS.find(meta => meta.id === id))
     .filter((meta): meta is NonNullable<typeof meta> => meta !== undefined)
-    .map(meta => ({
-      id: meta.id,
-      bk: meta.bk,
-      field: meta.field,
-      stance: meta.stance,
-      initials: meta.initials,
-      tags: meta.tags,
-      ...(meta.deceased === true ? { deceased: true } : {}),
-    }))
+    .map(meta => {
+      const match = matchById.get(meta.id)
+      return {
+        id: meta.id,
+        bk: meta.bk,
+        field: meta.field,
+        stance: meta.stance,
+        initials: meta.initials,
+        tags: meta.tags,
+        ...(meta.deceased === true ? { deceased: true } : {}),
+        // P1.5: 专家数据版本与命名空间（provenance）。
+        ...(meta.version !== undefined ? { version: meta.version } : {}),
+        namespace: meta.namespace ?? (meta.id.startsWith('bank-') ? 'bank' : 'bk'),
+        // P1.1: 能力匹配增强（命中标签/分值/理由）。
+        ...(match === undefined ? {} : {
+          matchedTags: [...match.matchedTags],
+          matchScore: match.score,
+          matchReason: match.reason,
+        }),
+      }
+    })
   return {
     topic: route.topic,
     framework: route.framework,
     primaryField: route.primaryField,
     candidates,
     ...(scenario?.constraints !== undefined ? { constraints: scenario.constraints } : {}),
+    capabilityNote: capabilityMatches.length > 0
+      ? `能力匹配：${capabilityMatches.map(m => `${m.id}(${m.score}分:${m.reason})`).join('；')}`
+      : undefined,
+    mentalModelsCount: catalogSize,
   }
 }
 
@@ -118,10 +140,18 @@ export function registerZhijianTools(
                 initials: { type: 'string', required: true },
                 tags: { type: 'array', items: { type: 'string' }, required: true },
                 deceased: { type: 'boolean' },
+                // P1.5 provenance + P1.1 capability match enhancements.
+                version: { type: 'string' },
+                namespace: { type: 'string' },
+                matched_tags: { type: 'array', items: { type: 'string' } },
+                match_score: { type: 'number' },
+                match_reason: { type: 'string' },
               },
             },
           },
           constraints: { type: 'string' },
+          capability_note: { type: 'string' },
+          mental_models_count: { type: 'number' },
         },
       },
       render: (_args, value) => [{
@@ -144,8 +174,15 @@ export function registerZhijianTools(
           initials: candidate.initials,
           tags: [...candidate.tags],
           ...(candidate.deceased === true ? { deceased: true } : {}),
+          ...(candidate.version !== undefined ? { version: candidate.version } : {}),
+          ...(candidate.namespace !== undefined ? { namespace: candidate.namespace } : {}),
+          ...(candidate.matchedTags !== undefined ? { matched_tags: [...candidate.matchedTags] } : {}),
+          ...(candidate.matchScore !== undefined ? { match_score: candidate.matchScore } : {}),
+          ...(candidate.matchReason !== undefined ? { match_reason: candidate.matchReason } : {}),
         })),
         ...(result.constraints !== undefined ? { constraints: result.constraints } : {}),
+        ...(result.capabilityNote !== undefined ? { capability_note: result.capabilityNote } : {}),
+        ...(result.mentalModelsCount !== undefined ? { mental_models_count: result.mentalModelsCount } : {}),
       }
     },
   }))
@@ -322,8 +359,10 @@ function renderRoute(result: ZhijianRouteResult): string {
     `主责领域：${result.primaryField}`,
     `候选专家（${result.candidates.length} 位，供用户拍板，展示请匿名）：`,
     ...result.candidates.map(candidate =>
-      `  - ${candidate.bk} · ${candidate.field} · ${candidate.initials}（${candidate.stance}${candidate.deceased === true ? '，已故仅引历史观点' : ''}）tags=${candidate.tags.join('/')}`),
+      `  - ${candidate.bk} · ${candidate.field} · ${candidate.initials}（${candidate.stance}${candidate.deceased === true ? '，已故仅引历史观点' : ''}）tags=${candidate.tags.join('/')}${candidate.matchScore !== undefined ? `｜能力匹配 ${candidate.matchScore}分（${candidate.matchReason ?? ''}）` : ''}${candidate.version !== undefined ? `｜v${candidate.version}` : ''}`),
     ...(result.constraints !== undefined ? [`约束：${result.constraints}`] : []),
+    ...(result.capabilityNote !== undefined ? [`${result.capabilityNote}`] : []),
+    ...(result.mentalModelsCount !== undefined ? [`心智模型注册表：${result.mentalModelsCount} 个模型（可反查专家）`] : []),
     `\n立场对照（同题对比选法）：`,
     ...STANCE_TABLE.map(pair => `  - ${pair.topic}：乐观/底部 ${pair.optimistic.join('、')} vs 风险 ${pair.risk.join('、')}${pair.unique !== undefined ? `；独特视角 ${pair.unique.join('、')}` : ''}`),
     `\n执行约束：${ROUTING_CONSTRAINTS.join('；')}`,
