@@ -20,6 +20,7 @@
       "default": "./lib/v2/index.js"
     },
     "./client": "./lib/client.js",
+    "./domain-packs/*": "./domain-packs/*",
     "./package.json": "./package.json"
   },
   "files": [

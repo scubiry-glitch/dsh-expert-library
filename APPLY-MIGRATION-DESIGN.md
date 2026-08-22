@@ -607,12 +607,43 @@ and the runtime is pack-first.**
   bad path and compiles digest-identically; runtime cache is pack-first (the
   generic experts are the loaded objects, not re-adapted).
 
-**Step 3 — FUTURE WORK (not done): full deletion of the `adaptV1*` runtime paths.**
-The V1 TypeScript (`BUILTIN_EXPERT_BY_ID` / `BUILTIN_SCENARIO_BY_ID` /
-`ZHIJIAN_EXPERT_BY_ID`) is now retained **solely as the authored generator
-input** (the same pattern as the zhijian source): the runtime no longer
-re-projects the builtin library per call, and the projection only exists as a
-fallback when the pack dir is absent. Deleting the V1 registries and the
-runtime `adaptV1*` bridge entirely still needs a consumer-by-consumer cutover
-of `resolveLibrary` (the V1 Expert/Scenario maps that personas, scenario
-validation and collab roster validation still read) — future work.
+**Step 3 — DONE (this round): the runtime is adaptV1-free; the pack ships with the package.**
+- `builtinLegacyPack()` / `loadBuiltinLegacyPack()` dropped the adaptV1
+  projection fallback entirely: a missing **or** invalid
+  `domain-packs/builtin-library/` is a **loud failure** with remediation text
+  (`pnpm build:builtin` / reinstall) — no silent degradation. The zhijian
+  bk-* append from the V1 registry stays (that registry is generated data,
+  not an adaptV1 runtime projection).
+- The published package ships the pack: `domain-packs` is in `files` and a
+  `./domain-packs/*` exports subpath was added. The module-root-relative
+  resolution (`new URL('../../domain-packs/builtin-library/', import.meta.url)`
+  from `lib/v2/compat.js`) works identically from the repo layout and the
+  published dist layout (both keep the module two levels below the root) —
+  covered by a production-layout test that copies `lib/` + the pack into a
+  fresh package root and loads `builtinLegacyPack()` from there.
+- Runtime `src/` grep: no module outside `v2/compat` imports `adaptV1*` /
+  `buildLegacyDomainPack` anymore — the collab projection routes caller
+  experts through the exported `mergeCachedExperts` bridge instead of
+  importing `adaptV1Expert`; the public `adaptV1*` /
+  `buildLegacyDomainPack` exports are retained and JSDoc-annotated
+  **generator-only** (used by `scripts/build-builtin-pack.mjs` at generation
+  time; `buildLegacyDomainPack` additionally backs the `migrateDomainPack`
+  API for user-provided legacy registries).
+- `test/v2-builtin-pack.test.mjs` updated: the old fallback test now asserts
+  the loud failure + remediation message for both a missing dir and an
+  invalid pack; a new dist-layout test covers the published layout; the 10/10
+  digest-equality loop (pack vs `buildLegacyDomainPack` reference) and the
+  `--check` drift guard stay.
+
+**Remaining V1 surfaces (documented, not a dual projection):**
+- the V1 TypeScript registries (`BUILTIN_EXPERT_BY_ID` /
+  `BUILTIN_SCENARIO_BY_ID` / `ZHIJIAN_EXPERT_BY_ID`) are the **authored
+  generator input** (the same pattern as the zhijian source) — they feed
+  `scripts/build-builtin-pack.mjs`, the zhijian registry append, and the
+  per-call user-scenario derive path inside `compileV1ScenarioExecutionPlan`
+  (V1-shaped data with no static pack home);
+- `resolveLibrary` remains as the **V1-shaped runtime interface** for
+  personas, scenario validation and collab roster validation — it is not a
+  dual projection of the builtin library, it is the runtime's expert/scenario
+  map surface; cutting it over to pack entities is a consumer-by-consumer
+  effort left for a later round.
