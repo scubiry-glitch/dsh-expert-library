@@ -35,3 +35,40 @@
 - 每个专家一个子目录，文件名带语义（如 `01-checklist.md`、`02-style-guide.md`）。
 - 场景资料放 `scenarios/<id>/`，与专家资料互不干扰。
 - 通用知识（行业报告、术语表、团队规范）放 `shared/`。
+
+---
+
+# 约定检查与设置手册（Skills / 工具使用）
+
+Skills 与工具使用约定分布在五层，各层的「在哪检查、在哪设置」如下：
+
+## ① 模型侧协议（什么时候调用什么工具）
+
+- **定义**：`src/index.ts` 的 `usageSectionText()` —— 注入系统提示词的使用协议（expert_teams_* 八步流程、智见点评 A–E 框架、协作模式）。
+- **检查**：设置页「提示词顺序」(`promptSectionOrder`，默认 117)；「向 Agent 注入专家库使用协议」开关 (`announceToAgent`)。
+- **设置**：改协议文本本身需改源码 `src/index.ts`。
+
+## ② 专家/场景级约定（谁能用什么能力）
+
+- **定义**：Domain Pack 实体 —— `domain-packs/zhijian-realestate/experts/bk-*.json` 的 `allowedCapabilities`、团队模板 runtime 参数、质量门（固定四阶段、硬门、≤2 修复轮）。
+- **检查**：`GET /plugins/dsh-expert-library/packs`（Web 预览）或 `node scripts/build-zhijian-pack.mjs --check` / `node scripts/build-builtin-pack.mjs --check`（漂移校验）。
+- **设置**：源在 `/root/.openclaw/workspace/skills/智见点评` 的 Profile JSON —— 改源后 `node scripts/build-zhijian-pack.mjs --src <源>` 重生成；**不要直接手改 pack 目录**（--check 会报漂移）。
+
+## ③ Skill 安装与路由（本地技能）
+
+- **定义**：`src/skills.ts` —— 技能**纯本地、只读解析**，从 `<workspace>/knowledge/skills/<id>/SKILL.md` 读取（≤1MiB，安全路径校验），不联网、不自动更新；场景可通过 `skill: {id, purpose}` 引用。
+- **检查**：`<workspace>/knowledge/skills/` 目录清单；全局技能在 `~/.agents/skills/`（如 wind-mcp-skill、98/99wiki、wind-find-finance-skill）。
+- **设置**：往 `knowledge/skills/<id>/SKILL.md` 放文件即安装；引用关系改场景定义或 pack 源。
+
+## ④ 数据源工具执行方式（Wind / zyt / 贝壳）
+
+- **定义**：settings 的 `toolExecution`（api/cli/auto 模式、端点、超时）+ `providers` 配置 + capability→provider 路由表（`src/v2/providers/*.ts`）。
+- **检查**：`GET /plugins/dsh-expert-library/health`（健康探测：注册状态/凭据存在性/可达性/延迟/pack 漂移）+ 设置页「数据源」区；ProviderRegistry 逐调用审计日志。
+- **设置**：设置页「数据源」区编辑（端点/CLI 路径/执行偏好），保存后即时重注册免重启；**API Key 永远走文件/环境变量，不进设置文档**（刻意安全边界）。
+
+## ⑤ 知识包与自定义覆盖
+
+- **检查**：本目录 `knowledge/` —— `experts/<id>.json` 覆盖内置专家、`scenarios/<id>.json` 覆盖场景。
+- **设置**：直接放文件，惰性生效免重启。
+
+> 一句话：**协议改 `src/index.ts`，能力边界改 Domain Pack 源再重生成，技能放 `knowledge/skills/`，数据源在设置页，自定义覆盖放 `knowledge/`。**

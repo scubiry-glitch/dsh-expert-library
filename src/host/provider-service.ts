@@ -127,13 +127,22 @@ export function resolveExecutable(name: string): string | undefined {
 }
 
 /**
+ * Wind CLI path candidate (settings/entry config > `WIND_SKILL_CLI` env >
+ * default skill probe path), resolved WITHOUT the existence gate — the
+ * health surface reports the candidate even when the file is absent.
+ */
+export function windCliPathCandidate(input: ProviderConfigInput): string {
+  return input.providers?.wind?.cliPath ?? process.env.WIND_SKILL_CLI ?? expandHome(DEFAULT_WIND_SKILL_CLI)
+}
+
+/**
  * Resolve per-provider options from the plugin config + environment + probes.
  * `wind` is registered only when the installed skill CLI exists (fail closed);
  * `zyt`/`beike` always register their HTTP transports with declared default
  * endpoints, and their optional CLI transports only when a binary is found.
  */
 export function resolveProviderServiceOptions(input: ProviderConfigInput): ProviderServiceOptions {
-  const windCliPath = input.providers?.wind?.cliPath ?? process.env.WIND_SKILL_CLI ?? expandHome(DEFAULT_WIND_SKILL_CLI)
+  const windCliPath = windCliPathCandidate(input)
   const wind = windCliPath !== undefined && existsSync(windCliPath) ? { cliPath: windCliPath } : undefined
 
   const zytBaseUrl = input.providers?.zyt?.baseUrl ?? process.env.ZYT_BASE_URL ?? DEFAULT_ZYT_BASE_URL

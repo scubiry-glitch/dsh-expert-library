@@ -52,13 +52,15 @@ import {
 import {
   ProviderTransportService,
   resolveProviderServiceOptions,
+  windCliPathCandidate,
   type ProviderConfigInput,
 } from './host/provider-service.ts'
+import { HealthProbeCache, createHealthHandler, type PackDirLike } from './host/health.ts'
 import {
   providerCallToolEligible,
   registerProviderCallTool,
 } from './host/provider-tool.ts'
-import { listDomainPacks, previewDomainPack } from './v2/preview.ts'
+import { discoverPackDirs, discoverPackDirsIn, listDomainPacks, previewDomainPack } from './v2/preview.ts'
 
 /**
  * Structural slice of the web server service, compatible with both the
@@ -427,10 +429,14 @@ export function apply(ctx: Context, config: Config): void {
 
   // Optional settings wiring: while a settings service exists, the
   // `expert-library` namespace overrides the entry config; otherwise the entry
-  // is the only source and everything behaves exactly as composed.
+  // is the only source and everything behaves exactly as composed. Every
+  // commit re-runs the full apply: runtimeConfig fields refresh in place and
+  // the provider registry is rebuilt (reconfigure disposes the old invokers
+  // by replacing the registry wholesale), so endpoint/path edits take effect
+  // without a restart.
   installExpertLibrarySettings(ctx, config ?? {}, {
     setSource: (source) => applySource(source as () => Config),
-    onChange: () => syncAnnounce(),
+    onChange: () => applySource(current),
   })
   applySource(() => config)
 
@@ -726,6 +732,49 @@ export function apply(ctx: Context, config: Config): void {
       res.end(JSON.stringify(list))
     },
   }), 'expert-teams: domain pack preview route')
+
+  // Health observation (设置页数据源/包健康): read-only probes of the three
+  // provider data sources and the generated domain packs. All I/O lives in
+  // src/host/health.ts behind injectable seams; a 30s single-flight cache
+  // absorbs repeated page polls. Secrets never leave the host — the wire
+  // carries only keyPresent booleans and non-secret metadata.
+  const healthCache = new HealthProbeCache()
+  ctx.effect(() => webServer.register({
+    kind: 'exact',
+    path: '/plugins/dsh-expert-library/health',
+    handler: createHealthHandler({
+      cache: healthCache,
+      resolve: async () => {
+        const value = current()
+        const options = resolveProviderServiceOptions(value as ProviderConfigInput)
+        // Pack dirs: the plugin module root's packsDir (the shipped
+        // domain-packs/) plus every workspace root's packsDir, deduped.
+        const moduleRoot = fileURLToPath(new URL('../', import.meta.url))
+        const packsDir = runtimeConfig.packsDir ?? 'domain-packs'
+        const packDirs: PackDirLike[] = []
+        const seen = new Set<string>()
+        for (const pack of await discoverPackDirsIn(moduleRoot, packsDir)) {
+          if (seen.has(pack.dir)) continue
+          seen.add(pack.dir)
+          packDirs.push(pack)
+        }
+        for (const pack of await discoverPackDirs(ctx, packsDir)) {
+          if (seen.has(pack.dir)) continue
+          seen.add(pack.dir)
+          packDirs.push(pack)
+        }
+        return {
+          providers: {
+            wind: { cliPath: windCliPathCandidate(value as ProviderConfigInput) },
+            ...(options.zyt !== undefined ? { zyt: { baseUrl: options.zyt.baseUrl } } : {}),
+            ...(options.beike !== undefined ? { beike: { baseUrl: options.beike.baseUrl } } : {}),
+          },
+          registered: providerService?.providers ?? [],
+          packDirs,
+        }
+      },
+    }),
+  }), 'expert-teams: health route')
   }
 
   registerWebSurface()
