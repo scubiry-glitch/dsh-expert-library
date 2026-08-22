@@ -254,6 +254,7 @@ export function registerCollabTools(
       audience: { type: 'string', description: '目标听众（如"管理层""投资客户"），缺省由架构专家判断。' },
       page_count: { type: 'number', description: '预计页数（默认 10-15 页）。' },
       data: { type: 'string', description: '可用素材/数据（数字带口径）。' },
+      template: { type: 'string', description: '可选：渲染模板/风格指定（如 "ink-press" 视频模板或 pptfast 主题名）；指定后「渲染和出图」任务严格按该模板渲染。' },
       skill_id: { type: 'string', description: '可选：本地 skill id（需预先安装于 knowledge/skills/<id>/SKILL.md，运行时不联网），其内容供成员参考。' },
       team_name: { type: 'string', description: '团队名（默认"PPT·<主题>"）。' },
     },
@@ -297,6 +298,12 @@ export function registerCollabTools(
       const dataBlock = args.data === undefined ? '' : `\n\n可用素材：\n${args.data}`
       const audienceLine = args.audience === undefined ? '' : `\n听众：${args.audience}`
       const pagesLine = args.page_count === undefined ? '' : `\n预计页数：${args.page_count}`
+      // The template threads through like audience/page_count/skill_id: a
+      // team-description line when provided, and a param (`templateLine`, the
+      // render task's interpolation value — always present so `{templateLine}`
+      // never leaks as a literal placeholder when no template was given).
+      const templateLine = args.template === undefined ? '' : `\n指定模板：${args.template.trim()}`
+      const templateBlock = args.template === undefined ? '' : templateLine
       let skillBlock = ''
       if (args.skill_id !== undefined) {
         const workspace = captain.session.header.cwd ?? process.cwd()
@@ -305,7 +312,7 @@ export function registerCollabTools(
       }
       const result = await applyCollabPlan(ctx, config, captain, core, exec.signal, {
         teamName: args.team_name?.trim() || `PPT·${args.topic.slice(0, 20)}`,
-        description: `PPT 生成：${args.topic}${audienceLine}${pagesLine}${dataBlock}${skillBlock}\n\n输出要求：markdown 内容包（封面、目录、逐页标题+要点、图表建议、演讲备注），可直接导入 PPT 工具排版。`,
+        description: `PPT 生成：${args.topic}${audienceLine}${pagesLine}${templateBlock}${dataBlock}${skillBlock}\n\n输出要求：markdown 内容包（封面、目录、逐页标题+要点、图表建议、演讲备注）与渲染成品（高工艺 HTML 幻灯片 / PPTX，可选产品视频）。`,
         mode: 'ppt-gen',
         templateId: 'collab.ppt-gen',
         expertIds: roster,
@@ -316,6 +323,10 @@ export function registerCollabTools(
           // (number or the "10-15" default), matching the previous assembler.
           pageCountText: String(args.page_count ?? '10-15'),
           ...(args.data !== undefined ? { data: args.data } : {}),
+          ...(args.template !== undefined ? { template: args.template.trim() } : {}),
+          // Always present: the render task's `{templateLine}` placeholder
+          // resolves to the template line (with leading newline) or to ''.
+          templateLine,
         },
         assignments: {
           'role.architect': ['docs-coordinator'],

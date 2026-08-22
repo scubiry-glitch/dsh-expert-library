@@ -274,12 +274,15 @@ export const BUILTIN_SCENARIOS: readonly Scenario[] = [
   {
     id: 'ppt-gen',
     name: 'PPT Generation Team',
-    description: 'PPT 生成：先做内容架构（听众/目标/大纲），再供给领域内容，最后产出逐页文案与演讲备注（markdown 结构化，可直接导入 PPT 工具）。',
+    description: 'PPT 生成：先做内容架构（听众/目标/大纲），再供给领域内容，产出逐页文案与演讲备注（markdown 结构化），最后由 docs-coordinator 渲染和出图（高工艺 HTML 幻灯片 → PPTX，可选产品视频）。',
     experts: ['docs-coordinator', 'designer', 'bk-024'],
     skill: {
       id: 'video-shotcraft',
       name: 'video-shotcraft',
       purpose: '可选增强：若用户同时需要产品视频/宣传片（Remotion 电影感视频），按该 skill 制作；需先本地安装到 knowledge/skills/video-shotcraft/。',
+      // The render task is the final DAG node — the skill reference (SKILL.md
+      // appended as the task suffix) belongs on 渲染和出图, not 逐页文案生成.
+      appliesToTaskIndex: 3,
     },
     tasks: [
       {
@@ -299,8 +302,14 @@ export const BUILTIN_SCENARIOS: readonly Scenario[] = [
         dependsOn: [0, 1],
         expert: 'docs-coordinator',
       },
+      {
+        subject: '渲染和出图',
+        description: '将逐页文案渲染为交付成品：① 先按 knowledge/skills/finesse-ui/SKILL.md 的规范产出高工艺 HTML 幻灯片（product register、craft floor、反 cheapness；需要动效参考 knowledge/skills/gsap-*）；② 用 pptfast 技能（~/.agents/skills 或 pptfast CLI）把内容转为 PPTX；③ 需要视频时用 knowledge/skills/video-shotcraft/SKILL.md（Ink Press 模板在 template/ 目录）拍产品视频。模板支持：模板可由用户在 goal/data 参数中指定（scenario apply 无独立 template 参数）——若调用方指定了模板，严格按指定模板渲染；未指定时用 finesse 规范自选并说明理由。',
+        dependsOn: [2],
+        expert: 'docs-coordinator',
+      },
     ],
-    deliverable: 'PPT 内容包（markdown）：封面、目录、逐页标题+要点、图表建议、演讲备注，可直接导入 PPT 工具排版。',
+    deliverable: 'PPT 内容包（markdown）：封面、目录、逐页标题+要点、图表建议、演讲备注 + 渲染成品（高工艺 HTML 幻灯片 / PPTX，可选产品视频）。',
   },
   {
     id: 'research-report',

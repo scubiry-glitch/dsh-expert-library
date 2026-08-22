@@ -134,22 +134,62 @@ test('roundtable with fewer than 2 speakers fails at compile time (assignment-co
 
 // ── 3. PPT ──────────────────────────────────────────────────────────────────
 
-test('ppt: 架构 → 内容供给(fan-out) → 逐页文案; docs-coordinator deduped', () => {
+test('ppt: 架构 → 内容供给(fan-out) → 逐页文案 → 渲染和出图; docs-coordinator deduped', () => {
   const result = compileCollab('collab.ppt-gen',
     { topic: '2026 房地产展望', audience: '投资客户', pageCountText: '12' },
     { 'role.architect': ['docs-coordinator'], 'role.content': ['bk-024', 'bk-008'], 'role.writer': ['docs-coordinator'] },
   )
   const expanded = expand(result)
   if (!expanded) return
-  assert.deepEqual(expanded.tasks.map(task => task.id), ['t1', 't2', 't3', 't4'])
+  assert.deepEqual(expanded.tasks.map(task => task.id), ['t1', 't2', 't3', 't4', 't5'])
   assert.deepEqual(expanded.tasks.map(task => task.subject), [
-    '内容架构', '内容供给（bk-024）', '内容供给（bk-008）', '逐页文案生成',
+    '内容架构', '内容供给（bk-024）', '内容供给（bk-008）', '逐页文案生成', '渲染和出图',
   ])
-  assert.deepEqual(expanded.tasks.map(task => task.dependsOn), [[], ['t1'], ['t1'], ['t1', 't2', 't3']])
-  assert.deepEqual(expanded.tasks.map(task => task.assigneeExpertId), ['docs-coordinator', 'bk-024', 'bk-008', 'docs-coordinator'])
+  assert.deepEqual(expanded.tasks.map(task => task.dependsOn), [[], ['t1'], ['t1'], ['t1', 't2', 't3'], ['t4']])
+  assert.deepEqual(expanded.tasks.map(task => task.assigneeExpertId), ['docs-coordinator', 'bk-024', 'bk-008', 'docs-coordinator', 'docs-coordinator'])
   assert.deepEqual(expanded.members.map(member => member.expertId), ['docs-coordinator', 'bk-024', 'bk-008'])
   // The audience + page count are interpolated into the architecture task.
   assert.equal(expanded.tasks[0]?.description, '确定听众（投资客户）、目标与篇幅（12 页），输出 PPT 大纲：章节结构 + 每页标题与要点。主题：2026 房地产展望')
+  // The render task is the final DAG node: depends on the copy task only and
+  // stays on the docs-coordinator render role.
+  assert.equal(expanded.tasks[4]?.dependsOn.length, 1)
+  assert.equal(expanded.tasks[4]?.dependsOn[0], 't4')
+  assert.equal(expanded.tasks[4]?.assigneeExpertId, 'docs-coordinator')
+  assert.ok(expanded.tasks[4]?.description.includes('finesse-ui/SKILL.md'), 'render task instructs the finesse craft floor')
+  assert.ok(expanded.tasks[4]?.description.includes('pptfast'), 'render task instructs the pptfast conversion')
+  assert.ok(expanded.tasks[4]?.description.includes('video-shotcraft/SKILL.md'), 'render task instructs the video-shotcraft path')
+  // No template given → no template line, no placeholder leak.
+  assert.ok(!expanded.tasks[4]?.description.includes('指定模板：'))
+  assert.ok(!expanded.tasks[4]?.description.includes('{templateLine}'))
+})
+
+test('ppt: the render task threads the template param — provided line present, absent → no line', () => {
+  // Template provided: the 「指定模板：{template}」 line lands in the render
+  // task description (mirroring how the report tool embeds dataLine). With one
+  // content expert the physical DAG is t1..t4, so the render task is t4.
+  const withTemplate = compileCollab('collab.ppt-gen',
+    { topic: 'T', template: 'ink-press', templateLine: '\n指定模板：ink-press' },
+    { 'role.architect': ['docs-coordinator'], 'role.content': ['bk-024'], 'role.writer': ['docs-coordinator'] },
+  )
+  const expandedWith = expand(withTemplate)
+  if (!expandedWith) return
+  assert.equal(expandedWith.tasks[3]?.subject, '渲染和出图')
+  const renderWith = expandedWith.tasks[3]?.description ?? ''
+  assert.ok(renderWith.includes('\n指定模板：ink-press'), `template line must be interpolated, got: ${renderWith}`)
+  assert.ok(!renderWith.includes('{templateLine}'), 'no placeholder leak when template is provided')
+
+  // Template absent: templateLine is the empty string (the adapter always
+  // passes it), so the placeholder resolves away and no line appears.
+  const withoutTemplate = compileCollab('collab.ppt-gen',
+    { topic: 'T', templateLine: '' },
+    { 'role.architect': ['docs-coordinator'], 'role.content': ['bk-024'], 'role.writer': ['docs-coordinator'] },
+  )
+  const expandedWithout = expand(withoutTemplate)
+  if (!expandedWithout) return
+  const renderWithout = expandedWithout.tasks[3]?.description ?? ''
+  assert.ok(!renderWithout.includes('指定模板：'), `no template line when absent, got: ${renderWithout}`)
+  assert.ok(!renderWithout.includes('{templateLine}'), 'no placeholder leak when template is absent')
+  assert.ok(renderWithout.includes('未指定模板时，用 finesse 规范自选并说明理由'))
 })
 
 test('ppt: default audience/page-count text when not supplied', () => {

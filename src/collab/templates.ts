@@ -116,7 +116,7 @@ const roundtable: TeamTemplate = {
   deliverables: [{ id: 'd1', outputTemplate: COLLAB_OUTPUT_ID, fromTasks: ['t1', 't2'] }],
 }
 
-/** PPT 生成: 内容架构 → 内容供给（fan-out）→ 逐页文案. */
+/** PPT 生成: 内容架构 → 内容供给（fan-out）→ 逐页文案 → 渲染和出图. */
 const ppt: TeamTemplate = {
   id: 'collab.ppt-gen',
   version: COLLAB_VERSION,
@@ -128,6 +128,8 @@ const ppt: TeamTemplate = {
       audience: { type: 'string', default: '缺省由你判断', description: '目标听众' },
       pageCountText: { type: 'string', description: '预计页数显示文本（如 "12" 或 "10-15"）' },
       data: { type: 'string', description: '可用素材/数据（数字带口径）' },
+      template: { type: 'string', description: '渲染模板/风格指定（如 "ink-press" 视频模板或 pptfast 主题名）；指定后渲染和出图任务严格按该模板渲染' },
+      templateLine: { type: 'string', default: '', description: '嵌入渲染任务描述的模板行（含换行；未指定模板时为空串，不泄漏占位符）' },
     },
     required: ['topic'],
   },
@@ -136,9 +138,10 @@ const ppt: TeamTemplate = {
     task('t1', 'role.architect', '内容架构', '确定听众（{audience}）、目标与篇幅（{pageCountText} 页），输出 PPT 大纲：章节结构 + 每页标题与要点。主题：{topic}'),
     task('t2', 'role.content', '内容供给（{expertId}）', '按大纲供给关键数据、结论与案例（数字带口径与来源），标注每页建议引用。主题：{topic}', ['t1']),
     task('t3', 'role.writer', '逐页文案生成', '按大纲与内容产出逐页文案（markdown 内容包）：封面/目录/每页标题+要点（每页≤5 条）/图表建议/演讲备注。主题：{topic}', ['t1', 't2']),
+    task('t4', 'role.writer', '渲染和出图', '将逐页文案渲染为交付成品：① 先按 knowledge/skills/finesse-ui/SKILL.md 的规范产出高工艺 HTML 幻灯片（product register、craft floor、反 cheapness；需要动效参考 knowledge/skills/gsap-*）；② 用 pptfast 技能（~/.agents/skills 或 pptfast CLI）把内容转为 PPTX；③ 需要视频时用 knowledge/skills/video-shotcraft/SKILL.md（Ink Press 模板在 template/ 目录）拍产品视频。{templateLine}\n未指定模板时，用 finesse 规范自选并说明理由。主题：{topic}', ['t3']),
   ],
   gates: [],
-  deliverables: [{ id: 'd1', outputTemplate: COLLAB_OUTPUT_ID, fromTasks: ['t1', 't2', 't3'] }],
+  deliverables: [{ id: 'd1', outputTemplate: COLLAB_OUTPUT_ID, fromTasks: ['t1', 't2', 't3', 't4'] }],
 }
 
 /** 研报生成（≥2 位研判专家）: 梳理 → 研判（fan-out）→ 融合成文. */

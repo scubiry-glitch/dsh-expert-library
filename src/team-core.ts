@@ -44,6 +44,7 @@ import type { TeamScheduler } from './scheduler.ts'
 import { resolveLibrary } from './expert-library/registry.ts'
 import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
 import { knowledgeGuide } from './knowledge.ts'
+import { skillsGuideSection } from './skills-discovery.ts'
 import { zhijianExpertPersona } from './zhijian/persona.ts'
 import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
 import { scenarioById } from './zhijian/routing.ts'
@@ -287,22 +288,31 @@ export async function addMemberCore(
     }
 
     // Expert persona with the role's knowledge pack guide. Zhijian (bk-*)
-    // experts get their Profile JSON baked into the persona instead.
+    // experts get their Profile JSON baked into the persona instead. The
+    // available-skills inventory rides on the same guide (via the shared
+    // skills index), so members always see what local skills exist instead of
+    // only learning about one when a task names it.
     let personaOverride: string | undefined
     if (expert !== undefined) {
       const scenario = fresh.scenarioId === undefined ? undefined : (library?.scenarios.get(fresh.scenarioId))
       const guide = await knowledgeGuide(workspace, config.knowledgeDir, expert.id, fresh.scenarioId)
+      const skillsSection = skillsGuideSection(ctx, workspace, config.knowledgeDir)
+      const guideWithSkills = skillsSection === ''
+        ? guide
+        : guide === ''
+          ? skillsSection
+          : `${guide}\n\n${skillsSection}`
       if (isZhijianExpertId(expert.id)) {
         const meta = zhijianMetaById(expert.id)
         if (meta !== undefined) {
           const framework = fresh.scenarioId === undefined
             ? undefined
             : scenarioById(fresh.scenarioId)?.framework
-          personaOverride = zhijianExpertPersona(fresh, member, config.stateDir, meta, framework, guide)
+          personaOverride = zhijianExpertPersona(fresh, member, config.stateDir, meta, framework, guideWithSkills)
         }
       }
       if (personaOverride === undefined) {
-        personaOverride = expertMemberPersona(fresh, member, config.stateDir, expert, guide, scenario?.name)
+        personaOverride = expertMemberPersona(fresh, member, config.stateDir, expert, guideWithSkills, scenario?.name)
       }
     }
 

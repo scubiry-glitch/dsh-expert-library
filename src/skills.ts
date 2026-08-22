@@ -22,6 +22,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import { readFile, realpath, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { isSafeKnowledgeId } from './knowledge.ts'
+import { collectSkillEntries, localSkillRoots } from './skills-discovery.ts'
 
 /** Skills directory name under the knowledge root. */
 const SKILLS_DIR = 'skills'
@@ -57,6 +58,31 @@ function installHint(workspace: string, knowledgeDir: string, id: string): strin
 }
 
 /**
+ * Format the 「当前可用：…」 suggestion suffix for a list of available local
+ * skill ids (the ids actually present in the skills roots at the failure
+ * moment). Empty list → 「当前可用：（无）」. Exported for direct testing of the
+ * empty case (which the live union rarely produces while the plugin's bundled
+ * skills ship).
+ */
+export function availableSkillIdsText(ids: readonly string[]): string {
+  if (ids.length === 0) return '\n当前可用：（无）'
+  return `\n当前可用：${ids.join(', ')}。`
+}
+
+/**
+ * Error-path suggestion loop: at the moment a skill reference fails, read the
+ * shared skills index (the workspace's `<knowledgeDir>/skills/` plus the
+ * plugin's bundled `knowledge/skills/`, deduped — the same union the
+ * `/skills` discovery route and the member persona inventory report) and
+ * append the currently available ids so the correction hint always offers
+ * concrete alternatives.
+ */
+function availableSkillsSuffix(workspace: string, knowledgeDir: string): string {
+  const ids = collectSkillEntries(localSkillRoots(workspace, knowledgeDir)).map(entry => entry.id)
+  return availableSkillIdsText(ids)
+}
+
+/**
  * Resolve one locally-installed skill: strict id validation, real-path
  * containment under the skills root, regular-file check, size cap, then a
  * read-only fetch of the text. No network, no writes, no directory
@@ -78,12 +104,13 @@ export async function resolveSkill(
 ): Promise<ResolvedSkill> {
   const skillId = id.trim()
   const name = fallbackName ?? skillId
+  const suffix = () => availableSkillsSuffix(workspace, knowledgeDir)
   if (!isSafeSkillId(skillId)) {
     ctx.logger.warn(`expert-library: skill id "${id}" is not a safe local skill id`)
     return {
       id: skillId,
       name,
-      unavailable: `非法 skill id「${id}」：必须是单个安全目录名（字母/数字/._-，不能包含路径分隔符或 ..）。`,
+      unavailable: `非法 skill id「${id}」：必须是单个安全目录名（字母/数字/._-，不能包含路径分隔符或 ..）。${suffix()}`,
     }
   }
 
@@ -99,7 +126,7 @@ export async function resolveSkill(
       return {
         id: skillId,
         name,
-        unavailable: `skill「${skillId}」的真实路径逃逸了 skills 根目录（符号链接指向外部？），已拒绝。${installHint(workspace, knowledgeDir, skillId)}`,
+        unavailable: `skill「${skillId}」的真实路径逃逸了 skills 根目录（符号链接指向外部？），已拒绝。${installHint(workspace, knowledgeDir, skillId)}${suffix()}`,
       }
     }
     const stats = await stat(realFile)
@@ -107,7 +134,7 @@ export async function resolveSkill(
       return {
         id: skillId,
         name,
-        unavailable: `skill「${skillId}」的 SKILL.md 不是常规文件。${installHint(workspace, knowledgeDir, skillId)}`,
+        unavailable: `skill「${skillId}」的 SKILL.md 不是常规文件。${installHint(workspace, knowledgeDir, skillId)}${suffix()}`,
       }
     }
     if (stats.size > MAX_SKILL_BYTES) {
@@ -115,7 +142,7 @@ export async function resolveSkill(
       return {
         id: skillId,
         name,
-        unavailable: `SKILL.md 超过 ${MAX_SKILL_BYTES / 1024} KiB 体积限制。`,
+        unavailable: `SKILL.md 超过 ${MAX_SKILL_BYTES / 1024} KiB 体积限制。${suffix()}`,
       }
     }
     const text = await readFile(realFile, 'utf8')
@@ -123,7 +150,7 @@ export async function resolveSkill(
       return {
         id: skillId,
         name,
-        unavailable: `skill「${skillId}」的 SKILL.md 为空文件。${installHint(workspace, knowledgeDir, skillId)}`,
+        unavailable: `skill「${skillId}」的 SKILL.md 为空文件。${installHint(workspace, knowledgeDir, skillId)}${suffix()}`,
       }
     }
     return { id: skillId, name, path: realFile }
@@ -134,7 +161,7 @@ export async function resolveSkill(
     return {
       id: skillId,
       name,
-      unavailable: `本地未安装 skill「${skillId}」。${installHint(workspace, knowledgeDir, skillId)}`,
+      unavailable: `本地未安装 skill「${skillId}」。${installHint(workspace, knowledgeDir, skillId)}${suffix()}`,
     }
   }
 }

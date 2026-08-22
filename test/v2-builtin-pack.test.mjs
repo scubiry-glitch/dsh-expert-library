@@ -112,6 +112,40 @@ test('every builtin scenario compiles digest-identically via the pack path and t
 
 // ── 4. No adaptV1 fallback: a missing/invalid pack fails loudly ──────────────
 
+test('ppt-gen builtin DAG shape: the 渲染和出图 render task is the final node on docs-coordinator', () => {
+  const scenario = BUILTIN_SCENARIO_BY_ID.get('ppt-gen')
+  assert.ok(scenario !== undefined)
+  if (scenario === undefined) return
+  const tasks = scenario.tasks
+  assert.equal(tasks.length, 4, 'ppt-gen must now carry the render task')
+  const render = tasks[3]
+  assert.equal(render?.subject, '渲染和出图')
+  assert.deepEqual(render?.dependsOn, [2], 'render depends on the final copy/content task (逐页文案生成)')
+  assert.equal(render?.expert, 'docs-coordinator', 'render uses the docs-coordinator render-role convention')
+  const description = render?.description ?? ''
+  assert.ok(description.includes('finesse-ui/SKILL.md'), 'instructs the finesse craft floor')
+  assert.ok(description.includes('pptfast'), 'instructs the pptfast conversion')
+  assert.ok(description.includes('video-shotcraft/SKILL.md'), 'instructs the video-shotcraft path')
+  assert.ok(description.includes('goal/data'), 'scenario-level template note: 模板可由用户在 goal/data 参数中指定')
+  // The video-shotcraft skill binding rides on the render task (final node).
+  assert.equal(scenario.skill?.appliesToTaskIndex, 3)
+  // The legacy projection compiles with the render task in the DAG, and the
+  // pack-path digest still equals the adaptV1 projection (regen consistency).
+  const compiled = compileV1ScenarioExecutionPlan(ALL_BUILTIN_EXPERTS, scenario)
+  assert.equal(compiled.ok, true, compiled.ok ? '' : JSON.stringify(compiled.errors))
+  if (!compiled.ok) return
+  const plan = compiled.plan
+  assert.deepEqual(plan.tasks.map(task => task.id), ['t1', 't2', 't3', 't4'])
+  assert.deepEqual(plan.tasks.map(task => task.dependsOn), [[], ['t1'], ['t1', 't2'], ['t3']])
+  assert.deepEqual(plan.tasks.map(task => task.subject), ['内容架构', '领域内容供给', '逐页文案生成', '渲染和出图'])
+  assert.deepEqual(plan.tasks[3].role, 'role.docs-coordinator')
+  assert.deepEqual(plan.deliverables[0].fromTasks, ['t1', 't2', 't3', 't4'])
+  // pack-path == adapt-path digest stays byte-identical with the new node.
+  const adaptPath = freshCompile(ALL_BUILTIN_EXPERTS, scenario)
+  assert.equal(adaptPath.ok, true)
+  if (adaptPath.ok) assert.equal(plan.digest, adaptPath.plan.digest)
+})
+
 test('a missing pack dir fails loudly with remediation (no adaptV1 fallback)', () => {
   assert.throws(
     () => loadBuiltinLegacyPack('/definitely/not/a/real/pack'),

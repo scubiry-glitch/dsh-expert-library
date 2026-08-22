@@ -68,6 +68,14 @@ import {
   registerProviderCallTool,
 } from './host/provider-tool.ts'
 import { discoverPackDirs, discoverPackDirsIn, listDomainPacks, previewDomainPack } from './v2/preview.ts'
+import {
+  collectSkillEntries,
+  discoverSkillRoots,
+  liveSkillsInventoryLine,
+  skillDiscoveryPromptSection,
+  skillsInventoryLine,
+} from './skills-discovery.ts'
+import type { AssembleContext } from '@deepseek-ai/dsh-system-prompt'
 
 /**
  * Structural slice of the web server service, compatible with both the
@@ -287,7 +295,7 @@ export const Config: z<Config> = z.object({
 })
 
 /** The model-facing usage policy: when and how to drive the Expert Library. */
-function usageSectionText(toolNames: string): string {
+function usageSectionText(toolNames: string, skillInventoryLine: string): string {
   const expertIds = [...BUILTIN_EXPERT_BY_ID.keys()].join(', ')
   const scenarioIds = [...BUILTIN_SCENARIO_BY_ID.keys()].join(', ')
   return `When the user asks to run something with the Expert Library (e.g. "用专家库审查最近的提交" / "use Expert Teams to research X"), you are the captain of a multi-agent team. Follow this protocol:
@@ -316,6 +324,8 @@ Collaboration modes — for 交叉辩论 / 圆桌研讨 / PPT 生成 / 研报生
 These tools assemble the team from the caller's expert selection and seed the mode DAG; the same patterns also exist as preset scenarios (cross-debate/roundtable/ppt-gen/research-report) for expert_teams_scenario_apply.
 
 Knowledge packs: files under the workspace <knowledgeDir>/{experts,scenarios,shared}/ are read by members directly (pointed to by their personas); never edit team.json or inbox files directly — use the expert_teams_* tools.
+
+${skillDiscoveryPromptSection(skillInventoryLine)}
 
 Tools: ${toolNames}`
 }
@@ -413,6 +423,29 @@ export function apply(ctx: Context, config: Config): void {
   // The usage policy section is injected while the plugin is announced to
   // agents; turning the announcement off (settings or entry config) removes it
   // so non-expert sessions are not polluted.
+  //
+  // The Skill discovery inventory is DYNAMIC: `dsh-system-prompt` evaluates a
+  // section's `text` as a provider on EVERY assembly (per model step, with the
+  // assembly's scope), so the prompt lists the workspace's CURRENT skills from
+  // the shared index instead of a stale mount-time snapshot. The provider
+  // resolves the workspace through `ctx.agents.currentInitiator()` (the agent
+  // driving this assembly — per-session, since dsh-agent's scope carrier IS
+  // the agent); outside an agent boundary it falls back to the union of every
+  // workspace + bundled skills, which includes the current session's cwd. The
+  // service contract exposes no scope→session→cwd lookup (ScopeKey is opaque),
+  // so the union fallback is the honest floor — and the two live surfaces (the
+  // /skills route and the member knowledge guide) carry the same inventory.
+  // All reads go through the mtime-fingerprinted index — one scan per root.
+  const sectionText = (context: AssembleContext): string => {
+    try {
+      return usageSectionText(toolNames, liveSkillsInventoryLine(ctx, runtimeConfig.knowledgeDir))
+    } catch (error: unknown) {
+      // A prompt provider must never break assembly: degrade to the static
+      // bundled inventory and the mechanism lines.
+      ctx.logger.warn(`expert-library: dynamic skill inventory failed: ${String(error)}`)
+      return usageSectionText(toolNames, skillsInventoryLine([], '插件自带 skills（挂载时）'))
+    }
+  }
   let disposeSection: (() => void) | undefined
   const syncAnnounce = (): void => {
     const value = current()
@@ -421,7 +454,7 @@ export function apply(ctx: Context, config: Config): void {
       disposeSection = ctx.systemPrompt.section({
         name: 'expert-library:usage',
         order: value.promptSectionOrder ?? 117,
-        text: usageSectionText(toolNames),
+        text: sectionText,
       })
     } else if (!announce && disposeSection !== undefined) {
       disposeSection()
@@ -497,6 +530,30 @@ export function apply(ctx: Context, config: Config): void {
       res.end(body)
     },
   }), 'expert-teams: activity route')
+
+  // Skill discovery route (read-only): enumerates every installed local skill
+  // across candidate workspaces (workspace registry + session cwds, the same
+  // union the /state route scans) plus the plugin's own bundled knowledge/
+  // dir. Lets an agent list what skills actually exist on the filesystem
+  // before concluding a named skill is absent (id/name/path/sizeBytes/
+  // hasReferences per entry; safe-id filtered, first hit per id wins).
+  ctx.effect(() => webServer.register({
+    kind: 'exact',
+    path: '/plugins/dsh-expert-library/skills',
+    handler: async (_req, res) => {
+      // The route reads the same mtime-fingerprinted index every consumer
+      // shares (discoverSkillRoots gives the roots; collectSkillEntries reads
+      // each through the cache) — no separate scan.
+      const roots = discoverSkillRoots(ctx, runtimeConfig.knowledgeDir)
+      const skills = collectSkillEntries(roots)
+      const body = JSON.stringify({ skills })
+      res.writeHead(200, {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+      })
+      res.end(body)
+    },
+  }), 'expert-teams: skills discovery route')
 
   // Whale mascot artwork: serve the packaged role/action images to the
   // activity panel. An explicit allowlist guards the route (no path

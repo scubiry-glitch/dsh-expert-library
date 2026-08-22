@@ -69,6 +69,20 @@
       "subject": "逐页文案生成",
       "description": "按大纲与内容产出逐页文案：封面/目录/每页标题+要点（每页≤5 条）/图表建议/演讲备注，markdown 结构化输出。",
       "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "ppt-gen.legacy-output",
+      "retryPolicy": "never",
+      "subject": "渲染和出图",
+      "description": "将逐页文案渲染为交付成品：① 先按 knowledge/skills/finesse-ui/SKILL.md 的规范产出高工艺 HTML 幻灯片（product register、craft floor、反 cheapness；需要动效参考 knowledge/skills/gsap-*）；② 用 pptfast 技能（~/.agents/skills 或 pptfast CLI）把内容转为 PPTX；③ 需要视频时用 knowledge/skills/video-shotcraft/SKILL.md（Ink Press 模板在 template/ 目录）拍产品视频。模板支持：模板可由用户在 goal/data 参数中指定（scenario apply 无独立 template 参数）——若调用方指定了模板，严格按指定模板渲染；未指定时用 finesse 规范自选并说明理由。",
+      "legacySource": "v1"
     }
   ],
   "gates": [],
@@ -79,7 +93,8 @@
       "fromTasks": [
         "t1",
         "t2",
-        "t3"
+        "t3",
+        "t4"
       ]
     }
   ],
