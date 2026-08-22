@@ -1,0 +1,21 @@
+{
+  "part": "Part C 逻辑附件",
+  "pdf": "附件_partC_沪八条二手转保租单元经济_重做.pdf",
+  "pdf_sha256": "48add6401c2bb6c0293696272b6073e03bd923c08a4208f42f30bb91cd109057",
+  "html": "附件_partC_沪八条二手转保租单元经济_重做.html",
+  "html_sha256": "b995bb3b9cbdb76a3997a030a5952e68f3a3f9526dd6df33b0a9cce48d83a792",
+  "pages": 8,
+  "checked_pages": [
+    1,
+    4,
+    8
+  ],
+  "screenshots": {
+    "1": "附件C_render_check_p01.png",
+    "4": "附件C_render_check_p04.png",
+    "8": "附件C_render_check_p08.png"
+  },
+  "rendered_at": "2026-08-22 23:56:07",
+  "render_method": "weasyprint 69 (md->html5->pdf, A4)",
+  "note": "Part B/C 分别用各自验收器; 本记录随渲染同步生成"
+}

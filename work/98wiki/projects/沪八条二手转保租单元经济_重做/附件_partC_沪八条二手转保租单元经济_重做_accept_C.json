@@ -1,0 +1,68 @@
+{
+  "part": "C",
+  "label": "Part C 逻辑附件",
+  "html": "附件_partC_沪八条二手转保租单元经济_重做.html",
+  "verdict": "PASS",
+  "passed": 14,
+  "total": 14,
+  "items": {
+    "logic-annex-v2 标识": {
+      "pass": true,
+      "detail": ""
+    },
+    "速览卡 S=15": {
+      "pass": true,
+      "detail": "sCards=15"
+    },
+    "详细卡 D=15": {
+      "pass": true,
+      "detail": "dCards=15"
+    },
+    "逻辑图 SVG>=12": {
+      "pass": true,
+      "detail": "svgs=12"
+    },
+    "白话总结 P=15": {
+      "pass": true,
+      "detail": "pCards=15"
+    },
+    "Key Takeaways": {
+      "pass": true,
+      "detail": ""
+    },
+    "替代解释": {
+      "pass": true,
+      "detail": ""
+    },
+    "独立补数协议": {
+      "pass": true,
+      "detail": ""
+    },
+    "无旧模板类名": {
+      "pass": true,
+      "detail": ""
+    },
+    "无第二套 summary grid": {
+      "pass": true,
+      "detail": ""
+    },
+    "无 p 嵌套": {
+      "pass": true,
+      "detail": "nestedP=0"
+    },
+    "无占位句": {
+      "pass": true,
+      "detail": ""
+    },
+    "无 JS 错误": {
+      "pass": true,
+      "detail": "[]"
+    },
+    "无横向溢出": {
+      "pass": true,
+      "detail": "overflow=0, maxRight=1280 (viewport 1280)"
+    }
+  },
+  "checked_at": "2026-08-22 23:55:01",
+  "method": "playwright chromium DOM-first（禁止正则判 HTML 嵌套；溢出/JS/数量均以加载后 DOM 为准）"
+}
