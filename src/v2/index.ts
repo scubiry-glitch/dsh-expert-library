@@ -9,9 +9,11 @@
  *
  * Exported through the package `exports` map as
  * `@zhijian/dsh-expert-library/v2` (`./lib/v2/index.js`, types
- * `./lib/types/v2/index.d.ts`). Not yet wired into Host registration or the
- * UI — internal modules first, per the phased migration plan in
- * NEXT-GENERATION-ARCHITECTURE.md §11.
+ * `./lib/types/v2/index.d.ts`). Most modules are not yet wired into Host
+ * registration or the UI — internal modules first, per the phased migration
+ * plan in NEXT-GENERATION-ARCHITECTURE.md §11; the single exception is the
+ * read-only `preview` surface (Phase 1 「设置页只读预览校验」), which backs
+ * `GET /plugins/dsh-expert-library/packs`.
  * @module dsh-expert-library/v2
  */
 
@@ -38,3 +40,4 @@ export * from './compiler.ts'
 export * from './quality.ts'
 export * from './builtin-gates.ts'
 export * from './pack-loader.ts'
+export * from './preview.ts'

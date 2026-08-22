@@ -49,6 +49,7 @@ import {
   type ExpertLibrarySettings,
   type ToolExecutionConfig,
 } from './settings.ts'
+import { listDomainPacks, previewDomainPack } from './v2/preview.ts'
 
 /**
  * Structural slice of the web server service, compatible with both the
@@ -189,6 +190,8 @@ export interface Config {
   maxMembers?: number
   /** Knowledge pack directory name under the captain's workspace (default `knowledge`). */
   knowledgeDir?: string
+  /** Domain pack directory name under each workspace root (default `domain-packs`). */
+  packsDir?: string
   /** Prompt-section order for the usage policy (default `117`, after delegation policy). */
   promptSectionOrder?: number
   /** Whether the usage policy section is announced to agents (default `true`). */
@@ -228,6 +231,7 @@ export const Config: z<Config> = z.object({
   memberMaxDepth: z.natural().default(1),
   maxMembers: z.natural().min(1).default(8),
   knowledgeDir: z.string().default('knowledge'),
+  packsDir: z.string().default('domain-packs'),
   promptSectionOrder: z.natural().default(117),
   announceToAgent: z.boolean().default(true),
   defaultModel: memberModelSchema,
@@ -279,6 +283,7 @@ export function apply(ctx: Context, config: Config): void {
     memberMaxDepth: config.memberMaxDepth ?? 1,
     maxMembers: config.maxMembers ?? 8,
     knowledgeDir: config.knowledgeDir ?? 'knowledge',
+    packsDir: config.packsDir ?? 'domain-packs',
     toolExecution: config.toolExecution,
   }
 
@@ -341,6 +346,7 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.memberMaxDepth = value.memberMaxDepth ?? 1
     runtimeConfig.maxMembers = value.maxMembers ?? 8
     runtimeConfig.knowledgeDir = value.knowledgeDir ?? 'knowledge'
+    runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
     runtimeConfig.toolExecution = value.toolExecution
     syncAnnounce()
   }
@@ -605,6 +611,47 @@ export function apply(ctx: Context, config: Config): void {
       }
     },
   }), 'expert-teams: workspace file route')
+
+  // Domain Pack read-only preview (Phase 1 §11 「设置页只读预览校验」): lists
+  // the builtin pack plus workspace `domain-packs/` packs with live
+  // validation health, and with `?id=<SafeId>` returns one pack's preview
+  // plus full loader/validator diagnostics. GET-only, no writes; the wire
+  // summaries never carry secrets or full persona/profile prose.
+  ctx.effect(() => webServer.register({
+    kind: 'exact',
+    path: '/plugins/dsh-expert-library/packs',
+    handler: async (req, res) => {
+      const url = new URL(req.url ?? '/', 'http://x')
+      const id = url.searchParams.get('id') ?? ''
+      if (id !== '') {
+        // Same SafeId rule as isSafeKnowledgeId: unicode letters/digits
+        // first, `._-` inside, ≤64 chars — no separators, no traversal.
+        if (!/^[\p{L}\p{N}][\p{L}\p{N}._-]{0,63}$/u.test(id)) {
+          res.writeHead(400)
+          res.end()
+          return
+        }
+        const preview = await previewDomainPack(ctx, id, runtimeConfig.packsDir)
+        if (preview === undefined) {
+          res.writeHead(404)
+          res.end()
+          return
+        }
+        res.writeHead(200, {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+        })
+        res.end(JSON.stringify(preview))
+        return
+      }
+      const list = await listDomainPacks(ctx, runtimeConfig.packsDir)
+      res.writeHead(200, {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+      })
+      res.end(JSON.stringify(list))
+    },
+  }), 'expert-teams: domain pack preview route')
   }
 
   registerWebSurface()

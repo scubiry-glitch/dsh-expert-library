@@ -80,6 +80,8 @@ export interface ToolsConfig {
   maxMembers: number
   /** Knowledge pack directory name under the captain's workspace. */
   knowledgeDir: string
+  /** Domain pack directory name under each workspace root (read-only preview surface). */
+  packsDir: string
   /** Per-tool execution policy (API vs CLI vs auto) for external capabilities. */
   toolExecution?: Record<string, ToolExecutionConfig>
 }

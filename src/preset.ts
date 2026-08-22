@@ -29,6 +29,7 @@ export function apply(ctx: Context, config: Config): void {
     memberMaxDepth: config.memberMaxDepth ?? 1,
     maxMembers: config.maxMembers ?? 8,
     knowledgeDir: config.knowledgeDir ?? 'knowledge',
+    packsDir: config.packsDir ?? 'domain-packs',
     toolExecution: config.toolExecution,
   }
   const core = registerExpertTeamsTools(ctx, runtimeConfig)

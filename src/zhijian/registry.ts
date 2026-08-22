@@ -10,7 +10,7 @@ import { ZHIJIAN_EXPERTS } from './data/experts.generated.ts'
 import type { ZhijianExpertMeta } from './types.ts'
 
 /** The preset model route applied to every Zhijian expert (environment default). */
-const ZHIJIAN_ROUTE: ExpertModelRoute = {
+export const ZHIJIAN_ROUTE: ExpertModelRoute = {
   provider: 'deepseek-official',
   model: 'deepseek-v4-flash',
   reasoningEffort: 'max',

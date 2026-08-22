@@ -81,6 +81,8 @@ export interface ExpertLibrarySettings {
   stateDir?: string
   /** Knowledge pack directory name under the captain's workspace. */
   knowledgeDir?: string
+  /** Domain pack directory name under each workspace root (read-only preview; default `domain-packs`). */
+  packsDir?: string
   /** Member subagent provider name (`spawn` or `fork`). */
   memberProvider?: string
   /** Member delegation depth cap; `0` forbids delegation. */
@@ -131,6 +133,7 @@ const toolExecutionSchema = z.dict(z.object({
 export const ExpertLibrarySettingsSchema: z<ExpertLibrarySettings> = z.object({
   stateDir: z.string(),
   knowledgeDir: z.string(),
+  packsDir: z.string(),
   memberProvider: z.string(),
   memberMaxDepth: z.natural(),
   maxMembers: z.natural(),

@@ -17,6 +17,7 @@ import { ExpertTeamsCard, type ExpertTeamsCardInjected } from './AgentTeamsCard.
 import { agentTeamsCardDefinition } from './agent-teams-card-definition.ts'
 import { FilesView } from './FilesView.tsx'
 import { ExpertLibrarySettingsCard } from './settings-card.tsx'
+import { DomainPacksCard } from './domain-packs-card.tsx'
 
 /** Required services: conversation nodes, slots, and sessions navigation. */
 export const inject = ['conversationEvents', 'slots', 'sessions', 'settingsScope']
@@ -51,6 +52,16 @@ export function apply(ctx: ClientContext): void {
     label: '专家库',
     inject: () => ({ scope: settingsScope }),
   }, ExpertLibrarySettingsCard)
+
+  // Read-only Domain Pack preview (Phase 1 「设置页只读预览校验」): next to the
+  // writable 专家库 runtime card, without any settings scope — the page only
+  // reads the host `/plugins/dsh-expert-library/packs` route.
+  ctx.slots.register({
+    name: 'settings.section',
+    id: 'expert-library-packs',
+    order: 165,
+    label: '领域包',
+  }, DomainPacksCard)
   ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({
     name: 'conversation.chat.node',
     key: 'expert-teams',
