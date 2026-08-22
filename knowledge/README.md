@@ -22,9 +22,22 @@
 - 资料是**惰性生效**的：任何时候把文件放进目录，下一次成员被唤醒/创建时即可读到，无需重启或重新构建。
 - 自定义专家/场景 JSON 的字段与内置定义一致（见 `src/expert-library/types.ts`），放在目录中即可覆盖内置同名条目。
 
+## 知识版本化（P2.4）
+
+- 每个资料目录可放一个 **`VERSION` 文件**（单行语义版本，如 `1.2.0`）作为该资料包的版本锚点；
+  成员 persona 的知识指引会显示 `| v1.2.0`，据此判断资料新旧。
+- 更新资料后**同步递增 VERSION**；无 VERSION 文件时版本缺省（不阻断）。
+- 资料漂移检测：目录文件清单或 VERSION 变化 ⇒ 重新灌包即可，无需重启。
+
+## 专家反馈（P2.2）
+
+- `expert_review_feedback` 把评分写入 `<workspace>/knowledge/experts/<expertId>/evaluations.jsonl`；
+  该专家下次被唤醒时 persona 注入「既往反馈摘要」（仅校准提示，不覆盖人设）。
+- 删除该文件即清空全部反馈（保留 `VERSION` 与资料文件不受影响）。
+
 ## 内置专家 id
 
-`researcher`、`engineer`、`qa-engineer`、`security-reviewer`、`designer`、`docs-coordinator`、`data-analyst`、`team-lead`
+`researcher`、`engineer`、`qa-engineer`、`security-reviewer`、`designer`、`docs-coordinator`、`data-analyst`、`team-lead`（另有 `bk-002`~`bk-034` 房地产专家、`bank-09` 银行专家，见领域包）
 
 ## 内置场景 id
 

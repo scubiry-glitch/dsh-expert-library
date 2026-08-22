@@ -223,6 +223,8 @@ export interface TeamMember {
   reasoningEffort?: string
   joinedAt: number
   status: MemberStatus
+  /** P2.1: 追问回合计数（expert_teams_chat 累计，可追溯；无追问时缺省）。 */
+  chatRounds?: number
 }
 
 /** One mailbox message. */

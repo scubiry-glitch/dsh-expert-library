@@ -29,16 +29,19 @@ dsh plugin --profile web add .
 | `expert_teams_scenario_apply` | 按场景一键建队（推荐）：创建团队 → 添加专家成员（含预置模型路由与 persona）→ 生成任务 DAG |
 | `expert_teams_add_member(expert=…)` | 手动建队时按专家档案添加成员 |
 | `expert_teams_add_member(name=…)` | 普通成员（行为同原插件） |
-| `expert_review_route` | 智见点评路由：话题类型 → 输出框架 → 主责领域 → 候选专家（用户拍板） |
+| `expert_teams_chat` | P2.1 成员追问通道：向成员发起一轮追问（不重建团队/不新建任务，回合计数累计） |
+| `expert_review_route` | 智见点评路由：话题类型 → 输出框架 → 主责领域 → 候选专家（用户拍板）；输出含能力匹配分/命中标签/专家版本/心智模型目录 |
 | `expert_review_apply` | 智见点评组队：按拍板结果建队 + 框架任务 DAG（并行研判 → 融合 → 渲染） |
+| `expert_review_feedback` | P2.2 专家反馈评分回写（evaluations.jsonl，persona 注入既往反馈摘要） |
 
-### 智见点评领域包（32 位房地产专家，原生数据）
+### 智见点评领域包（33 位房地产专家 + 1 位银行专家，原生数据）
 
-- 专家 id：`bk-002` ~ `bk-033`（五大领域：宏观经济 9 / 政策制度 8 / 行业研究 8 / 城市发展 3 / 居住服务 4）
-- Profile JSON 已由 `scripts/build-zhijian-data.mjs` **编译为插件原生数据**（`src/zhijian/data/experts.generated.ts`）：风格/立场/金句/禁区/分析步骤在 spawn 时**烘焙进 persona**，成员不需要自己解析资料
-- 路由规则原生化为结构化路由表：话题 → 框架（A 五维/B 四段/C 用户视角五层/D 多分类融合/E 顾问式）→ 主责领域 → 候选专家 + 立场对照 + 执行约束
+- 专家 id：`bk-002` ~ `bk-034`（五大领域：宏观经济 9 / 政策制度 8 / 行业研究 8 / 城市发展 3 / 居住服务 4）+ `bank-09`（BANK 命名空间首发，零售金融/银行经营）
+- Profile JSON 已由 `scripts/build-zhijian-data.mjs` / `scripts/build-bank-data.mjs` **编译为插件原生数据**（`src/zhijian/data/experts.generated.ts` + `src/bank/data/experts.generated.ts`）：风格/立场/金句/禁区/分析步骤在 spawn 时**烘焙进 persona**，成员不需要自己解析资料
+- 路由规则原生化为结构化路由表：话题 → 框架（A 五维/B 四段/C 用户视角五层/D 多分类融合/E 顾问式）→ 主责领域 → 候选专家 + 立场对照 + 执行约束；**零售金融/银行经营** 话题已并入同一路由表（共享注册表：bk+bank 双命名空间）
+- P1 增强：三维能力索引匹配（领域×标签×立场，候选 ≤5 带理由）、立场对照自动配对（debate 可省略 pro/con）、心智模型注册表反查（`债务-通缩循环 → bk-007`）、专家版本/来源 provenance
 - 流程：`expert_review_route` 判题 → 用户拍板选人（匿名呈现「BK · 领域 · 首字母」）→ `expert_review_apply` 建队执行（并行专家研判 → 基调融合 → 讨论稿/正式稿渲染）；框架 E 不建队，队长直接顾问式作答
-- 约束内建：口径缺失先问用户、数字必须核实、已故专家（顾云昌 bk-022）只引历史观点、匿名化、文风禁区
+- 约束内建：口径缺失先问用户、数字必须核实、已故专家（顾云昌 bk-022）只引历史观点、匿名化、文风禁区、**银行 PII 脱敏硬门（pii-redaction：手机号/身份证/银行卡号/账号）**
 
 ### 内置专家（8 位通用，均预置 `deepseek-official/deepseek-v4-flash` 路由）
 
@@ -148,27 +151,38 @@ dsh plugin --profile web add .
 ```
 src/
 ├── index.ts                  # 入口：系统提示协议 + 工具注册 + Web 路由
-├── tools.ts                  # 11 个 expert_teams_* 工具（含 scenario_apply）+ 可复用核心
+├── tools.ts                  # 11 个 expert_teams_* 工具（含 scenario_apply + chat 追问）+ 可复用核心
 ├── members.ts                # 成员子代理生命周期 + 专家 persona（expertMemberPersona）
 ├── state.ts                  # 持久化/锁/任务状态机（原插件移植）
 ├── scheduler.ts              # 事件驱动共享任务调度（原插件移植）
 ├── snapshot.ts / events.ts / event-types.ts   # 面板快照与会话事件（移植）
 ├── types.ts                  # TeamState（新增 scenarioId 字段）
-├── knowledge.ts              # 知识包目录约定与成员知识指引
+├── knowledge.ts              # 知识包目录约定 + 知识指引（含 VERSION 版本锚点，P2.4）
 ├── skills.ts                 # ★ 外部 skill 绑定：仅本地解析/降级（场景可挂 skill，运行时不联网）
 ├── expert-library/           # 通用专家库：类型/内置专家/内置场景/注册表
+├── bank/                     # ★ BANK 命名空间原生数据（build-bank-data.mjs 生成）
+│   └── data/experts.generated.ts   # bank-09 王一帆（零售金融/银行经营）
 ├── zhijian/                  # ★ 智见点评领域子系统（原生数据）
 │   ├── types.ts              # 领域类型（专家 meta/路由/框架/ReviewMeta）
-│   ├── data/experts.generated.ts  # ★ 32 位专家原生数据（脚本生成，勿手改）
-│   ├── routing.ts            # ★ 原生路由表：话题→框架→主责领域→候选专家
+│   ├── data/experts.generated.ts  # ★ 33 位专家原生数据（脚本生成，勿手改）
+│   ├── capability.ts         # ★ P1 三维能力索引/匹配 + 心智模型注册表
+│   ├── evaluations.ts        # ★ P2.2 专家反馈评分回写（evaluations.jsonl）
+│   ├── routing.ts            # ★ 原生路由表（话题→框架→主责领域→候选；含 bank 话题与立场配对）
 │   ├── frameworks.ts         # ★ 框架 A/B/C/D/E 模板与全局输出规则
-│   ├── registry.ts           # meta → Expert 注册（并入专家库注册表）
+│   ├── registry.ts           # ★ meta → Expert 注册（bk+bank 单一合并注册表）
 │   ├── persona.ts            # ★ Profile 烘焙 persona（zhijianExpertPersona）
-│   └── tools.ts              # ★ expert_review_route / expert_review_apply
+│   └── tools.ts              # ★ expert_review_route / apply / feedback
 └── collab/
-    └── tools.ts              # ★ 协作模式：debate / roundtable / ppt / report
+    └── tools.ts              # ★ 协作模式：debate（可自动立场配对）/ roundtable / ppt / report
 scripts/
-└── build-zhijian-data.mjs    # 资料包 → 原生数据生成脚本
+├── build-zhijian-data.mjs    # BK 资料包 → 原生数据生成脚本
+├── build-bank-data.mjs       # BANK 资料包 → 原生数据生成脚本
+├── build-zhijian-pack.mjs    # zhijian-realestate 领域包发射器
+├── build-bank-pack.mjs       # bank-finance 领域包发射器（共享 pack-common）
+├── build-packs.mjs           # ★ 多包驱动（构建/漂移检查唯一入口）
+├── pack-common.mjs           # ★ 共享确定性发射器（实体写入/自验/树摘要）
+├── verify-bk-sources.mjs     # ★ P0.3 BK 素材交叉核对（政研通/feishu vs 包内 raw）
+└── import-persons.mjs        # ★ P2.3 人物转专家半自动管线（逐字稿→画像草稿）
 ```
 
 ## 开发验证

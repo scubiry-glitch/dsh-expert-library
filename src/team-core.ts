@@ -46,6 +46,7 @@ import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
 import { knowledgeGuide } from './knowledge.ts'
 import { skillsGuideSection } from './skills-discovery.ts'
 import { zhijianExpertPersona } from './zhijian/persona.ts'
+import { feedbackGuideSection } from './zhijian/evaluations.ts'
 import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
 import { scenarioById } from './zhijian/routing.ts'
 import { expertMemoryGuideSection } from './zhijian/expert-memory.ts'
@@ -313,17 +314,25 @@ export async function addMemberCore(
         : guideWithMemory === ''
           ? skillsSection
           : `${guideWithMemory}\n\n${skillsSection}`
+      // P2.2: 既往反馈摘要注入（expert_review_feedback 回写的 evaluations.jsonl；
+      // 无反馈时为空串，不产生噪音）。
+      const feedbackSection = await feedbackGuideSection(workspace, config.knowledgeDir, expert.id)
+      const guideWithFeedback = feedbackSection === ''
+        ? guideWithSkills
+        : guideWithSkills === ''
+          ? feedbackSection
+          : `${guideWithSkills}\n\n${feedbackSection}`
       if (isZhijianExpertId(expert.id)) {
         const meta = zhijianMetaById(expert.id)
         if (meta !== undefined) {
           const framework = fresh.scenarioId === undefined
             ? undefined
             : scenarioById(fresh.scenarioId)?.framework
-          personaOverride = zhijianExpertPersona(fresh, member, config.stateDir, meta, framework, guideWithSkills)
+          personaOverride = zhijianExpertPersona(fresh, member, config.stateDir, meta, framework, guideWithFeedback)
         }
       }
       if (personaOverride === undefined) {
-        personaOverride = expertMemberPersona(fresh, member, config.stateDir, expert, guideWithSkills, scenario?.name)
+        personaOverride = expertMemberPersona(fresh, member, config.stateDir, expert, guideWithFeedback, scenario?.name)
       }
     }
 

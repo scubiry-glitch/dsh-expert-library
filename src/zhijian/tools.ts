@@ -26,6 +26,7 @@ import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
 import { frameworkById, GLOBAL_OUTPUT_RULES } from './frameworks.ts'
 import { ALL_EXPERT_METAS } from './registry.ts'
 import { matchExperts, mentalModelCatalog } from './capability.ts'
+import { appendEvaluation, evaluationsFile, feedbackSummary, readEvaluations, type EvaluationRecord } from './evaluations.ts'
 import {
   ROUTE_TOPICS, ROUTE_SCENARIOS, STANCE_TABLE, SPECIAL_ROUTING, ROUTING_CONSTRAINTS,
   scenarioForTopic, topicRouteFor,
@@ -349,6 +350,9 @@ export function registerZhijianTools(
       }
     },
   }))
+
+  // P2.2: 反馈评分回写（与 route/apply 同一工具注册表）。
+  registerReviewFeedbackTool(ctx, config)
 }
 
 /** Render the route result as compact text for the captain. */
@@ -368,4 +372,91 @@ function renderRoute(result: ZhijianRouteResult): string {
     `\n执行约束：${ROUTING_CONSTRAINTS.join('；')}`,
   ]
   return lines.join('\n')
+}
+
+/**
+ * Register the review-feedback tool (P2.2): 专家反馈评分回写 evaluations.jsonl。
+ * 由 registerZhijianTools 在末尾调用，共用同一工具注册表。
+ */
+function registerReviewFeedbackTool(ctx: Context, config: ToolsConfig): void {
+  ctx.tools.register(defineTool({
+    name: 'expert_review_feedback',
+    description: '专家反馈评分回写（P2.2）：对某位专家的输出评分（0-100，可带三维度分项与备注），追加写入 <workspace>/<knowledgeDir>/experts/<expertId>/evaluations.jsonl；该专家下次被唤醒时 persona 注入既往反馈摘要（仅作校准提示，不覆盖人设）。删除该文件即清空全部反馈。',
+    parameters: {
+      expert: { type: 'string', required: true, description: '专家 id（bk-xxx / bank-xxx / 内置专家）。' },
+      score: { type: 'number', required: true, description: '0-100 总分。' },
+      note: { type: 'string', description: '备注（口径问题/风格建议/采纳情况等）。' },
+      task_id: { type: 'string', description: '来源任务 id（可选，用于追溯）。' },
+      dim_adoption: { type: 'number', description: '分项：采纳率（0-100，可选）。' },
+      dim_relevance: { type: 'number', description: '分项：相关性（0-100，可选）。' },
+      dim_caliber: { type: 'number', description: '分项：口径合规（0-100，可选）。' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          expert: { type: 'string', required: true },
+          count: { type: 'number', required: true },
+          avg_score: { type: 'number', required: true },
+          summary: { type: 'string', required: true },
+          file: { type: 'string', required: true },
+        },
+      },
+      render: (args, value) => [{
+        type: 'text',
+        text: `反馈已回写：${value.expert} 累计 ${value.count} 条，均分 ${value.avg_score}/100。\n${value.summary}\n存储：${value.file}`,
+      }],
+    },
+    async execute(args, exec) {
+      const captain = requireCaptain(exec)
+      const workspace = captain.session.header.cwd ?? process.cwd()
+      const expertId = String(args.expert ?? '').trim()
+      if (ALL_EXPERT_METAS.every(meta => meta.id !== expertId)) {
+        // 内置通用专家也允许（反馈工具面向整个专家库）。
+        const { resolveLibrary } = await import('../expert-library/registry.ts')
+        const library = await resolveLibrary(ctx, workspace, config.knowledgeDir)
+        if (!library.experts.has(expertId)) {
+          throw new Error(`未知专家 id "${expertId}" — 可用：${[...library.experts.keys()].join(', ')}`)
+        }
+      }
+      const score = Number(args.score)
+      if (!Number.isFinite(score) || score < 0 || score > 100) {
+        throw new Error(`score 必须在 0-100 之间（收到 ${args.score}）`)
+      }
+      const file = evaluationsFile(workspace, config.knowledgeDir, expertId)
+      const dimensions: { 采纳率?: number; 相关性?: number; 口径合规?: number } = {}
+      for (const [key, value] of [
+        ['采纳率', args.dim_adoption],
+        ['相关性', args.dim_relevance],
+        ['口径合规', args.dim_caliber],
+      ] as const) {
+        if (value !== undefined) {
+          const parsed = Number(value)
+          if (!Number.isFinite(parsed) || parsed < 0 || parsed > 100) {
+            throw new Error(`${key} 必须在 0-100 之间（收到 ${value}）`)
+          }
+          dimensions[key] = parsed
+        }
+      }
+      const record: EvaluationRecord = {
+        at: new Date().toISOString(),
+        score,
+        ...(args.task_id !== undefined ? { taskId: String(args.task_id) } : {}),
+        ...(Object.keys(dimensions).length > 0 ? { dimensions } : {}),
+        ...(args.note !== undefined ? { note: String(args.note) } : {}),
+      }
+      await appendEvaluation(file, record)
+      const records = await readEvaluations(file)
+      const summary = feedbackSummary(records) ?? ''
+      const avg = Math.round(records.reduce((sum, r) => sum + r.score, 0) / records.length)
+      return {
+        expert: expertId,
+        count: records.length,
+        avg_score: avg,
+        summary,
+        file: file ?? '',
+      }
+    },
+  }))
 }

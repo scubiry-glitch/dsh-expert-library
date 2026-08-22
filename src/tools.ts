@@ -1040,6 +1040,84 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
   }))
 
   ctx.tools.register(defineTool({
+    name: 'expert_teams_chat',
+    description: '向团队内某位成员发起一轮追问（连续对话通道，P2.1）：不重建团队、不新建任务——消息进入成员 mailbox 并唤醒其新回合，回合计数累计在成员记录上（可追溯）。仅队长可用；用于对已完成/进行中的输出做澄清、口径修正或延伸追问。',
+    parameters: {
+      member: { type: 'string', required: true, description: '目标成员名（团队内 active 成员）。' },
+      content: { type: 'string', required: true, description: '追问内容（澄清问题/口径修正/延伸要求）。' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          member: { type: 'string', required: true },
+          round: { type: 'number', required: true, description: '该成员的累计追问回合数。' },
+          message_id: { type: 'string', required: true },
+          delivered: { type: 'string', required: true, description: 'wake（成员被唤醒）或 mailbox（仅入箱）。' },
+        },
+      },
+      render: (args, value) => [{
+        type: 'text',
+        text: `追问已发出：${value.member} 第 ${value.round} 轮（message ${value.message_id}，${value.delivered === 'wake' ? '成员已唤醒' : '已入 mailbox'}）。`,
+      }],
+    },
+    async execute(args, exec) {
+      const captain = requireCaptain(exec)
+      const workspace = workspaceOf(captain)
+      const stateRoot = stateRootOf(workspace, config)
+      const team = await requireParticipantTeam(workspace, config, captain)
+      const memberName = args.member.trim()
+      const prepared = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
+        const { team: fresh, identity } = await requireFreshParticipant(stateRoot, team.id, captain.id)
+        if (identity.kind !== 'captain') {
+          throw new Error('expert_teams_chat 仅队长可用；成员间的追问请用 expert_teams_send_message')
+        }
+        const recipient = requireMember(fresh, memberName)
+        recipient.chatRounds = (recipient.chatRounds ?? 0) + 1
+        const round = recipient.chatRounds
+        const message = { ...createMessage(CAPTAIN_KEY, recipient.name, args.content), deliveryClaimedAt: Date.now() }
+        await appendMailbox(stateRoot, fresh.id, recipient.name, message)
+        appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, captain.session), 'expert-teams/chat-round', {
+          teamId: fresh.id,
+          messageId: message.id,
+          member: recipient.name,
+          round,
+          content: args.content,
+          ts: message.ts,
+        })
+        await writeTeam(stateRoot, fresh)
+        return { fresh, recipient: { ...recipient }, message, round }
+      })
+      // Live delivery (same path as send_message → member): wake the member
+      // with the follow-up as its next turn; mailbox fallback is durable.
+      const liveCaptain = ctx.agents.get(prepared.fresh.captainSessionId as SessionId)
+      let delivered: 'wake' | 'mailbox' = 'mailbox'
+      if (liveCaptain !== undefined && prepared.recipient.id !== '') {
+        const text = `Expert Teams state policy: inspect ${config.stateDir}/${prepared.fresh.id}/ read-only; never edit team.json or inbox files directly. Use expert_teams_* tools for team state.\n\n队长追问（第 ${prepared.round} 轮）：\n\n${args.content}`
+        const accepted = await deliverToMember(ctx, liveCaptain, prepared.recipient.id, text, exec.signal)
+        delivered = accepted ? 'wake' : 'mailbox'
+        if (accepted) {
+          await withTeamLock(teamLockKey(stateRoot, prepared.fresh.id), () => (
+            acknowledgeMailbox(stateRoot, prepared.fresh.id, prepared.recipient.name, [prepared.message.id])
+          ))
+        }
+      }
+      if (delivered === 'mailbox') {
+        await withTeamLock(teamLockKey(stateRoot, prepared.fresh.id), () => (
+          releaseMailboxDelivery(stateRoot, prepared.fresh.id, prepared.recipient.name, [prepared.message.id])
+        ))
+      }
+      return {
+        member: prepared.recipient.name,
+        round: prepared.round,
+        message_id: prepared.message.id,
+        delivered,
+      }
+    },
+  }))
+
+  ctx.tools.register(defineTool({
     name: 'expert_teams_status',
     description: 'Team snapshot: members with live activity and tasks with status/assignee/dependencies/output. Captains also see every team mailbox; members see only their own inbox. Poll this to watch progress.',
     parameters: {},

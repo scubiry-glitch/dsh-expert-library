@@ -1,0 +1,40 @@
+{
+  "expert_id": "PERSON-说话人_2",
+  "name": "说话人 2",
+  "_needs_review": true,
+  "_draft_source": {
+    "file": "20260730_租房平台产品及发展规划分享_逐字稿.md",
+    "utterances": 24,
+    "note": "由 scripts/import-persons.mjs 从逐字稿启发式提取；立场/风格/心智模型/禁区需人工或 Agent 确认补全后进库。"
+  },
+  "summary": "说话人 2 在「20260730_租房平台产品及发展规划分享_逐字稿.md」中发言 24 次（整体的模式。）",
+  "persona": {
+    "style": [],
+    "bias": [],
+    "mentalModels": [],
+    "signaturePhrases": [
+      "整体的模式。",
+      "可以啊。会议可以啊。你进入那个会议了吗？",
+      "应该没进。"
+    ],
+    "antiPatterns": [],
+    "analysisSteps": []
+  },
+  "method": {
+    "frameworks": [],
+    "analysis_steps": []
+  },
+  "topics": [
+    "租赁",
+    "平台"
+  ],
+  "evidence": {
+    "representative_quotes": [
+      "整体的模式。",
+      "可以啊。会议可以啊。你进入那个会议了吗？",
+      "应该没进。",
+      "不是那个吗？",
+      "那全国有多少个这种注册用户啊？"
+    ]
+  }
+}

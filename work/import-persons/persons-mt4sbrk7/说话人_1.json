@@ -1,0 +1,39 @@
+{
+  "expert_id": "PERSON-说话人_1",
+  "name": "说话人 1",
+  "_needs_review": true,
+  "_draft_source": {
+    "file": "20260730_租房平台产品及发展规划分享_逐字稿.md",
+    "utterances": 5,
+    "note": "由 scripts/import-persons.mjs 从逐字稿启发式提取；立场/风格/心智模型/禁区需人工或 Agent 确认补全后进库。"
+  },
+  "summary": "说话人 1 在「20260730_租房平台产品及发展规划分享_逐字稿.md」中发言 5 次（嗯，对，可以介绍一下你们的。）",
+  "persona": {
+    "style": [],
+    "bias": [],
+    "mentalModels": [],
+    "signaturePhrases": [
+      "嗯，对，可以介绍一下你们的。",
+      "嗯，好。",
+      "项目主要是以客户，对吧？就是链接房和客。"
+    ],
+    "antiPatterns": [],
+    "analysisSteps": []
+  },
+  "method": {
+    "frameworks": [],
+    "analysis_steps": []
+  },
+  "topics": [
+    "物业"
+  ],
+  "evidence": {
+    "representative_quotes": [
+      "嗯，对，可以介绍一下你们的。",
+      "嗯，好。",
+      "项目主要是以客户，对吧？就是链接房和客。",
+      "对吧？那我们的收入来源是什么呢？",
+      "但是但是像日本，它是基本上代建的。日本美国啊，我看了一下，都是自持居多，我把物业买过来，我装修，再对外长期包租。你像国内这种比较少，对吧？基本上都是分散式的嘛。"
+    ]
+  }
+}

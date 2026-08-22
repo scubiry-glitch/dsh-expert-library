@@ -1,0 +1,37 @@
+{
+  "expert_id": "PERSON-说话人_5",
+  "name": "说话人 5",
+  "_needs_review": true,
+  "_draft_source": {
+    "file": "20260730_租房平台产品及发展规划分享_逐字稿.md",
+    "utterances": 3,
+    "note": "由 scripts/import-persons.mjs 从逐字稿启发式提取；立场/风格/心智模型/禁区需人工或 Agent 确认补全后进库。"
+  },
+  "summary": "说话人 5 在「20260730_租房平台产品及发展规划分享_逐字稿.md」中发言 3 次（乐优 c 吗？对。我用过。）",
+  "persona": {
+    "style": [],
+    "bias": [],
+    "mentalModels": [],
+    "signaturePhrases": [
+      "乐优 c 吗？对。我用过。",
+      "对，之前的确是在小红书上先搜了一下，就才了解到这个平台。",
+      "允许企业之外的成员加入。"
+    ],
+    "antiPatterns": [],
+    "analysisSteps": []
+  },
+  "method": {
+    "frameworks": [],
+    "analysis_steps": []
+  },
+  "topics": [
+    "平台"
+  ],
+  "evidence": {
+    "representative_quotes": [
+      "乐优 c 吗？对。我用过。",
+      "对，之前的确是在小红书上先搜了一下，就才了解到这个平台。",
+      "允许企业之外的成员加入。"
+    ]
+  }
+}

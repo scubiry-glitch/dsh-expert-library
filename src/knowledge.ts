@@ -16,7 +16,7 @@
  * @module dsh-expert-library/knowledge
  */
 
-import { readdir, stat } from 'node:fs/promises'
+import { readdir, readFile, stat } from 'node:fs/promises'
 import { join, relative } from 'node:path'
 
 /**
@@ -122,7 +122,8 @@ export async function knowledgeGuide(
   if (expertDir !== undefined) {
     const files = await listKnowledgeFiles(expertDir)
     if (files.length > 0) {
-      lines.push(`- Expert knowledge for ${expertId} (${relative(workspace, expertDir)}/): ${files.join(', ')}`)
+      const version = await knowledgeVersionOf(expertDir)
+      lines.push(`- Expert knowledge for ${expertId} (${relative(workspace, expertDir)}/): ${files.join(', ')}${version}`)
     }
   }
 
@@ -130,7 +131,8 @@ export async function knowledgeGuide(
     const scenarioDir = join(layout.scenariosDir, scenarioId)
     const files = await listKnowledgeFiles(scenarioDir)
     if (files.length > 0) {
-      lines.push(`- Scenario knowledge for ${scenarioId} (${relative(workspace, scenarioDir)}/): ${files.join(', ')}`)
+      const version = await knowledgeVersionOf(scenarioDir)
+      lines.push(`- Scenario knowledge for ${scenarioId} (${relative(workspace, scenarioDir)}/): ${files.join(', ')}${version}`)
     }
   }
 
@@ -143,4 +145,19 @@ export async function knowledgeGuide(
 
   if (lines.length === 0) return ''
   return `Knowledge packs available for this role (read them with your file/read tools when relevant):\n${lines.join('\n')}`
+}
+
+/**
+ * P2.4: 知识版本化约定 — 知识目录内的 `VERSION` 文件（单行，如 `1.2.0`）
+ * 作为该资料包的版本锚点，persona 知识指引中可见（成员可据此判断资料新旧、
+ * 漂移后重新灌包）。无 VERSION 文件时返回空串（版本可缺省，不阻断）。
+ */
+async function knowledgeVersionOf(dir: string): Promise<string> {
+  try {
+    const version = (await readFile(join(dir, 'VERSION'), 'utf8')).trim()
+    if (version === '') return ''
+    return ` | v${version}`
+  } catch {
+    return ''
+  }
 }

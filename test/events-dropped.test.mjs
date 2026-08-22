@@ -172,7 +172,7 @@ test('/audit omits eventsDropped when the resolver is absent (backward compatibl
  * Single source of truth for the event vocabulary
  * ------------------------------------------------------------------------- */
 
-test('EXPERT_TEAMS_EVENT_TYPES enumerates all eight expert-teams/* event names', () => {
+test('EXPERT_TEAMS_EVENT_TYPES enumerates all nine expert-teams/* event names', () => {
   assert.deepEqual(EXPERT_TEAMS_EVENT_TYPES, [
     'expert-teams/team-created',
     'expert-teams/member-added',
@@ -182,6 +182,7 @@ test('EXPERT_TEAMS_EVENT_TYPES enumerates all eight expert-teams/* event names',
     'expert-teams/message-sent',
     'expert-teams/team-deleted',
     'expert-teams/provider-called',
+    'expert-teams/chat-round',
   ])
   assert.equal(new Set(EXPERT_TEAMS_EVENT_TYPES).size, EXPERT_TEAMS_EVENT_TYPES.length)
 })

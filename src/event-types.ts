@@ -130,7 +130,22 @@ declare module '@deepseek-ai/dsh-session/types' {
      * failure code/correction when present.
      */
     'expert-teams/provider-called': ExpertTeamsProviderCalledData
+    /**
+     * Records one captain-driven follow-up round (P2.1 expert_teams_chat).
+     * @param data - team identity, message id, member, round number and content.
+     */
+    'expert-teams/chat-round': ExpertTeamsChatRoundData
   }
+}
+
+/** P2.1 chat-round 事件负载。 */
+export interface ExpertTeamsChatRoundData {
+  readonly teamId: string
+  readonly messageId: string
+  readonly member: string
+  readonly round: number
+  readonly content: string
+  readonly ts: number
 }
 
 /**
@@ -148,6 +163,7 @@ export const EXPERT_TEAMS_EVENT_TYPES = [
   'expert-teams/message-sent',
   'expert-teams/team-deleted',
   'expert-teams/provider-called',
+  'expert-teams/chat-round',
 ] as const
 
 /** The full set of `expert-teams/*` event names. */

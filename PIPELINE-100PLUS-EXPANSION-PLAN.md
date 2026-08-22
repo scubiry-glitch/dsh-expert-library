@@ -290,3 +290,15 @@ M4 (P3 完成)  pipeline §2.1 差距列清零（可选，依赖线上接口）
 ```
 
 **建议起点**：P0.1 + P0.2（素材清单 + 泛化脚本）可以立即开工，且与现有代码零冲突（纯脚本 + 数据目录新增）。需要我先把 P0.1 的素材清单盘点出来，还是直接开始写 `build-packs.mjs`？
+
+---
+
+## 9. 执行状态（P0–P2 已完成，2026-08-23）
+
+| 阶段 | 状态 | 关键交付 | 验证 |
+|---|---|---|---|
+| P0 | ✅ | `domain-packs/MATERIAL-INVENTORY.md`、`MATERIAL-CROSSCHECK.md`、`pack-common.mjs` 共享发射器、`build-packs.mjs` 多包驱动、`bank-finance` 领域包（BANK-09 + bank-retail/bank-credit-card 场景）、`pii-redaction` 脱敏硬门 | zhijian/bank 包 `--check` 双绿；`test/bank-pack.test.mjs` 9 例 |
+| P1 | ✅ | `capability.ts`（三维能力索引/匹配 + 心智模型注册表 + 反查）、`stancePairForTopic` + debate 自动配对、`expert_review_route` 输出增强（能力分/标签/版本/命名空间）、meta 统一打戳 `stampExperts`（namespace/version/source） | `test/capability.test.mjs` 11 例；路由回归全绿 |
+| P2 | ✅ | `expert_teams_chat` 追问通道（chatRounds 累计 + chat-round 事件）、`expert_review_feedback` + `evaluations.jsonl` + persona 既往反馈摘要注入、`import-persons.mjs` 人物转专家（飞书逐字稿双格式解析）、knowledge `VERSION` 版本锚点 | `test/p2-feedback-knowledge.test.mjs` 6 例 + `test/import-persons.test.mjs` 4 例；全量 **590/590** |
+
+**整合原则落地**：单一注册表（bk+bank 合并）、单一路由表（含银行话题）、单一发射器（pack-common）、扩展既有工具而非新增平行体系；P3（热点解读/素材可信度评估/线上 100+ 同步）预留 manifest 接入位。

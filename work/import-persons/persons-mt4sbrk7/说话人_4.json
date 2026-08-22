@@ -1,0 +1,39 @@
+{
+  "expert_id": "PERSON-说话人_4",
+  "name": "说话人 4",
+  "_needs_review": true,
+  "_draft_source": {
+    "file": "20260730_租房平台产品及发展规划分享_逐字稿.md",
+    "utterances": 20,
+    "note": "由 scripts/import-persons.mjs 从逐字稿启发式提取；立场/风格/心智模型/禁区需人工或 Agent 确认补全后进库。"
+  },
+  "summary": "说话人 4 在「20260730_租房平台产品及发展规划分享_逐字稿.md」中发言 20 次（嗯，我好像有发给我，我再转一下。）",
+  "persona": {
+    "style": [],
+    "bias": [],
+    "mentalModels": [],
+    "signaturePhrases": [
+      "嗯，我好像有发给我，我再转一下。",
+      "很成，很正常，咱们现在就是。",
+      "有人在吗？我们是不是没有开公司外。"
+    ],
+    "antiPatterns": [],
+    "analysisSteps": []
+  },
+  "method": {
+    "frameworks": [],
+    "analysis_steps": []
+  },
+  "topics": [
+    "平台"
+  ],
+  "evidence": {
+    "representative_quotes": [
+      "嗯，我好像有发给我，我再转一下。",
+      "很成，很正常，咱们现在就是。",
+      "有人在吗？我们是不是没有开公司外。",
+      "不是那个问题，是公司外。",
+      "就他这个会议。"
+    ]
+  }
+}
