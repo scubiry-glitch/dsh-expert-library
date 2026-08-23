@@ -1,0 +1,83 @@
+{
+  "id": "pipeline-general",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "pipeline.general",
+  "intents": [
+    "general-advisory"
+  ],
+  "requiredCapabilities": [
+    {
+      "capability": "pipeline-general.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    },
+    {
+      "capability": "pipeline.general.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    }
+  ],
+  "routingPolicy": {
+    "assertions": [
+      "特级专家为公众人物，可实名引用；研判结论先行、数字带口径"
+    ],
+    "candidateHints": [
+      "s-01",
+      "s-02",
+      "s-03",
+      "s-04",
+      "s-05",
+      "s-06",
+      "s-07",
+      "s-08",
+      "s-09",
+      "s-10",
+      "s-11",
+      "s-12",
+      "s-13",
+      "s-14",
+      "s-15",
+      "s-16",
+      "s-17",
+      "s-18",
+      "s-19",
+      "s-20",
+      "s-21",
+      "s-22",
+      "s-23",
+      "s-24",
+      "s-26",
+      "s-27",
+      "s-28",
+      "s-29",
+      "s-30",
+      "s-31",
+      "s-32",
+      "s-33",
+      "s-34",
+      "s-35",
+      "s-36",
+      "s-37",
+      "s-38",
+      "s-39",
+      "s-40",
+      "s-41",
+      "xhs-01"
+    ]
+  },
+  "teamTemplate": "pipeline-general.team.B",
+  "outputTemplate": "pipeline-general.output.B",
+  "qualityPolicy": "pipeline-general.quality",
+  "knowledgePolicy": {
+    "required": [
+      "pipeline-general-expert-memory"
+    ],
+    "optional": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  }
+}

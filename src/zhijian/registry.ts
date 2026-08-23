@@ -9,6 +9,7 @@ import type { Expert, ExpertModelRoute } from '../expert-library/types.ts'
 import { ZHIJIAN_EXPERTS } from './data/experts.generated.ts'
 import { BANK_EXPERTS } from '../bank/data/experts.generated.ts'
 import { PIPELINE_EXPERTS } from '../pipeline/data/experts.generated.ts'
+import { GENERAL_EXPERTS } from '../pipeline-general/data/experts.generated.ts'
 import type { ZhijianExpertMeta } from './types.ts'
 
 /** The preset model route applied to every Zhijian expert (environment default). */
@@ -20,14 +21,15 @@ export const ZHIJIAN_ROUTE: ExpertModelRoute = {
 
 /**
  * All native expert metas, every namespace, in deterministic order
- * (BK 智见点评 + BANK 银行金融 + pipeline S/E/XHS)——one merged data set
- * feeding the registry, routing tables, persona baker and pack projection
- * (整合设计).
+ * (BK 智见点评 + BANK 银行金融 + pipeline E 域 + pipeline-general S/XHS)——
+ * one merged data set feeding the registry, routing tables, persona baker and
+ * pack projection (整合设计).
  */
 export const ALL_EXPERT_METAS: readonly ZhijianExpertMeta[] = [
   ...ZHIJIAN_EXPERTS,
   ...BANK_EXPERTS,
   ...PIPELINE_EXPERTS,
+  ...GENERAL_EXPERTS,
 ]
 
 /** Field → suited review scenarios. */

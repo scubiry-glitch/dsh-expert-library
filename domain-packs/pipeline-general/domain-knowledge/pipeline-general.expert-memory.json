@@ -1,0 +1,66 @@
+{
+  "id": "pipeline-general.expert-memory",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "pipeline.general",
+  "boundary": "pipeline 特级专家（S-* 40 位：巴菲特/芒格/乔布斯/Karpathy/张一鸣…）与小红书操盘手（XHS-*）Profile 基线（2026-08-23）：实名（公众人物）、领域、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。",
+  "ontology": {
+    "entities": [
+      {
+        "id": "expert",
+        "description": "特级专家（s-*）/小红书操盘手（xhs-*）"
+      },
+      {
+        "id": "field",
+        "description": "领域（投资/产品/组织/战略/AI/科学思维…）"
+      },
+      {
+        "id": "mental-model",
+        "description": "心智模型（method.frameworks）"
+      }
+    ],
+    "relations": [
+      {
+        "id": "expert-belongs-to-field",
+        "from": "expert",
+        "to": "field",
+        "description": "专家属于主领域"
+      },
+      {
+        "id": "expert-uses-model",
+        "from": "expert",
+        "to": "mental-model",
+        "description": "专家使用心智模型"
+      }
+    ]
+  },
+  "collections": [
+    {
+      "id": "experts",
+      "root": "experts",
+      "format": "json",
+      "description": "每专家一个 Profile 记录"
+    }
+  ],
+  "snapshot": {
+    "id": "pipeline-general-v1-2026-08-23",
+    "takenAt": "2026-08-23T00:00:00Z",
+    "digest": "e5fb8d8d6996cb1a2048387356187d208af85865de3fecbd63a708b939c3cf02",
+    "recordCount": 41
+  },
+  "retrievalProfiles": [
+    {
+      "id": "by-id",
+      "method": "keyword"
+    },
+    {
+      "id": "by-field",
+      "method": "keyword"
+    }
+  ],
+  "policies": {
+    "citation": "required",
+    "freshness": "monthly",
+    "access": "readonly"
+  }
+}

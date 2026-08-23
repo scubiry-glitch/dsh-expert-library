@@ -16,11 +16,11 @@ import { topicRouteFor } from '../lib/zhijian/routing.js'
 
 // ── 1. 包校验 ───────────────────────────────────────────────────────────────
 
-test('pipeline-domains pack validates clean with 19 experts (E01/E08; E13 已并入 bank)', () => {
+test('pipeline-domains pack validates clean with 106 experts (E01-E12; E13 已并入 bank)', () => {
   const pack = buildPipelineDomainPack()
   const result = validateDomainPack(pack)
   assert.equal(result.ok, true, JSON.stringify(result.diagnostics.filter(d => d.severity === 'error')))
-  assert.equal(pack.experts.length, 19)
+  assert.equal(pack.experts.length, 106)
   assert.equal(pack.scenarios.length, 2)
   assert.equal(pack.scenarios.some(sc => sc.id === 'bank-strategy'), false, 'bank-strategy 归 bank-finance 包')
   assert.ok(pack.qualityPolicies[0].gates.some(g => g.id === 'pii-redaction'))
@@ -37,10 +37,13 @@ test('pipeline pack reuses shared template builders with pipeline prefix', () =>
 // ── 2. 单一注册表 / 命名空间 ────────────────────────────────────────────────
 
 test('pipeline experts are merged into the native registry with per-id namespaces', () => {
-  assert.equal(PIPELINE_EXPERTS.length, 19)
+  assert.equal(PIPELINE_EXPERTS.length, 106)
   assert.equal(zhijianMetaById('e08-08')?.namespace, 'e08')
   assert.equal(zhijianMetaById('e01-08')?.namespace, 'e01')
   assert.equal(zhijianMetaById('e13-02')?.namespace, 'e13', 'e13 保留命名空间（数据在 bank-finance 包）')
+  assert.equal(zhijianMetaById('e07-07')?.namespace, 'e07', 'E 其余域并入 pipeline-domains')
+  assert.equal(zhijianMetaById('s-32')?.namespace, 's', 'S 特级并入 pipeline-general 命名空间')
+  assert.equal(zhijianMetaById('xhs-01')?.namespace, 'xhs')
   assert.equal(ZHIJIAN_EXPERT_BY_ID.has('e08-08'), true)
   assert.equal(isZhijianExpertId('e08-08'), true)
   const left = ZHIJIAN_EXPERT_BY_ID.get('e08-08')

@@ -304,3 +304,5 @@ M4 (P3 完成)  pipeline §2.1 差距列清零（可选，依赖线上接口）
 **整合原则落地**：单一注册表（bk+bank 合并）、单一路由表（含银行话题）、单一发射器（pack-common）、扩展既有工具而非新增平行体系；P3（热点解读/素材可信度评估/线上 100+ 同步）预留 manifest 接入位。
 
 | P3.1 | ✅（2026-08-23） | `sync-pipeline-experts.mjs`（线上 184 位盘点：`PIPELINE-REMAINING-EXPERTS.md` + `work/pipeline-experts-184.json`；E01/E08/E13 首批 22 位已同步入库，S/XHS 命名空间脚本已支持按批收）、`build-pipeline-data.mjs`（e01/e08/e13 命名空间）、`pipeline-domains` 领域包（3 场景 + pii 硬门）、路由表 + 注册表并入 | `test/pipeline-sync` 5 例 + `test/pipeline-pack` 6 例；全量 **601/601**；三包 `--check` 全绿 |
+
+| P3.2 | ✅（2026-08-23） | pipeline 其余 128 位续收：E02-E12 87 位（金融科技/新能源/医疗/消费/半导体/AI/传媒/制造/ESG/出海）→ `pipeline-domains`（106 位）；S 特级 40 + XHS 1 → 新包 `pipeline-general`（41 位）；sync 脚本支持多批次合并（roster 不丢历史批次）；路由话题「特级专家研判」+ 通用场景 | `test/pipeline-general-pack.test.mjs` 4 例；全量 **607/607**；四包 `--check` 全绿 |

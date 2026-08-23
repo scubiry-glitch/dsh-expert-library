@@ -36,7 +36,7 @@ dsh plugin --profile web add .
 
 ### 智见点评领域包（33 位房地产专家 + 1 位银行专家 + 22 位 pipeline 专家，原生数据）
 
-- 专家 id：`bk-002` ~ `bk-034`（五大领域 33 位）+ `bank-09` + `e13-*`（**bank-finance 包**：BANK 零售操盘 + E13 江苏银行高层 3 位）+ `e01-*`/`e08-*`（**pipeline-domains 包**：E01 宏观 9 / E08 房地产 10，公众人物实名，`scripts/sync-pipeline-experts.mjs` 从线上专家库同步）
+- 专家 id：`bk-002` ~ `bk-034`（五大领域 33 位）+ `bank-09` + `e13-*`（**bank-finance 包** 4 位）+ `e01-*`~`e12-*`（**pipeline-domains 包** 106 位，E01-E12 全行业域）+ `s-*`/`xhs-*`（**pipeline-general 包** 41 位：S 特级 40 + 小红书操盘手 1）——**共 184 位 = 线上专家库全量收编**（`scripts/sync-pipeline-experts.mjs` 分批同步）
 - Profile JSON 已由 `scripts/build-zhijian-data.mjs` / `scripts/build-bank-data.mjs` **编译为插件原生数据**（`src/zhijian/data/experts.generated.ts` + `src/bank/data/experts.generated.ts`）：风格/立场/金句/禁区/分析步骤在 spawn 时**烘焙进 persona**，成员不需要自己解析资料
 - 路由规则原生化为结构化路由表：话题 → 框架（A 五维/B 四段/C 用户视角五层/D 多分类融合/E 顾问式）→ 主责领域 → 候选专家 + 立场对照 + 执行约束；**零售金融/银行经营** 话题已并入同一路由表（共享注册表：bk+bank 双命名空间）
 - P1 增强：三维能力索引匹配（领域×标签×立场，候选 ≤5 带理由）、立场对照自动配对（debate 可省略 pro/con）、心智模型注册表反查（`债务-通缩循环 → bk-007`）、专家版本/来源 provenance

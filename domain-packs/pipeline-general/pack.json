@@ -1,0 +1,13 @@
+{
+  "id": "pipeline-general",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "name": "pipeline 特级专家领域包（S-* 40 + XHS-* 1）",
+  "description": "41 位 pipeline 特级专家/操盘手基线（s-*/xhs-*，公众人物实名）。V2 投影源为 src/pipeline-general/data/experts.generated.ts；复用 zhijian/bank 的模板/质量/方法构建器（pipeline-general 前缀）。",
+  "dependsOn": [
+    "zhijian-realestate"
+  ],
+  "caliberDeclarations": {
+    "线上": "paper.morning.rocks 专家库口径"
+  }
+}

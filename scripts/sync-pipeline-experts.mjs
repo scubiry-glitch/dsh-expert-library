@@ -21,7 +21,7 @@
  *   node scripts/sync-pipeline-experts.mjs --dry-run          # 只打印将写什么
  *   node scripts/sync-pipeline-experts.mjs --out <dir>        # 自定义输出目录
  */
-import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
@@ -145,6 +145,41 @@ function matchesNamespace(expertId, namespaces) {
 }
 
 /**
+ * 扫描输出目录中已有的标准 Profile（先前批次同步落盘），返回
+ * `{ id, profile, derived }` 条目——供多批次追加时合并 roster，
+ * 已有专家不丢、不重复（新批次拉取的同 id 条目优先）。
+ */
+export async function collectExistingProfiles(outDir) {
+  const rawRoot = join(resolve(outDir), 'raw-profiles')
+  const entries = []
+  let files = []
+  try {
+    files = (await readdir(rawRoot)).filter(f => f.endsWith('.json')).sort()
+  } catch {
+    return entries
+  }
+  for (const file of files) {
+    try {
+      const profile = JSON.parse(await readFile(join(rawRoot, file), 'utf8'))
+      if (typeof profile?.expert_id !== 'string' || typeof profile?.name !== 'string') continue
+      const derived = derivePipelineMeta(profile.name, profile.domain ?? [])
+      entries.push({ id: profile.expert_id, profile, derived })
+    } catch {
+      // 坏文件跳过（不阻断合并）
+    }
+  }
+  return entries
+}
+
+/** 合并既有与新增条目（按 id 去重；新增优先），按 id 排序。 */
+export function mergeEntries(existing, fresh) {
+  const byId = new Map()
+  for (const entry of existing) byId.set(entry.id, entry)
+  for (const entry of fresh) byId.set(entry.id, entry)
+  return [...byId.values()].sort((a, b) => a.id.localeCompare(b.id))
+}
+
+/**
  * 同步入口：拉列表 → 过滤 → 拉详情 → 归一化 → 写 raw-profiles + roster + manifest。
  * 任何拉取失败都会在写盘前中止（原子语义：不产生半成品）。
  * 已存在的同 sha 文件跳过（幂等）；sha 不同则覆盖并计入 changed。
@@ -161,23 +196,27 @@ export async function syncPipelineExperts(options = {}) {
     .sort()
 
   // 拉详情（小并发，顺序无关紧要——归一化按 id 排序保证确定性）。
-  const entries = []
+  const fresh = []
   for (const id of targets) {
     const detail = await fetchJson(`${PIPELINE_API}/experts/${encodeURIComponent(id)}`)
     if (detail === null) throw new Error(`详情 404：${id}`)
     const { profile, derived } = normalizePipelineProfile(detail)
-    entries.push({ id, profile, derived })
+    fresh.push({ id, profile, derived })
   }
-  entries.sort((a, b) => a.id.localeCompare(b.id))
+  fresh.sort((a, b) => a.id.localeCompare(b.id))
+
+  // 多批次追加：合并输出目录中已有专家（roster 不丢历史批次）。
+  const existing = await collectExistingProfiles(outDir)
+  const entries = mergeEntries(existing, fresh)
 
   if (dryRun) {
-    return { dryRun: true, outDir, namespaces, targets, entries, changed: entries.map(e => e.id), skipped: [] }
+    return { dryRun: true, outDir, namespaces, targets, entries, changed: fresh.map(e => e.id), skipped: [] }
   }
 
   const manifest = { syncedAt: new Date().toISOString(), namespaces, total: entries.length, files: {}, changed: [], skipped: [] }
   await mkdir(join(outDir, 'raw-profiles'), { recursive: true })
   await mkdir(join(outDir, 'docs'), { recursive: true })
-  for (const { id, profile } of entries) {
+  for (const { id, profile } of fresh) {
     const rel = `raw-profiles/${profile.name}_专家Profile_${id}.json`
     const abs = join(outDir, rel)
     const content = `${JSON.stringify(profile, null, 2)}\n`

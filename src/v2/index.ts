@@ -57,6 +57,16 @@ export {
   PIPELINE_REVIEW_CAPABILITY,
 } from './pipeline-pack.ts'
 export type { BuildPipelinePackOptions } from './pipeline-pack.ts'
+export {
+  buildPipelineGeneralDomainPack,
+  GENERAL_PACK_ID,
+  GENERAL_PACK_VERSION,
+  GENERAL_PACK_SNAPSHOT,
+  GENERAL_BASELINE_DATE,
+  GENERAL_QUALITY_POLICY_ID,
+  GENERAL_REVIEW_CAPABILITY,
+} from './pipeline-general-pack.ts'
+export type { BuildPipelineGeneralPackOptions } from './pipeline-general-pack.ts'
 export * from './digest.ts'
 export * from './phases.ts'
 export * from './compiler.ts'

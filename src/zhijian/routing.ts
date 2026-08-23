@@ -116,6 +116,13 @@ export const ROUTE_TOPICS: readonly ZhijianRouteTopic[] = [
     preferredTags: ['实操', '数据'],
     packScope: 'pipeline',
   },
+  {
+    topic: '特级专家研判（战略、投资、产品、组织、AI 趋势、科学思维）',
+    framework: 'B',
+    primaryField: '特级专家',
+    preferredTags: ['研判', '理论'],
+    packScope: 'pipeline-general',
+  },
 ]
 
 /** 路由规则.md §二: 场景 → 主责领域 → 候选专家（BK 号 → 专家 id）. */
@@ -221,6 +228,14 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     primaryField: '江苏银行高层',
     candidates: ['e13-01', 'e13-02', 'e13-03'],
     constraints: 'pipeline 命名空间（E13 江苏银行高层，公众人物实名）。袁军 e13-01 战略/客户经营，高增银 e13-02 战略执行/量化目标，梁斌 e13-03 零售/网络金融/数智化。',
+  },
+  {
+    id: 'pipeline-general',
+    name: '特级专家研判',
+    framework: 'B',
+    primaryField: '特级专家',
+    candidates: ['s-32', 's-37', 's-36', 's-40', 's-24', 's-10', 's-01'],
+    constraints: 'pipeline-general 命名空间（S 特级，公众人物实名）。巴菲特 s-32 价值投资/安全边际，芒格 s-37 多学科思维，乔布斯 s-36 产品设计，Karpathy s-40 AI/LLM，张小龙 s-24 产品体验，陆奇 s-10 AI 趋势，张一鸣 s-01 产品增长。',
   },
 ]
 

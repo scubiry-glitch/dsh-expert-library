@@ -1,0 +1,67 @@
+{
+  "packId": "pipeline-general",
+  "packVersion": "1.0.0",
+  "schemaVersion": 2,
+  "baselines": [
+    {
+      "version": "1.0.0",
+      "source": "paper.morning.rocks/api/v1/expert-library（scripts/sync-pipeline-experts.mjs 归一化，2026-08-23）",
+      "date": "2026-08-23T00:00:00Z",
+      "snapshot": "pipeline-v1-2026-08-23",
+      "expertCount": 22,
+      "note": "首发：E01 宏观经济 9 / E08 房地产 10 / E13 江苏银行 3。公众人物实名，classification/initials 由 sync 脚本确定性推导。"
+    }
+  ],
+  "rawProfiles": {
+    "count": 41,
+    "files": {
+      "Andrej Karpathy_专家Profile_S-40.json": "90973f5f276f6ca3235a2550afdb61f138ad352c6092335db86d9e0032f7c39a",
+      "Paul Graham_专家Profile_S-41.json": "6b3ad373f7eb7b73bd7c7e34225aec20166123e8eea7a21989914ded6b844313",
+      "丁磊_专家Profile_S-18.json": "03acde97df4c61dc87f882d818b45ba11203579c96ee5acf7d48be046a4e1911",
+      "乔布斯_专家Profile_S-36.json": "2935de5777ef0cf28df90846543b5cd017c8f7ca5d6e96ddcc49e9d78328d062",
+      "任正非_专家Profile_S-06.json": "d0f50bb7902cee0c6d72a3d47c5f18242dbbde743dad142a022ea26f14df4d62",
+      "余承东_专家Profile_S-28.json": "e8f4b6408e58026e20832dda484d22dd57a10be43fc5d732d6530100f200ee29",
+      "刘强东_专家Profile_S-17.json": "ad169c86417e79850090ee30e2475ac07fd769bcb5d48a8c81d48c47275c5bb4",
+      "刘炽平_专家Profile_S-20.json": "384d12635251fdae6ace91dd1dc305892766edc64e4a20750fbe2454b5cc80fc",
+      "周其仁_专家Profile_S-16.json": "5689ad57b74ed93428c8baaeb63b7f1e82e1d85ea15d686553d3cce6f0e66c83",
+      "塔勒布_专家Profile_S-38.json": "5cdbb8422cb1432319e3d71dbf26d56c9f2b0f878867cf8fe679343153b0d9f3",
+      "孙正义_专家Profile_S-33.json": "fc8ab490f6d835b71aa186e07d6de933dd688c3da4512e0eac32ab8ec439d0dd",
+      "宿华_专家Profile_S-08.json": "3e764727b02dd60592df7283226bc282f989e4d8f77e10e4d224db0d9cbd54fa",
+      "小红书爆款操盘手_专家Profile_XHS-01.json": "5a87b0ef2fc9df7f5a0fac81066177f7117862dc37f0daa5e8226feb1b3d5f08",
+      "巴菲特_专家Profile_S-32.json": "3e8b8452965755c98b4525251dcb75de247153c9572588a7e1754a860265d1c2",
+      "张一鸣_专家Profile_S-01.json": "7bc0bb4d25be002ba32d38e250f3d1531334ef8348281fb5ba548388528fd53a",
+      "张勇_专家Profile_S-07.json": "96256b3eea0cf8bec340c8821ac6d2a89686bc198c37b7eac8f634a331c54c38",
+      "张小龙_专家Profile_S-24.json": "ffc7886c12a2da730b3476f14a586875ba04ec3a7a040d15074df3546d37decb",
+      "张磊_专家Profile_S-12.json": "5c96ac60ae8c7686e4dac180d7b5995c63126098e66ec7a1a49ffdd7cbeacbee",
+      "徐新_专家Profile_S-14.json": "e5348987b7d9237d2595973dadd5b85f7fc5a9ed089fcc263663ba3490485eb7",
+      "朱啸虎_专家Profile_S-13.json": "77bd8bab6964d88a48c43f328bad8c87f0c1d7ef4366a732c86c66ea251f60e4",
+      "李开复_专家Profile_S-30.json": "2ce6ad8bd0705043d3ec69696e48bccb6e4f94ea1af0c55332f1a0bceb53e188",
+      "李彦宏_专家Profile_S-27.json": "ffdb9f20f3ac6ff538a79df15586f5cdfac51e1637b80a3a83b2ab218aef03d6",
+      "李稻葵_专家Profile_S-22.json": "a5cae18f2afa944aa90fb9b9a87785628b914e19f203880875b10407ba3de0b3",
+      "林毅夫_专家Profile_S-15.json": "be9a70c632ac9205d698d77dc3b6b52cfe88a3b68e5230e113dbb3e441ccc7a2",
+      "查理·芒格_专家Profile_S-37.json": "cf2b6ff7d7d6acafafdbbd824603de8b1eecfa61f7f8a9e26bb84569c25d3cc8",
+      "梁建章_专家Profile_S-26.json": "8437d828f4e10649430ca92044082a740401afad32279a14396fb06c9eef3fc8",
+      "樊纲_专家Profile_S-21.json": "a2eb3abb5ec080ce68304807facb9035c07e5358f4a102cdd9305d710b36ce7d",
+      "沈南鹏_专家Profile_S-11.json": "8c7f4273ccd3c6fd1b338755c121a927e3c678d75a84296cc6d11202c5c4b2db",
+      "熊晓鸽_专家Profile_S-19.json": "87b2c856bb005aeb940cdeda242cee15fd192b4d9c750ba6b3f0c8944f932467",
+      "王兴_专家Profile_S-04.json": "fbbd028ef470521d0a75fed9aa602ec253584b8ca104d315eda052a8b74cbc86",
+      "王慧文_专家Profile_S-09.json": "53d6d22934a8699fbc658076aba2013de0434d474dd795be9559fc56d6c7ecbc",
+      "程维_专家Profile_S-23.json": "b2ce18432a5b768eaff394d2f0ddd6491068bcdf6d359a9749200a88e04a8400",
+      "纳德拉_专家Profile_S-35.json": "b41b023e2d1ac5d53148c38842ff4a6a176a2da3f003ce4cd4f6fc2fc212aa6a",
+      "董明珠_专家Profile_S-29.json": "8bde05d0b3caf9fe5cf5a618c979b1a0fb17776ef56c13d82679c886db945cb9",
+      "贝索斯_专家Profile_S-31.json": "fd52db3ecafd4c1337cb3b7d3e14af10d491deb3c7147eb71712246295c84826",
+      "费曼_专家Profile_S-39.json": "07cf92cfca89ae386ee8b516cc515c3051c24d5f2414dca779ced8467a3913c8",
+      "陆奇_专家Profile_S-10.json": "f09c5463282830c345b9965d69ef04c259c4b391878ddbd6f8c73a30ad5ed82a",
+      "雷军_专家Profile_S-02.json": "b690cc3c76590c5eb947e44f398b2fc2ebb4ce190ac0b8904b3a1fbafd4e38a9",
+      "马斯克_专家Profile_S-03.json": "6de2459b3253adae8d16ca56ff245de66827563bfd69badd3b1a1c0d696a3e0d",
+      "马斯克_专家Profile_S-05.json": "527050c8725ce48556378e62c1742d9199f8c1a148c625d446af575fb762b6d6",
+      "黄峥_专家Profile_S-34.json": "73d99f7bb856505cc7ceb4f957a9e1a55ea370d84fd16d8234be926feeb63bb5"
+    }
+  },
+  "docs": {
+    "count": 1,
+    "files": {
+      "专家总表.md": "5074198d23956f1eb21a46f089a83bfe330a1c960198fee852d1d42090406fd6"
+    }
+  }
+}
