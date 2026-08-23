@@ -35,6 +35,7 @@ import {
   emitPackEntities,
   fileExists,
   finalizePack,
+  listFiles,
   sha256Of,
 } from './pack-common.mjs'
 
@@ -89,6 +90,16 @@ export async function copyBankSourceAssets(srcDir, outDir) {
     }
     docs[name] = await copyBytes(source, join(sourceRoot, 'docs', name))
   }
+
+  // 捆绑技能：`<srcDir>/skills/<id>/…`（SKILL.md 树）→ `<out>/source/skills/`
+  // 逐字节保留（发射阶段再分发为包内 `skills/`，见 emitBankPack）。
+  const skills = {}
+  const skillsRoot = join(srcDir, 'skills')
+  if (await fileExists(join(skillsRoot, 'SKILL.md')).catch(() => false) || (await stat(skillsRoot).catch(() => undefined))?.isDirectory()) {
+    for (const rel of await listFiles(skillsRoot)) {
+      skills[rel] = await copyBytes(join(skillsRoot, rel), join(sourceRoot, 'skills', rel))
+    }
+  }
   if (errors.length > 0) throw new PackGenError(errors)
 
   const manifest = {
@@ -98,6 +109,7 @@ export async function copyBankSourceAssets(srcDir, outDir) {
     baselines: BANK_BASELINES,
     rawProfiles: { count: Object.keys(rawFiles).length, files: rawFiles },
     docs: { count: Object.keys(docs).length, files: docs },
+    ...(Object.keys(skills).length > 0 ? { skills: { count: Object.keys(skills).length, files: skills } } : {}),
   }
   await writeFile(join(sourceRoot, 'SOURCE-MANIFEST.json'), `${JSON.stringify(manifest, null, 2)}\n`)
   return manifest
@@ -114,6 +126,7 @@ export async function verifyBankSourceAssets(outDir) {
   const groups = [
     ['rawProfiles', 'raw-profiles'],
     ['docs', 'docs'],
+    ['skills', 'skills'],
   ]
   for (const [groupKey, dirName] of groups) {
     for (const [name, expected] of Object.entries(manifest[groupKey]?.files ?? {}).sort()) {
@@ -196,6 +209,14 @@ export async function emitBankPack(outDir, options = {}) {
   // source assets: lossless raw profiles + docs (staged before the reset)
   if (staging !== null) {
     await copyTree(join(staging, 'source'), join(outDir, 'source'))
+    // 捆绑技能分发：`source/skills/<id>/…` → 包内 `skills/<id>/…`（技能内容
+    // 随包分发；声明在 skill-packages/ 实体，运行时亦可放入 knowledge/skills/ 使用）。
+    const stagedSkills = join(staging, 'source', 'skills')
+    const stagedSkillsInfo = await stat(stagedSkills).catch(() => undefined)
+    if (stagedSkillsInfo?.isDirectory() === true) {
+      const count = await copyTree(stagedSkills, join(outDir, 'skills'))
+      if (count > 0) written.push(`skills/ (${count} files)`)
+    }
   } else {
     try {
       manifest = await verifyBankSourceAssets(outDir)

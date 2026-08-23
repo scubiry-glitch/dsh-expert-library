@@ -28,6 +28,7 @@ import {
   type PackMeta,
   type QualityGateSpec,
   type ScenarioV2,
+  type SkillPackageManifest,
   type TeamTemplate,
 } from './types.ts'
 import {
@@ -56,6 +57,49 @@ export const BANK_QUALITY_POLICY_ID = 'bank.quality'
 
 /** The bank review capability every bank expert claims. */
 export const BANK_REVIEW_CAPABILITY = 'bank.review'
+
+/** Skill 内容版本约定（技能自身无版本号时用本地基线版本，同 zhijian 包）。 */
+export const BANK_SKILL_BASELINE_VERSION = '0.0.0-local'
+
+/** bank-finance 包捆绑技能（内容在 `domain-packs/bank-finance/source/skills/<id>/`，
+ * 发射时保留为包内 `skills/<id>/`；SKILL.md 树为内容本体，manifest 为声明）。 */
+export const BANK_SKILL_PACKAGES: readonly { id: string; name: string; version: string }[] = [
+  { id: 'bank-retail-finance-analysis', name: 'bank-retail-finance-analysis', version: BANK_SKILL_BASELINE_VERSION },
+  { id: 'strategy-consulting', name: 'strategy-consulting', version: BANK_SKILL_BASELINE_VERSION },
+]
+
+/**
+ * 声明级 digest：sha256 over the declaration identity（id/version/root）。
+ * 内容树由发射器在 SOURCE-MANIFEST 中以逐文件 sha256 记录（lossless），
+ * 与 zhijian 包的 skill 声明模式一致。
+ */
+function bankSkillPackageDigest(decl: { id: string; version: string }): string {
+  return createHash('sha256')
+    .update(`bank:skill-package:${decl.id}:${decl.version}:skills/${decl.id}`)
+    .digest('hex')
+}
+
+/** One bundled bank skill → {@link SkillPackageManifest}（local-only，无 license ⇒ internalOnly）。 */
+function bankSkillPackageManifest(decl: { id: string; name: string; version: string }): SkillPackageManifest {
+  return {
+    id: decl.id,
+    name: decl.name,
+    version: decl.version,
+    schemaVersion: SCHEMA_VERSION,
+    source: {
+      kind: 'builtin',
+      // 相对包根：发射后包内 `skills/<id>/` 存在（内容树由发射器拷贝）。
+      root: `skills/${decl.id}`,
+      digest: bankSkillPackageDigest(decl),
+    },
+    // 技能主体在 SKILL.md 树（运行时 resolveSkill 读取），声明本身无实体贡献。
+    contributions: {},
+    permissions: {
+      execScripts: [],
+      internalOnly: true,
+    },
+  }
+}
 
 /** Scenario id → controlled intent vocabulary (pack-defined). */
 const BANK_SCENARIO_INTENTS: Readonly<Record<string, readonly string[]>> = {
@@ -283,7 +327,7 @@ export function buildBankDomainPack(options: BuildBankPackOptions = {}): DomainP
       bankRetailMethodPack(packVersion),
       frameworkMethodPack(frameworkB, packVersion, 'bank'),
     ],
-    skillPackages: [], // bank-99 is a workspace skill, not bundled
+    skillPackages: BANK_SKILL_PACKAGES.map(bankSkillPackageManifest),
   }
 }
 

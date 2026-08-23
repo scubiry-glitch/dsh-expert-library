@@ -1,8 +1,21 @@
 {
   "ok": true,
   "errorCount": 0,
-  "warningCount": 0,
-  "diagnostics": [],
+  "warningCount": 2,
+  "diagnostics": [
+    {
+      "code": "missing-license",
+      "path": "pack.skillPackages[0].source.license",
+      "message": "skill package has no license; outputs default to internalOnly",
+      "severity": "warning"
+    },
+    {
+      "code": "missing-license",
+      "path": "pack.skillPackages[1].source.license",
+      "message": "skill package has no license; outputs default to internalOnly",
+      "severity": "warning"
+    }
+  ],
   "entityCounts": {
     "experts": 4,
     "scenarios": 3,
@@ -12,6 +25,6 @@
     "knowledgeProviders": 2,
     "domainKnowledge": 1,
     "methodPacks": 2,
-    "skillPackages": 0
+    "skillPackages": 2
   }
 }

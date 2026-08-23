@@ -62,6 +62,18 @@ test('bank-finance pack validates clean with bank-09 + e13-* 江苏银行高层'
   assert.ok(pack.qualityPolicies[0].gates.some(g => g.id === 'pii-redaction'))
 })
 
+test('bank pack bundles both consulting skills with pack-relative roots', () => {
+  const pack = buildBankDomainPack()
+  assert.equal(pack.skillPackages.length, 2)
+  const ids = pack.skillPackages.map(s => s.id).sort()
+  assert.deepEqual(ids, ['bank-retail-finance-analysis', 'strategy-consulting'])
+  const retail = pack.skillPackages.find(s => s.id === 'bank-retail-finance-analysis')
+  assert.equal(retail.source.kind, 'builtin')
+  assert.equal(retail.source.root, 'skills/bank-retail-finance-analysis')
+  assert.equal(retail.permissions.internalOnly, true, '无 license 技能默认 internalOnly')
+  assert.deepEqual(retail.contributions, {})
+})
+
 test('bank pack reuses the shared framework B template with bank prefix', () => {
   const pack = buildBankDomainPack()
   const template = pack.teamTemplates[0]

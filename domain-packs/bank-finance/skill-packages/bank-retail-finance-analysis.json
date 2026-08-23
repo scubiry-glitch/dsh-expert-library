@@ -1,0 +1,16 @@
+{
+  "id": "bank-retail-finance-analysis",
+  "name": "bank-retail-finance-analysis",
+  "version": "0.0.0-local",
+  "schemaVersion": 2,
+  "source": {
+    "kind": "builtin",
+    "root": "skills/bank-retail-finance-analysis",
+    "digest": "5543b7adda13477b2f788b639ba0988785c278f4dc12833943611acbe9657fce"
+  },
+  "contributions": {},
+  "permissions": {
+    "execScripts": [],
+    "internalOnly": true
+  }
+}

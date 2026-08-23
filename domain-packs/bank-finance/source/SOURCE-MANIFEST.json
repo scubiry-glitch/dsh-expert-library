@@ -26,5 +26,13 @@
     "files": {
       "专家总表.md": "08641812a0e43c6f487ba5e7304dd498fed4eab3919d39cc592f588bcabfb9d4"
     }
+  },
+  "skills": {
+    "count": 3,
+    "files": {
+      "bank-retail-finance-analysis/SKILL.md": "c260871eba2e34097cc3bbec29384578759c5aab520ace308846dd60e6fb5d39",
+      "bank-retail-finance-analysis/references/analysis-templates.md": "e81824ef75e472856ee43c1d4238c76e67f89a87aeee5ecff424f4e293ceac93",
+      "strategy-consulting/SKILL.md": "4caefff0f4a63cf2313d17bbb36b94431b66f860e1d2c3df05053bb35bbfdb9f"
+    }
   }
 }

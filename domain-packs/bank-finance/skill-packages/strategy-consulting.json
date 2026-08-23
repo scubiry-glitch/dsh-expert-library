@@ -1,0 +1,16 @@
+{
+  "id": "strategy-consulting",
+  "name": "strategy-consulting",
+  "version": "0.0.0-local",
+  "schemaVersion": 2,
+  "source": {
+    "kind": "builtin",
+    "root": "skills/strategy-consulting",
+    "digest": "31ed0aef6a384c48b687985eca07b49985c6c26b605d045e02ca7c7a4df881e0"
+  },
+  "contributions": {},
+  "permissions": {
+    "execScripts": [],
+    "internalOnly": true
+  }
+}
