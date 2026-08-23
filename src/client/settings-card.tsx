@@ -505,7 +505,9 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
         ['knowledgeDir', draft.knowledgeDir],
         ['memberProvider', draft.memberProvider],
         ['maxMembers', Number(draft.maxMembers)],
-        ['memberMaxDepth', Number(draft.memberMaxDepth)],
+        // memberMaxDepth 0 is meaningful ("forbid delegation"), so only unset
+        // when the field is truly empty.
+        ['memberMaxDepth', draft.memberMaxDepth.trim() === '' ? '' : Number(draft.memberMaxDepth)],
         ['promptSectionOrder', Number(draft.promptSectionOrder)],
         ['defaultModel', { provider: draft.modelProvider, model: draft.modelName, reasoningEffort: draft.reasoningEffort }],
         ['announceToAgent', draft.announceToAgent],

@@ -324,6 +324,7 @@ function usageSectionText(toolNames: string, skillInventoryLine: string): string
 8. Present the team's results to the user, then expert_teams_delete the team unless the user wants to keep working with it.
 
 Zhijian (智见点评) review flow — when the user asks 请专家点评 / 让专家看看数据 (real-estate market data):
+0. 先归型、再路由 (mandatory for free-form requests): for a free/ambiguous request (e.g. "贝壳政研通的 BP 优化"), call expert_review_clarify FIRST — it returns candidate topic/scenario options plus the domain pack's 待确认口径 questions (用途受众 / 数据来源 / 城市 / 时段 / 敏感脱敏 / 领域侧重; required items marked). Ask the user these questions one round, then 归型 (pick the intent). When expert_review_route returns clarify_needed, confirm those 口径 with the user before expert_review_apply — never enter a team with unresolved 口径.
 1. Call expert_review_route with the question/topic: it returns the output framework (A 五维 / B 四段 / C 用户视角五层 / D 多分类融合 / E 顾问式), the primary field, and 3-5 candidate experts (anonymized BK·领域·首字母).
 2. Present the candidates to the USER for sign-off — never auto-select. For 同题对比 prefer one 乐观/底部派 + one 风险揭示派 from the stance table.
 3. If the data 口径 (source/city/period) is missing, ask the user first — never generate a review without it.
@@ -381,8 +382,11 @@ export function apply(ctx: Context, config: Config): void {
     'expert_teams_send_message',
     'expert_teams_status',
     'expert_teams_delete',
+    'expert_teams_chat',
     'expert_review_route',
     'expert_review_apply',
+    'expert_review_clarify',
+    'expert_review_feedback',
     'expert_teams_debate',
     'expert_teams_roundtable',
     'expert_teams_ppt',
