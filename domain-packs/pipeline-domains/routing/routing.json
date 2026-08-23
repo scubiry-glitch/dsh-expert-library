@@ -1,0 +1,37 @@
+{
+  "topics": [
+    {
+      "topic": "房地产企业经营（房企经营、平台经济、服务品质、不动产金融、物业）",
+      "framework": "B",
+      "primaryField": "房地产",
+      "preferredTags": [
+        "实操",
+        "研判"
+      ]
+    },
+    {
+      "topic": "宏观经济与资本市场（宏观、利率、汇率、资本市场、资产配置）",
+      "framework": "B",
+      "primaryField": "宏观经济",
+      "preferredTags": [
+        "研判",
+        "理论"
+      ]
+    },
+    {
+      "topic": "银行战略与经营（银行战略、量化目标、数智化转型、零售网络金融）",
+      "framework": "B",
+      "primaryField": "江苏银行高层",
+      "preferredTags": [
+        "实操",
+        "数据"
+      ]
+    }
+  ],
+  "scenarios": [
+    "pipeline-realestate-ops",
+    "pipeline-macro-capital",
+    "pipeline-bank-strategy"
+  ],
+  "qualityPolicyId": "pipeline.quality"
+}

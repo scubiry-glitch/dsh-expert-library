@@ -198,7 +198,7 @@ function bankRetailMethodPack(packVersion: string): MethodPack {
 }
 
 /** The PII-redaction gate spec bound into the bank quality policy (P0.5). */
-function piiRedactionGate(): QualityGateSpec {
+export function piiRedactionGate(): QualityGateSpec {
   return {
     id: 'pii-redaction',
     kind: 'deterministic',

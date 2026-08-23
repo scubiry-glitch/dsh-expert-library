@@ -47,19 +47,32 @@ export const DECEASED = new Set(['BK-022'])
 const ROSTER_HEADER = /^### \d+\. (.+?)（\d+ 位）$|^### \d+\. (.+?)$/
 
 /**
- * Expert id in either namespace: `BK-NNN` (real-estate/macro/policy roster)
- * or `BANK-NNN` (banking/finance roster). Both namespaces share the same
- * meta shape, registry merge point and routing tables (consolidation: one
- * generated data layer, one registry, one route table — see
- * PIPELINE-100PLUS-EXPANSION-PLAN.md P0.2).
+ * Expert id in any supported namespace:
+ * - `BK-NNN`    房地产/宏观/政策 roster
+ * - `BANK-NNN`  银行金融 roster
+ * - `S-NNN`     pipeline 特级专家（巴菲特/乔布斯/Karpathy…）
+ * - `E<域>-<号>` pipeline 行业专家（E08=房地产、E01=宏观经济、E13=江苏银行…）
+ * - `XHS-NNN`   pipeline 小红书运营
+ * All namespaces share the same meta shape, registry merge point and routing
+ * tables（整合设计：单一生成数据层 + 单一注册表 + 单一路由表）.
  */
-const EXPERT_ALT = '(?:BK-\\d+|BANK-\\d+)'
+const EXPERT_ALT = '(?:BK-\\d+|BANK-\\d+|S-\\d+|E\\d+-[\\w-]+|XHS-\\d+)'
 
-/** Roster data row: `| BK-004 | 邢自强 | 宏观周期派 X 首席 | … |` (or BANK-…). */
+/** Roster data row: `| BK-004 | 邢自强 | 宏观周期派 X 首席 | … |` (any namespace). */
 const ROSTER_ROW = new RegExp(`^\\| (${EXPERT_ALT}) \\| ([^|]+) \\| ([^|]+) \\| ([^|]*) \\| ([^|]*) \\| ([^|]*) \\| ([^|]*) \\|$`)
 
-/** Flattened Profile file name: `<真实姓名>_专家Profile_BK-NNN.json` (or BANK-…). */
+/** Flattened Profile file name: `<真实姓名>_专家Profile_BK-NNN.json` (any namespace). */
 const PROFILE_FILE = new RegExp(`^(.+)_专家Profile_(${EXPERT_ALT})\\.json$`)
+
+/**
+ * 专家 id → 命名空间（供 stampExperts 自动打戳）：
+ * BK→bk、BANK→bank、S→s、E<域>-* → e<域>（e01/e08/e13…）、XHS→xhs、其余 → 前缀小写。
+ */
+export function namespaceOfExpertId(expertId) {
+  const m = /^([A-Za-z]+\d*)/.exec(expertId ?? '')
+  if (m === null) return 'other'
+  return m[1].toLowerCase()
+}
 
 /** Whether a value is a plain record. */
 function isRecord(value) {
@@ -586,9 +599,11 @@ async function fileExists(path) {
  */
 export function stampExperts(experts, stamp) {
   const { namespace, version, origin, material } = stamp
+  // namespace 可为函数（按专家 id 前缀逐人推导，如 pipeline E08→e08/S→s）。
+  const nsOf = typeof namespace === 'function' ? namespace : () => namespace
   return experts.map(meta => ({
     ...meta,
-    namespace,
+    namespace: nsOf(meta.bk ?? meta.id),
     version,
     source: {
       origin,

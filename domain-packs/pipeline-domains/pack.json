@@ -1,0 +1,15 @@
+{
+  "id": "pipeline-domains",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "name": "pipeline 领域包（E01 宏观 / E08 房地产 / E13 江苏银行）",
+  "description": "22 位 pipeline 专家库归一化专家基线（e01-*/e08-*/e13-*，公众人物实名）。V2 投影源为 src/pipeline/data/experts.generated.ts + routing 表；复用 zhijian/bank 的模板/质量/方法构建器（pipeline 前缀）。",
+  "dependsOn": [
+    "zhijian-realestate",
+    "bank-finance"
+  ],
+  "caliberDeclarations": {
+    "线上": "paper.morning.rocks 专家库口径",
+    "行内": "行内经营口径（脱敏）"
+  }
+}

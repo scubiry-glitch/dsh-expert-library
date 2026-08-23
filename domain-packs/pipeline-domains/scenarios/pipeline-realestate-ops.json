@@ -1,0 +1,47 @@
+{
+  "id": "pipeline-realestate-ops",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "pipeline",
+  "intents": [
+    "realestate-operations"
+  ],
+  "requiredCapabilities": [
+    {
+      "capability": "pipeline.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    },
+    {
+      "capability": "realestate.operations.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    }
+  ],
+  "routingPolicy": {
+    "assertions": [
+      "pipeline 命名空间（E08，公众人物实名）。左晖 e08-08 平台/服务品质/产业互联网，吴亚军 e08-06 房企经营，魏行空 e08-09 不动产金融/估值。"
+    ],
+    "candidateHints": [
+      "e08-08",
+      "e08-06",
+      "e08-07",
+      "e08-09",
+      "e08-yong-bang"
+    ]
+  },
+  "teamTemplate": "pipeline.team.B",
+  "outputTemplate": "pipeline.output.B",
+  "qualityPolicy": "pipeline.quality",
+  "knowledgePolicy": {
+    "required": [
+      "pipeline-expert-memory"
+    ],
+    "optional": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  }
+}

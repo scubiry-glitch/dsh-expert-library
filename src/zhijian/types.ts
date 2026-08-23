@@ -9,10 +9,11 @@
 /** Output framework ids (SKILL.md 框架 A/B/C/D/E). */
 export type ZhijianFrameworkId = 'A' | 'B' | 'C' | 'D' | 'E'
 
-/** Expert id namespace: BK = real-estate/macro/policy roster, BANK = banking/finance. */
-export type ExpertNamespace = 'bk' | 'bank'
+/** Expert id namespace: BK = real-estate/macro/policy, BANK = banking/finance,
+ * S = pipeline 特级专家, XHS = 小红书运营, E<域> = pipeline 行业专家（e01/e08/e13…）. */
+export type ExpertNamespace = 'bk' | 'bank' | 's' | 'xhs' | `e${string}` | (string & {})
 
-/** Five primary fields of the expert roster (BK 房地产/宏观/政策). */
+/** Fields of the expert roster（BK 五大领域 + BANK 银行领域 + pipeline 领域）. */
 export type ZhijianField =
   | '宏观经济'
   | '政策制度'
@@ -21,6 +22,9 @@ export type ZhijianField =
   | '居住服务'
   | '零售金融'
   | '银行经营'
+  | '房地产'
+  | '资产配置'
+  | '江苏银行高层'
 
 /**
  * One expert meta, extracted from `<姓名>_专家Profile_BK-NNN.json` plus the
@@ -188,6 +192,11 @@ export interface ZhijianRouteTopic {
   readonly primaryField: ZhijianField | string
   /** Preferred capability tags. */
   readonly preferredTags: readonly string[]
+  /**
+   * 归属领域包切片（整合设计：运行时共享一张路由表，各包发射器只投影自己的
+   * 切片）。缺省 'zhijian'；bank 话题标 'bank'，pipeline 话题标 'pipeline'。
+   */
+  readonly packScope?: 'zhijian' | 'bank' | 'pipeline'
 }
 
 /** One routing scenario (路由规则.md §二). */

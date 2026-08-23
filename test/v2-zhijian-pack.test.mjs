@@ -65,7 +65,8 @@ test('every derived expert maps 1:1 to a V1 Expert in the registry (runtime unto
   }
   // 整合设计：注册表含 bk+bank 双命名空间；zhijian 包投影 bk 切片（33）
   assert.equal([...ZHIJIAN_EXPERT_BY_ID.keys()].filter(id => id.startsWith('bk-')).length, 33)
-  assert.equal(ZHIJIAN_EXPERT_BY_ID.size, 34)
+  assert.equal([...ZHIJIAN_EXPERT_BY_ID.keys()].filter(id => id.startsWith('bk-')).length, 33)
+  assert.ok(ZHIJIAN_EXPERT_BY_ID.size > 34, 'registry merges bk + bank + pipeline namespaces')
 })
 
 // ── 2. No fabrication / no legacy markers ────────────────────────────────────

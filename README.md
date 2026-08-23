@@ -34,9 +34,9 @@ dsh plugin --profile web add .
 | `expert_review_apply` | 智见点评组队：按拍板结果建队 + 框架任务 DAG（并行研判 → 融合 → 渲染） |
 | `expert_review_feedback` | P2.2 专家反馈评分回写（evaluations.jsonl，persona 注入既往反馈摘要） |
 
-### 智见点评领域包（33 位房地产专家 + 1 位银行专家，原生数据）
+### 智见点评领域包（33 位房地产专家 + 1 位银行专家 + 22 位 pipeline 专家，原生数据）
 
-- 专家 id：`bk-002` ~ `bk-034`（五大领域：宏观经济 9 / 政策制度 8 / 行业研究 8 / 城市发展 3 / 居住服务 4）+ `bank-09`（BANK 命名空间首发，零售金融/银行经营）
+- 专家 id：`bk-002` ~ `bk-034`（五大领域 33 位）+ `bank-09`（BANK 命名空间）+ `e01-*`/`e08-*`/`e13-*`（pipeline 命名空间 22 位：E01 宏观 9 / E08 房地产 10 / E13 江苏银行 3，公众人物实名，`scripts/sync-pipeline-experts.mjs` 从线上专家库同步）
 - Profile JSON 已由 `scripts/build-zhijian-data.mjs` / `scripts/build-bank-data.mjs` **编译为插件原生数据**（`src/zhijian/data/experts.generated.ts` + `src/bank/data/experts.generated.ts`）：风格/立场/金句/禁区/分析步骤在 spawn 时**烘焙进 persona**，成员不需要自己解析资料
 - 路由规则原生化为结构化路由表：话题 → 框架（A 五维/B 四段/C 用户视角五层/D 多分类融合/E 顾问式）→ 主责领域 → 候选专家 + 立场对照 + 执行约束；**零售金融/银行经营** 话题已并入同一路由表（共享注册表：bk+bank 双命名空间）
 - P1 增强：三维能力索引匹配（领域×标签×立场，候选 ≤5 带理由）、立场对照自动配对（debate 可省略 pro/con）、心智模型注册表反查（`债务-通缩循环 → bk-007`）、专家版本/来源 provenance
@@ -162,6 +162,8 @@ src/
 ├── expert-library/           # 通用专家库：类型/内置专家/内置场景/注册表
 ├── bank/                     # ★ BANK 命名空间原生数据（build-bank-data.mjs 生成）
 │   └── data/experts.generated.ts   # bank-09 王一帆（零售金融/银行经营）
+├── pipeline/                  # ★ pipeline 命名空间原生数据（build-pipeline-data.mjs 生成）
+│   └── data/experts.generated.ts   # e01-* 宏观 / e08-* 房地产 / e13-* 江苏银行
 ├── zhijian/                  # ★ 智见点评领域子系统（原生数据）
 │   ├── types.ts              # 领域类型（专家 meta/路由/框架/ReviewMeta）
 │   ├── data/experts.generated.ts  # ★ 33 位专家原生数据（脚本生成，勿手改）
@@ -182,7 +184,10 @@ scripts/
 ├── build-packs.mjs           # ★ 多包驱动（构建/漂移检查唯一入口）
 ├── pack-common.mjs           # ★ 共享确定性发射器（实体写入/自验/树摘要）
 ├── verify-bk-sources.mjs     # ★ P0.3 BK 素材交叉核对（政研通/feishu vs 包内 raw）
-└── import-persons.mjs        # ★ P2.3 人物转专家半自动管线（逐字稿→画像草稿）
+├── import-persons.mjs        # ★ P2.3 人物转专家半自动管线（逐字稿→画像草稿）
+├── sync-pipeline-experts.mjs  # ★ P3.1 pipeline 剩余专家同步（线上归一化→标准 Profile→roster）
+├── build-pipeline-data.mjs    # pipeline 命名空间 → 原生数据生成
+└── build-pipeline-pack.mjs    # pipeline-domains 领域包发射器（共享 pack-common）
 ```
 
 ## 开发验证

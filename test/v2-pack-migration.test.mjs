@@ -258,7 +258,7 @@ test('fidelity: generated/v1/scenarios.json matches the bk-* builtin scenarios',
 test('fidelity: routing overlay matches the in-repo routing tables', async () => {
   const overlay = JSON.parse(await readFile(join(PACK_DIR, 'routing', 'routing.json'), 'utf8'))
   // 整合设计：运行时路由表含 bank 话题，zhijian 包路由覆盖只投影 bk 切片
-  assert.equal(canonicalJson(overlay.topics), canonicalJson(ROUTE_TOPICS.filter(t => t.primaryField !== '零售金融' && t.primaryField !== '银行经营')))
+  assert.equal(canonicalJson(overlay.topics), canonicalJson(ROUTE_TOPICS.filter(t => (t.packScope ?? 'zhijian') === 'zhijian')))
   assert.equal(canonicalJson(overlay.stancePairs), canonicalJson(STANCE_TABLE))
   assert.equal(canonicalJson(overlay.specialRouting), canonicalJson(SPECIAL_ROUTING))
   assert.equal(canonicalJson(overlay.constraints), canonicalJson(ROUTING_CONSTRAINTS))

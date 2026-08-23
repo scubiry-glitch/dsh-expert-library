@@ -47,6 +47,16 @@ export {
   BANK_REVIEW_CAPABILITY,
 } from './bank-pack.ts'
 export type { BuildBankPackOptions } from './bank-pack.ts'
+export {
+  buildPipelineDomainPack,
+  PIPELINE_PACK_ID,
+  PIPELINE_PACK_VERSION,
+  PIPELINE_PACK_SNAPSHOT,
+  PIPELINE_BASELINE_DATE,
+  PIPELINE_QUALITY_POLICY_ID,
+  PIPELINE_REVIEW_CAPABILITY,
+} from './pipeline-pack.ts'
+export type { BuildPipelinePackOptions } from './pipeline-pack.ts'
 export * from './digest.ts'
 export * from './phases.ts'
 export * from './compiler.ts'

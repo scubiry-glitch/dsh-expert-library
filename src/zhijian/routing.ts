@@ -86,12 +86,35 @@ export const ROUTE_TOPICS: readonly ZhijianRouteTopic[] = [
     framework: 'B',
     primaryField: '零售金融',
     preferredTags: ['实操', '解读'],
+    packScope: 'bank',
   },
   {
     topic: '银行经营（信用卡、息差、客群、负债、零售转型）',
     framework: 'B',
     primaryField: '银行经营',
     preferredTags: ['实操', '数据'],
+    packScope: 'bank',
+  },
+  {
+    topic: '房地产企业经营（房企经营、平台经济、服务品质、不动产金融、物业）',
+    framework: 'B',
+    primaryField: '房地产',
+    preferredTags: ['实操', '研判'],
+    packScope: 'pipeline',
+  },
+  {
+    topic: '宏观经济与资本市场（宏观、利率、汇率、资本市场、资产配置）',
+    framework: 'B',
+    primaryField: '宏观经济',
+    preferredTags: ['研判', '理论'],
+    packScope: 'pipeline',
+  },
+  {
+    topic: '银行战略与经营（银行战略、量化目标、数智化转型、零售网络金融）',
+    framework: 'B',
+    primaryField: '江苏银行高层',
+    preferredTags: ['实操', '数据'],
+    packScope: 'pipeline',
   },
 ]
 
@@ -174,6 +197,30 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     primaryField: '银行经营',
     candidates: ['bank-09'],
     constraints: '信用卡经营以 bank-09 操盘视角主答（考核/渠道/客户分层），收益模型与资负视角联动 BK 金融数据派（bk-014/bk-029）。样例素材：work/江苏银行信用卡提质增效_任务归档。',
+  },
+  {
+    id: 'pipeline-realestate-ops',
+    name: '房地产企业经营',
+    framework: 'B',
+    primaryField: '房地产',
+    candidates: ['e08-08', 'e08-06', 'e08-07', 'e08-09', 'e08-yong-bang'],
+    constraints: 'pipeline 命名空间（E08 房地产/不动产金融，公众人物实名）。左晖 e08-08 平台/服务品质/产业互联网视角，吴亚军 e08-06 房企经营，魏行空 e08-09 不动产金融/估值。经营与周期问题可联动 BK 行业研究派。',
+  },
+  {
+    id: 'pipeline-macro-capital',
+    name: '宏观经济与资本市场',
+    framework: 'B',
+    primaryField: '宏观经济',
+    candidates: ['e01-08', 'e01-09', 'e01-07', 'e01-02', 'e01-06'],
+    constraints: 'pipeline 命名空间（E01 宏观经济，公众人物实名）。高善文 e01-08 资本市场/周期，鲁政委 e01-09 汇率/利率，李扬 e01-07 宏观审慎/债务。',
+  },
+  {
+    id: 'pipeline-bank-strategy',
+    name: '银行战略与经营',
+    framework: 'B',
+    primaryField: '江苏银行高层',
+    candidates: ['e13-01', 'e13-02', 'e13-03'],
+    constraints: 'pipeline 命名空间（E13 江苏银行高层，公众人物实名）。袁军 e13-01 战略/客户经营，高增银 e13-02 战略执行/量化目标，梁斌 e13-03 零售/网络金融/数智化。',
   },
 ]
 

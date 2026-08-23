@@ -302,3 +302,5 @@ M4 (P3 完成)  pipeline §2.1 差距列清零（可选，依赖线上接口）
 | P2 | ✅ | `expert_teams_chat` 追问通道（chatRounds 累计 + chat-round 事件）、`expert_review_feedback` + `evaluations.jsonl` + persona 既往反馈摘要注入、`import-persons.mjs` 人物转专家（飞书逐字稿双格式解析）、knowledge `VERSION` 版本锚点 | `test/p2-feedback-knowledge.test.mjs` 6 例 + `test/import-persons.test.mjs` 4 例；全量 **590/590** |
 
 **整合原则落地**：单一注册表（bk+bank 合并）、单一路由表（含银行话题）、单一发射器（pack-common）、扩展既有工具而非新增平行体系；P3（热点解读/素材可信度评估/线上 100+ 同步）预留 manifest 接入位。
+
+| P3.1 | ✅（2026-08-23） | `sync-pipeline-experts.mjs`（线上 184 位盘点：`PIPELINE-REMAINING-EXPERTS.md` + `work/pipeline-experts-184.json`；E01/E08/E13 首批 22 位已同步入库，S/XHS 命名空间脚本已支持按批收）、`build-pipeline-data.mjs`（e01/e08/e13 命名空间）、`pipeline-domains` 领域包（3 场景 + pii 硬门）、路由表 + 注册表并入 | `test/pipeline-sync` 5 例 + `test/pipeline-pack` 6 例；全量 **601/601**；三包 `--check` 全绿 |

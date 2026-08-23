@@ -216,6 +216,10 @@ export const FIELD_DOMAINS: Readonly<Record<ZhijianField, string>> = {
   // BANK 命名空间（整合设计：同一投影函数服务两个命名空间）
   '零售金融': 'bank.retail',
   '银行经营': 'bank.operations',
+  // pipeline 命名空间（E08 房地产经营 / E01 宏观 / E13 江苏银行 / 资产配置）
+  '房地产': 'realestate.operations',
+  '资产配置': 'finance.allocation',
+  '江苏银行高层': 'bank.strategy',
 }
 
 /** Roster capability tags → review capability vocabulary (专家总表.md tags). */

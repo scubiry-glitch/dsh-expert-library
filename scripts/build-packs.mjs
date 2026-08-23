@@ -6,6 +6,7 @@
  * Pack registry:
  *   zhijian-realestate  → scripts/build-zhijian-pack.mjs（emitPack）
  *   bank-finance        → scripts/build-bank-pack.mjs（emitBankPack）
+ *   pipeline-domains    → scripts/build-pipeline-pack.mjs（emitPipelinePack）
  *
  * Usage:
  *   node scripts/build-packs.mjs                    # build every pack from lib
@@ -21,6 +22,7 @@ import { stat } from 'node:fs/promises'
 
 import { emitPack } from './build-zhijian-pack.mjs'
 import { emitBankPack, DEFAULT_BANK_PACK_DIR } from './build-bank-pack.mjs'
+import { emitPipelinePack, DEFAULT_PIPELINE_PACK_DIR } from './build-pipeline-pack.mjs'
 import { checkPackEmit, PackGenError } from './pack-common.mjs'
 
 /** Default zhijian pack dir (mirrors build-zhijian-pack.mjs). */
@@ -35,6 +37,10 @@ const PACKS = {
   'bank-finance': {
     dir: DEFAULT_BANK_PACK_DIR,
     emit: (outDir, opts) => emitBankPack(outDir, opts),
+  },
+  'pipeline-domains': {
+    dir: DEFAULT_PIPELINE_PACK_DIR,
+    emit: (outDir, opts) => emitPipelinePack(outDir, opts),
   },
 }
 

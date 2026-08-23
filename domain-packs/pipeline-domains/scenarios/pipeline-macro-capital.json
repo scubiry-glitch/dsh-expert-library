@@ -1,0 +1,47 @@
+{
+  "id": "pipeline-macro-capital",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "pipeline",
+  "intents": [
+    "macro-capital-markets"
+  ],
+  "requiredCapabilities": [
+    {
+      "capability": "pipeline.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    },
+    {
+      "capability": "realestate.macro.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    }
+  ],
+  "routingPolicy": {
+    "assertions": [
+      "pipeline 命名空间（E01，公众人物实名）。高善文 e01-08 资本市场/周期，鲁政委 e01-09 汇率/利率，李扬 e01-07 宏观审慎/债务。"
+    ],
+    "candidateHints": [
+      "e01-08",
+      "e01-09",
+      "e01-07",
+      "e01-02",
+      "e01-06"
+    ]
+  },
+  "teamTemplate": "pipeline.team.B",
+  "outputTemplate": "pipeline.output.B",
+  "qualityPolicy": "pipeline.quality",
+  "knowledgePolicy": {
+    "required": [
+      "pipeline-expert-memory"
+    ],
+    "optional": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  }
+}
