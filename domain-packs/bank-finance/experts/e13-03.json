@@ -176,6 +176,10 @@
     {
       "providerId": "local-knowledge",
       "scope": "experts/e13-03"
+    },
+    {
+      "providerId": "bank-99wiki",
+      "scope": "99wiki"
     }
   ],
   "toolAffinities": [],

@@ -161,6 +161,10 @@
     {
       "providerId": "local-knowledge",
       "scope": "experts/bank-09"
+    },
+    {
+      "providerId": "bank-99wiki",
+      "scope": "99wiki"
     }
   ],
   "toolAffinities": [],

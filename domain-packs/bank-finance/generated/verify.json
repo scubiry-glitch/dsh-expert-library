@@ -22,8 +22,8 @@
     "teamTemplates": 1,
     "outputTemplates": 1,
     "qualityPolicies": 1,
-    "knowledgeProviders": 2,
-    "domainKnowledge": 1,
+    "knowledgeProviders": 3,
+    "domainKnowledge": 2,
     "methodPacks": 2,
     "skillPackages": 2
   }

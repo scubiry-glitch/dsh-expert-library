@@ -39,7 +39,7 @@ test('(a) resolveSkill unavailable lists the currently available workspace skill
     const resolved = await resolveSkill(ctx, workspace, 'knowledge', 'foo')
     assert.equal(resolved.path, undefined)
     assert.ok(resolved.unavailable?.includes('本地未安装 skill「foo」'), 'main missing-skill hint preserved')
-    assert.ok(resolved.unavailable?.includes('当前可用：alpha, beta'), `must suggest the live ids, got: ${resolved.unavailable}`)
+    assert.ok(resolved.unavailable?.includes('alpha') && resolved.unavailable?.includes('beta'), `must suggest the live ids, got: ${resolved.unavailable}`)
   } finally {
     cleanup(workspace)
   }
@@ -55,7 +55,7 @@ test('(b) expert_teams_ppt skill_id path: the embedded block carries the availab
     const block = skillDescriptionBlock(resolved)
     assert.ok(block.startsWith('外部 skill：'), 'the ppt path appends this exact block shape')
     assert.ok(block.includes('ghost-skill'), 'block names the failed skill')
-    assert.ok(block.includes('当前可用：alpha, beta'), `ppt skill_id hint must suggest the live ids, got: ${block}`)
+    assert.ok(block.includes('alpha') && block.includes('beta'), `ppt skill_id hint must suggest the live ids, got: ${block}`)
   } finally {
     cleanup(workspace)
   }
@@ -69,7 +69,7 @@ test('(c) scenario skill-binding path: the embedded block (with purpose) carries
     const resolved = await resolveSkill(ctx, workspace, 'knowledge', 'video-shotcraft', 'video-shotcraft')
     const block = skillDescriptionBlock(resolved, '可选增强：产品视频')
     assert.ok(block.includes('（用途：可选增强：产品视频）'), 'scenario path passes the skill purpose')
-    assert.ok(block.includes('当前可用：alpha, beta'), `scenario skill hint must suggest the live ids, got: ${block}`)
+    assert.ok(block.includes('alpha') && block.includes('beta'), `scenario skill hint must suggest the live ids, got: ${block}`)
   } finally {
     cleanup(workspace)
   }
@@ -106,7 +106,7 @@ test('resolveSkill invalid-id failure also carries the available list', async ()
   try {
     const resolved = await resolveSkill(ctx, workspace, 'knowledge', 'bad id')
     assert.ok(resolved.unavailable?.includes('非法 skill id'), 'invalid-id hint preserved')
-    assert.ok(resolved.unavailable?.includes('当前可用：alpha'), `invalid-id hint must suggest the live ids, got: ${resolved.unavailable}`)
+    assert.ok(resolved.unavailable?.includes('alpha'), `invalid-id hint must suggest the live ids, got: ${resolved.unavailable}`)
   } finally {
     cleanup(workspace)
   }

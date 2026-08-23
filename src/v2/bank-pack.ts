@@ -161,7 +161,7 @@ function bankScenarioV2(scenario: ZhijianRouteScenario, packVersion: string): Sc
     qualityPolicy: BANK_QUALITY_POLICY_ID,
     knowledgePolicy: {
       required: ['bank-expert-memory'],
-      optional: ['local-knowledge'],
+      optional: ['local-knowledge', 'bank-99wiki'],
     },
     toolPolicy: { allowed: [] },
   }
@@ -189,7 +189,75 @@ function bankKnowledgeProviders(packVersion: string): KnowledgeProviderManifest[
       scopes: ['experts'],
       domainKnowledgeIds: ['bank.expert-memory'],
     },
+    {
+      // 本包知识库 = 本地 99wiki 目录（江苏银行/银行研究 Obsidian 知识库）。
+      id: 'bank-99wiki',
+      version: packVersion,
+      schemaVersion: SCHEMA_VERSION,
+      kind: 'structured-wiki',
+      capabilities: ['search', 'read', 'cite', 'history'],
+      freshness: 'monthly',
+      // scope 根：相对队长工作区的 `99wiki/`（如 workspace 为
+      // /root/.openclaw/workspace 时即 /root/.openclaw/workspace/99wiki）。
+      scopes: ['99wiki'],
+      domainKnowledgeIds: ['bank.99wiki'],
+    },
   ]
+}
+
+/**
+ * 本地 99wiki 知识库声明（DomainKnowledgeManifest）——bank-finance 包的
+ * 领域知识底座。collections.root 相对 99wiki 目录本身；snapshot 为声明级
+ * （构建期纯函数不读目录：digest 对集合描述计算，recordCount 由运行时枚举）。
+ */
+function bank99wikiKnowledgeManifest(packVersion: string): DomainKnowledgeManifest {
+  const collections = [
+    { id: 'expert-system', root: 'projects/专家体系', format: 'markdown', description: '专家体系（BANK-99 调用说明、专家画像）' },
+    { id: 'banking-research-assistant', root: 'projects/银行业研究助手', format: 'markdown', description: '银行业研究助手系统设计（SDD）与专家辩论纪要' },
+    { id: 'credit-card-premium', root: 'projects/江苏银行高端信用卡', format: 'markdown', description: '高端信用卡方案与权益评审圆桌' },
+    { id: 'credit-card-performance', root: 'projects/江苏银行信用卡提质增效研究', format: 'markdown', description: '信用卡提质增效研究' },
+    { id: 'ai-computing-finance', root: 'projects/江苏银行算力金融', format: 'markdown', description: '算力金融与 AI 银行卡评审' },
+    { id: 'retail-credit-coop', root: 'projects/银保渠道零售信贷合作', format: 'markdown', description: '银保渠道零售信贷合作' },
+    { id: 'branch-diagnosis', root: 'projects/干翻宁波', format: 'markdown', description: '分行对标诊断（宁波）与专家圆桌' },
+    { id: 'beike-cooperation', root: 'projects/贝壳x江苏银行', format: 'markdown', description: '贝壳×江苏银行合作' },
+    { id: 'retail-key-tasks', root: 'projects/零售信贷重点工作', format: 'markdown', description: '零售信贷重点工作' },
+    { id: 'feishu-materials', root: 'feishu', format: 'mixed', description: '银行研究素材（政策/研报/纪要/报表）' },
+  ] as const
+  const digest = createHash('sha256')
+    .update(`bank:99wiki:${collections.map(c => c.id).join(',')}:${BANK_PACK_VERSION}`)
+    .digest('hex')
+  return {
+    id: 'bank.99wiki',
+    version: packVersion,
+    schemaVersion: SCHEMA_VERSION,
+    domain: 'banking.jiangsu',
+    boundary: '本地 99wiki（江苏银行/银行研究 Obsidian 知识库）：专家体系、银行业研究助手、江苏银行高端信用卡/算力金融/信用卡提质增效、银保渠道零售信贷合作、分行诊断、贝壳合作、feishu 素材（政策/研报/纪要/日报表）。内部资料，引用须注明出处；敏感数据不外发。',
+    ontology: {
+      entities: [
+        { id: 'project', description: '银行研究项目/专题' },
+        { id: 'expert', description: '专家画像与调用说明（BANK-99 体系）' },
+        { id: 'meeting', description: '圆桌纪要/辩论/评审' },
+        { id: 'policy', description: '监管与地方政策材料' },
+      ],
+      relations: [
+        { id: 'project-has-expert', from: 'project', to: 'expert', description: '项目关联专家' },
+        { id: 'project-references-policy', from: 'project', to: 'policy', description: '项目引用政策材料' },
+      ],
+    },
+    collections: collections.map(collection => ({ ...collection })),
+    snapshot: {
+      id: '99wiki-local-2026-08-23',
+      takenAt: BANK_BASELINE_DATE,
+      digest,
+      // 构建期纯函数不枚举目录；运行时按 collections.root 枚举实际记录数。
+      recordCount: 0,
+    },
+    retrievalProfiles: [
+      { id: 'by-keyword', method: 'keyword' },
+      { id: 'by-project', method: 'keyword', config: { scope: 'projects' } },
+    ],
+    policies: { citation: 'required', freshness: 'monthly', access: 'readonly' },
+  }
 }
 
 /** Structured knowledge base over the BANK expert profile records. */
@@ -314,6 +382,11 @@ export function buildBankDomainPack(options: BuildBankPackOptions = {}): DomainP
         ...(BANK_INTERNAL_ONLY_IDS.has(meta.id)
           ? { compliance: { ...expert.compliance, internalOnly: true } }
           : {}),
+        // 知识库 = 本地 99wiki：每位银行专家绑定 99wiki 作用域（追加声明）。
+        knowledgeBindings: [
+          ...expert.knowledgeBindings,
+          { providerId: 'bank-99wiki', scope: '99wiki' },
+        ],
       }
     }),
     teamTemplates: [teamTemplate],
@@ -322,7 +395,7 @@ export function buildBankDomainPack(options: BuildBankPackOptions = {}): DomainP
     scenarios: BANK_SCENARIOS.map(scenario => bankScenarioV2(scenario, packVersion)),
     toolProviders: [], // provider runtime is Phase 2 — nothing asserted yet
     knowledgeProviders: bankKnowledgeProviders(packVersion),
-    domainKnowledge: [bankDomainKnowledgeManifest(packVersion)],
+    domainKnowledge: [bankDomainKnowledgeManifest(packVersion), bank99wikiKnowledgeManifest(packVersion)],
     methodPacks: [
       bankRetailMethodPack(packVersion),
       frameworkMethodPack(frameworkB, packVersion, 'bank'),

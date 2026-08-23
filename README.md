@@ -43,6 +43,7 @@ dsh plugin --profile web add .
 - 流程：`expert_review_route` 判题 → 用户拍板选人（匿名呈现「BK · 领域 · 首字母」）→ `expert_review_apply` 建队执行（并行专家研判 → 基调融合 → 讨论稿/正式稿渲染）；框架 E 不建队，队长直接顾问式作答
 - 约束内建：口径缺失先问用户、数字必须核实、已故专家（顾云昌 bk-022）只引历史观点、匿名化、文风禁区、**银行 PII 脱敏硬门（pii-redaction：手机号/身份证/银行卡号/账号）**
 - **捆绑技能（bank-finance 包）**：`bank-retail-finance-analysis`（银行零售金融五层分析/交叉销售）、`strategy-consulting`（萌翻咨询：假设驱动/金字塔表达）——内容随包分发（`domain-packs/bank-finance/skills/` + `knowledge/skills/`），声明见 `skill-packages/`
+- **知识库 = 本地 99wiki**：`bank-99wiki` provider + `bank.99wiki` 知识库声明（projects/银行业研究助手、江苏银行高端信用卡/算力金融/信用卡提质增效、银保渠道、干翻宁波、贝壳合作、feishu 素材等 10 个集合），每位银行专家 knowledgeBindings 绑定 `99wiki` 作用域
 
 ### 内置专家（8 位通用，均预置 `deepseek-official/deepseek-v4-flash` 路由）
 

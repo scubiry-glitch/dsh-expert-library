@@ -36,7 +36,8 @@
       "bank-expert-memory"
     ],
     "optional": [
-      "local-knowledge"
+      "local-knowledge",
+      "bank-99wiki"
     ]
   },
   "toolPolicy": {

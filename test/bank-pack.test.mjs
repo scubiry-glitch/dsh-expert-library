@@ -62,6 +62,26 @@ test('bank-finance pack validates clean with bank-09 + e13-* 江苏银行高层'
   assert.ok(pack.qualityPolicies[0].gates.some(g => g.id === 'pii-redaction'))
 })
 
+test('bank pack declares local 99wiki as its knowledge base', () => {
+  const pack = buildBankDomainPack()
+  const wikiProvider = pack.knowledgeProviders.find(p => p.id === 'bank-99wiki')
+  assert.ok(wikiProvider !== undefined)
+  assert.equal(wikiProvider.kind, 'structured-wiki')
+  assert.deepEqual(wikiProvider.scopes, ['99wiki'])
+  const wiki = pack.domainKnowledge.find(d => d.id === 'bank.99wiki')
+  assert.ok(wiki !== undefined)
+  assert.equal(wiki.domain, 'banking.jiangsu')
+  assert.ok(wiki.collections.length >= 8, '99wiki collections enumerated')
+  assert.ok(wiki.collections.some(c => c.root === 'projects/银行业研究助手'))
+  assert.ok(wiki.collections.some(c => c.root === 'feishu'))
+  // 每位银行专家绑定 99wiki 作用域
+  for (const expert of pack.experts) {
+    assert.ok(expert.knowledgeBindings.some(b => b.providerId === 'bank-99wiki'), `${expert.id} binds 99wiki`)
+  }
+  // 场景知识策略引用 99wiki
+  assert.ok(pack.scenarios[0].knowledgePolicy.optional?.includes('bank-99wiki'))
+})
+
 test('bank pack bundles both consulting skills with pack-relative roots', () => {
   const pack = buildBankDomainPack()
   assert.equal(pack.skillPackages.length, 2)

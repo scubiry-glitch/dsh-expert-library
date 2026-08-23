@@ -1,0 +1,19 @@
+{
+  "id": "bank-99wiki",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "kind": "structured-wiki",
+  "capabilities": [
+    "search",
+    "read",
+    "cite",
+    "history"
+  ],
+  "freshness": "monthly",
+  "scopes": [
+    "99wiki"
+  ],
+  "domainKnowledgeIds": [
+    "bank.99wiki"
+  ]
+}
