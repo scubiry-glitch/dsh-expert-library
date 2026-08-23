@@ -68,7 +68,8 @@ import { scenarioById } from './zhijian/routing.ts'
 import { normalizeToolMode, toolExecutionOf, type ToolExecutionConfig, type ToolExecutionMode } from './settings.ts'
 import { applyExecutionPlan, compileErrorOf } from './apply.ts'
 import { evaluateTaskCompletionGates, subjectWithQualityMark, taskGateBlockedError } from './task-gates.ts'
-import { compileV1ScenarioExecutionPlan } from './v2/compat.ts'
+import { compileV1ScenarioExecutionPlan, builtinLegacyPack } from './v2/compat.ts'
+import { resolveRuntimePack } from './v2/runtime-pack.ts'
 import {
   addMemberCore,
   createTaskCore,
@@ -251,8 +252,11 @@ export async function scenarioApplyCore(
     skillBlock = `\n\n${skillDescriptionBlock(resolved, scenario.skill.purpose)}`
   }
 
-  // 2. Compile the V1 scenario through the V2 TeamTemplate compiler.
-  const compiled = compileV1ScenarioExecutionPlan([...library.experts.values()], scenario)
+  // 2. Compile the V1 scenario through the V2 TeamTemplate compiler, with the
+  //    workspace domain-pack overlay merged in (workspace experts override
+  //    builtins by id; the base library survives as the builtin layer).
+  const runtimePack = (await resolveRuntimePack(ctx, config, builtinLegacyPack())).pack
+  const compiled = compileV1ScenarioExecutionPlan([...library.experts.values()], scenario, runtimePack)
   if (!compiled.ok) throw compileErrorOf(compiled)
 
   // Skill task suffix: reproduced exactly as the previous assembler appended

@@ -68,6 +68,12 @@ export interface ToolsConfig {
   knowledgeDir: string
   /** Domain pack directory name under each workspace root (read-only preview surface). */
   packsDir: string
+  /** Workspace domain pack ids enabled for runtime compile; absent/empty = every valid workspace pack. */
+  enabledPacks?: readonly string[]
+  /** Workspace domain pack id order (first = highest precedence); absent = discovery order. */
+  packPriority?: readonly string[]
+  /** Per-expert model route override (expert id → route); wins over the preset expert route. */
+  expertModelOverrides?: Readonly<Record<string, ExpertModelRoute>>
   /** Per-tool execution policy (API vs CLI vs auto) for external capabilities. */
   toolExecution?: Record<string, ToolExecutionConfig>
 }
@@ -270,11 +276,14 @@ export async function addMemberCore(
     // Model route precedence: preset expert route > explicit arguments >
     // plugin memberModel default > captain's current route (see
     // memberRouteRequest — a lone explicit reasoning_effort rides on top of
-    // whichever provider/model won instead of being dropped).
+    // whichever provider/model won instead of being dropped). A settings
+    // `expertModelOverrides` entry (if any) replaces the preset expert route,
+    // so the user-configured override wins over the pack-baked route.
+    const expertRoute = config.expertModelOverrides?.[expertId ?? '']
     const selection = await resolveMemberLlmSelection(
       ctx,
       captain,
-      memberRouteRequest(args, expert?.model, config.memberModel),
+      memberRouteRequest(args, expertRoute ?? expert?.model, config.memberModel),
       signal,
     )
 

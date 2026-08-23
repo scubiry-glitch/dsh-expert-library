@@ -19,6 +19,8 @@
 
 export * from './types.ts'
 export { validateDomainPack } from './validate.ts'
+export { invalidateRuntimePack, resolveRuntimePack } from './runtime-pack.ts'
+export type { RuntimePackResult, RuntimePackSelection } from './runtime-pack.ts'
 export { adaptV1Expert, adaptV1Scenario, adaptV1ScenarioTeamTemplate, buildLegacyDomainPack, migrateDomainPack, compileV1ScenarioExecutionPlan, builtinLegacyPack, invalidateBuiltinLegacyPack, loadBuiltinLegacyPack, mergeCachedExperts } from './compat.ts'
 export type { MigrationResult } from './compat.ts'
 export * from './provider-runtime.ts'

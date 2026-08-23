@@ -23,6 +23,7 @@ import { steerCaptainReport } from '../tools.ts'
 import { applyExecutionPlan, compileErrorOf } from '../apply.ts'
 import { compileExecutionPlan } from '../v2/compiler.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
+import { resolveRuntimePack } from '../v2/runtime-pack.ts'
 import { frameworkById, GLOBAL_OUTPUT_RULES } from './frameworks.ts'
 import { ALL_EXPERT_METAS } from './registry.ts'
 import { matchExperts, mentalModelCatalog } from './capability.ts'
@@ -31,6 +32,10 @@ import {
   ROUTE_TOPICS, ROUTE_SCENARIOS, STANCE_TABLE, SPECIAL_ROUTING, ROUTING_CONSTRAINTS,
   scenarioForTopic, topicRouteFor,
 } from './routing.ts'
+import {
+  clarificationSetFor, pendingRequiredQuestions,
+  type ClarificationAnswers,
+} from './clarify.ts'
 import type { ZhijianFrameworkId, ZhijianRouteResult } from './types.ts'
 
 /** The calling agent, or a loud failure. */
@@ -153,6 +158,11 @@ export function registerZhijianTools(
           constraints: { type: 'string' },
           capability_note: { type: 'string' },
           mental_models_count: { type: 'number' },
+          clarify_needed: {
+            type: 'array',
+            items: { type: 'string' },
+            description: '归型澄清：进入 apply 前仍需向用户确认的口径问题（数据来源/城市/时段/敏感脱敏等 required 项）。',
+          },
         },
       },
       render: (_args, value) => [{
@@ -163,6 +173,11 @@ export function registerZhijianTools(
     async execute(args, exec) {
       void requireCaptain(exec)
       const result = routeRequest(args.topic, args.question)
+      // 归型澄清：命中场景后给出该领域包仍需确认的口径（required 项），
+      // 队长先向用户提问确认，再带答案走 apply（避免进入团队后反复追问）。
+      const scenario = scenarioForTopic(args.topic, result.framework, args.question)
+      const clarify = scenario === undefined ? [] : clarificationSetFor({ scenarioId: scenario.id })
+      const clarifyNeeded = pendingRequiredQuestions(clarify, {}).map(question => question.question)
       return {
         topic: result.topic,
         framework: result.framework,
@@ -184,6 +199,7 @@ export function registerZhijianTools(
         ...(result.constraints !== undefined ? { constraints: result.constraints } : {}),
         ...(result.capabilityNote !== undefined ? { capability_note: result.capabilityNote } : {}),
         ...(result.mentalModelsCount !== undefined ? { mental_models_count: result.mentalModelsCount } : {}),
+        ...(clarifyNeeded.length > 0 ? { clarify_needed: clarifyNeeded } : {}),
       }
     },
   }))
@@ -295,7 +311,7 @@ export function registerZhijianTools(
         .map(rule => `5. ${rule}`)
         .join('\n')
       const compiled = compileExecutionPlan({
-        pack: buildZhijianDomainPack(),
+        pack: (await resolveRuntimePack(ctx, config, buildZhijianDomainPack())).pack,
         templateId: `zhijian.team.${frameworkId}`,
         ...(scenario === undefined ? {} : { scenarioId: scenario.id }),
         params: {
@@ -353,6 +369,8 @@ export function registerZhijianTools(
 
   // P2.2: 反馈评分回写（与 route/apply 同一工具注册表）。
   registerReviewFeedbackTool(ctx, config)
+  // 归型澄清层：自由请求 → 归型建议 + 领域包口径问题集。
+  registerClarifyTool(ctx)
 }
 
 /** Render the route result as compact text for the captain. */
@@ -374,6 +392,165 @@ function renderRoute(result: ZhijianRouteResult): string {
   return lines.join('\n')
 }
 
+/**
+ * 自由请求 → 候选归型（命中话题优先；未命中按关键词给领域话题兜底建议）。
+ * 供 expert_review_clarify 输出 intent_options。
+ */
+function intentCandidates(request: string): {
+  topic: string
+  framework: ZhijianFrameworkId
+  primaryField: string
+  scenarioId?: string
+  matched: boolean
+}[] {
+  const route = topicRouteFor(request)
+  if (route !== undefined) {
+    const scenario = scenarioForTopic(request, route.framework)
+    return [{
+      topic: route.topic,
+      framework: route.framework,
+      primaryField: route.primaryField,
+      ...(scenario === undefined ? {} : { scenarioId: scenario.id }),
+      matched: true,
+    }]
+  }
+  // 未命中：通用兜底 + 关键词领域话题建议。
+  const suggestions: {
+    topic: string
+    framework: ZhijianFrameworkId
+    primaryField: string
+    scenarioId?: string
+    matched: boolean
+  }[] = [
+    { topic: '自由提问', framework: 'E', primaryField: '统一顾问口吻，不拆分类', matched: false },
+    { topic: '多视角综合分析', framework: 'D', primaryField: '按问题拆 2~4 分类，每类≥2 专家', matched: false },
+  ]
+  const KEYWORD_INTENT: readonly [RegExp, string, ZhijianFrameworkId][] = [
+    [/贝壳|经纪|房源|挂牌|租赁|长租/, '贝壳生态与居住服务', 'B'],
+    [/银行|信贷|信用卡|分行|息差/, '零售金融', 'B'],
+    [/江苏银行|量化目标|数智化/, '银行战略与经营', 'B'],
+    [/宏观|利率|汇率|GDP|资产配置|资本市场/, '宏观经济与资本市场', 'B'],
+    [/战略|投资|组织|产品设计|AI|科学思维/, '特级专家研判', 'B'],
+    [/政策|政治局|定调|限购|收储/, '政策解读', 'B'],
+    [/楼市|房价|房产|房企|城市更新/, '城市月度市场分析', 'A'],
+  ]
+  for (const [pattern, topic, framework] of KEYWORD_INTENT) {
+    if (pattern.test(request)) {
+      const routeFor = topicRouteFor(topic)
+      const scenario = scenarioForTopic(topic, framework)
+      suggestions.push({
+        topic,
+        framework,
+        primaryField: routeFor?.primaryField ?? '',
+        ...(scenario === undefined ? {} : { scenarioId: scenario.id }),
+        matched: false,
+      })
+    }
+  }
+  return suggestions.map(suggestion => ({
+    topic: suggestion.topic,
+    framework: suggestion.framework,
+    primaryField: suggestion.primaryField,
+    ...(suggestion.scenarioId !== undefined ? { scenarioId: suggestion.scenarioId } : {}),
+    matched: suggestion.matched,
+  }))
+}
+
+/** 请求文本 → 推断领域包 scope（供澄清集选择；缺省 zhijian）。 */
+function inferPackScope(request: string, options: { packScope?: string }): string {
+  if (options.packScope !== undefined && options.packScope.trim() !== '') return options.packScope.trim()
+  if (/贝壳|经纪|房源|挂牌|租赁|长租/.test(request)) return 'beike'
+  if (/银行|信贷|信用卡|分行|息差|江苏银行/.test(request)) return 'bank'
+  if (/宏观|资本市场|战略|投资|AI|产品/.test(request)) return 'pipeline'
+  return 'zhijian'
+}
+
+/**
+ * Register the clarify tool (归型澄清层)：自由请求 → 候选归型 + 该领域包的
+ * 待确认口径问题集。由 registerZhijianTools 末尾调用。
+ */
+function registerClarifyTool(ctx: Context): void {
+  ctx.tools.register(defineTool({
+    name: 'expert_review_clarify',
+    description: '归型澄清（先归型、再路由）：对自由/模糊请求，判定候选话题/场景（命中或关键词建议），并给出对应领域包需要确认的口径问题（通用 + 领域，含 required 必答项）。队长据此逐项向用户提问，收集答案后用 answersToRouteContext 拼装，再跑 expert_review_route / expert_review_apply。',
+    parameters: {
+      request: { type: 'string', required: true, description: '用户原始请求文本（如"贝壳政研通的 BP 优化"）。' },
+      pack_scope: { type: 'string', description: '可选指定领域包（zhijian/bank/pipeline/pipeline-general/beike）；缺省按请求文本推断。' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          intent_options: {
+            type: 'array',
+            required: true,
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                topic: { type: 'string', required: true },
+                framework: { type: 'string', required: true },
+                primaryField: { type: 'string', required: true },
+                scenarioId: { type: 'string' },
+                matched: { type: 'boolean', required: true },
+              },
+            },
+          },
+          pack_scope: { type: 'string', required: true },
+          questions: {
+            type: 'array',
+            required: true,
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              properties: {
+                id: { type: 'string', required: true },
+                question: { type: 'string', required: true },
+                group: { type: 'string', required: true },
+                options: { type: 'array', items: { type: 'string' } },
+                required: { type: 'boolean' },
+              },
+            },
+          },
+          required_pending: { type: 'array', items: { type: 'string' }, required: true },
+        },
+      },
+      render: (_args, value) => {
+        const lines = [
+          `归型建议（${value.intent_options.length} 个候选，请用户选择或确认）：`,
+          ...value.intent_options.map((option: { topic: string; framework: string; primaryField: string; scenarioId?: string; matched: boolean }) =>
+            `  - ${option.topic}（框架 ${option.framework}${option.scenarioId !== undefined ? `，场景 ${option.scenarioId}` : ''}${option.matched ? '，命中' : '，建议'}）`),
+          `领域包：${value.pack_scope}`,
+          `需确认口径（${value.questions.length} 项，必答 ${value.required_pending.length} 项）：`,
+          ...value.questions.map((question: { question: string; options?: string[]; required?: boolean }) =>
+            `  - ${question.question}${question.required === true ? '（必答）' : ''}${question.options !== undefined ? ` 选项：${question.options.join(' / ')}` : ''}`),
+        ]
+        return [{ type: 'text', text: lines.join('\n') }]
+      },
+    },
+    async execute(args, exec) {
+      void requireCaptain(exec)
+      const request = String(args.request ?? '').trim()
+      if (request === '') throw new Error('request 不能为空')
+      const packScope = inferPackScope(request, { packScope: args.pack_scope })
+      const questions = clarificationSetFor({ packScope })
+      const requiredPending = pendingRequiredQuestions(questions, {}).map(question => question.question)
+      return {
+        intent_options: intentCandidates(request),
+        pack_scope: packScope,
+        questions: questions.map(question => ({
+          id: question.id,
+          question: question.question,
+          group: question.group,
+          ...(question.options !== undefined ? { options: [...question.options] } : {}),
+          ...(question.required === true ? { required: true } : {}),
+        })),
+        required_pending: requiredPending,
+      }
+    },
+  }))
+}
 /**
  * Register the review-feedback tool (P2.2): 专家反馈评分回写 evaluations.jsonl。
  * 由 registerZhijianTools 在末尾调用，共用同一工具注册表。

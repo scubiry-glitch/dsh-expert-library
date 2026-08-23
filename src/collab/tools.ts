@@ -23,6 +23,7 @@ import { compileExecutionPlan } from '../v2/compiler.ts'
 import { resolveLibrary } from '../expert-library/registry.ts'
 import { resolveSkill, skillDescriptionBlock } from '../skills.ts'
 import { buildCollabDomainPack } from './templates.ts'
+import { resolveRuntimePack } from '../v2/runtime-pack.ts'
 import { stancePairForTopic, STANCE_TABLE } from '../zhijian/routing.ts'
 
 /** The calling agent, or a loud failure. */
@@ -73,7 +74,7 @@ async function applyCollabPlan(
       throw new Error(`unknown expert "${id}" — available: ${[...library.experts.keys()].join(', ')}`)
     }
   }
-  const pack = buildCollabDomainPack([...library.experts.values()])
+  const pack = (await resolveRuntimePack(ctx, config, buildCollabDomainPack([...library.experts.values()]))).pack
   const result = compileExecutionPlan({
     pack,
     templateId: opts.templateId,

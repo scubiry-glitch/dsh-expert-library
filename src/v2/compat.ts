@@ -747,8 +747,9 @@ function v1RosterAssignments(scenario: Scenario): Record<string, readonly string
 export function compileV1ScenarioExecutionPlan(
   experts: readonly Expert[],
   scenario: Scenario,
+  base?: DomainPackV2,
 ): CompileResult {
-  const cached = builtinLegacyPack()
+  const cached = base ?? builtinLegacyPack()
   const assignments = v1RosterAssignments(scenario)
   let pack: DomainPackV2 = { ...cached, experts: mergeCachedExperts(cached, experts) }
 

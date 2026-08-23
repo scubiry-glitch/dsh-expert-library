@@ -290,6 +290,78 @@
   color: var(--elc-label-dim);
 }
 
+/* ── Runtime pack selection / expert route editor ────────────────────────── */
+
+.priorityControl {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.priorityControl .button {
+  padding: 1px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.expertTableWrap {
+  margin-top: 8px;
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid var(--elc-border);
+  border-radius: 10px;
+  background: var(--elc-bg-soft);
+}
+
+.expertTableWrap .packTable {
+  margin-top: 0;
+}
+
+.expertTableWrap th,
+.expertTableWrap td {
+  white-space: nowrap;
+}
+
+.expertTableWrap td[data-severity='pass'] {
+  color: var(--elc-success);
+}
+
+.expertTableWrap td[data-severity='idle'] {
+  color: var(--elc-label-secondary);
+}
+
+.routeEditor {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.miniInput {
+  flex: 0 1 110px;
+  min-width: 0;
+  height: 26px;
+  box-sizing: border-box;
+  border: 1px solid var(--elc-border);
+  border-radius: 6px;
+  background: var(--elc-bg);
+  color: var(--elc-label);
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 0 8px;
+}
+
+.miniInput::placeholder {
+  color: var(--elc-label-dim);
+}
+
+.miniInput:focus-visible {
+  border-color: var(--elc-brand);
+  outline: none;
+}
+
 /* ── Buttons ─────────────────────────────────────────────────────────────── */
 
 .button {

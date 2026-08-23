@@ -14,6 +14,11 @@
  * onChange path in `src/index.ts` calls it so pack edits take effect without
  * a restart.
  *
+ * Selection is by **pack id** (`pack.json` `pack.pack.id`), the same id the
+ * settings pack list exposes: `enabledPacks` absent/empty means every valid
+ * workspace pack participates, and `packPriority` (first = highest
+ * precedence) orders the workspace layers.
+ *
  * The base pack is never mutated: `mergePackLayers` produces a fresh merged
  * value, and the compile path treats it as read-only.
  *
@@ -32,7 +37,7 @@ import type { DomainPackV2, PackDiagnostic } from './types.ts'
 export interface RuntimePackSelection {
   /** Domain pack directory name under each workspace root (default `domain-packs`). */
   readonly packsDir: string
-  /** Workspace pack ids enabled for runtime compile; absent = every valid workspace pack. */
+  /** Workspace pack ids enabled for runtime compile; absent/empty = every valid workspace pack. */
   readonly enabledPacks?: readonly string[]
   /** Workspace pack id order (first = highest precedence); absent = discovery order. */
   readonly packPriority?: readonly string[]
@@ -42,9 +47,9 @@ export interface RuntimePackSelection {
 export interface RuntimePackResult {
   /** The merged, validated pack (base + enabled workspace overlays). */
   readonly pack: DomainPackV2
-  /** Every workspace pack dir that participated, in merge order (highest last). */
+  /** Every workspace pack that participated, in merge order (highest last). */
   readonly layers: readonly PackDir[]
-  /** Diagnostics from loading/merging workspace packs (errors degrade to warnings). */
+  /** Diagnostics from loading/merging workspace packs (failures degrade, never fatal). */
   readonly diagnostics: readonly PackDiagnostic[]
 }
 
@@ -105,16 +110,20 @@ function packDirFingerprint(dir: string): string | undefined {
 }
 
 /**
- * Order workspace pack dirs by the packPriority setting (first = highest
+ * Order loaded workspace packs by the packPriority setting (first = highest
  * precedence); packs not listed keep their discovery order after the listed
- * ones. Equal/unknown ranks preserve discovery order (stable).
+ * ones. Equal/unknown ranks preserve discovery order (stable). Packs whose
+ * id does not match any priority entry sort last, in discovery order.
  */
-function orderPackDirs(dirs: readonly PackDir[], priority: readonly string[] | undefined): PackDir[] {
-  if (priority === undefined || priority.length === 0) return [...dirs]
+function orderLoadedPacks(
+  loaded: readonly LoadedPack[],
+  priority: readonly string[] | undefined,
+): LoadedPack[] {
+  if (priority === undefined || priority.length === 0) return [...loaded]
   const rank = new Map(priority.map((id, index) => [id, index]))
-  return [...dirs].sort((a, b) => {
-    const ra = rank.get(a.dir.split('/').pop() ?? a.dir) ?? Number.MAX_SAFE_INTEGER
-    const rb = rank.get(b.dir.split('/').pop() ?? b.dir) ?? Number.MAX_SAFE_INTEGER
+  return [...loaded].sort((a, b) => {
+    const ra = rank.get(a.pack!.pack.id) ?? Number.MAX_SAFE_INTEGER
+    const rb = rank.get(b.pack!.pack.id) ?? Number.MAX_SAFE_INTEGER
     return ra - rb
   })
 }
@@ -124,12 +133,12 @@ function orderPackDirs(dirs: readonly PackDir[], priority: readonly string[] | u
  * typically the builtin zhijian or collab pack) merged with every enabled
  * workspace pack, cached by base id + selection + dir fingerprint.
  *
- * A workspace pack whose id is not in `enabledPacks` is skipped; a pack that
- * fails to load or validate is skipped with its diagnostics folded into the
- * result (never fatal — the base pack alone remains valid). `packPriority`
- * orders the workspace layers (first = highest precedence; the merge keeps
- * the canonical `builtin < workspace` ordering, so among workspace layers
- * the highest-precedence pack wins per entity id).
+ * A workspace pack whose id is not in `enabledPacks` (when the list is
+ * non-empty) is skipped; a pack that fails to load or validate is skipped
+ * with its diagnostics folded into the result (never fatal — the base pack
+ * alone remains valid). `packPriority` orders the workspace layers (first =
+ * highest precedence; among workspace layers the highest-precedence pack wins
+ * per entity id).
  */
 export async function resolveRuntimePack(
   ctx: Context,
@@ -142,29 +151,15 @@ export async function resolveRuntimePack(
   const dirs = await discoverPackDirs(ctx, selection.packsDir)
   const enabled = selection.enabledPacks === undefined
     ? undefined
-    : new Set(selection.enabledPacks)
-  // A missing/empty enabled list means "all valid workspace packs" — the same
-  // semantics as undefined.
-  const filter = enabled !== undefined && enabled.size > 0 ? enabled : undefined
+    : new Set(selection.enabledPacks.filter(id => id !== ''))
 
-  const ordered = orderPackDirs(dirs, selection.packPriority)
-    .filter(dir => filter === undefined || filter.has(dir.dir.split('/').pop() ?? dir.dir))
-  const fingerprint = ordered.map(dir => packDirFingerprint(dir.dir) ?? 'changed').join('|')
-
-  const cached = runtimePackCache.get(cacheKey)
-  if (cached !== undefined && cached.baseId === base.pack.id
-    && cached.selectionKey === selectionKey && cached.fingerprint === fingerprint) {
-    return cached.result
-  }
-
-  // Load every enabled workspace pack (parallel). Failed loads contribute
-  // diagnostics but never block the base pack.
-  const loaded: LoadedPack[] = []
+  // Load every discovered workspace pack (parallel), then select by pack id.
+  const loadedAll: LoadedPack[] = []
   const diagnostics: PackDiagnostic[] = []
-  await Promise.all(ordered.map(async (dir) => {
+  await Promise.all(dirs.map(async (dir) => {
     const item = await loadPackFromDir(dir.dir, { layer: 'workspace', label: dir.label })
     if (item.ok && item.pack !== undefined) {
-      loaded.push(item)
+      loadedAll.push(item)
     } else {
       for (const diagnostic of item.diagnostics) {
         diagnostics.push({
@@ -175,19 +170,32 @@ export async function resolveRuntimePack(
     }
   }))
 
+  const ordered = orderLoadedPacks(loadedAll, selection.packPriority)
+    .filter(item => enabled === undefined || enabled.size === 0 || enabled.has(item.pack!.pack.id))
+  const fingerprint = ordered.map(item => packDirFingerprint(item.source.root ?? item.source.label) ?? 'changed').join('|')
+
+  const cached = runtimePackCache.get(cacheKey)
+  if (cached !== undefined && cached.baseId === base.pack.id
+    && cached.selectionKey === selectionKey && cached.fingerprint === fingerprint) {
+    return cached.result
+  }
+
   // Merge: base (builtin) + workspace layers in ascending precedence so the
   // highest-precedence workspace pack wins per id. mergePackLayers revalidates
   // the whole merged pack; on any error we fall back to the base pack with the
-  // diagnostics (the base is always validator-clean).
+  // diagnostics (the base is always validator-clean). The merged pack's
+  // metadata stays the BASE pack's — overlay packs contribute entities by id,
+  // never the pack identity (the caller's base defines the domain).
   const merged = mergePackLayers([
     { pack: base, layer: 'builtin', label: base.pack.id },
-    ...loaded.map(item => ({ pack: item.pack!, layer: 'workspace' as const, label: item.source.label })),
+    ...ordered.map(item => ({ pack: item.pack!, layer: 'workspace' as const, label: item.source.label })),
   ], { reportReplaces: false })
   diagnostics.push(...merged.diagnostics.filter(d => d.severity !== 'info'))
 
+  const mergedPack = merged.pack === undefined ? undefined : { ...merged.pack, pack: base.pack }
   const result: RuntimePackResult = {
-    pack: merged.pack ?? base,
-    layers: ordered,
+    pack: mergedPack ?? base,
+    layers: ordered.map(item => ({ dir: item.source.root ?? item.source.label, label: item.source.label })),
     diagnostics,
   }
   runtimePackCache.set(cacheKey, { baseId: base.pack.id, selectionKey, fingerprint, result })

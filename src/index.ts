@@ -38,6 +38,7 @@ import { registerZhijianTools } from './zhijian/tools.ts'
 import { registerCollabTools } from './collab/tools.ts'
 import { BUILTIN_EXPERT_BY_ID } from './expert-library/builtin-experts.ts'
 import { BUILTIN_SCENARIO_BY_ID } from './expert-library/builtin-scenarios.ts'
+import { ZHIJIAN_EXPERT_BY_ID, ALL_EXPERT_METAS, zhijianMetaById } from './zhijian/registry.ts'
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { basename, join, resolve as resolvePath, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -64,11 +65,15 @@ import {
   resolveAuditLogPath,
 } from './host/audit-log.ts'
 import { invalidateBuiltinLegacyPack } from './v2/compat.ts'
+import { invalidateRuntimePack } from './v2/runtime-pack.ts'
 import {
   providerCallToolEligible,
   registerProviderCallTool,
 } from './host/provider-tool.ts'
 import { discoverPackDirs, discoverPackDirsIn, listDomainPacks, previewDomainPack } from './v2/preview.ts'
+import { buildZhijianDomainPack } from './v2/zhijian-pack.ts'
+import { resolveRuntimePack } from './v2/runtime-pack.ts'
+import type { DomainPackV2 } from './v2/types.ts'
 import {
   collectSkillEntries,
   discoverSkillRoots,
@@ -225,6 +230,12 @@ export interface Config {
   announceToAgent?: boolean
   /** Library-wide default model route for members without a preset route (alias of `memberModel`). */
   defaultModel?: { provider: string; model: string; reasoningEffort?: string }
+  /** Workspace domain pack ids enabled for runtime compile; absent/empty = every valid workspace pack. */
+  enabledPacks?: string[]
+  /** Workspace domain pack id order (first = highest precedence); absent = discovery order. */
+  packPriority?: string[]
+  /** Per-expert model route override (expert id → route); wins over the preset expert route. */
+  expertModelOverrides?: Record<string, { provider: string; model: string; reasoningEffort?: string }>
   /** Per-tool execution policy (API vs CLI vs auto) for external capabilities. */
   toolExecution?: Record<string, ToolExecutionConfig>
   /** Provider path/endpoint configuration (wind/zyt/beike); env/probe defaults apply when absent. */
@@ -287,6 +298,9 @@ export const Config: z<Config> = z.object({
   promptSectionOrder: z.natural().default(117),
   announceToAgent: z.boolean().default(true),
   defaultModel: memberModelSchema,
+  enabledPacks: z.array(z.string()),
+  packPriority: z.array(z.string()),
+  expertModelOverrides: z.dict(memberModelSchema),
   toolExecution: z.dict(toolExecutionEntrySchema),
   providers: z.object({
     wind: providerWindSchema,
@@ -343,6 +357,9 @@ export function apply(ctx: Context, config: Config): void {
     maxMembers: config.maxMembers ?? 8,
     knowledgeDir: config.knowledgeDir ?? 'knowledge',
     packsDir: config.packsDir ?? 'domain-packs',
+    enabledPacks: config.enabledPacks,
+    packPriority: config.packPriority,
+    expertModelOverrides: config.expertModelOverrides,
     toolExecution: config.toolExecution,
   }
 
@@ -474,12 +491,17 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.maxMembers = value.maxMembers ?? 8
     runtimeConfig.knowledgeDir = value.knowledgeDir ?? 'knowledge'
     runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
+    runtimeConfig.enabledPacks = value.enabledPacks
+    runtimeConfig.packPriority = value.packPriority
+    runtimeConfig.expertModelOverrides = value.expertModelOverrides
     runtimeConfig.toolExecution = value.toolExecution
     // Pack edits via settings take effect without a restart: drop the builtin
-    // pack cache on every settings commit — the next compile rebuilds it
-    // lazily (mtime staleness also catches external pack regeneration; see
-    // src/v2/compat.ts builtinLegacyPack).
+    // pack cache AND the runtime overlay cache on every settings commit — the
+    // next compile rebuilds them lazily (mtime staleness also catches external
+    // pack regeneration; see src/v2/compat.ts builtinLegacyPack and
+    // src/v2/runtime-pack.ts resolveRuntimePack).
     invalidateBuiltinLegacyPack()
+    invalidateRuntimePack()
     syncAnnounce()
     syncProviders()
   }
@@ -813,6 +835,84 @@ export function apply(ctx: Context, config: Config): void {
       res.end(JSON.stringify(list))
     },
   }), 'expert-teams: domain pack preview route')
+
+  // Expert route observability (设置页「专家路由」): read-only listing of
+  // every expert with its preset route (pack-baked), the settings override
+  // (if any) and the effective route + inheritance source. The wire carries
+  // anonymization-safe identity (id/field/stance/initials), never persona
+  // prose; routes are provider/model/effort only. The listing covers the
+  // builtin/zhijian registries plus every expert of the resolved runtime
+  // pack (workspace overlays), so an override can target exactly what the
+  // compile path can roster.
+  ctx.effect(() => webServer.register({
+    kind: 'exact',
+    path: '/plugins/dsh-expert-library/experts',
+    handler: async (_req, res) => {
+      const value = current()
+      const overrides = value.expertModelOverrides ?? {}
+      const defaultModel = value.defaultModel ?? value.memberModel
+      // Workspace overlay experts (merged over the builtin zhijian pack);
+      // failures degrade to the builtin pack alone.
+      let overlayPack: DomainPackV2 | undefined
+      try {
+        overlayPack = (await resolveRuntimePack(ctx, runtimeConfig, buildZhijianDomainPack())).pack
+      } catch {
+        overlayPack = undefined
+      }
+      const experts = [...BUILTIN_EXPERT_BY_ID.values(), ...ZHIJIAN_EXPERT_BY_ID.values()]
+      const byId = new Map<string, { meta?: ReturnType<typeof zhijianMetaById>; expert: { id: string; name: string; role?: string; model?: { provider: string; model: string; reasoningEffort?: string } } }>()
+      for (const expert of experts) {
+        byId.set(expert.id, { expert })
+      }
+      for (const meta of ALL_EXPERT_METAS) {
+        const existing = byId.get(meta.id)
+        if (existing === undefined) byId.set(meta.id, { meta, expert: { id: meta.id, name: meta.name, role: meta.field } })
+        else existing.meta = meta
+      }
+      // Workspace overlay experts: V2-shaped, id + internal name + preset
+      // modelPolicy. Their meta is absent, so the wire carries name only.
+      for (const expertV2 of overlayPack?.experts ?? []) {
+        if (byId.has(expertV2.id)) continue
+        const modelPolicy = expertV2.modelPolicy
+        byId.set(expertV2.id, {
+          expert: {
+            id: expertV2.id,
+            name: expertV2.display.internalName,
+            ...(modelPolicy === undefined ? {} : { model: { ...modelPolicy } }),
+          },
+        })
+      }
+      const list = [...byId.values()].map(({ meta, expert }) => {
+        const override = overrides[expert.id]
+        const preset = expert.model
+        const effective = override ?? preset ?? defaultModel
+        return {
+          id: expert.id,
+          name: expert.name,
+          ...(meta !== undefined ? {
+            field: meta.field,
+            stance: meta.stance,
+            initials: meta.initials,
+            ...(meta.deceased === true ? { deceased: true } : {}),
+            ...(meta.namespace !== undefined ? { namespace: meta.namespace } : {}),
+            ...(meta.version !== undefined ? { version: meta.version } : {}),
+          } : {
+            ...(expert.role !== undefined ? { role: expert.role } : {}),
+          }),
+          ...(preset !== undefined ? { preset: { ...preset } } : {}),
+          ...(override !== undefined ? { override: { ...override } } : {}),
+          ...(effective === undefined ? {} : { effective: { ...effective } }),
+          source: override !== undefined ? 'override' : preset !== undefined ? 'expert' : defaultModel !== undefined ? 'default' : 'none',
+        }
+      })
+      const body = JSON.stringify({ experts: list })
+      res.writeHead(200, {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+      })
+      res.end(body)
+    },
+  }), 'expert-teams: expert route listing')
 
   // Provider failure observability: read-only audit tail route. Merges the
   // persisted JSONL tail (cross-restart memory) with the live in-memory
