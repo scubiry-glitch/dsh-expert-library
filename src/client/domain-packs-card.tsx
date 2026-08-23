@@ -12,10 +12,14 @@
  * Fetch conventions follow FilesView/ActivityPanel: `cache: 'no-store'`,
  * guard `!response.ok` and array shapes before committing state, and keep the
  * last snapshot across transient host restarts.
+ *
+ * Styled with `domain-packs-card.module.css`, the DSW-token sibling of the
+ * 专家库 settings card.
  * @module dsh-expert-library/client/domain-packs-card
  */
 
 import { useEffect, useState } from 'react'
+import css from './domain-packs-card.module.css'
 
 /** One pack row of the host list response (mirrors host PackSummary). */
 interface ClientPackSummary {
@@ -91,7 +95,7 @@ function DiagnosticGroup({ title, diagnostics }: {
 }) {
   if (diagnostics.length === 0) return null
   return (
-    <div>
+    <div className={css.diagGroup}>
       <h4>{title}（{diagnostics.length}）</h4>
       <ul>
         {diagnostics.map((diagnostic, index) => (
@@ -112,19 +116,23 @@ function PreviewResult({ preview }: { readonly preview: ClientDomainPackPreview 
   const pack = preview.pack
   return (
     <>
-      <p role="status" data-preview-ok={preview.ok}>
+      <p
+        role="status"
+        data-preview-ok={preview.ok}
+        className={preview.ok ? css.statusOk : css.statusFail}
+      >
         {preview.ok ? '✓ 校验通过' : `✗ 校验失败（${errors.length} 项错误）`}
       </p>
       {preview.ok && pack !== undefined && (
         <>
-          <dl>
+          <dl className={css.facts}>
             <dt>版本</dt><dd>{pack.version}</dd>
             <dt>层级</dt><dd>{layerLabel(pack.layer)}</dd>
             <dt>来源</dt><dd>{pack.label}</dd>
             {pack.snapshot !== undefined && <><dt>快照</dt><dd>{pack.snapshot}</dd></>}
-            {pack.root !== undefined && <><dt>根目录</dt><dd>{pack.root}</dd></>}
+            {pack.root !== undefined && <><dt>根目录</dt><dd className={css.mono}>{pack.root}</dd></>}
           </dl>
-          <ul>
+          <ul className={css.counts}>
             {COUNTS.map(([key, label]) => (
               <li key={key}>{label} {pack.counts[key] ?? 0}</li>
             ))}
@@ -190,52 +198,59 @@ export function DomainPacksCard({ close }: DomainPacksCardProps) {
   useEffect(() => { void loadList() }, [])
 
   return (
-    <section style={{ maxWidth: 720 }}>
-      <h2>领域包</h2>
-      <p>Domain Pack 只读预览与校验结果：内置 zhijian-realestate 包与各工作区 <code>domain-packs/</code> 目录下的包；此处仅读取并重新校验，不修改任何文件。</p>
-      <div>
-        <button type="button" disabled={listLoading} onClick={() => void loadList()}>{listLoading ? '刷新中…' : '刷新'}</button>
-        <button type="button" onClick={close}>关闭</button>
+    <section className={css.card}>
+      <header className={css.head}>
+        <h2 className={css.title}>领域包</h2>
+        <p className={css.subtitle}>Domain Pack 只读预览与校验结果：内置 zhijian-realestate 包与各工作区 <code className={css.mono}>domain-packs/</code> 目录下的包；此处仅读取并重新校验，不修改任何文件。</p>
+      </header>
+      <div className={css.body}>
+        <div className={css.toolbar}>
+          <button className={css.button} type="button" disabled={listLoading} onClick={() => void loadList()}>{listLoading ? '刷新中…' : '刷新'}</button>
+          <button className={css.button} type="button" onClick={close}>关闭</button>
+        </div>
+        {listLoading && packs === null && <p className={css.hint}>正在读取领域包…</p>}
+        {listError !== '' && packs === null && (
+          <p className={css.statusError} role="status">{listError} <button className={css.button} type="button" onClick={() => void loadList()}>重试</button></p>
+        )}
+        {packs !== null && packs.length === 0 && <p className={css.hint}>暂无领域包</p>}
+        {packs !== null && packs.length > 0 && (
+          <ul className={css.packList}>
+            {packs.map((pack) => (
+              <li key={pack.id}>
+                <button
+                  className={css.packRow}
+                  type="button"
+                  data-active={selectedId === pack.id}
+                  onClick={() => {
+                    setSelectedId(pack.id)
+                    void loadPreview(pack.id)
+                  }}
+                >
+                  <span className={css.packMain}>
+                    <span className={css.packName}>{pack.name}</span>
+                    <span className={css.packMeta}>{pack.id}@{pack.version}</span>
+                    <span className={css.packSummary}>专家 {pack.counts.experts ?? 0} · 场景 {pack.counts.scenarios ?? 0} · 模板 {pack.counts.teamTemplates ?? 0}</span>
+                  </span>
+                  <span className={css.layer}>{layerLabel(pack.layer)}</span>
+                  <span className={css.pill} data-severity={pack.ok ? 'pass' : 'fail'}>
+                    {pack.ok ? '通过' : `${pack.errorCount} 错误`}
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {selectedId !== null && (
+          <section className={css.preview} aria-label={`${selectedId} 校验详情`}>
+            <h3 className={css.previewTitle}>{selectedId}</h3>
+            {previewLoading && <p className={css.hint}>正在校验 {selectedId}…</p>}
+            {!previewLoading && previewError !== '' && (
+              <p className={css.statusError} role="status">{previewError} <button className={css.button} type="button" onClick={() => void loadPreview(selectedId)}>重试</button></p>
+            )}
+            {!previewLoading && preview !== null && <PreviewResult preview={preview} />}
+          </section>
+        )}
       </div>
-      {listLoading && packs === null && <p>正在读取领域包…</p>}
-      {listError !== '' && packs === null && (
-        <p role="status">{listError} <button type="button" onClick={() => void loadList()}>重试</button></p>
-      )}
-      {packs !== null && packs.length === 0 && <p>暂无领域包</p>}
-      {packs !== null && packs.length > 0 && (
-        <ul>
-          {packs.map((pack) => (
-            <li key={pack.id}>
-              <button
-                type="button"
-                data-active={selectedId === pack.id}
-                onClick={() => {
-                  setSelectedId(pack.id)
-                  void loadPreview(pack.id)
-                }}
-              >
-                <span>{pack.name}</span>
-                <span>{pack.id}@{pack.version}</span>
-                <span>{layerLabel(pack.layer)}</span>
-                <span data-severity={pack.ok ? 'pass' : 'fail'}>
-                  {pack.ok ? '通过' : `${pack.errorCount} 错误`}
-                </span>
-                <span>专家 {pack.counts.experts ?? 0} · 场景 {pack.counts.scenarios ?? 0} · 模板 {pack.counts.teamTemplates ?? 0}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      {selectedId !== null && (
-        <section aria-label={`${selectedId} 校验详情`}>
-          <h3>{selectedId}</h3>
-          {previewLoading && <p>正在校验 {selectedId}…</p>}
-          {!previewLoading && previewError !== '' && (
-            <p role="status">{previewError} <button type="button" onClick={() => void loadPreview(selectedId)}>重试</button></p>
-          )}
-          {!previewLoading && preview !== null && <PreviewResult preview={preview} />}
-        </section>
-      )}
     </section>
   )
 }

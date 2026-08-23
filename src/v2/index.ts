@@ -67,6 +67,18 @@ export {
   GENERAL_REVIEW_CAPABILITY,
 } from './pipeline-general-pack.ts'
 export type { BuildPipelineGeneralPackOptions } from './pipeline-general-pack.ts'
+export {
+  buildBeikeDomainPack,
+  BEIKE_PACK_ID,
+  BEIKE_PACK_VERSION,
+  BEIKE_PACK_SNAPSHOT,
+  BEIKE_BASELINE_DATE,
+  BEIKE_QUALITY_POLICY_ID,
+  BEIKE_REVIEW_CAPABILITY,
+  BEIKE_EXPERT_IDS,
+  beikeExpertMetas,
+} from './beike-pack.ts'
+export type { BuildBeikePackOptions } from './beike-pack.ts'
 export * from './digest.ts'
 export * from './phases.ts'
 export * from './compiler.ts'

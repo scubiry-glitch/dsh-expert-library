@@ -196,7 +196,7 @@ export interface ZhijianRouteTopic {
    * 归属领域包切片（整合设计：运行时共享一张路由表，各包发射器只投影自己的
    * 切片）。缺省 'zhijian'；bank 话题标 'bank'，pipeline 话题标 'pipeline'。
    */
-  readonly packScope?: 'zhijian' | 'bank' | 'pipeline' | 'pipeline-general'
+  readonly packScope?: 'zhijian' | 'bank' | 'pipeline' | 'pipeline-general' | 'beike'
 }
 
 /** One routing scenario (路由规则.md §二). */

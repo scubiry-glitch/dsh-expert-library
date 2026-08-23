@@ -1,0 +1,87 @@
+{
+  "id": "beike.99wiki",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "beike",
+  "boundary": "本地 99wiki 贝壳合作材料：贝壳×江苏银行、贝壳合作方案、VLC 租房平台、feishu 贝壳纪要（长租供应链洽谈/业务布局讨论）。内部资料，引用须注明出处；敏感数据不外发。",
+  "ontology": {
+    "entities": [
+      {
+        "id": "project",
+        "description": "贝壳合作项目/方案"
+      },
+      {
+        "id": "meeting",
+        "description": "贝壳相关洽谈纪要"
+      },
+      {
+        "id": "rental",
+        "description": "租房平台/长租供应链"
+      }
+    ],
+    "relations": [
+      {
+        "id": "project-has-meeting",
+        "from": "project",
+        "to": "meeting",
+        "description": "项目关联纪要"
+      },
+      {
+        "id": "project-involves-rental",
+        "from": "project",
+        "to": "rental",
+        "description": "项目涉及租赁"
+      }
+    ]
+  },
+  "collections": [
+    {
+      "id": "beike-jiangsu",
+      "root": "projects/贝壳x江苏银行",
+      "format": "markdown",
+      "description": "贝壳×江苏银行合作"
+    },
+    {
+      "id": "beike-cooperation",
+      "root": "projects/贝壳合作方案",
+      "format": "markdown",
+      "description": "贝壳合作方案"
+    },
+    {
+      "id": "vlc-rental",
+      "root": "projects/VLC租房平台",
+      "format": "markdown",
+      "description": "VLC 租房平台产品与规划"
+    },
+    {
+      "id": "beike-minutes",
+      "root": "feishu",
+      "format": "mixed",
+      "description": "贝壳相关纪要/素材（贝壳×梦百合长租供应链、业务布局讨论）"
+    }
+  ],
+  "snapshot": {
+    "id": "beike-99wiki-2026-08-23",
+    "takenAt": "2026-08-23T00:00:00Z",
+    "digest": "ec42358b6a0bf1969693af8a777e599ee64e3c6bcb86a107c8e93906bd63eac4",
+    "recordCount": 0
+  },
+  "retrievalProfiles": [
+    {
+      "id": "by-keyword",
+      "method": "keyword"
+    },
+    {
+      "id": "by-project",
+      "method": "keyword",
+      "config": {
+        "scope": "projects"
+      }
+    }
+  ],
+  "policies": {
+    "citation": "required",
+    "freshness": "monthly",
+    "access": "readonly"
+  }
+}

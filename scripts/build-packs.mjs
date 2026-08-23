@@ -8,6 +8,7 @@
  *   bank-finance        → scripts/build-bank-pack.mjs（emitBankPack）
  *   pipeline-domains    → scripts/build-pipeline-pack.mjs（emitPipelinePack）
  *   pipeline-general    → scripts/build-pipeline-general-pack.mjs（emitGeneralPack）
+ *   beike               → scripts/build-beike-pack.mjs（emitBeikePack，交叉投影包）
  *
  * Usage:
  *   node scripts/build-packs.mjs                    # build every pack from lib
@@ -25,6 +26,7 @@ import { emitPack } from './build-zhijian-pack.mjs'
 import { emitBankPack, DEFAULT_BANK_PACK_DIR } from './build-bank-pack.mjs'
 import { emitPipelinePack, DEFAULT_PIPELINE_PACK_DIR } from './build-pipeline-pack.mjs'
 import { emitGeneralPack, DEFAULT_GENERAL_PACK_DIR } from './build-pipeline-general-pack.mjs'
+import { emitBeikePack, DEFAULT_BEIKE_PACK_DIR } from './build-beike-pack.mjs'
 import { checkPackEmit, PackGenError } from './pack-common.mjs'
 
 /** Default zhijian pack dir (mirrors build-zhijian-pack.mjs). */
@@ -47,6 +49,10 @@ const PACKS = {
   'pipeline-general': {
     dir: DEFAULT_GENERAL_PACK_DIR,
     emit: (outDir, opts) => emitGeneralPack(outDir, opts),
+  },
+  'beike': {
+    dir: DEFAULT_BEIKE_PACK_DIR,
+    emit: (outDir) => emitBeikePack(outDir),
   },
 }
 

@@ -1,0 +1,9 @@
+{
+  "id": "beike.method.ecosystem-protocol",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "name": "贝壳生态研判协议（平台/经纪/渠道/租赁）",
+  "mediaType": "agent-instructions",
+  "load": "progressive",
+  "body": "贝壳生态研判协议：\n1. 区分平台视角（左晖/杨现领）与经纪制度视角（廖俊平/徐斌/柴强），按问题落点选主答；\n2. 口径：贝壳成出口径（bk-031 陶琦）与克而瑞/中指/统计局均有差异，须标注；\n3. 陶琦 bk-031 为内测对比项，对外交付不引用；\n4. 输出结构按框架 B 四段式：关键结论 → 关键事实及变化 → 归因 → 展望与不确定性。"
+}

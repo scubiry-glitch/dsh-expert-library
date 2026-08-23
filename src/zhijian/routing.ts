@@ -123,6 +123,13 @@ export const ROUTE_TOPICS: readonly ZhijianRouteTopic[] = [
     preferredTags: ['研判', '理论'],
     packScope: 'pipeline-general',
   },
+  {
+    topic: '贝壳生态与居住服务（平台、经纪、房源、渠道、长租）',
+    framework: 'B',
+    primaryField: '居住服务',
+    preferredTags: ['研判', '实操'],
+    packScope: 'beike',
+  },
 ]
 
 /** 路由规则.md §二: 场景 → 主责领域 → 候选专家（BK 号 → 专家 id）. */
@@ -236,6 +243,22 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     primaryField: '特级专家',
     candidates: ['s-32', 's-37', 's-36', 's-40', 's-24', 's-10', 's-01'],
     constraints: 'pipeline-general 命名空间（S 特级，公众人物实名）。巴菲特 s-32 价值投资/安全边际，芒格 s-37 多学科思维，乔布斯 s-36 产品设计，Karpathy s-40 AI/LLM，张小龙 s-24 产品体验，陆奇 s-10 AI 趋势，张一鸣 s-01 产品增长。',
+  },
+  {
+    id: 'beike-ecosystem',
+    name: '贝壳生态与居住服务',
+    framework: 'B',
+    primaryField: '居住服务',
+    candidates: ['bk-033', 'e08-08', 'bk-018', 'bk-002', 'bk-019'],
+    constraints: '贝壳生态研判：杨现领 bk-033（贝壳研究院院长）主答；左晖 e08-08（贝壳创始人）平台/服务品质；柴强 bk-018 存量统筹、廖俊平 bk-002 经纪制度、徐斌 bk-019 监管对比作辅。陶琦 bk-031 贝壳口径仅内部使用。',
+  },
+  {
+    id: 'beike-rental-supply-chain',
+    name: '长租与租赁供应链',
+    framework: 'B',
+    primaryField: '居住服务',
+    candidates: ['e04-05', 'bk-033', 'e08-08'],
+    constraints: '长租/供应链合作（贝壳×梦百合等）：一濛 e04-05 长租资管主答；杨现领 bk-033 租赁市场/租购同权；左晖 e08-08 平台合作视角。素材：feishu 贝壳长租供应链洽谈纪要。',
   },
 ]
 

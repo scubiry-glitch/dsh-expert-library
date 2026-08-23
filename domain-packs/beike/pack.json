@@ -1,0 +1,16 @@
+{
+  "id": "beike",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "name": "贝壳生态领域包（居住服务/平台/经纪/租赁）",
+  "description": "7 位贝壳生态相关专家（交叉投影：BK 居住服务派 5 + 左晖 e08-08 + 一濛 e04-05）。V2 投影源为共享注册表 meta；复用 zhijian/bank 的模板/质量/方法构建器（beike 前缀）。知识库 = 本地 99wiki 贝壳合作材料。",
+  "dependsOn": [
+    "zhijian-realestate",
+    "pipeline-domains"
+  ],
+  "caliberDeclarations": {
+    "贝壳": "贝壳成出口径",
+    "克而瑞": "克而瑞/普睿监测口径",
+    "中指": "中指院口径"
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "id": "beike.expert-memory",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "beike",
+  "boundary": "贝壳生态专家 Profile 投影（2026-08-23）：bk-002/018/019/031/033 居住服务与经纪 + e08-08 左晖（贝壳创始人）+ e04-05 一濛（长租资管）。",
+  "ontology": {
+    "entities": [
+      {
+        "id": "expert",
+        "description": "贝壳生态相关专家"
+      },
+      {
+        "id": "field",
+        "description": "居住服务/经纪/平台/租赁"
+      }
+    ],
+    "relations": [
+      {
+        "id": "expert-belongs-to-field",
+        "from": "expert",
+        "to": "field",
+        "description": "专家属于主领域"
+      }
+    ]
+  },
+  "collections": [
+    {
+      "id": "experts",
+      "root": "experts",
+      "format": "json",
+      "description": "每专家一个 Profile 记录"
+    }
+  ],
+  "snapshot": {
+    "id": "beike-v1-2026-08-23",
+    "takenAt": "2026-08-23T00:00:00Z",
+    "digest": "0a6e2af76f2f5628adb607379a7c72dea69f19053dde6eb4fa0d3df1c437a43b",
+    "recordCount": 7
+  },
+  "retrievalProfiles": [
+    {
+      "id": "by-id",
+      "method": "keyword"
+    },
+    {
+      "id": "by-field",
+      "method": "keyword"
+    }
+  ],
+  "policies": {
+    "citation": "required",
+    "freshness": "monthly",
+    "access": "readonly"
+  }
+}

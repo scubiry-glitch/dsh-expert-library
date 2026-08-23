@@ -97,6 +97,12 @@ export interface ExpertLibrarySettings {
   defaultModel?: ExpertModelRoute
   /** Per-tool execution policy (API vs CLI vs auto). */
   toolExecution?: Record<string, ToolExecutionConfig>
+  /** Workspace domain pack ids enabled for runtime compile; absent = every valid workspace pack. */
+  enabledPacks?: string[]
+  /** Workspace domain pack id order (first = highest precedence); absent = discovery order. */
+  packPriority?: string[]
+  /** Per-expert model route override (expert id → route); wins over the preset expert route. */
+  expertModelOverrides?: Record<string, ExpertModelRoute>
   /** Provider path/endpoint configuration (wind/zyt/beike); env/probe defaults apply when absent. */
   providers?: {
     wind?: { cliPath?: string }
@@ -151,6 +157,9 @@ export const ExpertLibrarySettingsSchema: z<ExpertLibrarySettings> = z.object({
   announceToAgent: z.boolean(),
   defaultModel: modelRouteSchema,
   toolExecution: toolExecutionSchema,
+  enabledPacks: z.array(z.string()),
+  packPriority: z.array(z.string()),
+  expertModelOverrides: z.dict(modelRouteSchema),
   providers: z.object({
     wind: providerWindSchema,
     zyt: providerZytSchema,

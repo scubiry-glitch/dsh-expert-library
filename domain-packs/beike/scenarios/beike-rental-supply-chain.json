@@ -1,0 +1,46 @@
+{
+  "id": "beike-rental-supply-chain",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "beike",
+  "intents": [
+    "rental-supply-chain"
+  ],
+  "requiredCapabilities": [
+    {
+      "capability": "beike.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    },
+    {
+      "capability": "beike.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    }
+  ],
+  "routingPolicy": {
+    "assertions": [
+      "长租/供应链合作（如贝壳×梦百合长租供应链）：一濛 e04-05 住房租赁/长租资管主答；杨现领 bk-033 租赁市场/租购同权；左晖 e08-08 平台合作视角。素材：feishu 贝壳与梦百合长租供应链合作洽谈纪要。"
+    ],
+    "candidateHints": [
+      "e04-05",
+      "bk-033",
+      "e08-08"
+    ]
+  },
+  "teamTemplate": "beike.team.B",
+  "outputTemplate": "beike.output.B",
+  "qualityPolicy": "beike.quality",
+  "knowledgePolicy": {
+    "required": [
+      "beike-expert-memory"
+    ],
+    "optional": [
+      "local-knowledge",
+      "beike-99wiki"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  }
+}

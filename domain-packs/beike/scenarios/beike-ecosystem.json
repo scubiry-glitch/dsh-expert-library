@@ -1,0 +1,48 @@
+{
+  "id": "beike-ecosystem",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "beike",
+  "intents": [
+    "beike-ecosystem-review"
+  ],
+  "requiredCapabilities": [
+    {
+      "capability": "beike.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    },
+    {
+      "capability": "beike.review",
+      "minProficiency": 1,
+      "cardinality": 1
+    }
+  ],
+  "routingPolicy": {
+    "assertions": [
+      "贝壳生态研判：杨现领 bk-033（贝壳研究院院长）渠道/存量流通主答；左晖 e08-08（贝壳创始人）平台/服务品质/产业互联网；柴强 bk-018 存量统筹、廖俊平 bk-002 经纪制度、徐斌 bk-019 监管对比作辅。陶琦 bk-031 贝壳/NIFD 口径仅内部使用。"
+    ],
+    "candidateHints": [
+      "bk-033",
+      "e08-08",
+      "bk-018",
+      "bk-002",
+      "bk-019"
+    ]
+  },
+  "teamTemplate": "beike.team.B",
+  "outputTemplate": "beike.output.B",
+  "qualityPolicy": "beike.quality",
+  "knowledgePolicy": {
+    "required": [
+      "beike-expert-memory"
+    ],
+    "optional": [
+      "local-knowledge",
+      "beike-99wiki"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  }
+}
