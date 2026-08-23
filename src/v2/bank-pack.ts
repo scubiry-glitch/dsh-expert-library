@@ -17,7 +17,7 @@ import { createHash } from 'node:crypto'
 import { BANK_EXPERTS } from '../bank/data/experts.generated.ts'
 import { FRAMEWORKS } from '../zhijian/frameworks.ts'
 import { ZHIJIAN_ROUTE } from '../zhijian/registry.ts'
-import type { ZhijianFrameworkId, ZhijianRouteScenario } from '../zhijian/types.ts'
+import type { ZhijianField, ZhijianFrameworkId, ZhijianRouteScenario } from '../zhijian/types.ts'
 import {
   SCHEMA_VERSION,
   type DomainKnowledgeManifest,
@@ -31,6 +31,7 @@ import {
   type TeamTemplate,
 } from './types.ts'
 import {
+  FIELD_DOMAINS,
   frameworkMethodPack,
   frameworkOutputTemplate,
   frameworkTeamTemplate,
@@ -60,6 +61,7 @@ export const BANK_REVIEW_CAPABILITY = 'bank.review'
 const BANK_SCENARIO_INTENTS: Readonly<Record<string, readonly string[]>> = {
   'bank-retail': ['retail-rollout'],
   'bank-credit-card': ['credit-card-performance'],
+  'bank-strategy': ['bank-strategy-execution'],
 }
 
 /** Internal-only bank experts: real identity must never leave the org. */
@@ -83,11 +85,19 @@ const BANK_SCENARIOS: readonly ZhijianRouteScenario[] = [
     candidates: ['bank-09'],
     constraints: '信用卡经营以 bank-09 操盘视角主答（考核/渠道/客户分层），收益模型与资负视角联动 BK 金融数据派。',
   },
+  {
+    id: 'bank-strategy',
+    name: '银行战略与经营',
+    framework: 'B',
+    primaryField: '江苏银行高层',
+    candidates: ['e13-01', 'e13-02', 'e13-03'],
+    constraints: 'E13 江苏银行高层（pipeline 命名空间，公众人物实名）：袁军 e13-01 战略/客户经营，高增银 e13-02 量化目标评审，梁斌 e13-03 零售/网络金融/数智化。敏感数据按 pii-redaction 硬门脱敏。',
+  },
 ]
 
 /** One bank routing scenario → ScenarioV2 (candidates stay routing hints). */
 function bankScenarioV2(scenario: ZhijianRouteScenario, packVersion: string): ScenarioV2 {
-  const fieldCapability = `${scenario.primaryField === '零售金融' ? 'bank.retail' : 'bank.operations'}.review`
+  const fieldCapability = `${FIELD_DOMAINS[scenario.primaryField as ZhijianField] ?? 'bank.general'}.review`
   return {
     id: scenario.id,
     version: packVersion,
@@ -232,7 +242,7 @@ export function buildBankDomainPack(options: BuildBankPackOptions = {}): DomainP
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     name: '银行金融领域包',
-    description: `${BANK_EXPERTS.length} 位银行金融领域专家基线（${BANK_EXPERTS[0]?.id ?? 'bank-09'}，零售金融/银行经营）。V2 投影源为 src/bank/data/experts.generated.ts + routing 表；复用 zhijian-realestate 的模板/质量/方法构建器（bank 前缀）。`,
+    description: `${BANK_EXPERTS.length} 位银行金融领域专家基线（bank-09 零售操盘 + e13-* 江苏银行高层，零售金融/银行经营/江苏银行高层）。V2 投影源为 src/bank/data/experts.generated.ts + routing 表；复用 zhijian-realestate 的模板/质量/方法构建器（bank 前缀）。`,
     dependsOn: ['zhijian-realestate'],
     caliberDeclarations: {
       '行内': '行内经营口径（脱敏）',

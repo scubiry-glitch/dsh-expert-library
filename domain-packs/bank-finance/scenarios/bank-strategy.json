@@ -1,14 +1,14 @@
 {
-  "id": "pipeline-bank-strategy",
+  "id": "bank-strategy",
   "version": "1.0.0",
   "schemaVersion": 2,
-  "domain": "pipeline",
+  "domain": "banking",
   "intents": [
     "bank-strategy-execution"
   ],
   "requiredCapabilities": [
     {
-      "capability": "pipeline.review",
+      "capability": "bank.review",
       "minProficiency": 1,
       "cardinality": 1
     },
@@ -20,7 +20,7 @@
   ],
   "routingPolicy": {
     "assertions": [
-      "pipeline 命名空间（E13 江苏银行，公众人物实名）。袁军 e13-01 战略/客户经营，高增银 e13-02 量化目标评审，梁斌 e13-03 零售/数智化。敏感数据按 pii-redaction 硬门脱敏。"
+      "E13 江苏银行高层（pipeline 命名空间，公众人物实名）：袁军 e13-01 战略/客户经营，高增银 e13-02 量化目标评审，梁斌 e13-03 零售/网络金融/数智化。敏感数据按 pii-redaction 硬门脱敏。"
     ],
     "candidateHints": [
       "e13-01",
@@ -28,12 +28,12 @@
       "e13-03"
     ]
   },
-  "teamTemplate": "pipeline.team.B",
-  "outputTemplate": "pipeline.output.B",
-  "qualityPolicy": "pipeline.quality",
+  "teamTemplate": "bank.team.B",
+  "outputTemplate": "bank.output.B",
+  "qualityPolicy": "bank.quality",
   "knowledgePolicy": {
     "required": [
-      "pipeline-expert-memory"
+      "bank-expert-memory"
     ],
     "optional": [
       "local-knowledge"

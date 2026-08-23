@@ -13,7 +13,7 @@
     }
   ],
   "rawProfiles": {
-    "count": 22,
+    "count": 19,
     "files": {
       "刘明远_专家Profile_E01-01.json": "5aac0fba4251480cb58fa50f5a9a9e52098cf3d111fc3da1cc7df5859369ea37",
       "刘洋_专家Profile_E08-05.json": "8ba07a993994933e6762de903bfa147dae4277fb4764f55dab3938ba7f11e6b5",
@@ -25,16 +25,13 @@
       "李芳_专家Profile_E08-02.json": "0f4a4aeee213678ce8428376218a23f491d6e2924f85541026ff5b75f992b0be",
       "李雪琴_专家Profile_E01-04.json": "9a115e736b35477eef3d9a17f4cbfe52c2e305958c0c94138f77bacf7b91f6a0",
       "林中_专家Profile_E08-07.json": "0dce4298e2935c635a76b9cebdbb45cb6be533d39dff0573f63bb9331bdefcbf",
-      "梁斌_专家Profile_E13-03.json": "efd32d98c7068cc612133e41ae1428b0279cdcf19c8aad1a15d70947301a3683",
       "永邦_专家Profile_E08-yong-bang.json": "b52ee56f52972ec2ed08712571ae35c559b2c9dcff51f44dfcf01b8e6d1a8145",
       "王建国_专家Profile_E08-01.json": "2b878b94324f18dc0235946bb553eb6b5ecb8c46daacbbb1b0308f4a7d0b8cf4",
       "王海涛_专家Profile_E01-03.json": "5300e2eb8971ecb38f3ec91178fb6d5390428034eac44debd27250eee40ff187",
-      "袁军_专家Profile_E13-01.json": "ff51504c1c99d9c68f1dc6fe595611c38ee1045b48e03b2a8717a91d5828e981",
       "赵敏_专家Profile_E01-06.json": "8bc72550a53b482b2ad5c8ff14dfdb91cd85570d6857c4c457b2834cc6b636b6",
       "陈华_专家Profile_E08-04.json": "15aaf9f56747703704ca7fe6b1d7e4f386f7e517eff8774a290df51d02c1b699",
       "陈志华_专家Profile_E01-02.json": "3d0334e7ce4a6a01babfae4d435f2a266100b876f3abd45150ff20a059e9935f",
       "高善文_专家Profile_E01-08.json": "c706c00a0bf23dad494d870dfca3a17eacfd29aa8dad68b11814f89daaad5d9d",
-      "高增银_专家Profile_E13-02.json": "0e139e8389bb0d538f45a44dd24217a423e90d542b8f575c761824feba99121e",
       "魏行空_专家Profile_E08-09.json": "0b6127f555f35af22b96974080bee9f1634ff3ab6b42e8195f78b6f5efc1ddf5",
       "鲁政委_专家Profile_E01-09.json": "1be9b046f2b013ed52624a0c440aee841479e9f043bbadd1b4fd7cf782d33505"
     }
@@ -42,7 +39,7 @@
   "docs": {
     "count": 1,
     "files": {
-      "专家总表.md": "82c8ba1b4f7869d4efc93ed55e6a51c879cff6caa958101eaa2b9fd1d917854d"
+      "专家总表.md": "424ef4436edaeea9e580428f92c7b3cc27f09b06353fd25754e801a76061b372"
     }
   }
 }

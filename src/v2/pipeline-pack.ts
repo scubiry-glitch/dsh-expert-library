@@ -4,8 +4,8 @@
  * 整合设计：与 zhijian/bank 包共用同一投影（zhijianMetaToExpertV2）、同一
  * 模板/输出/方法/质量构建器（zhijian-pack.ts，pipeline 前缀）、同一发射器
  * （pack-common）。本文件只提供 pipeline 专属数据：PIPELINE_EXPERTS 投影、
- * 三个领域场景（房地产企业经营 / 宏观与资本市场 / 银行战略经营）、
- * pii-redaction 硬门（E13 江苏银行涉敏感数据）。
+ * 两个领域场景（房地产企业经营 / 宏观与资本市场）与 pii-redaction 硬门
+ * （银行/金融敏感数据脱敏；E13 江苏银行高层已并入 bank-finance 包）。
  *
  * @module dsh-expert-library/v2/pipeline-pack
  */
@@ -70,21 +70,12 @@ const PIPELINE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     candidates: ['e01-08', 'e01-09', 'e01-07', 'e01-02', 'e01-06'],
     constraints: 'pipeline 命名空间（E01，公众人物实名）。高善文 e01-08 资本市场/周期，鲁政委 e01-09 汇率/利率，李扬 e01-07 宏观审慎/债务。',
   },
-  {
-    id: 'pipeline-bank-strategy',
-    name: '银行战略与经营',
-    framework: 'B',
-    primaryField: '江苏银行高层',
-    candidates: ['e13-01', 'e13-02', 'e13-03'],
-    constraints: 'pipeline 命名空间（E13 江苏银行，公众人物实名）。袁军 e13-01 战略/客户经营，高增银 e13-02 量化目标评审，梁斌 e13-03 零售/数智化。敏感数据按 pii-redaction 硬门脱敏。',
-  },
 ]
 
 /** 场景 → controlled intent vocabulary（pack-defined）。 */
 const PIPELINE_SCENARIO_INTENTS: Readonly<Record<string, readonly string[]>> = {
   'pipeline-realestate-ops': ['realestate-operations'],
   'pipeline-macro-capital': ['macro-capital-markets'],
-  'pipeline-bank-strategy': ['bank-strategy-execution'],
 }
 
 /** 领域 → pack 域词汇（与 FIELD_DOMAINS 一致；未知领域不捏造）。 */
@@ -158,10 +149,10 @@ function pipelineDomainKnowledgeManifest(packVersion: string): DomainKnowledgeMa
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     domain: 'pipeline.general',
-    boundary: `pipeline 专家库（paper.morning.rocks）归一化 Profile 基线（2026-08-23，E01 宏观 9 / E08 房地产 10 / E13 江苏银行 3）：实名（公众人物）、领域、立场、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。`,
+    boundary: `pipeline 专家库（paper.morning.rocks）归一化 Profile 基线（2026-08-23，E01 宏观 9 / E08 房地产 10；E13 江苏银行 3 已并入 bank-finance 包）：实名（公众人物）、领域、立场、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。`,
     ontology: {
       entities: [
-        { id: 'expert', description: 'pipeline 领域专家（e01-*/e08-*/e13-*）' },
+        { id: 'expert', description: 'pipeline 领域专家（e01-* 宏观 / e08-* 房地产；e13-* 已并入 bank-finance）' },
         { id: 'field', description: '领域（房地产/宏观经济/江苏银行高层/资产配置）' },
         { id: 'mental-model', description: '心智模型（method.frameworks）' },
       ],
@@ -227,7 +218,7 @@ export function buildPipelineDomainPack(options: BuildPipelinePackOptions = {}):
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     name: 'pipeline 领域包（E01 宏观 / E08 房地产 / E13 江苏银行）',
-    description: `${PIPELINE_EXPERTS.length} 位 pipeline 专家库归一化专家基线（e01-*/e08-*/e13-*，公众人物实名）。V2 投影源为 src/pipeline/data/experts.generated.ts + routing 表；复用 zhijian/bank 的模板/质量/方法构建器（pipeline 前缀）。`,
+    description: `${PIPELINE_EXPERTS.length} 位 pipeline 专家库归一化专家基线（e01-* 宏观 / e08-* 房地产，公众人物实名；e13-* 江苏银行高层已并入 bank-finance 包）。V2 投影源为 src/pipeline/data/experts.generated.ts + routing 表；复用 zhijian/bank 的模板/质量/方法构建器（pipeline 前缀）。`,
     dependsOn: ['zhijian-realestate', 'bank-finance'],
     caliberDeclarations: {
       '线上': 'paper.morning.rocks 专家库口径',

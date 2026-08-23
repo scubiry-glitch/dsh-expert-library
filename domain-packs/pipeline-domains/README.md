@@ -1,6 +1,6 @@
 # pipeline-domains（pipeline 领域包）v1.0.0
 
-22 位 pipeline 专家库归一化专家（E01 宏观 / E08 房地产 / E13 江苏银行，
+19 位 pipeline 专家库归一化专家（E01 宏观 / E08 房地产 / E13 江苏银行，
 公众人物实名），source 由 `scripts/sync-pipeline-experts.mjs` 从线上专家库同步，
 包实体由 `scripts/build-pipeline-pack.mjs` 确定性生成（复用 zhijian/bank 发射器）。
 

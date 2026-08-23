@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "domain": "pipeline.general",
-  "boundary": "pipeline 专家库（paper.morning.rocks）归一化 Profile 基线（2026-08-23，E01 宏观 9 / E08 房地产 10 / E13 江苏银行 3）：实名（公众人物）、领域、立场、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。",
+  "boundary": "pipeline 专家库（paper.morning.rocks）归一化 Profile 基线（2026-08-23，E01 宏观 9 / E08 房地产 10；E13 江苏银行 3 已并入 bank-finance 包）：实名（公众人物）、领域、立场、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。",
   "ontology": {
     "entities": [
       {
         "id": "expert",
-        "description": "pipeline 领域专家（e01-*/e08-*/e13-*）"
+        "description": "pipeline 领域专家（e01-* 宏观 / e08-* 房地产；e13-* 已并入 bank-finance）"
       },
       {
         "id": "field",
@@ -45,8 +45,8 @@
   "snapshot": {
     "id": "pipeline-v1-2026-08-23",
     "takenAt": "2026-08-23T00:00:00Z",
-    "digest": "ad65bb49397c98d1e9a76188a4e7637829a2b79544bcd2ae66141e6997266b80",
-    "recordCount": 22
+    "digest": "089e700ad2f40443d00d89c84dceba7f26a281bca361291357aec95f970ad716",
+    "recordCount": 19
   },
   "retrievalProfiles": [
     {

@@ -48,14 +48,17 @@ function runPii(evaluators, content) {
 
 // ── 1. bank-finance 包校验 ──────────────────────────────────────────────────
 
-test('bank-finance pack validates clean with bank-09', () => {
+test('bank-finance pack validates clean with bank-09 + e13-* 江苏银行高层', () => {
   const pack = buildBankDomainPack()
   const result = validateDomainPack(pack)
   assert.equal(result.ok, true, JSON.stringify(result.diagnostics.filter(d => d.severity === 'error')))
-  assert.equal(pack.experts.length, 1)
-  assert.equal(pack.experts[0].id, 'bank-09')
-  assert.equal(pack.experts[0].compliance.internalOnly, true)
-  assert.equal(pack.scenarios.length, 2)
+  assert.equal(pack.experts.length, 4)
+  const ids = pack.experts.map(e => e.id)
+  assert.ok(ids.includes('bank-09'))
+  assert.ok(ids.includes('e13-01') && ids.includes('e13-02') && ids.includes('e13-03'))
+  assert.equal(pack.experts.find(e => e.id === 'bank-09').compliance.internalOnly, true)
+  assert.equal(pack.scenarios.length, 3)
+  assert.ok(pack.scenarios.some(sc => sc.id === 'bank-strategy'), 'bank-strategy 场景承载 E13')
   assert.ok(pack.qualityPolicies[0].gates.some(g => g.id === 'pii-redaction'))
 })
 
@@ -71,7 +74,7 @@ test('bank pack reuses the shared framework B template with bank prefix', () => 
 // ── 2. 单一注册表 / 单一数据层 ───────────────────────────────────────────────
 
 test('bank-09 is merged into the native expert registry (single merge point)', () => {
-  assert.equal(BANK_EXPERTS.length, 1)
+  assert.equal(BANK_EXPERTS.length, 4)
   assert.equal(BANK_EXPERTS[0].bk, 'BANK-09')
   assert.equal(ZHIJIAN_EXPERT_BY_ID.has('bank-09'), true)
   assert.equal(isZhijianExpertId('bank-09'), true)
@@ -103,11 +106,13 @@ test('routeRequest routes 零售金融 to framework B with bank-09 candidate', (
   assert.equal(candidate.initials, 'W')
 })
 
-test('scenarioForTopic resolves bank-retail for 零售金融 topics', () => {
+test('scenarioForTopic resolves bank-retail / bank-strategy', () => {
   const scenario = scenarioForTopic('零售金融（零售信贷、分行经营）', 'B')
   assert.equal(scenario?.id, 'bank-retail')
   const card = scenarioForTopic('银行经营（信用卡、息差）', 'B')
   assert.equal(card?.id, 'bank-credit-card')
+  const strategy = scenarioForTopic('银行战略与经营（银行战略、量化目标）', 'B')
+  assert.equal(strategy?.id, 'bank-strategy')
 })
 
 test('zhijian-realestate scenarios do not leak bank scenarios (pack slice)', async () => {

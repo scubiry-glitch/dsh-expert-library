@@ -215,7 +215,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     constraints: 'pipeline 命名空间（E01 宏观经济，公众人物实名）。高善文 e01-08 资本市场/周期，鲁政委 e01-09 汇率/利率，李扬 e01-07 宏观审慎/债务。',
   },
   {
-    id: 'pipeline-bank-strategy',
+    id: 'bank-strategy',
     name: '银行战略与经营',
     framework: 'B',
     primaryField: '江苏银行高层',

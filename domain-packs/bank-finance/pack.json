@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "name": "银行金融领域包",
-  "description": "1 位银行金融领域专家基线（bank-09，零售金融/银行经营）。V2 投影源为 src/bank/data/experts.generated.ts + routing 表；复用 zhijian-realestate 的模板/质量/方法构建器（bank 前缀）。",
+  "description": "4 位银行金融领域专家基线（bank-09 零售操盘 + e13-* 江苏银行高层，零售金融/银行经营/江苏银行高层）。V2 投影源为 src/bank/data/experts.generated.ts + routing 表；复用 zhijian-realestate 的模板/质量/方法构建器（bank 前缀）。",
   "dependsOn": [
     "zhijian-realestate"
   ],
