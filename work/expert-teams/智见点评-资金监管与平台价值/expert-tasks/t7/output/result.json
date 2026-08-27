@@ -1,0 +1,9 @@
+{
+  "taskId": "t7",
+  "status": "completed",
+  "attempt": 1,
+  "output": "一、关键性结论\nt7 渲染与生成完成，正式稿（t6 融合稿）已转成三份可交付件：HTML5 视觉稿、A4 PDF、可编辑 PPTX，渲染检查全过（无遮挡/无溢出/页脚可见/audit 0 findings），可对外招商与客户展示。内容主体为 t6 融合稿核心结论：资金流经平台还是绕过平台，由「释放条件确认权」归属决定——机制B为主通道、机制C为变现层、机制A仅修正次要收入项；政府管底座、平台管节点，是分工不是替代。\n\n二、关键事实及其变化（交付文件清单 · 路径 + sha256）\n目录：expert-teams/智见点评-资金监管与平台价值/expert-tasks/t7/artifacts/\n1. HTML5 视觉稿（product register·贝壳蓝金·A4 打印友好）智见_资金监管与平台价值_正式稿_20260823.html｜sha256 b3452373b2bff4f809dfde059e5db686cfd49356bb055b7eec38276d8e760174｜finesse-ui craft floor（tinted neutrals、hairline borders、无纯黑白、对比度达标）、卡片式布局、KPI 数据高亮、8 页分节\n2. PDF（weasyprint 69，A4，页脚「98wiki ｜ 智见 / 行业研究报告」+页码）智见_资金监管与平台价值_正式稿_20260823.pdf（8页 552KB）｜sha256 82b4a42ff82c652f339f48864549f1a016135dfa01391a7d2e4e299a4df5e328｜检查：8页 overflow=0、overlap=0、页脚可见、内容完整\n3. PPT（pptfast 可编辑 PPTX，11页，consulting 派生贝壳蓝金）智见_资金监管与平台价值_正式稿_20260823.pptx（56KB）｜sha256 3cb347879bb5110f51a26920d05314b03990385731ab438ad9c8de5813987ac3｜validate OK、audit 0 findings、数字带口径、预测标注「研判推断」；页序：封面→关键结论→监管时间线→市场KPI→平台账本→归因四层→展望验证→不确定性→对外话术→数据来源→结尾\n4. 辅助：deck.json（sha256 e2640e279769526ce2b4bff6a837993c93f523f3f18286ad777c6086c25e867b）、preview/（HTML预览+11页SVG）、sha256_交付清单.txt\n\n三、归因分析（渲染决策与质量过程）\n① 视觉：按 finesse-ui product register 规范，拒绝廉价默认（白底蓝按钮），采用 tinted warm paper（#F4F3EE）+ 贝壳深蓝（#0B6390）+ 金（#9A6B14）双主色，hairline 边框与数据高亮；② PDF：weasyprint 69 渲染，8 页分节对应报告结构，页脚规范落位；③ PPT：pptfast IR 驱动，经历 validate→audit 两轮修复（超长 bullet 拆短、KPI 8 卡裁至 6 卡、label 压缩），最终 0 findings；④ 视频（60-90s 电影感短视频）未执行：video-shotcraft 规范要求先与用户确认创作模式（Ink Press 模板/自主/共同），工具链 ffmpeg 已就绪，待确认后启动。\n\n四、收尾（洞察 + 展望 + 不确定性）\n洞察：正式稿从\"五专家研判→融合→渲染\"全链闭环，对外话术核心是「政府管底座、平台管节点，是分工，不是替代」。展望：待用户确认后续方向——①视频精修（选模式后执行 Remotion 制作）；②PPT 调整（改 deck.json 重渲染）；③直接转正式稿交付。不确定性：t3（柴强研判）此前质量门未过，融合稿未含其视角（本次渲染基于 t1/t2/t4/t5/t6 内容）；渲染本身无残留风险。数据引用口径已在交付件中逐条标注（官方政策/媒体报道/自算框架值）；身份标注已按正式稿要求去匿名化（仅留数据来源）。",
+  "qualityScore": 20,
+  "repairCount": 2,
+  "updatedAt": 1787479372103
+}

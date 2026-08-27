@@ -18,6 +18,7 @@ import { agentTeamsCardDefinition } from './agent-teams-card-definition.ts'
 import { FilesView } from './FilesView.tsx'
 import { ExpertLibrarySettingsCard } from './settings-card.tsx'
 import { DomainPacksCard } from './domain-packs-card.tsx'
+import { ManageCard } from './manage-card.tsx'
 
 /** Required services: conversation nodes, slots, and sessions navigation. */
 export const inject = ['conversationEvents', 'slots', 'sessions', 'settingsScope']
@@ -62,6 +63,16 @@ export function apply(ctx: ClientContext): void {
     order: 165,
     label: '领域包',
   }, DomainPacksCard)
+
+  // 专家库手动管理（写侧）：专家/场景覆盖层 CRUD、技能 zip 安装、领域包重建。
+  // 把高频操作固定成设置表单，避免每次靠 agent 执行的随机性；host 路由
+  // /plugins/dsh-expert-library/manage/*（白名单脚本 + 惰性写覆盖层）。
+  ctx.slots.register({
+    name: 'settings.section',
+    id: 'expert-library-manage',
+    order: 170,
+    label: '专家库管理',
+  }, ManageCard)
   ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({
     name: 'conversation.chat.node',
     key: 'expert-teams',

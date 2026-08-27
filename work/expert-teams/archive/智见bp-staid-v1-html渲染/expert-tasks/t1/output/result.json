@@ -1,0 +1,9 @@
+{
+  "taskId": "t1",
+  "status": "completed",
+  "attempt": 1,
+  "output": "交付路径：/root/zhijian/dsh-expert-library/work/研报交付_20260825_智见BP_汇报大纲_STAID_v1_HTML/\n1) 智见BP_汇报大纲_STAID_v1_视觉稿.html — 单文件自包含（68KB/996行，无外部依赖，直接浏览器打开）\n2) Designer_渲染检查记录.md — 全部检查项与数字\n3) _check/desktop-1440.png + _check/mobile-390.png — headless chromium 全页截图\n\nsha256（html）：fa73e2a0a6debfed943a37c880b47a7d187ae219f17cbab9dc07eec0d716ffbb\n\n关键设计决策：\n- register=product（汇报大纲文档页，非品牌 landing）：无 grain/vignette/hero engine；SPECTACLE=2（仅 reveal+计数动效，IntersectionObserver+CSS，零外部库）；DENSITY=7\n- 贝壳蓝金双色锁定：页面 tinted neutral #edf0f6（非纯白）、卡片 #fcfdff、hairline rgba(20,32,56,.08)、whisper 阴影 rgba(20,34,64,.06)；Cobalt #2d5bd8 + 金 #c98a2e；语义色（涨/跌/警示）与品牌色分离\n- 单页长文滚动（有意不用 v37 的 100vh deck）：sticky 导航+滚动进度条 → masthead（定位语+元信息+4 统计计数）→ 六章深蓝渐变 chapter 带（金色点缀+corner glow，呼应 v37）→ 98wiki 页脚 + A4 @page 打印约定\n- mermaid 全改纯 HTML/CSS 静态分层图：客户六类 chips →↓→ S 方案四卡 →↓→ STAID 四层堆叠条 → 五条横向链，无 mermaid 依赖\n- 六类客户 2 列卡片网格（需求痛点/最佳实践/解题思路/数据源四块，块标签语义色区分）；竞品地图/数据矩阵/数据源三表深蓝表头+斑马纹；T·A·I 三层大卡（内部小结构+能力边界四做三不做+指数基期卡+两锚一模型）；支撑机制五链横排+四卡\n- 数字与口径全部照抄底稿（300 人白名单、基期 2020-01/2024-01、33+ 专家、31 省、70 城、40城vs50城、千万级=需验证标注、暂缓对外标注），未编造任何数字\n\n检查结果（headless chromium 实测，4 视口 1440/768/390/320）：横向溢出 0px、console 错误 0、reveal 终态全部可见、计数终值 6/4/5/5、三表行数 7/6/4 与底稿一致、对比度抽查 13 组全部 ≥4.5:1（最低 4.86）、16 处阴影无纯黑、reduced-motion 模拟下全部回退生效、print 媒体导航隐藏且页脚约定就位。过程中修复 2 处窄屏 chips 溢出。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787635680280
+}

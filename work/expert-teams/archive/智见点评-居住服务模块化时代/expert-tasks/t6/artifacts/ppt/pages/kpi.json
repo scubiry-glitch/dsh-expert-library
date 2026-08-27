@@ -1,0 +1,40 @@
+{
+ "components": [
+  {
+   "type": "kpi_cards",
+   "items": [
+    {
+     "value": "5",
+     "unit": "万+",
+     "label": "承接线索（5–7月）",
+     "delta": "up",
+     "icon": "users"
+    },
+    {
+     "value": "7.4",
+     "unit": "%",
+     "label": "客户组转带看率",
+     "delta": "up",
+     "icon": "trending-up"
+    },
+    {
+     "value": "14.6",
+     "unit": "%",
+     "label": "Q2 利润率",
+     "delta": "up",
+     "icon": "percent"
+    },
+    {
+     "value": "≈2",
+     "unit": "×",
+     "label": "利润近翻倍",
+     "delta": "up",
+     "icon": "rocket"
+    }
+   ]
+  }
+ ],
+ "footnote": "转带看率 vs 大盘 5.0%（相对约四成）；GTV 重回增长（36氪/TIKR）；Q2 单量增近两成、人员未扩（财新）；客户管家为单源内部样本，以 2 万线索随机对照为准",
+ "notes": "五组数字均带口径与来源。7.4% vs 5.0% 的相对提升约四成，但只验证了转带看一段，带看转签、客诉、毛利尚未验证。",
+ "arrangement": "kpi_focus"
+}

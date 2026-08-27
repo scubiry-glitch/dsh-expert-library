@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智见点评 · 居住服务进入「专业角色可拆分、可验证、可单独付费」时代？</title>
+<style>
+/* ============================================================
+   智见点评 · 融合研判（讨论稿） · finesse-ui product register
+   Palette: Beike 蓝金 (teal-blue + gold) · Cool Slate tinted ramp
+   Craft floor: tinted neutrals · hairline borders · AA contrast
+   ============================================================ */
+:root{
+  /* substrate */
+  --page:#e9eef0;           /* 青调冷灰，绝不纯 var(--on-dark-strong) */
+  --bg:var(--on-dark-strong);
+  --panel-2:#f1f5f6;
+  --panel-3:#e8eef0;
+  --border:rgba(15,41,52,.08);
+  --border-strong:rgba(15,41,52,.16);
+
+  /* ink */
+  --ink-1:#13262e;          /* 青黑 */
+  --ink-2:#3a4f59;
+  --ink-3:#56707c;          /* 4.6:1 on white, AA */
+
+  /* brand — Beike teal-blue + gold partner */
+  --accent:#0b7a8c;         /* 贝壳青蓝（加深保证对比） */
+  --accent-deep:#085768;
+  --accent-dark:#2bb8c9;
+  --accent-2:#a86f10;       /* 金（amber 系加深，on-white 4.5:1） */
+  --accent-2-dark:#e0a53a;
+  --accent-soft:rgba(var(--accent-rgb),.10);
+  --gold-soft:rgba(168,111,16,.12);
+  --on-accent:var(--on-dark-strong);
+  --glow:rgba(11,122,140,.30);
+
+  /* semantic */
+  --up:#1e7d58;
+  --down:#b0403a;
+  --warn:#a86f10;
+
+  /* elevation */
+  --shadow:0 1px 3px rgba(21,61,74,.06);
+  --shadow-md:0 8px 28px -14px rgba(21,61,74,.18);
+  --shadow-lg:0 40px 90px -50px rgba(21,61,74,.38);
+
+  /* radius */
+  --r:18px; --r-sm:11px; --r-lg:30px;
+
+
+  /* dark surfaces (masthead / keynote / chain-hot / print header) */
+  --dark-1:#10242c; --dark-2:#142e38; --dark-3:#0e2530; --dark-4:#0a3d4c; --dark-5:#0d5568;
+  --on-dark-strong:#ffffff; --on-dark-1:#eaf2f4; --on-dark-2:#e8f1f3; --on-dark-3:#b9d2d9;
+  --on-dark-4:#9fc4cc; --on-dark-5:#8fb4bd; --on-dark-6:#8ed2de; --on-dark-7:#bcd5dc;
+  --on-dark-8:#dceef1; --on-dark-9:#8a9ba3; --on-dark-10:#f2c879;
+
+  --gold2-rgb:224,165,58; --up-rgb:30,125,88; --beike-rgb:43,184,201; --deep-rgb:8,87,104;
+  /* rgb channels for alpha derivation */
+  --accent-rgb:11,122,140; --gold-rgb:168,111,16; --down-rgb:176,64,58;
+
+  /* derived alphas (white-on-dark) */
+  --white-a055:rgba(255,255,255,.055); --white-a06:rgba(255,255,255,.06);
+  --white-a08:rgba(255,255,255,.08); --white-a12:rgba(255,255,255,.12);
+  --white-a13:rgba(255,255,255,.13); --white-a14:rgba(255,255,255,.14);
+
+  /* gradients & decor */
+  --gold-grad:linear-gradient(115deg,#f0b453,#b77a16 62%,#8a5e0a);
+  --gold-solid:#b77a16;
+  --gold-grad-soft:linear-gradient(90deg,rgba(var(--gold2-rgb),.9),rgba(var(--gold2-rgb),.25) 55%,transparent);
+  --accent-grad:linear-gradient(135deg,#3fc5d6,#0b7a8c 70%);
+  --num-gold:linear-gradient(115deg,#f2b95a,#a86f10);
+  --num-teal:linear-gradient(115deg,#3fc5d6,#0b7a8c);
+  --bar-teal:linear-gradient(180deg,#45c7d8,#0b7a8c 72%,#085768);
+  --bar-gold:linear-gradient(180deg,#f0b453,#a86f10 72%,#8a5e0a);
+  --card-hover-shadow:0 16px 36px -18px rgba(21,61,74,.30);
+
+  /* expert identity hues (Y 金 / C 青 / L 蓝 / X 石板灰) */
+  --who-y:#a86f10; --who-c:#0b7a8c; --who-l:#2d5bd8; --who-x:#5a6b76;
+  --who-y-soft:rgba(var(--gold-rgb),.10); --who-c-soft:rgba(var(--accent-rgb),.10);
+  --who-l-soft:rgba(45,91,216,.10); --who-x-soft:rgba(90,107,118,.10);
+  --avatar-y:linear-gradient(135deg, #f2b95a, #a86f10 85%);
+  --avatar-c:linear-gradient(135deg, #3fc5d6, #0b7a8c 85%);
+  --avatar-l:linear-gradient(135deg, #6d8cf0, #2d5bd8 85%);
+  --avatar-x:linear-gradient(135deg, #8b9aa6, #5a6b76 85%);
+  --seq-grad:linear-gradient(135deg,#2bb8c9,#085768);
+  /* type */
+  --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","Segoe UI",Roboto,sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  font-family:var(--font-sans);
+  color:var(--ink-2);
+  background:
+    radial-gradient(640px 420px at 88% -6%, rgba(var(--accent-rgb),.10), transparent 62%),
+    radial-gradient(520px 360px at -6% 22%, rgba(var(--gold-rgb),.07), transparent 60%),
+    var(--page);
+  font-size:15px; line-height:1.75;
+  overflow-wrap:break-word;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- 悬浮面板（screen） ---------- */
+.panel{
+  max-width:960px;
+  margin:34px auto 60px;
+  background:var(--bg);
+  border-radius:var(--r-lg);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+}
+
+/* ---------- 报头 ---------- */
+.masthead{
+  position:relative; overflow:hidden;
+  background:
+    linear-gradient(135deg, rgba(var(--accent-rgb),.16), rgba(var(--deep-rgb),.05) 46%, rgba(var(--gold-rgb),.08)),
+    linear-gradient(180deg, var(--dark-1), var(--dark-2));
+  color:var(--on-dark-1);
+  padding:44px 52px 38px;
+}
+.mh-art{
+  position:absolute; right:36px; bottom:18px; width:430px; height:210px;
+  z-index:0; opacity:.9; pointer-events:none;
+}
+.mh-content{position:relative; z-index:1;}
+.masthead .brand-row{
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  font-size:12.5px; letter-spacing:.06em; color:var(--on-dark-4); font-weight:600;
+}
+.masthead .brand-mark{
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--white-a08);
+  border:1px solid var(--white-a14);
+  padding:5px 12px; border-radius:999px;
+}
+.masthead .brand-mark b{color:var(--on-dark-strong);font-weight:700;}
+.masthead .tag{
+  display:inline-flex; align-items:center;
+  background:rgba(var(--gold2-rgb),.16);
+  border:1px solid rgba(var(--gold2-rgb),.4);
+  color:var(--on-dark-10);
+  padding:5px 12px; border-radius:999px;
+  font-weight:600;
+}
+.masthead .tag.alt{
+  background:var(--white-a08); border-color:var(--white-a14); color:var(--on-dark-2);
+}
+.masthead .tag.alt .dot{width:6px; height:6px; border-radius:50%; background:var(--accent-2-dark); margin-right:7px; box-shadow:0 0 8px rgba(224,165,58,.8);}
+.masthead h1{
+  font-size:30px; line-height:1.38; font-weight:800;
+  color:var(--on-dark-strong); letter-spacing:.005em;
+  margin:22px 0 6px; text-wrap:balance;
+}
+.masthead .sub{font-size:14.5px; color:var(--on-dark-3); max-width:56em;}
+.masthead .divider{
+  height:2px; margin-top:18px; border-radius:2px;
+  background:var(--gold-grad-soft);
+}
+.masthead .meta{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+  margin-top:22px;
+}
+.masthead .meta .cell{
+  background:var(--white-a055);
+  border:1px solid var(--white-a12);
+  border-radius:var(--r-sm);
+  padding:10px 14px;
+}
+.masthead .meta .k{font-size:11px; letter-spacing:.08em; color:var(--on-dark-5); font-weight:600;}
+.masthead .meta .v{font-size:12.5px; color:var(--on-dark-2); font-weight:600; line-height:1.5; margin-top:2px;}
+
+/* ---------- section 骨架 ---------- */
+section{padding:38px 52px 10px;}
+.sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:20px;}
+.sec-head .idx{
+  font-size:12.5px; font-weight:800; letter-spacing:.12em; color:var(--accent);
+  background:var(--accent-soft); border:1px solid rgba(var(--accent-rgb),.22);
+  padding:3px 10px; border-radius:999px; flex:none;
+}
+.sec-head h2{
+  font-size:20px; font-weight:800; color:var(--ink-1); letter-spacing:.01em;
+  border-left:4px solid var(--gold-solid); padding-left:12px;
+}
+.sec-head .en{font-size:11.5px; color:var(--ink-3); letter-spacing:.1em; text-transform:uppercase;}
+
+/* ---------- keynote ---------- */
+.keynote{
+  border-radius:var(--r);
+  background:
+    radial-gradient(560px 300px at 92% -20%, rgba(var(--beike-rgb),.28), transparent 60%),
+    linear-gradient(140deg, var(--dark-3), var(--dark-4) 58%, var(--dark-5));
+  border:1px solid rgba(var(--beike-rgb),.3);
+  box-shadow:var(--shadow-md);
+  color:var(--on-dark-8);
+  padding:30px 32px 26px;
+}
+.keynote .lead{font-size:13px; letter-spacing:.18em; font-weight:700; color:var(--on-dark-6);}
+.keynote .verdict{
+  font-size:26px; font-weight:800; color:var(--on-dark-strong); line-height:1.4;
+  margin:10px 0 12px; text-wrap:balance;
+}
+.keynote .verdict em{
+  font-style:normal; color:var(--accent-2-dark);
+  font-weight:800;
+}
+.keynote .basis{font-size:14px; color:var(--on-dark-7); max-width:60em;}
+.keynote .basis b{color:var(--on-dark-strong); font-weight:700;}
+.keynote .proof{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:22px;
+}
+.keynote .proof .p{
+  background:var(--white-a06);
+  border:1px solid var(--white-a13);
+  border-radius:var(--r-sm);
+  padding:12px 14px;
+}
+.keynote .proof .n{
+  font-size:21px; font-weight:800; color:var(--accent-2-dark);
+  font-variant-numeric:tabular-nums; letter-spacing:-.01em;
+}
+.keynote .proof .t{font-size:12px; color:var(--on-dark-4); line-height:1.6; margin-top:3px;}
+
+/* ---------- KPI 行 ---------- */
+.kpi-grid{
+  display:grid; grid-template-columns:repeat(5,1fr); gap:14px;
+}
+.kpi{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:16px 16px 14px;
+  display:flex; flex-direction:column; gap:8px;
+  transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s cubic-bezier(.16,1,.3,1), border-color .25s;
+}
+.kpi:hover{transform:translateY(-3px); box-shadow:var(--card-hover-shadow); border-color:rgba(var(--accent-rgb),.30);}
+.kpi .top{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+.kpi .ic{
+  width:30px; height:30px; border-radius:9px;
+  background:var(--accent-soft); border:1px solid rgba(var(--accent-rgb),.18);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; color:var(--accent); font-weight:800;
+}
+.kpi .delta{
+  font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px;
+  background:var(--gold-soft); color:var(--accent-2);
+  border:1px solid rgba(var(--gold-rgb),.25); letter-spacing:.02em;
+}
+.kpi .delta.up{background:rgba(var(--up-rgb),.1); color:var(--up); border-color:rgba(var(--up-rgb),.22);}
+.kpi .label{font-size:11.5px; color:var(--ink-3); font-weight:600; letter-spacing:.02em; line-height:1.55;}
+.kpi .num{
+  font-size:30px; font-weight:800; color:var(--ink-1);
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em; line-height:1.1;
+}
+.kpi .num .unit{font-size:14px; font-weight:700; color:var(--ink-2); margin-left:2px;}
+.kpi .num.gold{
+  background:var(--num-gold);
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.kpi .num.teal{
+  background:var(--num-teal);
+  -webkit-background-clip:text; background-clip:text;
+  color:transparent;
+}
+.kpi .note{font-size:10.5px; color:var(--ink-3); line-height:1.55;}
+
+/* ---------- 通用卡片 ---------- */
+.card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:22px 24px;
+  transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s cubic-bezier(.16,1,.3,1), border-color .25s;
+}
+.card:hover{transform:translateY(-3px); box-shadow:var(--card-hover-shadow); border-color:rgba(var(--accent-rgb),.28);}
+.card h3{font-size:15.5px; font-weight:800; color:var(--ink-1); margin-bottom:10px; letter-spacing:.01em;}
+.card p{font-size:13.5px; line-height:1.85; color:var(--ink-2);}
+.card p + p{margin-top:8px;}
+.card .src{
+  display:inline-block; margin-top:10px;
+  font-size:11px; color:var(--ink-3); background:var(--panel-2);
+  border:1px solid var(--border); border-radius:999px; padding:2px 10px;
+}
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+.grid-4{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+
+/* 专家首字母圆形渐变徽章（Y/C/L/X 身份色） */
+.avatar{
+  width:30px; height:30px; border-radius:50%; flex:0 0 auto;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:12.5px; font-weight:800; color:var(--on-dark-strong);
+}
+.av-y{background:var(--avatar-y);}
+.av-c{background:var(--avatar-c);}
+.av-l{background:var(--avatar-l);}
+.av-x{background:var(--avatar-x);}
+
+/* 序号徽章 */
+.seq{
+  flex:none; min-width:24px; height:24px; padding:0 6px; border-radius:8px;
+  display:inline-flex; align-items:center; justify-content:center;
+  background:var(--seq-grad); color:var(--on-dark-strong);
+  font-size:11px; font-weight:800; letter-spacing:.04em;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25), 0 2px 5px -2px rgba(21,61,74,.35);
+  font-variant-numeric:tabular-nums;
+}
+
+/* 边界条件 */
+.bounds .card{position:relative; overflow:hidden;}
+.topbar{
+  position:absolute; top:0; left:0; right:0; height:4px; z-index:1;
+}
+.tb-y{background:linear-gradient(90deg, var(--who-y), transparent 82%);}
+.tb-c{background:linear-gradient(90deg, var(--who-c), transparent 82%);}
+.tb-l{background:linear-gradient(90deg, var(--who-l), transparent 82%);}
+.tb-x{background:linear-gradient(90deg, var(--who-x), transparent 82%);}
+.tb-accent{background:linear-gradient(90deg, rgba(var(--accent-rgb),.75), transparent 82%);}
+.bounds .card h3{display:flex; gap:9px; align-items:center; margin-bottom:10px;}
+.bounds .card h3 .who{
+  font-size:11px; font-weight:700; color:var(--accent-2);
+  background:var(--gold-soft); border:1px solid rgba(var(--gold-rgb),.25);
+  padding:1px 8px; border-radius:999px; flex:none;
+}
+.bounds .who{white-space:nowrap;}
+
+/* ---------- 图表（真实几何） ---------- */
+.chart-box{
+  background:var(--panel-2); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:16px 18px 12px; margin-top:14px;
+  position:relative;
+}
+.chart-box .cap{font-size:11.5px; color:var(--ink-3); font-weight:600; margin-bottom:12px;}
+.chart-box .cap b{color:var(--ink-2);}
+.rel-badge{
+  position:absolute; top:10px; right:12px; z-index:3;
+  display:inline-flex; flex-direction:column; align-items:center; gap:1px;
+  background:var(--bg); border:1px solid rgba(var(--gold-rgb),.4);
+  border-radius:999px; padding:3px 12px;
+  font-size:11.5px; font-weight:800; color:var(--accent-2); letter-spacing:.02em;
+  box-shadow:0 3px 10px -4px rgba(var(--gold-rgb),.4);
+}
+.rel-badge small{font-size:9px; font-weight:600; color:var(--ink-3); letter-spacing:.02em;}
+.bars{
+  display:flex; align-items:flex-end; gap:18px;
+  padding:0 6px;
+}
+.bars .bar-col{flex:1; min-width:0; display:flex; flex-direction:column; align-items:center; gap:6px;}
+.bars .bar-track{
+  width:100%; height:118px;
+  display:flex; align-items:flex-end; justify-content:center;
+  border-bottom:1px solid var(--border-strong);
+  position:relative;
+}
+.bars .bar{
+  width:min(56px,72%);
+  border-radius:6px 6px 0 0;
+  background:var(--bar-teal);
+  position:relative; flex:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 4px 10px -6px rgba(var(--accent-rgb),.5);
+}
+.bars .bar::after{
+  content:""; position:absolute; top:0; left:8%; right:8%; height:5px;
+  border-radius:6px 6px 0 0;
+  background:linear-gradient(180deg, rgba(255,255,255,.45), transparent);
+}
+.bars .bar.gold{background:var(--bar-gold); box-shadow:inset 0 1px 0 rgba(255,255,255,.4), 0 4px 10px -6px rgba(var(--gold-rgb),.55);}
+.bars .bar .val{
+  position:absolute; top:-24px; left:50%; transform:translateX(-50%);
+  font-size:12.5px; font-weight:800; color:var(--ink-1);
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.bars .bar .val small{font-size:10px; font-weight:600; color:var(--ink-3);}
+.bars .xl{font-size:11.5px; color:var(--ink-2); font-weight:600; text-align:center; line-height:1.5;}
+.bars .xl small{display:block; font-size:10px; color:var(--ink-3); font-weight:400;}
+.legend-note{margin-top:10px; font-size:11px; color:var(--ink-3); line-height:1.6;}
+
+/* ---------- 模块链 chips ---------- */
+.chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;}
+.chip{
+  font-size:12px; font-weight:600; color:var(--accent);
+  background:var(--accent-soft); border:1px solid rgba(var(--accent-rgb),.22);
+  padding:4px 12px; border-radius:999px;
+}
+.chip.gold{color:var(--accent-2); background:var(--gold-soft); border-color:rgba(var(--gold-rgb),.28);}
+
+/* ---------- 时间线 ---------- */
+.tl{display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-top:14px;}
+.tl .ev{
+  background:var(--panel-2); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:11px 12px; position:relative;
+}
+.tl .ev::before{
+  content:""; position:absolute; top:0; left:14px; right:14px; height:2px;
+  background:linear-gradient(90deg, var(--accent), rgba(var(--accent-rgb),.15));
+  border-radius:2px;
+}
+.tl .d{font-size:12px; font-weight:800; color:var(--accent); font-variant-numeric:tabular-nums;}
+.tl .e{font-size:11px; color:var(--ink-2); line-height:1.6; margin-top:3px;}
+.tl .e b{color:var(--ink-1); font-weight:700;}
+.tl .side{
+  display:inline-block; margin-top:6px; font-size:9.5px; font-weight:700;
+  color:var(--ink-3); background:var(--bg); border:1px solid var(--border);
+  padding:1px 7px; border-radius:999px; letter-spacing:.05em;
+}
+
+/* ---------- 归因 numbered ---------- */
+.why .step{display:flex; gap:16px; padding:20px 0; border-bottom:1px solid var(--border);}
+.why .step:last-child{border-bottom:none;}
+.why .no{
+  flex:none; width:38px; height:38px; border-radius:12px;
+  background:var(--accent-soft); border:1px solid rgba(var(--accent-rgb),.25);
+  color:var(--accent); font-size:17px; font-weight:800;
+  display:flex; align-items:center; justify-content:center;
+  font-variant-numeric:tabular-nums;
+}
+.why .step h3{font-size:15px; font-weight:800; color:var(--ink-1); margin-bottom:4px;}
+.why .step p{font-size:13.5px; color:var(--ink-2); line-height:1.85;}
+.why .step .tagline{font-size:12px; color:var(--accent); font-weight:700; margin-bottom:6px;}
+
+/* 海外对照 */
+.overseas{
+  display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:14px;
+}
+.overseas .o{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:12px 13px; box-shadow:var(--shadow);
+}
+.overseas .o .rg{font-size:12px; font-weight:800; color:var(--accent); margin-bottom:5px;}
+.overseas .o .d{font-size:11px; color:var(--ink-2); line-height:1.65;}
+
+/* ---------- 机制链 ---------- */
+.chain{display:flex; align-items:stretch; gap:0; margin-top:16px; flex-wrap:wrap;}
+.chain .node{
+  flex:1; min-width:120px;
+  background:var(--panel-2); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:13px 14px;
+  position:relative; text-align:center;
+}
+.chain .node:not(:last-child)::after{
+  content:"→"; position:absolute; right:-15px; top:50%; transform:translateY(-50%);
+  color:var(--accent); font-size:16px; font-weight:800; z-index:2;
+  background:var(--panel-2); padding:0 3px;
+}
+.chain .node b{display:block; font-size:13px; color:var(--ink-1); font-weight:800; line-height:1.5;}
+.chain .node span{display:block; font-size:10.5px; color:var(--ink-3); margin-top:4px; line-height:1.55;}
+.chain .node.hot{
+  background:linear-gradient(160deg, var(--dark-3), var(--dark-4)); border-color:rgba(var(--beike-rgb),.35);
+}
+.chain .node.hot b{color:var(--on-dark-strong);}
+.chain .node.hot span{color:var(--on-dark-4);}
+
+/* ---------- 洞察 ---------- */
+.insight .card{position:relative; overflow:hidden;}
+.insight .card h3{display:flex; gap:9px; align-items:center;}
+.insight .card h3 .who{
+  font-size:11px; font-weight:700; color:var(--accent);
+  background:var(--accent-soft); border:1px solid rgba(var(--accent-rgb),.22);
+  padding:1px 8px; border-radius:999px; flex:none;
+}
+
+/* ---------- 展望 ---------- */
+.outlook .phase{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  box-shadow:var(--shadow); padding:20px 22px;
+  transition:transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s cubic-bezier(.16,1,.3,1), border-color .25s;
+}
+.outlook .phase:hover{transform:translateY(-3px); box-shadow:var(--card-hover-shadow); border-color:rgba(var(--accent-rgb),.28);}
+.outlook .phase .ph-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+.outlook .phase .ph{
+  display:inline-block; font-size:11px; font-weight:800; letter-spacing:.1em;
+  color:var(--accent); background:var(--accent-soft);
+  border:1px solid rgba(var(--accent-rgb),.22); padding:3px 10px; border-radius:999px;
+}
+.outlook .phase h3{font-size:15px; font-weight:800; color:var(--ink-1); margin-bottom:8px;}
+.outlook .phase p{font-size:13px; line-height:1.85; color:var(--ink-2);}
+.outlook .phase ul{list-style:none; margin-top:6px;}
+.outlook .phase li{
+  font-size:13px; line-height:1.8; color:var(--ink-2);
+  padding-left:16px; position:relative;
+}
+.outlook .phase li::before{content:"·"; position:absolute; left:4px; color:var(--accent-2); font-weight:800;}
+.outlook .phase .rule{
+  margin-top:10px; font-size:12.5px; font-weight:700; color:var(--down);
+  background:rgba(var(--down-rgb),.07); border:1px solid rgba(var(--down-rgb),.22);
+  border-radius:var(--r-sm); padding:8px 12px;
+}
+
+/* ---------- 不确定性 ---------- */
+.risk .card{border-top:2px solid rgba(var(--down-rgb),.5);}
+.risk .card h3{font-size:13.5px;}
+.risk .card .rno{
+  font-size:11px; font-weight:800; color:var(--down);
+  background:rgba(var(--down-rgb),.08); border:1px solid rgba(var(--down-rgb),.22);
+  padding:2px 9px; border-radius:999px; margin-right:8px;
+}
+
+/* ---------- 附录 ---------- */
+.appendix{
+  margin:20px 52px 0;
+  background:var(--panel-2);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  box-shadow:var(--shadow);
+  padding:24px 28px;
+  font-size:12px; color:var(--ink-3); line-height:1.9;
+}
+.appendix h3{font-size:13px; font-weight:800; color:var(--ink-2); margin-bottom:10px; letter-spacing:.04em;}
+.appendix p{margin-bottom:6px;}
+.appendix .anon{color:var(--ink-2);}
+.appendix .hl{color:var(--warn); font-weight:700;}
+
+/* ---------- 页脚（screen 常驻可见） ---------- */
+.foot{
+  position:relative;
+  padding:18px 52px 16px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:11px; color:var(--ink-3); letter-spacing:.04em;
+  background:var(--bg);
+}
+.foot::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg, rgba(var(--gold2-rgb),.9), rgba(var(--accent-rgb),.45) 55%, transparent);
+}
+.foot b{color:var(--ink-2); font-weight:700;}
+
+/* ---------- 打印（A4） ---------- */
+@page{
+  size:A4;
+  margin:17mm 15mm 19mm;
+  @bottom-center{
+    content:"98wiki ｜ 智见 / 行业研究报告";
+    font-family:var(--font-sans); font-size:8pt; color:var(--on-dark-9);
+  }
+  @bottom-right{
+    content:"第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family:var(--font-sans); font-size:8pt; color:var(--on-dark-9);
+  }
+}
+@media print{
+  body{background:var(--on-dark-strong); font-size:10.5pt;}
+  /* weasyprint 不执行 JS：reveal 元素强制可见（否则正文整页透明） */
+  .reveal{opacity:1 !important; transform:none !important;}
+  .panel{
+    max-width:none; margin:0; border:none; border-radius:0; box-shadow:none;
+  }
+  .masthead{
+    padding:24px 0 18px; border-radius:0;
+    background:linear-gradient(135deg, rgba(var(--accent-rgb),.16), rgba(var(--deep-rgb),.05) 46%, rgba(var(--gold-rgb),.08)), linear-gradient(180deg, var(--dark-1), var(--dark-2));
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .mh-art{right:0; bottom:0; width:300px; opacity:.3;}
+  .masthead h1{font-size:20pt;}
+  .masthead .sub{font-size:10.5pt;}
+  .masthead .meta{grid-template-columns:repeat(4,1fr);}
+  section{padding:20px 0 4px;}
+  .sec-head h2{font-size:13.5pt;}
+  section{break-inside:auto;}
+  .card,.kpi,.bounds .card,.outlook .phase,.insight .card,.risk .card{break-inside:avoid;}
+  .card:hover,.kpi:hover,.outlook .phase:hover{transform:none; box-shadow:var(--shadow); border-color:var(--border);}
+  .keynote{break-inside:avoid; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  .keynote .proof{grid-template-columns:repeat(3,1fr);}
+  .kpi-grid{grid-template-columns:repeat(5,1fr); gap:8pt;}
+  .grid-2{grid-template-columns:1fr 1fr; gap:10pt;}
+  .grid-3{grid-template-columns:repeat(3,1fr); gap:10pt;}
+  .grid-4{grid-template-columns:repeat(4,1fr); gap:10pt;}
+  .tl{grid-template-columns:repeat(6,1fr);}
+  .overseas{grid-template-columns:repeat(5,1fr);}
+  .chain .node{min-width:0;}
+  .appendix{margin:14px 0 0; border:none; border-radius:0; box-shadow:none; padding:18px 0 8px;}
+  .foot{display:none;}
+  .bar,.tl .ev::before,.delta,.seq,.avatar,.topbar{ -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  /* weasyprint 不支持 background-clip:text：渐变数字回退为纯色 */
+  .kpi .num.gold{background:none; -webkit-background-clip:initial; background-clip:initial; color:var(--accent-2);}
+  .kpi .num.teal{background:none; -webkit-background-clip:initial; background-clip:initial; color:var(--accent);}
+  .sec-head h2{border-left:4px solid var(--gold-solid);}
+}
+
+/* ---------- 动效（product：feedback only，reduced-motion 降级） ---------- */
+.reveal{opacity:0; transform:translateY(14px); transition:opacity .55s cubic-bezier(.16,1,.3,1), transform .55s cubic-bezier(.16,1,.3,1);}
+.reveal.in{opacity:1; transform:none;}
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1; transform:none; transition:none;}
+  .num{animation:none;}
+}
+
+/* ---------- 小屏 ---------- */
+@media (max-width:860px){
+  body{font-size:14px;}
+  .panel{margin:0; border-radius:0; border:none; box-shadow:none;}
+  .masthead{padding:30px 22px 24px;}
+  .masthead h1{font-size:23px;}
+  .masthead .meta{grid-template-columns:repeat(2,1fr);}
+  .mh-art{display:none;}
+  section{padding:26px 22px 4px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+  .tl{grid-template-columns:repeat(2,1fr);}
+  .overseas{grid-template-columns:repeat(2,1fr);}
+  .keynote .proof{grid-template-columns:1fr;}
+  .appendix{margin:16px 22px 0; padding:20px 20px;}
+  .foot{padding:14px 22px; flex-direction:column; gap:4px; text-align:center;}
+}
+</style>
+</head>
+<body>
+<div class="panel">
+
+  <!-- ================= 报头 ================= -->
+  <header class="masthead">
+    <svg class="mh-art" viewBox="0 0 560 220" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.5">
+        <path d="M40 110 H520" stroke-dasharray="3 8" />
+        <path d="M60 92 V128 M185 92 V128 M310 92 V128 M435 92 V128" />
+      </g>
+      <g fill="rgba(255,255,255,.10)">
+        <circle cx="60" cy="110" r="16" />
+        <circle cx="185" cy="110" r="16" />
+        <circle cx="435" cy="110" r="16" />
+      </g>
+      <circle cx="310" cy="110" r="18" fill="rgba(224,165,58,.16)" stroke="rgba(224,165,58,.55)" stroke-width="1.5" />
+      <circle cx="310" cy="110" r="6" fill="rgba(224,165,58,.85)" />
+      <g fill="rgba(232,241,243,.5)" font-size="12" font-family="'Noto Sans CJK SC','PingFang SC',sans-serif" text-anchor="middle">
+        <text x="60" y="148">客户管家</text>
+        <text x="185" y="148">懂盘者</text>
+        <text x="310" y="148">履约模块</text>
+        <text x="435" y="148">可验证</text>
+      </g>
+    </svg>
+    <div class="mh-content">
+      <div class="brand-row">
+        <span class="brand-mark"><b>智见点评</b> · 居住服务系列</span>
+        <span class="tag">融合研判 · 讨论稿</span>
+        <span class="tag alt"><span class="dot"></span>加速趋势</span>
+        <span class="tag alt">2026-08</span>
+      </div>
+      <h1>居住服务进入「专业角色可拆分、可验证、可单独付费」时代？</h1>
+      <p class="sub">从「一名经纪人包办一单」到「客户管家 × 懂盘者 × 履约模块」：服务价值锚点正在从信息差移向决策差。</p>
+      <div class="divider"></div>
+      <div class="meta">
+        <div class="cell"><div class="k">输出框架</div><div class="v">通用四段式（结论 · 事实 · 归因 · 展望）</div></div>
+        <div class="cell"><div class="k">数据来源</div><div class="v">贝壳Q2管理层S分享 · 财新 · 搜狐 · 36氪 · TIKR · 新华社 · 内部材料</div></div>
+        <div class="cell"><div class="k">数据时段</div><div class="v">2026Q2 及 2026年5–7月客户管家数据</div></div>
+        <div class="cell"><div class="k">证据窗</div><div class="v">2025-08-25 — 2026-08-25</div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= 一、关键性结论 ================= -->
+  <section id="s1">
+    <div class="sec-head reveal"><span class="idx">01</span><h2>关键性结论</h2><span class="en">Keynote</span></div>
+
+    <div class="keynote reveal">
+      <div class="lead">主基调 KEYNOTE</div>
+      <div class="verdict">会，而且<em>已经启动</em>。依据不是概念推演，是三组实证。</div>
+      <p class="basis">
+        客户管家 2026 年 5–7 月承接超 <b>5 万条</b>线索、商机转带看率 <b>7.4%</b> 对同期大盘 <b>5%</b>（口径：商机转带看；管理层S分享 08-21，内部样本单源）、收入与单笔成交脱钩，并与懂盘者 / 带看撮合 / 签约 / 报告 / 装修 / 租赁管家构成<b>模块链</b>；
+        贝壳 2026Q2 二手成交单量同比增<b>近两成</b>而经纪人规模未同步扩大（财新 08-22）、利润率 <b>14.6%</b>（搜狐 08-22）、GTV 重回增长（36氪 08-23）、利润<b>近翻倍</b>（TIKR 08-23）；
+        深圳国企零中介费平台上线（08-13）、新华社二手房资金协同治理（08-19）、青岛通报 22 家中介（07-31）、成都租房官方避坑（08-24）同向压缩「信息费」空间。
+      </p>
+      <div class="proof">
+        <div class="p"><div class="n">5万+</div><div class="t">客户管家承接线索 5–7月 · 内部样本</div></div>
+        <div class="p"><div class="n">7.4% <span style="font-size:12px;color:var(--on-dark-6);">vs 5.0%</span></div><div class="t">商机转带看率：客户管家 vs 同期大盘</div></div>
+        <div class="p"><div class="n">14.6%</div><div class="t">2026Q2 利润率（搜狐 08-22）</div></div>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="margin-top:16px;">
+      <div class="kpi reveal">
+        <div class="top"><span class="ic">线</span><span class="delta">单源样本</span></div>
+        <div class="label">客户管家承接线索 · 2026.5–7</div>
+        <div class="num gold">5<span class="unit">万+</span></div>
+        <div class="note">口径：内部样本，公开渠道暂无法独立核实</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="ic">转</span><span class="delta up">+2.4pct</span></div>
+        <div class="label">商机转带看率 · 客户管家组</div>
+        <div class="num gold">7.4<span class="unit">%</span></div>
+        <div class="note">vs 同期大盘 5.0%；绝对差 +2.4pct、相对 ≈48%（口径：2.4÷5.0）；选择效应未排除</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="ic">量</span><span class="delta up">同比</span></div>
+        <div class="label">2026Q2 二手成交单量</div>
+        <div class="num">+近两成</div>
+        <div class="note">财新 08-22；经纪人规模未同步扩大</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="ic">利</span><span class="delta">Q2</span></div>
+        <div class="label">2026Q2 利润率</div>
+        <div class="num teal">14.6<span class="unit">%</span></div>
+        <div class="note">搜狐 08-22；为分账改革摩擦留出空间</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="ic">增</span><span class="delta up">~2×</span></div>
+        <div class="label">利润近翻倍 · GTV 重回增长</div>
+        <div class="num">≈2<span class="unit">×</span></div>
+        <div class="note">36氪 / TIKR 08-23；约值，表述口径换算</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 二、边界条件 ================= -->
+  <section id="s2" class="bounds">
+    <div class="sec-head reveal"><span class="idx">02</span><h2>边界条件</h2><span class="en">Bounds</span></div>
+    <div class="grid-2">
+      <div class="card reveal b-y"><span class="topbar tb-y"></span>
+        <h3><span class="avatar av-y">Y</span>「可单独付费」尚未全面成立</h3>
+        <p>中间隔着两道门槛：<b>分账规则重构</b>（ACN 从房客源分佣升级为角色模块分账）与<b>责任界定</b>。角色可拆分已在发生，付费模式尚未跑通。</p>
+        <span class="src">居住服务 · Y · 渠道崛起派</span>
+      </div>
+      <div class="card reveal b-l"><span class="topbar tb-l"></span>
+        <h3><span class="avatar av-l">L</span>跑通取决于三个制度条件</h3>
+        <p><b>结果可验证、分账可执行、责任可追偿</b>。窗口期约 <b>12–18 个月</b>（研判推断）；拆不拆不是问题，能不能制度化才是。</p>
+        <span class="src">居住服务 · L · 制度派</span>
+      </div>
+      <div class="card reveal b-x"><span class="topbar tb-x"></span>
+        <h3><span class="avatar av-x">X</span>从业管理制度的一次迟到补课</h3>
+        <p>只拆责任、不建制度，会把「一人包办」的模糊责任升级为「无人负责」的碎片化甩锅。海外均以持证主体清晰、结果可验证、责任可追溯为前提。</p>
+        <span class="src">居住服务 · X · 海外监管派</span>
+      </div>
+      <div class="card reveal b-c"><span class="topbar tb-c"></span>
+        <h3><span class="avatar av-c">C</span>不得破坏 ACN 协同</h3>
+        <p>模块结果必须可验证、付费必须与成交脱钩可单列；否则模块化退化为<b>变相提佣</b>，侵蚀合作分佣的信任基础。</p>
+        <span class="src">居住服务 · C · 存量统筹派</span>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--ink-3);margin-top:12px;">偏离观点降级规则：若以上任一条件不成立，主基调需下修。匿名标注：Y / C / L / X 对应四位研判专家领域与立场。</p>
+  </section>
+
+  <!-- ================= 三、关键事实及其变化 ================= -->
+  <section id="s3">
+    <div class="sec-head reveal"><span class="idx">03</span><h2>关键事实及其变化</h2><span class="en">Facts</span></div>
+    <div class="grid-3">
+
+      <div class="card reveal">
+        <h3>供给侧：角色开始制度性分化</h3>
+        <p>「包办经纪人」首次被拆成「<b>咨询角色 + 履约角色</b>」（L）；收入与成交脱钩，意味着买方第一次可为「决策服务」单独付费，而非为成交结果付全包佣金（C）。</p>
+        <div class="chips">
+          <span class="chip">客户管家</span>
+          <span class="chip">懂盘者</span>
+          <span class="chip">带看撮合</span>
+          <span class="chip">签约</span>
+          <span class="chip">报告</span>
+          <span class="chip">装修</span>
+          <span class="chip gold">租赁管家</span>
+        </div>
+        <div class="chart-box">
+          <span class="rel-badge">相对 +48%<small>口径：2.4pct ÷ 大盘 5.0%</small></span>
+          <div class="cap">商机转带看率 · <b>客户管家 vs 同期大盘</b>（口径：商机转带看）</div>
+          <div class="bars">
+            <div class="bar-col">
+              <div class="bar-track">
+                <div class="bar" style="height:110px;"><span class="val">7.4%</span></div>
+              </div>
+              <div class="xl">客户管家<small>内部样本 · 单源</small></div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-track">
+                <div class="bar gold" style="height:74px;"><span class="val">5.0%</span></div>
+              </div>
+              <div class="xl">同期大盘<small>基线</small></div>
+            </div>
+          </div>
+          <div class="legend-note">高度按数值/最大值 7.4% 归一（零基线）；仅验证「转带看」一段，带看转签、客诉、毛利尚未验证，结果出来前不可外推。</div>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <h3>平台端：量价背离，效率兑现增长</h3>
+        <p>单量增近两成而人员不增、利润近翻倍，行业第一次靠「<b>效率</b>」而非「规模」兑现增长（C），是模块化分工的财务镜像：同样的线索池、更少的人、更结构化的服务（L）。人均效能替代人海扩张，为「少而精」的专业者供给创造了财务前提（X）。</p>
+        <div class="chart-box">
+          <div class="cap">2026Q2 同比 · <b>量价背离</b>（约值 · 研判推断）</div>
+          <div class="bars">
+            <div class="bar-col">
+              <div class="bar-track">
+                <div class="bar" style="height:22px;"><span class="val">≈+20%<small>约</small></span></div>
+              </div>
+              <div class="xl">二手成交单量<small>同比增近两成 · 财新</small></div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-track">
+                <div class="bar gold" style="height:3px;"><span class="val" style="top:-22px;">≈0<small>约</small></span></div>
+              </div>
+              <div class="xl">经纪人规模<small>未同步扩大</small></div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-track">
+                <div class="bar" style="height:110px;"><span class="val">≈+100%<small>约</small></span></div>
+              </div>
+              <div class="xl">利润<small>近翻倍 · TIKR/36氪</small></div>
+            </div>
+          </div>
+          <div class="legend-note">「近两成 / 近翻倍」为公开报道表述，图中按 ≈20% / ≈100% 归一示意，非精确值。</div>
+        </div>
+      </div>
+
+      <div class="card reveal">
+        <h3>外部：制度环境同时挤压「信息租金」</h3>
+        <p>深圳零中介费平台压<b>价格端</b>、青岛通报压<b>合规端</b>、新华社资金协同治理压<b>履约端</b>、成都官方避坑压<b>信息端</b>：静态房源信息正在公共化、廉价化，捆绑定价里的信息费部分被外部力量归零（L）。</p>
+        <div class="tl">
+          <div class="ev"><div class="d">07-31</div><div class="e"><b>青岛</b>通报 22 家中介</div><span class="side">合规端</span></div>
+          <div class="ev"><div class="d">08-13</div><div class="e"><b>深圳</b>国企零中介费平台上线</div><span class="side">价格端</span></div>
+          <div class="ev"><div class="d">08-19</div><div class="e"><b>新华社</b>二手房资金协同治理</div><span class="side">履约端</span></div>
+          <div class="ev"><div class="d">08-22</div><div class="e"><b>财新</b>：Q2 单量增近两成</div><span class="side">平台端</span></div>
+          <div class="ev"><div class="d">08-23</div><div class="e"><b>36氪/TIKR</b>：GTV 重回增长</div><span class="side">平台端</span></div>
+          <div class="ev"><div class="d">08-24</div><div class="e"><b>成都</b>租房官方避坑</div><span class="side">信息端</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= 四、归因分析 ================= -->
+  <section id="s4" class="why">
+    <div class="sec-head reveal"><span class="idx">04</span><h2>归因分析：为什么是此刻</h2><span class="en">Why now</span></div>
+    <div class="card reveal" style="padding:8px 24px;">
+      <div class="step">
+        <div class="no">1</div>
+        <div>
+          <div class="tagline">最底层变量 · 供给侧</div>
+          <h3>信息成本坍塌</h3>
+          <p>房源静态信息在平台化 + AI 化后边际成本趋零，靠信息不对称支撑的佣金租金失去根基。链条上靠信息差吃饭的角色被压缩，靠决策与履约能力吃饭的角色升值（L）。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="no">2</div>
+        <div>
+          <div class="tagline">需求侧推力</div>
+          <h3>决策复杂度上升</h3>
+          <p>置换链条、税费、限购限贷、居住价值评估，客户缺的不是房源而是<b>决策支持</b>，而决策支持短期内无法被 AI 平权，顾问价值因此上升。中国家庭 <b>65%</b> 资产压在房子上，决策金额与复杂度持续上升，「买得起」早已不是问题，「买得对」才是（Y）。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="no">3</div>
+        <div>
+          <div class="tagline">制度根源</div>
+          <h3>旧模式的捆绑与不可验证</h3>
+          <p>包办模式 = 多重委托 + 双向收费 + 结果捆绑，过程不可验证、责任不可分割，劣币驱逐良币。海外只允许在持证主体清晰、结果可验证、责任可追溯的前提下拆（X）。</p>
+          <div class="overseas">
+            <div class="o"><div class="rg">香港</div><div class="d">《地产代理条例》分级发牌：代理 / 营业员</div></div>
+            <div class="o"><div class="rg">台湾</div><div class="d">经纪人·营业员分级，成交时签章负责</div></div>
+            <div class="o"><div class="rg">新加坡</div><div class="d">CEA 销售员 / 代理分级考试法律化</div></div>
+            <div class="o"><div class="rg">德州</div><div class="d">TREC：sales agent / broker 两级 + 赔偿基金</div></div>
+            <div class="o"><div class="rg">北卡</div><div class="d">broker-in-charge 对每笔交易负督导责任</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="no">4</div>
+        <div>
+          <div class="tagline">内部条件具备</div>
+          <h3>ACN 已验证合作分佣</h3>
+          <p>从「房客源」三要素拆分到「获客-匹配-带看-谈判-签约-履约」六环节是自然延伸；14.6% 的利润率给了公司承担分账改革摩擦成本的空间（Y）。</p>
+          <div class="chips">
+            <span class="chip">获客</span><span class="chip">匹配</span><span class="chip">带看</span>
+            <span class="chip">谈判</span><span class="chip">签约</span><span class="chip gold">履约</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 五、机制链 ================= -->
+  <section id="s5">
+    <div class="sec-head reveal"><span class="idx">05</span><h2>机制链：模块化如何自我强化</h2><span class="en">Mechanism</span></div>
+    <div class="chain reveal">
+      <div class="node"><b>静态信息贬值</b><span>信息费被外部归零</span></div>
+      <div class="node"><b>决策复杂度上升</b><span>顾问价值升值</span></div>
+      <div class="node hot"><b>专业角色拆分</b><span>咨询 × 履约 × 模块</span></div>
+      <div class="node"><b>模块结果可验证</b><span>过程透明、责任可溯</span></div>
+      <div class="node"><b>分账 / 付费</b><span>与成交脱钩、可单列</span></div>
+      <div class="node"><b>专业者长期供给</b><span>职业化正反馈</span></div>
+    </div>
+    <p style="font-size:12px;color:var(--ink-3);margin-top:14px;">量化口径建议：模块渗透率 · 顾问建议采纳率 · 删选项后满意度 · 转带看 / 带看转签 · 客诉 · 复购 · 模块贡献毛利 · 协同成本。</p>
+  </section>
+
+  <!-- ================= 六、洞察与展望 ================= -->
+  <section id="s6">
+    <div class="sec-head reveal"><span class="idx">06</span><h2>洞察与展望</h2><span class="en">Insight &amp; Outlook</span></div>
+
+    <div class="grid-3 insight">
+      <div class="card reveal"><span class="topbar tb-accent"></span>
+        <h3><span class="avatar av-l">L</span>拆的不是「人」，是「责任」</h3>
+        <p>收费从「结果佣金」部分转向「过程服务费」，是从<b>居间向委托</b>的行为模式迁移。</p>
+      </div>
+      <div class="card reveal"><span class="topbar tb-accent"></span>
+        <h3><span class="avatar av-c">C</span>终点不是「去中介」，是经纪职业化</h3>
+        <p>收入与单次成交脱钩后，职业稳定性与专业积累才形成正反馈；这是经纪行业变成<b>重服务业</b>的必经之路。</p>
+      </div>
+      <div class="card reveal"><span class="topbar tb-accent"></span>
+        <h3><span class="avatar av-y">Y</span>从业者只有两条出路</h3>
+        <p>成为懂盘者式的<b>深度专业者</b>，或成为模块化链条上的<b>执行节点</b>。</p>
+      </div>
+    </div>
+
+    <div class="grid-3 outlook" style="margin-top:14px;">
+      <div class="phase reveal">
+        <div class="ph-row"><span class="seq">01</span><span class="ph">短期 · 12–18个月（研判推断）</span></div>
+        <h3>用随机对照验证，不提前扩张</h3>
+        <ul>
+          <li>2 万条线索随机对照：客户管家组 vs 传统直分经纪人组，60 天窗口</li>
+          <li>四指标：转化 · 客诉 · NPS · 贡献毛利</li>
+          <li>建议增「删选项后满意度」检验（Y）与「责任事故归责清晰度」一票否决项（X）</li>
+        </ul>
+        <div class="rule">纪律：转化提升但毛利 / 满意度不升，则不扩张</div>
+      </div>
+      <div class="phase reveal">
+        <div class="ph-row"><span class="seq">02</span><span class="ph">中期 · 分账制度</span></div>
+        <h3>ACN 从「一单分蛋糕」到「服务链分账」</h3>
+        <ul>
+          <li>主战场：模块价值度量（渗透率 / 采纳率 / 满意度 / 复购 / 客诉 / 贡献毛利 / 协同成本）</li>
+          <li>3 城试点选<b>自营 / 加盟 / 混合</b>三种经纪结构，检验可复制性</li>
+          <li>付费顺序先易后难：先增值服务（装修、租赁管家）后核心环节（带看、签约）；卖方付费先于买方付费（Y）</li>
+        </ul>
+      </div>
+      <div class="phase reveal">
+        <div class="ph-row"><span class="seq">03</span><span class="ph">长期 · 主战场</span></div>
+        <h3>二手是模块化主场，一手受限</h3>
+        <ul>
+          <li>二手：链条长、低频、决策复杂，模块化空间最大（L）</li>
+          <li>一手受开发商渠道分销约束，空间有限</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 七、不确定性 ================= -->
+  <section id="s7" class="risk">
+    <div class="sec-head reveal"><span class="idx">07</span><h2>不确定性</h2><span class="en">Risks</span></div>
+    <div class="grid-2">
+      <div class="card reveal">
+        <h3><span class="rno">R1</span>单源样本，随机对照前不得外推</h3>
+        <p>客户管家 7.4% 对 5% 为单源内部样本，选择效应未排除；随机对照结果出来前不得作为扩张依据（四位共识）。</p>
+      </div>
+      <div class="card reveal">
+        <h3><span class="rno">R2</span>模块交接的协同成本是最大暗礁</h3>
+        <p>转带看漏单、责任扯皮；需法务与 ACN 规则先行（L）。</p>
+      </div>
+      <div class="card reveal">
+        <h3><span class="rno">R3</span>AI 平权可能压缩「懂盘者」中间层</h3>
+        <p>模块价值锚点应放在<b>决策与履约</b>而非信息上（L）。</p>
+      </div>
+      <div class="card reveal">
+        <h3><span class="rno">R4</span>零中介费扩大化 × 监管规则缺位</h3>
+        <p>行业总收费空间被压缩，分账改革与价格战并行，试点需预留毛利安全垫（Y）；监管对「服务费单独付费」的定价与责任界定尚无规则，是试点最大的外部变量（X）。政策该管的是信息披露、资金监管、责任划分；把服务费压到零只会消灭专业化供给，把行业推回信息差时代（L）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 附录：数据口径 ================= -->
+  <div class="appendix">
+    <h3>附录 · 数据口径与来源</h3>
+    <p><span class="hl">主基调判定依据</span>：以上数据事实为基准；偏离观点已降级为边界条件 / 风险提示。</p>
+    <p>数据来源：贝壳 2026Q2 管理层 S 分享（08-21）· 财新（08-22）· 搜狐（08-22）· 36氪（08-23）· TIKR（08-23）· 新华社（08-19）· 深圳国企平台上线（08-13）· 青岛通报（07-31）· 成都官方避坑（08-24）· 内部材料。<b>多源；客户管家数字为单源内部样本，公开渠道暂无法独立核实，需以 2 万线索随机对照结果为准。</b></p>
+    <p>时段：2026Q2 及 2026 年 5–7 月客户管家数据；证据窗 2025-08-25 — 2026-08-25。区域：全国（贝壳平台多城）。</p>
+    <p class="anon">匿名标注：<b>Y</b>（渠道崛起派）· <b>C</b>（存量统筹派）· <b>L</b>（制度派）· <b>X</b>（海外监管派）；「约 / 近 / ≈」数值为公开表述口径换算，标「研判推断」者为专家估计，非实测值。</p>
+    <p class="anon">心智模型：渠道崛起 / 边缘革命（Y）· 存量统筹 / 蓄水池（C）· 交易成本 / 制度条件（L）· 海外分级持证对照（X）。内部密度：N=81 ｜ S=186.6 ｜ L=5 ｜ R=8。</p>
+    <p class="anon">输出形态：讨论稿（含匿名标注）；转正式稿时去除标注、仅留数据来源。责任部门建议：智见牵头；客户产品、ACN 规则、财务分账、法务合规设计 3 城模块化服务试点。</p>
+  </div>
+
+  <div class="foot">
+    <span><b>98wiki ｜ 智见 / 行业研究报告</b></span>
+    <span>智见点评 · 居住服务系列 ｜ 融合研判 · 讨论稿 ｜ 2026-08</span>
+  </div>
+</div>
+
+<script>
+/* 动效：reveal + 数字滚动（product：feedback only；reduced-motion 降级） */
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var els = document.querySelectorAll('.reveal');
+  if (reduce || !('IntersectionObserver' in window)) {
+    els.forEach(function(el){el.classList.add('in');});
+    return;
+  }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold:.12});
+  els.forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>

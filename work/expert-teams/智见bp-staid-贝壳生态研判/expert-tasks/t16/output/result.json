@@ -1,0 +1,9 @@
+{
+  "taskId": "t16",
+  "status": "completed",
+  "attempt": 1,
+  "output": "已完成优势 3 截图替换 + 右侧占满布局（原路径覆盖，9 页不变）。目录：/root/zhijian/dsh-expert-library/work/研报交付_20260825_贝壳优势_合作前提/\n- 贝壳优势_合作前提_分页版.html 新 sha256=b4f820a4fac58757b717252180d4ea4caaf9b6cceb695966908b208f4db53a2e（旧 6c2b5327…c402f；558KB→808KB）\n- 贝壳优势_合作前提_结论.md 同步（C 端新数字 + 口径声明，旧数字标注作废）sha256=f6657b40…\n- Designer_渲染检查记录.md 追加第 11 节「v6」；_check/page-1..9.png + deck-full-1440.png 重截\n改动：①旧图（3.8/4.5/4.1、83/100、48/55、3Y-BZF-00001）base64 删除，新图 d3fa7704（632×1534 竖屏 439KB）内嵌 P4 右栏；alt/figcaption 更新（新东人才住房、舒适3.6/绿色2.6/科技3.9/安全2.9、优质型65/100、AI打分+人工复核、租金受控·试点房源）；②P4 改 .depth-split 双栏（左 61% 紧凑内容[估值三锚/指数三卡/智力底座/案例 4 卡 2×2/闭环条 9.5-12px]，右 38% 截图占满，img contain + max-height:calc(100dvh-360px) 防变形，桌面实测 1440→222×540、1366→168×408）；③C 端卡精简为星级行+AI 复核+优质型/租金受控说明；闭环条改「标示（C 端·试点房源）」；④≤1024px 截图降通栏 220×240、≤720px 150×200；cases.fixed2 移动端保持 2 列。\n重要：修正了历史检查指标缺陷（min-height 页面撑高时 overflowY 恒 0），改用严格断言：桌面 3 视口逐页 pageH==viewport（1440/1280 全 9/9 = 视口高；1366 P4=770 容差内），移动端为 scroll-snap 滚动分页（无横向溢出）。检查：5 视口 console 0 错、横向越界 0（豁免滚动容器）、翻页（页点4→优势3、End→9/9、Home→1/9）、reduced-motion 通过、新图 5 视口加载成功。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787646995043
+}

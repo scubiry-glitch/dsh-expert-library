@@ -17,6 +17,8 @@ import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { join, resolve as resolvePath, sep } from 'node:path'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type { ExpertToolsCore, ToolsConfig } from '../tools.ts'
 import { steerCaptainReport } from '../tools.ts'
@@ -25,7 +27,7 @@ import { compileExecutionPlan } from '../v2/compiler.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
 import { resolveRuntimePack } from '../v2/runtime-pack.ts'
 import { frameworkById, GLOBAL_OUTPUT_RULES } from './frameworks.ts'
-import { ALL_EXPERT_METAS } from './registry.ts'
+import { ALL_EXPERT_METAS, normalizeExpertId } from './registry.ts'
 import { matchExperts, mentalModelCatalog } from './capability.ts'
 import { appendEvaluation, evaluationsFile, feedbackSummary, readEvaluations, type EvaluationRecord } from './evaluations.ts'
 import {
@@ -275,8 +277,10 @@ export function registerZhijianTools(
         throw new Error(`未知框架 "${args.framework}" — 可选 A/B/C/D（E 不建队）`)
       }
 
-      // 1. Validate the selected experts.
-      const selected = [...new Set(args.selected_experts)]
+      // 1. Validate the selected experts. User inputs may use the display
+      // form (`BK-033` / `E08-08`) while the registry keys are canonical
+      // lowercase — normalize before dedupe, validation and compilation.
+      const selected = [...new Set(args.selected_experts.map(normalizeExpertId))]
       if (selected.length === 0) throw new Error('selected_experts 不能为空')
       if (selected.length > 5) throw new Error('一次点评最多 5 位专家')
       const metas = selected.map(id => ALL_EXPERT_METAS.find(meta => meta.id === id))
@@ -314,6 +318,11 @@ export function registerZhijianTools(
         pack: (await resolveRuntimePack(ctx, config, buildZhijianDomainPack())).pack,
         templateId: `zhijian.team.${frameworkId}`,
         ...(scenario === undefined ? {} : { scenarioId: scenario.id }),
+        // 渲染与生成（t3）默认指派内置通用专家 designer：领域专家管内容、
+        // 通用专家管渲染（finesse-ui/pptfast/video-shotcraft 三技能已绑到
+        // designer persona）。显式 assignments 驱动 role.render slot，
+        // 使 t3 从共享池任务变为 designer 专属任务（职责分离，防领域专家抢单）。
+        binding: { assignments: { 'role.render': ['designer'] } },
         params: {
           selectedExpertIds: selected,
           data: args.data,
@@ -371,6 +380,8 @@ export function registerZhijianTools(
   registerReviewFeedbackTool(ctx, config)
   // 归型澄清层：自由请求 → 归型建议 + 领域包口径问题集。
   registerClarifyTool(ctx)
+  // P2.3: 渲染产物外网发布（HTML5 → https://yy.meizu.life/render/...，免登录）。
+  registerRenderPublishTool(ctx)
 }
 
 /** Render the route result as compact text for the captain. */
@@ -633,6 +644,91 @@ function registerReviewFeedbackTool(ctx: Context, config: ToolsConfig): void {
         avg_score: avg,
         summary,
         file: file ?? '',
+      }
+    },
+  }))
+}
+
+/**
+ * 渲染产物外网发布工具（render_publish，P2.3）：Designer 渲染任务生成 HTML5
+ * 视觉稿后，把产物发布到 `/var/www/dsh-render/<teamId>/<slug>.html`，经
+ * nginx 直出（免登录）得到 `https://yy.meizu.life/render/<teamId>/<slug>.html`
+ * 公网链接，回填到任务 output 供行内分享。
+ *
+ * 安全约束：
+ * - teamId：SafeId 规则（字母/数字开头，内部 ._-，≤64，无路径分隔符）；
+ * - slug：仅字母数字与 -_（≤80），禁止点段与分隔符（防穿越）；
+ * - 源文件：会话工作区内包含性校验（同 workspace-file），或发布目录内；
+ * - 产物无鉴权直出——调用前必须确认内容不涉密、可公开。
+ */
+function registerRenderPublishTool(ctx: Context): void {
+  const PUBLIC_DIR = '/var/www/dsh-render'
+  const PUBLIC_BASE = 'https://yy.meizu.life/render'
+  ctx.tools.register(defineTool({
+    name: 'render_publish',
+    description: `把 HTML5 渲染产物发布为公网可访问链接（免登录）：${PUBLIC_BASE}/<teamId>/<slug>.html。Designer 渲染任务完成 HTML5 视觉稿后调用，把产物发布并取得外网链接。注意：产物无鉴权直出，发布前必须确认内容不涉密、可公开。`,
+    parameters: {
+      teamId: { type: 'string', required: true, description: '团队 id（expert_teams_status 中的团队名，单段、无路径分隔符）。' },
+      file: { type: 'string', description: 'HTML5 产物文件绝对路径（file 与 html 二选一，file 优先）。' },
+      html: { type: 'string', description: 'HTML5 全文（file 与 html 二选一）。' },
+      slug: { type: 'string', description: '发布文件名（不含 .html，默认 "index"；仅字母数字与 -_）。' },
+    },
+    output: {
+      schema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          url: { type: 'string', required: true },
+          file: { type: 'string', required: true },
+          teamId: { type: 'string', required: true },
+          publishedAt: { type: 'string', required: true },
+        },
+      },
+      render: (_args, value) => [{
+        type: 'text',
+        text: `已发布：${value.url}`,
+      }],
+    },
+    async execute(args, exec) {
+      const captain = requireCaptain(exec)
+      const cwd = captain.session.header.cwd ?? process.cwd()
+      const teamId = String(args.teamId ?? '').trim()
+      if (!/^[\p{L}\p{N}][\p{L}\p{N}._-]{0,63}$/u.test(teamId)) {
+        throw new Error(`teamId 非法：${teamId}（须单段、字母数字开头、≤64 字符，无路径分隔符）`)
+      }
+      const rawSlug = String(args.slug ?? '').trim() || 'index'
+      if (!/^[A-Za-z0-9_-]{1,80}$/.test(rawSlug)) {
+        throw new Error(`slug 非法：${rawSlug}（仅字母数字与 -_，≤80 字符）`)
+      }
+      let html: string
+      const fileArg = String(args.file ?? '').trim()
+      if (fileArg !== '') {
+        const absolute = resolvePath(cwd, fileArg)
+        const insideWorkspace = absolute.startsWith(cwd + sep)
+        const insidePublic = absolute.startsWith(PUBLIC_DIR + sep)
+        if (!insideWorkspace && !insidePublic) {
+          throw new Error(`file 必须在会话工作区内（或发布目录内）：${fileArg}`)
+        }
+        try {
+          html = await readFile(absolute, 'utf8')
+        } catch {
+          throw new Error(`无法读取产物文件：${fileArg}`)
+        }
+      } else if (String(args.html ?? '').trim() !== '') {
+        html = String(args.html)
+      } else {
+        throw new Error('file 与 html 至少提供其一')
+      }
+      if (html.length === 0) throw new Error('产物内容为空')
+      const outDir = join(PUBLIC_DIR, teamId)
+      await mkdir(outDir, { recursive: true })
+      const outFile = join(outDir, `${rawSlug}.html`)
+      await writeFile(outFile, html, 'utf8')
+      return {
+        url: `${PUBLIC_BASE}/${teamId}/${rawSlug}.html`,
+        file: outFile,
+        teamId,
+        publishedAt: new Date().toISOString(),
       }
     },
   }))

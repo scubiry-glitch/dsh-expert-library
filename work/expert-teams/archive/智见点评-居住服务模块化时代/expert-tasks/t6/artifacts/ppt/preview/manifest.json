@@ -1,0 +1,114 @@
+{
+  "manifestVersion": 1,
+  "generator": "pptfast preview",
+  "pptfastVersion": "0.20.0",
+  "title": "智见点评-居住服务模块化时代-讨论稿",
+  "slide": {
+    "width": 1280,
+    "height": 720
+  },
+  "checks": {
+    "svg": "completed",
+    "pixels": "not-requested"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "page": 1,
+      "type": "cover",
+      "file": "001-cover.svg",
+      "slideId": "cover"
+    },
+    {
+      "id": "keynote",
+      "page": 2,
+      "type": "content",
+      "file": "002-content.svg",
+      "slideId": "keynote"
+    },
+    {
+      "id": "kpi",
+      "page": 3,
+      "type": "content",
+      "file": "003-content.svg",
+      "slideId": "kpi"
+    },
+    {
+      "id": "bounds",
+      "page": 4,
+      "type": "content",
+      "file": "004-content.svg",
+      "slideId": "bounds"
+    },
+    {
+      "id": "fact-supply",
+      "page": 5,
+      "type": "content",
+      "file": "005-content.svg",
+      "slideId": "fact-supply"
+    },
+    {
+      "id": "fact-platform",
+      "page": 6,
+      "type": "content",
+      "file": "006-content.svg",
+      "slideId": "fact-platform"
+    },
+    {
+      "id": "fact-external",
+      "page": 7,
+      "type": "content",
+      "file": "007-content.svg",
+      "slideId": "fact-external"
+    },
+    {
+      "id": "why",
+      "page": 8,
+      "type": "content",
+      "file": "008-content.svg",
+      "slideId": "why"
+    },
+    {
+      "id": "chain",
+      "page": 9,
+      "type": "content",
+      "file": "009-content.svg",
+      "slideId": "chain"
+    },
+    {
+      "id": "insight",
+      "page": 10,
+      "type": "content",
+      "file": "010-content.svg",
+      "slideId": "insight"
+    },
+    {
+      "id": "outlook",
+      "page": 11,
+      "type": "content",
+      "file": "011-content.svg",
+      "slideId": "outlook"
+    },
+    {
+      "id": "risks",
+      "page": 12,
+      "type": "content",
+      "file": "012-content.svg",
+      "slideId": "risks"
+    },
+    {
+      "id": "caliber",
+      "page": 13,
+      "type": "content",
+      "file": "013-content.svg",
+      "slideId": "caliber"
+    },
+    {
+      "id": "ending",
+      "page": 14,
+      "type": "ending",
+      "file": "014-ending.svg",
+      "slideId": "ending"
+    }
+  ]
+}

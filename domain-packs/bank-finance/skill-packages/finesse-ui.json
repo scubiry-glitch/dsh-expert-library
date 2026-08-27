@@ -1,0 +1,16 @@
+{
+  "id": "finesse-ui",
+  "name": "finesse-ui",
+  "version": "0.20.0",
+  "schemaVersion": 2,
+  "source": {
+    "kind": "builtin",
+    "root": "skills/finesse-ui",
+    "digest": "dfe97eb5ea641b8c09155ae851ae8b056005af36e761e281ccd3ca85caa5baf9",
+    "license": "MIT"
+  },
+  "contributions": {},
+  "permissions": {
+    "execScripts": []
+  }
+}

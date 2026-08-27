@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "domain": "beike",
-  "boundary": "贝壳生态专家 Profile 投影（2026-08-23）：bk-002/018/019/031/033 居住服务与经纪 + e08-08 左晖（贝壳创始人）+ e04-05 一濛（长租资管）。",
+  "boundary": "贝壳生态专家 Profile 投影（2026-08-23）：bk-002/018/019/031/033 居住服务与经纪 + e08-08 左晖（贝壳创始人）+ e04-05 一濛（长租资管）+ s-07 张勇/s-13 朱啸虎/s-23 程维（商业模式与平台经济）+ bk-016 黄奇帆/bk-027 冯俊/bk-028 赵晖（政策治理，引用标注时点）。",
   "ontology": {
     "entities": [
       {
@@ -35,8 +35,8 @@
   "snapshot": {
     "id": "beike-v1-2026-08-23",
     "takenAt": "2026-08-23T00:00:00Z",
-    "digest": "0a6e2af76f2f5628adb607379a7c72dea69f19053dde6eb4fa0d3df1c437a43b",
-    "recordCount": 7
+    "digest": "90ec7be8c8d8407fcf5d5dde0d36fe734900a23b81d42e560d60b38d65ce1dd6",
+    "recordCount": 14
   },
   "retrievalProfiles": [
     {

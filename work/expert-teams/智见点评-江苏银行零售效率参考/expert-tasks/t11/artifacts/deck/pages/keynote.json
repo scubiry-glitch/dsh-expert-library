@@ -1,0 +1,22 @@
+{
+  "components": [
+    {
+      "type": "verdict_banner",
+      "tone": "neutral",
+      "text": "验收口径锁定「同店管户 AUM/人 净增（控 β 差分）」：净增 <10% 记市场 β、不记组织 α；数据安全四原则 + 总行委员会评审前置，一票否决。",
+      "icon": "badge-check"
+    },
+    {
+      "type": "kpi_cards",
+      "items": [
+        { "value": "<10%", "label": "同店管户 AUM/人 净增", "delta": "flat", "icon": "gauge" },
+        { "value": "90", "unit": "天", "label": "6 分行差分：3 试点 vs 3 对照", "delta": "up", "icon": "timer" },
+        { "value": "3%", "unit": "起", "label": "装修贷年化 · 单户 50 万起", "delta": "flat", "icon": "piggy-bank" },
+        { "value": "7.4%", "label": "客户管家转带看 vs 大盘 5%", "delta": "up", "icon": "bot" },
+        { "value": "0.03%", "label": "Token 先享在贷占比", "delta": "flat", "icon": "sparkles" }
+      ]
+    }
+  ],
+  "footnote": "行内数据待补；估算标注「研判推断」；客户管家数据为内部单源；施工图四节点：T+15 / T+30 / T+90 / T+180（梁斌修订）。",
+  "notes": "第一页讲判定标准：验收口径锁死在同店管户AUM/人净增，剔除市场β。五个数字各带口径：装修贷是98wiki可核实素材；客户管家7.4%是内部单源只能做试点；Token先享占比0.03%只埋接口不启动。v3 关键变化：施工图拆成T+15到T+180四个里程碑，数据安全一票否决成为一切合作的前提。"
+}

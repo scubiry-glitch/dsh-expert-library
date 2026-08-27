@@ -1,0 +1,17 @@
+{
+  "components": [
+    {"type": "data_table", "columns": [
+      {"key": "metric", "label": "观察指标"},
+      {"key": "threshold", "label": "阈值 / 基线"},
+      {"key": "signal", "label": "指向"}
+    ], "rows": [
+      {"cells": {"metric": "巡检覆盖率", "threshold": "十万套月度巡检占比", "signal": "↑"}},
+      {"cells": {"metric": "发现率（每万套风险）", "threshold": "12.7 基线（企业披露口径）", "signal": "↓"}},
+      {"cells": {"metric": "7日整改闭环率", "threshold": "燃气 ≥90%，电气单列（建议值）", "signal": "≥90%"}},
+      {"cells": {"metric": "重复风险率", "threshold": "同一房源复发", "signal": "≤5%"}},
+      {"cells": {"metric": "赔付率", "threshold": "赔付/安全服务收入 ≤30-40%（建议值）", "signal": "↓"}, "emphasis": "highlight"}
+    ], "source": "建议阈值为研判框架值；统计口径需第三方核验"},
+    {"type": "callout", "variant": "info", "text": "五数同向改善 → 溢价模型成立、可复制；闭环率 <70% 或重复率抬头 → 出口堵塞，先修出口再扩规模；赔付率超健康线 → 分级失效，收缩承诺而非加投入。"}
+  ],
+  "notes": "6个月验证窗口（2026-08 起）：成都样本是全国试验田。"
+}

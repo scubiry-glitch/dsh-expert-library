@@ -1,0 +1,9 @@
+{
+  "taskId": "t1",
+  "status": "completed",
+  "attempt": 1,
+  "output": "交付目录：/root/.openclaw/workspace/99wiki/projects/文旅体商融合专班/\n文件清单：\n1. 20260825_文旅体商融合发展工作专班组建方案_视觉稿.html（单文件自包含 69,103B，无外部依赖，结构①~⑥齐全）\n2. Designer_渲染检查记录.md（含 sha256 与全部实测）\n3. _build/（data.json 单一数据源 + 模板 + build/verify/shot 脚本，可复现）+ _build/shots/ 截图留档\nSHA256：d8344849b1a8c9e9a46dcb6a6974851c762998f383f0371ae3726aae1f7414d2\n关键设计决策：Cobalt Trust 蓝金（#2d5bd8/#c98a2e）product register；tinted 冷蓝灰底（#eef1f8）+ hairline + 无纯黑阴影；江苏银行金高亮（金 hairline+左边线+金融赋能标），省委金融办/省财政厅/省税务局按金融属性蓝 tint 高亮，文旅厅标牵头、南京市标试点城市；语义色（绿/红）与品牌色分离；金文字压深 #8a5a14 保对比度；reveal/count-up 动效含 prefers-reduced-motion 回退；@media print 基础适配（本任务仅 HTML，页脚项记不适用）。\n检查结果（机器实测）：verify.js 17/17 PASS——26 个职责分工主体与源材料逐字 diff=0（含直引号字符原样）、组织架构顺序 25+1 一致、附件 25 家一致、17 组配色对比度全部 ≥4.5:1；playwright 浏览器实测 1440/1280/390 三视口横向溢出 0px、文字裁切 0、console 0 错误、0 外部请求、动效终态正确。修复记录：390px 原溢出 62px（s1-grid 内联样式压过媒体查询+附件网格窄屏 2 列）已修复。\n说明：finesse-ui SKILL.md 在本机不存在（已检索 workspace/插件目录），按任务内嵌规范执行；联系电话 025---87798857 规范化为 025-87798857 已在稿内注明。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787638376580
+}

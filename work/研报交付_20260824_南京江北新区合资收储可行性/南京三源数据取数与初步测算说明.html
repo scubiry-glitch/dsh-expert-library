@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>南京三源数据取数与初步测算说明（20260824）</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "智见行业研究 ｜ 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<h1>南京三源数据取数与初步测算说明（20260824）</h1>
+<blockquote>
+<p>本文档为《南京江北新区"政府+贝壳"合资收储可行性分析》（专家团研判版）的配套数据说明：记录三源数据取数清单、口径与队长侧初步测算的完整复算过程。专家研判融合稿由智见点评团队产出；本文档仅承载数据溯源与可复算性，供内部评审核验。</p>
+</blockquote>
+<hr>
+<h2>一、三源数据取数清单</h2>
+<h3>1.1 政研通（贝壳研究院 / 贝壳平台交付，dss.ke.com）——南京市场量价租</h3>
+<p>取数方式：<code>GET <a href="https://dss.ke.com/openapi/v1/indicators/series|compare|districts">https://dss.ke.com/openapi/v1/indicators/series|compare|districts</a></code>，<code>city=南京</code>，<code>periodEnd=2026-07</code>，<code>X-Api-Key</code> 取自 <code>~/.config/zyt/config.json</code>（政研通即贝壳决策数据服务）。</p>
+<table>
+<thead>
+<tr>
+<th>指标（code）</th>
+<th>2026-07</th>
+<th>关键点</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>二手成交均价（SH_PRICE）</td>
+<td>16,893 元/㎡</td>
+<td>3–6 月环比连续为负（-3.63%/-1.05%/-1.65%/-1.60%），7 月企稳 +1.56%</td>
+<td>成交价（非挂牌价），贝壳研究院</td>
+</tr>
+<tr>
+<td>贝壳房价指数（KE_PRICE_INDEX）</td>
+<td><strong>64.2</strong></td>
+<td>2025-12=68.3 → 逐月创新低；对比上海 80.3（已回升）</td>
+<td>官方发布，2018-11=100</td>
+</tr>
+<tr>
+<td>二手成交套均总价（SH_UNIT_PRICE）</td>
+<td>159 万元/套</td>
+<td>2026-03 低点 157 万后微升</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>租赁套均租金（RENT_PRICE）</td>
+<td>3,029 元/月</td>
+<td>6 月 +3.58%、7 月 +10.11%（环比）；同比 -3.29%</td>
+<td>贝壳平台成交口径</td>
+</tr>
+<tr>
+<td>租赁成交量（RENT_VOL）</td>
+<td>12,074 套/月</td>
+<td>4–7 月连续放大（7,600→8,681→10,657→12,074）</td>
+<td>贝壳平台</td>
+</tr>
+<tr>
+<td>贝壳租金指数（KE_RENT_INDEX）</td>
+<td>90.5</td>
+<td>2025-12=88.5 缓升</td>
+<td>官方发布，2018-11=100</td>
+</tr>
+<tr>
+<td>二手成交周期（CLEARANCE_SH）</td>
+<td>7.8 个月</td>
+<td>2026-03 高点 8.3 后回落；上海同期 3.5 个月</td>
+<td>贝壳研究院（成交周期）</td>
+</tr>
+<tr>
+<td>二手新增挂牌（SUP_SH_LISTING）</td>
+<td>9,949 套/月</td>
+<td>3 月高点 13,104</td>
+<td>贝壳研究院</td>
+</tr>
+<tr>
+<td>平台成交（SH_VOL）</td>
+<td>2,392 套/月</td>
+<td>3 月高点 4,684</td>
+<td>平台口径，量级与网签不同</td>
+</tr>
+<tr>
+<td>区级成交均价（示意）</td>
+<td>浦口 1.2 万/㎡、六合 7,990 元/㎡、建邺 2.5 万/㎡</td>
+<td>2026-07，市级按权重拆分示意</td>
+<td>示意分布</td>
+</tr>
+<tr>
+<td>区级套均租金（示意）</td>
+<td>浦口 1,990 元、六合 1,398 元、建邺 4,217 元/月</td>
+<td>同上</td>
+<td>示意分布</td>
+</tr>
+<tr>
+<td>多城对比（贝壳房价指数）</td>
+<td>南京 64.2 vs 上海 80.3</td>
+<td>2026-07</td>
+<td>官方发布</td>
+</tr>
+</tbody>
+</table>
+<h3>1.2 Wind（万得金融）——资金与财政参数</h3>
+<p>取数方式：<code>wind-mcp-skill/scripts/cli.mjs call economic_data natural_language_get_edb_data</code>，密钥 <code>~/.wind-aifinmarket/config</code>。</p>
+<table>
+<thead>
+<tr>
+<th>数据</th>
+<th>数值</th>
+<th>指标代码 / 来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>保障性住房再贷款（1 年）</td>
+<td><strong>1.75%</strong>（2024Q2/Q3）</td>
+<td>U0895862，中国人民银行</td>
+</tr>
+<tr>
+<td>5Y LPR / 1Y LPR</td>
+<td>3.5% / 3.0%（2026-08-20，5Y 连续 15 期不变）</td>
+<td>M0331299 / M0096870，同业拆借中心</td>
+</tr>
+<tr>
+<td>南京市一般公共预算收入</td>
+<td>2023 年 1,619.98 亿；2024 年 1,596.02 亿；2025 年 1,620.91 亿元</td>
+<td>M6804061，南京市人民政府（决算数）</td>
+</tr>
+</tbody>
+</table>
+<h3>1.3 贝壳（房源级 MCP）——本轮不可用说明</h3>
+<p><code>realestate.listing.search</code> 绑定失败：<code>BEIKE_MCP_API_KEY</code> 未配置（<code>~/.beike/BEIKE_MCP_API_KEY</code> 不存在）。<strong>法拍房/房源级挂牌明细本轮不可取</strong>；平台级与研究院级数据已由政研通完整覆盖。法拍房量级相关数字在正文中以【估算】标注，验证协议（附录 C）要求补配密钥后用贝壳房源检索核验。</p>
+<hr>
+<h2>二、初步测算复算表（队长侧，供专家评审）</h2>
+<h3>2.1 挂牌存量与兜底 1/10 规模</h3>
+<ul>
+<li>挂牌存量【测算】= 新增挂牌 9,949 套/月 × 成交周期 7.8 个月 ≈ <strong>7.76 万套</strong></li>
+<li>兜底 1/10 ≈ <strong>7,800 套</strong>（全市口径）</li>
+<li>江北新区占比【测算】：浦口+六合成交份额约占全市 1/5（区级示意分布推算）→ 江北新区年收储约 <strong>1,500–2,000 套</strong></li>
+<li>资金量：按 70–94㎡、收购单价 1.0–1.2 万/㎡、7 折 → 单套约 50–80 万 → 1,500–2,000 套 ≈ <strong>10–14 亿元</strong>【测算】</li>
+<li>相对南京 2025 年一般公共预算收入（1,621 亿）：<strong>&lt;1%</strong>，财政可承受</li>
+</ul>
+<h3>2.2 纯租赁通道收益率（法拍/低价深折扣）</h3>
+<p>标的：江北新区 94㎡（全市套均），市场公允 = 浦口 1.2 万/㎡ × 94㎡ ≈ 113 万；月租取浦口套均 1,990 元/月（或按单位租金 21 元/㎡/月）。</p>
+<p>r = 12 × 1,990 × q(0.9) × o(0.9) ÷ (d × 113 万)</p>
+<table>
+<thead>
+<tr>
+<th>收购折扣 d</th>
+<th>收购价（万）</th>
+<th>r【测算】</th>
+<th>vs 1.75%（再贷款）</th>
+<th>vs 2.5%（综合）</th>
+<th>vs 3.0%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.60（法拍二拍深折扣）</td>
+<td>67.8</td>
+<td><strong>2.85%</strong></td>
+<td>+1.10pp，成立</td>
+<td>+0.35pp，成立</td>
+<td>−0.15pp，临界</td>
+</tr>
+<tr>
+<td>0.65</td>
+<td>73.5</td>
+<td>2.63%</td>
+<td>+0.88pp</td>
+<td>+0.13pp</td>
+<td>−0.37pp</td>
+</tr>
+<tr>
+<td>0.70（法拍首拍/低价房）</td>
+<td>79.1</td>
+<td>2.44%</td>
+<td>+0.69pp</td>
+<td>临界</td>
+<td>−0.56pp</td>
+</tr>
+<tr>
+<td>0.75</td>
+<td>84.8</td>
+<td>2.28%</td>
+<td>+0.53pp</td>
+<td>−0.22pp</td>
+<td>−0.72pp</td>
+</tr>
+<tr>
+<td>0.80（低于市场价房源）</td>
+<td>90.4</td>
+<td>2.14%</td>
+<td>+0.39pp</td>
+<td>−0.36pp</td>
+<td>−0.86pp</td>
+</tr>
+</tbody>
+</table>
+<p><strong>读表</strong>：法拍 6–7 折收购使纯租赁收益率（2.4%–3.1%）覆盖再贷款 1.75% 与综合 2.5% 资金成本；9 折以上收购（非低价标的）则收益率降至 1.9% 以下【测算：12×1990×0.81÷(0.9×113万)=1.90%】，仅勉强覆盖再贷款——<strong>折扣深度是南京收储单元经济成立的第一前提</strong>。</p>
+<h3>2.3 三通道模型与 ROE（100 套基准，简化测算）</h3>
+<p>假设：7 折收 100 套（单价 79 万/套，总投入 7,900 万）；自有资金 30%（2,370 万）、再贷款/银行 70%（5,530 万，成本 2.0%）。</p>
+<table>
+<thead>
+<tr>
+<th>通道</th>
+<th>权重</th>
+<th>收益逻辑</th>
+<th>首年贡献【测算】</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>保租房</td>
+<td>40 套</td>
+<td>净租金收益率 2.4%–2.9% − 资金成本 2.0% − 运营 0.4% ≈ +0.0~0.5pp</td>
+<td>+8 万/年（薄正）</td>
+</tr>
+<tr>
+<td>拆迁安置房</td>
+<td>30 套</td>
+<td>7 折收、按安置协议价（≈市场 8 折）移交 → 一次性价差 10%</td>
+<td>+339 万（一次性）</td>
+</tr>
+<tr>
+<td>二次销售</td>
+<td>30 套</td>
+<td>7 折收、翻新（7 万/套）后 9 折卖 → 毛利 ≈ (0.9−0.7)×113万 − 7万 ≈ 15.6 万/套 ≈ 14%</td>
+<td>+475 万（一次性）</td>
+</tr>
+<tr>
+<td>合计</td>
+<td>100 套</td>
+<td>首年一次性价差 814 万 + 租金 8 万 ≈ 822 万</td>
+<td>首年 ROE ≈ <strong>35%</strong>【测算】</td>
+</tr>
+</tbody>
+</table>
+<p><strong>关键限定</strong>：首年 ROE 主要来自收购价差的一次性兑现；常态年（无交易）租赁通道 ROE 仅 0.3%–1%【测算】。<strong>若价格继续下行，二次销售通道价差收窄甚至亏损（7 折收、跌至 8 折卖则毛利转负）——折扣纪律（≤7 折收）与处置节奏（价格确认触底前 ≤30% 权重）是 ROE 的生命线</strong>。二次销售遇跌转保租房保底（出租兜底）是缓释机制。</p>
+<h3>2.4 B2B 集体宿舍（京东/美团）对现金流的贡献【估算】</h3>
+<ul>
+<li>南京物流/制造业基层月薪约 6,000–9,000 元，租金支出比 20%–25% → 人均租金承载 1,200–2,200 元/月</li>
+<li>集体宿舍床位 500–800 元/床/月、4–6 人/间 → 每间 70–94㎡ 月租金 2,000–4,800 元，<strong>高于散租 1,990 元/套均</strong>，且企业长租约（1–3 年）锁定出租率 ≥90%、收缴以企业信用背书</li>
+<li>B2B 通道可提升收储资产整体租金收益 10%–30%【估算】，并显著降低空置波动</li>
+</ul>
+<hr>
+<h2>三、口径与局限</h2>
+<ol>
+<li>区级数据为市级指标按权重拆分的示意分布，非测绘级精度；江北新区跨浦口/六合，以两区口径近似。</li>
+<li>法拍房量级为【估算】（公开经验占比 3%–6%），待补配 BEIKE_MCP_API_KEY 后以贝壳房源检索核验。</li>
+<li>法拍房税费（增值税/个税/契税/历史欠费）、清场交付、产权瑕疵、租赁权对抗等成本未计入初步测算，专家研判稿中由风险侧补充。</li>
+<li>二次销售毛利率含翻新成本估算（7 万/套），不含交易税费；实际以税务口径为准。</li>
+</ol>
+</body>
+</html>

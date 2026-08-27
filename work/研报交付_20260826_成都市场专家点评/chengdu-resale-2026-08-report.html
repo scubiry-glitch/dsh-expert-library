@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成都二手房市场月度深度研判 · 2026年8月 · 智见点评</title>
+<style>
+/* ============ finesse-ui · product register · 贝壳蓝金 ============ */
+:root{
+  /* substrate — cool slate tinted toward Beike blue */
+  --page:#eef2f8;  --bg:#ffffff;  --panel-2:#f3f6fb;  --panel-3:#e9eef7;
+  --border:rgba(12,32,64,.08);  --border-2:rgba(12,32,64,.13);
+  /* ink */
+  --ink-1:#0d1c31;  --ink-2:#33455e;  --ink-3:#5f7088;
+  /* brand: Beike blue + gold */
+  --accent:#0069b4;  --accent-2:#c19a3b;  --accent-soft:rgba(0,105,180,.10);
+  --gold-soft:rgba(193,154,59,.14);  --on-accent:#ffffff;  --on-gold:#4a3a0e;
+  --glow:rgba(0,105,180,.30);
+  /* semantic — functional, not identity */
+  --up:#1e7a46;  --down:#c0453c;  --warn:#b0771a;
+  --up-soft:rgba(30,122,70,.10);  --down-soft:rgba(192,69,60,.10);
+  /* elevation — tinted toward ink */
+  --shadow:0 1px 3px rgba(13,34,64,.06);
+  --shadow-lg:0 40px 90px -50px rgba(13,34,64,.38);
+  --r:18px;  --r-sm:12px;  --r-lg:30px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--page);
+  color:var(--ink-2);
+  font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+/* ============ floating report shell ============ */
+.shell{
+  max-width:1120px; margin:26px auto 40px;
+  background:var(--bg);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+  overflow:hidden;
+  position:relative;
+}
+.shell::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(420px 240px at 92% -8%, rgba(0,105,180,.10), transparent 62%);
+}
+.pad{padding:34px 44px 30px}
+/* ============ type ============ */
+h1,h2,h3,h4{color:var(--ink-1); font-weight:700; text-wrap:balance}
+h1{font-family:"Noto Serif CJK SC","Songti SC",serif; font-size:30px; line-height:1.35; letter-spacing:.01em}
+h2{font-size:19px; line-height:1.4; letter-spacing:.005em}
+h3{font-size:14.5px; line-height:1.5}
+p{text-wrap:pretty}
+.lede{font-size:15.5px; line-height:1.85}
+.tnum{font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+.small{font-size:12px; color:var(--ink-3)}
+.micro{font-size:11px; letter-spacing:.06em; color:var(--ink-3); font-weight:600}
+/* ============ header ============ */
+.masthead{border-bottom:1px solid var(--border); padding:36px 44px 26px; position:relative}
+.masthead::after{
+  content:""; position:absolute; left:44px; right:44px; bottom:-1px; height:2px;
+  background:linear-gradient(90deg, var(--accent) 0%, var(--accent) 34%, var(--accent-2) 100%);
+  opacity:.85; border-radius:2px;
+}
+.brand-row{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+.brand-mark{
+  width:34px; height:34px; border-radius:10px; background:var(--accent);
+  display:flex; align-items:center; justify-content:center; color:#fff;
+  font-weight:800; font-size:17px; letter-spacing:.02em;
+  box-shadow:0 1px 3px rgba(0,105,180,.4);
+}
+.brand-name{font-size:13px; font-weight:700; color:var(--ink-1)}
+.brand-sub{font-size:11.5px; color:var(--ink-3)}
+.title-row{margin-bottom:10px}
+.kicker{display:inline-flex; align-items:center; gap:8px; margin-bottom:10px}
+.kicker .dot{width:7px; height:7px; border-radius:50%; background:var(--accent-2)}
+.meta-line{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:14px; font-size:12.5px; color:var(--ink-3)}
+.meta-line b{color:var(--ink-2); font-weight:600}
+/* chips */
+.chip{
+  display:inline-flex; align-items:center; gap:5px;
+  font-size:11.5px; font-weight:600; line-height:1; padding:5px 9px; border-radius:999px;
+  background:var(--panel-2); color:var(--ink-2); border:1px solid var(--border);
+}
+.chip.gold{background:var(--gold-soft); color:var(--on-gold); border-color:rgba(193,154,59,.28)}
+.chip.blue{background:var(--accent-soft); color:var(--accent); border-color:rgba(0,105,180,.22)}
+.chip.down{background:var(--down-soft); color:var(--down); border-color:rgba(192,69,60,.22)}
+.chip.up{background:var(--up-soft); color:var(--up); border-color:rgba(30,122,70,.22)}
+/* keynote */
+.keynote{
+  margin-top:22px; border-radius:var(--r); padding:20px 24px;
+  background:linear-gradient(135deg, rgba(0,105,180,.07), rgba(193,154,59,.10));
+  border:1px solid rgba(0,105,180,.16);
+  display:flex; gap:16px; align-items:flex-start;
+}
+.keynote .q{
+  flex:0 0 auto; width:34px; height:34px; border-radius:10px; background:var(--accent);
+  color:#fff; font-weight:800; font-size:16px; display:flex; align-items:center; justify-content:center;
+}
+.keynote .txt{font-size:16px; line-height:1.9; color:var(--ink-1); font-weight:600}
+.keynote .txt .hl{color:var(--accent)}
+.keynote .src{margin-top:6px; font-size:11.5px; color:var(--ink-3)}
+/* ============ sections ============ */
+section{padding:30px 44px; border-bottom:1px solid var(--border); break-inside:auto}
+section:last-of-type{border-bottom:none}
+.sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:6px}
+.sec-no{
+  font-size:12px; font-weight:800; color:var(--accent); letter-spacing:.08em;
+  border:1px solid rgba(0,105,180,.3); border-radius:7px; padding:3px 7px; background:var(--accent-soft);
+}
+.sec-head h2{flex:1}
+.sec-note{font-size:12px; color:var(--ink-3); margin-bottom:16px}
+/* ============ KPI band ============ */
+.kpis{display:flex; flex-wrap:wrap; gap:12px; margin:18px 0 4px}
+.kpi{
+  flex:1 1 150px; min-width:150px;
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:14px 16px 12px; position:relative; overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.kpi.hero{
+  flex:1 1 230px; min-width:230px; background:linear-gradient(150deg,#06294d,#0a3a6b);
+  border-color:transparent; color:#dbe7f5;
+}
+.kpi.hero::after{
+  content:""; position:absolute; right:-30px; top:-30px; width:110px; height:110px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,255,255,.14), transparent 65%);
+}
+.kpi .lbl{font-size:11.5px; color:var(--ink-3); font-weight:600; display:flex; align-items:center; gap:6px}
+.kpi.hero .lbl{color:#9fc3e6}
+.kpi .val{font-size:25px; font-weight:800; color:var(--ink-1); margin-top:4px; line-height:1.2}
+.kpi.hero .val{color:#fff}
+.kpi .val .unit{font-size:12.5px; font-weight:600; color:var(--ink-3); margin-left:3px}
+.kpi.hero .val .unit{color:#b8d3ec}
+.kpi .delta{font-size:11.5px; margin-top:5px; font-weight:600; display:flex; align-items:center; gap:5px; flex-wrap:wrap}
+.kpi .src{margin-top:4px; font-size:10.5px; color:var(--ink-3)}
+.kpi.hero .src{color:#8fb4d9}
+.arrow-up{color:var(--up)} .arrow-down{color:var(--down)}
+.kpi.hero .arrow-up{color:#7fd4a4} .kpi.hero .arrow-down{color:#ff9c94}
+/* ============ cards / two-col ============ */
+.grid2{display:flex; gap:14px; flex-wrap:wrap}
+.card{
+  flex:1 1 320px; min-width:300px;
+  border:1px solid var(--border); border-radius:var(--r); padding:18px 20px;
+  background:var(--bg); box-shadow:var(--shadow); break-inside:avoid;
+}
+.card h3{display:flex; align-items:center; gap:8px; margin-bottom:8px}
+.card h3 .tick{width:8px; height:8px; border-radius:2px; background:var(--accent-2); flex:0 0 auto}
+.card p{font-size:13.5px; color:var(--ink-2); margin-bottom:6px}
+.datalist{margin-top:10px}
+.dl-row{display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:7px 0; border-bottom:1px dashed rgba(12,32,64,.10); font-size:13px}
+.dl-row:last-child{border-bottom:none}
+.dl-row .k{color:var(--ink-3)}
+.dl-row .v{font-weight:700; color:var(--ink-1); white-space:nowrap}
+.dl-row .v small{font-weight:500; color:var(--ink-3); font-size:11px}
+.hl-num{color:var(--accent); font-weight:800}
+.gold-num{color:#8a6a1f; font-weight:800}
+.down-num{color:var(--down); font-weight:700}
+.up-num{color:var(--up); font-weight:700}
+/* verdict row */
+.verdict{
+  border-radius:var(--r-sm); padding:13px 16px; margin:8px 0;
+  background:var(--panel-2); border:1px solid var(--border);
+  font-size:13.5px;
+}
+.verdict b{color:var(--ink-1)}
+.verdict .tag{float:right; font-size:10.5px; color:var(--ink-3); margin-left:10px; font-weight:600}
+/* ============ charts (hand-built, data-driven) ============ */
+.chart-wrap{margin:14px 0 4px}
+.chart-title{font-size:12.5px; font-weight:700; color:var(--ink-1); margin-bottom:10px; display:flex; justify-content:space-between; align-items:baseline}
+.chart-title .note{font-weight:500; font-size:11px; color:var(--ink-3)}
+/* grouped bars (两段式价格收缩) */
+.dual-bars{display:flex; gap:26px; flex-wrap:wrap}
+.bar-group{flex:1 1 280px; min-width:260px}
+.bar-group .gtitle{font-size:12px; color:var(--ink-3); font-weight:600; margin-bottom:10px}
+.bg-row{display:flex; align-items:stretch; gap:26px; height:172px; border-bottom:1px solid var(--border-2); padding:0 4px}
+.bg-col{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; gap:7px; min-width:0}
+.bg-col .bar{width:min(56px,64%); border-radius:7px 7px 0 0; position:relative}
+.bg-col .bar.b1{background:linear-gradient(180deg,var(--accent),#00579a)}
+.bg-col .bar.b2{background:linear-gradient(180deg,var(--accent-2),#a37f2c)}
+.bg-col .bar .pct{position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-size:11px; font-weight:800; color:var(--ink-1)}
+.bg-col .lab{font-size:11px; color:var(--ink-3); text-align:center; line-height:1.4}
+.bg-col .lab b{display:block; color:var(--ink-1); font-size:12px}
+.bg-legend{display:flex; gap:16px; margin-top:10px; font-size:11.5px; color:var(--ink-3)}
+.sw{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px}
+/* horizontal ranking bars */
+.hbars{margin-top:8px}
+.hb-row{display:flex; align-items:center; gap:10px; margin-bottom:7px; font-size:12.5px}
+.hb-row .hb-lab{flex:0 0 92px; text-align:right; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.hb-row .hb-track{flex:1; height:16px; background:var(--panel-2); border-radius:5px; overflow:hidden; position:relative}
+.hb-row .hb-fill{height:100%; border-radius:5px; background:linear-gradient(90deg,#0069b4,#2f8fd8); min-width:2px}
+.hb-row.gold .hb-fill{background:linear-gradient(90deg,#a37f2c,#d4b25f)}
+.hb-row.avg .hb-fill{background:repeating-linear-gradient(45deg,#5f7088 0 5px,transparent 5px 9px)}
+.hb-row .hb-val{flex:0 0 74px; text-align:right; font-weight:700; color:var(--ink-1)}
+.hb-row .hb-delta{flex:0 0 56px; text-align:right; font-size:11px; color:var(--ink-3)}
+/* range band chart (流量比/去化) */
+.range-chart{margin:12px 0 6px}
+.rc-track{position:relative; height:14px; background:var(--panel-2); border-radius:7px; margin:26px 0 8px}
+.rc-zone{position:absolute; top:0; bottom:0; border-radius:7px}
+.rc-zone.warm{background:rgba(193,154,59,.28)}
+.rc-zone.hot{background:rgba(30,122,70,.18)}
+.rc-zone.cold{background:rgba(192,69,60,.16)}
+.rc-band{position:absolute; top:-4px; bottom:-4px; border:1.5px dashed rgba(12,32,64,.45); border-radius:8px}
+.rc-marker{position:absolute; top:-9px; width:2.5px; height:32px; background:var(--ink-1); border-radius:2px}
+.rc-marker::after{
+  content:""; position:absolute; top:-7px; left:50%; transform:translateX(-50%);
+  width:12px; height:12px; border-radius:50%; background:var(--accent); border:2px solid #fff;
+  box-shadow:0 1px 3px rgba(0,105,180,.5);
+}
+.rc-labels{display:flex; justify-content:space-between; font-size:10.5px; color:var(--ink-3); margin-top:4px}
+.rc-caption{font-size:11.5px; color:var(--ink-3); margin-top:8px}
+/* donut pair */
+.donuts{display:flex; gap:26px; flex-wrap:wrap; margin-top:6px}
+.donut-box{flex:1 1 150px; max-width:210px; text-align:center}
+.donut-box .dtitle{font-size:12px; color:var(--ink-3); font-weight:600; margin-bottom:4px}
+.donut{position:relative; width:120px; height:120px; margin:0 auto}
+.donut .center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center}
+.donut .center b{font-size:22px; color:var(--ink-1); line-height:1.1}
+.donut .center span{font-size:10.5px; color:var(--ink-3)}
+/* ============ tables ============ */
+.tbl-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:var(--r-sm); margin:12px 0}
+table{border-collapse:collapse; width:100%; font-size:12.5px}
+th{background:var(--panel-2); color:var(--ink-1); font-weight:700; text-align:left; padding:9px 12px; white-space:nowrap; border-bottom:1px solid var(--border-2)}
+td{padding:8px 12px; border-bottom:1px solid var(--border); color:var(--ink-2)}
+tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums}
+td b{color:var(--ink-1)}
+tr.hl td{background:var(--accent-soft)}
+tr.goldhl td{background:var(--gold-soft)}
+.mini-bar{display:inline-block; height:7px; border-radius:3px; background:var(--accent); vertical-align:middle; margin-right:6px; min-width:2px}
+/* prediction */
+.pred{position:relative; border:1px solid rgba(193,154,59,.4); border-radius:var(--r); padding:16px 18px 14px; margin:10px 0; background:linear-gradient(135deg,rgba(193,154,59,.08),rgba(193,154,59,.03))}
+.pred .flag{position:absolute; top:-9px; left:16px; background:var(--accent-2); color:var(--on-gold); font-size:10.5px; font-weight:800; letter-spacing:.05em; padding:2px 8px; border-radius:5px}
+.pred ul{list-style:none; margin-top:8px}
+.pred li{font-size:13px; padding:5px 0 5px 18px; position:relative; color:var(--ink-2)}
+.pred li::before{content:"◆"; position:absolute; left:0; top:5px; font-size:9px; color:var(--accent-2)}
+.pred li b{color:var(--ink-1)}
+/* risk */
+.risk{border:1px solid rgba(192,69,60,.30); border-radius:var(--r-sm); padding:13px 16px; margin:8px 0; background:rgba(192,69,60,.05)}
+.risk .rt{font-size:12px; font-weight:800; color:var(--down); margin-bottom:4px}
+/* appendix */
+.appendix{background:var(--panel-2); border-top:1px solid var(--border)}
+.appendix h3{font-size:13px; margin-bottom:6px}
+.appendix p,.appendix li{font-size:12px; color:var(--ink-3); line-height:1.8}
+.appendix ul{list-style:none}
+.appendix li{padding-left:14px; position:relative}
+.appendix li::before{content:"·"; position:absolute; left:2px; color:var(--accent); font-weight:800}
+/* footer bar (screen) */
+.shell-footer{
+  padding:16px 44px; border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;
+  font-size:11.5px; color:var(--ink-3); background:var(--bg);
+}
+.shell-footer .left{display:flex; align-items:center; gap:10px}
+.shell-footer .right{font-variant-numeric:tabular-nums}
+/* expert tag */
+.expert{display:inline-block; font-size:10.5px; font-weight:700; color:var(--accent); background:var(--accent-soft); border-radius:5px; padding:1px 6px; margin-left:6px; vertical-align:1px}
+/* ============ print: A4 ============ */
+@media print{
+  @page{
+    size:A4; margin:15mm 13mm 17mm;
+    @bottom-center{ content:"98wiki ｜ 智见 / 行业研究报告"; font-size:8.5pt; color:#5f7088; font-family:"Noto Sans CJK SC",sans-serif; }
+    @bottom-right{ content:counter(page) " / " counter(pages); font-size:8.5pt; color:#5f7088; }
+  }
+  body{background:#fff; font-size:11.5px}
+  .shell{max-width:none; margin:0; border:none; box-shadow:none; border-radius:0}
+  .pad{padding:0}
+  .masthead{padding:0 0 16px}
+  .masthead::after{left:0; right:0}
+  section{padding:16px 0; break-inside:auto}
+  .card{break-inside:avoid; box-shadow:none}
+  .kpi{box-shadow:none}
+  .shell-footer{border-top:1px solid var(--border); padding:8px 0}
+  .avoid-break{break-inside:avoid}
+  *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
+/* ============ motion (screen only, feedback-grade) ============ */
+@media (prefers-reduced-motion: no-preference){
+  .kpi{transition:transform .18s ease-out, box-shadow .18s ease-out}
+  .kpi:hover{transform:translateY(-2px); box-shadow:0 8px 20px -8px rgba(13,34,64,.18)}
+  .bar{animation:grow .8s cubic-bezier(.16,1,.3,1) both; transform-origin:bottom}
+  .hb-fill{animation:growx .9s cubic-bezier(.16,1,.3,1) both; transform-origin:left}
+  @keyframes grow{from{transform:scaleY(0)}}
+  @keyframes growx{from{transform:scaleX(0)}}
+  .kpi .val{animation:fade .7s ease-out both}
+  @keyframes fade{from{opacity:0}}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ============ 报头 ============ -->
+  <header class="masthead">
+    <div class="brand-row">
+      <div class="brand-mark">智</div>
+      <div>
+        <div class="brand-name">智见点评 · 城市月度市场深度研判</div>
+        <div class="brand-sub">Zhijian Monthly Market Brief · 成都站</div>
+      </div>
+      <div style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap">
+        <span class="chip blue">讨论稿 · Discussion</span>
+        <span class="chip gold">框架 五维递进</span>
+      </div>
+    </div>
+    <div class="title-row">
+      <div class="kicker"><span class="dot"></span><span class="micro">成都 · 二手房市场 · 月度深度研判</span></div>
+      <h1>成都二手房市场月度深度研判</h1>
+      <div style="margin-top:6px; font-size:15px; color:var(--ink-3)">2026 年 8 月市场观察 · 成交创两年次低 · 筑底未完成</div>
+    </div>
+    <div class="meta-line">
+      <span>数据时段 <b>2026-08</b>（区级截面 <b>2026-07</b>；租赁 <b>2026-07</b>）</span>
+      <span>数据来源 <b>政研通 zyt</b> · 贝壳研究院 / 贝壳平台 · analytics-v1.1</span>
+      <span>口径 <b>internal 绝对量</b> · 成交价 = 贝壳研究院成交价（非挂牌价）</span>
+    </div>
+    <div class="keynote avoid-break">
+      <div class="q">“</div>
+      <div>
+        <div class="txt">成都二手房仍处<b>寻底筑底期</b>：8 月量价齐跌、成交创两年次低，<span class="hl">未见企稳信号</span>；年内低位磨底、全面恢复仍需时间。</div>
+        <div class="src">一句话定性 · 融合基调 keynote（行业研究·H 定调，D/W/T/X 校准）</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ KPI 总览 ============ -->
+  <section>
+    <div class="sec-head"><span class="sec-no">KPI</span><h2>核心指标总览 · 2026-08</h2></div>
+    <div class="sec-note">城市级绝对量口径；同比（yoy）对 2025-08，环比（mom）对 2026-07；带看/去化周期为 2026-07 数据</div>
+    <div class="kpis">
+      <div class="kpi hero">
+        <div class="lbl">二手成交套数</div>
+        <div class="val tnum">4,507<span class="unit">套</span></div>
+        <div class="delta"><span class="arrow-down">▼</span> yoy <span class="tnum">-41.5%</span> ｜ mom <span class="tnum">-42.0%</span></div>
+        <div class="src">两年次低 · 仅高于春节月</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">成交均价</div>
+        <div class="val tnum">11,756<span class="unit">元/㎡</span></div>
+        <div class="delta"><span class="arrow-down">▼</span> yoy <span class="tnum">-9.4%</span></div>
+        <div class="src">较 2024-09 高点累计 -17.3%</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">成交金额</div>
+        <div class="val tnum">49.8<span class="unit">亿元</span></div>
+        <div class="delta"><span class="arrow-down">▼</span> yoy <span class="tnum">-46.9%</span></div>
+        <div class="src">量能收缩快于价格</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">新增挂牌</div>
+        <div class="val tnum">18,945<span class="unit">套</span></div>
+        <div class="delta"><span class="arrow-down">▼</span> yoy <span class="tnum">-46.7%</span></div>
+        <div class="src">业主冻结供给 · 非抛售</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">库存总量</div>
+        <div class="val tnum">301,672<span class="unit">套</span></div>
+        <div class="delta"><span class="arrow-up">▲</span> yoy <span class="tnum">+14.1%</span></div>
+        <div class="src">2025-08 为 264,463 · 被动累积</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">库存挂牌均价</div>
+        <div class="val tnum">16,587<span class="unit">元/㎡</span></div>
+        <div class="delta"><span class="arrow-down">▼</span> yoy <span class="tnum">-3.2%</span></div>
+        <div class="src">挂牌价跌幅小于成交价</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">带看客户</div>
+        <div class="val tnum">172,143<span class="unit">组</span></div>
+        <div class="delta"><span class="arrow-down">▼</span> yoy <span class="tnum">-27.0%</span> <span class="chip">2026-07</span></div>
+        <div class="src">转化率 ≈4.5%（自算，稳定）</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">去化周期</div>
+        <div class="val tnum">6.8<span class="unit">月</span></div>
+        <div class="delta">▲ yoy <span class="tnum">+9.7%</span> <span class="chip">温档 6-12</span></div>
+        <div class="src">成交周期口径 · 2026-07</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">贝壳房价指数</div>
+        <div class="val tnum">81.1</div>
+        <div class="delta"><span class="arrow-down">▼</span> yoy <span class="tnum">-11.4%</span></div>
+        <div class="src">2018-11 = 100</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">景气指数</div>
+        <div class="val tnum">9</div>
+        <div class="delta"><span class="chip down">低迷档 &lt;20</span></div>
+        <div class="src">供需流量比 4.20（两年区间 2.05-4.89）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 01 核心结论 ============ -->
+  <section>
+    <div class="sec-head"><span class="sec-no">01</span><h2>核心结论：量价双收缩，筑底未完成</h2></div>
+    <div class="sec-note">融合五专家研判（行业研究·D/H/W/T/X）后的一致收敛判断</div>
+    <div class="grid2">
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>量能：观望盘踞，非需求消失</h3>
+        <p>8 月成交 <b class="hl-num">4,507</b> 套、同比 <b class="down-num">-41.5%</b>、环比 <b class="down-num">-42.0%</b>，为两年次低仅高于春节月；成交金额 49.8 亿、同比 <b class="down-num">-46.9%</b>，<b>量价双收缩</b>，已非典型“以价换量”。带看同比 -27.0% 而转化率 <b class="gold-num">4.5%</b> 稳定（自算），需求未消失而是观望盘踞；新增挂牌同比 -46.7% 属<b>业主冻结供给非抛售</b>。<span class="expert">D</span></p>
+      </div>
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>价格：纯价格收缩，非结构切换</h3>
+        <p>成交均价 <b class="hl-num">11,756</b> 元/㎡、同比 <b class="down-num">-9.4%</b>，较 2024-09 的 14,211 元/㎡累计 <b class="down-num">-17.3%</b>；贝壳房价指数 <b class="hl-num">81.1</b>（2018-11=100）同比 -11.4%，未见沪连涨、深转涨式核心城市企稳信号。套均面积 94 ㎡ 锁定 20 个月、套均总价 <b class="down-num">-9.3%</b> 与单价跌幅一致，<b>纯价格收缩非结构切换</b>，回归 100-120 万主力总价段，是底部信号最扎实的一条。<span class="expert">D</span></p>
+      </div>
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>供给：库存被动累积，远郊断层</h3>
+        <p>库存 <b class="hl-num">301,672</b> 套、同比 <b class="up-num">+14.1%</b> 被动累积；供需流量比 <b class="gold-num">4.20</b> 逼近两年区间（2.05-4.89）上沿；库存 ÷ 月成交约 <b class="gold-num">67</b> 个月（自算参考）。远郊挂牌份额 7.1% 为成交 3.5% 的两倍，<b>流动性断层</b>；成交向主城与高新、天府集中。<span class="expert">W</span></p>
+      </div>
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>趋势：年内磨底，三条件确认</h3>
+        <p>研判（推断）：年内月成交 <b>4,500-6,000 套</b>低位震荡、均价阴跌斜率放缓；筑底完成需<b>库存增速转负、供需流量比回落至 3 以下、价格环比止跌</b>三项确认；乐观情形 2027 年一季度前后企稳。成都月成交绝对值高于京沪（2026-07 为 7,764 vs 4,932 / 2,521 套），<b>市场纵深未塌</b>。<span class="expert">W</span><span class="expert">X</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 02 量能 ============ -->
+  <section>
+    <div class="sec-head"><span class="sec-no">02</span><h2>量能拆解：供需同向收缩，流量比逼近上沿</h2></div>
+    <div class="grid2">
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>供需流量比（新增挂牌 ÷ 成交）</h3>
+        <div class="chart-wrap">
+          <div class="chart-title">当前 <b class="gold-num">4.20</b> · 两年区间 2.05 - 4.89 <span class="note">区间上沿逼近</span></div>
+          <div class="range-chart">
+            <div class="rc-track">
+              <div class="rc-zone warm" style="left:34.2%; width:47.3%"></div>
+              <div class="rc-marker" style="left:70%"></div>
+            </div>
+            <div class="rc-labels"><span>2.05（两年最低）</span><span>4.20（当前）</span><span>4.89（两年最高）</span></div>
+          </div>
+          <p class="small">流量比 = 新增挂牌 ÷ 成交，衡量供需摩擦；4.20 表明供给流量收缩幅度仍小于成交收缩，库存被动累积持续。</p>
+        </div>
+      </div>
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>去化周期档位</h3>
+        <div class="chart-wrap">
+          <div class="chart-title">当前 <b class="gold-num">6.8 月</b>（2026-07，yoy +9.7%）<span class="note">温档</span></div>
+          <div class="range-chart">
+            <div class="rc-track">
+              <div class="rc-zone hot" style="left:0; width:25%"></div>
+              <div class="rc-zone warm" style="left:25%; width:25%"></div>
+              <div class="rc-zone cold" style="left:50%; width:50%"></div>
+              <div class="rc-marker" style="left:28.3%"></div>
+            </div>
+            <div class="rc-labels"><span>热 &lt;6 月</span><span>温 6-12 月</span><span>冷 12-24 月</span></div>
+          </div>
+          <p class="small">成交周期 6.8 月为流量口径；库存 ÷ 月成交约 67 月（自算参考，非官方口径），“有房卖不掉”的流动性困境已成。<span class="expert">T</span></p>
+        </div>
+      </div>
+    </div>
+    <div class="verdict avoid-break"><b>读数：</b>带看转化率 4.5% 稳定说明看房意愿仍在，观望盘踞而非需求消失；新增挂牌 -46.7% 与成交 -41.5% 同向收缩，业主选择冻结供给而非割肉抛售；但成交收缩快于供给收缩，库存被动累积 +14.1%。<span class="tag">行业研究·D ｜ 带看转化率为自算口径</span></div>
+  </section>
+
+  <!-- ============ 03 价格 ============ -->
+  <section>
+    <div class="sec-head"><span class="sec-no">03</span><h2>价格拆解：阴跌收敛，回归主力总价段</h2></div>
+    <div class="grid2">
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>两段式价格收缩（真实端点）</h3>
+        <div class="chart-wrap">
+          <div class="dual-bars">
+            <div class="bar-group">
+              <div class="gtitle">成交均价（元/㎡）· 累计 <b class="down-num">-17.3%</b></div>
+              <div class="bg-row">
+                <div class="bg-col">
+                  <div class="bar b1" style="height:150px"><span class="pct">14,211</span></div>
+                  <div class="lab"><b>2024-09 高点</b>起点</div>
+                </div>
+                <div class="bg-col">
+                  <div class="bar b2" style="height:124px"><span class="pct">11,756</span></div>
+                  <div class="lab"><b>2026-08 当前</b>-17.3%</div>
+                </div>
+              </div>
+            </div>
+            <div class="bar-group">
+              <div class="gtitle">套均总价（万元）· 累计 <b class="down-num">-9.3%</b></div>
+              <div class="bg-row">
+                <div class="bg-col">
+                  <div class="bar b1" style="height:150px"><span class="pct">121.8</span></div>
+                  <div class="lab"><b>2025-09</b>起点</div>
+                </div>
+                <div class="bg-col">
+                  <div class="bar b2" style="height:136px"><span class="pct">110.5</span></div>
+                  <div class="lab"><b>2026-08 当前</b>-9.3%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="small" style="margin-top:8px">柱高 = 数值 / 组内最大值，真实几何驱动；两组跌幅与单价跌幅一致 → 纯价格收缩，非面积结构切换。</p>
+        </div>
+      </div>
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>面积锁定与总价回归</h3>
+        <div class="datalist">
+          <div class="dl-row"><span class="k">套均成交面积（20 个月）</span><span class="v tnum">93-96 ㎡ <small>94.6 → 94.0，无迁移</small></span></div>
+          <div class="dl-row"><span class="k">主力总价段</span><span class="v tnum">100-120 万 <small>1.1-1.2 万/㎡ × 94㎡ 闭合</small></span></div>
+          <div class="dl-row"><span class="k">贝壳房价指数</span><span class="v tnum">81.1 <small>2018-11=100 · yoy -11.4%</small></span></div>
+          <div class="dl-row"><span class="k">库存挂牌均价</span><span class="v tnum">16,587 元/㎡ <small>yoy -3.2%</small></span></div>
+          <div class="dl-row"><span class="k">成交价 vs 挂牌价</span><span class="v">折价扩大 <small>成交跌幅 9.4% &gt; 挂牌跌幅 3.2%</small></span></div>
+        </div>
+        <p class="small" style="margin-top:8px">面积段为派生维度（Q-DATA-08 暂缓、客户户籍未交付）；套均总价 121.8 万 → 110.5 万与单价跌幅一致，回归 100-120 万主力总价段是底部信号最扎实的一条。<span class="expert">D</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 城区 ============ -->
+  <section>
+    <div class="sec-head"><span class="sec-no">04</span><h2>城区结构：价格梯度 4.0 倍，成交向主城与高新天府集中</h2></div>
+    <div class="sec-note">区级成交均价为市级按权重拆分示意口径（2026-07 截面）；成交份额为各区成交 ÷ 全市成交</div>
+    <div class="grid2">
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>区县价格梯度（Top 10，元/㎡）</h3>
+        <div class="chart-wrap">
+          <div class="chart-title">全域均值 <b class="hl-num">11,756</b> · 梯度 <b class="gold-num">4.0 倍</b>（高新/金堂）<span class="note">CV 41.8% · P75/P25 = 2.21</span></div>
+          <div class="hbars">
+            <div class="hb-row"><span class="hb-lab">高新区</span><div class="hb-track"><div class="hb-fill" style="width:100%"></div></div><span class="hb-val tnum">19,928</span></div>
+            <div class="hb-row"><span class="hb-lab">锦江区</span><div class="hb-track"><div class="hb-fill" style="width:88.7%"></div></div><span class="hb-val tnum">17,686</span></div>
+            <div class="hb-row"><span class="hb-lab">青羊区</span><div class="hb-track"><div class="hb-fill" style="width:81.9%"></div></div><span class="hb-val tnum">16,324</span></div>
+            <div class="hb-row"><span class="hb-lab">武侯区</span><div class="hb-track"><div class="hb-fill" style="width:75.4%"></div></div><span class="hb-val tnum">15,030</span></div>
+            <div class="hb-row"><span class="hb-lab">成华区</span><div class="hb-track"><div class="hb-fill" style="width:69.6%"></div></div><span class="hb-val tnum">13,863</span></div>
+            <div class="hb-row"><span class="hb-lab">天府新区</span><div class="hb-track"><div class="hb-fill" style="width:66.2%"></div></div><span class="hb-val tnum">13,183</span></div>
+            <div class="hb-row"><span class="hb-lab">金牛区</span><div class="hb-track"><div class="hb-fill" style="width:65.6%"></div></div><span class="hb-val tnum">13,066</span></div>
+            <div class="hb-row"><span class="hb-lab">双流区</span><div class="hb-track"><div class="hb-fill" style="width:58.0%"></div></div><span class="hb-val tnum">11,562</span></div>
+            <div class="hb-row"><span class="hb-lab">龙泉驿区</span><div class="hb-track"><div class="hb-fill" style="width:50.5%"></div></div><span class="hb-val tnum">10,064</span></div>
+            <div class="hb-row"><span class="hb-lab">高新西区</span><div class="hb-track"><div class="hb-fill" style="width:49.9%"></div></div><span class="hb-val tnum">9,934</span></div>
+            <div class="hb-row avg"><span class="hb-lab">全域均值</span><div class="hb-track"><div class="hb-fill" style="width:59.0%"></div></div><span class="hb-val tnum">11,756</span></div>
+          </div>
+          <p class="small" style="margin-top:6px">柱宽 = 数值 / 最高值 19,928（真实几何）；远郊梯队：郫都 9,266 / 温江 8,942 / 新都 8,545 / 都江堰 6,717 / 新津 6,278 / 简阳 6,246 / 崇州 5,806 / 彭州 5,683 / 青白江 5,481 / 金堂 4,970。</p>
+        </div>
+      </div>
+      <div style="flex:1 1 300px; min-width:290px; display:flex; flex-direction:column; gap:14px">
+        <div class="card avoid-break">
+          <h3><span class="tick"></span>圈层份额：成交 vs 新增挂牌</h3>
+          <div class="chart-wrap">
+            <div class="hbars">
+              <div class="hb-row"><span class="hb-lab">主城五区</span><div class="hb-track"><div class="hb-fill" style="width:100%"></div></div><span class="hb-val tnum">43% / 40%</span></div>
+              <div class="hb-row"><span class="hb-lab">高新+天府</span><div class="hb-track"><div class="hb-fill gold" style="width:37.2%"></div></div><span class="hb-val tnum">16% / 16%</span></div>
+              <div class="hb-row"><span class="hb-lab">近郊六区</span><div class="hb-track"><div class="hb-fill" style="width:86%"></div></div><span class="hb-val tnum">37% / 37%</span></div>
+              <div class="hb-row"><span class="hb-lab">远郊县市</span><div class="hb-track"><div class="hb-fill gold" style="width:16.5%"></div></div><span class="hb-val tnum">3.5% / 7.1%</span></div>
+            </div>
+            <div class="rc-caption"><span class="sw" style="background:var(--accent)"></span>成交份额 ｜ <span class="sw" style="background:var(--accent-2)"></span>新增挂牌份额</div>
+            <p class="small" style="margin-top:6px">远郊挂牌份额（7.1%）= 成交份额（3.5%）两倍 → <b>流动性断层</b>；主城五区与高新天府承接成交主力。<span class="expert">W</span></p>
+          </div>
+        </div>
+        <div class="card avoid-break">
+          <h3><span class="tick"></span>成交集中度（2026-07 截面）</h3>
+          <div class="donuts">
+            <div class="donut-box">
+              <div class="dtitle">CR4 头部四区</div>
+              <div class="donut">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#e9eef7" stroke-width="14"/>
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#0069b4" stroke-width="14" stroke-linecap="round"
+                    stroke-dasharray="102.6 276.5" transform="rotate(-90 60 60)"/>
+                </svg>
+                <div class="center"><b class="tnum">37.1%</b><span>青羊532 · 成华454<br>高新427 · 龙泉驿425</span></div>
+              </div>
+            </div>
+            <div class="donut-box">
+              <div class="dtitle">CR8 头部八区</div>
+              <div class="donut">
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#e9eef7" stroke-width="14"/>
+                  <circle cx="60" cy="60" r="44" fill="none" stroke="#c19a3b" stroke-width="14" stroke-linecap="round"
+                    stroke-dasharray="187.8 276.5" transform="rotate(-90 60 60)"/>
+                </svg>
+                <div class="center"><b class="tnum">67.9%</b><span>+ 天府389 · 锦江388<br>武侯372 · 金牛372</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tbl-wrap avoid-break">
+      <table>
+        <thead><tr><th>区县</th><th class="num">成交均价（元/㎡）</th><th class="num">成交套数</th><th class="num">占全市</th><th>区县</th><th class="num">成交均价（元/㎡）</th><th class="num">成交套数</th><th class="num">占全市</th></tr></thead>
+        <tbody>
+          <tr class="hl"><td><b>高新区</b></td><td class="num"><b>19,928</b></td><td class="num">427</td><td class="num">8.5%</td><td><b>青羊区</b></td><td class="num"><b>16,324</b></td><td class="num"><b>532</b></td><td class="num"><b>10.8%</b></td></tr>
+          <tr><td>锦江区</td><td class="num">17,686</td><td class="num">388</td><td class="num">7.7%</td><td>成华区</td><td class="num">13,863</td><td class="num">454</td><td class="num">9.0%</td></tr>
+          <tr><td>武侯区</td><td class="num">15,030</td><td class="num">372</td><td class="num">7.4%</td><td>天府新区</td><td class="num">13,183</td><td class="num">389</td><td class="num">7.7%</td></tr>
+          <tr><td>金牛区</td><td class="num">13,066</td><td class="num">372</td><td class="num">7.4%</td><td>双流区</td><td class="num">11,562</td><td class="num">306</td><td class="num">6.1%</td></tr>
+          <tr><td>龙泉驿区</td><td class="num">10,064</td><td class="num">425</td><td class="num">8.4%</td><td>高新西区</td><td class="num">9,934</td><td class="num">63</td><td class="num">1.3%</td></tr>
+          <tr><td>郫都区</td><td class="num">9,266</td><td class="num">364</td><td class="num">7.2%</td><td>温江区</td><td class="num">8,942</td><td class="num">367</td><td class="num">7.3%</td></tr>
+          <tr><td>新都区</td><td class="num">8,545</td><td class="num">315</td><td class="num">6.3%</td><td>都江堰市</td><td class="num">6,717</td><td class="num">48</td><td class="num">1.0%</td></tr>
+          <tr><td>新津区</td><td class="num">6,278</td><td class="num">22</td><td class="num">0.4%</td><td>简阳市</td><td class="num">6,246</td><td class="num">15</td><td class="num">0.3%</td></tr>
+          <tr><td>崇州市</td><td class="num">5,806</td><td class="num">14</td><td class="num">0.3%</td><td>彭州市</td><td class="num">5,683</td><td class="num">19</td><td class="num">0.4%</td></tr>
+          <tr><td>青白江区</td><td class="num">5,481</td><td class="num">48</td><td class="num">1.0%</td><td>金堂县</td><td class="num">4,970</td><td class="num">8</td><td class="num">0.2%</td></tr>
+          <tr class="goldhl"><td><b>全域合计</b></td><td class="num"><b>11,756</b></td><td class="num"><b>4,507*</b></td><td class="num">100%</td><td>蒲江 / 大邑</td><td class="num">—</td><td class="num">0 / 0</td><td class="num">0%</td></tr>
+        </tbody>
+      </table>
+      <div style="padding:8px 12px; font-size:11px; color:var(--ink-3)">* 城市级成交 4,507 套为 2026-08 官方口径；区级成交为 2026-07 截面示意拆分，两者不可直接加总。区级均价为示意口径。</div>
+    </div>
+  </section>
+
+  <!-- ============ 05 跨城对照 ============ -->
+  <section>
+    <div class="sec-head"><span class="sec-no">05</span><h2>跨城对照：量能绝对值高于京沪，跌幅更深</h2></div>
+    <div class="sec-note">2026-07 截面 · 政研通 zyt 统一口径 · 贝壳房价指数 2018-11 = 100</div>
+    <div class="tbl-wrap avoid-break">
+      <table>
+        <thead><tr><th>指标（2026-07）</th><th class="num">成都</th><th class="num">北京</th><th class="num">上海</th><th>读数</th></tr></thead>
+        <tbody>
+          <tr><td>二手成交（套）</td><td class="num"><b>7,764</b></td><td class="num">4,932</td><td class="num">2,521</td><td>成都绝对量居首，市场纵深未塌</td></tr>
+          <tr><td>成交均价（元/㎡）</td><td class="num"><b>11,756</b></td><td class="num">44,915</td><td class="num">47,111</td><td>价格绝对水平约为京沪 1/4</td></tr>
+          <tr><td>套均总价（万元）</td><td class="num"><b>110.5</b></td><td class="num">390</td><td class="num">371</td><td>总价门槛约为京沪 1/3</td></tr>
+          <tr><td>贝壳房价指数</td><td class="num"><b>81.1</b></td><td class="num">73.5</td><td class="num">80.3</td><td>京深已有连涨/转涨信号，成都未现</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="verdict avoid-break"><b>解读：</b>成都市场成交体量仍高于京沪，但价格跌幅更深（较 2024-09 高点累计 -17.3%），印证能级分化下强二线滞后于一线寻底；一线企稳信号（沪二手连涨、深 6 月转涨）尚未传导至成都。<span class="tag">行业研究·X ｜ 数据为 2026-07 截面</span></div>
+  </section>
+
+  <!-- ============ 06 租赁 ============ -->
+  <section>
+    <div class="sec-head"><span class="sec-no">06</span><h2>租赁市场：量升价微降，回报率低位徘徊</h2></div>
+    <div class="sec-note">至 2026-07 · 政研通 zyt 口径</div>
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">租赁成交</div><div class="val tnum">12,587<span class="unit">套</span></div><div class="delta"><span class="arrow-up">▲</span> yoy <span class="tnum">+6.8%</span></div><div class="src">与二手买卖收缩背离</div></div>
+      <div class="kpi"><div class="lbl">套均租金</div><div class="val tnum">2,468<span class="unit">元/月</span></div><div class="delta"><span class="arrow-down">▼</span> yoy <span class="tnum">-1.4%</span></div><div class="src">租金稳中微降</div></div>
+      <div class="kpi"><div class="lbl">租赁新增挂牌</div><div class="val tnum">25,567<span class="unit">套</span></div><div class="delta">▲ <span class="tnum">+1.3%</span></div><div class="src">供给微增</div></div>
+      <div class="kpi"><div class="lbl">租金回报率</div><div class="val tnum">2.4-2.6<span class="unit">%</span></div><div class="delta"><span class="chip gold">年租 ÷ 套均总价</span></div><div class="src">低位徘徊，观察上行信号</div></div>
+    </div>
+  </section>
+
+  <!-- ============ 07 趋势研判 ============ -->
+  <section>
+    <div class="sec-head"><span class="sec-no">07</span><h2>趋势研判与关注指标</h2></div>
+    <div class="pred avoid-break">
+      <span class="flag">研判推断</span>
+      <div style="font-size:13.5px; color:var(--ink-1); font-weight:700; margin-top:4px">年内基准路径（综合 W/X 研判）</div>
+      <ul>
+        <li>月成交 <b>4,500 - 6,000 套</b> 低位震荡，旺季弹性有限；均价阴跌斜率放缓，未见加速下行条件。</li>
+        <li>筑底完成三确认：<b>① 库存增速转负 ② 供需流量比回落至 3 以下 ③ 价格环比止跌</b>；三者齐备前维持“筑底期”基调。</li>
+        <li>乐观情形：<b>2027 年一季度前后</b>企稳；成都量能绝对值高于京沪，市场纵深未塌，为修复保留弹性。</li>
+      </ul>
+    </div>
+    <div class="grid2">
+      <div class="card avoid-break" style="border-color:rgba(192,69,60,.30)">
+        <h3><span class="tick" style="background:var(--down)"></span>不确定性 / 下修触发</h3>
+        <p>人才购房资格扩围（2026-03-20，全日制本科以上在蓉就业可申请）落地 <b>5 个月</b>，带看/成交未兑现；政策库仅 <b>1 条</b>在册，无增量政策则阴跌延续。<span class="expert">T</span></p>
+        <p style="margin-top:6px">若出现 <b>库存割肉挂牌、流量比突破 4.89、远郊断层蔓延至近郊</b> 任一情形，基调需下修至<b>二次探底</b>。<span class="expert">T</span></p>
+      </div>
+      <div class="card avoid-break">
+        <h3><span class="tick"></span>关注指标（下月观察清单）</h3>
+        <div class="datalist">
+          <div class="dl-row"><span class="k">贝壳房价指数环比</span><span class="v">跌幅收窄或转正</span></div>
+          <div class="dl-row"><span class="k">库存拐点</span><span class="v">同比增速转负</span></div>
+          <div class="dl-row"><span class="k">供需流量比</span><span class="v">回落至 3 以下</span></div>
+          <div class="dl-row"><span class="k">带看转化率防线</span><span class="v">4.5% 不破</span></div>
+          <div class="dl-row"><span class="k">租金回报率</span><span class="v">2.4% → 2.6% 上行</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 附录 ============ -->
+  <section class="appendix">
+    <div class="sec-head"><span class="sec-no">附</span><h2>口径与说明</h2></div>
+    <div style="display:flex; flex-wrap:wrap; gap:14px">
+      <div style="flex:1 1 300px; min-width:270px">
+        <h3>数据与口径</h3>
+        <ul>
+          <li>数据来源：政研通 zyt（贝壳研究院 / 贝壳平台交付，analytics-v1.1），internal 绝对量口径。</li>
+          <li>成交价 = 贝壳研究院成交价，<b>非挂牌价</b>；挂牌相关指标（新增挂牌、库存、挂牌均价）为平台挂牌口径。</li>
+          <li>区级均价 = 市级按权重拆分<b>示意口径</b>（2026-07 截面）；面积段为派生维度（Q-DATA-08 暂缓、客户户籍未交付）；省内外为替代维度。</li>
+          <li>库存 ÷ 月成交（约 67 月）、带看转化率（约 4.5%）为<b>自算参考，非官方口径</b>。</li>
+        </ul>
+      </div>
+      <div style="flex:1 1 300px; min-width:270px">
+        <h3>框架与心智模型</h3>
+        <ul>
+          <li>输出框架：五维递进（定性 → 指标 → 趋势 → 不确定性 → 关注指标）。</li>
+          <li>心智模型：百城指数晴雨表 · 恢复三阶段路径（二手价企稳 → 新房销售修复 → 投资开工改善）· 供需流量比 · 租售比锚。</li>
+          <li>基调：先定 keynote（据数据事实判定），偏离观点降级为边界条件/风险提示。</li>
+          <li>专家标注：行业研究·D / H / W / T / X（讨论稿匿名标注，正式稿去除）。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 页脚 ============ -->
+  <footer class="shell-footer">
+    <div class="left">
+      <span>98wiki ｜ 智见 / 行业研究报告</span>
+      <span class="chip">讨论稿 · 2026-08</span>
+    </div>
+    <div class="right">成都二手房市场月度深度研判 · 智见点评 · 数据：政研通 zyt</div>
+  </footer>
+</div>
+</body>
+</html>

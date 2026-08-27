@@ -1,0 +1,534 @@
+{
+  "version": "4",
+  "filename": "chengdu-resale-2026-08-final",
+  "narrative": "weekly-brief",
+  "theme": {
+    "id": "consulting"
+  },
+  "meta": {
+    "organization": "智见·行业研究团队",
+    "authors": [
+      {
+        "name": "智见·行业研究团队",
+        "role": "城市月度市场研判"
+      }
+    ],
+    "date": "2026-08"
+  },
+  "assets": {
+    "images": {}
+  },
+  "seed": 20260826,
+  "slides": [
+    {
+      "type": "cover",
+      "id": "cover",
+      "heading": "成都二手房市场月度研判（正式稿）",
+      "components": [],
+      "notes": "开场定调：成都 8 月二手房量价齐跌，成交 4,507 套为近两年次低，市场仍处寻底筑底期。数据来源政研通 zyt（贝壳研究院/贝壳平台），internal 绝对量口径，成交价=贝壳研究院成交价非挂牌价。",
+      "layout": "banner-title"
+    },
+    {
+      "type": "content",
+      "id": "keynote",
+      "beat": "anchor",
+      "heading": "核心结论：量价双收缩，筑底未完成",
+      "components": [
+        {
+          "type": "verdict_banner",
+          "text": "成都二手房仍处寻底筑底期：8 月量价齐跌、成交创近两年次低，企稳信号尚未出现；年内低位磨底，全面恢复仍需时间。",
+          "tone": "warning",
+          "icon": "trending-down"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "量能：成交 4,507 套（yoy -41.5%、mom -42.0%），近两年次低仅高于春节月；量能收缩快于价格",
+            "价格：均价 11,756 元/㎡（yoy -9.4%），较 2024 年 9 月高点累计 -17.3%；贝壳指数 81.1",
+            "供给：库存 30.2 万套（yoy +14.1%）压力累积；流量比 4.20 逼近区间上沿 4.89",
+            "结构：纯价格收缩而非结构切换；远郊挂牌份额为成交两倍，流动性断层明显"
+          ],
+          "style": "divided"
+        }
+      ],
+      "footnote": "口径：政研通 zyt analytics-v1.1，internal 绝对量；成交价=贝壳研究院成交价非挂牌价；库存÷月成交、带看转化率为自算参考（2026 年 8 月）",
+      "notes": "正式稿核心结论（完整版）：成都二手房市场仍处寻底筑底期：2026 年 8 月量价齐跌、成交规模创近两年次低，企稳信号尚未出现；年内预计维持低位磨底，市场全面恢复仍需时间。量能收缩快于价格、价格阴跌但结构稳定、供给压力仍在累积。",
+      "layout": "two-column"
+    },
+    {
+      "type": "content",
+      "id": "volume",
+      "beat": "dense",
+      "heading": "量能：成交 4,507 套，创两年次低",
+      "components": [
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "4,507",
+              "unit": "套",
+              "label": "二手成交（2026-08）",
+              "delta": "down",
+              "icon": "house"
+            },
+            {
+              "value": "49.8",
+              "unit": "亿元",
+              "label": "成交金额（yoy -46.9%）",
+              "delta": "down",
+              "icon": "circle-dollar-sign"
+            },
+            {
+              "value": "172,143",
+              "unit": "组",
+              "label": "带看客户（2026-07，yoy -27.0%）",
+              "delta": "down",
+              "icon": "users"
+            },
+            {
+              "value": "≈4.5%",
+              "unit": "",
+              "label": "带看转化率（自算，稳定）",
+              "delta": "flat",
+              "icon": "filter"
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "两年次低：仅高于春节月；环比 -42.0%，量能收缩快于价格，景气指数 9 落低迷档（<20）",
+            "转化率 4.5% 稳定：需求未消失而是观望盘踞，不是没人看房，是没人出手",
+            "新增挂牌 18,945 套（yoy -46.7%）与成交同向收缩：业主冻结供给，非抛售"
+          ],
+          "style": "default"
+        }
+      ],
+      "footnote": "yoy=同比（对 2025-08），mom=环比（对 2026-07）；带看/去化周期为 2026-07 数据；转化率为自算口径",
+      "notes": "量能讲三点：成交绝对值近两年次低；带看与转化率背离说明观望盘踞；新增挂牌收缩属冻结供给。",
+      "layout": "stacked-poster"
+    },
+    {
+      "type": "content",
+      "id": "price",
+      "beat": "dense",
+      "heading": "价格：11,756 元/㎡，较高点累计 -17.3%",
+      "components": [
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "11,756",
+              "unit": "元/㎡",
+              "label": "成交均价（yoy -9.4%）",
+              "delta": "down",
+              "icon": "badge"
+            },
+            {
+              "value": "-17.3%",
+              "unit": "累计",
+              "label": "较 2024-09 高点 14,211 元/㎡",
+              "delta": "down",
+              "icon": "trending-down"
+            },
+            {
+              "value": "81.1",
+              "unit": "",
+              "label": "贝壳房价指数（2018-11=100）",
+              "delta": "down",
+              "icon": "gauge"
+            },
+            {
+              "value": "110.5",
+              "unit": "万元",
+              "label": "套均总价（-9.3%）",
+              "delta": "down",
+              "icon": "wallet"
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "纯价格收缩非结构切换：套均面积 20 个月锁定 93-96 ㎡（94.6→94.0 无迁移），总价跌幅与单价一致",
+            "回归主力总价段 100-120 万（1.1-1.2 万/㎡ × 94㎡ 闭合）——底部信号最扎实的一条",
+            "未见沪二手连涨、深 6 月转涨式核心城市企稳信号；库存挂牌均价 16,587 元/㎡（yoy -3.2%）"
+          ],
+          "style": "default"
+        }
+      ],
+      "footnote": "面积段为派生维度（Q-DATA-08 暂缓、客户户籍未交付）；套均总价 121.8 万（2025-09）→ 110.5 万（2026-08）",
+      "notes": "价格重点：阴跌但结构稳定，面积 20 个月锁定、总价跌幅与单价一致，是纯价格收缩而非结构切换。",
+      "layout": "side-highlight"
+    },
+    {
+      "type": "content",
+      "id": "supply",
+      "beat": "dense",
+      "heading": "供给：库存 30.2 万套被动累积",
+      "components": [
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "301,672",
+              "unit": "套",
+              "label": "库存（yoy +14.1%）",
+              "delta": "up",
+              "icon": "layers"
+            },
+            {
+              "value": "18,945",
+              "unit": "套",
+              "label": "新增挂牌（yoy -46.7%）",
+              "delta": "down",
+              "icon": "badge-plus"
+            },
+            {
+              "value": "4.20",
+              "unit": "",
+              "label": "供需流量比（区间 2.05-4.89）",
+              "delta": "up",
+              "icon": "scale"
+            },
+            {
+              "value": "6.8",
+              "unit": "月",
+              "label": "去化周期（温档 6-12，yoy +9.7%）",
+              "delta": "up",
+              "icon": "clock-3"
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "挂牌流量大降而库存反升：库存被动累积，库存÷月成交约 67 个月（自算参考），“有房卖不掉”",
+            "供需流量比 4.20 逼近两年区间上沿：供给收缩幅度小于成交收缩",
+            "远郊流动性断层：远郊挂牌份额 7.1% = 成交份额 3.5% 的两倍；成交向主城与高新天府集中"
+          ],
+          "style": "default"
+        }
+      ],
+      "footnote": "库存÷月成交、流量比为自算参考口径（非官方）；2025-08 库存 264,463 套",
+      "notes": "供给端：挂牌流量大降而库存反升，流量比逼近上沿，远郊流动性断层。",
+      "layout": "split-band"
+    },
+    {
+      "type": "content",
+      "id": "district",
+      "beat": "anchor",
+      "heading": "城区：价格梯度 4.0 倍，成交向主城集中",
+      "components": [
+        {
+          "type": "chart",
+          "chart_type": "bar",
+          "direction": "horizontal",
+          "axes": {
+            "x_title": "元/㎡",
+            "y_title": "区县",
+            "show_grid": true
+          },
+          "series": [
+            {
+              "name": "成交均价（2026-07）",
+              "data": [
+                {
+                  "x": "高新区",
+                  "y": 19928
+                },
+                {
+                  "x": "锦江区",
+                  "y": 17686
+                },
+                {
+                  "x": "青羊区",
+                  "y": 16324
+                },
+                {
+                  "x": "武侯区",
+                  "y": 15030
+                },
+                {
+                  "x": "成华区",
+                  "y": 13863
+                },
+                {
+                  "x": "天府新区",
+                  "y": 13183
+                },
+                {
+                  "x": "金牛区",
+                  "y": 13066
+                },
+                {
+                  "x": "双流区",
+                  "y": 11562
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "价格梯度 4.0 倍（高新 19,928 vs 金堂 4,970 元/㎡）；CV 41.8%，P75/P25 = 2.21",
+            "成交集中：CR4 = 37.1%（青羊 532 套居首）、CR8 = 67.9%；蒲江/大邑零成交",
+            "圈层份额（成交/挂牌）：主城五区 43%/40%、高新+天府 16%/16%、近郊 37%/37%、远郊 3.5%/7.1%"
+          ],
+          "style": "default"
+        }
+      ],
+      "footnote": "区级均价为市级按权重拆分示意口径（2026-07 截面）；成交份额=各区成交÷全市成交",
+      "notes": "城区结构：价格梯度 4 倍，成交向主城与高新天府集中，远郊挂牌两倍于成交份额，流动性断层。",
+      "layout": "banner-heading"
+    },
+    {
+      "type": "content",
+      "id": "cross-city",
+      "beat": "dense",
+      "heading": "跨城对照：量能高于京沪，跌幅更深",
+      "components": [
+        {
+          "type": "data_table",
+          "columns": [
+            {
+              "key": "indicator",
+              "label": "指标（2026-07）",
+              "align": "left"
+            },
+            {
+              "key": "cd",
+              "label": "成都",
+              "align": "right"
+            },
+            {
+              "key": "bj",
+              "label": "北京",
+              "align": "right"
+            },
+            {
+              "key": "sh",
+              "label": "上海",
+              "align": "right"
+            }
+          ],
+          "rows": [
+            {
+              "cells": {
+                "indicator": "二手成交（套）",
+                "cd": "7,764",
+                "bj": "4,932",
+                "sh": "2,521"
+              },
+              "emphasis": "highlight"
+            },
+            {
+              "cells": {
+                "indicator": "成交均价（元/㎡）",
+                "cd": "11,756",
+                "bj": "44,915",
+                "sh": "47,111"
+              }
+            },
+            {
+              "cells": {
+                "indicator": "套均总价（万元）",
+                "cd": "110.5",
+                "bj": "390",
+                "sh": "371"
+              }
+            },
+            {
+              "cells": {
+                "indicator": "贝壳房价指数",
+                "cd": "81.1",
+                "bj": "73.5",
+                "sh": "80.3"
+              }
+            }
+          ],
+          "source": "政研通 zyt · 2026-07 截面 · 贝壳指数 2018-11=100"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "成都成交绝对量居首（7,764 vs 4,932 / 2,521 套），市场纵深未塌",
+            "价格水平约为京沪 1/4，总价门槛约为 1/3",
+            "京深已有连涨/转涨信号，成都未现——强二线滞后于一线寻底"
+          ],
+          "style": "default"
+        }
+      ],
+      "notes": "跨城对照：成都成交绝对量居首（市场纵深未塌），但价格跌幅更深，寻底滞后于一线。",
+      "layout": "two-column"
+    },
+    {
+      "type": "content",
+      "id": "rental",
+      "beat": "breathing",
+      "heading": "租赁：量升价微降，回报率低位徘徊",
+      "components": [
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "12,587",
+              "unit": "套",
+              "label": "租赁成交（yoy +6.8%）",
+              "delta": "up",
+              "icon": "key-round"
+            },
+            {
+              "value": "2,468",
+              "unit": "元/月",
+              "label": "套均租金（yoy -1.4%）",
+              "delta": "down",
+              "icon": "banknote"
+            },
+            {
+              "value": "25,567",
+              "unit": "套",
+              "label": "租赁新增挂牌（+1.3%）",
+              "delta": "up",
+              "icon": "badge-plus"
+            },
+            {
+              "value": "2.4-2.6",
+              "unit": "%",
+              "label": "租金回报率（年租÷套均总价）",
+              "delta": "flat",
+              "icon": "percent"
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "买卖与租赁背离：二手买卖收缩，租赁成交 +6.8% 逆势上行",
+            "租金稳中微降（-1.4%），出租效率未见恶化",
+            "回报率 2.4%-2.6% 低位徘徊：观察是否随价格回落而上行（关注指标）"
+          ],
+          "style": "default"
+        }
+      ],
+      "footnote": "租赁数据至 2026-07，政研通 zyt 口径",
+      "notes": "租赁市场相对健康：量升价稳，回报率低位。是买卖市场的对冲面。",
+      "layout": "stacked-poster"
+    },
+    {
+      "type": "content",
+      "id": "outlook",
+      "beat": "anchor",
+      "heading": "趋势预测：年内磨底，三信号确认",
+      "components": [
+        {
+          "type": "callout",
+          "variant": "tip",
+          "text": "【研判推断】年内基准路径：月成交预计 4,500-6,000 套低位平台震荡、均价阴跌斜率逐步放缓；筑底完成需三项信号确认，乐观情形 2027 年一季度前后企稳。",
+          "icon": "sparkles"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "信号一：库存增速转负（当前 yoy +14.1%，仍在累积）",
+            "信号二：供需流量比回落至 3 以下（当前 4.20，区间上沿 4.89）",
+            "信号三：二手价格环比止跌（贝壳指数跌幅收窄或转正）"
+          ],
+          "style": "numbered"
+        }
+      ],
+      "footnote": "预测标注：研判推断（非事实承诺）；横向对照：成都月成交绝对值高于京沪（2026-07：7,764 vs 4,932/2,521 套），市场纵深未塌",
+      "notes": "趋势页：给可证伪的基准路径和三项可观测确认信号，下月按清单核对。",
+      "layout": "side-highlight"
+    },
+    {
+      "type": "content",
+      "id": "risk",
+      "beat": "dense",
+      "heading": "不确定性：政策未兑现，警惕下修触发",
+      "components": [
+        {
+          "type": "callout",
+          "variant": "warn",
+          "text": "人才购房资格扩围（2026 年 3 月 20 日落地，全日制本科以上在蓉就业可申请）已 5 个月，带看与成交均未兑现；政策库在册仅 1 条，若无增量政策跟进，阴跌将延续。",
+          "icon": "triangle-alert"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "下修触发：库存割肉挂牌、流量比突破 4.89、远郊断层向近郊蔓延 → 筑底进程延长",
+            "上修观察：成交环比企稳、转化率守住 4.5% 防线、租金回报率 2.4%-2.6% 能否上行",
+            "口径提示：区级均价为示意拆分；库存÷月成交约 67 月、转化率 4.5% 为自算参考，非官方口径"
+          ],
+          "style": "checklist"
+        }
+      ],
+      "footnote": "不确定性来自政策兑现与供给行为两端；本页为风险揭示，非基准判断",
+      "notes": "给决策者两个剧本：下修触发条件与上修观察信号，避免单边叙事。",
+      "layout": "image-lead-split"
+    },
+    {
+      "type": "content",
+      "id": "watchlist",
+      "beat": "breathing",
+      "heading": "关注指标与口径说明",
+      "components": [
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "81.1",
+              "unit": "指数",
+              "label": "贝壳房价指数环比：跌幅收窄或转正",
+              "delta": "flat",
+              "icon": "gauge"
+            },
+            {
+              "value": "3.0",
+              "unit": "以下",
+              "label": "供需流量比目标值（当前 4.20）",
+              "delta": "flat",
+              "icon": "scale"
+            },
+            {
+              "value": "4.5%",
+              "unit": "防线",
+              "label": "带看转化率不破位",
+              "delta": "flat",
+              "icon": "filter"
+            },
+            {
+              "value": "2.6%",
+              "unit": "上行",
+              "label": "租金回报率修复信号",
+              "delta": "flat",
+              "icon": "percent"
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "关注指标：贝壳指数环比 · 库存拐点 · 流量比 · 转化率 · 租金回报率",
+            "输出框架：五维递进（定性 → 指标 → 趋势 → 不确定性 → 关注指标）",
+            "心智模型：百城晴雨表 · 恢复三阶段 · 供需流量比 · 租售比锚",
+            "数据来源：政研通 zyt analytics-v1.1；成交价=贝壳研究院成交价非挂牌价"
+          ],
+          "style": "plain"
+        }
+      ],
+      "footnote": "正式稿：智见·行业研究团队出品，去除专家匿名标注",
+      "notes": "收尾页：给出下月核对清单与完整口径，保证判断可复现、可证伪。",
+      "layout": "stacked-poster"
+    },
+    {
+      "type": "ending",
+      "id": "ending",
+      "heading": "谢谢",
+      "components": [],
+      "notes": "感谢聆听。智见·行业研究团队 · 成都二手房市场月度研判（正式稿）· 数据：政研通 zyt。",
+      "layout": "masthead-ending"
+    }
+  ]
+}

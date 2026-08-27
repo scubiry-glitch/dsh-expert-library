@@ -1,0 +1,33 @@
+{
+  "components": [
+    {
+      "type": "data_table",
+      "columns": [
+        { "key": "scene", "label": "场景", "align": "left" },
+        { "key": "v", "label": "价值", "align": "center" },
+        { "key": "l", "label": "落地", "align": "center" },
+        { "key": "r", "label": "风险", "align": "center" },
+        { "key": "c", "label": "成本", "align": "center" },
+        { "key": "t", "label": "时效", "align": "center" },
+        { "key": "total", "label": "总分", "align": "center" },
+        { "key": "batch", "label": "批次", "align": "center" }
+      ],
+      "rows": [
+        { "cells": { "scene": "消费贷线", "v": 5, "l": 4, "r": 3, "c": 3, "t": 4, "total": "19", "batch": "第一批（红）" }, "emphasis": "highlight" },
+        { "cells": { "scene": "电销场景", "v": 3, "l": 5, "r": 2, "c": 4, "t": 4, "total": "18", "batch": "第二批（黄）" } },
+        { "cells": { "scene": "柜面/咨询", "v": 4, "l": 3, "r": 4, "c": 4, "t": 3, "total": "18", "batch": "第二批（黄）" } },
+        { "cells": { "scene": "信用卡线", "v": 4, "l": 4, "r": 3, "c": 3, "t": 3, "total": "17", "batch": "第三批（绿）" } },
+        { "cells": { "scene": "线上进件", "v": 4, "l": 3, "r": 3, "c": 2, "t": 3, "total": "15", "batch": "第三批（绿）" } }
+      ],
+      "source": "每维 1-5 分越高越优；依据 99wiki 行内数据（问题侧）+ 98wiki 方法成熟度（解法侧）"
+    },
+    {
+      "type": "verdict_banner",
+      "tone": "positive",
+      "text": "落地顺序：第一批消费贷打样板 → 第二批电销+柜面 → 第三批信用卡+线上。",
+      "icon": "route"
+    }
+  ],
+  "footnote": "批次色标为顺序标识（红=先打样板，黄=随口径字典展开，绿=依赖系统与合规），非风险语义。",
+  "notes": "五个场景五维打分：业务价值、可落地性、风险可控、成本投入（越小越高分）、时效。消费贷19分第一批——价值乘可落地双高，已立项双支撑；电销和柜面18分第二批；信用卡17分、线上进件15分第三批。"
+}

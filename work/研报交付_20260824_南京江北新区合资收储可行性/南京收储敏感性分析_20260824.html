@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>南京江北新区合资收储敏感性分析（20260824 · 通俗版）</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "智见行业研究 ｜ 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<h1>南京江北新区合资收储敏感性分析（20260824 · 通俗版）</h1>
+<blockquote>
+<p>配套：智见点评专家团融合稿《南京江北新区「政府+贝壳」合资收储可行性》（2026-08-24）；测算体系参照《沪八条二手转保租单元经济研究（优化版）》第三章。<br>
+阅读方式：先看「总结论」，再看每一节开头的"这一节在讲什么"和结尾的"小结"；表格是给复核用的细节。</p>
+</blockquote>
+<hr>
+<h2>总结论（一页看懂）</h2>
+<p><strong>这个模式能不能做？—— 能做，但必须同时满足三件事，少一件就亏：</strong></p>
+<ol>
+<li><strong>收得够便宜</strong>：法拍/低价房按评估价 <strong>6 折左右收、最多 7 折</strong>（7 折已经是"刚好不亏"的卡线，不是"能赚"的线）；</li>
+<li><strong>用的钱够便宜</strong>：主要靠 <strong>1.75% 的保障房再贷款</strong>——一旦综合资金成本到 2.5%，收购价必须压到 5.5 折以内，基本收不到；市场化 3.5% 的资金下这个模式不成立；</li>
+<li><strong>租得出去</strong>：靠京东/美团等平台的 <strong>B2B 集体宿舍长租约锁住 90% 出租率</strong>——出租率掉到 85%，等于收购价凭空贵了 0.35 折。</li>
+</ol>
+<p><strong>规模与节奏</strong>：政府想要的"兜底挂牌 1/10（约 8,000 套）"<strong>不要一次全收</strong>——那会把政府变成市场最大买家、锁死价格。专家建议首期试点 500–1,000 套，跑通后再滚动到 1,500–2,000 套/年（年资金 10–14 亿，占南京一年财政收入 1,621 亿的不到 1%，花得起）。</p>
+<p><strong>ROE 要分两本账看</strong>：首年 ROE 约 35% 看着很赚，但那是"7 折买进、9 折卖出"的一次性差价，不是经营赚的；把房子留着出租，一年只赚 0.3%–1%。<strong>别被首年数字骗了——这是"捡便宜"的账，不是"会经营"的账。</strong></p>
+<p><strong>最大的风险是"收在半山腰"</strong>（南京房价还在跌，贝壳指数 64.2 仍创新低）。对策：折扣红线（6 折基准/7 折封顶）+ 价格指数监控（指数再创新低就"只租不收"）+ 法拍房风险准备金。</p>
+<p><strong>一句话：可以做，但要小步、低价、用便宜的钱，别贪快。</strong></p>
+<hr>
+<h2>一、模型是什么：一道算术题</h2>
+<p><strong>这一节在讲什么</strong>：把"收一套房赚不赚钱"简化成一道算术题——<strong>租金回报率 ≥ 借钱利率，就成立</strong>；否则就靠财政贴钱。</p>
+<p>核心公式（式 1）：<strong>租金回报率 = 年租金 ÷ 收购价</strong>。收购价越低（折扣越深）、租金越高，回报率越高。<br>
+另外两个工具：<strong>盈亏平衡折扣（式 2）</strong>= 给定利率下"多少钱收才不亏"；<strong>净口径（式 3）</strong>= 回报率再扣掉改造费、风险准备金后的"真实回报率"。</p>
+<p><strong>与上海版（沪八条）的区别</strong>：南京收的是法拍/低价房，折扣更深（6–7 折 vs 上海 8 折），但法拍房有翻新、税费、清场等额外成本，所以必须用"净口径"算，不能只看表面回报率。</p>
+<p><strong>小结</strong>：模型的核心就一句话——<strong>"用便宜的钱、收便宜的房、租得出去"，三者缺一不可</strong>。本章只是把这个道理写成公式，方便后面做敏感性测算。</p>
+<h2>二、基准参数：拿江北新区算了一笔账</h2>
+<p><strong>这一节在讲什么</strong>：敏感性分析要有一个"基准情形"——按江北新区（浦口）的真实数据设定：一套 94㎡ 的房子，市场价约 113 万元，月租约 1,990 元；法拍/低价收购打 6–8 折；借钱利率分三档（1.75% 再贷款 / 2.5% 综合 / 3.5% 市场化）。</p>
+<p><strong>基准账</strong>：年租金净收入约 1.93 万元，对市场价 113 万的回报率约 1.71%；但收购打 6 折（67.8 万）后，回报率提到 2.85%——<strong>折扣越深，回报率越高，这就是"低价收储"赚钱的数学原理</strong>。</p>
+<p><strong>小结</strong>：先定好"一套 113 万的房、月租 1,990 元、打 6–7 折收"这个基准，后面所有敏感性都是在这个基准上"动一个变量、看结果变多少"。</p>
+<h2>三、盈亏平衡折扣：多少钱收才不亏</h2>
+<p><strong>这一节在讲什么</strong>：回答管委会最关心的问题之一——<strong>"按什么价收才不会亏"</strong>。答案是：取决于用谁的钱。</p>
+<table>
+<thead>
+<tr>
+<th>借钱成本</th>
+<th>毛口径（不扣成本）</th>
+<th>净口径（扣改造/准备金后）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.75%（再贷款）</td>
+<td>9.8 折以内都行</td>
+<td><strong>7.3 折以内</strong></td>
+</tr>
+<tr>
+<td>2.5%（综合）</td>
+<td>6.8 折以内</td>
+<td><strong>5.5 折以内</strong></td>
+</tr>
+<tr>
+<td>3.5%（市场化）</td>
+<td>4.9 折以内</td>
+<td><strong>4.2 折以内</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>看懂这张表</strong>：用再贷款的钱，7.3 折以内收都不亏（所以"6 折基准"很安全）；但钱一旦贵起来，能接受的收购价必须大幅压低——<strong>2.5% 的钱只允许收 5.5 折以内，市场化 3.5% 的钱基本收不到房</strong>。</p>
+<p><strong>小结</strong>：<strong>"再贷款通道是氧气"</strong>——没有 1.75% 的便宜钱，这个模式就做不起来；这也是专家团要求"资金结构以再贷款为主"的原因。</p>
+<h2>四、折扣 × 利率搭配表：两个变量怎么搭配</h2>
+<p><strong>这一节在讲什么</strong>：把"收购折扣"和"借钱利率"两个变量放在一起看，哪些搭配能赚（绿）、哪些刚好卡线（黄）、哪些亏（红）。下表是扣掉改造成本的"真实回报率"：</p>
+<table>
+<thead>
+<tr>
+<th>收购折扣 \ 利率</th>
+<th>1.75%（再贷款）</th>
+<th>2.5%（综合）</th>
+<th>3.5%（市场化）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5.5 折</td>
+<td>✅ 赚（+0.76pp）</td>
+<td>⚠️ 刚好卡线</td>
+<td>❌ 亏 0.99pp</td>
+</tr>
+<tr>
+<td>6 折</td>
+<td>✅ 赚（+0.50pp）</td>
+<td>❌ 亏 0.25pp</td>
+<td>❌ 亏 1.25pp</td>
+</tr>
+<tr>
+<td>6.5 折</td>
+<td>✅ 赚（+0.28pp）</td>
+<td>❌ 亏 0.47pp</td>
+<td>❌ 亏 1.47pp</td>
+</tr>
+<tr>
+<td>7 折</td>
+<td>⚠️ 卡线（+0.10pp）</td>
+<td>❌ 亏 0.65pp</td>
+<td>❌ 亏 1.65pp</td>
+</tr>
+<tr>
+<td>7.5 折以上</td>
+<td>❌ 亏</td>
+<td>❌ 亏</td>
+<td>❌ 亏</td>
+</tr>
+</tbody>
+</table>
+<p><strong>看懂这张表</strong>：绿色区域只有"<strong>≤6.5 折 + 再贷款</strong>"这一小块；7 折只是黄色卡线；只要钱贵到 2.5%，6 折都亏。<strong>这张表就是"6 折基准、7 折封顶"这条纪律的来源。</strong></p>
+<p><strong>小结</strong>：<strong>能赚的搭配非常窄——6.5 折以内 + 再贷款</strong>。执行上稍有偏差（折扣到 7 折、或资金结构偏贵）就从"赚"变"亏"。</p>
+<h2>五、运营变量：出租率和租金掉多少会出事</h2>
+<p><strong>这一节在讲什么</strong>：除了买价和利率，出租率、租金、收缴率也会影响回报率——算一下它们掉多少会"出事"。</p>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>变化</th>
+<th>回报率影响</th>
+<th>相当于收购价变贵</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>出租率</td>
+<td>90% → 85%</td>
+<td>−0.12pp</td>
+<td>贵 0.35 折</td>
+</tr>
+<tr>
+<td>租金</td>
+<td>−10%</td>
+<td>−0.25pp</td>
+<td>贵 0.7 折</td>
+</tr>
+<tr>
+<td>收缴率</td>
+<td>100% → 95%</td>
+<td>−0.12pp</td>
+<td>贵 0.35 折</td>
+</tr>
+</tbody>
+</table>
+<p><strong>看懂这张表</strong>：出租率从 90% 掉到 85%，等于收购价凭空贵了 0.35 折——本来 6 折收是"赚"，马上变成"卡线"。<strong>这就是为什么 B2B 集体宿舍长租约（锁 90% 出租率）是模式成立的关键，不是锦上添花。</strong></p>
+<p><strong>小结</strong>：<strong>运营端的容错空间很小</strong>——出租率、租金任何一项明显恶化，都会把"能赚"打成"亏"。收储前必须先把 B2B 长租约签下来。</p>
+<h2>六、法拍房的隐藏成本：为什么"7 折"不算赚</h2>
+<p><strong>这一节在讲什么</strong>：法拍房收进来不能直接住，要花钱：翻新（每套 7–10 万）、税费/腾退缓冲（5–8%）、风险准备金（2–3%）、改造期空置（3–6 个月）。这些成本每年合计吃掉约 <strong>0.6pp</strong> 的回报率。</p>
+<p><strong>所以</strong>：毛口径算出来"7 折能赚"，扣掉这些成本后 7 折只剩"刚好卡线"（+0.10pp），7.5 折直接亏。如果翻新按 10 年摊销（更保守），经常性成本升到 1.0–1.5pp，<strong>盈亏平衡折扣进一步收窄到 5.3 折</strong>。</p>
+<p><strong>小结</strong>：<strong>"7 折封顶"不是保守，是扣完法拍成本后的真实临界线</strong>；建议按"翻新 10 年摊销"做保守测算，翻新标准直接决定可行性区间。</p>
+<h2>七、ROE：股东回报怎么变（三根杠杆）</h2>
+<p><strong>这一节在讲什么</strong>：管委会要求贝壳测算 ROE（股东回报率）。结果显示 ROE 有三根杠杆，重要性从大到小：</p>
+<p><strong>杠杆 1：收购折扣（最重要）</strong></p>
+<table>
+<thead>
+<tr>
+<th>收购折扣</th>
+<th>5.5 折</th>
+<th>6 折</th>
+<th>6.5 折</th>
+<th>7 折</th>
+<th>7.5 折</th>
+<th>8 折</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首年 ROE</td>
+<td>≈99%</td>
+<td>≈74%</td>
+<td>≈53%</td>
+<td><strong>≈35%</strong></td>
+<td>≈19%</td>
+<td>≈5%</td>
+</tr>
+</tbody>
+</table>
+<p>收购价每深 1 折，ROE 接近翻倍——<strong>ROE 是"买得便宜"的函数，不是"经营得好"的函数</strong>。</p>
+<p><strong>杠杆 2：卖出价格</strong>：卖 9 折 → ROE 35%；卖 8.5 折 → 28%；卖 8 折 → 21%；卖 7.5 折 → 13.5%（翻新成本开始倒挂）。</p>
+<p><strong>杠杆 3：三通道比例</strong>：保租 40/安置 30/销售 30 → 35%；保租 50/安置 25/销售 25 → 29.5%（压销售保现金流）。</p>
+<p><strong>压力测试</strong>：悲观（2027 房价补跌，卖 8 折）→ ROE 13.5%；销售完全卖不掉转保租 → 15.9%（还是正的——"保租+安置"是安全垫）。</p>
+<p><strong>小结</strong>：<strong>首年 35% 的 ROE 是"低价买、高价卖"的一次性差价，不是常态</strong>；常态出租只赚 0.3%–1%。对管委会和贝壳都必须分两本账讲清楚，别让首年数字误导决策。</p>
+<h2>八、决策红线：什么情况必须停</h2>
+<p><strong>这一节在讲什么</strong>：把上面所有敏感性变成可执行的"红线"，一条违规就降速或暂停：</p>
+<table>
+<thead>
+<tr>
+<th>红线</th>
+<th>触发线</th>
+<th>动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>收购折扣</td>
+<td>&gt; 7 折</td>
+<td>停收，回到 6 折基准</td>
+</tr>
+<tr>
+<td>资金成本</td>
+<td>&gt; 2.5%</td>
+<td>暂停（仅 5.5 折以内成立）</td>
+</tr>
+<tr>
+<td>出租率</td>
+<td>&lt; 85%</td>
+<td>降节奏、提准备金</td>
+</tr>
+<tr>
+<td>贝壳房价指数</td>
+<td>再创新低且跌幅扩大</td>
+<td><strong>只租不收（重启闸门）</strong></td>
+</tr>
+<tr>
+<td>租金回报率（净口径）</td>
+<td>&lt; 2.5%</td>
+<td>不达门槛不收（写入合资协议）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>小结</strong>：<strong>纪律就是生命线</strong>——宁可少收、慢收，也不能破折扣红线和资金红线；价格指数是"重启闸门"，指数再创新低就只租不收，避免收在半山腰。</p>
+<hr>
+<h2>附录 A：复算表（给复核用）</h2>
+<ul>
+<li>基准：K = 12 × 1,990 × 0.9 × 0.9 = 19,343 元；K/P_m = 1.7118%（P_m = 113 万）</li>
+<li>r(d) = 1.7118% ÷ d：0.55→3.11%；0.60→2.85%；0.65→2.63%；0.70→2.45%；0.75→2.28%；0.80→2.14%</li>
+<li>r_net(d) = r − 0.6pp：0.55→2.51%；0.60→2.25%；0.65→2.03%；0.70→1.85%；0.75→1.68%；0.80→1.54%</li>
+<li>d*(毛) = 1.7118% ÷ c：1.75%→9.8 折；2.0%→8.6 折；2.5%→6.8 折；3.0%→5.7 折；3.5%→4.9 折</li>
+<li>d*(净) = 1.7118% ÷ (c+0.6%)：1.75%→7.3 折；2.0%→6.6 折；2.5%→5.5 折；3.0%→4.8 折；3.5%→4.2 折</li>
+<li>换算：折扣收紧 0.5 折 ≈ r 降 0.17–0.24pp；利率每升 1pp 需折扣加深约 0.56 折（1.75% 档）/0.27 折（2.5% 档）/0.14 折（3.5% 档）</li>
+<li>CAPEX：7–10 万 ÷ 20 年 ÷ 79 万 = 0.44%–0.63%；10 年摊销 0.9%–1.3%；备付金 2–3% ≈ 0.10%–0.15%/年</li>
+<li>ROE 基准（d=0.7）：保租净 21.5 万 + 安置 339 万 + 销售 468 万 = 828.5 万 ÷ 自有 2,373 万 = 34.9%</li>
+<li>ROE 情景：d=0.6→74.4%；卖 8 折→20.6%；悲观 13.5%；乐观 49.2%；销售失效 15.9%</li>
+</ul>
+<hr>
+<p><em>测算：智见行业研究 · 2026-08-24 · 数据源：政研通·贝壳（成出口径 2026-07）/ Wind EDB / 专家团融合稿；法拍量级与翻新单价为【估算】，待贝壳房源级数据（BEIKE_MCP_API_KEY）与首批项目实测校准。</em></p>
+<hr>
+<h2>九、明确建议（给决策者的执行结论）</h2>
+<p><strong>① 收不收？——收，但小步试点，不搞全量。</strong><br>
+- 管委会想要的"兜底挂牌 1/10（约 8,000 套）"<strong>不要一次承诺</strong>：首期 <strong>500–1,000 套</strong>试点（浦口优先、法拍占比 ≤50%），跑通三通道去化与回款后，再以 <strong>1,500–2,000 套/年</strong>滚动放量（年资金 10–14 亿，占南京财政不足 1%，完全可承受）。</p>
+<p><strong>② 按什么价收？——评估价 6 折基准、7 折封顶，写入合资协议。</strong><br>
+- 这是扣完法拍改造/税费成本后的"净口径"红线（见第三章、第六章）：7 折已是临界，7.5 折以上必亏；法拍房 6 折上限价内已内置 5–8% 税费/腾退缓冲。</p>
+<p><strong>③ 用什么钱？——只允许"再贷款为主"，综合资金成本锁 2.5% 以内。</strong><br>
+- 1.75% 再贷款是模式成立的氧气；财政只补交易税费与改造融资，不出本金；<strong>一旦综合资金成本超过 2.5%（或 5.5 折以内收不到房），暂停放量</strong>。</p>
+<p><strong>④ 三通道怎么配？——保租 40–50% / 安置 25–35% / 销售 25%，销售后置。</strong><br>
+- 保租通道设硬门槛：净口径租金回报率 ≥2.5% 才收（现金流覆盖型）；安置通道是政府订单（现金流确定）；销售通道是"退出通道"不是"主通道"，<strong>价格企稳确认前权重 ≤25% 且后置到 2027H2</strong>。</p>
+<p><strong>⑤ 合资结构怎么搭？——SPV：政府平台 51% 控股、贝壳 49% 运营。</strong><br>
+- 政府以税费补贴 + 改造融资入股、少出现金；贝壳角色从卖房渠道升级为<strong>政府端资产运营商</strong>，守"折扣"与"清场"两条纪律。</p>
+<p><strong>⑥ 立即要做的事（2026Q4，90 天）？</strong><br>
+1. 法拍房/低价房源<strong>画像与法律尽调</strong>（产权/占用/税费/户口四查，优先空置无瑕疵标的）；<br>
+2. 与京东/美团等平台<strong>签 B2B 集体宿舍意向约</strong>（锁定出租率 ≥90%，这是模型成立的前提）；<br>
+3. 申报<strong>保障性住房再贷款南京额度</strong>，锁定 1.75% 资金结构；<br>
+4. 确定首批 <strong>500 套标的池</strong>（浦口次新 + 六合低成本保租）。</p>
+<p><strong>⑦ 什么情况必须停（重启闸门）？</strong><br>
+- 贝壳房价指数再创新低且环比跌幅扩大 → <strong>只租不收</strong>；出租率 &lt;85%、收购价 &gt;7 折、资金成本 &gt;2.5% → 任一触发即降速/暂停，转入存量运营。</p>
+<p><strong>时间表</strong>：2026Q4 完成尽调与签约 → 2027H1 首批 500–1,000 套交付 → 若 8–10 月成交价环比连续为正且贝壳指数止跌，2027H2 滚动至 1,500–2,000 套/年；否则维持小批量、以租养收。</p>
+<hr>
+</body>
+</html>

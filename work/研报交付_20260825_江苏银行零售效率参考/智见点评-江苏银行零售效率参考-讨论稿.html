@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智见点评 · 江苏银行零售效率参考：贝壳验证协议比结论更有价值</title>
+<style>
+/* ============================================================
+   智见点评 · 融合研判（讨论稿 v2）· finesse-ui product register
+   江苏银行主题：深藏蓝档案 + 香槟金发丝线 · Cool Slate 蓝调中性
+   Craft floor: 泛色中性底 · 发丝线边框 · 泛色阴影 · AA 对比
+   ============================================================ */
+:root{
+  /* substrate — 蓝调冷灰，绝不纯 #fff/#000 */
+  --page:#edf1f6;
+  --bg:#ffffff;
+  --panel-2:#f4f7fa;
+  --panel-3:#e9eff5;
+  --border:rgba(18,40,63,.08);
+  --border-strong:rgba(18,40,63,.16);
+
+  /* ink */
+  --ink-1:#12283f;
+  --ink-2:#33495e;
+  --ink-3:#5b7085;
+
+  /* brand — 江苏银行深藏蓝 + 金 */
+  --accent:#14304f;
+  --accent-deep:#0e2340;
+  --accent-bright:#1d4f8a;
+  --accent-soft:rgba(20,48,79,.10);
+  --gold:#8a5e0a;
+  --gold-bright:#b8860b;
+  --gold-light:#e8b64c;
+  --gold-soft:rgba(138,94,10,.12);
+  --on-accent:#ffffff;
+
+  /* semantic */
+  --up:#1e7d58;
+  --down:#b0403a;
+  --warn:#8a5e0a;
+
+  /* elevation — 泛色阴影 */
+  --shadow:0 1px 3px rgba(18,40,63,.06);
+  --shadow-md:0 12px 32px -20px rgba(18,40,63,.28);
+  --shadow-lg:0 40px 90px -50px rgba(14,35,64,.4);
+
+  /* radius */
+  --r:18px; --r-sm:11px; --r-lg:30px;
+
+  /* dark surfaces */
+  --navy-1:#0b1f33; --navy-2:#102c4a; --navy-3:#143a63; --navy-4:#0e2340;
+  --on-dark-1:#e8eef5; --on-dark-2:#c9d6e4; --on-dark-3:#9db4cb; --on-dark-4:#7f9ab5;
+  --gold-deco:#e8b64c;
+  --white-a06:rgba(255,255,255,.06);
+  --white-a10:rgba(255,255,255,.10);
+  --white-a16:rgba(255,255,255,.16);
+
+  /* gradients */
+  --navy-grad:linear-gradient(135deg,var(--navy-1),var(--navy-3) 68%,var(--navy-2));
+  --gold-grad:linear-gradient(115deg,#f2c87e,#b8860b 62%,#8a5e0a);
+
+  /* rgb channels */
+  --accent-rgb:20,48,79; --gold-rgb:138,94,10; --up-rgb:30,125,88; --down-rgb:176,64,58;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  font-family:"Noto Sans CJK SC","Noto Sans CJK TC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  background:var(--page);
+  color:var(--ink-2);
+  font-size:15px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+.panel{
+  max-width:1180px; margin:26px auto 44px;
+  background:var(--bg);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+  border:1px solid var(--border);
+  position:relative;
+}
+.panel::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:4px; z-index:5;
+  background:var(--navy-grad);
+  border-bottom:1px solid rgba(232,182,76,.45);
+}
+
+/* ---------- 报头 ---------- */
+.masthead{
+  position:relative; overflow:hidden;
+  background:var(--navy-grad);
+  color:var(--on-dark-1);
+  padding:34px 44px 30px;
+}
+.mh-art{position:absolute; right:0; bottom:0; width:430px; height:auto; opacity:.5; pointer-events:none;}
+.brand-row{display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:20px; position:relative; z-index:2;}
+.brand-mark{
+  font-size:13px; font-weight:700; letter-spacing:.06em; color:var(--gold-deco);
+  padding:4px 12px; border:1px solid rgba(232,182,76,.55); border-radius:999px;
+  margin-right:4px;
+}
+.brand-mark b{color:var(--on-dark-1); font-weight:700;}
+.tag{
+  font-size:12px; color:var(--on-dark-2); background:var(--white-a10);
+  padding:4px 10px; border-radius:999px; border:1px solid var(--white-a16);
+}
+.tag.gold{color:var(--gold-deco); border-color:rgba(232,182,76,.5); background:rgba(232,182,76,.08);}
+.masthead h1{
+  font-size:28px; font-weight:800; color:#ffffff; line-height:1.38; letter-spacing:.01em;
+  max-width:880px; position:relative; z-index:2; margin-bottom:10px;
+  text-wrap:balance;
+}
+.masthead .sub{
+  font-size:15px; color:var(--on-dark-2); max-width:840px; position:relative; z-index:2;
+  margin-bottom:18px;
+}
+.mh-rule{height:1px; background:linear-gradient(90deg,rgba(232,182,76,.75),rgba(232,182,76,.12) 55%,transparent); margin-bottom:16px; position:relative; z-index:2;}
+.meta{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; position:relative; z-index:2;}
+.meta .cell{background:var(--white-a06); border:1px solid var(--white-a10); border-radius:14px; padding:10px 14px;}
+.meta .k{font-size:11px; color:var(--on-dark-3); letter-spacing:.08em; margin-bottom:4px;}
+.meta .v{font-size:12.5px; color:var(--on-dark-1); line-height:1.5;}
+
+/* ---------- 章节 ---------- */
+section{padding:30px 44px 6px;}
+.sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:18px;}
+.sec-head .idx{
+  font-size:13px; font-weight:800; color:var(--gold);
+  font-variant-numeric:tabular-nums; letter-spacing:.04em;
+}
+.sec-head h2{font-size:21px; font-weight:800; color:var(--ink-1); letter-spacing:.01em;}
+.sec-head .en{font-size:11.5px; color:var(--ink-3); letter-spacing:.14em; text-transform:uppercase;}
+
+/* ---------- 主基调 ---------- */
+.keynote{
+  background:linear-gradient(180deg,var(--panel-3),var(--panel-2));
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:24px 28px 22px;
+  box-shadow:var(--shadow);
+  margin-bottom:18px;
+}
+.keynote .lead{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12px; font-weight:700; color:var(--accent); letter-spacing:.1em;
+  margin-bottom:12px;
+}
+.keynote .lead::before{content:""; width:18px; height:2px; background:var(--gold-grad); border-radius:2px;}
+.keynote .verdict{
+  font-size:19px; font-weight:800; color:var(--ink-1); line-height:1.5; margin-bottom:12px;
+  text-wrap:balance;
+}
+.keynote .verdict em{font-style:normal; color:var(--gold);}
+.keynote .basis{font-size:14px; color:var(--ink-2); line-height:1.75;}
+.keynote .basis b{color:var(--accent-deep); font-weight:700;}
+.keynote .basis .hl{background:var(--gold-soft); color:var(--gold); font-weight:700; padding:0 3px; border-radius:4px;}
+
+/* ---------- KPI ---------- */
+.kpi-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:8px;}
+.kpi{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  padding:16px 16px 14px; box-shadow:var(--shadow);
+  border-top:3px solid var(--accent);
+}
+.kpi.gold{border-top-color:var(--gold-bright);}
+.kpi .top{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;}
+.kpi .ic{
+  width:28px; height:28px; border-radius:9px; background:var(--accent-soft);
+  color:var(--accent); font-size:13px; font-weight:800;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.kpi.gold .ic{background:var(--gold-soft); color:var(--gold);}
+.kpi .delta{font-size:11.5px; font-weight:700; color:var(--ink-3); background:var(--panel-2); padding:2px 8px; border-radius:999px; border:1px solid var(--border);}
+.kpi .delta.up{color:var(--up); background:rgba(30,125,88,.08); border-color:rgba(30,125,88,.2);}
+.kpi .label{font-size:12px; color:var(--ink-3); line-height:1.5; margin-bottom:6px; min-height:36px;}
+.kpi .num{font-size:26px; font-weight:800; color:var(--ink-1); font-variant-numeric:tabular-nums; letter-spacing:-.02em; line-height:1.1; margin-bottom:6px;}
+.kpi .num .unit{font-size:13px; font-weight:700; color:var(--ink-3); margin-left:2px;}
+.kpi .num.gold{
+  background:linear-gradient(115deg,#c08a1e,var(--gold));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.kpi .note{font-size:11px; color:var(--ink-3); line-height:1.55;}
+
+/* ---------- 通用卡 ---------- */
+.grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+.grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.card{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  padding:20px 22px; box-shadow:var(--shadow);
+  position:relative;
+}
+.card .topbar{position:absolute; top:0; left:22px; right:22px; height:3px; border-radius:0 0 3px 3px; background:var(--accent);}
+.card .topbar.tb-gold{background:var(--gold-grad);}
+.card .topbar.tb-grey{background:#9db4cb;}
+.card h3{font-size:16.5px; font-weight:800; color:var(--ink-1); margin-bottom:10px; line-height:1.5; text-wrap:balance;}
+.card p{font-size:13.5px; color:var(--ink-2); line-height:1.72; margin-bottom:8px;}
+.card p b{color:var(--accent-deep); font-weight:700;}
+.card p .hl{background:var(--gold-soft); color:var(--gold); font-weight:700; padding:0 3px; border-radius:4px;}
+.card .src{display:block; font-size:11.5px; color:var(--ink-3); margin-top:10px; padding-top:10px; border-top:1px dashed var(--border-strong);}
+.card ul{list-style:none; margin:8px 0 4px;}
+.card ul li{font-size:13px; color:var(--ink-2); line-height:1.65; padding-left:16px; position:relative; margin-bottom:5px;}
+.card ul li::before{content:""; position:absolute; left:2px; top:8px; width:6px; height:6px; border-radius:2px; background:var(--accent); opacity:.75;}
+.card ul li.g::before{background:var(--gold-bright);}
+
+/* 三线维度卡 */
+.line-card{padding:22px 22px 18px; display:flex; flex-direction:column;}
+.line-card .line-head{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+.line-card .line-no{
+  width:34px; height:34px; border-radius:11px; flex:0 0 auto;
+  background:var(--accent); color:#fff; font-size:15px; font-weight:800;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.line-card.gold-card .line-no{background:linear-gradient(135deg,#c08a1e,var(--gold));}
+.line-card.grey-card .line-no{background:#5b7085;}
+.line-card .prio{
+  font-size:12px; font-weight:800; letter-spacing:.06em; padding:4px 10px; border-radius:999px;
+  background:var(--accent-soft); color:var(--accent); border:1px solid rgba(20,48,79,.18);
+}
+.line-card.gold-card .prio{background:var(--gold-soft); color:var(--gold); border-color:rgba(138,94,10,.22);}
+.line-card.grey-card .prio{background:var(--panel-2); color:var(--ink-3); border-color:var(--border-strong);}
+.line-card h3{font-size:17.5px; font-weight:800; color:var(--ink-1); margin-bottom:10px;}
+.line-card .tagline{font-size:13px; color:var(--ink-3); margin-bottom:12px; line-height:1.6;}
+.criteria{
+  background:var(--panel-2); border:1px solid var(--border); border-left:3px solid var(--accent);
+  border-radius:12px; padding:12px 14px; margin-bottom:12px; font-size:12.8px; line-height:1.65;
+  color:var(--ink-2);
+}
+.gold-card .criteria{border-left-color:var(--gold-bright); background:rgba(248,242,230,.7);}
+.criteria .ck{display:block; font-size:11.5px; font-weight:800; color:var(--accent); letter-spacing:.1em; margin-bottom:4px;}
+.gold-card .criteria .ck{color:var(--gold);}
+.card .act{margin-top:auto;}
+
+/* ---------- 领导质询 ---------- */
+.q-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+.q-card{border-radius:var(--r); padding:22px 24px; position:relative; overflow:hidden;}
+.q-card.dark{
+  background:var(--navy-grad); color:var(--on-dark-1);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:var(--shadow-md);
+}
+.q-card.light{
+  background:var(--bg); border:1px solid var(--border); box-shadow:var(--shadow);
+  border-top:3px solid var(--gold-bright);
+}
+.q-card .q-role{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+.q-card .q-avatar{
+  width:42px; height:42px; border-radius:14px; flex:0 0 auto;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:16px; font-weight:800;
+}
+.q-card.dark .q-avatar{background:rgba(232,182,76,.16); color:var(--gold-deco); border:1px solid rgba(232,182,76,.4);}
+.q-card.light .q-avatar{background:var(--gold-soft); color:var(--gold); border:1px solid rgba(138,94,10,.25);}
+.q-card .q-name{font-size:16px; font-weight:800;}
+.q-card.dark .q-name{color:#ffffff;}
+.q-card .q-post{font-size:12px;}
+.q-card.dark .q-post{color:var(--on-dark-3);}
+.q-card.light .q-post{color:var(--ink-3);}
+.q-card .q-verdict{
+  font-size:13.5px; font-weight:700; line-height:1.7; margin-bottom:12px;
+  padding:10px 14px; border-radius:12px;
+}
+.q-card.dark .q-verdict{background:rgba(255,255,255,.07); color:var(--gold-deco); border:1px solid var(--white-a16);}
+.q-card.light .q-verdict{background:var(--gold-soft); color:var(--gold); border:1px solid rgba(138,94,10,.2);}
+.q-card ol{list-style:none; counter-reset:q; margin:0;}
+.q-card ol li{
+  counter-increment:q; position:relative; padding-left:28px;
+  font-size:13px; line-height:1.68; margin-bottom:9px;
+}
+.q-card ol li::before{
+  content:counter(q); position:absolute; left:0; top:2px;
+  width:19px; height:19px; border-radius:7px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800;
+}
+.q-card.dark ol li::before{background:rgba(232,182,76,.18); color:var(--gold-deco);}
+.q-card.light ol li::before{background:var(--accent-soft); color:var(--accent);}
+.q-card.dark ol li b{color:#ffffff; font-weight:700;}
+.q-card.dark ol li{color:var(--on-dark-2);}
+.q-card.light ol li b{color:var(--accent-deep); font-weight:700;}
+/* 梁斌 CIO 科技质询卡 */
+.q-card.tech{
+  background:linear-gradient(180deg,#eef3fa,var(--panel-2));
+  border:1px solid rgba(29,79,138,.22); box-shadow:var(--shadow);
+  border-top:3px solid var(--accent-bright);
+}
+.q-card.tech .q-avatar{background:rgba(29,79,138,.12); color:var(--accent-bright); border:1px solid rgba(29,79,138,.28);}
+.q-card.tech .q-name{color:var(--accent-deep);}
+.q-card.tech .q-post{color:var(--ink-3);}
+.q-card.tech .q-verdict{background:rgba(29,79,138,.08); color:var(--accent-bright); border:1px solid rgba(29,79,138,.22);}
+.q-card.tech ol li::before{background:rgba(29,79,138,.14); color:var(--accent-bright);}
+.q-card.tech ol li b{color:var(--accent-deep); font-weight:700;}
+.q-card .q-verdict.deal{background:rgba(176,64,58,.09); color:var(--down); border:1px solid rgba(176,64,58,.25);}
+
+/* ---------- 数据安全闸门横幅（跨线） ---------- */
+.gate-banner{
+  margin-bottom:18px;
+  background:var(--navy-grad); color:var(--on-dark-1);
+  border:1px solid rgba(232,182,76,.4); border-radius:var(--r);
+  padding:22px 26px 18px; box-shadow:var(--shadow-md);
+  position:relative; overflow:hidden;
+}
+.gate-banner::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg,var(--gold-deco),rgba(232,182,76,.15));
+}
+.gate-head{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+.gate-head .gate-ic{
+  width:30px; height:30px; border-radius:10px; flex:0 0 auto;
+  background:rgba(232,182,76,.15); color:var(--gold-deco); font-size:14px; font-weight:800;
+  display:inline-flex; align-items:center; justify-content:center;
+  border:1px solid rgba(232,182,76,.4);
+}
+.gate-head h3{font-size:16.5px; font-weight:800; color:#ffffff;}
+.gate-head .gate-tag{
+  font-size:11.5px; font-weight:800; letter-spacing:.06em; padding:3px 10px; border-radius:999px;
+  background:rgba(176,64,58,.35); color:#ffd9d4; border:1px solid rgba(255,120,110,.4);
+  margin-left:auto; white-space:nowrap;
+}
+.gate-sub{font-size:12.5px; color:var(--on-dark-2); line-height:1.6; margin-bottom:14px; max-width:960px;}
+.gate-principles{display:grid; grid-template-columns:repeat(4,1fr); gap:12px;}
+.gate-p{
+  background:var(--white-a06); border:1px solid var(--white-a16); border-radius:14px;
+  padding:12px 14px;
+}
+.gate-p .gp-no{font-size:10.5px; font-weight:800; color:var(--gold-deco); letter-spacing:.1em; margin-bottom:5px;}
+.gate-p .gp-t{font-size:13.5px; font-weight:800; color:#ffffff; margin-bottom:5px;}
+.gate-p .gp-d{font-size:11.5px; color:var(--on-dark-2); line-height:1.6;}
+.gate-foot{
+  margin-top:14px; padding-top:12px; border-top:1px solid var(--white-a16);
+  font-size:12.5px; color:var(--on-dark-1); line-height:1.65;
+}
+.gate-foot b{color:var(--gold-deco); font-weight:700;}
+
+/* ---------- 归因 ---------- */
+.attr{display:flex; flex-direction:column; gap:14px;}
+.attr-row{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  padding:18px 22px; box-shadow:var(--shadow);
+}
+.attr-row .ar-head{display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;}
+.attr-row .ar-tag{font-size:12px; font-weight:800; letter-spacing:.06em; padding:3px 10px; border-radius:999px;}
+.attr-row .ar-tag.a{background:var(--gold-soft); color:var(--gold); border:1px solid rgba(138,94,10,.22);}
+.attr-row .ar-tag.b{background:var(--accent-soft); color:var(--accent); border:1px solid rgba(20,48,79,.18);}
+.attr-row .ar-tag.c{background:var(--panel-2); color:var(--ink-3); border:1px solid var(--border-strong);}
+.attr-row h3{font-size:16px; font-weight:800; color:var(--ink-1);}
+.attr-row p{font-size:13.5px; color:var(--ink-2); line-height:1.72; margin-bottom:10px;}
+.attr-row p b{color:var(--accent-deep);}
+.split{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:4px;
+}
+.split .seg{
+  border-radius:12px; padding:10px 12px; border:1px solid var(--border);
+  background:var(--panel-2);
+}
+.split .seg .sk{font-size:11px; color:var(--ink-3); letter-spacing:.05em; margin-bottom:4px;}
+.split .seg .sv{font-size:16px; font-weight:800; font-variant-numeric:tabular-nums;}
+.split .seg .sd{font-size:11px; color:var(--ink-3); line-height:1.5; margin-top:3px;}
+.split .seg.s-beta .sv{color:var(--accent-bright);}
+.split .seg.s-denom .sv{color:var(--down);}
+.split .seg.s-alpha .sv{color:var(--gold);}
+.split .seg.s-note{grid-column:1/-1; background:var(--panel-3); font-size:11.5px; color:var(--ink-3); line-height:1.6;}
+
+/* ---------- 施工图 ---------- */
+.phases{display:grid; grid-template-columns:repeat(4,1fr); gap:16px;}
+.phase{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  padding:18px 20px; box-shadow:var(--shadow); position:relative;
+  border-top:3px solid var(--accent);
+}
+.phase:nth-child(2){border-top-color:var(--gold-bright);}
+.phase:nth-child(3){border-top-color:#5b7085;}
+.phase:nth-child(4){border-top-color:var(--accent-bright);}
+.phase .ph-row{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+.phase .seq{
+  width:30px; height:30px; border-radius:10px; flex:0 0 auto;
+  background:var(--accent); color:#fff; font-size:13px; font-weight:800;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.phase:nth-child(2) .seq{background:linear-gradient(135deg,#c08a1e,var(--gold));}
+.phase:nth-child(3) .seq{background:#5b7085;}
+.phase:nth-child(4) .seq{background:var(--accent-bright);}
+.phase .ph{font-size:13.5px; font-weight:800; color:var(--ink-1);}
+.phase h4{font-size:15.5px; font-weight:800; color:var(--ink-1); margin-bottom:8px;}
+.phase ul{list-style:none; margin:0 0 10px;}
+.phase ul li{font-size:12.8px; color:var(--ink-2); line-height:1.65; padding-left:15px; position:relative; margin-bottom:5px;}
+.phase ul li::before{content:""; position:absolute; left:1px; top:8px; width:5px; height:5px; border-radius:2px; background:var(--gold-bright);}
+.phase .rule{
+  font-size:12px; font-weight:700; color:var(--gold); background:var(--gold-soft);
+  border-radius:10px; padding:8px 12px; line-height:1.55;
+}
+
+/* ---------- 反方 ---------- */
+.attack{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  padding:18px 20px; box-shadow:var(--shadow);
+}
+.attack h3{font-size:15px; font-weight:800; color:var(--down); margin-bottom:8px; display:flex; gap:8px; align-items:center;}
+.attack h3 .ano{
+  width:22px; height:22px; border-radius:7px; flex:0 0 auto; background:rgba(176,64,58,.1);
+  color:var(--down); font-size:12px; font-weight:800; display:inline-flex; align-items:center; justify-content:center;
+}
+.attack p{font-size:12.8px; color:var(--ink-2); line-height:1.68; margin-bottom:8px;}
+.attack .hedge{font-size:12px; color:var(--ink-3); background:var(--panel-2); border-radius:10px; padding:8px 11px; line-height:1.6; border:1px solid var(--border);}
+.attack .hedge b{color:var(--accent); font-weight:700;}
+
+/* ---------- 不确定性 ---------- */
+.risk-list{display:grid; grid-template-columns:1fr 1fr; gap:12px 16px;}
+.risk-item{
+  background:var(--bg); border:1px solid var(--border); border-radius:14px;
+  padding:13px 16px; font-size:13px; color:var(--ink-2); line-height:1.68;
+  display:flex; gap:10px; box-shadow:var(--shadow);
+}
+.risk-item .rno{
+  flex:0 0 auto; width:22px; height:22px; border-radius:7px; margin-top:1px;
+  background:rgba(138,94,10,.12); color:var(--gold); font-size:11.5px; font-weight:800;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.risk-item b{color:var(--ink-1);}
+
+/* ---------- 附录 ---------- */
+.appendix{
+  margin:30px 44px 8px;
+  background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r);
+  padding:20px 24px;
+}
+.appendix h3{font-size:16px; font-weight:800; color:var(--ink-1); margin-bottom:12px; display:flex; align-items:center; gap:8px;}
+.appendix h3::before{content:""; width:16px; height:3px; border-radius:2px; background:var(--gold-grad);}
+.appendix table{width:100%; border-collapse:collapse; font-size:12.5px; margin-bottom:12px;}
+.appendix th{
+  text-align:left; font-size:11.5px; color:var(--ink-3); letter-spacing:.05em;
+  padding:6px 10px; border-bottom:1px solid var(--border-strong); font-weight:700;
+}
+.appendix td{padding:7px 10px; border-bottom:1px solid var(--border); color:var(--ink-2); line-height:1.6; vertical-align:top;}
+.appendix tr:last-child td{border-bottom:none;}
+.appendix .models{font-size:12px; color:var(--ink-3); line-height:1.75;}
+.appendix .models b{color:var(--accent);}
+
+/* ---------- 页脚 ---------- */
+.foot{
+  margin:34px 44px 0; padding:16px 0 26px;
+  border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;
+  font-size:11.5px; color:var(--ink-3);
+}
+.foot .fi{font-weight:700; color:var(--accent); letter-spacing:.05em;}
+.foot .fc{color:var(--ink-3);}
+.foot .fg{color:var(--gold); font-weight:700;}
+
+/* ============================================================
+   A4 打印（weasyprint 直接消费本文件）
+   ============================================================ */
+@page{
+  size:A4;
+  margin:19mm 15mm 18mm 15mm;
+  @top-center{
+    content:"智见点评 ｜ 江苏银行零售效率参考 · 2026-08-25";
+    font-family:"Noto Sans CJK SC",sans-serif;
+    font-size:8pt; color:#5b7085;
+    border-bottom:0.5pt solid #c9d3de;
+    width:100%; vertical-align:bottom; padding-bottom:2mm;
+  }
+  @bottom-center{
+    content:"98wiki ｜ 智见 / 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family:"Noto Sans CJK SC",sans-serif;
+    font-size:8pt; color:#5b7085;
+    border-top:0.5pt solid #c9d3de;
+    width:100%; vertical-align:top; padding-top:2mm;
+  }
+}
+@page :first{@top-center{content:none; border:none;}}
+@media print{
+  body{background:#ffffff; font-size:10pt;}
+  .panel{max-width:none; margin:0; border:none; border-radius:0; box-shadow:none;}
+  .panel::before{display:none;}
+  .masthead{
+    padding:22px 0 18px; border-radius:0;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .mh-art{width:300px; opacity:.32;}
+  .masthead h1{font-size:19pt;}
+  .masthead .sub{font-size:10.5pt;}
+  .masthead .brand-row{margin-bottom:14px;}
+  .meta{grid-template-columns:repeat(4,1fr); gap:8pt;}
+  section{padding:18px 0 2px;}
+  .sec-head{margin-bottom:12px;}
+  .sec-head h2{font-size:13.5pt;}
+  .keynote{padding:14pt 16pt;}
+  .keynote .verdict{font-size:12.5pt;}
+  .keynote .basis{font-size:9pt;}
+  .kpi-grid{grid-template-columns:repeat(5,1fr); gap:8pt;}
+  .kpi{padding:10pt 10pt 8pt; border-radius:12pt;}
+  .kpi .num{font-size:17pt;}
+  /* weasyprint 不支持 background-clip:text：渐变数字回退为纯色金 */
+  .kpi .num.gold{background:none; -webkit-background-clip:initial; background-clip:initial; color:var(--gold);}
+  .kpi .label{font-size:7.6pt; min-height:26pt;}
+  .kpi .note{font-size:7pt;}
+  .kpi .delta{font-size:7.2pt;}
+  .grid-3,.grid-2{grid-template-columns:repeat(3,1fr); gap:8pt;}
+  .grid-2{grid-template-columns:1fr 1fr;}
+  /* 打印：三线卡与质询卡块级堆叠（全宽更矮、无溢出），编号用原生 decimal */
+  .grid-3{display:block;}
+  .grid-3 .card{margin-bottom:8pt;}
+  .q-grid{display:block;}
+  .q-card{margin-bottom:8pt; break-inside:avoid;}
+  .q-card.tech{grid-column:auto;}
+  .q-card ol{list-style:decimal; padding-left:16pt;}
+  .q-card ol li{position:static; padding-left:0; margin-bottom:4pt;}
+  .q-card ol li::before{display:none;}
+  .phases{display:block;}
+  .phase{margin-bottom:8pt; break-inside:avoid;}
+  .gate-banner{padding:12pt 14pt 10pt; break-inside:avoid; -webkit-print-color-adjust:exact; print-color-adjust:exact;}
+  .gate-principles{grid-template-columns:repeat(4,1fr); gap:6pt;}
+  .gate-p{padding:8pt 9pt;}
+  .gate-p .gp-t{font-size:8.6pt;}
+  .gate-p .gp-d{font-size:7.4pt;}
+  .gate-sub{font-size:8pt; margin-bottom:8pt;}
+  .gate-foot{font-size:8pt; margin-top:8pt; padding-top:8pt;}
+  .gate-head h3{font-size:11pt;}
+  .q-card.tech{grid-column:1/-1;}
+  .card{padding:12pt 13pt; border-radius:12pt; break-inside:avoid;}
+  .card h3{font-size:11pt; margin-bottom:6pt;}
+  .card p{font-size:8.6pt;}
+  .card ul li{font-size:8.4pt;}
+  .card .src{font-size:7.6pt;}
+  .line-card{padding:12pt 13pt 10pt;}
+  .line-card h3{font-size:11.5pt;}
+  .line-card .tagline{font-size:8.6pt;}
+  .criteria{font-size:8.2pt; padding:8pt 10pt;}
+  .q-card{padding:12pt 14pt; break-inside:avoid;}
+  .q-card .q-name{font-size:11pt;}
+  .q-card ol li{font-size:8.4pt; position:relative; padding-left:20pt; margin-bottom:5pt;}
+  .q-card ol li::before{position:absolute; left:0; top:2pt; margin-right:0;}
+  .q-card .q-verdict{font-size:8.8pt;}
+  .attr-row{padding:12pt 14pt; break-inside:avoid;}
+  .attr-row h3{font-size:11pt;}
+  .attr-row p{font-size:8.6pt;}
+  .split{gap:6pt;}
+  .split .seg{padding:7pt 9pt;}
+  .split .seg .sv{font-size:11pt;}
+  .split .seg .sd{font-size:7.4pt;}
+  .phase{padding:10pt 12pt; break-inside:auto;}
+  .phase h4{font-size:10pt;}
+  .phase ul li{font-size:8.2pt;}
+  .phase .rule{font-size:8pt;}
+  .attack{padding:10pt 12pt; break-inside:avoid;}
+  .attack h3{font-size:10pt;}
+  .attack p{font-size:8.4pt;}
+  .attack .hedge{font-size:7.8pt;}
+  .risk-list{grid-template-columns:1fr 1fr; gap:6pt;}
+  .risk-item{font-size:8.2pt; padding:8pt 10pt;}
+  .appendix{margin:14pt 0 0; padding:12pt 14pt; break-inside:avoid;}
+  .appendix h3{font-size:11pt;}
+  .appendix table{font-size:8pt;}
+  .appendix th{padding:4pt 6pt;}
+  .appendix td{padding:5pt 6pt;}
+  .appendix .models{font-size:7.8pt;}
+  .foot{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="panel">
+
+  <!-- ================= 报头 ================= -->
+  <header class="masthead">
+    <svg class="mh-art" viewBox="0 0 560 240" aria-hidden="true" focusable="false">
+      <g fill="none" stroke="rgba(255,255,255,.13)" stroke-width="1.4">
+        <path d="M30 150 V70 H170 V150" />
+        <path d="M200 150 V40 H340 V150" />
+        <path d="M370 150 V90 H510 V150" />
+      </g>
+      <g fill="rgba(255,255,255,.10)">
+        <rect x="40" y="84" width="26" height="66" rx="3"/>
+        <rect x="86" y="70" width="26" height="80" rx="3"/>
+        <rect x="132" y="98" width="26" height="52" rx="3"/>
+        <rect x="210" y="56" width="26" height="94" rx="3"/>
+        <rect x="256" y="40" width="26" height="110" rx="3"/>
+        <rect x="302" y="74" width="26" height="76" rx="3"/>
+        <rect x="380" y="100" width="26" height="50" rx="3"/>
+        <rect x="426" y="84" width="26" height="66" rx="3"/>
+        <rect x="472" y="112" width="26" height="38" rx="3"/>
+      </g>
+      <g fill="rgba(232,182,76,.85)">
+        <rect x="256" y="40" width="26" height="110" rx="3"/>
+      </g>
+      <path d="M40 176 H520" stroke="rgba(232,182,76,.4)" stroke-width="1" stroke-dasharray="2 6"/>
+      <text x="40" y="200" fill="rgba(232,233,238,.55)" font-size="12" font-family="'Noto Sans CJK SC',sans-serif">同店管户 AUM/人</text>
+      <text x="256" y="200" fill="rgba(232,182,76,.9)" font-size="12" font-family="'Noto Sans CJK SC',sans-serif" text-anchor="middle">α 候选</text>
+      <text x="520" y="200" fill="rgba(232,233,238,.55)" font-size="12" font-family="'Noto Sans CJK SC',sans-serif" text-anchor="end">控 β 差分</text>
+    </svg>
+    <div class="brand-row">
+      <span class="brand-mark"><b>智见点评</b> · 江苏银行零售系列</span>
+      <span class="tag">融合研判 · 讨论稿 v3</span>
+      <span class="tag gold">三轮质询已并入</span>
+      <span class="tag">2026-08-25</span>
+    </div>
+    <h1>江苏银行零售效率参考：贝壳验证协议比结论更有价值</h1>
+    <p class="sub">从贝壳经营杠杆 / 模块化 / 生态合作提炼「人效重构 × AI 规模化 × 场景获客」三线方案——三线并重、分级推进、差分核销、考核落地、<b style="color:var(--gold-deco);">数据安全一票否决</b>。</p>
+    <div class="mh-rule"></div>
+    <div class="meta">
+      <div class="cell"><div class="k">输出框架</div><div class="v">框架 B 通用四段式 + 三线并重（v3 修订版）</div></div>
+      <div class="cell"><div class="k">数据来源</div><div class="v">98wiki 素材 · 今日贝壳研究 · 三轮质询修订 · 行内数据待补</div></div>
+      <div class="cell"><div class="k">数据时段</div><div class="v">2026Q2 · 2026-08 素材窗口 · 行内口径待补</div></div>
+      <div class="cell"><div class="k">研判团队</div><div class="v">智见点评 5 位专家 + 袁军 / 高增银 / 梁斌质询</div></div>
+    </div>
+  </header>
+
+  <!-- ================= 一、关键性结论 ================= -->
+  <section id="s1">
+    <div class="sec-head"><span class="idx">01</span><h2>关键性结论</h2><span class="en">Keynote</span></div>
+    <div class="keynote">
+      <div class="lead">主基调 KEYNOTE</div>
+      <div class="verdict">验证协议优先：验收口径锁定「<em>同店管户 AUM/人 净增（控 β 差分）</em>」，净增 <em>&lt;10%</em> 记市场 β（AUM 红利）、不记组织 α；<em>数据安全四原则 + 总行委员会评审前置</em>为一切合作的前提（一票否决）。</div>
+      <p class="basis">
+        贝壳对江苏银行零售最有价值的不是「人效 3→5.6 单 / 零开单率 25%→&lt;10%」的结论数字，而是「<b>同店口径 + α/β 剥离 + 对照差分</b>」的验证协议。三线并重但分三级推进：<b>人效重构 + 场景生态获客「现在干」</b>，<b>AI 规模化「试点验证」</b>（只批单分行试点），<b>Token 先享「观察」</b>。验证协议写进行内考核（α/β 分账、90 天观察期不排名、撤点不追责但复盘），落成可执行施工图（<span class="hl">T+15 / T+30 / T+90 / T+180 四节点钉死</span>）；数据安全硬伤一票否决。行内数据（零产单率、人均 AUM、单客成本、交叉销售率现值）全部标注「待补」。
+      </p>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi gold">
+        <div class="top"><span class="ic">验</span><span class="delta">验收口径</span></div>
+        <div class="label">同店管户 AUM/人 净增 · 控 β 差分</div>
+        <div class="num gold">&lt;10<span class="unit">%</span></div>
+        <div class="note">净增不足 10% 记市场 β（AUM 红利），不记组织 α；陶琦口径：锁定存量管户池、剔除新分配与离职交接</div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="ic">差</span><span class="delta up">裁决点</span></div>
+        <div class="label">6 分行 90 天差分 · 3 试点 vs 3 同能级对照</div>
+        <div class="num">90<span class="unit">天</span></div>
+        <div class="note">控制 AUM 自然增速 5-8%（估算基准）后净人效 &lt;10% 即撤回 α；观察期不排名、撤点不追责但复盘</div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="ic">线</span><span class="delta">现在干</span></div>
+        <div class="label">装修贷「促转化」定位 · 98wiki 素材</div>
+        <div class="num">3<span class="unit">%起</span></div>
+        <div class="note">年化 3% 起、平均单户 50 万 / 上限 300 万；价内加价约 6% 由装修商贴息，计入客户综合融资成本口径</div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="ic">AI</span><span class="delta">试点验证</span></div>
+        <div class="label">客户管家 5 万+ 线索 · 转带看率</div>
+        <div class="num">7.4<span class="unit">%</span></div>
+        <div class="note">vs 大盘 5%（相对 +48%）；管理层 S 分享 08-21 内部单源，未获独立验证；只批单分行试点</div>
+      </div>
+      <div class="kpi">
+        <div class="top"><span class="ic">观</span><span class="delta">观察</span></div>
+        <div class="label">Token 先享 · 只埋接口不启动</div>
+        <div class="num">0.03<span class="unit">%</span></div>
+        <div class="note">成熟 5 亿在贷 vs 零售 AUM 约 1.6 万亿（2025Q3 公开口径）——入口非引擎</div>
+      </div>
+    </div>
+    <!-- 跨线闸门 · 数据安全专项（梁斌必补项 · dealbreaker） -->
+    <div class="gate-banner">
+      <div class="gate-head">
+        <span class="gate-ic">盾</span>
+        <h3>数据安全专项 · 跨线闸门</h3>
+        <span class="gate-tag">DEALBREAKER · 一票否决</span>
+      </div>
+      <p class="gate-sub">装修贷三方流转（行方 / 贝壳 / 装修商）、私行共营名单共享、权益互换权益供应商均涉客户数据出界——数据安全四原则为一切合作的前提，上线前必须过<b style="color:#ffffff;">总行信息安全与数据管理委员会评审</b>，硬伤一票否决（梁斌必补项）。</p>
+      <div class="gate-principles">
+        <div class="gate-p"><div class="gp-no">原则 01</div><div class="gp-t">最小必要</div><div class="gp-d">只取合作所需的字段与范围，不整表、不批量外发</div></div>
+        <div class="gate-p"><div class="gp-no">原则 02</div><div class="gp-t">共享必授权</div><div class="gp-d">个保法第 13 条同意基础：单独授权、明确告知用途</div></div>
+        <div class="gate-p"><div class="gp-no">原则 03</div><div class="gp-t">数据不出行</div><div class="gp-d">高净值名单「可用不可见」：行内平台定向触达，合作方只出内容不出名单</div></div>
+        <div class="gate-p"><div class="gp-no">原则 04</div><div class="gp-t">流转必留痕</div><div class="gp-d">全链路审计日志 + 合作方供应商安全审查</div></div>
+      </div>
+      <div class="gate-foot"><b>覆盖范围</b>：装修贷三方流转 · 私行共营名单共享 · 权益互换权益供应商 · 政银协同数据共享——所有外部合作上线前均须过总行信息安全与数据管理委员会评审。</div>
+    </div>
+  </section>
+
+  <!-- ================= 二、三线维度卡 ================= -->
+  <section id="s2">
+    <div class="sec-head"><span class="idx">02</span><h2>三线方案 · 维度卡</h2><span class="en">Three Tracks</span></div>
+    <div class="grid-3">
+      <div class="card line-card gold-card">
+        <span class="topbar tb-gold"></span>
+        <div class="line-head"><span class="line-no">线1</span><span class="prio">现在干</span></div>
+        <h3>人效重构 · 客户经理管户重配</h3>
+        <p class="tagline">迁移贝壳「0 变 1」尾部修复逻辑（盘级拆分 + 人房客重配）：β 能改分母（客户自然来），改不了「零产单变产一单」。</p>
+        <div class="criteria"><span class="ck">验收口径</span>同店管户 AUM/人 净增（控 β 差分，陶琦口径：锁定存量管户池、剔除新分配与离职交接），<b>不是规模排名</b>（袁军裁定）；同店管户 AUM/人 只作观测指标不作考核指标。</div>
+        <ul class="act">
+          <li><b>执行 SOP</b>：划片管户、人客重配——尾部零产单管户收归头部 + AI 辅助承接</li>
+          <li><b>P25 判据</b>（陶琦）：尾部产出提升占总量超 50% 属激活存量式修复、天花板低；头部跃迁才是真 α，分开记账</li>
+          <li><b>考核双层</b>（高增银）：分行层 = 同店口径净人效差分核销 α；个人层 = 行为（管户覆盖、回访频次）+ 结果（单客 FTP 后净贡献）双因子</li>
+          <li>零产单率月度通报分行排名、不直接挂钩绩效工资（防尾部冲量造假）</li>
+        </ul>
+        <span class="src">张一鸣（α/β 拆分）· 陶琦（口径）· 袁军 / 高增银（考核裁定）</span>
+      </div>
+      <div class="card line-card">
+        <span class="topbar"></span>
+        <div class="line-head"><span class="line-no">线2</span><span class="prio">试点验证</span></div>
+        <h3>AI 规模化 · 进件与线索承接</h3>
+        <p class="tagline">零售价值链六成流程环节可结构化（进件 / 规则审核 / 高频客服），四成以上成本不可结构化（风险定价 / 线下尽调面签 / 高净值关系维护）。</p>
+        <div class="criteria"><span class="ck">证伪条件（高增银 / 王一帆 / 梁斌合并口径）</span>AI 承接商机转化率 ≥ 人工基线 且 单位获客成本不升（6 个月验证，T+180 无证据即撤）；<b>人工基线 = 试点分行试点前 6 个月同渠道人工转化率（差分前测，非全行均值）</b>；「AI 承接」分 <b>AI 辅助（人机协同）/ AI 自主（无人工干预）</b>两档分别验证，防口径打架；原「12 个月进件占比 30%」降为监测指标，口径统一到「<b>获批且放款</b>」。</div>
+        <ul class="act">
+          <li><b>物理上限</b>（马斯克）：AI 上限 = 规则可表达边界，净降本 20-30% 到头，不是 10 倍；AI 只触及利润创造权重 ≤40% 的环节</li>
+          <li><b>技术路径</b>（梁斌）：流程分段嵌入——先做进件完整性校验、反欺诈初筛、规则审核；风险定价与终审人工兜底，人工审批经验沉淀至大模型做辅助决策</li>
+          <li><b>数据治理前置</b>（梁斌）：口径字典与单一取数源由总行数据中台统一发布，禁止分行自报表——责任主体 = 总行数据管理部而非零售部</li>
+          <li><b>成本 BOM 入账</b>：AI 线索转介成本/单、调用成本/单；算力与模型维护挂总行科技账时，零售「效率提升」是账面幻觉</li>
+          <li><b>自主可控底线</b>（王一帆）：规则、模型、决策自建；外部平台当工具不当大脑</li>
+        </ul>
+        <span class="src">马斯克（第一性拆解）· 梁斌（人工基线/两档/数据治理）· 王一帆（自主可控）</span>
+      </div>
+      <div class="card line-card grey-card">
+        <span class="topbar tb-grey"></span>
+        <div class="line-head"><span class="line-no">线3</span><span class="prio">现在干 + 观察分层</span></div>
+        <h3>场景生态获客 · 98wiki 方案落地</h3>
+        <p class="tagline">三层结构：商业合作层（装修贷）→ 高净值共营层（私行沙龙 / 权益互换）→ 政银协同层（袁军必补项）。</p>
+        <div class="criteria"><span class="ck">双目标（高增银裁定）</span>交叉销售率 ≥ 30%（装修贷客户持有 ≥2 类零售产品）+ 受托支付分节点放款留存的<b>结算资金日均沉淀额</b>；无中收与沉淀双目标，场景线就是赔本赚吆喝。</div>
+        <ul class="act">
+          <li><b>装修贷</b>：年化 3% 起、单户 50 万 / 上限 300 万、受托支付 + 分节点放款；加价计入综合融资成本口径、补装修进度第三方核验凭证（袁军）</li>
+          <li><b>高净值共营</b>：私行 12 场中 6 场插课 + 3 场专场（上海试点覆盖南通 / 苏州 / 无锡）；补「新增私行达标户/场、AUM 净增/场」两指标</li>
+          <li><b>权益互换</b>：钻石卡 600 万→200 万；合规审查前置（袁军）；补新增达标户数目标</li>
+          <li><b>Token 先享</b>：只埋接口不启动（0.03% 占比 = 入口非引擎）；政银协同 = 数据共享 + 白名单预授信 + 财政贴息联动</li>
+          <li><b>渠道协同三件套</b>（梁斌）：统一商机池 + 智能路由 + 全渠道归因——场景线索进统一商机池，简易需求（装修贷标准件）线上闭环（手机银行 + 远程银行承接），复杂 / 高净值需求路由重渠道（网点 / 私行承接）</li>
+          <li><b>归因分账</b>：补全渠道归因规则（首触 + 成交分账）；渠道成本按场景转化付费（杨现领）；<b>禁止各分行自建场景系统</b>重复建设</li>
+        </ul>
+        <span class="src">杨现领（按场景转化付费）· 王一帆（促转化红线）· 袁军（政银协同）· 梁斌（渠道协同）</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 三、领导质询 ================= -->
+  <section id="s3">
+    <div class="sec-head"><span class="idx">03</span><h2>领导质询 · 修订并入</h2><span class="en">Executive Challenge</span></div>
+    <div class="q-grid">
+      <div class="q-card dark">
+        <div class="q-role">
+          <span class="q-avatar">袁</span>
+          <div>
+            <div class="q-name">袁军</div>
+            <div class="q-post">江苏银行 · 董事长（战略视角）· 战略质询</div>
+          </div>
+        </div>
+        <div class="q-verdict">总体裁定：主基调可接受；验收口径锁「同店管户 AUM/人 净增」，不是规模排名——防「双提升」曲解为「双第一」层层加码。</div>
+        <ol>
+          <li><b>验收口径</b>：同店管户 AUM/人 净增（控 β 差分），且须写入考核办法；不因 AUM 红利稀释计分</li>
+          <li><b>综合融资成本口径</b>：装修贷加价计入客户综合融资成本，防「低息获客、高加价转嫁」被认定变相提高融资成本；补装修进度第三方核验凭证</li>
+          <li><b>合规前置</b>：权益互换（钻石卡 600 万→200 万）合规审查前置</li>
+          <li><b>必补第三层</b>：场景线补政银协同（存量房以旧换新 / 城市更新 / 人才安居），机制 = 政银数据共享 + 白名单预授信 + 财政贴息联动</li>
+          <li><b>考核三原则</b>：α/β 分账考核、90 天观察期不排名、撤点不追责但须复盘</li>
+        </ol>
+      </div>
+      <div class="q-card light">
+        <div class="q-role">
+          <span class="q-avatar">高</span>
+          <div>
+            <div class="q-name">高增银</div>
+            <div class="q-post">江苏银行 · 行长（经营视角）· 经营质询</div>
+          </div>
+        </div>
+        <div class="q-verdict">施工图三缺（责任主体、时间节点、考核挂钩）必须补齐；AI「12 个月进件占比 30%」口径未定义须重设；场景线只有投放没有中收沉淀双目标，必须补。</div>
+        <ol>
+          <li><b>施工图钉死</b>：T+0 立项、T+30 口径字典上线（3 试点 + 3 同能级对照配对、日均 AUM 含表外口径）、T+90 差分初判；责任主体 = 零售部 + 试点分行零售分管行长，节点 = 季度经营分析会</li>
+          <li><b>人效考核双层</b>：分行层 = 同店口径净人效差分核销 α；个人层 = 行为 + 结果双因子；同店 AUM/人 只作观测不作考核；零产单率月度通报、不直接挂钩绩效工资</li>
+          <li><b>AI 证伪条件重设</b>：商机转化率 ≥ 人工 且 单客成本不升（6 个月验证）；「30% 进件占比」降为监测指标，口径统一到「获批且放款」</li>
+          <li><b>场景双目标</b>：交叉销售率 ≥ 30% + 结算资金日均沉淀额；私行沙龙补「新增达标户/场、AUM 净增/场」；权益互换补新增达标户数</li>
+        </ol>
+      </div>
+      <div class="q-card tech">
+        <div class="q-role">
+          <span class="q-avatar">梁</span>
+          <div>
+            <div class="q-name">梁斌</div>
+            <div class="q-post">江苏银行 · CIO（科技视角）· 科技质询</div>
+          </div>
+        </div>
+        <div class="q-verdict deal">总体裁定：主基调可接受，①③需修改、②数据安全必补（dealbreaker，不补不批）、④条件性可接受。</div>
+        <ol>
+          <li><b>AI 线两处口径修改</b>：「人工基线」锁定试点分行试点前 6 个月同渠道人工转化率（差分前测，非全行均值）；「AI 承接」分 AI 辅助（人机协同）/ AI 自主（无人工干预）两档分别验证，防口径打架</li>
+          <li><b>数据安全必补（dealbreaker）</b>：四原则（最小必要 / 共享必授权·个保法 13 条单独授权 / 数据不出行·名单可用不可见 / 流转必留痕）+ 总行信息安全与数据管理委员会评审前置一票否决；数据治理责任主体 = 总行数据管理部（口径字典与单一取数源统一发布，禁止分行自报表）</li>
+          <li><b>场景线渠道协同修改</b>：统一商机池 + 智能路由 + 全渠道归因（首触 + 成交分账），简易需求线上闭环（手机银行 / 远程银行）、复杂高净值路由重渠道（网点 / 私行）；禁止各分行自建场景系统</li>
+          <li><b>施工图条件性可接受</b>：拆 T+15 口径字典 / T+30 取数联调 + 基线快照（试点前 6 个月回溯数据补齐，差分可比性以基线为前提——T+30 不补基线则 T+90 无差分可比）；用现有数据中台看板，不新建系统（人天估算 2-3 个月，待校准）</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 四、归因分析 ================= -->
+  <section id="s4">
+    <div class="sec-head"><span class="idx">04</span><h2>归因分析 · 三线剥离</h2><span class="en">Attribution</span></div>
+    <div class="attr">
+      <div class="attr-row">
+        <div class="ar-head"><span class="ar-tag a">人效线 · α 候选</span><h3>贝壳 +87% 均值提升的拆解：β 与分母吃掉大半，α 残差未验证</h3></div>
+        <p>张一鸣拆解：<b>市场 β 约 +20%</b>（量增自然摊薄）、<b>分母操纵最多 +33%</b>（清退零开单者 3→4 单）、<b>组织/AI α 残差约 +47%</b> 但归因未验证。银行同理：AUM 高增期人均管户 AUM 提升主要是 β（利率下行存款搬家红利，行内 AUM 增速口径待补）；贝壳三组 α 数字全为内部单源、无对照组，差分前只是「相关」非「因果」。</p>
+        <div class="split">
+          <div class="seg s-beta"><div class="sk">市场 β</div><div class="sv">≈+20%</div><div class="sd">量增摊薄 · 约值</div></div>
+          <div class="seg s-denom"><div class="sk">分母操纵（上限）</div><div class="sv">最多 +33%</div><div class="sd">清退零开单者 3→4 单 · 同店口径 + 总量监测对冲</div></div>
+          <div class="seg s-alpha"><div class="sk">组织/AI α 残差</div><div class="sv">≈+47%</div><div class="sd">归因未验证 · 待 90 天差分核销</div></div>
+          <div class="seg s-note">专家拆分约值（研判推断），分量非加总关系；零开单率 25%→不足 10% 的分布级改变需要机制性力量，是最可信的组织 α 证据。</div>
+        </div>
+      </div>
+      <div class="attr-row">
+        <div class="ar-head"><span class="ar-tag b">AI 线 · β 为主</span><h3>命门在成本入账与人工基线：AI 物理上限 = 规则可表达边界</h3></div>
+        <p>六成流程环节可结构化、四成以上成本不可结构化 → <b>净降本 20-30% 到头，不是 10 倍</b>（马斯克）。AI 线索转介成本/单不可控则贡献利润率不升反降；算力与模型维护挂总行科技账时，零售「效率提升」是账面幻觉。<b>AI 成本 BOM（获客成本/单、调用成本/单）必须入账</b>。14.6% 利润率在 AI 成本未入账时虚高。<b>人工基线</b>（梁斌）：试点分行试点前 6 个月同渠道人工转化率差分前测，AI 辅助 / AI 自主两档分别验证；口径字典与单一取数源由总行数据中台统一发布（责任主体 = 总行数据管理部）。</p>
+      </div>
+      <div class="attr-row">
+        <div class="ar-head"><span class="ar-tag c">场景线 · 净 α ≈ 0 起步</span><h3>正 α 全靠交叉销售：双目标落地即对冲</h3></div>
+        <p>装修贷扣资金成本约 2%、拨备 0.5-1%、获客后单看净利差 ≈ 0 或为负，<b>正 α 全靠交叉销售</b>（高增银双目标：交叉销售率 ≥ 30% + 结算资金日均沉淀额）。杨现领重定价不变：按场景转化付费而非按网点成本付费；「装修贷是促转化不是卖金融产品」（王一帆红线）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 五、施工图 ================= -->
+  <section id="s5">
+    <div class="sec-head"><span class="idx">05</span><h2>施工图 · 四里程碑钉死</h2><span class="en">Roadmap</span></div>
+    <div class="phases">
+      <div class="phase">
+        <div class="ph-row"><span class="seq">1</span><span class="ph">T+15</span></div>
+        <h4>口径字典定稿发布</h4>
+        <ul>
+          <li>日均 AUM 含表外口径、时点 vs 日均规则定稿</li>
+          <li>进件 ≠ 获批 ≠ 放款：转化链定义到「放款且首笔动账」</li>
+          <li>责任主体：总行数据管理部（非零售部）</li>
+        </ul>
+        <div class="rule">梁斌：单一取数源由总行数据中台统一发布</div>
+      </div>
+      <div class="phase">
+        <div class="ph-row"><span class="seq">2</span><span class="ph">T+30</span></div>
+        <h4>取数联调 + 基线快照</h4>
+        <ul>
+          <li>3 试点 + 3 同能级对照配对、试点前 6 个月回溯数据补齐</li>
+          <li>用现有数据中台看板，不新建系统（人天估算 2-3 个月，待校准）</li>
+          <li>T+30 不补基线则 T+90 无差分可比</li>
+        </ul>
+        <div class="rule">差分可比性以基线快照为前提（梁斌）</div>
+      </div>
+      <div class="phase">
+        <div class="ph-row"><span class="seq">3</span><span class="ph">T+90 · 约 2026Q4</span></div>
+        <h4>差分初判 · 核销 α</h4>
+        <ul>
+          <li>控 AUM 自然增速 5-8%（估算基准）后净人效 &lt;10% 即撤回 α、回试点重来</li>
+          <li>观察期不排名、撤点不追责但复盘（袁军三原则）</li>
+          <li>同期监测总量与挂牌量-成交周期类 β 旁证</li>
+        </ul>
+        <div class="rule">裁决点：同店管户 AUM/人 净增（控 β 差分）</div>
+      </div>
+      <div class="phase">
+        <div class="ph-row"><span class="seq">4</span><span class="ph">T+180 · AI 证据</span></div>
+        <h4>AI 线扩点评估</h4>
+        <ul>
+          <li>AI 辅助 / AI 自主两档商机转化率 ≥ 人工基线 且 单客成本不升 → 扩点评估</li>
+          <li>无证据即撤；「获批且放款」监测口径季度通报</li>
+          <li>场景线靠前发力：装修贷 Q3 进件、Q4 转化入月度通报；双目标季度核销</li>
+        </ul>
+        <div class="rule">止损线：任一证伪触发即撤回叙事、回单分行试点</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 六、反方压力测试 ================= -->
+  <section id="s6">
+    <div class="sec-head"><span class="idx">06</span><h2>反方压力测试 · 风险锚点</h2><span class="en">Red Team</span></div>
+    <div class="grid-2">
+      <div class="attack">
+        <h3><span class="ano">1</span>AI 物理天花板</h3>
+        <p>净降本 20-30% 到头；AI 只触及利润创造权重 ≤40% 的环节（风险定价、线下尽调面签、高净值关系维护不可结构化）。</p>
+        <div class="hedge"><b>对冲</b>：成本 BOM 入账，试点验证而非全面铺开</div>
+      </div>
+      <div class="attack">
+        <h3><span class="ano">2</span>分母操纵</h3>
+        <p>人均 AUM / 中收靠裁尾部、缩网点可立涨 20-30%，总量不动。</p>
+        <div class="hedge"><b>对冲</b>：同店口径 + 总量同步监测；零产单率不直接挂钩绩效</div>
+      </div>
+      <div class="attack">
+        <h3><span class="ano">3</span>场景净利差 ≈ 0</h3>
+        <p>装修贷单看净利差 ≈ 0 或为负，正 α 全靠交叉销售，转化率未披露。</p>
+        <div class="hedge"><b>对冲</b>：交叉销售率 ≥ 30% + 结算资金日均沉淀额双目标落地即对冲</div>
+      </div>
+      <div class="attack">
+        <h3><span class="ano">4</span>止损线</h3>
+        <p>商机转化率不达标 / 控 β 差分人效净增 &lt;10% / 场景交叉销售率 &lt;30%——任一触发。</p>
+        <div class="hedge"><b>处置</b>：即撤回叙事、回单分行试点；撤点不追责但须复盘</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 七、不确定性 ================= -->
+  <section id="s7">
+    <div class="sec-head"><span class="idx">07</span><h2>不确定性</h2><span class="en">Uncertainty</span></div>
+    <div class="risk-list">
+      <div class="risk-item"><span class="rno">U1</span><div><b>内部单源</b>：贝壳三组 α 数字（3→5.6 单、零开单率、7.4% vs 5%）全为管理层 S 分享单源、无对照组，差分前只是「相关」非「因果」；试点盘可能是优选盘。</div></div>
+      <div class="risk-item"><span class="rno">U2</span><div><b>行内数据待补</b>：零产单率、人均 AUM、AUM 自然增速基准 5-8%（估算）、单客成本、交叉销售率现值、人天投入估算——证伪线须口径字典上线后核实。</div></div>
+      <div class="risk-item"><span class="rno">U3</span><div><b>窗口污染</b>：差分若跨季末冲量窗口会污染读数；口径混用（时点 vs 日均、进件 vs 放款）须显式排除；基线快照缺失则差分不可比。</div></div>
+      <div class="risk-item"><span class="rno">U4</span><div><b>复制率衰减</b>：&gt;30% 即停扩——样板分行跑通只是样板工程，3 家以上稳定复制才是真能力。</div></div>
+      <div class="risk-item"><span class="rno">U5</span><div><b>政银协同前置</b>：数据共享与财政贴息需与地方政府逐项签协议，合规与预算前置；且数据共享本身须过数据安全四原则审查（梁斌）；政策脉冲（收储、城中村改造）若驱动回暖，β 持续性存疑。</div></div>
+      <div class="risk-item"><span class="rno">U6</span><div><b>考核扭曲风险</b>：α/β 分账考核落地需防「冲量造假」与「低产清退美化均值」；同店口径 + 总量监测双保险。</div></div>
+    </div>
+  </section>
+
+  <!-- ================= 附录 ================= -->
+  <div class="appendix">
+    <h3>附录 · 数据口径与来源</h3>
+    <table>
+      <tr><th>素材</th><th>数字</th><th>口径 / 标注</th></tr>
+      <tr><td>98wiki 素材（可核实）</td><td>装修贷年化 3% 起、单户 50 万 / 上限 300 万、价内加价约 6%</td><td>2026-08-18 版方案口径；加价计入客户综合融资成本</td></tr>
+      <tr><td>98wiki 素材（可核实）</td><td>Token 先享试单授信 2,800 万；成熟 5 亿在贷</td><td>中行广州分行已落地；占比 0.03% = 入口非引擎</td></tr>
+      <tr><td>98wiki 素材（可核实）</td><td>私行 12 场中 6 场插课 + 3 场专场</td><td>上海试点覆盖南通 / 苏州 / 无锡</td></tr>
+      <tr><td>98wiki 素材（可核实）</td><td>权益互换：钻石卡 600 万→200 万</td><td>合规审查前置（袁军修订）</td></tr>
+      <tr><td>今日贝壳研究（公开可核实）</td><td>二手单量 +近两成、利润率 14.6%、净利 38.79 亿</td><td>财新 08-22 单量 / 搜狐等 08-22 利润；β 占六成上下为专家估算</td></tr>
+      <tr><td>管理层 S 分享 08-21（内部单源）</td><td>人效 3→5.6 单（+87%）、零开单率 25%→&lt;10%、转带看 7.4% vs 5%</td><td>内部单源未获独立验证；同店口径、成本/单未披露</td></tr>
+      <tr><td>行内数据</td><td>零产单率、人均 AUM、单客成本、交叉销售率现值、人天投入估算</td><td>全部标注「待补」；证伪线须口径字典上线后核实</td></tr>
+      <tr><td>数据安全专项（梁斌必补项）</td><td>四原则：最小必要 / 共享必授权 / 数据不出行 / 流转必留痕</td><td>个保法第 13 条同意基础单独授权；名单「可用不可见」；上线前过总行信息安全与数据管理委员会评审，硬伤一票否决</td></tr>
+      <tr><td>人工基线（梁斌）</td><td>试点分行试点前 6 个月同渠道人工转化率</td><td>差分前测，非全行均值；AI 辅助 / AI 自主两档分别验证</td></tr>
+      <tr><td>渠道协同三件套（梁斌）</td><td>统一商机池 + 智能路由 + 全渠道归因</td><td>首触 + 成交分账；简易需求线上闭环、复杂高净值路由重渠道；禁止分行自建</td></tr>
+    </table>
+    <p class="models"><b>心智模型</b>：同店口径 · α/β 剥离 · 平均数失效（P25 尾部修复）· 差分验证 · 成本 BOM · 渠道产能重定价 · 复制率衰减 · 自主可控底线 · 政银协同 · α/β 分账考核 · 数据安全四原则 · AI 辅助 vs AI 自主两档 · 人工基线差分前测 · 统一商机池 + 智能路由 + 全渠道归因。<b>研判团队</b>：王一帆（银行零售·W）/ 杨现领（居住服务·Y）/ 陶琦（行业研究·T）/ 张一鸣（组织效率·张）/ 马斯克（第一性原理·马）+ 领导质询 袁军 / 高增银 / 梁斌（CIO）。</p>
+  </div>
+
+  <!-- ================= 页脚 ================= -->
+  <div class="foot">
+    <span class="fi">智见点评 · 江苏银行零售效率参考</span>
+    <span class="fc">素材 98wiki · 行内数据待补 · 数字带口径 · 预测与估算标注「研判推断」</span>
+    <span class="fg">2026-08-25 · 讨论稿 v3（三轮质询已并入）</span>
+  </div>
+
+</div>
+</body>
+</html>

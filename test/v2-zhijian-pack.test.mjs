@@ -228,22 +228,29 @@ test('five output templates (A-E) derived from the framework specs', () => {
   assert.deepEqual(a.media, ['markdown'])
 })
 
-test('four team templates (A-D) model one logical review → fusion render; E has none', () => {
+test('four team templates (A-D) model one logical review → fusion → render; E has none', () => {
   const templates = build().teamTemplates
   assert.deepEqual(templates.map(template => template.id), ['zhijian.team.A', 'zhijian.team.B', 'zhijian.team.C', 'zhijian.team.D'])
   for (const template of templates) {
     const tasks = template.tasks
-    // One logical reviewer task + one fusion task (reviewer fan-out is the
-    // execution adapter's job, driven by compiled task.expertIds).
-    assert.deepEqual(tasks.map(task => task.id), ['t1', 't2'])
+    // One logical reviewer task + one fusion task + one render task (reviewer
+    // fan-out is the execution adapter's job, driven by compiled task.expertIds;
+    // fusion and render stay in the shared pool).
+    assert.deepEqual(tasks.map(task => task.id), ['t1', 't2', 't3'])
     assert.equal(tasks[0].role, 'role.reviewer')
     assert.equal(tasks[1].role, 'role.fusion')
+    assert.equal(tasks[2].role, 'role.render')
     assert.deepEqual(tasks[1].dependsOn, ['t1'], 'fusion depends on the logical review task')
+    assert.deepEqual(tasks[2].dependsOn, ['t2'], 'render depends on the fusion task')
     assert.equal(template.slots[0].approval, 'user-signoff')
     assert.deepEqual(template.slots[0].cardinality, { min: 1, max: 5 })
     // role.fusion is optional (min 0): the fusion task stays unassigned
-    // (shared pool), matching the V1 review runtime — no auto-filled member.
+    // (shared pool); role.render is a dedicated slot filled by the apply
+    // bridge with the builtin generalist expert (designer), so domain
+    // experts never take the render task.
     assert.deepEqual(template.slots[1].cardinality, { min: 0, max: 1 })
+    assert.equal(template.slots[2]?.id, 'role.render')
+    assert.deepEqual(template.slots[2]?.cardinality, { min: 0, max: 1 })
     // The reviewer subject carries per-expert placeholders resolved by the
     // apply bridge from the adapter-supplied expertDisplay.
     assert.equal(tasks[0].subject, '专家研判：{expertName}（{expertField}·{expertInitials}）')
@@ -252,9 +259,15 @@ test('four team templates (A-D) model one logical review → fusion render; E ha
       assert.ok(template.parameters.properties[param] !== undefined, `template must declare param ${param}`)
     }
     assert.ok(template.deliverables[0].outputTemplate.startsWith('zhijian.output.'))
-    assert.deepEqual(template.deliverables[0].fromTasks, ['t2'])
+    assert.deepEqual(template.deliverables[0].fromTasks, ['t3'])
     assert.ok(template.gates.length >= 2)
-    assert.ok(template.gates.every(gate => gate.appliesTo.includes('t2')))
+    assert.ok(template.gates.every(gate => gate.appliesTo.includes('t3')))
+    // Render node binds the three delivery skills + the completion checkpoint.
+    assert.ok(tasks[2].subject.includes('渲染与生成'))
+    assert.ok(tasks[2].description.includes('finesse-ui'))
+    assert.ok(tasks[2].description.includes('pptfast'))
+    assert.ok(tasks[2].description.includes('video-shotcraft'))
+    assert.ok(tasks[2].description.includes('等待用户确认'))
   }
   const d = templates.find(template => template.id === 'zhijian.team.D')
   assert.deepEqual(d.slots[0].diversity, { fields: 2 }, '框架 D 需要至少两个领域')

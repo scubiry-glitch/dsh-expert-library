@@ -19,6 +19,7 @@ import {
   SCHEMA_VERSION,
   type DomainKnowledgeManifest,
   type DomainPackV2,
+  type ExpertV2,
   type KnowledgeProviderManifest,
   type MethodPack,
   type OutputTemplate,
@@ -30,6 +31,7 @@ import {
   frameworkOutputTemplate,
   frameworkTeamTemplate,
   qualityPolicy,
+  REVIEW_CAPABILITY,
   zhijianMetaToExpertV2,
 } from './zhijian-pack.ts'
 import { piiRedactionGate } from './bank-pack.ts'
@@ -52,6 +54,9 @@ export const BEIKE_QUALITY_POLICY_ID = 'beike.quality'
 /** The universal review capability every beike expert claims. */
 export const BEIKE_REVIEW_CAPABILITY = 'beike.review'
 
+/** Evidence ref for the beike pack roster-level capability claim. */
+const BEIKE_ROSTER_EVIDENCE = 'beike:roster'
+
 /**
  * 贝壳生态相关专家（跨命名空间装载，按 id 引用现有 meta，不重复注册）：
  * - bk-002 廖俊平（制度派·经纪/居住服务）
@@ -61,6 +66,13 @@ export const BEIKE_REVIEW_CAPABILITY = 'beike.review'
  * - bk-033 杨现领（渠道崛起派·贝壳研究院院长）
  * - e08-08 左晖（贝壳创始人·平台经济）
  * - e04-05 一濛（居住服务·住房租赁/长租资管）
+ * - s-07 张勇（组织设计·商业模式创新·数字化转型）
+ * - s-13 朱啸虎（平台商业模式·单位经济·网络效应）
+ * - s-23 程维（双边平台·规模经济·运营执行）
+ * - bk-016 黄奇帆（前市长·制度与产业政策设计）
+ * - bk-027 冯俊（住建部/房协政策语境，引用须标注时点）
+ * - bk-028 赵晖（住建部原总经济师·住房品质与治理）
+ * - bank-11 琉（战略咨询·SPQA 问题定义/假设驱动/对标机制提炼，萌翻咨询方法论）
  */
 export const BEIKE_EXPERT_IDS: readonly string[] = [
   'bk-002',
@@ -70,6 +82,13 @@ export const BEIKE_EXPERT_IDS: readonly string[] = [
   'bk-033',
   'e08-08',
   'e04-05',
+  's-07',
+  's-13',
+  's-23',
+  'bk-016',
+  'bk-027',
+  'bk-028',
+  'bank-11',
 ]
 
 /** 贝壳专家 meta（从全量合并 meta 按 id 装载；缺失即构建失败——防丢）。 */
@@ -118,8 +137,16 @@ function beikeScenarioV2(scenario: ZhijianRouteScenario, packVersion: string): S
     domain: 'beike',
     intents: [...(BEIKE_SCENARIO_INTENTS[scenario.id] ?? [scenario.id])],
     requiredCapabilities: [
-      { capability: BEIKE_REVIEW_CAPABILITY, minProficiency: 1, cardinality: 1 },
-      { capability: 'beike.review', minProficiency: 1, cardinality: 1 },
+      // Roster gate against the capability every zhijian-projected expert
+      // claims (`zhijian.review`), NOT the pack-scoped `beike.review`.
+      // Expert overlays now union capability claims by capability id
+      // (mergeExpertCapabilities in pack-loader), so a `beike.review` stamp
+      // on beike experts survives a higher-precedence zhijian-realestate
+      // re-projection; the shared gate keeps a pack-scoped affinity from
+      // ever becoming mandatory for roster eligibility. `beike.review`
+      // remains a capability marker on beike experts (see beikeExpertToV2)
+      // for future tool/知识路由 and capability-index lookups.
+      { capability: REVIEW_CAPABILITY, minProficiency: 1, cardinality: 1 },
     ],
     routingPolicy: {
       ...(scenario.constraints !== undefined ? { assertions: [scenario.constraints] } : {}),
@@ -224,7 +251,7 @@ function beikeDomainKnowledgeManifest(packVersion: string): DomainKnowledgeManif
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     domain: 'beike',
-    boundary: '贝壳生态专家 Profile 投影（2026-08-23）：bk-002/018/019/031/033 居住服务与经纪 + e08-08 左晖（贝壳创始人）+ e04-05 一濛（长租资管）。',
+    boundary: '贝壳生态专家 Profile 投影（2026-08-23）：bk-002/018/019/031/033 居住服务与经纪 + e08-08 左晖（贝壳创始人）+ e04-05 一濛（长租资管）+ s-07 张勇/s-13 朱啸虎/s-23 程维（商业模式与平台经济）+ bk-016 黄奇帆/bk-027 冯俊/bk-028 赵晖（政策治理，引用标注时点）。',
     ontology: {
       entities: [
         { id: 'expert', description: '贝壳生态相关专家' },
@@ -265,8 +292,43 @@ function beikeProtocolMethodPack(packVersion: string): MethodPack {
       '1. 区分平台视角（左晖/杨现领）与经纪制度视角（廖俊平/徐斌/柴强），按问题落点选主答；',
       '2. 口径：贝壳成出口径（bk-031 陶琦）与克而瑞/中指/统计局均有差异，须标注；',
       '3. 陶琦 bk-031 为内测对比项，对外交付不引用；',
-      '4. 输出结构按框架 B 四段式：关键结论 → 关键事实及变化 → 归因 → 展望与不确定性。',
+      '4. 商业与平台经济议题可选张勇 s-07（组织/商业模式）、朱啸虎 s-13（单位经济/网络效应）、程维 s-23（双边平台/运营执行），分别校验组织生态、单位经济与平台执行；',
+      '5. 政策治理议题可选黄奇帆 bk-016、冯俊 bk-027、赵晖 bk-028；引用必须标注前任/原任身份和观点时点，不得表述为现任官员意见；',
+      '6. 输出结构按框架 B 四段式：关键结论 → 关键事实及变化 → 归因 → 展望与不确定性。',
     ].join('\n'),
+  }
+}
+
+/**
+ * Project one beike expert meta into an {@link ExpertV2} and stamp the
+ * pack-wide `beike.review` capability marker. The scenarios' roster gates
+ * use the shared `zhijian.review` claim (see beikeScenarioV2) — this
+ * pack-scoped marker is not roster-required; it is stamped for future
+ * tool/知识路由 and capability-index lookups, and the overlay merge
+ * preserves it across re-projections via the capability-id union in
+ * `mergeExpertCapabilities`. The shared zhijian projection injects the
+ * generic `zhijian.review` plus field-scoped `realestate.*.review` claims
+ * but never the pack-scoped marker.
+ */
+function beikeExpertToV2(
+  meta: ZhijianExpertMeta,
+  options: { packVersion?: string; modelPolicy?: import('./types.ts').ModelPolicy } = {},
+): ExpertV2 {
+  const expert = zhijianMetaToExpertV2(meta, options)
+  if (expert.capabilities.some(claim => claim.capability === BEIKE_REVIEW_CAPABILITY)) {
+    return expert
+  }
+  return {
+    ...expert,
+    capabilities: [
+      ...expert.capabilities,
+      {
+        capability: BEIKE_REVIEW_CAPABILITY,
+        proficiency: 1,
+        coverage: 'high',
+        evidenceRefs: [BEIKE_ROSTER_EVIDENCE],
+      },
+    ],
   }
 }
 
@@ -291,8 +353,8 @@ export function buildBeikeDomainPack(options: BuildBeikePackOptions = {}): Domai
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     name: '贝壳生态领域包（居住服务/平台/经纪/租赁）',
-    description: `${metas.length} 位贝壳生态相关专家（交叉投影：BK 居住服务派 5 + 左晖 e08-08 + 一濛 e04-05）。V2 投影源为共享注册表 meta；复用 zhijian/bank 的模板/质量/方法构建器（beike 前缀）。知识库 = 本地 99wiki 贝壳合作材料。`,
-    dependsOn: ['zhijian-realestate', 'pipeline-domains'],
+    description: `${metas.length} 位贝壳生态相关专家（居住服务/平台创始人 + 商业模式/平台经济外部专家 + 前政府及行业治理专家）。V2 投影源为共享注册表 meta；复用 zhijian/bank 的模板/质量/方法构建器（beike 前缀）。知识库 = 本地 99wiki 贝壳合作材料。`,
+    dependsOn: ['zhijian-realestate', 'pipeline-domains', 'pipeline-general'],
     caliberDeclarations: {
       '贝壳': '贝壳成出口径',
       '克而瑞': '克而瑞/普睿监测口径',
@@ -305,7 +367,7 @@ export function buildBeikeDomainPack(options: BuildBeikePackOptions = {}): Domai
   }
   return {
     pack,
-    experts: metas.map(meta => zhijianMetaToExpertV2(meta, { packVersion, modelPolicy })),
+    experts: metas.map(meta => beikeExpertToV2(meta, { packVersion, modelPolicy })),
     teamTemplates: [frameworkTeamTemplate(frameworkB, packVersion, {
       prefix: 'beike',
       qualityPolicyId: BEIKE_QUALITY_POLICY_ID,

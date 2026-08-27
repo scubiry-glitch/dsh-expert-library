@@ -1,0 +1,85 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "balanced",
+    "audience": "executive"
+  },
+  "theme": "consulting",
+  "filename": "贝壳2026Q2经营杠杆归因_讨论稿.pptx",
+  "seed": 20260825,
+  "meta": {
+    "organization": "98wiki ｜ 智见点评",
+    "authors": [
+      {
+        "name": "T/D/W/X · 张一鸣/马斯克 · 杨现领",
+        "role": "融合研判",
+        "org": "智见"
+      }
+    ],
+    "date": "2026-08",
+    "version": "讨论稿 v2.1",
+    "confidentiality": "internal",
+    "copyright": "98wiki ｜ 智见 / 行业研究报告"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "贝壳 2026Q2 经营杠杆归因"
+    },
+    {
+      "id": "kpi",
+      "type": "content",
+      "heading": "核心指标：量升人平剪刀差",
+      "beat": "anchor"
+    },
+    {
+      "id": "split",
+      "type": "content",
+      "heading": "归因拆分：β 入账、α 应收",
+      "beat": "dense"
+    },
+    {
+      "id": "facts",
+      "type": "content",
+      "heading": "六组关键事实，按证据强度排序",
+      "beat": "anchor"
+    },
+    {
+      "id": "chain",
+      "type": "content",
+      "heading": "机制链：沿链逐环剥离 β 与 α",
+      "beat": "dense"
+    },
+    {
+      "id": "compare",
+      "type": "content",
+      "heading": "β 段与 α 段：两层账拆开看",
+      "beat": "breathing"
+    },
+    {
+      "id": "verify",
+      "type": "content",
+      "heading": "验证协议：6 城 90 天差分，唯一裁决点",
+      "beat": "anchor"
+    },
+    {
+      "id": "nodes",
+      "type": "content",
+      "heading": "三个验证节点",
+      "beat": "breathing"
+    },
+    {
+      "id": "outlook",
+      "type": "content",
+      "heading": "展望与风险：范式判断与误读警示",
+      "beat": "dense"
+    },
+    {
+      "id": "ending",
+      "type": "ending",
+      "heading": "90 天后，凭差分核销"
+    }
+  ]
+}

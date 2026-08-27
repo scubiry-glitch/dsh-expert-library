@@ -82,14 +82,26 @@ export const ZHIJIAN_EXPERT_BY_ID: ReadonlyMap<string, Expert> = new Map(
   ALL_EXPERT_METAS.map(meta => [meta.id, zhijianExpertToExpert(meta)]),
 )
 
+/**
+ * Normalize a user-facing roster id to its canonical lowercase form
+ * (e.g. `BK-033` → `bk-033`, `E08-08` → `e08-08`, ` BK-033 ` → `bk-033`).
+ * Public callers may pass the display form (uppercase `BK-*` / `E<域>-<n>`)
+ * while the registry keys are all lowercase; every lookup boundary must
+ * normalize before matching.
+ */
+export function normalizeExpertId(id: string): string {
+  return id.trim().toLowerCase()
+}
+
 /** Meta lookup by expert id (both namespaces). */
 export function zhijianMetaById(id: string): ZhijianExpertMeta | undefined {
-  return ALL_EXPERT_METAS.find(meta => meta.id === id)
+  const normalized = normalizeExpertId(id)
+  return ALL_EXPERT_METAS.find(meta => meta.id === normalized)
 }
 
 /** Whether an Expert definition is a native (bk-* / bank-* / s-* / e*-* / xhs-*) expert. */
 export function isZhijianExpertId(id: string): boolean {
-  return ZHIJIAN_EXPERT_BY_ID.has(id)
+  return ZHIJIAN_EXPERT_BY_ID.has(normalizeExpertId(id))
 }
 
 /** All native expert ids, for roster display. */

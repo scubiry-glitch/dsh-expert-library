@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>优化说明（沪八条二手转保租单元经济研报 20260823 优化版）</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "智见行业研究 ｜ 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<h1>优化说明：沪八条二手转保租单元经济研报（20260823 优化版）</h1>
+<blockquote>
+<p>优化对象：<code>20260822_沪八条二手转保租单元经济_重做</code> 研究包（主文 + 测算）<br>
+交付内容：本目录 <code>主文_沪八条二手转保租单元经济_重做_优化.md</code>（正式研报，含 HTML/PDF 渲染版）＋ <code>测算说明与复算表_优化.md</code><br>
+对照用户三项要求与"三个外部数据源"逐条说明如下。</p>
+</blockquote>
+<hr>
+<h2>一、夯实测算逻辑（对应要求 1）</h2>
+<h3>1.1 定位到的原稿硬伤（已全部修正）</h3>
+<ol>
+<li><strong>组合表 r 值与公式自相矛盾</strong>：原稿 3.2 定义 <code>r = 毛收益率 × 九折 × 出租率 × 收缴率</code>，锚点 B 推出"90% 出租率折后 1.5%–2.0%"，但组合①（8折+1.75%+90%）却写 <code>r≈2.2%–2.6%</code>，组合③写 <code>r≈2.5%–2.9%</code>——数值比"未打折的毛收益率"还高，说明组合表漏乘了纳管九折与出租率（或偷换租金档），三行不是同一口径。</li>
+<li><strong>"折扣每收紧 0.5 折 ≈ 资金成本上升 0.6–0.9pp"系误算</strong>：按 <code>∂r/∂d ≈ −r/d</code> 实算，折扣收紧 0.5 折 r 仅下降约 0.10–0.13pp（原值高估 5–7 倍），已修正为"0.5 折 ≈ 0.10–0.13pp"，并新增"资金成本每升 1pp 盈亏平衡折扣需加深 0.3–0.5 折"的等价换算。</li>
+<li><strong>敏感性矩阵判定过乐观</strong>：原稿"7.5 折 + 1.75% 成立"经复算为"临界 +0.1pp"；全区间无安全边际。</li>
+<li><strong>结论与数字脱节</strong>：原稿承认"计入 CAPEX 0.8–1.7pp 后组合①面临被推翻"，但组合表却写"勉强成立"——优化版将结论修正为诚实的"全部组合临界、无安全边际，经常性 CAPEX 摊销即可翻负"。</li>
+</ol>
+<h3>1.2 夯实方式</h3>
+<ul>
+<li><strong>统一公式</strong>：式 1 <code>r = 12·R_m·q·o·收缴率 ÷ (d·P_m)</code>；式 2 盈亏平衡折扣 <code>d* = 12·R_m·q·o·收缴率 ÷ (c·P_m)</code>。全报告所有数字从同一组基准参数出发复算。</li>
+<li><strong>新增盈亏平衡分析</strong>（3.5 节）：给出"资金成本 1.75% → 盈亏平衡折扣 8.1 折；3.0% → 4.7 折"的量化标尺，把"折扣是枢纽、再贷款是氧气"从口号变成可证伪的算术。</li>
+<li><strong>区分成本时点性质</strong>：CAPEX 摊销为经常性（0.3–0.5pp）、改造期空置为首年一次性（0.5–1.2pp），不再混为一个笼统的 pp。</li>
+<li><strong>复算表</strong>：<code>测算说明与复算表_优化.md</code> 提供全部中间计算与差异对照，报告内每个数字可复算、可追溯。</li>
+</ul>
+<h2>二、使用三个外部数据源（Wind / 政研通 / 贝壳）</h2>
+<p>本轮实际取数并写入报告（详见测算说明第一章）：</p>
+<table>
+<thead>
+<tr>
+<th>数据源</th>
+<th>状态</th>
+<th>用到的数据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Wind（万得）</strong></td>
+<td>✅ 已取数</td>
+<td>保障性住房再贷款 1.75%（央行 EDB）、5Y LPR 3.5% / 1Y LPR 3.0%（连续 15 期）、上海一般公共预算收入 2024/2025（8,374/8,501 亿元）、城投宽庭 REIT 508031.SH 行情</td>
+</tr>
+<tr>
+<td><strong>政研通（贝壳研究院/贝壳平台交付）</strong></td>
+<td>✅ 已取数</td>
+<td>上海二手成交均价 47,111 元/㎡（2026-07，环比连续转正）、套均总价 371 万、租赁套均租金 6,997 元/月（+4.78% MoM）、成交周期 3.5 个月、贝壳房价指数 80.3（一线最高）与租金指数 97.9、区级示意分布（静安 6.57 万/㎡）</td>
+</tr>
+<tr>
+<td><strong>贝壳（房源级 MCP）</strong></td>
+<td>⚠️ 不可用</td>
+<td><code>BEIKE_MCP_API_KEY</code> 未配置，房源级挂牌/租金明细取不到；其平台级/研究院级数据已由政研通（贝壳决策数据服务）完整覆盖。如需房源级数据（如静安 40㎡ 老破小挂牌样本），需补配密钥后复跑</td>
+</tr>
+</tbody>
+</table>
+<p><strong>夯实效果</strong>：原稿的资金成本参数（财联社二手报道）升级为 Wind 央行官方序列；月租锚从"平台口径 3500–4500"升级为"贝壳全市单位租金 89 元/㎡/月推演（3,400–4,200）"；首例折扣从"约 8–9 折"精确到"对静安区级均价反推 8.4 折"；并新增全市年化租金回报率实测（2026-07 为 2.26%，自 2.07% 抬升）作为交叉锚。</p>
+<h2>三、减少对"旧版"等过程稿件的引用和表达（对应要求 2）</h2>
+<p>逐一清理（优化版正文统计：<code>旧版</code> 0 次、<code>重做</code> 0 次、<code>GATE</code> 0 次、<code>t1/t2/t3/t4/t5</code> 0 次、<code>98wiki</code> 0 次、<code>KPI</code> 0 次、<code>【推断】</code> 0 次）：</p>
+<table>
+<thead>
+<tr>
+<th>原表述</th>
+<th>优化版处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>封面 kicker "98WIKI ｜ 贝壳域 · 深度研究（重做版）"</td>
+<td>"智见行业研究 ｜ 贝壳域 · 政策与资产研究"</td>
+</tr>
+<tr>
+<td>"研究类型：政策机制研究（98wiki 选题 1 重做 · research-report 全流程 · GATE 双 PASS）"</td>
+<td>正式的研究方法描述（政策文本分析 + 三源数据锚定 + 敏感性测算）</td>
+</tr>
+<tr>
+<td>"参与研判：Researcher（t1）· 宏观周期派（t2）· 债务金融派（t3）｜ Docs Coordinator（t4/t5）"</td>
+<td>删除（不再出现流程角色）</td>
+</tr>
+<tr>
+<td>"旧版框架报告…本次 t1 已部分填实"</td>
+<td>"试点以来公开披露的数据已可支撑定量检验…"</td>
+</tr>
+<tr>
+<td>1.5 节"与旧版的关系"整节</td>
+<td>删除；内容并入"研究问题"与结论（用本报告自身语言）</td>
+</tr>
+<tr>
+<td>"旧版口径单套 8–15 万"</td>
+<td>"参考口径：单套 8–15 万（行业经验区间）"</td>
+</tr>
+<tr>
+<td>"旧版圆桌共识""旧版 L 立场""旧版共识延续""旧版裁决规则延续"</td>
+<td>删除或改写为"本报告基准假设""学界筛选偏差警示""本报告裁决规则"</td>
+</tr>
+<tr>
+<td>"【推断】"（约 40 处）</td>
+<td>统一为"【测算】"并在文首声明"全部测算值可在附录 B 复算"</td>
+</tr>
+<tr>
+<td>"补数项 / 补数动作"</td>
+<td>"待验证数据项 / 验证动作"</td>
+</tr>
+<tr>
+<td>页脚 "98wiki ｜ 智见 / 行业研究报告"</td>
+<td>"智见行业研究 ｜ 行业研究报告"</td>
+</tr>
+<tr>
+<td>文末"成文：Docs Coordinator（t4）· 供 t5 渲染与分型验收"</td>
+<td>"由智见行业研究团队完成" + 免责声明</td>
+</tr>
+</tbody>
+</table>
+<h2>四、相对正式的研报格式（对应要求 3）</h2>
+<ul>
+<li><strong>封面</strong>：报告名称、报告日期、研究范围、研究方法、数据口径、关键锚点、密级（不再用 KPI 卡，改为"关键数字"速览，数字全部更新为修正后口径）。</li>
+<li><strong>摘要（Executive Summary）</strong>：核心判断加粗置顶 + 三点结论 + 时间表与验证窗口，独立成节。</li>
+<li><strong>正文结构</strong>：一研究背景与政策框架（政策事实链/条款解读/问题范围/变量口径）→ 二市场与制度环境（量价租/制度/资金/八项措施）→ 三单元经济模型与测算（机制图/公式/基准参数/锚点/组合判定/盈亏平衡/敏感性/CAPEX/资金情景）→ 四宏观研判 → 五风险研判与财政纪律 → 六情景推演与政策建议（含决策树）→ 七结论 → 八风险提示 → 附录（数据总表/测算复算/验证协议/来源清单）+ 免责声明。</li>
+<li><strong>编号与标注</strong>：图表统一编号（图 1–4、表格编号）、公式编号（式 1、式 2）、测算值统一标注【测算】并集中可复算；数据来源逐一标注（Wind / 政研通 / 公开报道）。</li>
+<li><strong>口径纪律</strong>：成交价 vs 挂牌价、贝壳口径 vs 网签口径、成交周期 vs 库存月数、全市 vs 区级示意——全部并列注明，杜绝混用。</li>
+<li><strong>渲染</strong>：沿用 A4/weasyprint 正式排版（HTML+PDF），页眉页脚改为正式署名。</li>
+</ul>
+<h2>五、结论基调的变化（供决策参考）</h2>
+<p>优化版的核心结论比原稿更谨慎、也更诚实：<strong>原稿"组合①勉强成立"→ 优化版"全部组合临界、无安全边际，计入 CAPEX 后转负，成立依赖四项执行条件同时达标并辅以贴息兜底"</strong>。这一变化不是数据恶化，而是把原稿中已经承认但未落实到数字的脆弱性（3.5 节"足以把组合①打成不成立"）统一进了测算口径。</p>
+</body>
+</html>

@@ -245,7 +245,22 @@ interface ResolvedTaskGates {
  * `appliesTo` names the physical task id or its logical plan id, plus
  * deliverable-targeted gates for every deliverable whose sources are all
  * complete (the completing task included).
+ *
+ * Compiled plans name **logical** task ids (e.g. the fusion task `t2`). After
+ * reviewer fan-out the completing task carries a physical id (e.g. `t6` with
+ * `planTask.logicalId === 't2'`), so every selected gate's `appliesTo` is
+ * rebound onto the physical ids and every deliverable's logical `fromTasks`
+ * is expanded to its physical realizations — otherwise the quality runtime
+ * cannot bind an artifact and fails the gate with `gate-artifact-missing`.
  */
+/** Every physical team task id that realizes a (possibly logical) source id. */
+function physicalTaskIdsFor(team: TeamState, sourceId: string): string[] {
+  const ids = team.tasks
+    .filter(candidate => candidate.id === sourceId || candidate.planTask?.logicalId === sourceId)
+    .map(candidate => candidate.id)
+  return ids.length > 0 ? ids : [sourceId]
+}
+
 function selectStampedGates(
   plan: StampedQualityPlan,
   team: TeamState,
@@ -253,22 +268,40 @@ function selectStampedGates(
 ): { gates: readonly StampedGate[]; compose: ReadonlyArray<{ readonly id: string; readonly fromTasks: readonly string[] }> } {
   const logicalId = task.planTask?.logicalId
   const compose: Array<{ id: string; fromTasks: readonly string[] }> = []
-  const gates = plan.gates.filter(gate => {
-    const taskHit = gate.appliesTo.some(target =>
-      target !== 'deliverable' && (target === task.id || target === logicalId))
-    if (!gate.appliesTo.includes('deliverable')) return taskHit
+  const gates: StampedGate[] = []
+  for (const gate of plan.gates) {
+    const taskTargets = gate.appliesTo.filter(target => target !== 'deliverable')
+    const taskHit = taskTargets.some(target =>
+      target === task.id || target === logicalId
+      || (target !== logicalId && physicalTaskIdsFor(team, target).includes(task.id)))
     let composed = false
-    for (const deliverable of plan.deliverables) {
-      if (!deliverable.fromTasks.includes(task.id)) continue
-      const allComplete = deliverable.fromTasks.every(sourceId =>
-        sourceId === task.id || team.tasks.some(candidate => candidate.id === sourceId && candidate.status === 'completed'))
-      if (allComplete && !compose.some(candidate => candidate.id === deliverable.id)) {
-        compose.push({ id: deliverable.id, fromTasks: [...deliverable.fromTasks] })
+    if (gate.appliesTo.includes('deliverable')) {
+      for (const deliverable of plan.deliverables) {
+        // Logical source ids → physical task ids (deduped, input order kept).
+        const physicalSources = [...new Set(
+          deliverable.fromTasks.flatMap(sourceId => physicalTaskIdsFor(team, sourceId)),
+        )]
+        if (!physicalSources.includes(task.id)) continue
+        const allComplete = physicalSources.every(sourceId =>
+          sourceId === task.id || team.tasks.some(candidate => candidate.id === sourceId && candidate.status === 'completed'))
+        if (allComplete && !compose.some(candidate => candidate.id === deliverable.id)) {
+          compose.push({ id: deliverable.id, fromTasks: physicalSources })
+        }
+        composed = composed || allComplete
       }
-      composed = composed || allComplete
     }
-    return taskHit || composed
-  })
+    if (!taskHit && !composed) continue
+    // Rebind logical targets the completing task realizes to its physical id,
+    // and any other logical target to the physical id that realizes it, so
+    // the runtime can resolve an artifact for every named target.
+    const appliesTo = gate.appliesTo.map(target => {
+      if (target === 'deliverable' || target === task.id) return target
+      if (target === logicalId) return task.id
+      const physical = physicalTaskIdsFor(team, target)
+      return physical.includes(task.id) ? task.id : target
+    })
+    gates.push({ ...gate, appliesTo })
+  }
   return { gates, compose }
 }
 

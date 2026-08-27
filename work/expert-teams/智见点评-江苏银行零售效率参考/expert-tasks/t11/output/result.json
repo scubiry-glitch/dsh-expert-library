@@ -1,0 +1,9 @@
+{
+  "taskId": "t11",
+  "status": "completed",
+  "attempt": 1,
+  "output": "三件套渲染完成（基于 t9 融合稿 v2，finesse-ui product register）。交付于 研报交付_20260825_江苏银行零售效率参考/：\n\n①HTML5 视觉稿 智见点评-江苏银行零售效率参考-讨论稿.html（单文件自包含 47.6KB）：江苏银行深藏蓝(#14304f)+香槟金(#b8860b) 主题，Cool Slate 蓝调中性底、发丝线边框、泛色阴影；结构=深蓝报头(含金线装饰 SVG)→主基调 keynote（验收口径 <10% 记 β 不记 α）→5 张 KPI 数字卡（同店AUM/人、90天差分、装修贷3%起、客户管家7.4%、Token 0.03%）→三线维度卡（人效重构·现在干/金、AI规模化·试点验证/蓝、场景获客·分层推进/灰，各带验收口径+证伪条件+双目标 callout）→领导质询区（袁军深蓝卡5条裁定 + 高增银浅金卡4条裁定）→归因三线剥离（+87% 拆 β+20%/分母+33%/α+47%）→施工图 T+30/T+90/T+180→反方四攻击点+对冲→不确定性 U1-U6→附录口径表；A4 打印 CSS 内置。\n\n②PDF 智见点评-江苏银行零售效率参考-讨论稿.pdf：weasyprint A4 共 5 页，页脚「98wiki ｜ 智见 / 行业研究报告 · 第 X 页 / 共 Y 页」逐页验证可见；gold 渐变数字已加 print 回退纯色（weasyprint 不支持 background-clip:text），像素抽查无隐形文字。\n\n③PPTX 智见点评-江苏银行零售效率参考-讨论稿.pptx：pptfast 原生可编辑 12 页（71.9KB），consulting 主题（深蓝+金，boardroom 叙事 dense/executive），cover→主基调→三线总览→线1/2/3→领导质询对比→归因→施工图 roadmap→红队→口径表→ending；每页带中文演讲备注（notesSlide×12）；pptfast audit 0 findings。deck 工程在 expert-tasks/t11/artifacts/deck/（已在对话卡片翻页预览）。\n\n④渲染检查：Playwright 宽屏 1440×2x 整页截图 + print-media A4 截图（检查_宽屏_1440.png / 检查_A4_打印渲染.png）；程序化审计 0 溢出、0 重叠、0 越界；MANIFEST.md + sha256.txt 已更新（html/pdf/pptx/2截图 共 5 个 sha256）。\n\n口径纪律：98wiki 素材数字带口径；管理层 S 分享三组 α 数字标注内部单源；行内数据全部标注「待补」；专家拆分标注「研判推断」。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787632186488
+}

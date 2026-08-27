@@ -1,0 +1,597 @@
+{
+ "SH_PRICE": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [
+   {
+    "district_name": "高新区",
+    "value": 19928,
+    "display_value": "2.0万/㎡"
+   },
+   {
+    "district_name": "锦江区",
+    "value": 17686,
+    "display_value": "1.8万/㎡"
+   },
+   {
+    "district_name": "青羊区",
+    "value": 16324,
+    "display_value": "1.6万/㎡"
+   },
+   {
+    "district_name": "武侯区",
+    "value": 15030,
+    "display_value": "1.5万/㎡"
+   },
+   {
+    "district_name": "成华区",
+    "value": 13863,
+    "display_value": "1.4万/㎡"
+   },
+   {
+    "district_name": "天府新区",
+    "value": 13183,
+    "display_value": "1.3万/㎡"
+   },
+   {
+    "district_name": "金牛区",
+    "value": 13066,
+    "display_value": "1.3万/㎡"
+   },
+   {
+    "district_name": "双流区",
+    "value": 11562,
+    "display_value": "1.2万/㎡"
+   },
+   {
+    "district_name": "龙泉驿区",
+    "value": 10064,
+    "display_value": "1.0万/㎡"
+   },
+   {
+    "district_name": "高新西区",
+    "value": 9934,
+    "display_value": "9,934元/㎡"
+   },
+   {
+    "district_name": "郫都区",
+    "value": 9266,
+    "display_value": "9,266元/㎡"
+   },
+   {
+    "district_name": "温江区",
+    "value": 8942,
+    "display_value": "8,942元/㎡"
+   },
+   {
+    "district_name": "新都区",
+    "value": 8545,
+    "display_value": "8,545元/㎡"
+   },
+   {
+    "district_name": "都江堰市",
+    "value": 6717,
+    "display_value": "6,717元/㎡"
+   },
+   {
+    "district_name": "新津区",
+    "value": 6278,
+    "display_value": "6,278元/㎡"
+   },
+   {
+    "district_name": "简阳市",
+    "value": 6246,
+    "display_value": "6,246元/㎡"
+   },
+   {
+    "district_name": "崇州市",
+    "value": 5806,
+    "display_value": "5,806元/㎡"
+   },
+   {
+    "district_name": "彭州市",
+    "value": 5683,
+    "display_value": "5,683元/㎡"
+   },
+   {
+    "district_name": "青白江区",
+    "value": 5481,
+    "display_value": "5,481元/㎡"
+   },
+   {
+    "district_name": "金堂县",
+    "value": 4970,
+    "display_value": "4,970元/㎡"
+   }
+  ],
+  "dataView": "internal"
+ },
+ "SH_VOL": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [
+   {
+    "district_name": "青羊区",
+    "value": 532,
+    "display_value": "532套"
+   },
+   {
+    "district_name": "成华区",
+    "value": 454,
+    "display_value": "454套"
+   },
+   {
+    "district_name": "高新区",
+    "value": 427,
+    "display_value": "427套"
+   },
+   {
+    "district_name": "龙泉驿区",
+    "value": 425,
+    "display_value": "425套"
+   },
+   {
+    "district_name": "天府新区",
+    "value": 389,
+    "display_value": "389套"
+   },
+   {
+    "district_name": "锦江区",
+    "value": 388,
+    "display_value": "388套"
+   },
+   {
+    "district_name": "武侯区",
+    "value": 372,
+    "display_value": "372套"
+   },
+   {
+    "district_name": "金牛区",
+    "value": 372,
+    "display_value": "372套"
+   },
+   {
+    "district_name": "温江区",
+    "value": 367,
+    "display_value": "367套"
+   },
+   {
+    "district_name": "郫都区",
+    "value": 364,
+    "display_value": "364套"
+   },
+   {
+    "district_name": "新都区",
+    "value": 315,
+    "display_value": "315套"
+   },
+   {
+    "district_name": "双流区",
+    "value": 306,
+    "display_value": "306套"
+   },
+   {
+    "district_name": "高新西区",
+    "value": 63,
+    "display_value": "63套"
+   },
+   {
+    "district_name": "都江堰市",
+    "value": 48,
+    "display_value": "48套"
+   },
+   {
+    "district_name": "青白江区",
+    "value": 48,
+    "display_value": "48套"
+   },
+   {
+    "district_name": "新津区",
+    "value": 22,
+    "display_value": "22套"
+   },
+   {
+    "district_name": "彭州市",
+    "value": 19,
+    "display_value": "19套"
+   },
+   {
+    "district_name": "简阳市",
+    "value": 15,
+    "display_value": "15套"
+   },
+   {
+    "district_name": "崇州市",
+    "value": 14,
+    "display_value": "14套"
+   },
+   {
+    "district_name": "金堂县",
+    "value": 8,
+    "display_value": "8套"
+   },
+   {
+    "district_name": "蒲江县",
+    "value": 0,
+    "display_value": "0套"
+   },
+   {
+    "district_name": "大邑县",
+    "value": 0,
+    "display_value": "0套"
+   }
+  ],
+  "dataView": "internal"
+ },
+ "SH_DEAL_AMOUNT": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [],
+  "dataView": "internal"
+ },
+ "SH_DEAL_AREA": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [],
+  "dataView": "internal"
+ },
+ "SH_UNIT_PRICE": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [],
+  "dataView": "internal"
+ },
+ "SH_INVENTORY_COUNT": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [],
+  "dataView": "internal"
+ },
+ "SUP_SH_LISTING": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [
+   {
+    "district_name": "成华区",
+    "value": 1748,
+    "display_value": "1,748套"
+   },
+   {
+    "district_name": "龙泉驿区",
+    "value": 1579,
+    "display_value": "1,579套"
+   },
+   {
+    "district_name": "高新区",
+    "value": 1565,
+    "display_value": "1,565套"
+   },
+   {
+    "district_name": "青羊区",
+    "value": 1418,
+    "display_value": "1,418套"
+   },
+   {
+    "district_name": "锦江区",
+    "value": 1407,
+    "display_value": "1,407套"
+   },
+   {
+    "district_name": "双流区",
+    "value": 1337,
+    "display_value": "1,337套"
+   },
+   {
+    "district_name": "金牛区",
+    "value": 1242,
+    "display_value": "1,242套"
+   },
+   {
+    "district_name": "温江区",
+    "value": 1210,
+    "display_value": "1,210套"
+   },
+   {
+    "district_name": "天府新区",
+    "value": 1183,
+    "display_value": "1,183套"
+   },
+   {
+    "district_name": "武侯区",
+    "value": 1162,
+    "display_value": "1,162套"
+   },
+   {
+    "district_name": "郫都区",
+    "value": 1146,
+    "display_value": "1,146套"
+   },
+   {
+    "district_name": "新都区",
+    "value": 1120,
+    "display_value": "1,120套"
+   },
+   {
+    "district_name": "都江堰市",
+    "value": 327,
+    "display_value": "327套"
+   },
+   {
+    "district_name": "青白江区",
+    "value": 247,
+    "display_value": "247套"
+   },
+   {
+    "district_name": "高新西区",
+    "value": 182,
+    "display_value": "182套"
+   },
+   {
+    "district_name": "简阳市",
+    "value": 179,
+    "display_value": "179套"
+   },
+   {
+    "district_name": "彭州市",
+    "value": 166,
+    "display_value": "166套"
+   },
+   {
+    "district_name": "新津区",
+    "value": 135,
+    "display_value": "135套"
+   },
+   {
+    "district_name": "金堂县",
+    "value": 131,
+    "display_value": "131套"
+   },
+   {
+    "district_name": "崇州市",
+    "value": 61,
+    "display_value": "61套"
+   },
+   {
+    "district_name": "大邑县",
+    "value": 5,
+    "display_value": "5套"
+   },
+   {
+    "district_name": "蒲江县",
+    "value": 3,
+    "display_value": "3套"
+   }
+  ],
+  "dataView": "internal"
+ },
+ "SH_INVENTORY_PRICE": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [],
+  "dataView": "internal"
+ },
+ "RENT_VOL": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [
+   {
+    "district_name": "高新区",
+    "value": 1459,
+    "display_value": "1,459套"
+   },
+   {
+    "district_name": "青羊区",
+    "value": 1386,
+    "display_value": "1,386套"
+   },
+   {
+    "district_name": "锦江区",
+    "value": 1374,
+    "display_value": "1,374套"
+   },
+   {
+    "district_name": "成华区",
+    "value": 1232,
+    "display_value": "1,232套"
+   },
+   {
+    "district_name": "金牛区",
+    "value": 959,
+    "display_value": "959套"
+   },
+   {
+    "district_name": "武侯区",
+    "value": 942,
+    "display_value": "942套"
+   },
+   {
+    "district_name": "天府新区",
+    "value": 851,
+    "display_value": "851套"
+   },
+   {
+    "district_name": "郫都区",
+    "value": 826,
+    "display_value": "826套"
+   },
+   {
+    "district_name": "龙泉驿区",
+    "value": 782,
+    "display_value": "782套"
+   },
+   {
+    "district_name": "双流区",
+    "value": 738,
+    "display_value": "738套"
+   },
+   {
+    "district_name": "温江区",
+    "value": 708,
+    "display_value": "708套"
+   },
+   {
+    "district_name": "新都区",
+    "value": 666,
+    "display_value": "666套"
+   },
+   {
+    "district_name": "高新西区",
+    "value": 216,
+    "display_value": "216套"
+   },
+   {
+    "district_name": "都江堰市",
+    "value": 129,
+    "display_value": "129套"
+   },
+   {
+    "district_name": "青白江区",
+    "value": 109,
+    "display_value": "109套"
+   },
+   {
+    "district_name": "金堂县",
+    "value": 71,
+    "display_value": "71套"
+   },
+   {
+    "district_name": "新津区",
+    "value": 64,
+    "display_value": "64套"
+   },
+   {
+    "district_name": "简阳市",
+    "value": 41,
+    "display_value": "41套"
+   },
+   {
+    "district_name": "彭州市",
+    "value": 24,
+    "display_value": "24套"
+   },
+   {
+    "district_name": "崇州市",
+    "value": 10,
+    "display_value": "10套"
+   },
+   {
+    "district_name": "蒲江县",
+    "value": 0,
+    "display_value": "0套"
+   },
+   {
+    "district_name": "大邑县",
+    "value": 0,
+    "display_value": "0套"
+   }
+  ],
+  "dataView": "internal"
+ },
+ "RENT_PRICE": {
+  "status": 200,
+  "period": "2026-07",
+  "rows": [
+   {
+    "district_name": "高新区",
+    "value": 3613,
+    "display_value": "3,613元"
+   },
+   {
+    "district_name": "锦江区",
+    "value": 3072,
+    "display_value": "3,072元"
+   },
+   {
+    "district_name": "武侯区",
+    "value": 2765,
+    "display_value": "2,765元"
+   },
+   {
+    "district_name": "天府新区",
+    "value": 2651,
+    "display_value": "2,651元"
+   },
+   {
+    "district_name": "青羊区",
+    "value": 2599,
+    "display_value": "2,599元"
+   },
+   {
+    "district_name": "成华区",
+    "value": 2492,
+    "display_value": "2,492元"
+   },
+   {
+    "district_name": "金牛区",
+    "value": 2305,
+    "display_value": "2,305元"
+   },
+   {
+    "district_name": "高新西区",
+    "value": 2216,
+    "display_value": "2,216元"
+   },
+   {
+    "district_name": "双流区",
+    "value": 2036,
+    "display_value": "2,036元"
+   },
+   {
+    "district_name": "郫都区",
+    "value": 1892,
+    "display_value": "1,892元"
+   },
+   {
+    "district_name": "温江区",
+    "value": 1842,
+    "display_value": "1,842元"
+   },
+   {
+    "district_name": "龙泉驿区",
+    "value": 1787,
+    "display_value": "1,787元"
+   },
+   {
+    "district_name": "新都区",
+    "value": 1596,
+    "display_value": "1,596元"
+   },
+   {
+    "district_name": "新津区",
+    "value": 1367,
+    "display_value": "1,367元"
+   },
+   {
+    "district_name": "彭州市",
+    "value": 1224,
+    "display_value": "1,224元"
+   },
+   {
+    "district_name": "都江堰市",
+    "value": 1198,
+    "display_value": "1,198元"
+   },
+   {
+    "district_name": "简阳市",
+    "value": 1194,
+    "display_value": "1,194元"
+   },
+   {
+    "district_name": "崇州市",
+    "value": 1134,
+    "display_value": "1,134元"
+   },
+   {
+    "district_name": "青白江区",
+    "value": 1045,
+    "display_value": "1,045元"
+   },
+   {
+    "district_name": "金堂县",
+    "value": 997,
+    "display_value": "997元"
+   }
+  ],
+  "dataView": "internal"
+ }
+}

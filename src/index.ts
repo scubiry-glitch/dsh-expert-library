@@ -46,6 +46,7 @@ import { collectArchivedTeamsActivity, collectTeamsActivity } from './snapshot.t
 import { readTeam } from './state.ts'
 import type { TeamState } from './types.ts'
 import { droppedSessionEvents } from './events.ts'
+import { handleManage } from './host/manage.ts'
 import {
   installExpertLibrarySettings,
   type ExpertLibrarySettings,
@@ -917,6 +918,27 @@ export function apply(ctx: Context, config: Config): void {
       res.end(body)
     },
   }), 'expert-teams: expert route listing')
+
+  // Manual library management (设置页「专家库」写侧): 专家/场景运行时覆盖层
+  // CRUD（写 <workspace>/<knowledgeDir>/{experts,scenarios}/<id>.json，惰性
+  // 生效、零漂移——领域包本体是构建产物绝不直写）、技能 zip 安装
+  // （<knowledgeDir>/skills/<id>/，安全 id + zip-slip 防护）与领域包重建
+  // （白名单脚本 build-packs.mjs，仅允许 PACK_BUILD_ALLOWLIST 内 pack id）。
+  // 写目标 workspace：优先首个注册 workspace 的 cwd，回退当前进程 cwd——
+  // 设置页没有会话上下文，故不按 session cwd 解析。
+  ctx.effect(() => webServer.register({
+    kind: 'prefix',
+    path: '/plugins/dsh-expert-library/manage',
+    handler: async (req, res) => {
+      const url = new URL(req.url ?? '/', 'http://x')
+      const registry = (ctx.get(WORKSPACE_KEYS[0]) ?? ctx.get(WORKSPACE_KEYS[1])) as
+        | { list(): Array<{ path: string }> }
+        | undefined
+      const firstWorkspace = registry?.list()?.[0]?.path
+      const workspace = firstWorkspace !== undefined && firstWorkspace !== '' ? firstWorkspace : process.cwd()
+      await handleManage(ctx, req, res, url, workspace, runtimeConfig.knowledgeDir)
+    },
+  }), 'expert-teams: manual library management routes')
 
   // Provider failure observability: read-only audit tail route. Merges the
   // persisted JSONL tail (cross-restart memory) with the live in-memory

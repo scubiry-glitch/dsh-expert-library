@@ -3,6 +3,7 @@
 > 版本：原插件 `@nanmicoder/dsh-agent-teams` v0.1.7（fork 基线） vs 新插件 `@zhijian/dsh-expert-library` v0.1.0（当前迭代）
 > 日期：2026-08-19 · 依据：双方完整源码（Host + Client）
 > Phase 0 刷新（2026-08-22）：调度器/状态层已加硬化（cancelled 终态、补偿事务），skill 绑定改为仅本地，代码规模与打包状态按当前源码更新。
+> V2 刷新（2026-08-23）：V2 数据与运行时层落地——Domain Packs（schema validator / pack-loader / 确定性 overlay 合并）、Provider Runtime（ProviderRegistry / CapabilityResolver / ProviderEnvelope + host provider-service）、TeamTemplate Compiler → ExecutionPlan、Quality Gate Chain；client/settings 已打包；专家 capability overlay 按 capability id 合并；质量 gate 逻辑 id 重绑定到物理 fan-out 任务产物。
 
 ---
 
@@ -21,8 +22,8 @@
 | 维度 | 原 dsh-agent-teams | 新 dsh-expert-library |
 |---|---|---|
 | 插件名 | `agent-teams` | `expert-library` |
-| 工具总数 | **10** | **17**（+7） |
-| 内置专家 | 无（成员是通用 worker，仅 role 字符串） | **40 位**：8 通用 + 32 智见（bk-002~bk-033） |
+| 工具总数 | **10** | **21**：12 `expert_teams_*`（含 `scenario_apply`/`chat`）+ 4 协作（debate/roundtable/ppt/report）+ 4 智见（route/apply/clarify/feedback）+ 1 `expert_provider_call` |
+| 内置专家 | 无（成员是通用 worker，仅 role 字符串） | **33 位智见（bk-002~bk-034）** + 通用/银行/pipeline 专家（s-*/xhs-*/e*-*/bank-*），按领域包装载（如 beike 包 13 位跨命名空间交叉投影） |
 | 场景模板 | 无 | **10 个**（6 通用 + 4 协作） |
 | 领域路由 | 无 | **原生路由表**（11 话题 → 框架 → 主责领域 → 候选专家） |
 | 输出框架 | 无 | **5 套**（A 五维 / B 四段 / C 用户视角 / D 融合 / E 顾问） |
@@ -32,8 +33,11 @@
 | 会话事件 | `agent-teams/*`（7 种） | `expert-teams/*`（7 种，已改名） |
 | HTTP 路由 | `/plugins/dsh-agent-teams/{state,assets}` | `/plugins/dsh-expert-library/{state,assets}` |
 | 状态目录 | `<workspace>/.agent-teams/` | `<workspace>/.expert-teams/` |
-| 客户端 UI | 完整（ActivityPanel + 会话卡片，1246 行） | 已打包（`lib/client.js` + exports `./client`）：活动面板 + 会话卡片 + 文件视图 + 设置卡片（4070 行 tsx/ts + 1841 行 CSS） |
-| Host 代码量 | 3567 行 / 9 文件 | 11423 行 / 30 文件 |
+| 客户端 UI | 完整（ActivityPanel + 会话卡片） | 已打包（`lib/client.js` + exports `./client`）：活动面板 + 会话卡片 + 文件视图 + 设置卡片 |
+| Host 代码量 | 3567 行 / 9 文件 | 30+ 文件（含 `v2/` 数据与运行时层：schema validator / pack-loader / provider-runtime / compiler / quality / domain-pack builders） |
+| Domain Packs（V2） | 无 | **内置 5 包 + 工作区 overlay**：zhijian-realestate / bank-finance / pipeline-domains / pipeline-general / beike；可加载、校验、确定性合并（builtin < domain-pack < workspace < request） |
+| Provider 运行时（V2） | 无 | **ProviderRegistry + CapabilityResolver + ProviderEnvelope + host provider-service**：Wind/zyt/beike 归一化、凭据/只读审批/新鲜度约束、仅显式 fallback、provenance 审计 |
+| 模板编译 + 质量运行时（V2） | 无 | **TeamTemplate Compiler → 不可变 ExecutionPlan（roster/DAG/gates/digest）+ Quality Gate Chain**：硬门阻断、≤2 轮修复预算、artifact 哈希；逻辑 gate id 重绑定到物理 fan-out 产物 |
 | 依赖关系 | 独立插件 | fork 后独立迭代，注册面全部改名，互不冲突 |
 
 ---
@@ -60,7 +64,7 @@
 
 | 家族 | 原 | 新 | 说明 |
 |---|---|---|---|
-| 核心编排 | 10 个 `agent_teams_*` | 11 个 `expert_teams_*`（+`scenario_apply`） | 机制同源：create/add_member/create_task/reassign/claim/update/send_message/status/delete |
+| 核心编排 | 10 个 `agent_teams_*` | 12 个 `expert_teams_*`（含 `remove_member`/`chat`，+`scenario_apply`） | 机制同源：create/add_member/create_task/reassign/claim/update/send_message/status/delete |
 | 场景一键 | — | `expert_teams_scenario_apply` | 建队 + 加专家 + 生成任务 DAG 一步完成 |
 | 领域路由 | — | `expert_review_route` | 结构化路由：话题 → 框架 → 候选专家（用户拍板） |
 | 领域组队 | — | `expert_review_apply` | 按拍板结果建队 + 框架任务 DAG（并行研判 → 融合 → 渲染） |
@@ -101,7 +105,7 @@ dsh-agent-teams                     dsh-expert-library
 └────────────────────┘              ├─ expert-library/ 通用专家库    │
                                     │   （8 专家 + 10 场景 + 注册表） │
                                     ├─ zhijian/ 领域子系统 ★        │
-                                    │   ├─ 原生专家数据（32 位）     │
+                                    │   ├─ 原生专家数据（33 位）     │
                                     │   ├─ 原生路由表                │
                                     │   ├─ 框架模板 A/B/C/D/E        │
                                     │   └─ 立场对照/执行约束          │
@@ -111,6 +115,19 @@ dsh-agent-teams                     dsh-expert-library
                                     └─ skills.ts 本地 skill 绑定 ★   │
                                     └──────────────────────────────┘
 ```
+
+---
+
+### 3.7 V2 数据与运行时层（Phase 1–4，2026-08 落地）
+
+在 V1 机制层之上，新插件新增独立的 `src/v2/` 数据与运行时层（纯 JSON 契约，经 `@zhijian/dsh-expert-library/v2` exports）：
+
+- **schema-v2 + `validateDomainPack`**：`ExpertV2 / ScenarioV2 / TeamTemplate / OutputTemplate / QualityPolicy / ToolProviderManifest / SkillPackageManifest` 等一等公民对象；零依赖纯结构校验（安全 id、版本、重复 id、DAG 环、交叉引用），输出错误/警告诊断而非布尔。
+- **pack-loader（Domain Packs）**：本地加载（JSON 文件 / 目录布局，路径包含与 symlink 逃逸校验）+ 确定性 overlay 合并（`builtin < domain-pack < workspace < request`）；专家实体按 **capability id 合并**（`mergeExpertCapabilities`）——高层字段覆盖、低层独有 capability（如 `beike.review`）保留，避免 overlay 整体替换静默丢失包级能力声明。
+- **provider-runtime（Provider Registry + Capability Resolver）**：`ProviderRegistry`（注册/替换/注销 + 审计 + capability 索引）、`CapabilityResolver`（任务 allowlist ∩ 已安装 ∩ 允许集合 ∩ 凭据可用 ∩ 只读审批 ∩ 数据新鲜度；仅显式 fallback，不做 Wind↔zyt 隐式替换）、`ProviderEnvelope`（provenance/caliber/unit/retry 指令）；Wind / zyt / beike 归一化适配器；Host `provider-service` 注入 invoker，`expert_provider_call` 工具走同一解析/审批/审计路径。
+- **template-compiler + quality-runtime**：`compileExecutionPlan` 把 TeamTemplate 编译为不可变 `ExecutionPlan`（roster/DAG/gates/digest）；`runQualityChain` 执行确定性 gate 链（data-citation / compliance-anonymization / schema-structure / pii-redaction…），硬门阻断 + ≤2 轮修复预算 + artifact 哈希；任务完成时逻辑 gate id **重绑定到物理 fan-out 任务产物**（如融合任务逻辑 t2 → 物理 t6），修复 `gate-artifact-missing`。
+- **domain-pack builders**：zhijian-realestate（33 位 bk-*）、bank-finance、pipeline-domains、pipeline-general（s-*/xhs-*）、beike（13 位跨命名空间交叉投影）等；设置页提供只读 pack 预览与专家路由查看。
+- **client/settings**：`lib/client.js` 打包（exports `./client`）、Settings namespace `expert-library`、设置卡片（stateDir/knowledgeDir/pack 选择/模型路由/工具模式），settings 服务缺席时降级不白屏。
 
 ---
 
@@ -140,13 +157,15 @@ dsh-agent-teams                     dsh-expert-library
 | 失败自动重试（attempt 预算 3 次） | — | ✅ Phase 0：`shouldAutoRetryTask`，cancelled 终态永不复活 | 新增硬化 |
 | 任务提交补偿事务 | — | ✅ Phase 0：`commitTaskUpdate`（project 先写、team 后提交、失败回滚） | 新增硬化 |
 | 删除归档（archive/） | ✅ | ✅ | 继承 |
-| 专家注册表 | — | ✅ 40 位，用户 JSON 可覆盖 | 新增 |
+| 专家注册表 | — | ✅ 多命名空间（bk-*/bank-*/s-*/xhs-*/e*-*）按领域包装载，用户 JSON 可覆盖 | 新增 |
 | 场景任务 DAG | — | ✅ 10 个 | 新增 |
 | 结构化路由 | — | ✅ 话题→框架→候选 | 新增 |
 | persona 三级烘焙 | — | ✅ 通用/专家/智见 | 新增 |
 | 模型路由三级预置 | — | ✅ | 新增 |
 | 知识包指引 | — | ✅ 惰性生效 | 新增 |
 | 外部 skill 绑定 | — | ✅ 仅本地解析 + 降级（运行时不联网） | 新增 |
+| 专家 capability overlay 合并（V2） | — | ✅ `mergeExpertCapabilities`：按 capability id union，低层 pack 独有声明保留 | 新增 |
+| 质量 gate 逻辑→物理重绑定（V2） | — | ✅ `selectStampedGates`：逻辑任务 id 重绑定到物理 fan-out 产物，deliverable 源逻辑 id 展开为物理任务 | 新增 |
 
 ---
 
@@ -172,18 +191,18 @@ dsh-agent-teams                     dsh-expert-library
 
 ---
 
-## 七、代码规模与模块对照
+## 七、模块对照（职责描述，行数未重新测量）
 
 | 模块 | 原 | 新 | 说明 |
 |---|---|---|---|
-| tools.ts | 1160 行 / 10 工具 | 1599 行 / 11 工具 + 核心提取 | 增量小，核心复用 |
-| members.ts | 490 行 | 603 行 | +专家 persona / 烘焙钩子 / memberRouteRequest 路由优先级 |
-| state.ts | 882 行 | 1104 行 | +scenarioId 校验 / commitTaskUpdate 补偿事务 |
-| scheduler.ts | 265 行 | 330 行 | +shouldAutoRetryTask（cancelled 终态 / attempt 预算） |
-| index.ts | 224 行 | 618 行 | +协议/注册/领域工具清单 |
-| 新模块 | — | +7169 行 | 专家数据 1745 + 路由/框架/工具/知识/skill 3532 + v2 schema 基础 1892 |
-| Host 合计 | 3567 行 / 9 文件 | 11423 行 / 30 文件 | 3.2×（其中 15% 为生成数据） |
-| Client | 1246 行 | 4070 行 tsx/ts + 1841 行 CSS（已打包） | 活动面板/会话卡片/文件视图/设置卡片 |
+| tools.ts | 机制层 10 工具 | 12 个 `expert_teams_*`（含 remove_member/chat）+ 核心提取 | 增量小，核心复用 |
+| members.ts | 成员 persona / 模型路由 | 专家 persona / 烘焙钩子 / `memberRouteRequest` 路由优先级 | persona 三级烘焙 |
+| state.ts | 锁 / 原子写 / JSON 校验 | + scenarioId 校验 / `commitTaskUpdate` 补偿事务 | Phase 0 硬化 |
+| scheduler.ts | 事件驱动调度 | + `shouldAutoRetryTask`（cancelled 终态 / attempt 预算） | Phase 0 硬化 |
+| index.ts | 插件入口 / 协议 | 协议 / 注册 / 领域工具清单 | — |
+| 新模块 | — | v2/ 数据与运行时层 + 领域 pack 构建器 | schema validator / pack-loader / provider-runtime / compiler / quality / digest / preview / runtime-pack / 5 个 domain-pack builders + 生成数据 |
+| Host 合计 | 机制层 9 文件 | 30+ 文件（含 v2/ 层与生成数据） | 体积显著大于原插件（生成数据 + V2 数据/运行时层） |
+| Client | 活动面板 / 会话卡片 | 活动面板 / 会话卡片 / 文件视图 / 设置卡片（已打包 `lib/client.js`） | 职责描述，无行数口径 |
 
 ---
 
@@ -192,7 +211,7 @@ dsh-agent-teams                     dsh-expert-library
 1. **从"机制"到"机制 + 数据 + 策略"**：原插件是纯机制（工具 + 协议），所有领域知识靠模型现场发挥；新插件把领域知识（专家档案、路由规则、框架规范）**编译为原生数据**，模型从"读文档执行"变为"查表执行"——决策质量提升且可审计。
 2. **从"单一人设"到"persona 三级烘焙"**：worker → 专家 → 领域 Profile，越具体越少依赖模型对资料的自主解析，越接近"真正的专家分身"。
 3. **从"prompt 约束"到"结构化约束"**：原插件依赖系统提示文本约束行为；新插件把约束（字数闸门、四要素、数字核实、匿名化、已故专家）下沉为数据与任务描述，协议变薄。
-4. **组合爆炸的收敛**：若按"专家为主入口"，40 专家 × 10 产出 = 400 组合无法选择；以场景为主入口 + 专家为参数 + 路由收敛 + 用户拍板，组合被结构化消解。
+4. **组合爆炸的收敛**：若按"专家为主入口"，跨命名空间专家（bk-/bank-/s-/xhs-/e*-）× 多套产出框架的组合无法人工选择；以场景为主入口 + 专家为参数 + 路由收敛 + 用户拍板，组合被结构化消解。
 5. **可插拔性**：知识包（数据）、自定义专家/场景（JSON）、外部 skill（本地安装，运行时不联网）三层可插拔，全部惰性生效——插件本体不动，能力持续增长。
 6. **兼容性策略**：注册面全部改名换取共存能力，机制层保持同源（继承成熟度），这是"独立迭代"的稳妥路径。
 
@@ -205,7 +224,7 @@ dsh-agent-teams                     dsh-expert-library
 | 能否共存 | ✅ 可以。注册面（工具/事件/路由/状态目录）全部独立，互不干扰 |
 | 是否建议同时启用 | ⚠️ 不建议。两套队长协议同时在系统提示中会让模型混淆入口；按需二选一 |
 | 迁移成本 | 低。机制同源，原团队数据（`.agent-teams/`）可通过改目录名导入新插件（scenarioId 缺失不影响） |
-| 新插件的代价 | 体积 3.2×（含 1745 行生成数据 + v2 schema 基础 1892 行）、协议更长 |
+| 新插件的代价 | 体积显著大于原插件（含生成数据 + V2 数据/运行时层）、协议更长 |
 
 ---
 

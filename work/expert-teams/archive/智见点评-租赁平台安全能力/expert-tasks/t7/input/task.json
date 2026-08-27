@@ -1,0 +1,9 @@
+{
+  "taskId": "t7",
+  "subject": "渲染与生成（三步走：HTML5 → PDF/PPT → 视频，finesse-ui + pptfast + video-shotcraft）",
+  "description": "将 t6 融合稿（正式稿《租赁平台安全能力：确定性溢价与责任敞口的边界——成都样本评析》）渲染生成最终交付件，参照昨天（8-22）确立的三步走流程与三个技能：\n\n【输入】读取 t6 output 的融合稿全文（或工作区 /root/zhijian/dsh-expert-library/work/研报_租赁平台安全能力_确定性溢价与责任敞口_20260823.md）。\n\n【三步走】\n第 1 步 生成 HTML5 视觉稿：用 finesse-ui 技能（knowledge/skills/finesse-ui/SKILL.md）做出高质感、绝不廉价（never cheap）的研报视觉稿。配色：贝壳蓝/白为主（参考 98wiki 规范：#1a3a5c 深蓝标题栏 / #c9a96e 金色高亮 / 白底），卡片式布局、数据高亮、信息层次分明。产品 register（dashboard/研报页），遵守 universal craft floor（tinted neutrals、hairline borders、contrast floors），禁止 AI-slop。产出 .html 单文件（内嵌 CSS，A4 打印友好）。\n第 2 步 转 PDF + PPT：A4 纵向，页脚统一「98wiki ｜ 智见 / 行业研究报告」；用 pptfast 技能将核心结论整理成可编辑 PPTX（10-15 页：封面/核心结论/责任边界/证据/归因/电气盲区/验证协议/风险/口径附录），数字带口径，预测类标注「研判推断」。PDF 用 weasyprint（python3 -m weasyprint 或参考 98wiki/projects/沪八条二手转保租单元经济_重做/render_report.py）。\n第 3 步 渲染检查 + 视频（可选增强）：渲染后截图检查（无遮挡/溢出/页脚可见），记录 sha256；若条件允许用 video-shotcraft 技能（knowledge/skills/video-shotcraft/SKILL.md）将核心结论做成 60-90 秒电影感短视频（Remotion + 页面截图 + 2.5D 运镜），镜头卡参考 gallery。\n\n【技能清单】三个技能：finesse-ui（HTML5 高质感视觉稿）、pptfast（PPT 生成）、video-shotcraft（宣传视频）。PDF 渲染参照 wiki-gated-research 的 HTML→PDF 规范。\n\n【交付物】落盘到 /root/zhijian/dsh-expert-library/work/98wiki/projects/租赁平台安全能力_20260823/ 目录：\n- 研报_租赁平台安全能力_20260823.html\n- 研报_租赁平台安全能力_20260823.pdf\n- 租赁平台安全能力_20260823.pptx\n- 渲染检查记录（截图路径 + sha256）+（可选）video.mp4\n完成后把交付文件清单与关键数据写入 output。",
+  "dependencies": [
+    "t6"
+  ],
+  "createdAt": 1787462910395
+}

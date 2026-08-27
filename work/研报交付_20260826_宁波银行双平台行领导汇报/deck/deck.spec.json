@@ -1,0 +1,143 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "balanced",
+    "audience": "executive"
+  },
+  "theme": "consulting",
+  "filename": "双平台行领导汇报",
+  "meta": {
+    "organization": "江苏银行（智见点评·行业研究报告）",
+    "date": "2026-08",
+    "version": "正式稿",
+    "confidentiality": "internal"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "把非金融入口变成金融闭环",
+      "focus": "banner-title"
+    },
+    {
+      "id": "ch1",
+      "type": "content",
+      "heading": "核心观点：方向正确、路径可行、窗口期紧迫",
+      "beat": "anchor"
+    },
+    {
+      "id": "kpi",
+      "type": "content",
+      "heading": "财务已经验证了逻辑",
+      "beat": "anchor",
+      "summary": "宁波银行2026H1核心财务：营收、净利、中收、负债成本",
+      "focus": "kpi_cards"
+    },
+    {
+      "id": "judgments",
+      "type": "content",
+      "heading": "五个基本判断",
+      "beat": "breathing",
+      "focus": "bullets"
+    },
+    {
+      "id": "ch2",
+      "type": "content",
+      "heading": "宁波定位与经营逻辑：任务链分工、先价值后业务",
+      "beat": "anchor"
+    },
+    {
+      "id": "platforms",
+      "type": "content",
+      "heading": "双平台：按企业任务链分工",
+      "beat": "dense",
+      "summary": "波波知了＝企业经营侧，数字人力＝企业组织侧，同一企业可同时使用",
+      "focus": "comparison"
+    },
+    {
+      "id": "logic",
+      "type": "content",
+      "heading": "经营逻辑：先有服务关系，后有资产负债表",
+      "beat": "anchor",
+      "focus": "steps"
+    },
+    {
+      "id": "finance",
+      "type": "content",
+      "heading": "财务印证：差距在结构，不在规模",
+      "beat": "dense",
+      "summary": "宁波银行 vs 江苏银行 · 2026H1（口径标注）",
+      "focus": "chart"
+    },
+    {
+      "id": "ch3",
+      "type": "content",
+      "heading": "我行启示与建议方案：学三件事、一套底座两条主线三个闭环",
+      "beat": "anchor"
+    },
+    {
+      "id": "lessons",
+      "type": "content",
+      "heading": "学宁波，学三件事",
+      "beat": "breathing",
+      "focus": "bullets"
+    },
+    {
+      "id": "arch",
+      "type": "content",
+      "heading": "总体架构：一套底座、两条主线",
+      "beat": "dense",
+      "focus": "architecture"
+    },
+    {
+      "id": "loops",
+      "type": "content",
+      "heading": "三个金融闭环：把服务变资产",
+      "beat": "breathing",
+      "focus": "row_cards"
+    },
+    {
+      "id": "ch4",
+      "type": "content",
+      "heading": "90天试点与组织保障：先验证闭环，再滚动放量",
+      "beat": "anchor"
+    },
+    {
+      "id": "pilot",
+      "type": "content",
+      "heading": "90天双场景试点",
+      "beat": "dense",
+      "summary": "场景A 培训代发闭环 · 场景B AI出海闭环 · 先行地区建议南京或苏州",
+      "focus": "timeline"
+    },
+    {
+      "id": "acceptance",
+      "type": "content",
+      "heading": "验收口径与组织考核",
+      "beat": "dense",
+      "focus": "bullets"
+    },
+    {
+      "id": "risk",
+      "type": "content",
+      "heading": "风险与合规红线",
+      "beat": "dense",
+      "focus": "bullets"
+    },
+    {
+      "id": "decisions",
+      "type": "content",
+      "heading": "提请决策事项",
+      "beat": "anchor",
+      "focus": "bullets"
+    },
+    {
+      "id": "ending",
+      "type": "ending",
+      "heading": "把方便留给客户，把复杂留给自己",
+      "focus": "masthead-ending"
+    }
+  ],
+  "seed": 816273514
+}

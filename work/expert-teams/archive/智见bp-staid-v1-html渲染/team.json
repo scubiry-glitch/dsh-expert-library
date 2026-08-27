@@ -1,0 +1,45 @@
+{
+  "name": "智见BP_STAID_v1_HTML渲染",
+  "id": "智见bp-staid-v1-html渲染",
+  "description": "将 智见BP 汇报大纲 STAID v1（2026-08-25）渲染为高质感 HTML5 视觉稿：参考 98wiki 知识库（政研通BP 项目下的 v37 贝壳蓝 HTML 与 STAID 分层汇报大纲），由 designer 专家按 finesse-ui product register（贝壳蓝金）成稿，含渲染检查记录。",
+  "captainSessionId": "session-ee3079c0-a426-40c1-8a87-90840898bbba",
+  "createdAt": 1787635084444,
+  "members": [
+    {
+      "id": "01f44616-f37f-4951-b534-999a36befb28",
+      "name": "designer",
+      "role": "product/UI designer",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1787635085912,
+      "status": "removed"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "subject": "渲染智见BP汇报大纲STAID_v1为HTML5视觉稿",
+      "description": "## 任务：把智见BP汇报大纲 STAID 分层版 v1 渲染成一份高质感 HTML5 视觉稿\n\n### 输入材料\n1. **底稿（主内容，必须忠实呈现）**：`/root/zhijian/dsh-expert-library/work/.dsh-filess/session-ee3079c0-a426-40c1-8a87-90840898bbba/7934893075d2-20260825_智见BP_汇报大纲_STAID_v1.md`（210 行：〇一页总览（含 mermaid 流程图）→ 一 客户与解决方案（六类客户×四维度 + 商业模式落点）→ 二 竞品分析（竞品地图表 + 差异化结论）→ 三 T·A·I 三层规划 → 四 D 数据层规划（数据矩阵表 + 政策库 + 数据源表）→ 五 支撑机制）\n2. **98wiki 知识库参考（风格与内容补全）**：\n   - 品牌风格参照：`/root/.openclaw/workspace/98wiki/projects/政研通BP/20260811_智见BP_贝壳蓝_v37.html`（贝壳蓝系、deck 式分页、深蓝渐变 chapter 页、金色点缀）\n   - 内容补全参照：`/root/.openclaw/workspace/98wiki/projects/政研通BP/20260825_智见STAID分层汇报大纲.md`（更完整的六类客户展开、五层架构全景图）\n   - 近期 Designer 成稿风格参照：`/root/zhijian/dsh-expert-library/work/研报交付_20260824_南京江北新区合资收储可行性/主文_融合研判_Designer渲染.html`（finesse-ui product register · 贝壳蓝金：--accent #2D5BD8 + --accent-2 #C98A2E、tinted neutrals 页面 #edf0f6、hairline borders rgba(20,32,56,.08)、radius 20/32、corner glow）\n\n### 设计要求（遵循 knowledge/skills/finesse-ui/SKILL.md，product register 用于报告/研报页）\n- **register=product**（报告/BP 大纲页，不是品牌 landing）→ 不用 grain/vignette/hero engine；SPECTACLE 低（1-3，仅反馈性 reveal/计数动效），DENSITY 中高\n- **never cheap**：页面底色用 tinted neutral（非纯白 #fff）、卡片 hairline border（3-8% alpha）、whisper shadow（0 1px 3px rgba(20,34,64,.06)）、无纯黑阴影、对比度正文 ≥4.5:1\n- **配色**：贝壳蓝金双色（Cobalt 蓝 #2D5BD8 系 + 金 #C98A2E/#B97A1E），语义色（涨/跌/警示）与品牌色分离；图表系列色不用红绿语义冲突\n- **布局**：单页长文滚动式（不是 v37 那种 100vh 分页 deck，因为这是汇报大纲文档），建议结构：\n  - 顶部 masthead（品牌 kicker「98wiki ｜ 智见 / 汇报大纲」+ 大标题 + 一句话定位 + 日期/用途元信息）\n  - 〇 一页总览：六类客户 / 四解决方案 / STAID 底座的关系图（把 mermaid flowchart 改造成 HTML/CSS 静态分层图：客户六类 → 方案四件 → STAID 底座五层，用 flex/grid + 箭头）\n  - 一 客户与解决方案：六类客户用卡片网格（每卡 需求痛点/最佳实践/解题思路/数据源 四块），商业模式落点条\n  - 二 竞品分析：竞品地图表格化（表格样式参照 finesse 表格规范）+ 差异化结论高亮卡\n  - 三 T·A·I 三层规划：T 终端层/A 智囊层/I 标尺层 三块分层卡片（每层内部小结构）\n  - 四 D 数据层规划：数据矩阵表（量/价/成交 × 六业态）+ 政策库 + 数据源表\n  - 五 支撑机制：五条横向链（Identity/Version/Evidence/Approval/Replay）横排链式展示 + 责任边界/三级商业模型/60天两灯塔/三步走\n  - 页脚：A4 打印约定「98wiki ｜ 智见 / 行业研究报告」\n- **mermaid 不保留代码**，改造成纯 HTML/CSS 图形（浏览器无 mermaid 依赖也能看）\n- **动效**：仅 reveal（IntersectionObserver 或 CSS animation）+ prefers-reduced-motion 回退；不引入外部库（保持单文件自包含）\n- **字体**：系统中文字体栈（PingFang SC / Microsoft YaHei / Noto Sans CJK SC），标题可用字重 800-900\n- 数字与口径严格照抄底稿，不得编造新增数字\n\n### 交付物（写入 /root/zhijian/dsh-expert-library/work/ 下新建目录 研报交付_20260825_智见BP_汇报大纲_STAID_v1_HTML/）\n1. `智见BP_汇报大纲_STAID_v1_视觉稿.html`（单文件自包含、可直接浏览器打开）\n2. `Designer_渲染检查记录.md`（检查项：无横向溢出、对比度抽查、表格/卡片无截断、无纯黑阴影、动效 reduced-motion 回退、sha256 记录）\n3. 可选：截图验证（如环境可用）或说明\n完成后在任务输出里附：交付路径、sha256、关键设计决策（注册表/配色/布局）、检查结果。",
+      "status": "completed",
+      "assignee": "designer",
+      "dependencies": [],
+      "attempt": 1,
+      "createdAt": 1787635097695,
+      "updatedAt": 1787635680280,
+      "project": {
+        "path": "expert-tasks/t1",
+        "inputPath": "expert-tasks/t1/input/task.json",
+        "outputPath": "expert-tasks/t1/output/result.json",
+        "artifactsPath": "expert-tasks/t1/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "qualityScore": null,
+      "repairCount": 0,
+      "output": "交付路径：/root/zhijian/dsh-expert-library/work/研报交付_20260825_智见BP_汇报大纲_STAID_v1_HTML/\n1) 智见BP_汇报大纲_STAID_v1_视觉稿.html — 单文件自包含（68KB/996行，无外部依赖，直接浏览器打开）\n2) Designer_渲染检查记录.md — 全部检查项与数字\n3) _check/desktop-1440.png + _check/mobile-390.png — headless chromium 全页截图\n\nsha256（html）：fa73e2a0a6debfed943a37c880b47a7d187ae219f17cbab9dc07eec0d716ffbb\n\n关键设计决策：\n- register=product（汇报大纲文档页，非品牌 landing）：无 grain/vignette/hero engine；SPECTACLE=2（仅 reveal+计数动效，IntersectionObserver+CSS，零外部库）；DENSITY=7\n- 贝壳蓝金双色锁定：页面 tinted neutral #edf0f6（非纯白）、卡片 #fcfdff、hairline rgba(20,32,56,.08)、whisper 阴影 rgba(20,34,64,.06)；Cobalt #2d5bd8 + 金 #c98a2e；语义色（涨/跌/警示）与品牌色分离\n- 单页长文滚动（有意不用 v37 的 100vh deck）：sticky 导航+滚动进度条 → masthead（定位语+元信息+4 统计计数）→ 六章深蓝渐变 chapter 带（金色点缀+corner glow，呼应 v37）→ 98wiki 页脚 + A4 @page 打印约定\n- mermaid 全改纯 HTML/CSS 静态分层图：客户六类 chips →↓→ S 方案四卡 →↓→ STAID 四层堆叠条 → 五条横向链，无 mermaid 依赖\n- 六类客户 2 列卡片网格（需求痛点/最佳实践/解题思路/数据源四块，块标签语义色区分）；竞品地图/数据矩阵/数据源三表深蓝表头+斑马纹；T·A·I 三层大卡（内部小结构+能力边界四做三不做+指数基期卡+两锚一模型）；支撑机制五链横排+四卡\n- 数字与口径全部照抄底稿（300 人白名单、基期 2020-01/2024-01、33+ 专家、31 省、70 城、40城vs50城、千万级=需验证标注、暂缓对外标注），未编造任何数字\n\n检查结果（headless chromium 实测，4 视口 1440/768/390/320）：横向溢出 0px、console 错误 0、reveal 终态全部可见、计数终值 6/4/5/5、三表行数 7/6/4 与底稿一致、对比度抽查 13 组全部 ≥4.5:1（最低 4.86）、16 处阴影无纯黑、reduced-motion 模拟下全部回退生效、print 媒体导航隐藏且页脚约定就位。过程中修复 2 处窄屏 chips 溢出。"
+    }
+  ],
+  "taskSeq": 1,
+  "completionNotifiedAt": 1787635680286
+}

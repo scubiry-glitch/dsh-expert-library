@@ -1,0 +1,9 @@
+{
+  "taskId": "t6",
+  "status": "completed",
+  "attempt": 1,
+  "output": "已完成「智见 · 客户与解决方案」六类客户分页 HTML 渲染与全量检查（47/47 通过）。\n\n交付（/root/zhijian/dsh-expert-library/work/研报交付_20260825_智见BP_客户解决方案_HTML/）：\n1. 智见_客户与解决方案_六类客户.html（单文件自包含 56KB，sha256 69e57824785658f71bd6e6337a7895eb37eb3bb3d2f864c2cef782a8419754cd）\n2. Designer_渲染检查记录.md（页数/每页无溢出/对比度/翻页/reduced-motion/sha256 全记录）\n3. _check/（page-1..8.png 逐页截图 + deck-full-1440.png 长图 + 可复跑 check.mjs + sha256.txt）\n\n结构：8 页 = 封面（kicker+大标题+副标题+6 类客户总览卡+一句话定位）→ 六类客户各一页（P2 中央部委/P3 地方监管/P4 金融机构/P5 保租房国企·城投★重点/P6 开发商/P7 C端个人）→ 封底（口径声明 9 项+一句话定位）。客户页统一六块：①需求痛点 chips ②解题思路不同（传统/竞品→贝壳对比条+三机制卡）③产品优势卡 ④产品组合 chips ⑤交付团队 chips ＋「一页结论」金条。P5 重点页实现因果可解释估值框架可视化：公式条+三卡箭头链（方法开源＋事实数据＋情形模拟→可溯源·可复现·可跟踪）+八步闭环链+四本账注。\n\n交互与「贝壳的优势」分页版一致：scroll-snap + 键盘←→/空格/Home/End + 页点 + 翻页条 + 进度条 + reduced-motion 双回退。\n\n检查结果（Headless Chromium）：一屏一页严格断言 5 视口全过（1440×900/1280×800/1366×768 逐页=视口高；390/320 无横向溢出）；对比度实渲染采样 18 组全部 ≥4.5:1（最低 4.86）；翻页/页点/按钮/disabled 状态实测正确；reduced-motion 全可见；console/pageerror 0；文本裁切 0；末元素与翻页条无遮挡（P4 最紧余 31px）；内容 35 项关键词全命中、无未授权数字；标签配平 8/8 section。\n\n关键设计决策：沿用贝壳蓝金 product register 全套 token（tinted #edf0f6/hairline/无纯黑阴影）；数字全部照抄源稿并带口径注（2800 万=试单记录、1000万/3000万=目标假设、左海案例=已签约、1000+=STAID 口径等）；修复过程中 1 处对比度问题（眉标 4.28→4.86）。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787649791654
+}

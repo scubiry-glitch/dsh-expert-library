@@ -1,0 +1,38 @@
+{
+ "components": [
+  {
+   "type": "verdict_banner",
+   "text": "会，而且已经启动。依据不是概念推演，是三组实证。",
+   "tone": "positive",
+   "icon": "sparkles"
+  },
+  {
+   "type": "kpi_cards",
+   "items": [
+    {
+     "value": "5",
+     "unit": "万+",
+     "label": "客户管家承接线索 2026.5–7（内部样本单源）",
+     "delta": "up",
+     "icon": "users"
+    },
+    {
+     "value": "7.4",
+     "unit": "%",
+     "label": "商机转带看率 · 客户管家 vs 大盘 5.0%",
+     "delta": "up",
+     "icon": "trending-up"
+    },
+    {
+     "value": "14.6",
+     "unit": "%",
+     "label": "2026Q2 利润率（搜狐 08-22）",
+     "delta": "up",
+     "icon": "percent"
+    }
+   ]
+  }
+ ],
+ "footnote": "单量同比增近两成而人员未扩（财新）；GTV 重回增长、利润近翻倍（36氪/TIKR）｜ Y/C/L/X 方向一致：价值锚点从信息差移向决策差",
+ "notes": "主基调结论先行：角色拆分已在发生，可单独付费尚未全面成立，中间隔着分账重构与责任界定。三组实证分别来自客户管家试点、平台量价背离、外部制度挤压。"
+}

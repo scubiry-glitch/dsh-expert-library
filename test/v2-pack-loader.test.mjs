@@ -80,6 +80,34 @@ function expert(id, version, displayName = id.toUpperCase()) {
   }
 }
 
+test('expert overlays merge capability contributions by capability id', () => {
+  const lower = expert('ex-a', '1.0.0', 'Lower')
+  lower.capabilities = [
+    { capability: 'shared.cap', proficiency: 2, coverage: 'low' },
+    { capability: 'beike.review', proficiency: 1, coverage: 'high' },
+  ]
+  const higher = expert('ex-a', '2.0.0', 'Higher')
+  higher.capabilities = [
+    { capability: 'shared.cap', proficiency: 5, coverage: 'high' },
+    { capability: 'zhijian.review', proficiency: 1, coverage: 'high' },
+  ]
+  const result = mergePackLayers([
+    { pack: validPack({ experts: [lower] }), layer: 'domain-pack', label: 'beike' },
+    { pack: validPack({ experts: [higher] }), layer: 'workspace', label: 'zhijian' },
+  ])
+  assert.equal(result.ok, true, JSON.stringify(result.diagnostics))
+  const merged = result.pack.experts.find(item => item.id === 'ex-a')
+  assert.equal(merged.display.internalName, 'Higher', 'higher layer still owns normal fields')
+  assert.deepEqual(merged.capabilities.map(claim => claim.capability), [
+    'shared.cap', 'beike.review', 'zhijian.review',
+  ])
+  assert.equal(
+    merged.capabilities.find(claim => claim.capability === 'shared.cap').proficiency,
+    5,
+    'higher layer wins a duplicate capability claim',
+  )
+})
+
 /** Temp-dir helper that always cleans up. */
 async function withTmp(fn) {
   const root = await mkdtemp(join(tmpdir(), 'pack-loader-'))

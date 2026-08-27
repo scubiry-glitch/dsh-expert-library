@@ -50,11 +50,11 @@ test('schema tolerates a partial section (every field optional)', () => {
   assert.equal(parsed.maxMembers, 4)
   assert.equal(parsed.memberMaxDepth, undefined)
   // Schemastery array defaults are [] — the runtime treats empty as "all
-  // valid packs enabled", identical to undefined.
+  // valid packs enabled", identical to undefined; dict defaults are {}.
   assert.deepEqual(parsed.enabledPacks, [])
   assert.deepEqual(parsed.packPriority, [])
-  assert.equal(parsed.expertModelOverrides, undefined)
-  assert.equal(parsed.toolExecution, undefined)
+  assert.deepEqual(parsed.expertModelOverrides, {})
+  assert.deepEqual(parsed.toolExecution, {})
 })
 
 test('normalizeToolMode: unknown/empty modes fall back to auto', () => {

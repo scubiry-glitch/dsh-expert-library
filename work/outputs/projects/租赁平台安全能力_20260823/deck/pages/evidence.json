@@ -1,0 +1,16 @@
+{
+  "components": [
+    {"type": "kpi_cards", "items": [
+      {"value": "12.7", "unit": "/万套", "label": "每万套风险 · 2026Q1", "delta": "flat", "icon": "activity"},
+      {"value": "-42%", "unit": "", "label": "漏气同比 · 闭环见效", "delta": "down", "icon": "trending-down"},
+      {"value": "2.5", "unit": "万套", "label": "18个月拦截风险房源", "delta": "up", "icon": "shield-x"},
+      {"value": "10", "unit": "万套+", "label": "成都燃气联合管控", "delta": "up", "icon": "building-2"}
+    ]},
+    {"type": "bullets", "items": [
+      "2026-07 无地线冰箱漏电投诉（媒体口径）：电气在原地",
+      "累计赔付金超 2 亿元（媒体口径，性质待拆分）",
+      "无锡/深圳/杭州九个月三地立法，安全义务显性化"
+    ]}
+  ],
+  "notes": "四组证据：管控有效、结构偏科、入口成熟、监管法定。事故下降与责任模糊并存。"
+}

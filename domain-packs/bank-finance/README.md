@@ -1,6 +1,6 @@
 # bank-finance（银行金融领域包）v1.0.0
 
-4 位银行金融领域专家基线（BANK-09，零售金融/银行经营），由
+6 位银行金融领域专家基线（BANK-09，零售金融/银行经营），由
 `scripts/build-bank-pack.mjs` 确定性生成（复用 zhijian-realestate 的发射器与
 模板/质量/方法构建器，仅数据不同）。
 

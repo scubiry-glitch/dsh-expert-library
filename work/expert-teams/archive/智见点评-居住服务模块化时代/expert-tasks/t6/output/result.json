@@ -1,0 +1,9 @@
+{
+  "taskId": "t6",
+  "status": "completed",
+  "attempt": 1,
+  "output": "【t6 渲染与生成 · 完成】讨论稿渲染全链路：HTML5 视觉稿 → PDF → 可编辑 PPTX → 宣传视频，四件交付齐备\n\n一、关键性结论\n渲染完成且全部通过质检（口径：本任务交付物，非行业数据）：HTML5 视觉稿一件，浏览器程序化审计零缺陷（无水平溢出、无文本裁切、无元素重叠、柱状图几何正确）；PDF 共六页（口径：weasyprint 实测分页），每页页脚「98wiki ｜ 智见 / 行业研究报告」与页码可见，深色报头背景正常打印；PPTX 共十四页（口径：pptfast 渲染规格），validate 通过、audit 零发现；宣传视频时长六十秒整（口径：ffprobe 实测），符合六十至九十秒规格。研判数字口径全部沿用 t5 融合稿：客户管家五万+ 线索标「单源内部样本」、转带看率 7.4% vs 大盘 5.0% 标「选择效应未排除」、约值标「表述换算 · 研判推断」。\n\n二、关键事实及其变化\n交付文件清单（绝对路径 /root/zhijian/dsh-expert-library/work/expert-teams/智见点评-居住服务模块化时代/expert-tasks/t6/artifacts/；四件 sha256 校验指纹统一记录于同目录 sha256.txt，口径：sha256 算法文件指纹）：\n1. 智见点评-居住服务模块化时代-讨论稿.html（指纹见 sha256.txt）\n2. 智见点评-居住服务模块化时代-讨论稿.pdf（指纹见 sha256.txt）\n3. 智见点评-居住服务模块化时代-讨论稿.pptx（指纹见 sha256.txt）\n4. 智见点评-居住服务模块化时代-宣传片60s.mp4（指纹见 sha256.txt；文件名中 60s 为时长标注）\n渲染检查截图存 screens/ 目录（整页、PDF 六页、七个分区）。\n\n三、归因分析\n为什么这样渲染：① HTML 按 finesse-ui product register 规范执行 never cheap 底线：贝壳蓝金主题（青调冷灰底、贝壳青蓝、金，金色占比约百分之五限用于关键对比数字，口径：设计约束）、tinted neutrals、hairline borders、对比度达 WCAG AA、全部色值 token 化（:root 外零裸色值）；② 图表真实几何：柱高按 值/最大值 × 满高 归一（口径：图表归一规则），转带看率两柱呈满高与约三分之二高，量价背离三柱呈两成、近零、满高，均标注「约值 · 研判推断」；③ 修复两处真实缺陷：flex 收缩压扁柱状图、浏览器对全角括号加数字簇的断行怪癖；④ PDF 用 weasyprint A4 分页与页脚；⑤ PPT 用 pptfast 自定义贝壳蓝金主题加 boardroom-report 叙述，演讲备注已写入，数字带口径、预测标「研判推断」；⑥ 视频走 video-shotcraft 路线（Remotion 加双倍像素页面截图加 2.5D 运镜加 riser→impact→sparkle 收尾句式，结尾字标 hold 三十帧以上，口径：渲染参数）。\n\n四、收尾：洞察、展望与不确定性\n交付完成，等待用户确认，不静默结束。可继续：① 视频精修（字幕、节奏、BGM 版）；② PPT 调整（增删页、换布局）；③ 转正式稿（去匿名标注、仅留数据来源）；④ HTML 与 PDF 微调。已知取舍：PPT 口径页三条要点因宽松节奏偏长（validate warning 非错误，为保证口径完整保留）；视频特写帧基于双倍像素截图放大，如需更锐利可补四倍像素截图（研判推断：非必需）。",
+  "qualityScore": 39,
+  "repairCount": 2,
+  "updatedAt": 1787625214754
+}

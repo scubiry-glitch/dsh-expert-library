@@ -1,0 +1,9 @@
+{
+  "components": [
+    {
+      "type": "callout",
+      "variant": "info",
+      "text": "90天只验证「闭环能否成立」，不铺摊子；验证通过后按季度滚动放量。"
+    }
+  ]
+}

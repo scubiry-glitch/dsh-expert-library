@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>江苏银行零售效率参考：贝壳验证协议比结论更有价值</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "98wiki ｜ 智见 / 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<p><strong>融合讨论稿 v3（修订版·并入董事长/行长/CIO 质询）｜江苏银行零售效率参考：贝壳验证协议比结论更有价值——三线并重、分级推进、差分核销、考核落地、数据安全一票否决</strong></p>
+<p><strong>主基调（据数据事实判定，经袁军/高增银/梁斌三轮质询修订）：贝壳对江苏银行零售最有价值的不是"人效3→5.6单/零开单率25%→&lt;10%"的结论数字，而是"同店口径+α/β剥离+对照差分"的验证协议——验收口径锁定"同店管户AUM/人净增（控β差分）"，净增&lt;10%记市场β（AUM红利）、不记组织α。三线并重但分三级推进：人效重构+场景生态获客"现在干"，AI规模化"试点验证"（只批单分行试点），Token先享"观察"。验证协议写进行内考核（α/β分账、90天观察期不排名、撤点不追责但复盘），落成可执行施工图（T+15/T+30/T+90/T+180 四节点钉死）；数据安全四原则+总行委员会评审前置为一切合作的前提（dealbreaker，一票否决）。</strong></p>
+<p><strong>一、关键性结论</strong></p>
+<p>三线不是同一优先级，每条线都挂考核挂钩与安全闸门：①人效重构（现在干）——"0变1"尾部修复逻辑可迁移，管户重配SOP+考核绑定推进；验收口径=同店管户AUM/人净增（控β差分），不是规模排名（袁军）；②AI规模化（试点验证）——只批单分行试点（马斯克），证伪条件="AI承接商机转化率≥人工且单位获客成本不升（6个月）"，其中"人工基线"锁定试点分行试点前6个月同渠道人工转化率（差分前测，非全行均值），"AI承接"分AI辅助（人机协同）/AI自主（无人工干预）两档分别验证（梁斌）；原"12个月进件占比30%"降为监测指标，口径统一到"获批且放款"（高增银）；③场景生态获客（现在干+观察分层）——装修贷"促转化"定位直接落地，Token先享只埋接口不启动（0.03%占比=入口非引擎），政银协同第三层必补（袁军）。裁决点不变：6分行90天差分（3试点vs3同能级对照，控制AUM自然增速5-8%后净人效&lt;10%即撤回α）——但差分可比性以T+30基线快照为前提（梁斌：T+30不补基线则T+90无差分可比）。</p>
+<p><strong>二、关键事实及其变化</strong></p>
+<ol>
+<li>人效（管理层S分享08-21，内部单源未获独立验证）：租赁样本人效约3单→5.6单（+87%）、零开单率近25%→不足10%——主体是"0变1"尾部修复（盘级拆分+人房客重配），非"3变6"能力跃迁，平均数失效。迁移银行：对应"零产单客户经理占比"——最可信的组织α证据：β能改分母（客户自然来），改不了"零产单变产一单"。</li>
+<li>量（财新08-22，可核实）：二手单量+近两成而经纪人规模未扩——"量升人平"剪刀差；口径警示同型迁移到银行AUM（含否表外理财、时点vs日均，考核用日均、对外披露注时点；进件≠获批≠放款，转化链定义到"放款且首笔动账"）。</li>
+<li>利（搜狐/智通财经/新京报08-22）：贝壳Q2利润率14.6%、净利38.79亿，β占六成上下（专家估算），组织α仅1-1.5pct——14.6%在AI成本未入账时虚高（马斯克警示）；银行AI成本必须BOM入账（获客成本/单、调用成本/单）。</li>
+<li>场景（98wiki素材，可核实）：装修贷年化3%起、平均单户50万/上限300万、价内加价约6%由装修商贴息、受托支付+分节点放款——加价计入客户综合融资成本口径+装修进度第三方核验凭证（袁军）；权益互换（钻石卡600万→200万）合规审查前置（袁军）；高净值共营=私行12场中6场插课+3场专场（上海试点覆盖南通/苏州/无锡）；Token先享=中行广州分行已落地（试单授信2,800万），成熟5亿在贷 vs 零售AUM约1.6万亿（2025Q3公开口径）占比0.03%。</li>
+<li>政银协同第三层（袁军必补项）：存量房以旧换新、城市更新、人才安居——政银数据共享+白名单预授信+财政贴息联动，场景线三层结构（商业合作层+高净值共营层+政银协同层）。</li>
+<li>【新增·数据安全专项（梁斌必补项·dealbreaker）】装修贷三方流转（行方/贝壳/装修商）、私行共营名单共享、权益互换权益供应商均涉客户数据出界——四原则：最小必要、共享必授权（个保法第13条同意基础，单独授权）、数据不出行（高净值名单"可用不可见"：行内营销平台定向触达，合作方只出内容不出名单）、流转必留痕（全链路审计日志）+合作方供应商安全审查；上线前必须过总行信息安全与数据管理委员会评审，数据安全硬伤一票否决。</li>
+</ol>
+<p><strong>三、归因分析</strong></p>
+<p>沿三条线分别剥离：</p>
+<p>人效线（α候选）：贝壳+87%均值提升中，市场β约+20%、分母操纵最多+33%（清退零开单者3→4单）、组织/AI α残差约+47%但归因未验证（张一鸣拆解）。银行同理：AUM高增期人均管户AUM提升主要是β（利率下行存款搬家红利，行内AUM增速口径待补）；P25尾部修复判据——尾部产出提升占总量超50%属激活存量式修复、天花板低；头部跃迁才是真α，分开记账（陶琦）。执行SOP：划片管户、人客重配（尾部零产单管户收归头部+AI辅助承接）；考核两层（高增银）：分行层=同店口径净人效差分核销α；个人层=行为（管户覆盖、回访频次）+结果（单客FTP后净贡献）双因子；同店管户AUM/人只作观测指标；零产单率月度通报分行排名、不直接挂钩绩效工资（防冲量造假）。</p>
+<p>AI线（β为主）：零售价值链六成流程环节可结构化（进件/规则审核/高频客服），四成以上成本不可结构化（风险定价/线下尽调面签/高净值关系维护）——AI物理上限=规则可表达边界，净降本20-30%到头，不是10倍（马斯克）。技术路径=流程分段嵌入：先做可结构化环节（进件完整性校验、反欺诈初筛、规则审核），风险定价与终审人工兜底，人工审批经验沉淀至大模型做辅助决策（梁斌）；自研路线守住王一帆底线：规则、模型、决策自建，外部平台当工具不当大脑。数据治理前置：口径字典（日均AUM、含表外）与单一取数源由总行数据中台统一发布，禁止分行自报表，责任主体=总行数据管理部而非零售部（梁斌）。命门在成本入账：AI成本BOM入账；商机转化率按AI辅助/AI自主两档分别测（防口径打架）；进件占比作监测指标（获批且放款口径），6个月/T+180无证据即撤。</p>
+<p>场景线（净α≈0起步，补双目标）：装修贷扣资金成本约2%、拨备0.5-1%、获客后单看净利差≈0或为负，正α全靠交叉销售——双目标（高增银）：交叉销售率≥30%（装修贷客户持有≥2类零售产品）+受托支付分节点放款留存的结算资金日均沉淀额；私行沙龙补"新增私行达标户/场、AUM净增/场"；权益互换补新增达标户数目标。渠道协同三件套（梁斌）：统一商机池+智能路由+全渠道归因——场景线索进统一商机池，简易需求（装修贷标准件）线上闭环（手机银行+远程银行承接），复杂/高净值需求路由重渠道（网点/私行承接）；补全渠道归因规则（首触+成交分账），渠道成本按场景转化付费（杨现领）；禁止各分行自建场景系统重复建设。杨现领重定价不变：按场景转化付费而非按网点成本付费；"装修贷是促转化不是卖金融产品"（王一帆红线）。</p>
+<p><strong>四、收尾（洞察+展望+不确定性）</strong></p>
+<p>洞察：贝壳验证协议对银行的真正价值是把"效率叙事"变成"可证伪工程"+"可考核工程"+"可安全落地工程"——无同店口径、无成本分母、无对照组的一切人效故事都是PPT（张一鸣/王一帆共识）；差分核销写进考核（袁军）、施工图钉死（高增银）、数据安全一票否决（梁斌），三关齐过方可规模化。银行零售"挂牌量"对应物=沉默户占比：存量流失率与沉睡户激活率是前瞻指标，资产迁徙链（活期→理财→私行）即置换链条（陶琦）。</p>
+<p>展望验证节点（施工图拆四里程碑，梁斌修订）：①T+15口径字典定稿发布（总行数据管理部，日均AUM含表外口径）；②T+30取数接口联调+基线快照（3试点+3同能级对照、试点前6个月回溯数据补齐——90天差分依赖此基线，T+30不补基线则T+90无差分可比；用现有数据中台看板，不新建系统；人天投入估算2-3个月，待校准）；③T+90差分初判（控AUM自然增速5-8%后净人效&lt;10%即撤回α，约2026Q4，观察期不排名、撤点不追责但复盘）；④T+180 AI证据（AI辅助/AI自主两档商机转化率≥人工基线且单客成本不升成立则进入扩点评估，否则撤回）。场景线靠前发力：装修贷Q3进件、Q4转化入月度通报，双目标季度核销；所有外部合作（装修贷三方/私行共营/权益互换/政银协同）上线前过总行信息安全与数据管理委员会评审。</p>
+<p>反方并置（马斯克bearish四攻击点，风险锚点不改变主基调）：①AI物理天花板——净降本20-30%到头，AI只触及利润创造权重≤40%的环节；②分母操纵——人均AUM/中收靠裁尾部、缩网点可立涨20-30%，总量不动（同店口径+总量同步监测对冲）；③场景净利差≈0——正α全靠交叉销售（双目标落地对冲）；④止损线——商机转化率不达标/控β差分人效净增&lt;10%/场景交叉销售率&lt;30%，任一触发即撤回叙事、回单分行试点。</p>
+<p>不确定性：①贝壳三组α数字全为内部单源、无对照组，差分前只是"相关"非"因果"；②行内数据（零产单率、人均AUM、AUM自然增速基准5-8%估算、单客成本、交叉销售率现值、人天投入估算）全部待补，证伪线须口径字典上线后核实；③差分若跨季末冲量窗口会污染读数；④复制率衰减&gt;30%即停扩——样板分行跑通只是样板工程，3家以上稳定复制才是真能力；⑤政银协同涉及数据共享与财政贴息，需与地方政府逐项签协议、合规与预算前置，且数据共享本身须过数据安全四原则审查。</p>
+<hr>
+<p><strong>元信息</strong>：融合框架=框架B通用四段式+三线并重（v3修订版）；主基调=验证协议优先、三线分级推进、差分核销写进考核、数据安全一票否决（据数据事实判定+三轮质询修订）；参与研判=银行零售·W（王一帆：样板复制/考核绑定/自主可控，人效+场景现在干）/居住服务·Y（杨现领：渠道产能重定价、按场景转化付费）/行业研究·T（陶琦：同店管户AUM/人、指标映射、口径字典）/组织效率·张（张一鸣：验证协议优先、三条件、中收再投入飞轮）/第一性原理·马（马斯克：bearish红队、物理天花板、止损线）；领导质询=袁军（董事长：验收口径锁同店管户AUM/人净增、综合融资成本口径+合规审查前置、政银协同第三层、验证协议写入考核三原则）/高增银（行长：施工图T+30/T+90/T+180、人效考核双层、AI证伪条件修订、场景线双目标）；<strong>科技质询=梁斌（CIO：人工基线差分前测+AI辅助/AI自主两档验证、数据治理责任主体=总行数据管理部、数据安全四原则+委员会评审一票否决、统一商机池+智能路由+全渠道归因三件套+首触成交分账、禁止分行自建场景系统、T+15/T+30拆两里程碑+基线快照、用现有数据中台不新建系统）</strong>；数据口径=98wiki素材（装修贷年化3%/单户50万/上限300万/价内加价6%、Token先享2,800万试单、私行6+3场、钻石卡600万→200万）+今日贝壳研究（财新08-22单量、搜狐等08-22利润率14.6%/净利38.79亿、管理层S分享08-21人效/零开单率/转带看7.4%——内部单源标注）+行内数据缺标注"待补"；心智模型=同店口径、α/β剥离、平均数失效（P25尾部修复）、差分验证、成本BOM、渠道产能重定价、复制率衰减、自主可控底线、政银协同、α/β分账考核、数据安全四原则（最小必要/共享必授权/数据不出行/流转必留痕）、AI辅助vs AI自主两档验证、人工基线差分前测、统一商机池+智能路由+全渠道归因。</p>
+</body>
+</html>

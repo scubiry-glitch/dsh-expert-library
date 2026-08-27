@@ -1,0 +1,30 @@
+{
+  "version": "1",
+  "narrative": "boardroom-report",
+  "theme": "consulting",
+  "filename": "租赁平台安全能力_20260823",
+  "seed": 20260823,
+  "meta": {
+    "organization": "98wiki ｜ 智见",
+    "authors": [{"name": "智见点评团队", "role": "行业研究"}],
+    "date": "2026-08-23",
+    "version": "1.0",
+    "confidentiality": "public"
+  },
+  "pages": [
+    {"id": "cover", "type": "cover", "heading": "租赁平台安全能力：确定性溢价与责任敞口的边界"},
+    {"id": "conclusion", "type": "content", "heading": "核心结论：能溢价的是确定性，不是保证", "beat": "anchor"},
+    {"id": "boundary", "type": "content", "heading": "责任边界：过程责任六项，止步于结果承诺", "beat": "dense"},
+    {"id": "evidence", "type": "content", "heading": "证据：四组关键事实", "beat": "dense"},
+    {"id": "effective", "type": "content", "heading": "管控有效：漏气降42%的闭环逻辑", "beat": "dense"},
+    {"id": "electrical", "type": "content", "heading": "电气盲区：燃气与电气的一进一退", "beat": "dense"},
+    {"id": "drivers", "type": "content", "heading": "归因一：三重驱动", "beat": "dense"},
+    {"id": "formula", "type": "content", "heading": "归因二：投入强度公式", "beat": "anchor"},
+    {"id": "solution", "type": "content", "heading": "破解：证据链划界与停租分洪闸", "beat": "dense"},
+    {"id": "protocol", "type": "content", "heading": "验证协议：6个月盯五指标", "beat": "dense"},
+    {"id": "outlook", "type": "content", "heading": "展望：电气破局三条腿", "beat": "dense"},
+    {"id": "risks", "type": "content", "heading": "四大不确定性", "beat": "dense"},
+    {"id": "appendix", "type": "content", "heading": "口径附录：数字、口径与核验状态", "beat": "dense"},
+    {"id": "ending", "type": "ending", "heading": "平台做的是确定性生意，不是安全保证生意"}
+  ]
+}

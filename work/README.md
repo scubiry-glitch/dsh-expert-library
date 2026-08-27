@@ -23,4 +23,4 @@
 
 research-report 场景全流程：t1 资料梳理 → t2/t3 专家研判 → t4 融合成文 → t5 渲染与分型验收（DAG 自动执行）→ GATE 双 PASS。
 
-完整源稿与脚本：`98wiki/projects/沪八条二手转保租单元经济_重做/`
+完整源稿与脚本：`outputs/projects/沪八条二手转保租单元经济_重做/`

@@ -1,0 +1,63 @@
+{
+ "compare_KE_PRICE_INDEX": {
+  "code": "KE_PRICE_INDEX",
+  "period": "2026-08",
+  "dataView": "internal",
+  "indexed": false,
+  "rows": []
+ },
+ "compare_SH_VOL": {
+  "code": "SH_VOL",
+  "period": "2026-08",
+  "dataView": "internal",
+  "indexed": false,
+  "rows": [
+   {
+    "city_name": "成都",
+    "display_value": "4,507套",
+    "value": 4507,
+    "mom": -41.95002575991757,
+    "confidence": "高"
+   }
+  ]
+ },
+ "compare_SH_PRICE": {
+  "code": "SH_PRICE",
+  "period": "2026-08",
+  "dataView": "internal",
+  "indexed": false,
+  "rows": [
+   {
+    "city_name": "成都",
+    "display_value": "1.2万元/㎡",
+    "value": 11756.08630962,
+    "mom": -1.6789257385115837,
+    "confidence": "高"
+   }
+  ]
+ },
+ "compare_KE_PROSPERITY": {
+  "code": "KE_PROSPERITY",
+  "period": "2026-08",
+  "dataView": "internal",
+  "indexed": false,
+  "rows": []
+ },
+ "policies": {
+  "rows": [
+   {
+    "id": "pol-1785997132292-ercicc",
+    "city_name": "成都",
+    "title": "人才购房资格扩围",
+    "category": "补贴",
+    "effective_date": "2026-03-20",
+    "summary": "全日制本科及以上在蓉就业即可申请人才购房资格。",
+    "impact_tags": [
+     "新房",
+     "人才"
+    ],
+    "created_at": "2026-08-06T06:18:52.000Z"
+   }
+  ]
+ }
+}

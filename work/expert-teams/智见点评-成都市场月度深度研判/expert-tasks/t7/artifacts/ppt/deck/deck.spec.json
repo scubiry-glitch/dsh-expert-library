@@ -1,0 +1,26 @@
+{
+  "version": "1",
+  "filename": "chengdu-resale-2026-08",
+  "narrative": "weekly-brief",
+  "theme": "consulting",
+  "seed": 20260826,
+  "meta": {
+    "organization": "智见点评",
+    "authors": [{ "name": "智见点评", "role": "城市月度市场深度研判" }],
+    "date": "2026-08"
+  },
+  "pages": [
+    { "id": "cover", "type": "cover", "heading": "成都二手房市场月度深度研判" },
+    { "id": "keynote", "type": "content", "heading": "核心结论：筑底未完成，量价双收缩", "beat": "anchor" },
+    { "id": "volume", "type": "content", "heading": "量能：成交 4,507 套，创两年次低", "beat": "dense" },
+    { "id": "price", "type": "content", "heading": "价格：11,756 元/㎡，较高点累计 -17.3%", "beat": "dense" },
+    { "id": "supply", "type": "content", "heading": "供给：库存 30.2 万套被动累积", "beat": "dense" },
+    { "id": "district", "type": "content", "heading": "城区：价格梯度 4.0 倍，成交向主城集中", "beat": "anchor" },
+    { "id": "cross-city", "type": "content", "heading": "跨城对照：量能高于京沪，跌幅更深", "beat": "dense" },
+    { "id": "rental", "type": "content", "heading": "租赁：量升价微降，回报率低位徘徊", "beat": "breathing" },
+    { "id": "outlook", "type": "content", "heading": "趋势研判：年内磨底，三条件确认", "beat": "anchor" },
+    { "id": "risk", "type": "content", "heading": "不确定性：政策未兑现，警惕下修触发", "beat": "dense" },
+    { "id": "watchlist", "type": "content", "heading": "关注指标与口径说明", "beat": "breathing" },
+    { "id": "ending", "type": "ending", "heading": "谢谢" }
+  ]
+}

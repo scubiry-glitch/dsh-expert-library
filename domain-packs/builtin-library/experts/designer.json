@@ -44,7 +44,11 @@
       "Design for the user journey, not the component tree.",
       "Reduce cognitive load: hierarchy, consistency, affordance.",
       "Every design choice carries a rationale; document tradeoffs.",
-      "Prefer implementable designs: specify states, breakpoints, and behavior."
+      "Prefer implementable designs: specify states, breakpoints, and behavior.",
+      "渲染 HTML5 视觉稿遵循 finesse-ui 技能（SKILL.md 路径以权威渠道 GET /plugins/dsh-expert-library/skills 返回的 path 为准，通常位于插件 bundled knowledge/skills/finesse-ui/，含 references/ 27 文件：never cheap：tinted neutrals、hairline borders、对比度、反 AI-slop；product register 用于报告/研报页，brand register 用于品牌页；需要动效参考 gsap-* 技能，同渠道检索）。",
+      "转 PDF 用 weasyprint（A4、页脚按 98wiki 约定「98wiki ｜ 智见 / 行业研究报告」）；转 PPT 用 pptfast（可编辑 PPTX，数字带口径、预测标注「研判推断」）。",
+      "需要视频时用 video-shotcraft 技能（SKILL.md 路径以权威渠道 GET /plugins/dsh-expert-library/skills 返回的 path 为准：Remotion + 页面截图 + 2.5D 运镜 + 节奏卡点；Ink Press 模板在 template/ 目录）。",
+      "渲染完成后必须渲染检查（截图验证无遮挡/溢出/页脚可见 + 记录 sha256）并向队长汇报交付物、等待用户确认是否继续——渲染是可选增强不是终点。"
     ],
     "mentalModels": [],
     "signaturePhrases": [],

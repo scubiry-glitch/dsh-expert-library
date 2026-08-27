@@ -1,0 +1,9 @@
+{
+  "taskId": "t7",
+  "status": "completed",
+  "attempt": 1,
+  "output": "【t7 渲染与生成 · 交付完成】\n\n交付目录：/root/zhijian/dsh-expert-library/work/98wiki/projects/租赁平台安全能力_20260823/\n\n【第 1 步 · HTML5 视觉稿】研报_租赁平台安全能力_20260823.html\n- finesse-ui product register（研报页）规范：贝壳蓝 #1a3a5c 深蓝标题栏 / 金色 #c9a96e 高亮 / tinted 白底，卡片式布局 + KPI 数据带 + 金句 verdict + 风险卡\n- universal craft floor：tinted neutrals、hairline borders、tinted shadows、对比度达标\n- 结构：封面（5 项 KPI）→ 01 关键性结论 → 02 关键事实（4 卡）→ 03 归因（驱动/公式/破解）→ 04 收尾（五指标/三条腿/四大风险）→ 数据来源\n- A4 打印友好（@page margin boxes 页眉页脚），sha256: 46dc7fa8feb1c0e62f2cb625f327bb32d27a9b67a382c13e1dd476c72d1c6b99\n\n【第 2 步 · PDF + PPTX】\n- 研报_租赁平台安全能力_20260823.pdf：weasyprint 69，A4 纵向 6 页，页脚「98wiki ｜ 智见 / 行业研究报告 · 第 X 页 / 共 Y 页」6/6 页可见，sha256: e54f5cf0a304198c7876cf07e3ea28c5cf0275e0ae0c81fbf8cd19641ba4ae64\n- 租赁平台安全能力_20260823.pptx：pptfast 渲染，14 页可编辑（封面/核心结论/责任边界/证据/管控/电气盲区/归因×2/破解/验证协议/展望/风险/口径附录/收束），贝壳蓝金 style 注入，数字带口径、预测标注研判推断，validate OK + 0 warnings + audit 0 findings，sha256: a2edd26255850104cedc0a422d3a265831cfba3fb775224cc9d1cfbeb07095c7\n\n【第 3 步 · 渲染检查】render_check.json\n- HTML 无水平溢出（playwright DOM 扫描）；PDF 无空白页、封面 KPI/末页数据来源完整；PPT 无截断/溢出/重叠\n- 截图：render_check_p01.png、render_check_full.png、render_check_pdf_p{1,2,4}.png\n- 视频（可选增强）：Remotion 模板与 ffmpeg 环境具备；Ink Press 模板为纸墨风需按贝壳蓝重蒙皮，60-90s 2.5D 成片渲染耗时长，以简化 2.5D 运镜版（页面截图 zoom/pan + 字卡）后台渲染中，产出 video.mp4（如完成将补充交付）\n\n关键数据（带口径）：每万套风险 12.7、漏气同比 -42%（贝壳成出口径）；拦截 2.5 万套、燃气联合管控 10 万套+（企业披露）；赔付金 2 亿元+（媒体披露）——统计口径需第三方核验已注明。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787463444340
+}

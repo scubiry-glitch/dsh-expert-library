@@ -323,6 +323,7 @@ export function skillDiscoveryPromptSection(inventoryLine: string): string {
   return [
     'Skill discovery — local skills live at <workspace>/<knowledgeDir>/skills/<id>/SKILL.md (session/workspace knowledge dirs) or the plugin\'s bundled knowledge/skills/.',
     `GET /plugins/dsh-expert-library/skills lists every installed skill (id/name/path/sizeBytes/hasReferences) in every session — the channel always exists, so consult it before concluding a named skill is absent. ${inventoryLine}.`,
+    'Skill reference rule: the authoritative path of a skill is the one returned by GET /plugins/dsh-expert-library/skills (the plugin bundled knowledge/skills/<id>/ when present) — never guess from a relative knowledge/skills/ path, because a subagent cwd\'s knowledge/ may have no skills/ dir; domain-packs/*/skills/ and domain-packs/*/source/skills/ are distribution copies, not lookup roots.',
     'When a task names a skill, check in order: ① the session skill catalog; ② <knowledgeDir>/skills/ on the filesystem (or GET /plugins/dsh-expert-library/skills); ③ the plugin registry; ④ the marketplace — the first hit wins.',
     'When the user asserts a skill is installed, run a filesystem search FIRST (list/read the skill folder under <knowledgeDir>/skills/ or ~/.agents/skills/) before concluding it is absent: a skill can exist on disk without being in the session catalog.',
   ].join('\n')
@@ -339,7 +340,7 @@ export function skillsGuideSection(ctx: Context, workspace: string, knowledgeDir
   if (entries.length === 0) return ''
   const lines = entries.map(entry => `- ${entry.id}: ${entry.name}`)
   return [
-    'Available local skills (read knowledge/skills/<id>/SKILL.md to consult when relevant):',
+    'Available local skills (read SKILL.md at the path returned by GET /plugins/dsh-expert-library/skills, or <workspace>/<knowledgeDir>/skills/<id>/SKILL.md / the plugin bundled knowledge/skills/<id>/SKILL.md; never a bare relative knowledge/skills/ guess):',
     ...lines,
   ].join('\n')
 }

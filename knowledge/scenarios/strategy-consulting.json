@@ -1,0 +1,43 @@
+{
+  "id": "strategy-consulting",
+  "name": "Strategy Consulting Team",
+  "description": "战略咨询：以问题定义、假设驱动、对标研究和金字塔表达完成战略分析与交付（萌翻咨询方法论）。适用于战略、增长、组织、运营、数字化、市场研究、竞品对标和业务优化课题。",
+  "experts": ["strategy-consultant", "researcher", "docs-coordinator"],
+  "tasks": [
+    {
+      "subject": "问题定义与澄清",
+      "description": "先读 knowledge/skills/strategy-consulting/SKILL.md。确认背景、真实决策者、听众 Know/Feel/Do、成功指标与输出约束；用 SPQA 写清问题 Statement 并通过「so what」测试，连续追问为什么，区分「为什么解决」与「怎么实施」。",
+      "expert": "strategy-consultant"
+    },
+    {
+      "subject": "结构化分析与假设",
+      "description": "从核心问题拆 3–5 个一级议题（尽量 MECE），每个议题提出至少 2–3 个声明式、可行动、可验证假设，按「影响/价值 × 实施难度/时间」排序，明确验证分析、数据来源、口径、判断标准。",
+      "dependsOn": [0],
+      "expert": "strategy-consultant"
+    },
+    {
+      "subject": "资料搜集与对标研究",
+      "description": "按假设清单搜集资料：市场报告、竞品、年报财报、研报、用户反馈，记录来源与日期；区分差距对标/Quick Facts 与全面案例/Case Study，对标不复制事实而提炼机制（做了什么、为何有效、成功条件、可迁移边界）。",
+      "dependsOn": [1],
+      "expert": "researcher"
+    },
+    {
+      "subject": "结论、建议与实施路线",
+      "description": "整合资料输出：核心结论 → 背景与问题定义 → 分析框架与假设 → 关键证据与机制 → 建议与优先级 → 风险与权衡 → 实施路线、负责人和指标 → 待验证事项。数字带口径，区分事实/假设/推断/观点。",
+      "dependsOn": [2],
+      "expert": "strategy-consultant"
+    },
+    {
+      "subject": "故事线 Deck 与成品交付",
+      "description": "先写答案再写故事：横向逻辑只读标题即构成完整叙事（标题是结论非主题词），纵向逻辑每页 2–5 个要点；输出 markdown 内容包（封面/目录/逐页标题+要点/图表建议/演讲备注），如需渲染 PPT 交 docs-coordinator（pptfast 或 tencent-pptx，数字带口径、预测标注「研判推断」）。",
+      "dependsOn": [3],
+      "expert": "docs-coordinator"
+    }
+  ],
+  "deliverable": "战略咨询内容包（markdown）：问题定义、Issue Tree 与假设、对标研究、结论与建议、实施路线 + 故事线 Deck（可渲染为 PPTX）。",
+  "skill": {
+    "id": "strategy-consulting",
+    "purpose": "萌翻咨询方法论：问题定义（SPQA）、MECE Issue Tree、假设驱动验证、对标研究、金字塔表达与故事线 Deck 规范——战略咨询角色的核心工作方法。",
+    "appliesToTaskIndex": 0
+  }
+}

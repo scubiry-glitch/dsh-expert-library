@@ -43,7 +43,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /** Validate one expert definition at the JSON boundary. */
-function parseExpert(value: unknown): Expert | undefined {
+export function parseExpert(value: unknown): Expert | undefined {
   if (!isRecord(value)) return undefined
   const { id, name, role, background, principles, deliverables, model, suitedFor } = value
   // The id doubles as a knowledge folder name — only safe path segments are accepted.

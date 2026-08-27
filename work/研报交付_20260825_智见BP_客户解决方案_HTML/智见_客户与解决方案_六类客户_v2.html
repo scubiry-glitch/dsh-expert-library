@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>智见 · 客户与解决方案 v2 ｜ 98wiki ｜ 智见 / 行业研究报告</title>
+<style>
+/* finesse · register=product · A=beike cobalt+gold duotone on cool tinted neutral · B=900/700/500 · C=100vh snap deck (one customer per page) · D=CSS page reveal + snap scroll (feedback only) · E=customer-solution v2: 5-block hierarchy + svg diagram language · SOUL=6 SPECTACLE=2 DENSITY=6 */
+:root{
+  --page:#edf0f6; --surface:#fcfdff; --surface-2:#f3f6fb; --surface-3:#e8edf6;
+  --ink:#16233c; --ink-2:#3d4c66; --ink-3:#57677f;
+  --accent:#2d5bd8; --accent-deep:#1e44a8; --accent-soft:rgba(45,91,216,.09); --accent-soft-2:rgba(45,91,216,.16);
+  --gold:#c98a2e; --gold-deep:#8a5f14; --gold-soft:#f8edd9;
+  --navy-0:#0d1e3b; --navy-1:#12294e; --navy-2:#1c3a6e;
+  --line:rgba(20,32,56,.08); --line-strong:rgba(20,32,56,.16);
+  --shadow:0 1px 3px rgba(20,34,64,.06); --shadow-md:0 6px 16px -8px rgba(20,34,64,.12);
+  --up:#1d7a4f; --down:#b3402f; --warn:#8a6a13;
+  --r:18px; --r-sm:11px;
+  --font:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC","Hiragino Sans GB",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Consolas,"Roboto Mono",monospace;
+}
+*{box-sizing:border-box}
+html{overflow:hidden}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font);font-size:14.5px;line-height:1.66;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow:hidden}
+h1,h2,h3,h4{text-wrap:balance;overflow-wrap:anywhere;margin:0}
+p{text-wrap:pretty;margin:0}
+::selection{background:var(--accent-soft-2);color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+svg.ic{width:1em;height:1em;vertical-align:-.12em;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.pic{flex:none;width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent-deep);display:flex;align-items:center;justify-content:center;font-size:20px}
+
+/* ---------- deck ---------- */
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--accent),var(--gold));z-index:80;border-radius:0 2px 2px 0}
+.deck{height:100vh;height:100dvh;overflow-y:auto;scroll-snap-type:y mandatory;scroll-behavior:smooth;overscroll-behavior-y:contain}
+.page{min-height:100vh;min-height:100dvh;scroll-snap-align:start;position:relative;display:flex;flex-direction:column;padding:36px clamp(20px,4vw,56px) 72px}
+.page-inner{width:100%;max-width:1180px;margin:0 auto;display:flex;flex-direction:column;flex:1;gap:12px}
+
+/* ---------- page header ---------- */
+.phead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-bottom:11px;border-bottom:1px solid var(--line)}
+.phead .no{font-family:var(--mono);font-size:12px;font-weight:900;color:var(--accent-deep);background:var(--accent-soft);border-radius:8px;padding:4px 10px;letter-spacing:.06em}
+.phead h2{font-size:clamp(20px,2.3vw,26px);font-weight:900;color:var(--ink);letter-spacing:.01em}
+.phead .en{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--ink-3);text-transform:uppercase;margin-left:auto}
+
+/* ---------- 一页结论 anchor ---------- */
+.concl{display:flex;gap:12px;align-items:flex-start;background:var(--gold-soft);border:1px solid rgba(138,95,20,.25);border-left:3px solid var(--gold);border-radius:13px;padding:10px 16px}
+.concl .ic{flex:none;width:30px;height:30px;border-radius:9px;background:rgba(201,138,46,.14);color:#7a5210;display:flex;align-items:center;justify-content:center;font-size:16px;margin-top:1px}
+.concl .lab{flex:none;font-family:var(--mono);font-size:10.5px;font-weight:900;letter-spacing:.14em;color:var(--gold-deep);border:1px solid rgba(138,95,20,.3);border-radius:999px;padding:2px 10px;margin-top:3px;white-space:nowrap}
+.concl p{font-size:12.5px;color:var(--ink-2);line-height:1.62}
+.concl p b{color:var(--ink)}
+.concl p .gd{color:var(--gold-deep);font-weight:800}
+
+/* ---------- section labels ---------- */
+.sec-lab{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:900;letter-spacing:.1em;color:var(--accent-deep);font-family:var(--mono)}
+.sec-lab::before{content:"";width:16px;height:2px;background:var(--gold);border-radius:2px;flex:none}
+.sec-lab i{font-style:normal;font-size:9.5px;font-weight:700;color:var(--ink-3);letter-spacing:.16em}
+
+/* ---------- pains ---------- */
+.pains{display:flex;flex-wrap:wrap;gap:7px}
+.pains .chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:12px;color:var(--ink-2);font-weight:600;line-height:1.5}
+.pains .chip .d{flex:none;width:14px;height:14px;border-radius:50%;background:var(--surface-3);color:var(--ink-3);display:flex;align-items:center;justify-content:center;font-size:8.5px}
+.pains .chip b{color:var(--ink);font-weight:800}
+
+/* ---------- ② 主视觉区：对比表 ---------- */
+.tbl-wrap{overflow:hidden;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);background:var(--surface)}
+.tbl{width:100%;border-collapse:collapse;font-size:11.5px}
+.tbl th{background:var(--navy-1);color:#eef3fb;font-weight:700;text-align:left;padding:6px 12px;font-size:11px}
+.tbl th .en{display:block;font-family:var(--mono);font-size:9px;font-weight:600;color:#9fc0f2;margin-top:1px;letter-spacing:.08em}
+.tbl td{padding:6px 12px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink-2);line-height:1.55}
+.tbl tr:nth-child(even) td{background:var(--surface-2)}
+.tbl td b{color:var(--accent-deep);font-weight:800}
+.tbl .src{font-weight:800;color:var(--ink);white-space:nowrap}
+.tbl .beike-row td{background:var(--accent-soft);border-top:2px solid var(--accent-soft-2)}
+.tbl .beike-row td b{color:var(--accent-deep)}
+.tbl .beike-row .src{color:var(--accent-deep)}
+
+/* ---------- ② 主视觉区：flow 链 ---------- */
+.flow3{display:flex;align-items:stretch;gap:7px}
+.flow3 .n{flex:1;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:10px;padding:6px 12px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow)}
+.flow3 .n .ic{flex:none;width:22px;height:22px;border-radius:7px;background:var(--accent-soft);color:var(--accent-deep);display:flex;align-items:center;justify-content:center;font-size:12px}
+.flow3 .n p{font-size:11px;color:var(--ink-2);line-height:1.5}
+.flow3 .n p b{color:var(--ink)}
+.flow3 .ar{align-self:center;color:var(--gold-deep);font-size:13px;font-weight:900;font-family:var(--mono)}
+.idx3{display:flex;flex-wrap:wrap;gap:7px;align-items:center}
+.idx3 .cap{font-family:var(--mono);font-size:10.5px;font-weight:900;letter-spacing:.08em;color:var(--gold-deep);white-space:nowrap}
+.idx3 .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:11.5px;color:var(--ink-2);font-weight:600}
+.idx3 .chip b{color:var(--accent-deep);font-weight:800}
+
+/* ---------- ② 主视觉区：四级下钻 ---------- */
+.drill{display:flex;align-items:stretch;gap:6px}
+.drill .d{flex:1;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:11px;padding:8px 10px;text-align:center;box-shadow:var(--shadow)}
+.drill .d.hot{background:var(--gold-soft);border-color:rgba(138,95,20,.3);border-top-color:var(--gold)}
+.drill .d .lv{font-family:var(--mono);font-size:9.5px;font-weight:900;letter-spacing:.1em;color:var(--gold-deep)}
+.drill .d b{display:block;font-size:13px;font-weight:800;color:var(--ink);margin-top:2px}
+.drill .d i{display:block;font-style:normal;font-size:10.5px;color:var(--ink-3);line-height:1.5;margin-top:2px}
+.drill .d.hot i{color:var(--gold-deep)}
+.drill .d.hot b{color:var(--gold-deep)}
+.drill .ar{align-self:center;color:var(--accent-deep);font-size:13px;font-weight:900;font-family:var(--mono)}
+
+/* ---------- ② 主视觉区：T0→T+N 时间轴 ---------- */
+.timeline{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr);gap:7px;align-items:stretch}
+.tl-card{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:11px;padding:9px 12px;box-shadow:var(--shadow)}
+.tl-card.gold{border-top-color:var(--gold)}
+.tl-card .h{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.tl-card .h .ic{flex:none;width:24px;height:24px;border-radius:8px;background:var(--accent-soft);color:var(--accent-deep);display:flex;align-items:center;justify-content:center;font-size:13px}
+.tl-card.gold .h .ic{background:var(--gold-soft);color:var(--gold-deep)}
+.tl-card .h .t{font-size:12.5px;font-weight:800;color:var(--ink)}
+.tl-card .h .tag{font-family:var(--mono);font-size:9.5px;font-weight:900;letter-spacing:.08em;color:var(--gold-deep);background:var(--gold-soft);border-radius:999px;padding:1px 8px;margin-left:auto;white-space:nowrap}
+.tl-card ul{margin:0;padding:0;list-style:none}
+.tl-card li{position:relative;padding:2px 0 2px 14px;font-size:10.8px;color:var(--ink-2);line-height:1.5}
+.tl-card li::before{content:"";position:absolute;left:1px;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.tl-card.gold li::before{background:var(--gold)}
+.tl-card li b{color:var(--ink)}
+.tl-card .out{margin-top:4px;background:var(--accent-soft);border-radius:8px;padding:4px 9px;font-size:10.5px;font-weight:800;color:var(--accent-deep)}
+.tl-card.gold .out{background:var(--gold-soft);color:var(--gold-deep)}
+.tl-ar{align-self:center;color:var(--gold-deep);font-size:15px;font-weight:900;font-family:var(--mono)}
+.band{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--gold-soft);border:1px solid rgba(138,95,20,.25);border-left:3px solid var(--gold);border-radius:11px;padding:8px 14px}
+.band .ic{flex:none;width:22px;height:22px;border-radius:7px;background:rgba(201,138,46,.16);color:#7a5210;display:flex;align-items:center;justify-content:center;font-size:12px}
+.band .lab{flex:none;font-family:var(--mono);font-size:10.5px;font-weight:900;letter-spacing:.08em;color:var(--gold-deep);white-space:nowrap}
+.band p{font-size:11.5px;color:var(--ink-2);line-height:1.6;flex:1;min-width:240px}
+.band p b{color:var(--ink)}
+
+/* ---------- ② 主视觉区：估值框架链（客户四） ---------- */
+.formula-strip{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;font-weight:800;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 13px;box-shadow:var(--shadow)}
+.formula-strip b{color:var(--gold-deep)}
+.formula-strip .out{color:var(--accent-deep);font-weight:900}
+.fchain{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1fr) auto minmax(0,1.15fr);gap:7px;align-items:stretch}
+.fcard{background:var(--surface-2);border:1px solid var(--line);border-top:3px solid var(--accent);border-radius:11px;padding:9px 12px}
+.fcard.gold{border-top-color:var(--gold)}
+.fcard .k{font-family:var(--mono);font-size:9px;font-weight:900;letter-spacing:.1em;color:var(--gold-deep)}
+.fcard h4{font-size:12.5px;font-weight:800;color:var(--ink);margin:2px 0 3px}
+.fcard p{font-size:10.5px;color:var(--ink-2);line-height:1.5}
+.fcard p b{color:var(--ink)}
+.fop{align-self:center;font-size:15px;font-weight:900;color:var(--gold-deep);font-family:var(--mono);text-align:center}
+.fout{background:linear-gradient(120deg,var(--navy-0),var(--navy-2) 70%,#23457f);border-radius:11px;color:#fff;display:flex;flex-direction:column;justify-content:center;padding:9px 12px}
+.fout .k{font-family:var(--mono);font-size:9px;font-weight:900;letter-spacing:.14em;color:#9fc0f2;text-transform:uppercase}
+.fout .tags{font-size:12.5px;font-weight:900;color:#f2d9a8;margin:2px 0;letter-spacing:.04em}
+.fout .note{font-size:9.5px;color:#c9d8f2;line-height:1.5}
+.loop{display:flex;flex-wrap:wrap;align-items:center;gap:5px}
+.loop .lab{font-family:var(--mono);font-size:10.5px;font-weight:900;letter-spacing:.1em;color:var(--gold-deep);white-space:nowrap;margin-right:2px}
+.loop .step{font-family:var(--mono);font-size:10.5px;font-weight:800;color:var(--ink-2);background:var(--surface);border:1px solid var(--line-strong);border-radius:8px;padding:4px 10px;white-space:nowrap}
+.loop .step.hot{color:#fff;background:var(--accent-deep);border-color:var(--accent-deep)}
+.loop .ar{color:var(--ink-3);font-weight:900;font-size:10px;font-family:var(--mono)}
+.fnote{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:10.5px;color:var(--ink-3);font-weight:600;background:var(--surface-3);border:1px solid var(--line);border-radius:10px;padding:6px 13px}
+.fnote b{color:var(--gold-deep);font-weight:800}
+
+/* ---------- ② 主视觉区：链条 / 三层框架 ---------- */
+.chain4{display:flex;align-items:stretch;gap:6px}
+.chain4 .c{flex:1;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:11px;padding:8px 10px;text-align:center;box-shadow:var(--shadow)}
+.chain4 .c b{display:block;font-size:12.5px;font-weight:800;color:var(--ink)}
+.chain4 .c i{display:block;font-style:normal;font-size:10.5px;color:var(--ink-3);margin-top:2px;line-height:1.5}
+.chain4 .c.hot{background:var(--accent-soft);border-top-color:var(--accent)}
+.chain4 .c.hot i{color:var(--accent-deep)}
+.chain4 .ar{align-self:center;color:var(--gold-deep);font-size:13px;font-weight:900;font-family:var(--mono)}
+.lay3{display:flex;flex-direction:column;gap:6px}
+.lay3 .l3{display:grid;grid-template-columns:118px 1fr;border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow)}
+.lay3 .l3 .nm{display:flex;align-items:center;gap:7px;background:linear-gradient(120deg,var(--navy-0),var(--navy-2) 80%);color:#fff;font-size:12.5px;font-weight:800;padding:8px 12px}
+.lay3 .l3 .nm .ic{font-size:14px;color:#f2d9a8}
+.lay3 .l3 .ds{display:flex;align-items:center;gap:8px;background:var(--surface);color:var(--ink-2);font-size:11.5px;padding:8px 12px}
+.lay3 .l3 .ds b{color:var(--accent-deep);font-weight:800}
+.lay3 .l3.hot .nm{background:linear-gradient(120deg,#8a5f14,#c98a2e)}
+.lay3 .l3.hot .nm .ic{color:#fff}
+.lay3 .l3.hot .ds b{color:var(--gold-deep)}
+.lay3 .l3.hot .ds{background:var(--gold-soft)}
+
+/* ---------- ② 对比条 / 三方对比 ---------- */
+.cmp{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1.4fr);gap:8px;align-items:stretch}
+.cmp .old,.cmp .new{border-radius:11px;padding:9px 13px}
+.cmp .old{background:var(--surface-2);border:1px solid var(--line)}
+.cmp .new{background:var(--surface);border:1px solid var(--accent-soft-2);border-left:3px solid var(--accent);box-shadow:var(--shadow)}
+.cmp .lab{font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.12em;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.cmp .old .lab{color:var(--ink-3)}
+.cmp .new .lab{color:var(--gold-deep)}
+.cmp .lab::before{content:"";width:14px;height:2px;border-radius:2px;flex:none}
+.cmp .old .lab::before{background:var(--ink-3)}
+.cmp .new .lab::before{background:var(--gold)}
+.cmp .vs{align-self:center;font-family:var(--mono);font-size:11px;font-weight:900;color:var(--ink-3);background:var(--surface);border:1px solid var(--line-strong);border-radius:999px;padding:2px 9px;text-align:center;letter-spacing:.05em}
+.cmp .r{display:flex;gap:6px;flex-wrap:wrap;align-items:baseline;font-size:11.5px;color:var(--ink-2);line-height:1.55}
+.cmp .r+.r{margin-top:4px}
+.cmp .r b{color:var(--ink);font-weight:800}
+.cmp .new .r b{color:var(--accent-deep)}
+.cmp .r .gd{color:var(--gold-deep);font-weight:800}
+.cmp3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cmp3 .c{background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:9px 13px}
+.cmp3 .c.win{background:var(--surface);border:1px solid var(--accent-soft-2);border-top:3px solid var(--gold);box-shadow:var(--shadow)}
+.cmp3 .c .lab{font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.1em;color:var(--ink-3);margin-bottom:4px}
+.cmp3 .c.win .lab{color:var(--gold-deep)}
+.cmp3 .c p{font-size:11.5px;color:var(--ink-2);line-height:1.55}
+.cmp3 .c p b{color:var(--ink)}
+.cmp3 .c.win p b{color:var(--accent-deep)}
+
+/* ---------- ③ 优势卡 ---------- */
+.adv{display:grid;gap:11px}
+.adv.a3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.adv.a4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.adv .a{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:12px;padding:11px 14px;box-shadow:var(--shadow);min-width:0}
+.adv .a .k{font-size:9.5px;font-weight:900;letter-spacing:.1em;color:var(--accent-deep);font-family:var(--mono)}
+.adv .a h4{font-size:13px;font-weight:800;color:var(--ink);margin:3px 0 4px}
+.adv .a p{font-size:11.5px;color:var(--ink-2);line-height:1.6}
+.adv .a p b{color:var(--ink)}
+.adv .a .cal{display:block;font-style:normal;font-size:9.5px;font-weight:700;color:var(--warn);margin-top:4px;line-height:1.45}
+
+/* ---------- ④⑤ 组合与团队（底部条） ---------- */
+.mix{display:flex;flex-direction:column;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:9px 14px;box-shadow:var(--shadow)}
+.mix-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mix .mlab{flex:none;font-family:var(--mono);font-size:10px;font-weight:900;letter-spacing:.1em;color:var(--gold-deep);background:var(--gold-soft);border-radius:999px;padding:2px 10px;white-space:nowrap}
+.mix .chip{display:inline-flex;align-items:flex-start;gap:6px;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:4px 11px;font-size:11.5px;color:var(--ink-2);font-weight:600;white-space:normal;line-height:1.5}
+.mix .chip .l{font-family:var(--mono);font-size:9.5px;font-weight:900;color:var(--accent-deep);background:var(--accent-soft);border-radius:999px;padding:0 7px;flex:none;margin-top:1px;line-height:1.7}
+.mix .chip b{color:var(--ink);font-weight:800}
+
+/* ---------- cover / backcover ---------- */
+.cover{background:linear-gradient(125deg,var(--navy-0) 0%,var(--navy-1) 40%,#24478f 76%,#2d5bd8 112%);color:#fff}
+.cover::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(520px 300px at 88% -30%,rgba(201,138,46,.26),transparent 64%),radial-gradient(560px 340px at -8% 112%,rgba(45,91,216,.35),transparent 62%),repeating-linear-gradient(90deg,rgba(255,255,255,.026) 0 1px,transparent 1px 44px),repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 1px,transparent 1px 44px)}
+.cover .page-inner,.back .page-inner{position:relative;z-index:1;justify-content:center;gap:19px}
+.cover .kicker{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:800;letter-spacing:.22em;color:#c9d8f2;text-transform:uppercase}
+.cover .kicker::before{content:"";width:26px;height:2px;background:var(--gold);border-radius:2px}
+.cover .kicker .zh{letter-spacing:.14em;color:#9fc0f2}
+.cover h1{font-size:clamp(36px,5.6vw,60px);font-weight:900;line-height:1.15;letter-spacing:.01em}
+.cover h1 .gold-t{color:#f2d9a8}
+.cover .pos{font-size:clamp(14.5px,1.7vw,18px);font-weight:600;color:#dbe7f8;line-height:1.6;max-width:32em}
+.cover .pos b{color:#fff;border-bottom:2px solid var(--gold);padding-bottom:1px}
+.cover .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:1px}
+.meta-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.07);font-size:11.5px;color:#dbe7f8;font-weight:600}
+.meta-chip b{color:#fff;font-weight:800}
+.meta-chip .k{color:#9fc0f2;font-weight:700}
+.cover .hero{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:10px 16px}
+.cover .hero .big{font-family:var(--mono);font-size:clamp(26px,3.2vw,36px);font-weight:900;color:#f2d9a8;letter-spacing:.02em;flex:none}
+.cover .hero p{font-size:clamp(13.5px,1.6vw,16.5px);font-weight:700;color:#fff;line-height:1.55}
+.cover .hero p i{display:block;font-style:normal;font-size:11.5px;color:#c9d8f2;font-weight:600;margin-top:2px}
+.cover .ov-title{font-size:12px;font-weight:800;letter-spacing:.14em;color:#9fc0f2;display:flex;align-items:center;gap:10px;margin-top:2px}
+.cover .ov-title::before{content:"";width:20px;height:2px;background:var(--gold);border-radius:2px}
+.cover .ov{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.ov-card{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:13px;padding:9px 12px}
+.ov-card .ic{flex:none;width:30px;height:30px;border-radius:9px;background:rgba(255,255,255,.1);color:#f2d9a8;display:flex;align-items:center;justify-content:center;font-size:16px}
+.ov-card.gold{background:rgba(201,138,46,.14);border-color:rgba(242,217,168,.4)}
+.ov-card.gold .ic{background:rgba(242,217,168,.18);color:#f2d9a8}
+.ov-card .n{font-family:var(--mono);font-size:9.5px;font-weight:900;color:#f2d9a8;letter-spacing:.08em}
+.ov-card b{display:block;font-size:13.5px;font-weight:800;color:#fff;margin-top:1px}
+.ov-card i{display:block;font-style:normal;font-size:10.5px;color:#c9d8f2;line-height:1.5;margin-top:2px}
+.cover .hint{margin-top:auto;padding-top:12px;font-size:12px;color:#9fc0f2;display:flex;align-items:center;gap:8px;font-weight:600}
+.cover .hint .key{font-family:var(--mono);border:1px solid rgba(159,192,242,.35);border-radius:6px;padding:1px 7px;font-size:11px;color:#c9d8f2}
+
+.back{background:linear-gradient(125deg,var(--navy-0),var(--navy-1) 55%,#1c3a6e);color:#fff}
+.back h2{font-size:clamp(24px,3.4vw,36px);font-weight:900;line-height:1.3}
+.back h2 .gold-t{color:#f2d9a8}
+.back .pos{font-size:clamp(14.5px,1.7vw,18px);font-weight:600;color:#dbe7f8;max-width:34em;line-height:1.7}
+.back .caliber{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:14px 18px;font-size:11.5px;color:#c9d8f2;line-height:1.7;max-width:66em}
+.back .caliber b{color:#fff}
+.back .caliber .qh{font-size:11px;font-weight:800;letter-spacing:.14em;color:#f2d9a8;margin-bottom:5px;text-transform:uppercase}
+.back .foot{margin-top:auto;padding-top:12px;font-size:12px;color:#9fc0f2;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.14)}
+
+/* ---------- pager ---------- */
+.pager{position:fixed;left:0;right:0;bottom:0;z-index:70;display:flex;align-items:center;justify-content:center;gap:14px;padding:9px 18px;background:rgba(237,240,246,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+.pager .btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink-2);font-size:12.5px;font-weight:700;border-radius:999px;padding:5px 14px;cursor:pointer;font-family:var(--font);transition:background .15s ease,color .15s ease}
+.pager .btn:hover{color:var(--accent-deep);background:var(--accent-soft)}
+.pager .btn:disabled{opacity:.35;cursor:default}
+.pager .btn:disabled:hover{background:var(--surface);color:var(--ink-2)}
+.pager .count{font-family:var(--mono);font-size:12.5px;font-weight:800;color:var(--ink);min-width:64px;text-align:center;font-variant-numeric:tabular-nums}
+.pager .count i{font-style:normal;color:var(--ink-3)}
+.pager .ptitle{font-size:12px;color:var(--ink-3);font-weight:600;max-width:26em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dots{position:fixed;right:16px;top:50%;transform:translateY(-50%);z-index:70;display:flex;flex-direction:column;gap:7px}
+.dots button{width:9px;height:9px;border-radius:50%;border:1px solid var(--line-strong);background:var(--surface);padding:0;cursor:pointer;transition:transform .2s ease,background .2s ease,border-color .2s ease}
+.dots button.on{background:var(--accent-deep);border-color:var(--accent-deep);transform:scale(1.35)}
+.dots button:hover{transform:scale(1.25)}
+.dots button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ---------- reveal (page-enter only) ---------- */
+.page .fade{opacity:0;transform:translateY(12px)}
+.page.on .fade{opacity:1;transform:none;transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .5s cubic-bezier(.16,1,.3,1);transition-delay:var(--d,0s)}
+html.no-motion .page .fade,html.no-motion .page.on .fade{opacity:1;transform:none;transition:none}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .deck{scroll-behavior:auto}
+}
+
+/* ---------- responsive ---------- */
+@media (max-width:1024px){
+  .cover .ov{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cover .hero{flex-wrap:wrap}
+  .adv.a3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fchain{grid-template-columns:1fr auto 1fr auto 1fr;grid-template-rows:auto auto auto}
+  .fop.end{display:none}
+  .fout{grid-column:1/-1}
+  .timeline{grid-template-columns:1fr;grid-template-rows:auto auto auto}
+  .tl-ar{justify-self:center;transform:rotate(90deg)}
+  .drill,.chain4{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .drill .ar,.chain4 .ar{display:none}
+  .cmp{grid-template-columns:1fr}
+  .cmp .vs{justify-self:center;transform:rotate(90deg)}
+  .cmp3{grid-template-columns:1fr}
+  .dots{display:none}
+}
+@media (max-width:720px){
+  .page{padding:26px 18px 82px}
+  .pains .chip{padding:4px 10px;font-size:11.5px}
+  .adv.a3,.adv.a4{grid-template-columns:1fr}
+  .tbl{font-size:10.5px}
+  .lay3 .l3{grid-template-columns:1fr}
+  .cover h1{font-size:32px}
+  .cover .ov{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .phead .en{display:none}
+  .ptitle{display:none}
+  .pager .btn span{display:none}
+}
+@media (max-height:820px) and (min-width:721px){
+  .page{padding-top:24px;padding-bottom:58px}
+  .page-inner{gap:10px}
+  .phead{padding-bottom:8px}
+  .concl{padding:8px 14px}
+  .concl p{font-size:12px}
+  .adv .a{padding:8px 11px}
+  .mix{padding:7px 12px}
+  .tbl th,.tbl td{padding:5px 10px}
+  .tl-card{padding:7px 10px}
+  .fcard{padding:7px 10px}
+  .fout{padding:7px 10px}
+  .cmp .old,.cmp .new{padding:7px 11px}
+  .chip{padding:3px 9px}
+  body{font-size:14px}
+}
+@media (max-height:800px) and (min-width:721px){
+  .page{padding-top:18px;padding-bottom:50px}
+  .page-inner{gap:8px}
+  .phead h2{font-size:clamp(17px,1.9vw,21px)}
+  .sec-lab{font-size:10.5px}
+  .concl .ic{width:26px;height:26px;font-size:14px}
+  .adv .a{padding:6px 10px}
+  .adv .a h4{font-size:12px;margin:2px 0 3px}
+  .adv .a p{font-size:10.5px}
+  .tbl{font-size:10.5px}
+  .tbl th,.tbl td{padding:4px 8px}
+  .flow3 .n{padding:5px 10px}
+  .flow3 .n p{font-size:10.5px}
+  .drill .d{padding:6px 8px}
+  .tl-card{padding:6px 9px}
+  .tl-card li{font-size:10px}
+  .tl-card .h .t{font-size:11.5px}
+  .fcard{padding:5px 9px}
+  .fcard p{font-size:10px}
+  .fout{padding:6px 9px}
+  .loop .step{padding:3px 8px;font-size:10px}
+  .cmp .old,.cmp .new{padding:6px 10px}
+  .cmp .r,.cmp3 .c p{font-size:10.5px}
+  .mix{padding:6px 10px}
+  .mix .chip{font-size:10.5px;padding:3px 9px}
+  .pains .chip{font-size:11px;padding:3px 10px}
+  .concl p{font-size:11.5px}
+  .formula-strip{font-size:10.5px;padding:5px 11px}
+  .lay3 .l3 .nm{font-size:11.5px;padding:6px 10px}
+  .lay3 .l3 .ds{font-size:10.5px;padding:6px 10px}
+}
+
+/* ---------- print (optional, non-deliverable) ---------- */
+@page{size:A4;margin:14mm}
+@media print{
+  html,body{overflow:visible;background:#fff}
+  .deck{height:auto;overflow:visible;scroll-snap-type:none}
+  .page{min-height:0;height:auto;page-break-after:always;break-after:page;padding:0 0 8mm}
+  .pager,.dots,#progress{display:none!important}
+  .page .fade,.page.on .fade{opacity:1;transform:none}
+  .cover,.back{background:#fff!important;color:var(--ink)}
+  .cover h1,.cover .pos,.cover .meta-chip,.cover .ov-card b,.cover .ov-card i,.cover .hero p,.back h2,.back .pos,.back .caliber{color:var(--ink)}
+  .cover .hero,.cover .meta-chip{background:var(--surface-2);border-color:var(--line)}
+  .cover .hero .big,.cover .hero p i,.cover .ov-card .ic{color:var(--gold-deep)}
+  .cover .ov-card{background:var(--surface-2);border-color:var(--line)}
+  .back .caliber{background:var(--surface-2);border-color:var(--line);color:var(--ink-2)}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-gov" viewBox="0 0 24 24"><path d="M3 21h18M5 18V10l7-5 7 5v8M9 18v-4h6v4"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6-5.2-6-10a6 6 0 1 1 12 0c0 4.8-6 10-6 10z"/><circle cx="12" cy="10.6" r="2.2"/></symbol>
+    <symbol id="i-bank" viewBox="0 0 24 24"><path d="M2.5 21h19M4 18h16M6 18v-7M10 18v-7M14 18v-7M18 18v-7M2.5 9.5L12 3l9.5 6.5"/></symbol>
+    <symbol id="i-house" viewBox="0 0 24 24"><path d="M3 11.5L12 4l9 7.5M5.5 10v10h13V10M10 20v-6h4v6"/></symbol>
+    <symbol id="i-dev" viewBox="0 0 24 24"><path d="M7 21V6h10v15M7 9h10M10 6V3.5h4V6M5 21h14"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M4.8 20c1.3-3.3 4-4.9 7.2-4.9s5.9 1.6 7.2 4.9"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.8"/><path d="M8.6 12.2l2.3 2.3 4.5-4.9"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3.6L22 20H2L12 3.6z"/><path d="M12 10v4.4M12 17.3v.2"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13.5 5.5L20 12l-6.5 6.5"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3.5L21 8l-9 4.5L3 8l9-4.5z"/><path d="M3.5 12.5L12 16.5l8.5-4M3.5 16.6L12 20.6l8.5-4"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3.5 20.5h17M7 20v-7M12 20V8M17 20v-10"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M7 3h7l4 4v14H7V3z"/><path d="M14 3v4h4M10 12h5M10 15.5h5"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><path d="M12 7.4V12l3 2"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 2.8v5.4c0 4.6-3 7.9-7 9.8-4-1.9-7-5.2-7-9.8V5.8L12 3z"/><path d="M9.2 11.8l2.1 2.1 3.6-4"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.3"/><path d="M15.6 15.6L21 21"/></symbol>
+  </defs>
+</svg>
+<div id="progress" role="presentation"></div>
+
+<main class="deck" id="deck" aria-label="智见 · 客户与解决方案 v2 · 分页演示">
+
+<!-- ============ P1 封面 ============ -->
+<section class="page cover" data-title="封面 · 客户与解决方案 v2">
+  <div class="page-inner">
+    <div class="kicker fade"><span class="zh">98wiki ｜ 智见 / 客户与解决方案</span> · 2026-08-25</div>
+    <h1 class="fade" style="--d:.05s">客户与<span class="gold-t">解决方案</span></h1>
+    <p class="pos fade" style="--d:.1s">副标题 · <b>六类客户 × 一类一页：贝壳解题思路的不同 ＋ 产品优势</b></p>
+    <div class="hero fade" style="--d:.14s">
+      <div class="big">六</div>
+      <p>卖的不是数据，是经得起审计的决策过程。<i>把决策过程做成底稿，把底稿做成标准——六类客户，一种解法。</i></p>
+    </div>
+    <div class="meta fade" style="--d:.18s">
+      <span class="meta-chip"><span class="k">用途</span><b>对外方案说明</b></span>
+      <span class="meta-chip"><span class="k">底稿</span><b>六类客户融合源稿</b></span>
+      <span class="meta-chip"><span class="k">形态</span><b>分页版 v2 · 一类客户一页</b></span>
+      <span class="meta-chip"><span class="k">页数</span><b>共 8 页</b></span>
+    </div>
+    <div class="ov-title fade" style="--d:.22s">六类客户 · ONE-PAGER OVERVIEW<span style="margin-left:auto;color:#f2d9a8;letter-spacing:.02em">★ 重点页：客户四</span></div>
+    <div class="ov fade" style="--d:.26s">
+      <div class="ov-card"><span class="ic"><svg class="ic"><use href="#i-gov"/></svg></span><div><div class="n">CUST.01</div><b>中央部委</b><i>标准入口 · 不卖数据卖标准<br>先立标准、后收钱</i></div></div>
+      <div class="ov-card"><span class="ic"><svg class="ic"><use href="#i-pin"/></svg></span><div><div class="n">CUST.02</div><b>地方监管</b><i>放大器 · 底座复用<br>一个省跑通、全省复制</i></div></div>
+      <div class="ov-card"><span class="ic"><svg class="ic"><use href="#i-bank"/></svg></span><div><div class="n">CUST.03</div><b>金融机构</b><i>灯塔一 · 不动产风险工作台<br>T0 估值＋T+N 监测</i></div></div>
+      <div class="ov-card gold"><span class="ic"><svg class="ic"><use href="#i-house"/></svg></span><div><div class="n">CUST.04 ★</div><b>保租房国企·城投</b><i>灯塔二 · 收储决策工作台<br>因果可解释估值框架（重点页）</i></div></div>
+      <div class="ov-card"><span class="ic"><svg class="ic"><use href="#i-dev"/></svg></span><div><div class="n">CUST.05</div><b>开发商</b><i>S 层标准化扩展<br>可复核底稿＋条件化推演</i></div></div>
+      <div class="ov-card"><span class="ic"><svg class="ic"><use href="#i-user"/></svg></span><div><div class="n">CUST.06</div><b>C 端个人</b><i>远期 · 口碑与数据入口<br>研究可信，沉淀用户信任</i></div></div>
+    </div>
+    <div class="hint fade" style="--d:.3s"><span class="key">←</span><span class="key">→</span> 翻页 · 点击右侧圆点或底部按钮 · 共 8 页</div>
+  </div>
+</section>
+
+<!-- ============ P2 客户一 · 中央部委 ============ -->
+<section class="page" data-title="客户一 · 中央部委">
+  <div class="page-inner">
+    <div class="phead fade">
+      <span class="pic"><svg class="ic"><use href="#i-gov"/></svg></span>
+      <span class="no">SEC.01</span>
+      <h2>客户一 · 中央部委</h2>
+      <span class="en">CENTRAL MINISTRIES</span>
+    </div>
+
+    <div class="concl fade">
+      <span class="ic"><svg class="ic"><use href="#i-check"/></svg></span>
+      <span class="lab">一页结论</span>
+      <p>政府端定位为<b>示范与标准入口</b>，不纳入近期收入主战场——<b>先立标准、后收钱</b>；部委把贝壳口径纳入工作流之日，就是替换成本最高之时。</p>
+    </div>
+
+    <div class="sec-lab fade">① 需求痛点 <i>PAIN POINTS</i></div>
+    <div class="pains fade">
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>口径不一、更新滞后</b>全国市场监测依赖地方报送</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>政策效果缺可核验底稿</b></span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>数据分散</b>住建 · 统计 · 自然资源 · 金融各部门</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.04s">② 贝壳解题思路的不同 <i>WHAT WE DO DIFFERENTLY</i></div>
+    <div class="tbl-wrap fade" style="--d:.06s">
+      <table class="tbl">
+        <thead><tr><th style="width:24%">口径来源 <span class="en">SOURCE</span></th><th style="width:30%">数据性质 <span class="en">NATURE</span></th><th>局限 <span class="en">LIMIT</span></th></tr></thead>
+        <tbody>
+          <tr><td class="src">统计局 70 城指数</td><td>月度 · 仅同环比</td><td>无底稿、只到城市</td></tr>
+          <tr><td class="src">央行问卷</td><td>抽样 · 季度</td><td>滞后、非全量</td></tr>
+          <tr><td class="src">住建网签</td><td>行政记录 · 无价格</td><td>无价格、口径分散</td></tr>
+          <tr class="beike-row"><td class="src">贝壳 · 交易事实</td><td><b>成交 / 挂牌 / 带看全链路</b>，颗粒度到小区；只描述已发生、<b>不帮涨不帮降</b></td><td><b>政策效果复现</b> → 审计级底稿 · 统一口径指数（价格 / 活跃 / 信心，40 城 vs 50 城可解释、可切换）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flow3 fade" style="--d:.08s">
+      <div class="n"><span class="ic"><svg class="ic"><use href="#i-clock"/></svg></span><p><b>给定历史时点</b>（政策出台后）</p></div>
+      <div class="ar">→</div>
+      <div class="n"><span class="ic"><svg class="ic"><use href="#i-layers"/></svg></span><p><b>重放数据 / 假设 / 计算</b></p></div>
+      <div class="ar">→</div>
+      <div class="n"><span class="ic"><svg class="ic"><use href="#i-doc"/></svg></span><p><b>审计级底稿</b>——70 城只有指数、没有底稿</p></div>
+    </div>
+    <div class="idx3 fade" style="--d:.1s">
+      <span class="cap">统一口径指数 · 三维</span>
+      <span class="chip"><b>价格</b> 2020 基期</span>
+      <span class="chip"><b>活跃</b> 2024 基期</span>
+      <span class="chip"><b>信心</b> 暂缓对外</span>
+      <span class="chip">口径纪律换公信力 · 监测对象从「开发进度」转向「流通事实」</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.13s">③ 产品优势 <i>PRODUCT EDGE</i></div>
+    <div class="adv a3 fade" style="--d:.15s">
+      <div class="a"><div class="k">ADV · 01</div><h4>免费入口的独特性</h4><p>不卖数据卖标准，换<b>部委采用贝壳口径</b>；免费送入口、送标准。</p></div>
+      <div class="a"><div class="k">ADV · 02</div><h4>观测指标热力度对比</h4><p><b>领先 / 同步指标分层</b>，可看出哪些指标先行、哪些同步确认。</p></div>
+      <div class="a"><div class="k">ADV · 03</div><h4>口径透明可解释</h4><p><b>40 城 vs 50 城</b>口径可解释、可切换，对比 70 城「黑箱」指数是差异点。</p></div>
+    </div>
+
+    <div class="mix fade" style="--d:.2s">
+      <div class="mix-row"><span class="mlab">④ 产品组合</span>
+        <span class="chip"><span class="l">大屏</span><b>政府市场监测大屏</b>（白标）</span>
+        <span class="chip"><span class="l">直问</span><b>领导直问</b>（白名单 300 人，四段式：结论—依据—口径—待补数据）</span>
+        <span class="chip"><span class="l">指数</span><b>指数接口</b>（价格 / 活跃 / 信心）</span>
+        <span class="chip"><span class="l">政策库</span><b>政策库</b>（中央—部委—省—市—区县政策映射）</span>
+      </div>
+      <div class="mix-row"><span class="mlab">⑤ 交付团队</span>
+        <span class="chip"><span class="l">数据</span><b>政研通数据团队</b>（自爬住建 / 统计 / 自然资源公开数据）</span>
+        <span class="chip"><span class="l">研究</span><b>政策研究专家</b>（政策解读 Agent）</span>
+        <span class="chip"><span class="l">集成</span><b>大屏集成实施方</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ P3 客户二 · 地方监管 ============ -->
+<section class="page" data-title="客户二 · 地方监管">
+  <div class="page-inner">
+    <div class="phead fade">
+      <span class="pic"><svg class="ic"><use href="#i-pin"/></svg></span>
+      <span class="no">SEC.02</span>
+      <h2>客户二 · 地方监管</h2>
+      <span class="en">LOCAL REGULATORS</span>
+    </div>
+
+    <div class="concl fade">
+      <span class="ic"><svg class="ic"><use href="#i-check"/></svg></span>
+      <span class="lab">一页结论</span>
+      <p>地方监管是<b>标准入口的放大器</b>——一个省跑通、全省复制；政府端先立示范，<b>收入锚定后续国企收储与银行风险两个灯塔</b>。</p>
+    </div>
+
+    <div class="sec-lab fade">① 需求痛点 <i>PAIN POINTS</i></div>
+    <div class="pains fade">
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>区县口径对齐难</b></span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>小区级价格缺失</b></span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>舆情与价格监测手段弱</b></span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>40 城 vs 50 城口径</b>要向领导解释</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.04s">② 贝壳解题思路的不同 · 四级下钻 <i>WHAT WE DO DIFFERENTLY</i></div>
+    <div class="drill fade" style="--d:.06s">
+      <div class="d"><div class="lv">LV.1</div><b>地图</b><i>全国底座 · 指标口径全国拉齐</i></div>
+      <div class="ar">→</div>
+      <div class="d"><div class="lv">LV.2</div><b>城市</b><i>城市级监测工作台</i></div>
+      <div class="ar">→</div>
+      <div class="d"><div class="lv">LV.3</div><b>区县</b><i>边界 / 板块 / 小区成交对齐</i></div>
+      <div class="ar">→</div>
+      <div class="d hot"><div class="lv">LV.4</div><b>小区</b><i>价格（成交+挂牌）与迁移指数独有</i></div>
+    </div>
+    <div class="cmp fade" style="--d:.08s">
+      <div class="old">
+        <div class="lab">传统 / 竞品做法</div>
+        <div class="r"><b>成都样板</b><span>一城一建、项目制——重复建设、不换口径成本高</span></div>
+        <div class="r"><b>统计局 70 城</b><span>只到城市、无区县</span></div>
+      </div>
+      <div class="vs">→</div>
+      <div class="new">
+        <div class="lab">贝壳做法 · 底座复用</div>
+        <div class="r"><b>同一套指标口径全国拉齐</b><span>地方版只做<b>裁剪与白标</b>，不重复建设、不换口径</span></div>
+        <div class="r"><b>白标挂地方品牌</b><span>对外呈现「XX 市房地产市场运行监测」，<b>不出现贝壳</b>，过舆情审核再对外</span></div>
+      </div>
+    </div>
+    <div class="idx3 fade" style="--d:.1s">
+      <span class="cap">独有能力</span>
+      <span class="chip"><b>领导直问白名单</b>四段式：结论—依据—口径—待补数据</span>
+      <span class="chip"><b>舆情与价格联动监测</b>防止误读</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.13s">③ 产品优势 <i>PRODUCT EDGE</i></div>
+    <div class="adv a3 fade" style="--d:.15s">
+      <div class="a"><div class="k">ADV · 01</div><h4>独有数据</h4><p><b>小区级价格（成交 + 挂牌）与迁移指数</b>——贝壳交易 / 带看数据底座，非申报口径可比。</p></div>
+      <div class="a"><div class="k">ADV · 02</div><h4>区县对齐的工程能力</h4><p>区县边界、板块、小区成交<b>对齐到统一口径</b>，一个口径说清本地市场。</p></div>
+      <div class="a"><div class="k">ADV · 03</div><h4>白标挂地方品牌</h4><p>对外呈现「<b>XX 市房地产市场运行监测</b>」，不出现贝壳，舆情审核后再对外。</p></div>
+    </div>
+
+    <div class="mix fade" style="--d:.2s">
+      <div class="mix-row"><span class="mlab">④ 产品组合</span>
+        <span class="chip"><span class="l">工作台</span><b>地方版监测工作台</b></span>
+        <span class="chip"><span class="l">大屏</span><b>白标大屏</b></span>
+        <span class="chip"><span class="l">直问</span><b>领导直问</b>（白名单）</span>
+        <span class="chip"><span class="l">数据包</span><b>城市数据包</b>（小区级，含历史序列）</span>
+      </div>
+      <div class="mix-row"><span class="mlab">⑤ 交付团队</span>
+        <span class="chip"><span class="l">数据</span><b>城市数据团队</b></span>
+        <span class="chip"><span class="l">实施</span><b>实施 / 白标团队</b></span>
+        <span class="chip"><span class="l">舆情</span><b>舆情审核协作</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ P4 客户三 · 金融机构 ============ -->
+<section class="page" data-title="客户三 · 金融机构">
+  <div class="page-inner">
+    <div class="phead fade">
+      <span class="pic"><svg class="ic"><use href="#i-bank"/></svg></span>
+      <span class="no">SEC.03</span>
+      <h2>客户三 · 金融机构</h2>
+      <span class="en">FINANCIAL INSTITUTIONS</span>
+    </div>
+
+    <div class="concl fade">
+      <span class="ic"><svg class="ic"><use href="#i-check"/></svg></span>
+      <span class="lab">一页结论</span>
+      <p>定价纪律（内部口径）：把「可审计」翻译成银行的 KPI——银行年费 <b class="gd">1000 万起、3000 万为合适锚</b><span class="gd">（目标假设）</span>；首单让功能不让价格、按机构分档、先签年度。边界声明——<b>仅提供价值参考与监测信号，不替代法定评估、不直接决定授信或减值计提</b>。</p>
+    </div>
+
+    <div class="sec-lab fade">① 需求痛点 <i>PAIN POINTS</i></div>
+    <div class="pains fade">
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>单点评估＋贷后放任</b>估值与市场存在时滞</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>压力测试缺统一口径</b>区域 / 物业类型 / 客户集中度</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>评估报告不可复现</b>内审、监管检查无法还原</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>签章责任重</b>结论出错责任界面不清</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.04s">② 贝壳解题思路的不同 · T0 → T+N <i>WHAT WE DO DIFFERENTLY</i></div>
+    <div class="timeline fade" style="--d:.06s">
+      <div class="tl-card">
+        <div class="h"><span class="ic"><svg class="ic"><use href="#i-target"/></svg></span><span class="t">T0 · 授信时点估值参考</span><span class="tag">时点</span></div>
+        <ul>
+          <li>房源级<b>估值区间＋置信度</b></li>
+          <li>与外部评估报告差异<b>自动比对</b></li>
+          <li>按<b>数据 / 方法 / 假设</b>三分归因</li>
+        </ul>
+        <div class="out">→ 形成授信参考底稿</div>
+      </div>
+      <div class="tl-ar">→</div>
+      <div class="tl-card">
+        <div class="h"><span class="ic"><svg class="ic"><use href="#i-clock"/></svg></span><span class="t">T+N · 贷后监测</span><span class="tag">持续</span></div>
+        <ul>
+          <li><b>持续更新估值</b></li>
+          <li><b>价值偏离预警</b></li>
+          <li><b>组合压力测试</b></li>
+        </ul>
+        <div class="out">→ 自动生成贷后复核底稿</div>
+      </div>
+      <div class="tl-ar">→</div>
+      <div class="tl-card gold">
+        <div class="h"><span class="ic"><svg class="ic"><use href="#i-doc"/></svg></span><span class="t">复核底稿 · 可审计</span><span class="tag">输出</span></div>
+        <ul>
+          <li><b>价值台账持续可查</b></li>
+          <li><b>同条件可复现</b>、内审问询一键还原</li>
+          <li>直接供<b>内审与监管检查</b>查验</li>
+        </ul>
+        <div class="out">持续需求，而非项目制</div>
+      </div>
+    </div>
+    <div class="band fade" style="--d:.08s">
+      <span class="ic"><svg class="ic"><use href="#i-shield"/></svg></span>
+      <span class="lab">做底稿、不做签章</span>
+      <p>估值只做过程、不做结论；需盖章环节<b>引入持牌评估机构协作</b>——不抢法定评估刚需，分润补位、责任界面清晰；一次估值偏差的成本远高于系统年费。</p>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.12s">③ 产品优势 <i>PRODUCT EDGE</i></div>
+    <div class="adv a4 fade" style="--d:.14s">
+      <div class="a"><div class="k">ADV · 01</div><h4>差异归因三分</h4><p>偏差按<b>数据 / 方法 / 假设</b>可解释、可追溯——而非「两个数打架」。</p></div>
+      <div class="a"><div class="k">ADV · 02</div><h4>同条件可复现</h4><p>价值台账持续可查、<b>同条件可复现</b>、内审问询一键还原。</p></div>
+      <div class="a"><div class="k">ADV · 03</div><h4>复核底稿直供查验</h4><p><b>贷后复核底稿</b>直接供内审与监管检查查验。</p></div>
+      <div class="a"><div class="k">ADV · 04</div><h4>先例背书</h4><p><b>中国银行广州分行 2026-08 落地试单、授信 2800 万</b>；江苏银行谈的是复制升级，非首创。<span class="cal">口径：试单授信记录</span></p></div>
+    </div>
+
+    <div class="mix fade" style="--d:.19s">
+      <div class="mix-row"><span class="mlab">④ 产品组合</span>
+        <span class="chip"><span class="l">主 B</span><b>金融机构风险工作台</b>（T0＋T+N）</span>
+        <span class="chip"><span class="l">基础包</span><b>机构基础包</b>（数据＋模型服务）</span>
+        <span class="chip"><span class="l">API</span><b>API / 嵌入式组件</b></span>
+        <span class="chip"><span class="l">部署</span><b>私有化部署</b>（可选）</span>
+      </div>
+      <div class="mix-row"><span class="mlab">⑤ 交付团队</span>
+        <span class="chip"><span class="l">产品</span><b>银行风控产品团队</b></span>
+        <span class="chip"><span class="l">数据</span><b>数据团队</b></span>
+        <span class="chip"><span class="l">模型</span><b>模型 / 压力测试工程师</b></span>
+        <span class="chip"><span class="l">评估</span><b>持牌评估机构</b>（签章环节协作）</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ P5 客户四 · 保租房国企/城投（重点页） ============ -->
+<section class="page" data-title="客户四 · 保租房国企/城投 ★">
+  <div class="page-inner">
+    <div class="phead fade">
+      <span class="pic"><svg class="ic"><use href="#i-house"/></svg></span>
+      <span class="no">SEC.04 ★</span>
+      <h2>客户四 · 保租房国企 / 城投 / 住房运营平台</h2>
+      <span class="en">KEY PAGE · STATE-OWNED HOUSING</span>
+    </div>
+
+    <div class="concl fade">
+      <span class="ic"><svg class="ic"><use href="#i-check"/></svg></span>
+      <span class="lab">一页结论</span>
+      <p>收储本质是把<b>存量蓄水池的水引向保租房源头活水</b>；定价底稿化后，<b>1000+ 收储主体</b>（口径：STAID 分层汇报大纲）的决策将从经验走向数据——左海已交付、萧山环投在谈、贵州 / 辽宁复制。边界：输出「价值参考与监测信号」，<b>不替代法定评估</b>。</p>
+    </div>
+
+    <div class="sec-lab fade">① 需求痛点 <i>PAIN POINTS</i></div>
+    <div class="pains fade">
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>项目筛选靠经验</b>口径不一</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>测算缺统一口径</b>收储价格 · 租金 · 改造成本 · 运营成本</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>政策目标 × 社会效益 × 经营安全</b>难兼顾</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>历史假设难还原</b>审计巡视追问「当时为什么这么决策」</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.04s">② 贝壳解题思路的不同 · 因果可解释估值框架 <i>EXPLAINABLE VALUATION</i></div>
+    <div class="formula-strip fade" style="--d:.05s">不动产估值 ＝ <b>估值方法开源</b> ＋ <b>过往事实数据</b> ＋ <b>情形模拟（敏感性分析）</b> → <span class="out">可溯源 · 可复现 · 可跟踪</span></div>
+    <div class="fchain fade" style="--d:.07s">
+      <div class="fcard"><div class="k">TERM · 01</div><h4>估值方法 · 开源</h4><p>收益法 / 比较法 / DCF，<b>不依赖窗口指导</b>——每个数字都有来路。</p></div>
+      <div class="fop">＋</div>
+      <div class="fcard gold"><div class="k">TERM · 02</div><h4>过往事实数据</h4><p>成交 / 挂牌 / 租金 / 去化，<b>历史指数修正</b>中性定价。</p></div>
+      <div class="fop">＋</div>
+      <div class="fcard"><div class="k">TERM · 03</div><h4>情形模拟 · 敏感性分析</h4><p>租金 / 空置 / 折现率 / 退出年限<b>压测</b>。</p></div>
+      <div class="fop end">→</div>
+      <div class="fout"><div class="k">OUTPUT</div><div class="tags">可溯源 · 可复现 · 可跟踪</div><div class="note">每步带时点快照与唯一编码</div></div>
+    </div>
+    <div class="loop fade" style="--d:.09s">
+      <span class="lab">八步闭环 · 对比「经验＋窗口指导」式定价</span>
+      <span class="step">项目建档</span><span class="ar">→</span>
+      <span class="step">取数</span><span class="ar">→</span>
+      <span class="step">假设设定</span><span class="ar">→</span>
+      <span class="step">多法测算</span><span class="ar">→</span>
+      <span class="step">情景压测</span><span class="ar">→</span>
+      <span class="step">审批快照</span><span class="ar">→</span>
+      <span class="step hot">审计复现与运营跟踪</span>
+    </div>
+    <div class="fnote fade" style="--d:.11s">配<b>四本账</b>（事实 / 假设 / 方法 / 责任）· 审计问询一键还原——「在任不出事、离任查得清」；<b>做底稿不做签章</b>，不替代法定评估，但每个数字都有来路。</div>
+
+    <div class="sec-lab fade" style="--d:.13s">③ 产品优势 <i>PRODUCT EDGE</i></div>
+    <div class="adv a3 fade" style="--d:.15s">
+      <div class="a"><div class="k">ADV · 01 · 已交付验证</div><h4>福州左海集团（分散式收储试点）</h4><p>以旧换新收 <b>8 套</b>、国企间划转收 <b>3000 多套</b>；历史指数修正评估模型中性定价，<b>单套低约 10%</b>、帮买方<b>省数千万</b>，客户续约复购。<span class="cal">口径：已签约案例（董事长汇报大纲及业务规划逐字稿）</span></p></div>
+      <div class="a"><div class="k">ADV · 02</div><h4>三层决策支撑</h4><p>敏感性分析给出<b>市场公允 / 经营价值 / 安全边界</b>三层支撑。</p></div>
+      <div class="a"><div class="k">ADV · 03</div><h4>审批底稿可对接</h4><p>审批底稿可<b>对接 OA / 国资监管系统</b>，审批链可担责。</p></div>
+    </div>
+
+    <div class="mix fade" style="--d:.2s">
+      <div class="mix-row"><span class="mlab">④ 产品组合</span>
+        <span class="chip"><span class="l">主 A</span><b>收储决策工作台</b></span>
+        <span class="chip"><span class="l">数据包</span><b>城市数据包</b></span>
+        <span class="chip"><span class="l">敏感</span><b>敏感性分析模块</b></span>
+        <span class="chip"><span class="l">底稿</span><b>审批底稿导出</b>（对接 OA / 国资监管）</span>
+      </div>
+      <div class="mix-row"><span class="mlab">⑤ 交付团队</span>
+        <span class="chip"><span class="l">咨询</span><b>收储咨询</b></span>
+        <span class="chip"><span class="l">数据</span><b>数据团队</b></span>
+        <span class="chip"><span class="l">模型</span><b>模型 / 测算工程师</b></span>
+        <span class="chip"><span class="l">评估</span><b>持牌评估机构</b>（盖章环节协作）</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ P6 客户五 · 开发商 ============ -->
+<section class="page" data-title="客户五 · 开发商">
+  <div class="page-inner">
+    <div class="phead fade">
+      <span class="pic"><svg class="ic"><use href="#i-dev"/></svg></span>
+      <span class="no">SEC.05</span>
+      <h2>客户五 · 开发商</h2>
+      <span class="en">DEVELOPERS · S-LAYER</span>
+    </div>
+
+    <div class="concl fade">
+      <span class="ic"><svg class="ic"><use href="#i-check"/></svg></span>
+      <span class="lab">一页结论</span>
+      <p>「可复核底稿」的付费意愿已被验证（<b>福州左海集团收储估值咨询</b>：历史指数修正后单套价格低约 10%、客户已续约，详见客户四）；开发商线<b>待两灯塔形成合同与复购后作为标准化扩展铺开</b>——先慢后快，不补贴换规模。</p>
+    </div>
+
+    <div class="sec-lab fade">① 需求痛点 <i>PAIN POINTS</i></div>
+    <div class="pains fade">
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>依赖经验判断与外部研报</b>拿地 · 定价 · 去化</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>投后复盘无底稿</b>当初为什么这么定价、基于什么数据与假设，事后无法还原</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.04s">② 贝壳解题思路的不同 <i>WHAT WE DO DIFFERENTLY</i></div>
+    <div class="cmp fade" style="--d:.06s">
+      <div class="old">
+        <div class="lab">中指 / 克而瑞 · 榜单式服务</div>
+        <div class="r"><b>指数排行 ＋ 报告订阅</b><span>交付物是报告，结论不绑定假设</span></div>
+      </div>
+      <div class="vs">→</div>
+      <div class="new">
+        <div class="lab">智见 · 交付物形态不同</div>
+        <div class="r"><b>可复核底稿</b><span>来源 · 口径 · 假设 · 版本全程留痕</span></div>
+        <div class="r"><b>条件化推演</b><span>结论绑定假设——不同假设下结果怎么变</span></div>
+      </div>
+    </div>
+    <div class="chain4 fade" style="--d:.08s">
+      <div class="c"><b>土地供给</b><i>土地成交 / 批售</i></div>
+      <div class="ar">→</div>
+      <div class="c"><b>新房供应</b><i>取证 / 供应节奏</i></div>
+      <div class="ar">→</div>
+      <div class="c"><b>库存</b><i>可售存量</i></div>
+      <div class="ar">→</div>
+      <div class="c hot"><b>去化</b><i>去化周期 · 连成链条</i></div>
+    </div>
+    <div class="idx3 fade" style="--d:.1s">
+      <span class="cap">三个交付形态</span>
+      <span class="chip"><b>城市监测订阅</b>CLI / 客户端 / API 标准组件，替代「买报告」，嵌入开发商数据工作流</span>
+      <span class="chip"><b>开盘定价支持</b>条件化解释：不同去化假设下价格如何表现</span>
+      <span class="chip"><b>投后复盘底稿</b>决策时能追溯、复盘时能还原</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.13s">③ 产品优势 <i>PRODUCT EDGE</i></div>
+    <div class="adv a3 fade" style="--d:.15s">
+      <div class="a"><div class="k">ADV · 01</div><h4>城市地图与客研数据</h4><p>贝壳自有<b>成交 / 带看全链路数据</b>（口径：贝壳授权数据），房源—楼栋—社区—项目级颗粒度。</p></div>
+      <div class="a"><div class="k">ADV · 02</div><h4>CLI / API 标准化嵌入</h4><p>政研通 CLI 已跑通（<b>Python＋TS 双版本</b>，口径：2026-08 交付记录），支持批量城市比较与底稿导出。</p></div>
+      <div class="a"><div class="k">ADV · 03</div><h4>条件化定价不担责</h4><p>假设框定＋边界声明，<b>责任界面清晰</b>——不承诺结果、不做趋势性判断。</p></div>
+    </div>
+
+    <div class="mix fade" style="--d:.2s">
+      <div class="mix-row"><span class="mlab">④ 产品组合</span>
+        <span class="chip"><span class="l">订阅</span><b>城市监测订阅</b>（CLI＋API）</span>
+        <span class="chip"><span class="l">定价</span><b>开盘定价支持模块</b></span>
+        <span class="chip"><span class="l">土地</span><b>土地供给与去化分析</b></span>
+        <span class="chip"><span class="l">复盘</span><b>投后复盘底稿</b></span>
+      </div>
+      <div class="mix-row"><span class="mlab">⑤ 交付团队</span>
+        <span class="chip"><span class="l">数据</span><b>城市数据团队</b></span>
+        <span class="chip"><span class="l">集成</span><b>API / 集成工程师</b></span>
+        <span class="chip"><span class="l">研究</span><b>行业研究顾问</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ P7 客户六 · C 端个人 ============ -->
+<section class="page" data-title="客户六 · C 端个人">
+  <div class="page-inner">
+    <div class="phead fade">
+      <span class="pic"><svg class="ic"><use href="#i-user"/></svg></span>
+      <span class="no">SEC.06</span>
+      <h2>客户六 · C 端个人</h2>
+      <span class="en">CONSUMERS · LONG-TERM</span>
+    </div>
+
+    <div class="concl fade">
+      <span class="ic"><svg class="ic"><use href="#i-check"/></svg></span>
+      <span class="lab">一页结论</span>
+      <p>C 端价值不在当期收入，而在建立<b>「研究可信」的口碑与数据入口</b>，为远期 Agent 沉淀用户信任与使用习惯；<b>待两灯塔形成合同与复购后再启动，不抢跑</b>。</p>
+    </div>
+
+    <div class="sec-lab fade">① 需求痛点 <i>PAIN POINTS</i></div>
+    <div class="pains fade">
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>信息不对称</b>真实成交、挂牌价与营销话术难区分</span>
+      <span class="chip"><span class="d"><svg class="ic"><use href="#i-alert"/></svg></span><b>中介话术不可验证</b>买卖 / 置换 / 租金判断缺少可复核依据</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.04s">② 贝壳解题思路的不同 · 三层分析框架 <i>WHAT WE DO DIFFERENTLY</i></div>
+    <div class="lay3 fade" style="--d:.06s">
+      <div class="l3"><div class="nm"><svg class="ic"><use href="#i-dev"/></svg>城市</div><div class="ds"><b>周期与供需</b>——城市层判断大势</div></div>
+      <div class="l3"><div class="nm"><svg class="ic"><use href="#i-pin"/></svg>板块</div><div class="ds"><b>配套与流动性</b>——板块层选地段</div></div>
+      <div class="l3 hot"><div class="nm"><svg class="ic"><use href="#i-house"/></svg>房源</div><div class="ds"><b>成交 · 挂牌 · 租金</b>——房源层落点</div></div>
+    </div>
+    <div class="cmp3 fade" style="--d:.08s">
+      <div class="c"><div class="lab">贝壳真房源</div><p>解决「<b>房源是真的</b>」——智见不替代真房源、不与它比拼信息真实。</p></div>
+      <div class="c"><div class="lab">诸葛找房 / 兔博士</div><p>轻量工具，解决「<b>查得快</b>」——智见不比拼轻量查询。</p></div>
+      <div class="c win"><div class="lab">智见 · 判断是可验证的</div><p>研究过程<b>可追溯</b>、假设<b>可调整</b>、口径<b>可解释</b>——结论有条件、历史可复现。</p></div>
+    </div>
+    <div class="idx3 fade" style="--d:.1s">
+      <span class="cap">三个机制</span>
+      <span class="chip"><b>个人不动产研究 Agent</b>（远期）城市—板块—房源三层分析＋收入 / 首付 / 月供 / 持有周期测算</span>
+      <span class="chip"><b>条件化分析</b>输出「不同假设下的结果」，不输出「必须买 / 必然涨」（红线：不做趋势性判断）</span>
+      <span class="chip"><b>指标解释</b>租金回报率 / 挂牌成交比 / 去化周期，每个指标带口径与适用边界</span>
+    </div>
+
+    <div class="sec-lab fade" style="--d:.13s">③ 产品优势 <i>PRODUCT EDGE</i></div>
+    <div class="adv a3 fade" style="--d:.15s">
+      <div class="a"><div class="k">ADV · 01</div><h4>可验证的研究过程</h4><p>结论有条件、<b>假设可调整</b>、历史可复现。</p></div>
+      <div class="a"><div class="k">ADV · 02</div><h4>三层分析框架</h4><p><b>城市</b>（周期与供需）→<b>板块</b>（配套与流动性）→<b>房源</b>（成交、挂牌、租金）。</p></div>
+      <div class="a"><div class="k">ADV · 03</div><h4>家庭现金流测算</h4><p>收入、首付、月供、持有期限由家庭自行输入（<b>口径：用户输入数据</b>），平台只算结果、不代做财务承诺。</p></div>
+    </div>
+
+    <div class="mix fade" style="--d:.2s">
+      <div class="mix-row"><span class="mlab">④ 产品组合</span>
+        <span class="chip"><span class="l">Agent</span><b>个人不动产研究 Agent</b>（远期）</span>
+        <span class="chip"><span class="l">入口</span><b>轻量指标查询入口</b>（现阶段）</span>
+        <span class="chip"><span class="l">指标</span><b>租金回报率 / 挂牌成交比等指标解释</b></span>
+      </div>
+      <div class="mix-row"><span class="mlab">⑤ 交付团队</span>
+        <span class="chip"><span class="l">研究</span><b>研究 Agent 团队</b>（远期）</span>
+        <span class="chip"><span class="l">运营</span><b>C 端数据入口运营</b>（现阶段）</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ P8 封底 ============ -->
+<section class="page back" data-title="封底 · 定位与口径">
+  <div class="page-inner">
+    <h2 class="fade">卖的不是数据，<br>是<span class="gold-t">经得起审计的决策过程</span>。</h2>
+    <p class="pos fade" style="--d:.08s">六类客户 × 一类一页：贝壳解题思路的不同 ＋ 产品优势——把决策过程做成底稿，把底稿做成标准。</p>
+
+    <div class="caliber fade" style="--d:.15s">
+      <div class="qh">口径声明 · CALIBER NOTE</div>
+      本稿全部数字沿用六类客户融合源稿口径，未新增编造数字：<b>40 城 / 50 城、白名单 300 人</b>（产品配置口径）；<b>70 城</b>（国家统计局 70 城住宅销售价格指数，月度、仅同环比）、央行问卷（抽样、季度）、住建网签（行政记录、无价格）；<b>左海案例</b>（福州左海集团分散式收储试点——以旧换新收 8 套、国企间划转收 3000 多套、单套低约 10%、省数千万、续约复购，已签约案例）；<b>Token 贷</b>（中国银行广州分行 2026-08 落地试单、授信 2800 万）；<b>银行年费 1000 万起 / 3000 万锚</b>（2026-08-10 董事长会议定调，目标假设，不写对外承诺）；<b>政研通 CLI</b>（Python＋TS 双版本，2026-08 交付记录）；<b>1000+ 收储主体、八步闭环、四本账、三层决策支撑</b>（智见 STAID 分层汇报大纲口径）；<b>中指/克而瑞、诸葛找房/兔博士、成都样板</b>（仅定位对比，未引用其数据）。
+    </div>
+
+    <div class="foot fade" style="--d:.2s">
+      <span>98wiki ｜ 智见 / 行业研究报告 · 2026-08-25</span>
+      <span>客户与解决方案 · 六类客户分页版 v2 · 共 8 页 · 底稿：客户与解决方案_六类客户_渲染源稿.md</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ pager ============ -->
+<nav class="pager" aria-label="翻页控制">
+  <button class="btn" id="prevBtn" aria-label="上一页">← <span>上一页</span></button>
+  <span class="count" id="pageCount" aria-live="polite">1 <i>/</i> 8</span>
+  <span class="ptitle" id="pageTitle">封面 · 客户与解决方案 v2</span>
+  <button class="btn" id="nextBtn" aria-label="下一页"><span>下一页</span> →</button>
+</nav>
+<div class="dots" id="dots" role="tablist" aria-label="页面导航"></div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  root.classList.add('js');
+  var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(RM)root.classList.add('no-motion');
+
+  var deck=document.getElementById('deck');
+  var pages=[].slice.call(document.querySelectorAll('.page'));
+  var dotsBox=document.getElementById('dots');
+  var pTitle=document.getElementById('pageTitle');
+  var pCount=document.getElementById('pageCount');
+  var prevBtn=document.getElementById('prevBtn');
+  var nextBtn=document.getElementById('nextBtn');
+  var prog=document.getElementById('progress');
+
+  pages.forEach(function(p,i){
+    var b=document.createElement('button');
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-label','第 '+(i+1)+' 页：'+p.getAttribute('data-title'));
+    b.addEventListener('click',function(){go(i);});
+    dotsBox.appendChild(b);
+  });
+  var dots=[].slice.call(dotsBox.children);
+
+  function go(i){
+    i=Math.max(0,Math.min(pages.length-1,i));
+    deck.scrollTo({top:pages[i].offsetTop,behavior:RM?'auto':'smooth'});
+  }
+  prevBtn.addEventListener('click',function(){go(cur()-1);});
+  nextBtn.addEventListener('click',function(){go(cur()+1);});
+
+  function cur(){
+    var y=deck.scrollTop;
+    for(var i=0;i<pages.length;i++){
+      if(pages[i].offsetTop+pages[i].offsetHeight/2>y)return i;
+    }
+    return pages.length-1;
+  }
+
+  var ticking=false;
+  function onScroll(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){
+      var i=cur();
+      dots.forEach(function(d,j){d.classList.toggle('on',j===i);});
+      pages.forEach(function(p,j){p.classList.toggle('on',j<=i);});
+      pTitle.textContent=pages[i].getAttribute('data-title');
+      pCount.innerHTML=(i+1)+' <i>/</i> '+pages.length;
+      var max=deck.scrollHeight-deck.clientHeight;
+      prog.style.width=(max>0?(deck.scrollTop/max*100):0)+'%';
+      prevBtn.disabled=i===0;nextBtn.disabled=i===pages.length-1;
+      ticking=false;
+    });
+  }
+  deck.addEventListener('scroll',onScroll,{passive:true});
+  onScroll();
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();go(cur()+1);}
+    else if(e.key==='ArrowLeft'||e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();go(cur()-1);}
+    else if(e.key==='Home'){e.preventDefault();go(0);}
+    else if(e.key==='End'){e.preventDefault();go(pages.length-1);}
+  });
+
+  onScroll();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>租赁平台安全能力：确定性溢价与责任敞口的边界——成都样本评析</title>
+<style>
+/* ============================================================
+   研报视觉稿 · finesse-ui product register（dashboard/研报页）
+   贝壳蓝/白主调：#1a3a5c 深蓝标题栏 · #c9a96e 金色高亮 · 白底
+   universal craft floor：tinted neutrals / hairline borders / contrast floors
+   A4 打印友好（weasyprint @page margin boxes 页脚）
+   ============================================================ */
+:root{
+  --navy:#1a3a5c;          /* 贝壳深蓝 · 标题栏 */
+  --navy-deep:#10263f;     /* 更深一档，用于封面底 */
+  --navy-soft:#eef3f8;     /* 蓝调浅底 */
+  --gold:#c9a96e;          /* 金色高亮 */
+  --gold-deep:#8a6d1a;
+  --gold-soft:#f6efe2;     /* 金调浅底 */
+  --bg:#f6f7f9;            /* tinted 页面底（非纯白） */
+  --surface:#fdfdfc;       /* tinted 卡片面 */
+  --ink:#1f2733;           /* 正文墨色 */
+  --ink-soft:#3d4653;
+  --muted:#5b6570;
+  --faint:#8a8f99;
+  --hairline:rgba(26,58,92,.16);
+  --hairline-soft:rgba(26,58,92,.10);
+  --green:#1d6f42;
+  --red:#a63a2b;
+  --radius:10px;
+  --shadow:0 1px 2px rgba(16,38,63,.05),0 8px 24px -12px rgba(16,38,63,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{
+  font-family:"Noto Sans CJK SC","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:980px;margin:0 auto;padding:0 28px 64px;}
+
+/* ---------- 封面 ---------- */
+.cover{
+  background:linear-gradient(160deg,var(--navy-deep) 0%,var(--navy) 62%,#24496f 100%);
+  color:#f4f7fb;border-radius:14px;margin:26px 0 0;padding:52px 56px 44px;
+  position:relative;overflow:hidden;
+}
+.cover::after{ /* 金线修饰 */
+  content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold) 30%,var(--gold) 70%,transparent);
+}
+.cover .kicker{
+  font-size:12px;letter-spacing:.42em;color:var(--gold);font-weight:600;
+  text-transform:uppercase;margin-bottom:18px;
+}
+.cover h1{
+  font-size:31px;line-height:1.36;font-weight:700;letter-spacing:.02em;
+  max-width:760px;margin-bottom:14px;
+}
+.cover .sub{font-size:15.5px;color:#c6d2e0;margin-bottom:6px;}
+.cover .meta-line{
+  margin-top:16px;font-size:12.5px;color:#93a4b8;letter-spacing:.06em;
+  border-top:1px solid rgba(201,169,110,.35);padding-top:14px;display:flex;gap:22px;flex-wrap:wrap;
+}
+.cover .meta-line b{color:var(--gold);font-weight:600;}
+/* KPI 带（封面内） */
+.kpi-strip{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px;}
+.kpi{
+  flex:1 1 150px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  border-top:2px solid var(--gold);border-radius:8px;padding:14px 16px;backdrop-filter:blur(2px);
+}
+.kpi .k{font-size:11.5px;color:#aebfd2;margin-bottom:4px;letter-spacing:.04em;}
+.kpi .v{font-size:26px;font-weight:700;color:#fff;line-height:1.15;}
+.kpi .v em{font-style:normal;font-size:15px;color:var(--gold);margin-left:2px;}
+.kpi .s{font-size:10.5px;color:#7e92a8;margin-top:4px;}
+
+/* ---------- 区块骨架 ---------- */
+section{margin-top:44px;}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px;}
+.sec-head .no{
+  font-size:13px;font-weight:700;color:var(--gold-deep);letter-spacing:.1em;
+  border:1px solid var(--gold);border-radius:5px;padding:2px 9px;background:var(--gold-soft);
+}
+.sec-head h2{font-size:21px;font-weight:700;color:var(--navy);letter-spacing:.02em;}
+.sec-head .en{margin-left:auto;font-size:11px;color:var(--faint);letter-spacing:.22em;text-transform:uppercase;}
+
+/* ---------- 金句 verdict ---------- */
+.verdict{
+  background:linear-gradient(180deg,var(--gold-soft),#fbf7ee);
+  border:1px solid rgba(201,169,110,.45);border-left:4px solid var(--gold);
+  border-radius:var(--radius);padding:22px 26px;font-size:17px;font-weight:600;
+  color:#4a3d1c;line-height:1.65;box-shadow:var(--shadow);
+}
+.verdict .hl{color:var(--gold-deep);}
+.verdict .src{margin-top:8px;font-size:12px;font-weight:400;color:var(--muted);}
+
+/* ---------- 卡片网格 ---------- */
+.grid{display:flex;flex-wrap:wrap;gap:16px;}
+.card{
+  background:var(--surface);border:1px solid var(--hairline);border-radius:var(--radius);
+  padding:20px 22px;box-shadow:var(--shadow);flex:1 1 300px;position:relative;
+}
+.card .tag{
+  display:inline-block;font-size:11px;font-weight:600;letter-spacing:.12em;color:var(--navy);
+  background:var(--navy-soft);border:1px solid rgba(26,58,92,.2);border-radius:999px;padding:2px 10px;margin-bottom:10px;
+}
+.card .tag.gold{color:var(--gold-deep);background:var(--gold-soft);border-color:rgba(201,169,110,.4);}
+.card h3{font-size:16.5px;color:var(--navy);margin-bottom:8px;font-weight:700;}
+.card p{font-size:13.5px;color:var(--ink-soft);}
+.card p + p{margin-top:8px;}
+.num{font-weight:700;color:var(--navy);font-size:15px;}
+.num.gold{color:var(--gold-deep);}
+.num.red{color:var(--red);}
+.num.green{color:var(--green);}
+
+/* ---------- 数据表 ---------- */
+table.data{
+  width:100%;border-collapse:collapse;background:var(--surface);
+  border:1px solid var(--hairline);border-radius:var(--radius);overflow:hidden;
+  font-size:13px;box-shadow:var(--shadow);
+}
+table.data th{
+  background:var(--navy);color:#fff;font-weight:600;text-align:left;
+  padding:10px 14px;font-size:12.5px;letter-spacing:.04em;
+}
+table.data td{padding:10px 14px;border-top:1px solid var(--hairline-soft);vertical-align:top;}
+table.data tr:nth-child(even) td{background:#f7f9fc;}
+table.data td.metric{font-weight:700;color:var(--navy);white-space:nowrap;}
+table.data .cal{font-size:11px;color:var(--faint);display:block;margin-top:1px;}
+.note{font-size:11.5px;color:var(--faint);margin-top:10px;line-height:1.6;}
+
+/* ---------- 公式带 ---------- */
+.formula{
+  background:var(--navy-deep);color:#e8eef6;border-radius:var(--radius);
+  padding:18px 24px;font-size:14.5px;line-height:1.7;margin-top:16px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.formula .eq{color:var(--gold);font-weight:700;letter-spacing:.04em;}
+.formula .dim{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:6px;padding:3px 10px;font-size:13px;}
+.formula .dim b{color:var(--gold);}
+
+/* ---------- 列表卡片 ---------- */
+.split{display:flex;flex-wrap:wrap;gap:16px;}
+.panel{flex:1 1 320px;background:var(--surface);border:1px solid var(--hairline);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);}
+.panel h3{font-size:15.5px;color:var(--navy);margin-bottom:10px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.panel h3 .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block;}
+.panel ul{list-style:none;}
+.panel li{
+  padding:7px 0 7px 18px;position:relative;font-size:13.5px;color:var(--ink-soft);
+  border-bottom:1px dashed var(--hairline-soft);
+}
+.panel li:last-child{border-bottom:none;}
+.panel li::before{content:"";position:absolute;left:2px;top:15px;width:6px;height:6px;border-radius:2px;background:var(--navy);opacity:.55;}
+.panel li b{color:var(--navy);}
+
+/* ---------- 风险卡 ---------- */
+.risk-grid{display:flex;flex-wrap:wrap;gap:14px;}
+.risk{
+  flex:1 1 220px;background:#fbf7f4;border:1px solid rgba(166,58,43,.22);border-top:3px solid var(--red);
+  border-radius:var(--radius);padding:16px 18px;
+}
+.risk h4{font-size:14px;color:var(--red);margin-bottom:6px;font-weight:700;}
+.risk p{font-size:12.8px;color:var(--ink-soft);line-height:1.65;}
+
+/* ---------- 页脚 ---------- */
+.foot{
+  margin-top:52px;border-top:1px solid var(--hairline);padding-top:16px;
+  font-size:11.5px;color:var(--faint);line-height:1.8;
+}
+.foot b{color:var(--muted);}
+
+/* ---------- A4 打印 ---------- */
+@page{
+  size:A4;margin:20mm 16mm 18mm 16mm;
+  @top-center{
+    content:"98wiki ｜ 智见 / 行业研究报告 · 租赁平台安全能力";
+    font-family:"Noto Sans CJK SC",sans-serif;font-size:8pt;color:#8a8f99;
+    border-bottom:.5pt solid #c9ced6;width:100%;vertical-align:bottom;padding-bottom:2mm;
+  }
+  @bottom-center{
+    content:"98wiki ｜ 智见 / 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family:"Noto Sans CJK SC",sans-serif;font-size:8pt;color:#8a8f99;
+    border-top:.5pt solid #c9ced6;width:100%;vertical-align:top;padding-top:2mm;
+  }
+}
+@media print{
+  body{background:#fff;font-size:10.5pt;}
+  .wrap{max-width:none;padding:0;}
+  .cover{border-radius:0;margin:0;padding:34px 40px 30px;page-break-after:always;}
+  section{page-break-inside:avoid;margin-top:26px;}
+  .card,.panel,.risk{box-shadow:none;break-inside:avoid;}
+  .kpi{break-inside:avoid;}
+  table.data{font-size:8.6pt;}
+  .sec-head h2{font-size:14pt;}
+  .verdict{font-size:11pt;padding:14px 18px;}
+  .card p{font-size:9.5pt;}
+  .panel li{font-size:9.5pt;}
+  .formula{font-size:10pt;padding:12px 16px;}
+  .risk p{font-size:9pt;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= 封面 ================= -->
+  <header class="cover">
+    <div class="kicker">98wiki ｜ 智见 / 行业研究报告</div>
+    <h1>租赁平台安全能力：<br>确定性溢价与责任敞口的边界</h1>
+    <div class="sub">成都样本评析 · 平台承担过程责任，产权人承担维修义务，赔付走保险化</div>
+    <div class="meta-line">
+      <span>主题：<b>贝壳生态与居住服务</b></span>
+      <span>城市：<b>成都为主 · 全国政策为辅</b></span>
+      <span>证据窗：<b>2025-09 ～ 2026-08</b></span>
+      <span>日期：<b>2026-08-23</b></span>
+    </div>
+    <div class="kpi-strip">
+      <div class="kpi"><div class="k">每万套风险发生量 · 2026Q1</div><div class="v">12.7<em>/万套</em></div><div class="s">企业披露口径 · 发现率非事故率</div></div>
+      <div class="kpi"><div class="k">漏气发生量 · 同比</div><div class="v">-42<em>%</em></div><div class="s">企业披露口径 · 闭环干预见效</div></div>
+      <div class="kpi"><div class="k">18个月拦截风险房源</div><div class="v">2.5<em>万套</em></div><div class="s">企业披露口径 · 月均约 1,390 套</div></div>
+      <div class="kpi"><div class="k">成都燃气联合管控在管</div><div class="v">10<em>万套+</em></div><div class="s">企业披露口径 · 专业机构联合处置</div></div>
+      <div class="kpi"><div class="k">累计服务赔付金</div><div class="v">2<em>亿元+</em></div><div class="s">媒体披露口径 · 性质待拆分</div></div>
+    </div>
+  </header>
+
+  <!-- ================= 一、关键性结论 ================= -->
+  <section>
+    <div class="sec-head"><span class="no">01</span><h2>关键性结论</h2><span class="en">Key Takeaways</span></div>
+    <div class="verdict">
+      安全正在成为租赁服务溢价的下一个入口，但能溢价的是<span class="hl">确定性</span>，不是保证——租客愿意为「我知道风险、我看到整改、我有人赔付」付费，没有人能买到「绝对安全」。
+      <div class="src">谁承诺零事故，谁就在第一次事故时崩塌。</div>
+    </div>
+    <div class="grid" style="margin-top:16px;">
+      <div class="card">
+        <span class="tag">责任边界 · 过程责任</span>
+        <h3>平台六项全包，止步于结果承诺</h3>
+        <p>平台承担：<span class="num">发现、分级、披露、督促整改、停租下架、保险安排</span>；房屋本体的维修义务<span class="num">法定归产权人</span>（民法典第七百一十二条），赔付按过错归因、走保险化，平台绝不做责任的终点。</p>
+      </div>
+      <div class="card">
+        <span class="tag gold">溢价前提 · 四件套</span>
+        <h3>边界可量化，安全才是溢价</h3>
+        <p><span class="num gold">风险分级 · 停租阈值 · 整改SLA · 赔付边界</span>——四件事量化并写进合同，安全才是服务溢价；否则<span class="num red">规模越大、责任敞口越大</span>，溢价被赔付吃掉。</p>
+      </div>
+      <div class="card">
+        <span class="tag">范式 · 成都样本</span>
+        <h3>平台做连接器，不做兜底者</h3>
+        <p>成都燃气联合管控（<span class="num">超十万套</span>在管房源）是当前最优范式：平台做连接器与规则制定者，专业机构做处置者，责任留在专业端；<span class="num red">电气安全是全链条唯一未闭合的环节</span>。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 二、关键事实及其变化 ================= -->
+  <section>
+    <div class="sec-head"><span class="no">02</span><h2>关键事实及其变化</h2><span class="en">Evidence &amp; Shift</span></div>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:14px;">2026 年上半年，成都样本呈现「事故下降与责任模糊并存」。</p>
+    <div class="grid">
+      <div class="card">
+        <span class="tag">事实一 · 管控有效</span>
+        <h3>漏气降 42%：闭环跑通</h3>
+        <p>2026Q1 每万套风险发生量 <span class="num">12.7</span>、漏气发生量同比 <span class="num green">下降 42%</span>（企业披露口径，统计口径需第三方核验）。这是行业第一个规模化安全口径；42% 的降幅只能来自干预闭环。</p>
+        <p style="font-size:12px;color:var(--muted);">注意：12.7 是发现率不是事故率，漏气降幅须与检出量分离——覆盖扩大时检出量应上升、发生量才下降，42% 是改善还是口径红利需交叉验证。</p>
+      </div>
+      <div class="card">
+        <span class="tag gold">事实二 · 结构偏科</span>
+        <h3>电气安全：建筑级缺陷</h3>
+        <p>2026-07 仍有租客因无地线冰箱漏电受伤投诉（媒体披露口径）。燃气可单套闭环、成本百元至千元级；电气属<span class="num red">整栋楼接地系统缺陷</span>，单套整改数千至数万元，平台若承诺「电气安全交付」即打开无底洞。</p>
+        <p style="font-size:12px;color:var(--muted);">责任按「缺陷归属」切割：冰箱属租客添置设备（生产者），无地线属房屋缺陷（产权人），不能按「出事谁在场」切割。</p>
+      </div>
+      <div class="card">
+        <span class="tag">事实三 · 入口成熟</span>
+        <h3>拦截 2.5 万套，出口是盲区</h3>
+        <p>18 个月拦截 <span class="num">2.5 万套</span>风险房源（企业披露口径），挂牌即检、准入拦截已成体系。但拦截后的去向——整改回归、永久退出、停滞积压——<span class="num red">未披露</span>；被拦房源若流入线下无监管渠道，事故只是转移不是消失。</p>
+      </div>
+      <div class="card">
+        <span class="tag">事实四 · 监管法定</span>
+        <h3>九个月内三地立法</h3>
+        <p>无锡办法（2026-02-27）、深圳福田燃气须知（2026-02-09）、杭州条例安全要求（2025-09-15）集中落地，平台安全义务显性化。三地共同点是「要求管」，<span class="num red">没有一份划定「管到什么程度、责任归谁」</span>，全国统一风险分级标准仍是空白。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 三、归因分析 ================= -->
+  <section>
+    <div class="sec-head"><span class="no">03</span><h2>归因分析</h2><span class="en">Attribution</span></div>
+    <div class="split">
+      <div class="panel">
+        <h3><span class="dot"></span>三重驱动：为什么是现在</h3>
+        <ul>
+          <li><b>存量欠账暴露</b>——成都租赁房源大量为 2000 年前后及更早老房，无地线、燃气超期、管线老化是历史欠账，产权人无动力也无力整改，平台站在第一暴露面</li>
+          <li><b>买方市场转服务力</b>——租客用脚投票，安全是服务力权重最高的单项，谁能量化安全能力谁获得选择率溢价</li>
+          <li><b>监管显性化</b>——地方立法把平台义务写进条例，安全从自愿投入变成法定成本</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3><span class="dot"></span>一进一退：结构性必然</h3>
+        <ul>
+          <li><b>燃气三项全高</b>——可单套闭环、爆燃伤亡监管倒逼、可检测可交付能生成「安心租」溢价</li>
+          <li><b>电气三项全低</b>——建筑级缺陷单套无解、触电常被民事化为「房屋瑕疵」、无法向租客证明交付</li>
+          <li><b>偏科不是态度问题，是结构问题</b></li>
+        </ul>
+      </div>
+    </div>
+    <div class="formula">
+      <span class="eq">平台投入强度</span>
+      <span>=</span>
+      <span class="dim">整改可闭环度</span>
+      <span class="dim">监管压力</span>
+      <span class="dim">溢价可生成性</span>
+      <span style="color:#93a4b8;font-size:12.5px;margin-left:6px;">三项乘积——燃气全高、电气全低，偏科是必然</span>
+    </div>
+    <div class="grid" style="margin-top:16px;">
+      <div class="card">
+        <span class="tag gold">核心矛盾 · 义务与能力错配</span>
+        <h3>从「协助者」滑向「保证人」</h3>
+        <p>维修义务法定在产权人，产权人却不居住、不巡检；平台有触达能力却无法定义务。平台一旦宣称「安全服务」，司法可能以行为默示认定管理义务。</p>
+      </div>
+      <div class="card">
+        <span class="tag">破解之道 · 证据链划界</span>
+        <h3>责任以证据链为界，不以金额为界</h3>
+        <p>安全服务做成可审计的过程记录（<span class="num">巡检记录 · 风险告知单 · 整改SLA · 下架凭证</span>）；<span class="num gold">停租阈值是责任分洪闸</span>——风险达标即强制下架，此后仍出租的责任自动移转业主。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 四、收尾：展望与不确定性 ================= -->
+  <section>
+    <div class="sec-head"><span class="no">04</span><h2>收尾：洞察 · 展望 · 不确定性</h2><span class="en">Outlook &amp; Risks</span></div>
+    <div class="verdict">
+      <span class="hl">规则比规模更重要</span>——停租阈值、整改SLA、赔付边界三条规则建立并公开后，规模扩张的边际责任递减；没有规则，规模是责任敞口的线性放大。
+      <div class="src">安全溢价的本质是信息确定性溢价，与真房源逻辑同构：真房源是底线不是卖点，安全巡检同样是底线，能成为卖点的是「透明、闭环、赔付」这套规则。</div>
+    </div>
+
+    <div class="grid" style="margin-top:16px;">
+      <div class="card">
+        <span class="tag">6个月验证窗口 · 五指标</span>
+        <h3>五数同向改善，溢价模型成立</h3>
+        <p>巡检覆盖率 · 发现率（12.7 基线附近或下降）· 7日整改闭环率（燃气建议 ≥90%，电气单列）· 重复风险率 · 赔付率（健康线 ≤30-40%）。</p>
+        <p style="font-size:12px;color:var(--muted);">闭环率 &lt;70% 或重复率抬头 → 出口堵塞，先修出口再扩规模；赔付率超健康线 → 分级失效，应收缩承诺而非加投入。</p>
+      </div>
+      <div class="card">
+        <span class="tag gold">电气破局 · 三条腿</span>
+        <h3>平台做「揭示者+保险组织者」</h3>
+        <p>① 签约前强制披露电气检测结果；② 电气事故险嵌入租金、精算定价，赔付走保险不走平台自有资金；③ 无地线问题数据化，对接城市更新与老旧小区改造专项。</p>
+      </div>
+      <div class="card">
+        <span class="tag">制度机会</span>
+        <h3>先行者制定规则</h3>
+        <p>成都模式验证成功后，把巡检覆盖率、整改闭环率、停租下架机制写入地方标准；海外通例（日本赁贷住宅管理业法登记制+定期点检、美国出租人维修义务法定化）可作制度参照。</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:15.5px;color:var(--navy);margin:26px 0 12px;font-weight:700;">四大不确定性</h3>
+    <div class="risk-grid">
+      <div class="risk"><h4>① 口径风险</h4><p>12.7 与 -42% 的分母、基期未独立核实，企业自报数据天然倾向展示成效，需燃气台账、保险出险、投诉数据三方交叉验证。</p></div>
+      <div class="risk"><h4>② 出口盲区</h4><p>2.5 万套拦截房源去向未披露，若大量积压，「拦截率」只是账面安全，实际是风险出清停滞。</p></div>
+      <div class="risk"><h4>③ 赔付性质</h4><p>累计赔付金 2 亿元+（媒体披露口径）是服务保障金还是事故赔付未拆分，决定它是营销成本还是责任成本。</p></div>
+      <div class="risk"><h4>④ 司法尾部风险</h4><p>若发生致死事故，「平台承诺安全」可能被认定为管理义务，敞口无法预估，必须提前用合同与保险封顶。</p></div>
+    </div>
+    <p class="note">另需留意：6 个月观察期不覆盖完整冬季（燃气事故高发季），同比口径受季节性干扰，至少需要一个完整年度才能下结论。</p>
+  </section>
+
+  <!-- ================= 数据来源 ================= -->
+  <footer class="foot">
+    <b>数据来源</b>：贝壳成出口径（新浪财经 2026-05-19）；企业披露（乐居财经 2026-08-08、网易 2026-07-13、格隆汇、金融界 2026-05-19）；媒体披露（新浪科技 2026-08-13）；政策文件（无锡市政府公报 2026-02-27、深圳福田区政府网 2026-02-09、杭州市住保房管局 2025-09-15）；中国建设报、央广网、凤凰网、北京商报同期报道可核验。<br>
+    统计口径、行业经验估值与建议阈值为研判框架值，需第三方核验。预测类表述为研判推断。<br>
+    <b>一句话收束</b>：平台做的是「确定性生意」，不是「安全保证生意」——确定性可以溢价，保证只能带来无限责任。
+  </footer>
+
+</div>
+</body>
+</html>

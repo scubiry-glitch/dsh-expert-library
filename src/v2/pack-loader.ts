@@ -844,6 +844,39 @@ function toLayer(item: MergeInput): { pack?: DomainPackV2; layer: PackLayer; lab
 }
 
 /**
+ * Merge one higher-precedence expert over a lower-precedence projection while
+ * retaining capability contributions from both packs. Normal fields keep the
+ * standard overlay semantics (the higher layer wins). For a duplicated
+ * capability id the higher layer's claim wins; lower-layer-only claims are
+ * retained in their original order, then higher-layer-only claims append.
+ *
+ * Without this, an overlay that re-projects an expert by id (e.g. the
+ * zhijian-realestate overlay replacing a beike cross-projection) silently
+ * drops the pack-scoped capability claims (e.g. `beike.review`) contributed
+ * by the lower layer, breaking roster gates that depend on them.
+ */
+function mergeExpertCapabilities(previous: unknown, next: unknown): unknown {
+  if (!isRecord(previous) || !isRecord(next)) return next
+  const previousClaims = previous['capabilities']
+  const nextClaims = next['capabilities']
+  if (!Array.isArray(previousClaims) || !Array.isArray(nextClaims)) return next
+
+  const order: string[] = []
+  const byCapability = new Map<string, unknown>()
+  for (const claim of [...previousClaims, ...nextClaims]) {
+    const capability = isRecord(claim) ? claim['capability'] : undefined
+    if (typeof capability !== 'string' || capability === '') continue
+    if (!byCapability.has(capability)) order.push(capability)
+    byCapability.set(capability, claim)
+  }
+  return {
+    ...previous,
+    ...next,
+    capabilities: order.map(capability => byCapability.get(capability)),
+  }
+}
+
+/**
  * Deterministic overlay merge with the canonical precedence
  * `builtin < domain-pack < workspace < request` (inputs are sorted into
  * that order regardless of argument order; equal layers keep input order,
@@ -901,7 +934,11 @@ export function mergePackLayers(inputs: readonly MergeInput[], options: OverlayM
           if (reportDowngrades && previous.version !== undefined && version !== undefined && compareVersions(version, previous.version) === -1) {
             diags.add('overlay-downgrade', `overlay.${key}.${id}`, `"${id}" (${key}) replaced by older version ${version} < ${previous.version}`, 'warning')
           }
-          byId.set(id, { entity, label: layer.label, version })
+          byId.set(id, {
+            entity: key === 'experts' ? mergeExpertCapabilities(previous.entity, entity) : entity,
+            label: layer.label,
+            version,
+          })
         } else {
           byId.set(id, { entity, label: layer.label, version })
           order.push(id)

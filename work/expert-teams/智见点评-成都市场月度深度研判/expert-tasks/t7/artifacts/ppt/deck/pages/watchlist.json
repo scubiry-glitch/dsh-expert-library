@@ -1,0 +1,25 @@
+{
+  "components": [
+    {
+      "type": "kpi_cards",
+      "items": [
+        { "value": "81.1", "unit": "指数", "label": "贝壳房价指数环比：跌幅收窄或转正", "delta": "flat", "icon": "gauge" },
+        { "value": "3.0", "unit": "以下", "label": "供需流量比目标值（当前 4.20）", "delta": "flat", "icon": "scale" },
+        { "value": "4.5%", "unit": "防线", "label": "带看转化率不破位", "delta": "flat", "icon": "filter" },
+        { "value": "2.6%", "unit": "上行", "label": "租金回报率修复信号", "delta": "flat", "icon": "percent" }
+      ]
+    },
+    {
+      "type": "bullets",
+      "style": "plain",
+      "items": [
+        "关注指标：贝壳指数环比 · 库存拐点 · 流量比 · 转化率 · 租金回报率",
+        "输出框架：五维递进（定性 → 指标 → 趋势 → 不确定性 → 关注指标）",
+        "心智模型：百城晴雨表 · 恢复三阶段 · 供需流量比 · 租售比锚",
+        "数据来源：政研通 zyt analytics-v1.1；成交价=贝壳研究院成交价非挂牌价"
+      ]
+    }
+  ],
+  "footnote": "讨论稿：专家观点按行业研究·首字母匿名标注（D/H/W/T/X）；正式稿将去除匿名标注",
+  "notes": "收尾页：给出下月核对清单与完整口径，保证判断可复现、可证伪。"
+}

@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>贝壳 2026Q2 经营杠杆归因 · 智见点评讨论稿 v2</title>
+<style>
+/* finesse · cobalt-trust · 贝壳蓝金 · product/report · v2（并入渠道视角） · 2026-08 */
+:root{
+  --page:#edf0f6; --bg:#ffffff; --panel-2:#f4f6fa; --border:rgba(20,32,56,.07);
+  --ink-1:#121a2b; --ink-2:#3a465c; --ink-3:#69768c;
+  --accent:#2D5BD8; --accent-2:#E08A2E;
+  --accent-soft:rgba(45,91,216,.10); --gold-soft:rgba(224,138,46,.13);
+  --on-accent:#ffffff; --glow:rgba(45,91,216,.30);
+  --up:#2F7A55; --down:#C0453C; --warn:#8a5a10;
+  --navy:#0f1a33; --navy-2:#1d3a6e; --navy-ink:rgba(255,255,255,.72);
+  --shadow:0 1px 3px rgba(20,34,64,.05); --shadow-lg:0 40px 90px -50px rgba(20,34,64,.34);
+  --r:20px; --r-sm:12px; --r-lg:28px;
+  --font:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{overflow-x:clip}
+body{
+  font-family:var(--font); color:var(--ink-2);
+  background:var(--page);
+  line-height:1.75; font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+.sheet{max-width:880px;margin:0 auto;padding:34px 26px 60px}
+.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+
+/* ---------- masthead ---------- */
+.masthead{
+  position:relative; border-radius:var(--r-lg);
+  background:linear-gradient(135deg,var(--navy) 0%,#142448 52%,var(--navy-2) 100%);
+  color:#fff; padding:34px 34px 96px; overflow:hidden;
+}
+.masthead::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(320px 200px at 92% -8%,rgba(224,138,46,.22),transparent 62%);
+}
+.masthead .eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12px; letter-spacing:.14em; color:#e8b06b; font-weight:600;
+}
+.masthead .eyebrow::before{content:"";width:22px;height:1px;background:var(--accent-2);opacity:.85}
+.masthead h1{
+  margin:16px 0 10px; font-size:clamp(26px,4.4vw,38px); font-weight:800;
+  line-height:1.32; letter-spacing:-.015em; color:#fff; overflow-wrap:anywhere;
+}
+.masthead .lede{font-size:15.5px;color:var(--navy-ink);max-width:640px}
+.masthead .meta{
+  margin-top:22px; padding-top:16px; border-top:1px solid rgba(255,255,255,.14);
+  display:flex; flex-wrap:wrap; gap:10px 26px; font-size:12.5px; color:var(--navy-ink);
+}
+.masthead .meta b{color:#fff;font-weight:600}
+.verdict-card{
+  position:relative; z-index:2; margin-top:-58px; margin-left:26px; margin-right:26px;
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  box-shadow:var(--shadow-lg); padding:20px 24px;
+}
+.verdict-card .tag{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:700; color:#7d520e; letter-spacing:.06em;
+  background:var(--gold-soft); border-radius:999px; padding:3px 12px; margin-bottom:10px;
+}
+.verdict-card p{font-size:15.5px;color:var(--ink-1);font-weight:600;line-height:1.8}
+.verdict-card p span{color:var(--ink-2);font-weight:400}
+
+/* ---------- sections ---------- */
+section{margin-top:44px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px}
+.sec-head .no{font-size:13px;font-weight:800;color:var(--accent);letter-spacing:.08em}
+.sec-head h2{font-size:21px;font-weight:800;color:var(--ink-1);letter-spacing:-.01em;line-height:1.4}
+.sec-head .hint{margin-left:auto;font-size:12px;color:var(--ink-3)}
+
+/* ---------- KPI band ---------- */
+.kpi-band{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.kpi{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  box-shadow:var(--shadow); padding:16px 18px 14px; break-inside:avoid;
+  display:flex; flex-direction:column; gap:6px;
+}
+.kpi .top{display:flex;align-items:center;justify-content:space-between}
+.kpi .icon{
+  width:32px;height:32px;border-radius:10px;background:var(--accent-soft);
+  display:flex;align-items:center;justify-content:center;color:var(--accent);
+}
+.kpi .icon.gold{background:var(--gold-soft);color:#8a5a10}
+.kpi .chip{
+  font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;
+}
+.kpi .chip.up{background:rgba(47,122,85,.10);color:var(--up)}
+.kpi .chip.flat{background:rgba(105,118,140,.12);color:var(--ink-3)}
+.kpi .chip.warn{background:rgba(183,122,22,.12);color:var(--warn)}
+.kpi .label{font-size:12px;color:var(--ink-3)}
+.kpi .value{font-size:26px;font-weight:800;color:var(--ink-1);line-height:1.2}
+.kpi .value small{font-size:13px;font-weight:600;color:var(--ink-3);margin-left:2px}
+.kpi .value .arrow{color:var(--ink-3);font-weight:600;margin:0 3px;font-size:20px}
+.kpi .src{font-size:11px;color:var(--ink-3);margin-top:auto;padding-top:4px}
+.kpi.key{
+  background:linear-gradient(150deg,#10203f 0%,#17305e 60%,#1d3a6e 100%);
+  border-color:transparent; color:#fff;
+}
+.kpi.key .label{color:rgba(255,255,255,.66)}
+.kpi.key .value{color:#fff}
+.kpi.key .src{color:rgba(255,255,255,.5)}
+.kpi.key .chip.up{background:rgba(255,255,255,.14);color:#9fe3c4}
+.kpi.key .icon{background:rgba(255,255,255,.12);color:#e8b06b}
+
+/* ---------- accounting card ---------- */
+.accounting{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-lg);
+  box-shadow:var(--shadow); padding:24px 26px; break-inside:avoid;
+  display:grid; grid-template-columns:1.55fr 1fr; gap:22px; align-items:center;
+}
+.accounting .verdict b{color:var(--ink-1)}
+.accounting .verdict .ledger{
+  display:flex; gap:10px; margin:14px 0 4px; flex-wrap:wrap;
+}
+.accounting .ledger .cell{
+  flex:1; min-width:150px; background:var(--panel-2); border:1px solid var(--border);
+  border-radius:var(--r-sm); padding:12px 14px;
+}
+.accounting .ledger .cell .k{font-size:11.5px;color:var(--ink-3)}
+.accounting .ledger .cell .v{font-size:19px;font-weight:800;color:var(--ink-1);margin-top:2px}
+.accounting .ledger .cell .v.beta{color:var(--accent)}
+.accounting .ledger .cell .v.alpha{color:#8a5a10}
+.accounting .ledger .cell .s{font-size:11px;color:var(--ink-3)}
+.accounting .note{font-size:11.5px;color:var(--ink-3);margin-top:10px}
+.donut-wrap{display:flex;align-items:center;gap:18px;justify-content:center}
+.donut-legend{font-size:12.5px;color:var(--ink-2);display:flex;flex-direction:column;gap:7px}
+.donut-legend .row{display:flex;align-items:center;gap:8px}
+.donut-legend .sw{width:10px;height:10px;border-radius:3px;flex:none}
+.donut-legend b{color:var(--ink-1);font-weight:700}
+.donut-legend .est{font-size:11px;color:var(--ink-3);margin-top:2px}
+
+/* ---------- channel dimension card (居住服务·Y 渠道视角) ---------- */
+.channel-card{
+  margin-top:16px; border-radius:var(--r); padding:20px 24px; break-inside:avoid;
+  background:linear-gradient(150deg,#fbf4ea 0%,#fdf8f0 55%,#f8efe0 100%);
+  border:1px solid rgba(224,138,46,.30);
+}
+.channel-card .c-head{margin-bottom:10px}
+.channel-card .tag{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:12px; font-weight:700; color:#7d520e; letter-spacing:.05em;
+  background:rgba(224,138,46,.14); border-radius:999px; padding:3px 12px;
+}
+.channel-card .c-thesis{font-size:15.5px; color:var(--ink-1); font-weight:600; line-height:1.8}
+.channel-card .c-thesis b{color:#8a5a10}
+.channel-card .c-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px}
+.channel-card .c-grid div{
+  font-size:13px; color:var(--ink-2); line-height:1.7;
+  background:rgba(255,255,255,.65); border:1px solid rgba(224,138,46,.18);
+  border-radius:var(--r-sm); padding:11px 13px;
+}
+.channel-card .c-grid b{color:#5c3f10}
+.channel-card .c-note{font-size:11.5px; color:var(--ink-3); margin-top:12px}
+@media screen and (max-width:760px){.channel-card .c-grid{grid-template-columns:1fr}}
+
+/* ---------- callout ---------- */
+.callout{
+  margin-top:16px; background:#fbf5ea; border:1px solid rgba(183,122,22,.22);
+  border-radius:var(--r); padding:16px 20px; break-inside:avoid;
+}
+.callout .t{font-size:12px;font-weight:800;color:#7d520e;letter-spacing:.05em;margin-bottom:6px}
+.callout p{font-size:13.5px;color:#4a3a22}
+.callout.blue{background:#eef2fb;border-color:rgba(45,91,216,.18)}
+.callout.blue .t{color:var(--accent)}
+.callout.blue p{color:#2c3a55}
+
+/* ---------- facts ---------- */
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fact{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  box-shadow:var(--shadow); padding:18px 20px; break-inside:avoid;
+  display:flex; flex-direction:column; gap:8px;
+}
+.fact .head{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.fact .tier{
+  font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;letter-spacing:.03em;
+}
+.fact .tier.ver{background:rgba(45,91,216,.10);color:var(--accent)}
+.fact .tier.int{background:rgba(183,122,22,.13);color:var(--warn)}
+.fact .tier.ext{background:rgba(105,118,140,.14);color:var(--ink-3)}
+.fact h3{font-size:15.5px;font-weight:800;color:var(--ink-1)}
+.fact p{font-size:13.5px;color:var(--ink-2)}
+.fact .src{font-size:11px;color:var(--ink-3);margin-top:auto;padding-top:6px;border-top:1px dashed var(--border)}
+.fact .hl{color:var(--accent);font-weight:700}
+.fact .hlg{color:#8a5a10;font-weight:700}
+
+/* ---------- mechanism chain ---------- */
+.chain{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-lg);
+  box-shadow:var(--shadow); padding:22px 24px; break-inside:avoid;
+}
+.chain .legend{display:flex;gap:16px;margin-bottom:16px;font-size:12px;color:var(--ink-3)}
+.chain .legend .row{display:flex;align-items:center;gap:6px}
+.chain .legend .sw{width:10px;height:10px;border-radius:3px}
+.chain .links{display:flex;align-items:stretch;gap:6px;flex-wrap:wrap}
+.chain .node{
+  flex:1; min-width:104px; border-radius:var(--r-sm); padding:11px 10px;
+  border:1px solid var(--border); background:var(--panel-2); text-align:center;
+}
+.chain .node .tag{font-size:10px;font-weight:800;letter-spacing:.08em;margin-bottom:4px}
+.chain .node .t{font-size:13px;font-weight:700;color:var(--ink-1);line-height:1.45}
+.chain .node.beta{background:rgba(45,91,216,.07);border-color:rgba(45,91,216,.22)}
+.chain .node.beta .tag{color:var(--accent)}
+.chain .node.alpha{background:rgba(224,138,46,.09);border-color:rgba(224,138,46,.25)}
+.chain .node.alpha .tag{color:#8a5a10}
+.chain .node.out{background:var(--navy);border-color:transparent}
+.chain .node.out .tag{color:#e8b06b}
+.chain .node.out .t{color:#fff}
+.chain .link{display:flex;align-items:center;color:var(--ink-3);font-size:15px;flex:none}
+.chain .foot{font-size:11.5px;color:var(--ink-3);margin-top:12px}
+
+/* ---------- beta/alpha panels ---------- */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.panel{border-radius:var(--r);padding:20px 22px;break-inside:avoid}
+.panel h3{font-size:16px;font-weight:800;margin-bottom:10px}
+.panel p{font-size:13.5px;margin-bottom:8px}
+.panel .src{font-size:11px;color:var(--ink-3)}
+.panel.beta{background:#eef2fb;border:1px solid rgba(45,91,216,.20)}
+.panel.beta h3{color:var(--accent)}
+.panel.beta b{color:#17305e}
+.panel.alpha{background:#fbf4ea;border:1px solid rgba(224,138,46,.26)}
+.panel.alpha h3{color:#8a5a10}
+.panel.alpha b{color:#5c3f10}
+.gap-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.gap-card{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:18px 20px;break-inside:avoid;
+}
+.gap-card .k{font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.05em;margin-bottom:6px}
+.gap-card p{font-size:13.5px}
+.key-card{
+  margin-top:16px; border-radius:var(--r); padding:22px 26px; break-inside:avoid;
+  background:linear-gradient(135deg,#10203f 0%,#17305e 60%,#1d3a6e 100%); color:#fff;
+}
+.key-card .k{font-size:12px;font-weight:800;color:#e8b06b;letter-spacing:.06em;margin-bottom:8px}
+.key-card p{font-size:15px;line-height:1.9;color:rgba(255,255,255,.92)}
+.key-card b{color:#fff}
+.key-card .stat{display:flex;gap:26px;margin-top:14px;flex-wrap:wrap}
+.key-card .stat .cell .v{font-size:24px;font-weight:800;color:#e8b06b}
+.key-card .stat .cell .s{font-size:12px;color:rgba(255,255,255,.62)}
+
+/* ---------- timeline ---------- */
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.tl{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 20px;break-inside:avoid;position:relative}
+.tl .when{font-size:11.5px;font-weight:800;color:var(--accent);letter-spacing:.05em}
+.tl .num{font-size:13px;font-weight:800;color:#8a5a10;margin:2px 0 6px}
+.tl p{font-size:13px}
+
+/* ---------- appendix ---------- */
+table.caliber{width:100%;border-collapse:collapse;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;font-size:12.5px}
+table.caliber th,table.caliber td{padding:9px 12px;text-align:left;vertical-align:top}
+table.caliber thead th{background:var(--panel-2);color:var(--ink-3);font-weight:700;font-size:11.5px;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+table.caliber td{border-bottom:1px solid var(--border);color:var(--ink-2)}
+table.caliber tr:last-child td{border-bottom:none}
+table.caliber td.num-r{font-variant-numeric:tabular-nums;color:var(--ink-1);font-weight:600;white-space:nowrap}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tag{font-size:12px;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--border);border-radius:999px;padding:4px 13px}
+.tag.b{color:var(--accent);background:var(--accent-soft);border-color:rgba(45,91,216,.18)}
+.tag.g{color:#8a5a10;background:var(--gold-soft);border-color:rgba(224,138,46,.22)}
+.warn-list{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);padding:20px 22px;break-inside:avoid}
+.warn-list h3{font-size:15px;font-weight:800;color:var(--ink-1);margin-bottom:10px}
+.warn-list li{font-size:13.5px;margin-left:18px;margin-bottom:7px;color:var(--ink-2)}
+.colophon{
+  margin-top:52px; padding-top:16px; border-top:1px solid var(--border);
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  font-size:11.5px; color:var(--ink-3);
+}
+
+/* ---------- reveal (feedback only) ---------- */
+.reveal{opacity:1;transform:none}
+.r-anim .reveal{opacity:0;transform:translateY(14px);animation:rise .5s cubic-bezier(.16,1,.3,1) forwards}
+.r-anim .reveal:nth-child(2){animation-delay:.06s}
+.r-anim .reveal:nth-child(3){animation-delay:.12s}
+.r-anim .reveal:nth-child(4){animation-delay:.18s}
+.r-anim .reveal:nth-child(5){animation-delay:.24s}
+@keyframes rise{to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;animation:none!important}}
+
+/* ---------- responsive ---------- */
+@media screen and (max-width:760px){
+  .kpi-band{grid-template-columns:1fr 1fr}
+  .facts{grid-template-columns:1fr}
+  .split{grid-template-columns:1fr}
+  .gap-cards{grid-template-columns:1fr}
+  .timeline{grid-template-columns:1fr}
+  .accounting{grid-template-columns:1fr}
+  .donut-wrap{justify-content:flex-start}
+}
+@media screen and (max-width:520px){
+  .kpi-band{grid-template-columns:1fr}
+  .masthead{padding:26px 22px 90px}
+  .verdict-card{margin-left:0;margin-right:0}
+  .sheet{padding:22px 14px 48px}
+  .chain .links{flex-direction:column;align-items:stretch}
+  .chain .link{justify-content:center;transform:rotate(90deg)}
+}
+
+/* ---------- print ---------- */
+@page{
+  size:A4; margin:13mm 12mm 15mm 12mm;
+  @bottom-center{content:"98wiki ｜ 智见 / 行业研究报告";font-size:8pt;color:#69768c}
+  @bottom-right{content:counter(page) " / " counter(pages);font-size:8pt;color:#69768c}
+}
+@media print{
+  body{background:#fff;font-size:11.5pt}
+  .sheet{max-width:none;padding:0}
+  section{margin-top:26pt}
+  .masthead{border-radius:14pt;padding:24pt 24pt 84pt}
+  .verdict-card{margin-top:-52pt;box-shadow:none;border-color:var(--border)}
+  .kpi,.fact,.gap-card,.tl,.accounting,.chain,.key-card,.warn-list{box-shadow:none}
+  .kpi .value{font-size:20pt}
+  .reveal{opacity:1;transform:none;animation:none!important}
+  .accounting,.split,.gap-cards,.timeline{break-inside:avoid}
+  .kpi{break-inside:avoid}
+  .colophon{margin-top:30pt}
+  table.caliber{font-size:9.5pt}
+  table.caliber th,table.caliber td{padding:6pt 8pt}
+  /* deterministic chain rows for print: 3 + 3 */
+  .chain .links{display:block;text-align:center}
+  .chain .node{display:inline-block;width:118pt;margin:4pt 2pt;vertical-align:middle}
+  .chain .link{display:inline-block;width:14pt;vertical-align:middle;text-align:center}
+}
+</style>
+</head>
+<body>
+<div class="sheet" id="top">
+
+  <!-- ============ 封面 ============ -->
+  <header class="masthead">
+    <div class="eyebrow">智见点评 · 行业研究报告 · 讨论稿 v2</div>
+    <h1>贝壳 2026Q2 经营杠杆归因：<br>β 记账、α 应收，90 天差分核销</h1>
+    <p class="lede">交易回升、经纪人不扩张、利润率抬升：哪些利润改善来自市场 β，哪些来自可复制的组织/AI α？本稿融合四份行业研判、跨域红队与居住服务渠道视角（7 位研判），给出统一归因口径与验证协议。</p>
+    <div class="meta">
+      <span>输出形态：<b>讨论稿 v2</b></span>
+      <span>覆盖：<b>全国（贝壳平台多城）</b></span>
+      <span>数据时段：<b>2026Q2</b> · 证据窗 2025-08-25 至 2026-08-25</span>
+      <span>框架：<b>通用四段式</b></span>
+      <span>研判：<b>T/D/W/X · 张一鸣/马斯克 · 杨现领（居住服务·Y）</b></span>
+    </div>
+  </header>
+
+  <div class="verdict-card reveal">
+    <span class="tag">主基调</span>
+    <p>利润改善以市场 β 与低基数为主；组织/AI α 有先行证据但证据等级不足，<span>新经营杠杆是待验证假说，而非既成事实。</span></p>
+    <p style="font-size:12.5px;color:var(--ink-3);margin-top:6px;font-weight:400">渠道视角（居住服务·Y·杨现领）并入为补充维度，不改变主基调。</p>
+  </div>
+
+  <!-- ============ 01 关键结论 ============ -->
+  <section>
+    <div class="sec-head">
+      <span class="no">01</span><h2>关键结论：利润翻倍按 β 入账，α 按应收款入账</h2>
+      <span class="hint">数字带口径 · 估算标注「研判推断」</span>
+    </div>
+
+    <div class="kpi-band">
+      <div class="kpi key reveal">
+        <div class="top"><span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 3v18M5 9l7-6 7 6M7 21h10"/></svg>
+        </span><span class="chip up">+4.6pct 估算</span></div>
+        <div class="label">Q2 平台利润率</div>
+        <div class="value">14.6<small>%</small></div>
+        <div class="src">搜狐/智通财经/新京报 08-22 · 公开可核实；2025Q2 基数约 10%（估算）</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+        </span><span class="chip up">+近两成</span></div>
+        <div class="label">二手成交单量（上半年同比）</div>
+        <div class="value">≈<span class="num">+20</span><small>%</small></div>
+        <div class="src">财新 08-22 · 公开可核实；另有 +18.6%（exmoo）/+25%（人民网）口径</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3.4"/><path d="M2.8 19c.6-3.4 3-5.2 6.2-5.2s5.6 1.8 6.2 5.2M16.4 5.6a3.2 3.2 0 0 1 0 4.9M17.6 14.4c2 .9 3.2 2.5 3.6 4.6"/></svg>
+        </span><span class="chip flat">剪刀差</span></div>
+        <div class="label">平台经纪人规模</div>
+        <div class="value">未同步<span class="arrow">·</span>扩大</div>
+        <div class="src">财新 08-22 · 公开可核实；「量升人平」为全篇分析锚点</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="icon gold">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 9.5h-6.5L13 2z"/></svg>
+        </span><span class="chip up">+87% 均值</span></div>
+        <div class="label">租赁样本人效（月人均单量）</div>
+        <div class="value"><span class="num">3</span><span class="arrow">→</span><span class="num">5.6</span><small>单</small></div>
+        <div class="src">管理层 S 分享 08-21 · 内部单源样本，未获独立验证</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="icon gold">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.4"/></svg>
+        </span><span class="chip up">-15pct 左右</span></div>
+        <div class="label">零开单率（租赁样本）</div>
+        <div class="value"><span class="num">25</span><span class="arrow">→</span><span class="num">&lt;10</span><small>%</small></div>
+        <div class="src">管理层 S 分享 08-21 · 内部单源样本；「0 变 1」尾部修复为主</div>
+      </div>
+      <div class="kpi reveal">
+        <div class="top"><span class="icon gold">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z"/><circle cx="12" cy="12" r="2.6"/></svg>
+        </span><span class="chip up">+48% 相对溢价</span></div>
+        <div class="label">客户管家转带看率（5-7 月）</div>
+        <div class="value"><span class="num">7.4</span><small>% vs 大盘 5%</small></div>
+        <div class="src">管理层 S 分享 08-21 · 内部单源；5 万+ 线索，属试点规模</div>
+      </div>
+    </div>
+
+    <div class="accounting reveal">
+      <div class="verdict">
+        <b>结论先行记账</b>
+        <p style="font-size:14.5px;margin-top:8px">2026Q2 利润近翻倍（TIKR 08-23），改善大头记在市场 β 账上。量化锚为两份独立拆分的交集：<b>β 占约六成</b>（行业研究·T 口径），与 X 的拆分方向一致。</p>
+        <div class="ledger">
+          <div class="cell"><div class="k">市场 β（单量 + 弹性 1.5-2 倍）</div><div class="v beta">2.5-3.0<span style="font-size:12px">pct</span></div><div class="s">约六成 · 研判推断</div></div>
+          <div class="cell"><div class="k">组织/AI α（试点证据）</div><div class="v alpha">1.0-1.5<span style="font-size:12px">pct</span></div><div class="s">约三成 · 研判推断</div></div>
+          <div class="cell"><div class="k">基数与一次性因素</div><div class="v">其余</div><div class="s">含低基数效应</div></div>
+        </div>
+        <p class="note">+4.6pct 拆分（2025Q2 基数约 10% → 14.6%）为专家估算，具体数字需核实；利润率抬升幅度远超单量增速，数学上必有每单成本下降或收入结构改善参与。</p>
+      </div>
+      <div class="donut-wrap">
+        <svg width="150" height="150" viewBox="0 0 140 140" role="img" aria-label="利润率抬升拆分：β 约六成，α 约三成，其余">
+          <circle cx="70" cy="70" r="54" fill="none" stroke="#e3e7ef" stroke-width="22"/>
+          <circle cx="70" cy="70" r="54" fill="none" stroke="#2D5BD8" stroke-width="22"
+            stroke-dasharray="203.58 339.29" transform="rotate(-90 70 70)"/>
+          <circle cx="70" cy="70" r="54" fill="none" stroke="#E08A2E" stroke-width="22"
+            stroke-dasharray="91.61 339.29" stroke-dashoffset="-203.58" transform="rotate(-90 70 70)"/>
+          <circle cx="70" cy="70" r="54" fill="none" stroke="#c4ccd8" stroke-width="22"
+            stroke-dasharray="44.10 339.29" stroke-dashoffset="-295.19" transform="rotate(-90 70 70)"/>
+          <text x="70" y="66" text-anchor="middle" font-size="17" font-weight="800" fill="#121a2b" font-family="inherit">+4.6pct</text>
+          <text x="70" y="84" text-anchor="middle" font-size="10" fill="#69768c" font-family="inherit">β 60% · α 27% · 其余 13%</text>
+        </svg>
+        <div class="donut-legend">
+          <div class="row"><span class="sw" style="background:#2D5BD8"></span><span>市场 β：<b>约六成</b></span></div>
+          <div class="row"><span class="sw" style="background:#E08A2E"></span><span>组织/AI α：<b>约三成</b></span></div>
+          <div class="row"><span class="sw" style="background:#c4ccd8"></span><span>基数与一次性：<b>其余</b></span></div>
+          <div class="est">专家估算 · 研判推断 · 需核实</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-card reveal">
+      <div class="c-head"><span class="tag">渠道视角维度 · 居住服务·Y（杨现领）</span></div>
+      <p class="c-thesis">「β 是底色、α 是种子」：剪刀差<b>最像 α</b>——量涨而人不增，说明单位产能变了，新杠杆已有雏形；但 14.6% 利润率大头仍是 β 与低基数，α 是种子不是收成。</p>
+      <div class="c-grid">
+        <div><b>① 剪刀差再定位</b>：行业出清只能解释「人少」，解释不了「量涨而人不增」；此前每轮量升都伴随扩招，本轮不扩员而单量涨，单位产能变了。</div>
+        <div><b>② AI 信息平权</b>：转带看率相对高约 50%，本质是房源静态信息贬值、渠道价值转向决策服务（匹配、谈判、流程管理）；全盘复制 = 渠道产能重定价。</div>
+        <div><b>③ 复制条件</b>：单盘经营与知识 Skill 沉淀为中台系统而非店长个人能力，方可跨城复制；复制率按密度分层看，低密度城市空间显著更小。</div>
+        <div><b>④ 差分两洞</b>：对照组污染（跨城借调/人员流动）与同能级配对（「3+6」格局，不得跨能级）；证伪条件不变。</div>
+      </div>
+      <div class="c-note">解读不改变证据等级：α 证据仍为内部单源试点数，须按城市能级分层验证后才能外推；不改变主基调。</div>
+    </div>
+
+    <div class="callout reveal">
+      <div class="t">全篇锚点：量升人平剪刀差</div>
+      <p>单量增长近两成而经纪人规模未同步扩大，与 2015-16、2020-21 两轮「量升人增」的周期规律截然不同。这是 α 正在起作用的先行证据，也是判断新经营杠杆存在的唯一硬支撑。居住服务·Y 再定位：行业出清只能解释「人少」，解释不了「量涨而人不增」——此前每轮量升都伴随扩招，本轮不扩员而单量涨，说明单位产能变了，这是最像 α 的先行证据；α 是种子不是收成。但支撑 α 的三个数字（人效、零开单率、转带看率）全部出自管理层 S 分享的内部单源样本，公开渠道未获独立交叉验证。</p>
+    </div>
+  </section>
+
+  <!-- ============ 02 关键事实 ============ -->
+  <section>
+    <div class="sec-head">
+      <span class="no">02</span><h2>关键事实及其变化：六组事实，按证据强度排序</h2>
+      <span class="hint">证据等级：公开可核实 / 内部单源 / 外部确认</span>
+    </div>
+    <div class="facts">
+      <div class="fact reveal">
+        <div class="head"><span class="tier ver">公开可核实</span><h3>1 · 量：单量升、金额降，指向以价换量</h3></div>
+        <p>二手成交单量增长近两成、GTV 重回增长（36氪 08-23）。口径差异需留意：exmoo 为单量 <span class="hl">+18.6%</span>、二手交易金额同比降约 <span class="hl">15.6%</span>；人民网口径单量 <span class="hl">+25%</span>。不同媒体口径不可交叉相乘；基期为近年低点，增长接近「止跌回稳」政策脉冲的正常水平。</p>
+        <div class="src">财新 08-22 / exmoo 08-22 / 人民网 08-24 / 36氪 08-23</div>
+      </div>
+      <div class="fact reveal">
+        <div class="head"><span class="tier ver">公开可核实</span><h3>2 · 利：抬升幅度远超单量增速</h3></div>
+        <p>Q2 利润率 <span class="hl">14.6%</span>（贝壳-W 02423.HK），上半年净利润 <span class="hl">38.79 亿元</span>；利润近翻倍（TIKR 08-23）含显著低基数效应。抬升远超单量增速，数学上必有每单成本下降或收入结构改善参与，不全是量增摊薄。</p>
+        <div class="src">搜狐/智通财经/新京报 08-22 · TIKR 08-23</div>
+      </div>
+      <div class="fact reveal">
+        <div class="head"><span class="tier ver">公开可核实</span><h3>3 · 人：不扩张，亦含供给出清的 β</h3></div>
+        <p>经纪人规模未同步扩大。被忽略的一层 β：2021 年以来行业经纪人深度流失、供给收缩，「不扩张」延续的是出清后的幸存者结构，分母收缩本身抬高人均，不全是组织主动选择。居住服务·Y 的边界条件：出清解释「人少」，解释不了「量涨而人不增」，剪刀差的主体部分仍须记在 α 候选池。</p>
+        <div class="src">财新 08-22 · 补充：行业研究·T / 居住服务·Y</div>
+      </div>
+      <div class="fact reveal">
+        <div class="head"><span class="tier int">内部单源</span><h3>4 · 效：均值 +87%，主要是尾部修复</h3></div>
+        <p>租赁样本人效约 <span class="hlg">3 单 → 5.6 单</span>、零开单率近 <span class="hlg">25% → 不足 10%</span>。均值 +87% 中零开单率砍 15 个点，意味着主要来自「0 变 1」的尾部修复而非「3 变 6」的能力跃迁，平均数在此失效；样本范围与同店口径未披露，存在系统性高估风险。居住服务·Y 提示：零开单率压到十分之一以下已超出「市场自然出清」能解释的幅度，更像盘级拆分+人房客重配在起作用——分布修复的幅度本身是机制性力量存在的旁证。</p>
+        <div class="src">管理层 S 分享 08-21 · 内部样本单源，具体数字需核实 · 提示：居住服务·Y</div>
+      </div>
+      <div class="fact reveal">
+        <div class="head"><span class="tier int">内部单源</span><h3>5 · 获客：转带看率 +48%，试点规模</h3></div>
+        <p>客户管家 5-7 月承接 <span class="hlg">5 万+ 线索</span>、转带看率 <span class="hlg">7.4% vs 大盘 5%</span>（+48% 相对溢价）。5 万条相对平台月线索量占比很小，属试点规模；窗口恰是旺季与回暖段，优势会被 β 放大。居住服务·Y 提供更深一层解读：相对高约 50%，本质是 AI 信息平权后的必然——房源静态信息正在贬值，渠道价值转向决策服务（匹配、谈判、流程管理），这是渠道崛起在 AI 时代的新形态，不是短期效率红利；若全盘复制，等于渠道产能重定价。此解读不改变证据等级：单源试点数，须按城市能级分层验证后才能外推。</p>
+        <div class="src">管理层 S 分享 08-21 · 内部样本单源 · 解读：居住服务·Y</div>
+      </div>
+      <div class="fact reveal">
+        <div class="head"><span class="tier ext">外部确认</span><h3>6 · 外部：确认性与叙事信息</h3></div>
+        <p>长江证券中报点评「效率持续兑现」（孙伟风/鲁俊，08-25）、大摩上调目标价（08-24）、彭永东业绩会「行业正从找房源进入做判断阶段」（08-22）。属确认性与叙事信息，不构成独立事实增量（T/W 共识）。</p>
+        <div class="src">长江证券 08-25 / 大摩 08-24 / 业绩会 08-22</div>
+      </div>
+    </div>
+    <div class="callout blue reveal">
+      <div class="t">口径警示</div>
+      <p>单量「+近两成 / +18.6% / +25%」与金额「-15.6%」并存：单量升、金额降的组合指向以价换量；以价换量若持续，每单佣金变薄，对利润率传导打折。不同来源口径不得交叉相乘，本稿统一以财新「近两成」为主口径并保留差异。</p>
+    </div>
+  </section>
+
+  <!-- ============ 03 归因分析 ============ -->
+  <section>
+    <div class="sec-head">
+      <span class="no">03</span><h2>归因分析：沿机制链逐环剥离 β 与 α</h2>
+      <span class="hint">蓝 = β 市场账 · 金 = α 组织账</span>
+    </div>
+
+    <div class="chain reveal">
+      <div class="legend">
+        <div class="row"><span class="sw" style="background:#2D5BD8"></span>β 段：市场回暖 → 量增 → 摊薄</div>
+        <div class="row"><span class="sw" style="background:#E08A2E"></span>α 段：组织/AI 机制</div>
+      </div>
+      <div class="links">
+        <div class="node beta"><div class="tag">β</div><div class="t">市场回暖</div></div>
+        <div class="link">→</div>
+        <div class="node alpha"><div class="tag">α</div><div class="t">盘级拆分<br>人房客重配</div></div>
+        <div class="link">→</div>
+        <div class="node alpha"><div class="tag">α</div><div class="t">零开单率下降</div></div>
+        <div class="link">→</div>
+        <div class="node alpha"><div class="tag">α 证据</div><div class="t">人效提升</div></div>
+        <div class="link">→</div>
+        <div class="node beta"><div class="tag">β</div><div class="t">固定成本摊薄</div></div>
+        <div class="link">→</div>
+        <div class="node out"><div class="tag">结果</div><div class="t">利润率抬升</div></div>
+      </div>
+      <div class="foot">机制链：市场回暖 → 盘级拆分/人房客重配 → 零开单率下降 → 人效提升 → 固定成本摊薄 → 利润率。α 只能从剔除 β 后的净人效提升里找。</div>
+    </div>
+
+    <div class="split">
+      <div class="panel beta reveal">
+        <h3>β 段：回暖 → 量增 → 摊薄</h3>
+        <p>人数不变、单量 +约 20%，人均单量自然 +约 20%，这部分先剔除，α 只能从剔除后的净人效提升里找。</p>
+        <p>经营杠杆弹性 <b>1.5-2 倍</b> 下，量增可解释利润率抬升的大部分。</p>
+        <p>另有两层结构性 β：2025 年二手交易额占比约 <b>48%</b> 的结构性提升，让以二手为基本盘的平台吃到市场结构变化红利；二手回暖 → 置换链条启动 → 改善需求释放，是 GTV 回升的底层机制。</p>
+        <div class="src">行业研究·W / X / T</div>
+      </div>
+      <div class="panel alpha reveal">
+        <h3>α 段：盘级拆分 → 零开单率 → 人效</h3>
+        <p>零开单率压降是四份研判一致认可的最可信组织 α 证据：市场 β 改变的是分母（客源变多、成交概率上升），能把「不开单的人」变成「开一单的人」，却无法把零开单率从近 25% 压到不足 10%，这个量级的分布改变需要机制性力量（单盘经营、人房客重配）。</p>
+        <p>客户管家转带看率领先 48% 是 AI 承接线索的效率候选证据，成本未算清前，属毛利改善还是净利改善存疑；AI 获客须以可控单位线索成本实现，否则贡献利润率不升反降。</p>
+        <p><b>居住服务·Y 的渠道解读：</b>7.4% vs 5% 的相对高约 50%，本质是 AI 信息平权后的必然——房源静态信息正在贬值，渠道价值转向决策服务（匹配、谈判、流程管理），这是渠道崛起在 AI 时代的新形态；若全盘复制，等于渠道产能重定价。解读不改变证据等级，须按城市能级分层验证后才能外推。</p>
+        <div class="src">行业研究·W / T · 解读：居住服务·Y</div>
+      </div>
+    </div>
+
+    <div class="gap-cards">
+      <div class="gap-card reveal">
+        <div class="k">观测缺口 ① · 挂牌量-成交周期检验</div>
+        <p>任务数据缺挂牌量与成交周期。若挂牌量增速高于成交增速、成交周期未明显缩短，则「流动性修复」成色不足，单量增长靠急售降价促动；结合「金额降 15.6%」口径，此检验更为紧迫。以成交周期作 β 旁证。</p>
+      </div>
+      <div class="gap-card reveal">
+        <div class="k">观测缺口 ② · α 可复制性必然分层</div>
+        <p>盘级拆分的前提是单盘 GTV 足够大、盘源密度足够高：一线/强二线有经济性，低能级城市摊不薄成本。新经营杠杆大概率先在一线/强二线成立，三四线复制率天然偏低。居住服务·Y 补一条复制条件：单盘经营与知识 Skill 若沉淀为<b>中台系统</b>而非店长个人能力，即可跨城复制——贝壳的店效复制史支持谨慎乐观；复制率须按密度分层看，低密度城市的人效提升空间显著小于高密度城市。</p>
+      </div>
+    </div>
+
+    <div class="key-card reveal">
+      <div class="k">城市复制率：α 的终极判据</div>
+      <p>1-2 个样板城跑通是<b>样板工程</b>，3 城以上稳定复制才是<b>真能力</b>。若单盘经营、人房客重配与知识 Skill 能在多城复制，贝壳将出现「交易量增而服务者不同比扩张」的新经营杠杆；否则只是低基数与市场回暖。</p>
+      <div class="stat">
+        <div class="cell"><div class="v">1-2 城</div><div class="s">样板工程 · 不算能力</div></div>
+        <div class="cell"><div class="v">3 城 +</div><div class="s">稳定复制 · 才是真 α</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 04 收尾 ============ -->
+  <section>
+    <div class="sec-head">
+      <span class="no">04</span><h2>收尾：三个验证节点与范式判断</h2>
+      <span class="hint">展望含预测成分，标注「研判推断」</span>
+    </div>
+
+    <div class="timeline">
+      <div class="tl reveal">
+        <div class="when">验证节点 ①</div>
+        <div class="num">2026Q3 财报 · 压力测试</div>
+        <p>成交回落假设下利润率能否站住，是第一关也是最残酷的压力测试：β 退潮后固定成本摊薄反转、利润率回吐，「α 是否还在」即见分晓。</p>
+      </div>
+      <div class="tl reveal">
+        <div class="when">验证节点 ②</div>
+        <div class="num">6 城 90 天差分 · 约 2026Q4</div>
+        <p>按能级配对（高能级组北京/上海/成都、中能级组武汉/西安/郑州），对照组同口径监测零开单率与人效防霍桑效应，判定用「同店 GTV/人」而非整体平均人效；差分期内同步观测挂牌量与成交周期作 β 旁证。</p>
+      </div>
+      <div class="tl reveal">
+        <div class="when">验证节点 ③</div>
+        <div class="num">AI 成本披露 · 持续跟踪</div>
+        <p>调用成本/单是否随量收敛；三关皆过则经营杠杆叙事成立，第一关即破则利润翻倍重新归类为「低基数+市场回暖」的 β 行情（研判推断）。</p>
+      </div>
+    </div>
+
+    <div class="key-card reveal">
+      <div class="k">验证协议（全部研判一致认可的唯一裁决点）</div>
+      <p>6 城 90 天差分：<b>3 城上线盘级经营 + Skill、3 城对照</b>；控制市场成交增速后，若人效净提升<b>不足 10%</b> 或贡献利润不升，即撤回组织 α 判断。居住服务·Y 补两洞：<b>对照组污染</b>（同平台跨城借调、人员流动会稀释差分）与<b>城市能级配对</b>（按「3+6」格局同能级配对，3 城上线 vs 3 城对照不应跨能级）；证伪条件不变。</p>
+      <div class="stat">
+        <div class="cell"><div class="v">90 天</div><div class="s">验证窗口</div></div>
+        <div class="cell"><div class="v">&lt; 10%</div><div class="s">人效净提升阈值</div></div>
+        <div class="cell"><div class="v">6 城</div><div class="s">3 实验 + 3 对照</div></div>
+      </div>
+    </div>
+
+    <div class="key-card reveal" style="margin-top:16px">
+      <div class="k">若被验证：范式级变化（研判推断）</div>
+      <p>若「量升人平」被多城验证，经纪行业增长模式将从<b>劳动力扩张</b>切换为<b>人效扩张</b>，成本函数从「人海规模」转向「组织资本」，贝壳估值逻辑从<b>周期股</b>切向<b>效率股</b>。这是行业级范式变化，不是季度波动。居住服务·Y 的行业注脚：行业正在变重，从业者价值从「跑盘抢客」转向「经营能力」，渠道靠密度与服务质量取胜而非人数扩张。</p>
+    </div>
+
+    <div class="warn-list reveal" style="margin-top:16px">
+      <h3>六项不确定性</h3>
+      <ul>
+        <li>试点盘可能是优选盘，「机制做得好」还是「盘选得好」未分（内部单源样本选择偏差）。</li>
+        <li>口径混用风险：财新单量、exmoo 金额、人民网 25%、TIKR 利润，不可交叉相乘。</li>
+        <li>AI 调用成本/单与同店口径未披露，α 净贡献无法量化。</li>
+        <li>政策脉冲（城中村改造货币化安置、收储）若驱动回暖，β 持续性存疑。</li>
+        <li>差分窗口若跨旺季尾部，季节性会污染净人效读数，建议同步观测挂牌量与成交周期作 β 旁证。</li>
+        <li>对照组污染与跨能级配对是差分实验的隐性风险，须在协议中显式排除（居住服务·Y）。</li>
+      </ul>
+    </div>
+
+    <div class="split" style="margin-top:16px">
+      <div class="callout reveal" style="margin-top:0">
+        <div class="t">乐观情形对照（未采纳为主基调）</div>
+        <p>行业研究·D 判断利润率抬升约一半记 α 账、14.6% 是新中枢，本次未采纳为主基调，因其依据的人效与转带看率数据全部为内部单源。若 90 天差分通过且 AI 成本随量收敛，α 占比需上修，基调上调至「α 已显形」，利润率中枢有望从 10-12% 抬升至 13-15%（研判推断）。</p>
+      </div>
+      <div class="callout reveal" style="margin-top:0">
+        <div class="t">误读警示（全员认可）</div>
+        <p>把单季利润翻倍直接外推为全年趋势、把内部单源样本人效当作平台整体水平，是对低基数与单季数据的双重误读。读本稿请始终携带口径：每个数字属于哪个样本、哪个窗口、哪家来源。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 附录 ============ -->
+  <section>
+    <div class="sec-head">
+      <span class="no">附录</span><h2>数据口径与元信息</h2>
+    </div>
+
+    <table class="caliber">
+      <thead><tr><th style="width:30%">指标 / 事实</th><th style="width:26%">数值</th><th style="width:30%">来源</th><th>证据等级</th></tr></thead>
+      <tbody>
+        <tr><td>二手成交单量（上半年同比）</td><td class="num-r">近 +20%（另有 +18.6% / +25%）</td><td>财新 08-22 / exmoo 08-22 / 人民网 08-24</td><td>公开可核实</td></tr>
+        <tr><td>GTV 重回增长</td><td class="num-r">增长</td><td>36氪 08-23</td><td>公开可核实</td></tr>
+        <tr><td>二手成交金额（同比）</td><td class="num-r">约 -15.6%（以价换量口径）</td><td>exmoo 08-22</td><td>公开可核实</td></tr>
+        <tr><td>Q2 平台利润率</td><td class="num-r">14.6%</td><td>搜狐/智通财经/新京报 08-22</td><td>公开可核实</td></tr>
+        <tr><td>上半年净利润</td><td class="num-r">38.79 亿元</td><td>同上</td><td>公开可核实</td></tr>
+        <tr><td>利润（同比）</td><td class="num-r">近翻倍</td><td>TIKR 08-23</td><td>公开可核实</td></tr>
+        <tr><td>经纪人规模</td><td class="num-r">未同步扩大</td><td>财新 08-22</td><td>公开可核实</td></tr>
+        <tr><td>租赁样本人效（月人均单量）</td><td class="num-r">约 3 单 → 5.6 单</td><td>管理层 S 分享 08-21</td><td>内部单源</td></tr>
+        <tr><td>零开单率（租赁样本）</td><td class="num-r">近 25% → 不足 10%</td><td>管理层 S 分享 08-21</td><td>内部单源</td></tr>
+        <tr><td>客户管家线索与转带看率</td><td class="num-r">5 万+ 线索；7.4% vs 5%</td><td>管理层 S 分享 08-21</td><td>内部单源</td></tr>
+        <tr><td>中报点评 / 目标价 / 业绩会表态</td><td class="num-r">确认性信息</td><td>长江证券 08-25 / 大摩 08-24 / 彭永东 08-22</td><td>外部确认</td></tr>
+      </tbody>
+    </table>
+
+    <div style="margin-top:18px">
+      <div style="font-size:12px;font-weight:800;color:var(--ink-3);letter-spacing:.05em">未披露关键变量</div>
+      <div class="tag-row">
+        <span class="tag b">同店口径</span><span class="tag b">单位线索成本</span><span class="tag b">AI 调用成本/单</span><span class="tag b">贡献利润率</span><span class="tag b">城市复制率</span>
+      </div>
+      <div style="font-size:12px;font-weight:800;color:var(--ink-3);letter-spacing:.05em;margin-top:16px">心智模型</div>
+      <div class="tag-row">
+        <span class="tag">经营杠杆弹性</span><span class="tag">同店口径</span><span class="tag">平均数失效（分布效应）</span><span class="tag">置换链条</span><span class="tag">城市复制率</span><span class="tag">挂牌量-成交周期检验</span><span class="tag g">AI 信息平权与渠道价值重定价</span><span class="tag g">中台系统沉淀（复制条件）</span>
+      </div>
+    </div>
+
+    <div class="warn-list reveal" style="margin-top:18px">
+      <h3>风险提示</h3>
+      <ul>
+        <li>α 证据（人效、零开单率、转带看率）全部为管理层 S 分享的内部单源样本，公开渠道未获独立交叉验证，存在系统性高估风险；试点盘可能是优选盘，「机制做得好」还是「盘选得好」未分。</li>
+        <li>β/α 量化拆分（+4.6pct 分解、β 占六成）为专家估算，属研判推断，具体数字需以公司披露为准。</li>
+        <li>同店口径、单位线索成本、AI 调用成本/单、贡献利润率、城市复制率五项关键变量均未披露，归因精度受限于此。</li>
+        <li>单量存在多口径（+18.6% / +近两成 / +25%），金额口径为负增长，不同来源不得交叉相乘；单季数据外推全年属误读。</li>
+        <li>政策脉冲（城中村改造货币化安置、收储）若驱动回暖，β 持续性存疑；差分窗口跨旺季尾部会污染净人效读数。</li>
+        <li>差分实验隐性风险：对照组污染（同平台跨城借调、人员流动稀释差分）与跨能级配对，须在协议中显式排除（居住服务·Y）。</li>
+      </ul>
+    </div>
+
+    <div class="colophon">
+      <span>98wiki ｜ 智见 / 行业研究报告</span>
+      <span>贝壳 2026Q2 经营杠杆归因 · 讨论稿 v2 · 2026-08</span>
+      <span>融合框架：通用四段式 · 研判：T（挂牌量派）/ D（长期主义派）/ W（存量转型派）/ X（城市能级派）+ 跨域红队（张一鸣/马斯克）+ 居住服务·Y（杨现领）</span>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.className = 'r-anim';
+})();
+</script>
+</body>
+</html>

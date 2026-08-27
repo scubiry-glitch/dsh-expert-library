@@ -1,0 +1,9 @@
+{
+  "taskId": "t7",
+  "status": "completed",
+  "attempt": 1,
+  "output": "一句话定性｜成都二手房仍处寻底筑底期（政研通zyt口径，至2026-08）：8月量价齐跌、成交创两年次低，未见企稳信号；渲染节点交付三件套（HTML5/PDF/PPTX）+ 渲染检查，视频待用户确认（可选增强）。\n\n指标 2-3 项｜①渲染质量：PDF 共 9 页（A4，来源：本次 weasyprint 69.0 渲染产物），每页页脚「98wiki ｜ 智见 / 行业研究报告」+页码，9/9 页可见（来源：本节点 PyMuPDF 逐页文本检查）；无文字越界/遮挡，边界检查 0 问题（来源：本节点渲染检查）。②PPT 完整性：12 页可编辑 PPTX（来源：pptfast v0.20.0 渲染，theme=consulting 贝壳蓝金，narrative=weekly-brief），audit 0 findings、validate OK，12/12 页含演讲备注（来源：pptfast audit + python-pptx 校验），关键数据 29 项全数在位（来源：政研通 zyt analytics-v1.1 数据同源比对）。③HTML 视觉稿：product register，贝壳蓝金（贝蓝 #0069b4+金 #c19a3b），finesse craft floor 全项通过（tinted neutrals/hairline/对比度 4.5:1+/prefers-reduced-motion），手绘数据驱动图表（柱高/条宽=值/max 真实几何，来源：政研通 zyt 同源数据）。\n\n趋势预测｜视频环节（video-shotcraft，60-90s 电影感短视频）工具链已就绪（Remotion 模板/ffmpeg/网络），按任务检查点约定为可选增强，需用户确认制作模式（Ink Press 模板或自主创作）后再执行；当前不静默完成，等待确认（研判推断：预计 60-90s 成片）。\n\n不确定性｜①PPT/HTML 如需调整（配色、页数、口径措辞）可基于 deck IR 与 HTML 源快速重渲染；②讨论稿如需转正式稿（去除行业研究·首字母匿名标注）需队长/用户确认后执行；③视频渲染耗时较长且需确认模式，未擅自启动。\n\n关注指标｜交付文件清单（均在 expert-tasks/t7/artifacts/ 下；sha256 为文件校验值，来源：本机 sha256sum 计算，非统计数据，单位：hex 摘要）：\n- html/chengdu-resale-2026-08-report.html，sha256 f603c4df533b35d6dff323f6bae02be03cfbce33380d13549d0d01685ab41a2c（来源：本机 sha256sum，非统计数据）\n- pdf/chengdu-resale-2026-08-report.pdf，sha256 2138079475c496c9d67d1d54cb0893c465f0bb2fef8c98c71d28821a3947a59c，9 页 A4（来源：本机 sha256sum + weasyprint 渲染，非统计数据）\n- ppt/chengdu-resale-2026-08.pptx，sha256 cdc903420dc8f38d341c75991fe60dfe3e50f7dbe4c941c472fbbb423a23fc1b，12 页（来源：本机 sha256sum + pptfast 渲染，非统计数据），数字带口径 footnote、预测页含「研判推断」标注，GUI 卡片可翻页预览\n- ppt/deck/（deck.spec.json + pages/*.json + deck.json），deck.json sha256 073bc88b23eaaca2b9db074f46c17722016733ce1ac9a29a08c36ba7819152bf（来源：本机 sha256sum，非统计数据），可编辑源\n- shots/page-01..09.png，9 页 PDF 栅格化截图（来源：本节点 PyMuPDF 栅格化，非统计数据）；SHA256SUMS.txt 含完整清单\n待用户确认：是否制作短视频 / PPT 调整 / 转正式稿。",
+  "qualityScore": 100,
+  "repairCount": 2,
+  "updatedAt": 1787736586771
+}

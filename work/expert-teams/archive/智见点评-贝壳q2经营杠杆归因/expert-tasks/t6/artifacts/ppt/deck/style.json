@@ -1,0 +1,24 @@
+{
+  "colors": {
+    "bg": "#EDF0F6",
+    "surface": "#FFFFFF",
+    "panel": "#F4F6FA",
+    "primary": "#2D5BD8",
+    "accent": "#E08A2E",
+    "text": "#121A2B",
+    "muted": "#69768C",
+    "border": "#DDE2E9",
+    "cardStroke": "#E2E6ED",
+    "chartPalette": ["#2D5BD8", "#E08A2E", "#97A2B3", "#176C6B", "#C4CCD8"],
+    "accentPool": ["#2D5BD8", "#E08A2E", "#97A2B3", "#566175", "#176C6B"]
+  },
+  "fonts": {
+    "heading": ["Microsoft YaHei", "Noto Sans CJK SC", "PingFang SC"],
+    "body": ["Microsoft YaHei", "Noto Sans CJK SC", "PingFang SC"],
+    "mono": ["Consolas", "Noto Sans Mono CJK SC"]
+  },
+  "shape": {
+    "radius": 10,
+    "gapScale": 1.0
+  }
+}

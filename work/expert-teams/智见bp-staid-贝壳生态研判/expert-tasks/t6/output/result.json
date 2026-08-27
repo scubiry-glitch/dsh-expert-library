@@ -1,0 +1,9 @@
+{
+  "taskId": "t6",
+  "status": "completed",
+  "attempt": 1,
+  "output": "已交付贝壳生态研判版 v2（保留 v1 原版，新建 v2）。交付路径：/root/zhijian/dsh-expert-library/work/研报交付_20260825_智见BP_汇报大纲_STAID_v1_HTML/\n- 智见BP_汇报大纲_STAID_v2_贝壳生态版.html sha256=f1a27bfadb1b19f16e709dde29904a94d499d16e9bb0931e41dbeef8094f50c4（单文件自包含，贝壳蓝金 product register 延续）\n- 智见BP_汇报大纲_STAID_v2_贝壳生态版.pdf sha256=859153307120b6be862c761f95a995bb747a6147f21c5752009d87a8e7a87a33（weasyprint A4，24 页，98wiki 页脚逐页断言 24/24）\n- Designer_渲染检查记录.md 已追加第 8 节「贝壳生态研判版」（sha256、页数、检查项、两处缺陷修复记录）\n- _check/ 存档：v2-desktop-1440.png、v2-mobile-390.png、v2-pdf-page-{cover,appendix-first,appendix-last}.png\n新增内容：附录章节「贝壳生态研判结论」SEC.A（A.1 核心结论 5 条编号卡 / A.2 四视角观点矩阵表 / A.3 共识 5+分歧 4 双栏 / A.4 十条建议→落点对照表 / A.5 风险验证 7 行表 / 口径声明）；正文按 t5 的 10 条增补/修正建议融入（60 天灯塔聚焦制方案甲/乙、付费测试、40 深 50 广分层、信心指数重启条件、复现边界限定、三步走补 Ask、DSCR 监管情景、多专家分歧管理、贝壳研究院移出竞品表改生态协同卡、评估机构分润补位），原文保留、批注显式标注「生态研判」。\n检查结果：4 视口（1440/768/390/320）页面级横向溢出 0；新增 20 组色对比度全部 ≥4.5（最低 4.86）；6 张表无截断（关键词全文命中）；reduced-motion 回退通过；PDF 内容块越界 0；console/pageerror 0。过程中修复两处缺陷：①reveal 安全网快速滚动滞留（sweep 放行视口上方元素+12 轮强制收敛）；②weasyprint grid-column:1/-1 跨轨道 bug 致附录结论卡丢失/溢出（第 5 卡移出网格改独立通栏卡）。数字口径全部照抄 t5 结论稿，未新增编造数字。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787638586547
+}

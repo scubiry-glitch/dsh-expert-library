@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>测算说明与复算表（沪八条二手转保租单元经济 20260823 优化版）</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "智见行业研究 ｜ 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<h1>测算说明与复算表（20260823 优化版）</h1>
+<blockquote>
+<p>本文件是《沪八条「收购二手住房→保障性租赁住房」资产转换单元经济研究（优化版）》的测算支撑：说明三源数据取数、公式推导与全部中间计算，确保报告内每一个数字均可复算、可追溯。配套主文：<code>主文_沪八条二手转保租单元经济_重做_优化.md</code>。</p>
+</blockquote>
+<hr>
+<h2>一、三源数据取数清单</h2>
+<h3>1.1 Wind（万得金融）——资金与财政参数</h3>
+<table>
+<thead>
+<tr>
+<th>数据</th>
+<th>数值</th>
+<th>指标代码 / 来源</th>
+<th>取数时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>保障性住房再贷款利率（1 年）</td>
+<td><strong>1.75%</strong>（2024Q2/Q3 两期）</td>
+<td>U0895862，中国人民银行 EDB</td>
+<td>2026-08-24</td>
+</tr>
+<tr>
+<td>5 年期以上 LPR</td>
+<td><strong>3.5%</strong>（2025-06-20 至 2026-08-20 连续 15 期不变）</td>
+<td>M0331299 / Y3707196，全国银行间同业拆借中心</td>
+<td>2026-08-24</td>
+</tr>
+<tr>
+<td>1 年期 LPR</td>
+<td><strong>3.0%</strong></td>
+<td>M0096870，同上</td>
+<td>2026-08-24</td>
+</tr>
+<tr>
+<td>上海一般公共预算收入</td>
+<td>2024 年 <strong>8,374.2 亿元</strong>；2025 年 <strong>8,500.9 亿元</strong></td>
+<td>M0025252，上海市财政局（年度）</td>
+<td>2026-08-24</td>
+</tr>
+<tr>
+<td>城投宽庭保租房 REIT</td>
+<td>508031.SH，2026-08-24 盘中价约 <strong>3.9 元</strong></td>
+<td>fund_data get_fund_quote</td>
+<td>2026-08-24</td>
+</tr>
+</tbody>
+</table>
+<p>取数方式：<code>wind-mcp-skill/scripts/cli.mjs call economic_data natural_language_get_edb_data</code>（EDB 自然语言提数），密钥 <code>~/.wind-aifinmarket/config</code>。</p>
+<h3>1.2 政研通（贝壳研究院 / 贝壳平台交付，dss.ke.com）——市场量价租</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>2026-07</th>
+<th>关键点</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>二手成交均价 SH_PRICE</td>
+<td>47,111 元/㎡</td>
+<td>2026-04/05/06 环比 +0.86%/+1.36%/+1.11% 连续转正</td>
+<td>成交价（非挂牌价），贝壳研究院</td>
+</tr>
+<tr>
+<td>二手成交套均总价 SH_UNIT_PRICE</td>
+<td>371 万元/套</td>
+<td>套均面积约 79㎡</td>
+<td>同上</td>
+</tr>
+<tr>
+<td>租赁套均租金 RENT_PRICE</td>
+<td>6,997 元/月</td>
+<td>环比 +4.78%、同比 +5.36%；5–7 月连涨</td>
+<td>贝壳平台成交口径</td>
+</tr>
+<tr>
+<td>租赁成交量 RENT_VOL</td>
+<td>8,288 套/月</td>
+<td>3 月 8,260 套为高点</td>
+<td>贝壳平台</td>
+</tr>
+<tr>
+<td>二手成交周期 CLEARANCE_SH</td>
+<td>3.5 个月</td>
+<td>2025-12 为 3.67，趋势下行</td>
+<td>贝壳研究院（成交周期）</td>
+</tr>
+<tr>
+<td>二手新增挂牌 SUP_SH_LISTING</td>
+<td>12,702 套/月</td>
+<td>3 月 20,675 套为高点</td>
+<td>贝壳研究院</td>
+</tr>
+<tr>
+<td>贝壳房价指数 KE_PRICE_INDEX</td>
+<td>80.3</td>
+<td>一线对比：上海 80.3 &gt; 北京 73.5 &gt; 广州 70.9</td>
+<td>官方发布，2018-11=100</td>
+</tr>
+<tr>
+<td>贝壳租金指数 KE_RENT_INDEX</td>
+<td>97.9</td>
+<td>自 2025-12 的 93.8 连升</td>
+<td>官方发布，2018-11=100</td>
+</tr>
+<tr>
+<td>区级成交均价（示意）</td>
+<td>静安 6.57 / 黄浦 10.3 / 徐汇 7.4 / 浦东 4.7 万/㎡</td>
+<td>市级按权重拆分示意</td>
+<td>2026-07</td>
+</tr>
+<tr>
+<td>区级套均租金（示意）</td>
+<td>静安 8,492 / 黄浦 11,745 / 徐汇 7,794 元/月</td>
+<td>市级按权重拆分示意</td>
+<td>2026-07</td>
+</tr>
+</tbody>
+</table>
+<p>取数方式：<code>GET <a href="https://dss.ke.com/openapi/v1/indicators/series|compare|districts|geo/tree">https://dss.ke.com/openapi/v1/indicators/series|compare|districts|geo/tree</a></code>，<code>X-Api-Key</code> 取 <code>~/.config/zyt/config.json</code>。批量接口 <code>/indicators/batch-series</code> 本轮返回异常（各查询均回同一序列），已改用单指标接口逐项取数。</p>
+<h3>1.3 贝壳（房源级 MCP）——本轮不可用说明</h3>
+<p><code>realestate.listing.search</code>（贝壳房源检索）绑定失败：<code>BEIKE_MCP_API_KEY</code> 未配置（<code>~/.beike/BEIKE_MCP_API_KEY</code> 不存在，环境变量未设置）。<strong>房源级挂牌/租金明细本轮不可取</strong>；贝壳平台级与研究院级数据已通过政研通（政研通即贝壳决策数据服务，dss.ke.com）完整覆盖，报告中市场量价租锚点均为贝壳体系真实数据。如需房源级（如静安 40㎡ 老破小挂牌样本、商圈租金分布），需补配 <code>BEIKE_MCP_API_KEY</code> 后复跑。</p>
+<h3>1.4 公开政策与报道（政策事实链、试点案例、REITs 公告）</h3>
+<p>沿用此前已核实的公开来源（上海市政府网、央视财经、新华网、每经、东方财富、迈点等），全部带口径与日期，见主文附录 D。</p>
+<hr>
+<h2>二、模型公式与假设</h2>
+<h3>2.1 判定式</h3>
+<p><strong>式 1（租金收益率）</strong>：</p>
+<blockquote>
+<p>r = 12 × R_m × q × o × 收缴率 ÷ (d × P_m)</p>
+</blockquote>
+<p><strong>式 2（盈亏平衡折扣）</strong>：令 r = c：</p>
+<blockquote>
+<p>d* = 12 × R_m × q × o × 收缴率 ÷ (c × P_m)</p>
+</blockquote>
+<h3>2.2 变量与假设</h3>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>符号</th>
+<th>取值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>市场月租金</td>
+<td>R_m</td>
+<td>3,400–4,200 元/月（中值 3,800）</td>
+<td>标的级：静安 40㎡ 老破小；全市单位租金 89 元/㎡/月（6,997 元 ÷ 78.8㎡）推演，85–105 元/㎡/月 × 40㎡</td>
+</tr>
+<tr>
+<td>市场公允价值</td>
+<td>P_m</td>
+<td>248–276 万元（中值 262 万）</td>
+<td>6.2–6.9 万/㎡ × 40㎡；静安区级均价 6.57 万/㎡ 落于区间</td>
+</tr>
+<tr>
+<td>收购折扣率</td>
+<td>d</td>
+<td>0.75 / 0.80 / 0.85 / 0.90</td>
+<td>敏感性主变量</td>
+</tr>
+<tr>
+<td>租金折扣</td>
+<td>q</td>
+<td>0.9</td>
+<td>制度上限（2022 规则）</td>
+</tr>
+<tr>
+<td>出租率</td>
+<td>o</td>
+<td>0.85 / 0.90 / 0.92</td>
+<td>基准 0.90</td>
+</tr>
+<tr>
+<td>收缴率</td>
+<td>—</td>
+<td>1.0（基准）</td>
+<td>未披露，假设</td>
+</tr>
+<tr>
+<td>资金成本</td>
+<td>c</td>
+<td>1.75% / 2.0% / 2.5% / 3.0% / 3.5%</td>
+<td>Wind 确认 1.75%（再贷款）、3.5%（5Y LPR）；综合 2.0–3.0% 为测算区间</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>三、全部中间计算（复算表）</h2>
+<h3>3.1 锚点 B：租金收益率链（对首例 220 万收购价）</h3>
+<table>
+<thead>
+<tr>
+<th>环节</th>
+<th>低端</th>
+<th>高端</th>
+<th>计算</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>月租（元/月）</td>
+<td>3,400</td>
+<td>4,200</td>
+<td>85/105 元/㎡/月 × 40㎡</td>
+</tr>
+<tr>
+<td>年毛租金（元）</td>
+<td>40,800</td>
+<td>50,400</td>
+<td>×12</td>
+</tr>
+<tr>
+<td>毛收益率</td>
+<td>1.85%</td>
+<td>2.29%</td>
+<td>÷ 2,200,000（≈1.9%–2.3%）</td>
+</tr>
+<tr>
+<td>九折纳管后</td>
+<td>1.67%</td>
+<td>2.06%</td>
+<td>×0.9（≈1.7%–2.1%）</td>
+</tr>
+<tr>
+<td>90% 出租率后</td>
+<td>1.50%</td>
+<td>1.86%</td>
+<td>×0.9（≈1.5%–1.9%）</td>
+</tr>
+</tbody>
+</table>
+<p>全市口径交叉：6,997 × 12 ÷ 3,710,000 = 2.26%（2026-07）；6,151×12÷3,560,000 = 2.07%（2026-03）；6,678×12÷3,760,000 = 2.13%（2026-06）。</p>
+<h3>3.2 首例折扣反推</h3>
+<ul>
+<li>对静安区级均价：220 万 ÷ (6.57 万/㎡ × 40㎡) = 220 ÷ 262.8 = <strong>83.7% ≈ 8.4 折</strong></li>
+<li>对市场带：220 ÷ 276 = 79.7%；220 ÷ 248 = 88.7% → <strong>8.0–8.9 折</strong></li>
+</ul>
+<h3>3.3 三组合复算（q=0.9；P_m=262 万）</h3>
+<table>
+<thead>
+<tr>
+<th>组合</th>
+<th>d</th>
+<th>o</th>
+<th>收购价（万）</th>
+<th>q×o</th>
+<th>r_min</th>
+<th>r_max</th>
+<th>r 中枢</th>
+<th>c</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①</td>
+<td>0.80</td>
+<td>0.90</td>
+<td>209.6</td>
+<td>0.81</td>
+<td>12×3400×0.81÷209.6万 = 1.58%</td>
+<td>12×4200×0.81÷209.6万 = 1.95%</td>
+<td>1.76%</td>
+<td>1.75%</td>
+<td>临界（+0.01pp）</td>
+</tr>
+<tr>
+<td>②</td>
+<td>0.90</td>
+<td>0.85</td>
+<td>235.8</td>
+<td>0.765</td>
+<td>12×3400×0.765÷235.8万 = 1.32%</td>
+<td>12×4200×0.765÷235.8万 = 1.64%</td>
+<td>1.48%</td>
+<td>3.0%</td>
+<td>缺口 1.36–1.68pp（≈1.4–1.7pp）</td>
+</tr>
+<tr>
+<td>③</td>
+<td>0.75</td>
+<td>0.92</td>
+<td>196.5</td>
+<td>0.828</td>
+<td>12×3400×0.828÷196.5万 = 1.72%</td>
+<td>12×4200×0.828÷196.5万 = 2.12%</td>
+<td>1.92%</td>
+<td>2.0%</td>
+<td>临界（−0.08pp）</td>
+</tr>
+</tbody>
+</table>
+<h3>3.4 盈亏平衡折扣（中值：R_m=3,800、P_m=262 万 → K/P_m = 36,936÷2,620,000 = 1.41%）</h3>
+<table>
+<thead>
+<tr>
+<th>c</th>
+<th>d* = 1.41% ÷ c</th>
+<th>折</th>
+<th>敏感区间（K/P_m = 1.20%–1.65%）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.75%</td>
+<td>0.806</td>
+<td>8.1 折</td>
+<td>6.9–9.4 折</td>
+</tr>
+<tr>
+<td>2.0%</td>
+<td>0.705</td>
+<td>7.1 折</td>
+<td>6.0–8.2 折</td>
+</tr>
+<tr>
+<td>2.5%</td>
+<td>0.564</td>
+<td>5.6 折</td>
+<td>4.8–6.6 折</td>
+</tr>
+<tr>
+<td>3.0%</td>
+<td>0.470</td>
+<td>4.7 折</td>
+<td>4.0–5.5 折</td>
+</tr>
+<tr>
+<td>3.5%</td>
+<td>0.403</td>
+<td>4.0 折</td>
+<td>3.4–4.7 折</td>
+</tr>
+</tbody>
+</table>
+<h3>3.5 敏感性矩阵（r 中枢 = 1.41%/d，vs c 的缺口，pp）</h3>
+<table>
+<thead>
+<tr>
+<th>d</th>
+<th>r 中枢</th>
+<th>vs 1.75%</th>
+<th>vs 2.5%</th>
+<th>vs 3.5%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.75</td>
+<td>1.88%</td>
+<td>+0.13（临界）</td>
+<td>−0.62</td>
+<td>−1.62</td>
+</tr>
+<tr>
+<td>0.80</td>
+<td>1.76%</td>
+<td>+0.01（临界）</td>
+<td>−0.74</td>
+<td>−1.74</td>
+</tr>
+<tr>
+<td>0.85</td>
+<td>1.66%</td>
+<td>−0.09</td>
+<td>−0.84</td>
+<td>−1.84</td>
+</tr>
+<tr>
+<td>0.90</td>
+<td>1.57%</td>
+<td>−0.18</td>
+<td>−0.93</td>
+<td>−1.93</td>
+</tr>
+</tbody>
+</table>
+<h3>3.6 换算关系（修正原稿错误）</h3>
+<ul>
+<li><strong>折扣每收紧 0.5 折（d 0.85→0.90）</strong>：r 下降 = 1.66% − 1.57% = <strong>0.09pp</strong>（区间口径约 0.10–0.13pp）。原稿"0.6–0.9pp"系误算（高估约 5–7 倍），已修正。</li>
+<li><strong>资金成本每升 1pp 的等价折扣加深</strong>：∂d*/∂c = −1.41%/c²，在 c=1.75% 时每 1pp 需加深约 0.46 折，在 c=3.0% 时约 0.16 折（非线性递减）。表述为"0.3–0.5 折（随 c 上升递减）"。</li>
+</ul>
+<h3>3.7 CAPEX 与空置</h3>
+<ul>
+<li>CAPEX 摊销（经常性）：8–15 万 ÷ 20 年 ÷ 220 万 = 0.18%–0.34%；含隐性合规（消防/管线/加固）估算 0.3%–0.5%。</li>
+<li>改造期空置（首年一次性）：3–6 个月 ÷ 12 × 毛收益率 1.9%–2.3% = 0.5%–1.2%。</li>
+<li>合并口径：经常性摊销 0.3–0.5pp 已足以把组合①（+0.01pp）翻负；首年再额外承受 0.5–1.2pp 现金流损失。</li>
+</ul>
+<h3>3.8 放量与贴息</h3>
+<ul>
+<li>套均 264 万 = 86.22㎡ × 3.07 万/㎡（2026-08-07 日度口径）。</li>
+<li>情景 A：1.6 万套 × 264 万 × 0.85 = <strong>359 亿 ≈ 360 亿</strong>；占 2025 年预算收入（8,501 亿）≈ <strong>4.2%</strong>。</li>
+<li>情景 B：10 万套 × 264 万 × 0.85 = <strong>2,244 亿 ≈ 2,240 亿</strong>；占比 ≈ <strong>26.4%</strong>。</li>
+<li>贴息：500 亿 × 1.0pp = 5.0 亿/年；500 亿 × 1.5pp = 7.5 亿/年；对 8,501 亿均 &lt;0.1%。5000 亿 × 1.5pp = 75 亿/年（质变）。</li>
+<li>REITs 承接比：城投宽庭年可供分配约 1.27 亿（6,337 万 × 2）÷ 360 亿收购规模 ≈ 0.35%/年。</li>
+</ul>
+<h3>3.9 去化与库存</h3>
+<ul>
+<li>库存月数 = 316,663 套 ÷ 23,000 套/月 ≈ 13.8 个月；每收购 1 万套 → (316,663−10,000)÷23,000 = 13.33 → 缩短约 0.43 个月。</li>
+<li>成交周期（贝壳研究院交付，另一口径）：2026-07 为 3.5 个月。</li>
+<li>551 套 ÷ 316,663 套 ≈ 0.17%（信号规模）。</li>
+</ul>
+<hr>
+<h2>四、与原稿数字差异对照（为何修正）</h2>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>原稿</th>
+<th>优化版</th>
+<th>修正原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>组合① r</td>
+<td>2.2%–2.6%</td>
+<td>1.6%–1.9%（中枢 1.76%）</td>
+<td>原值未乘纳管九折与出租率，与锚点 B（1.5%–2.0%）自相矛盾；统一式 1 复算</td>
+</tr>
+<tr>
+<td>组合③ r</td>
+<td>2.5%–2.9%</td>
+<td>1.7%–2.1%（中枢 1.92%）</td>
+<td>同上（原值 ≈ 未打折毛收益率）</td>
+</tr>
+<tr>
+<td>组合② 缺口</td>
+<td>1.4–1.6pp</td>
+<td>1.4–1.7pp</td>
+<td>同式复算，中枢约 1.5pp</td>
+</tr>
+<tr>
+<td>"0.5 折 ≈ 资金成本 0.6–0.9pp"</td>
+<td>0.6–0.9pp</td>
+<td>0.10–0.13pp</td>
+<td>推导错误，∂r/∂d ≈ −r/d 实算</td>
+</tr>
+<tr>
+<td>敏感性矩阵判定</td>
+<td>7.5 折+1.75% "成立"</td>
+<td>"临界 +0.1pp"</td>
+<td>按中值假设复算，无安全边际</td>
+</tr>
+<tr>
+<td>资金成本参数</td>
+<td>财联社 1.75%（二手）</td>
+<td>Wind EDB 央行确认 1.75%</td>
+<td>升级为官方来源</td>
+</tr>
+<tr>
+<td>月租锚</td>
+<td>平台口径 3500–4500</td>
+<td>3,400–4,200（贝壳单位租金推演）</td>
+<td>与全市单位租金 89 元/㎡/月交叉</td>
+</tr>
+<tr>
+<td>预算收入</td>
+<td>"8000 亿级"</td>
+<td>2025 年 8,501 亿（Wind）</td>
+<td>官方序列精确值</td>
+</tr>
+<tr>
+<td>首例折扣</td>
+<td>"约 8–9 折"</td>
+<td>8.3–8.9 折（对区级均价 8.4 折）</td>
+<td>政研通静安区级均价锚定</td>
+</tr>
+<tr>
+<td>结论基调</td>
+<td>"组合①勉强成立"</td>
+<td>"全部组合临界、无安全边际，CAPEX 后转负"</td>
+<td>逻辑自洽后的诚实结论</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,1 @@
+{"id":"8f426c51-f64d-4b7a-9876-334ed441ce04","from":"captain","to":"Designer","content":"交付产物已确认齐全（HTML5/PDF/PPTX/md + 交付清单 sha256 + 渲染检查截图 + deck_preview）。请完成 t5 收尾：把交付文件清单（路径 + sha256）写入 t5 的 output 并标记 completed，然后向队长汇报交付物。无需再做视频（PPT/PDF/HTML 已足够，用户后续如需视频再安排）。","ts":1787755952203,"deliveredAt":1787755952221,"readAt":1787755952221}

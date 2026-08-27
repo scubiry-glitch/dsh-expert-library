@@ -62,10 +62,18 @@ export const BANK_REVIEW_CAPABILITY = 'bank.review'
 export const BANK_SKILL_BASELINE_VERSION = '0.0.0-local'
 
 /** bank-finance 包捆绑技能（内容在 `domain-packs/bank-finance/source/skills/<id>/`，
- * 发射时保留为包内 `skills/<id>/`；SKILL.md 树为内容本体，manifest 为声明）。 */
-export const BANK_SKILL_PACKAGES: readonly { id: string; name: string; version: string }[] = [
+ * 发射时保留为包内 `skills/<id>/`；SKILL.md 树为内容本体，manifest 为声明）。
+ * finesse-ui / gsap-* 为渲染增强技能（同 zhijian-realestate 域，内容从插件
+ * bundled knowledge/skills/ 复制到本域 source/skills/ 随包分发——技能引用规则
+ * 见 src/skills-discovery.ts：权威路径以 GET /plugins/dsh-expert-library/skills
+ * 为准，包内副本仅供打包分发）。 */
+export const BANK_SKILL_PACKAGES: readonly { id: string; name: string; version: string; license?: string }[] = [
   { id: 'bank-retail-finance-analysis', name: 'bank-retail-finance-analysis', version: BANK_SKILL_BASELINE_VERSION },
   { id: 'strategy-consulting', name: 'strategy-consulting', version: BANK_SKILL_BASELINE_VERSION },
+  { id: 'finesse-ui', name: 'finesse-ui', version: '0.20.0', license: 'MIT' },
+  { id: 'gsap-core', name: 'gsap-core', version: BANK_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-scrolltrigger', name: 'gsap-scrolltrigger', version: BANK_SKILL_BASELINE_VERSION, license: 'MIT' },
+  { id: 'gsap-timeline', name: 'gsap-timeline', version: BANK_SKILL_BASELINE_VERSION, license: 'MIT' },
 ]
 
 /**
@@ -80,7 +88,7 @@ function bankSkillPackageDigest(decl: { id: string; version: string }): string {
 }
 
 /** One bundled bank skill → {@link SkillPackageManifest}（local-only，无 license ⇒ internalOnly）。 */
-function bankSkillPackageManifest(decl: { id: string; name: string; version: string }): SkillPackageManifest {
+function bankSkillPackageManifest(decl: { id: string; name: string; version: string; license?: string }): SkillPackageManifest {
   return {
     id: decl.id,
     name: decl.name,
@@ -91,12 +99,13 @@ function bankSkillPackageManifest(decl: { id: string; name: string; version: str
       // 相对包根：发射后包内 `skills/<id>/` 存在（内容树由发射器拷贝）。
       root: `skills/${decl.id}`,
       digest: bankSkillPackageDigest(decl),
+      ...(decl.license === undefined ? {} : { license: decl.license }),
     },
     // 技能主体在 SKILL.md 树（运行时 resolveSkill 读取），声明本身无实体贡献。
     contributions: {},
     permissions: {
       execScripts: [],
-      internalOnly: true,
+      ...(decl.license === undefined ? { internalOnly: true } : {}),
     },
   }
 }
@@ -260,6 +269,49 @@ function bank99wikiKnowledgeManifest(packVersion: string): DomainKnowledgeManife
   }
 }
 
+/**
+ * bank-finance 域品牌与视觉规范（C-1：渲染环节不再依赖任务文本口述色值）。
+ * 声明式 manifest：内容本体为 boundary/collections 描述（SkillPackage 式的
+ * 纯声明，无内嵌文件）；渲染专家（designer/docs-coordinator）读取本声明后按
+ * 蓝金变体执行 finesse-ui product register。任务口径以主蓝 #2d5bd8、金
+ * #c98a2e 为准；finesse Set 9 的 --accent:#2D5BD8/--accent-2:#E08A2E 仅参考。
+ */
+function bankBrandKnowledgeManifest(packVersion: string): DomainKnowledgeManifest {
+  const digest = createHash('sha256')
+    .update(`bank:brand:blue-gold:${packVersion}:2d5bd8:c98a2e`)
+    .digest('hex')
+  return {
+    id: 'bank.brand',
+    version: packVersion,
+    schemaVersion: SCHEMA_VERSION,
+    domain: 'banking.jiangsu.visual',
+    boundary: '江苏银行域视觉规范（蓝金变体）：主蓝 #2d5bd8、深蓝 #2447b8、金 #c98a2e（金文字压深 #8a5a14 保对比度）、tinted 底 #eef1f8 系；对应 finesse-ui Set 9 Cobalt Trust（product-palettes.md §4：--accent:#2D5BD8、--accent-2:#E08A2E——任务口径以 #2d5bd8/#c98a2e 为准，Set 9 的 #E08A2E 仅参考）；语义色（绿/红）与品牌色分离；对比度下限 4.5:1。渲染银行域页面须先读本声明，不再依赖任务文本口述色值。',
+    ontology: {
+      entities: [
+        { id: 'brand-color', description: '品牌主色/深色/金色/金文字压深/tinted 底' },
+        { id: 'semantic-color', description: '语义色（绿/红）与品牌色分离' },
+        { id: 'finesse-set9', description: 'finesse-ui product-palettes Set 9 Cobalt Trust 参考值' },
+      ],
+      relations: [
+        { id: 'brand-maps-to-finesse', from: 'brand-color', to: 'finesse-set9', description: '品牌色映射到 finesse Set 9 参考值' },
+      ],
+    },
+    collections: [
+      { id: 'visual-spec', root: 'domain-knowledge', format: 'manifest', description: '品牌与视觉规范声明（boundary 文本即规范本体）' },
+    ],
+    snapshot: {
+      id: 'bank-brand-blue-gold-2026-08-25',
+      takenAt: BANK_BASELINE_DATE,
+      digest,
+      recordCount: 1,
+    },
+    retrievalProfiles: [
+      { id: 'full-read', method: 'full-read' },
+    ],
+    policies: { citation: 'optional', freshness: 'static', access: 'readonly' },
+  }
+}
+
 /** Structured knowledge base over the BANK expert profile records. */
 function bankDomainKnowledgeManifest(packVersion: string): DomainKnowledgeManifest {
   const digest = createHash('sha256').update(JSON.stringify(BANK_EXPERTS)).digest('hex')
@@ -378,6 +430,13 @@ export function buildBankDomainPack(options: BuildBankPackOptions = {}): DomainP
       const expert = zhijianMetaToExpertV2(meta, { packVersion, modelPolicy })
       return {
         ...expert,
+        // 银行专家统一声明通用评审能力 bank.review（bankScenarioV2 的
+        // requiredCapabilities 硬门：每个 bank 场景至少一位专家声明它；
+        // zhijianMetaToExpertV2 只投影领域子能力如 bank.strategy.review）。
+        capabilities: [
+          ...expert.capabilities,
+          { capability: BANK_REVIEW_CAPABILITY, proficiency: 1, coverage: 'medium', evidenceRefs: ['zhijian:roster'] },
+        ],
         // Bank internal experts: the real identity must never leave the org.
         ...(BANK_INTERNAL_ONLY_IDS.has(meta.id)
           ? { compliance: { ...expert.compliance, internalOnly: true } }
@@ -395,7 +454,11 @@ export function buildBankDomainPack(options: BuildBankPackOptions = {}): DomainP
     scenarios: BANK_SCENARIOS.map(scenario => bankScenarioV2(scenario, packVersion)),
     toolProviders: [], // provider runtime is Phase 2 — nothing asserted yet
     knowledgeProviders: bankKnowledgeProviders(packVersion),
-    domainKnowledge: [bankDomainKnowledgeManifest(packVersion), bank99wikiKnowledgeManifest(packVersion)],
+    domainKnowledge: [
+      bankDomainKnowledgeManifest(packVersion),
+      bank99wikiKnowledgeManifest(packVersion),
+      bankBrandKnowledgeManifest(packVersion),
+    ],
     methodPacks: [
       bankRetailMethodPack(packVersion),
       frameworkMethodPack(frameworkB, packVersion, 'bank'),

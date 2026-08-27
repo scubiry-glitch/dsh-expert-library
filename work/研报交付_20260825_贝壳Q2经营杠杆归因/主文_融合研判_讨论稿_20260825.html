@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>贝壳 Q2 经营杠杆归因：β 记账、α 应收，90 天差分核销</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "98wiki ｜ 智见 / 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<p><strong>融合讨论稿｜贝壳2026Q2经营杠杆归因：β 记账、α 应收，90 天差分核销</strong></p>
+<p><strong>主基调（据数据事实判定）：利润改善以市场 β 与低基数为主；组织/AI α 有先行证据但证据等级不足，新经营杠杆是待验证假说而非既成事实。</strong></p>
+<p><strong>一、关键性结论</strong></p>
+<p>2026Q2 利润近翻倍、利润率升至 14.6%，改善大头记在市场 β 账上。量化锚（专家估算，具体数字需核实）：行业研究·X 拆解，若 2025Q2 利润率基数约 10%，+4.6pct 中市场 β（单量+近两成×经营杠杆弹性 1.5-2 倍）约贡献 2.5-3pct，组织/AI α 约 1-1.5pct，其余为基数与一次性因素；行业研究·T 估 β 占六成上下。两份独立拆分方向一致。全部分析的锚点是"量升人平"剪刀差——上半年二手成交单量增长近两成而平台经纪人规模未同步扩大（财新 08-22，公开可核实），与 2015-16、2020-21 两轮"量升人增"的周期规律截然不同，这是 α 正在起作用的先行证据，也是判断新经营杠杆存在的唯一硬支撑。支撑 α 的三个数字——租赁样本人效约 3 单升至 5.6 单、零开单率由近 25% 降至不足 10%、客户管家转带看率 7.4% vs 大盘 5%——全部出自管理层 S 分享（08-21）的内部单源样本，公开渠道未获独立交叉验证；同店口径、单位线索成本、AI 调用成本/单、贡献利润率、城市复制率五项关键变量均未披露。裁决点只有一个：验证协议设定的 6 城 90 天差分（3 城上线盘级经营+Skill、3 城对照，控制市场成交增速后人效净提升不足 10% 或贡献利润不升即撤回 α 判断），四份研判一致认可。结论先行记账：利润翻倍按 β 入账，α 按应收款入账，90 天后凭差分核销。</p>
+<p><strong>二、关键事实及其变化</strong></p>
+<p>六组事实按证据强度排序：</p>
+<ol>
+<li>量（财新 08-22，可核实）：二手成交单量增长近两成、GTV 重回增长（36氪 08-23）。需要留意的是口径差异：另有报道称单量+18.6%、而二手交易金额同比降约 15.6%（exmoo 08-22），人民网 08-24 口径为单量+25%——单量升、金额降的组合指向以价换量，且不同媒体口径不可交叉相乘（行业研究·W）。基期为近年低点，增长接近"止跌回稳"政策脉冲的正常水平（行业研究·T）。</li>
+<li>利（搜狐/智通财经/新京报 08-22，可核实）：Q2 利润率 14.6%（贝壳-W 02423.HK），上半年净利润 38.79 亿元；利润近翻倍（TIKR 08-23）含显著低基数效应。抬升幅度远超单量增速，数学上必有每单成本下降或收入结构改善参与，不全是量增摊薄（行业研究·X）。</li>
+<li>人（财新 08-22，可核实）：经纪人规模未同步扩大。行业研究·T 补一层被忽略的 β——2021 年以来行业经纪人深度流失、供给收缩，"不扩张"延续的是出清后的幸存者结构，分母收缩本身抬高人均，不全是组织主动选择。</li>
+<li>效（管理层 S 分享 08-21，内部单源，具体数字需核实）：租赁样本人效约 3 单→5.6 单、零开单率近 25%→不足 10%。均值+87% 的改善中零开单率砍 15 个点，意味着主要来自"0 变 1"的尾部修复而非"3 变 6"的能力跃迁，平均数在此失效（行业研究·T）；样本范围、门店进出（同店口径）均未披露，存在系统性高估风险（行业研究·X）。</li>
+<li>获客（管理层 S 分享 08-21，内部单源，具体数字需核实）：客户管家 5-7 月承接 5 万+线索、转带看率 7.4% vs 大盘 5%（+48% 相对溢价）。5 万条相对平台月线索量占比很小，属试点规模（行业研究·X）；窗口恰是旺季+回暖段，优势会被 β 放大（行业研究·T）。</li>
+<li>外部确认：长江证券中报点评"效率持续兑现"（孙伟风/鲁俊，08-25）、大摩上调目标价（08-24）、彭永东业绩会"行业正从找房源进入做判断阶段"（08-22）。属确认性与叙事信息，不构成独立事实增量（行业研究·T/W 共识）。</li>
+</ol>
+<p><strong>三、归因分析</strong></p>
+<p>沿机制链逐环剥离：市场回暖→盘级拆分/人房客重配→零开单率下降→人效提升→固定成本摊薄→利润率。</p>
+<p>β 段（回暖→量增→摊薄）：人数不变、单量+约 20%，人均单量自然+约 20%，这部分先剔除，α 只能从剔除后的净人效提升里找（行业研究·W）。经营杠杆弹性 1.5-2 倍下，量增可解释利润率抬升的大部分（行业研究·X）。另有两层结构性 β：2025 年二手交易额占比约 48% 的结构性提升，让以二手为基本盘的平台吃到市场结构变化红利；二手回暖→置换链条启动→改善需求释放是 GTV 回升的底层机制（行业研究·T）。以价换量若持续，每单佣金变薄，对利润率传导打折（行业研究·X）。</p>
+<p>α 段（盘级拆分→零开单率→人效）：零开单率压降是四份研判一致认可的最可信组织 α 证据——市场 β 改变的是分母（客源变多、成交概率上升），能把"不开单的人"变成"开一单的人"，却无法把零开单率从近 25% 压到不足 10%，这个量级的分布改变需要机制性力量（单盘经营、人房客重配）（行业研究·W）。客户管家转带看率领先 48% 是 AI 承接线索的效率候选证据，成本未算清前，属毛利改善还是净利改善存疑（行业研究·W）。AI 获客须以可控单位线索成本实现才成立，否则贡献利润率不升反降（行业研究·T）。</p>
+<p>两个观测缺口需要补：其一，任务数据缺挂牌量与成交周期——若挂牌量增速高于成交增速、成交周期未明显缩短，则"流动性修复"成色不足，单量增长靠急售降价促动，结合"金额降 15.6%"的口径，此检验更为紧迫（行业研究·T）；其二，α 可复制性必然分层——盘级拆分的前提是单盘 GTV 足够大、盘源密度足够高，一线/强二线有经济性，低能级城市摊不薄成本，新经营杠杆大概率先在一线/强二线成立，三四线复制率天然偏低（行业研究·X）。城市复制率是终极判据：1-2 个样板城跑通是样板工程，3 城以上稳定复制才是真能力（行业研究·D/T 共识）。</p>
+<p><strong>四、收尾（洞察+展望+不确定性）</strong></p>
+<p>本季度最值得记录的变量不是 14.6% 的利润率，而是"量升人平"剪刀差是否可持续。若被多城验证，经纪行业增长模式将从劳动力扩张切换为人效扩张，成本函数从"人海规模"转向"组织资本"，贝壳估值逻辑从周期股切向效率股——这是行业级范式变化，不是季度波动（行业研究·T/X/W 共识）。值得强调的对照：行业研究·D 的乐观判断——利润率抬升约一半记 α 账、14.6% 是新中枢——本次未采纳为主基调，因其依据的人效与转带看率数据全部为内部单源。若 90 天差分通过且 AI 成本随量收敛，α 占比需上修，基调上调至"α 已显形"，乐观情形下利润率中枢有望从 10-12% 抬升至 13-15%（行业研究·X）。</p>
+<p>展望三个验证节点：①三季度财报——成交回落假设下利润率能否站住，这是第一关也是最残酷的压力测试：β 退潮后固定成本摊薄反转、利润率回吐，"α 是否还在"即见分晓（行业研究·W）；②6 城 90 天差分（约 2026Q4 出结果）——建议按能级配对（高能级组北京/上海/成都、中能级组武汉/西安/郑州），对照组同口径监测零开单率与人效防霍桑效应，判定用"同店 GTV/人"而非整体平均人效（行业研究·W/X 补充）；③AI 成本披露——调用成本/单是否随量收敛。三关皆过则经营杠杆叙事成立；第一关即破，本次利润翻倍重新归类为"低基数+市场回暖"的 β 行情，组织 α 回到试点重来（行业研究·W）。</p>
+<p>不确定性：①内部单源样本选择偏差——试点盘可能是优选盘，"机制做得好"还是"盘选得好"未分；②口径混用风险——财新单量、exmoo 金额、人民网 25%、TIKR 利润，不可交叉相乘；③AI 调用成本/单与同店口径未披露，α 净贡献无法量化；④政策脉冲（城中村改造货币化安置、收储）若驱动回暖，β 持续性存疑；⑤差分窗口若跨旺季尾部，季节性会污染净人效读数，建议差分期内同步观测挂牌量与成交周期作 β 旁证（行业研究·T）。把单季利润翻倍直接外推为全年趋势、把内部单源样本人效当作平台整体水平，是对低基数与单季数据的双重误读（行业研究·W 纠偏，全员认可）。</p>
+<hr>
+<p><strong>元信息</strong>：融合框架=通用四段式；主基调=β 为主、α 待验（据数据事实判定，α 证据均为内部单源且关键成本变量未披露）；参与研判=行业研究·T（挂牌量派）/行业研究·D（长期主义派）/行业研究·W（存量转型派）/行业研究·X（城市能级派）；数据口径=财新 08-22（单量、经纪人规模）、搜狐/智通财经/新京报 08-22（利润率 14.6%、净利 38.79 亿）、exmoo 08-22（单量+18.6%、金额-15.6%）、人民网 08-24（单量+25%）、36氪 08-23（GTV）、TIKR 08-23（利润近翻倍）、管理层 S 分享 08-21（人效/零开单率/客户管家，内部单源未获独立验证）、长江证券 08-25、大摩 08-24；量化拆分（+4.6pct 分解、β 六成）为专家估算；心智模型=经营杠杆弹性、同店口径、平均数失效（分布效应）、置换链条、城市复制率、挂牌量-成交周期检验。</p>
+</body>
+</html>

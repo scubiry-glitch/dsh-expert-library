@@ -1,0 +1,192 @@
+{
+  "manifestVersion": 1,
+  "generator": "pptfast preview",
+  "pptfastVersion": "0.20.0",
+  "title": "双平台行领导汇报",
+  "slide": {
+    "width": 1280,
+    "height": 720
+  },
+  "checks": {
+    "svg": "completed",
+    "pixels": "not-requested"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "page": 1,
+      "type": "cover",
+      "file": "001-cover.svg",
+      "slideId": "cover"
+    },
+    {
+      "id": "ch1",
+      "page": 2,
+      "type": "chapter",
+      "file": "002-chapter.svg",
+      "slideId": "ch1",
+      "findings": [
+        {
+          "code": "low-contrast",
+          "message": "text \"01\" has a contrast ratio of 1.60:1 against its background #FFC72C (needs 3:1) — choose a text or background color with more contrast"
+        }
+      ]
+    },
+    {
+      "id": "kpi",
+      "page": 3,
+      "type": "content",
+      "file": "003-content.svg",
+      "slideId": "kpi",
+      "findings": [
+        {
+          "code": "content-truncated",
+          "message": "text \"+…宁波银行·2026H1\" was truncated with an ellipsis — widen the layout, shorten the source content, or accept the cut if the tail wasn't essential"
+        },
+        {
+          "code": "content-truncated",
+          "message": "text \"+…宁波银行·2026H1\" was truncated with an ellipsis — widen the layout, shorten the source content, or accept the cut if the tail wasn't essential"
+        },
+        {
+          "code": "content-truncated",
+          "message": "text \"+…中收占比10.42%\" was truncated with an ellipsis — widen the layout, shorten the source content, or accept the cut if the tail wasn't essential"
+        },
+        {
+          "code": "content-truncated",
+          "message": "text \"1.3…上半年降39bp\" was truncated with an ellipsis — widen the layout, shorten the source content, or accept the cut if the tail wasn't essential"
+        }
+      ]
+    },
+    {
+      "id": "judgments",
+      "page": 4,
+      "type": "content",
+      "file": "004-content.svg",
+      "slideId": "judgments"
+    },
+    {
+      "id": "ch2",
+      "page": 5,
+      "type": "chapter",
+      "file": "005-chapter.svg",
+      "slideId": "ch2"
+    },
+    {
+      "id": "platforms",
+      "page": 6,
+      "type": "content",
+      "file": "006-content.svg",
+      "slideId": "platforms",
+      "findings": [
+        {
+          "code": "content-truncated",
+          "message": "text \"数字人力·…\" was truncated with an ellipsis — widen the layout, shorten the source content, or accept the cut if the tail wasn't essential"
+        },
+        {
+          "code": "content-truncated",
+          "message": "text \"17.6万家企业·20+服务·园区联动…\" was truncated with an ellipsis — widen the layout, shorten the source content, or accept the cut if the tail wasn't essential"
+        },
+        {
+          "code": "content-truncated",
+          "message": "text \"量子教育拟入驻·购课9折·3.0/4.0形态待…\" was truncated with an ellipsis — widen the layout, shorten the source content, or accept the cut if the tail wasn't essential"
+        }
+      ]
+    },
+    {
+      "id": "logic",
+      "page": 7,
+      "type": "content",
+      "file": "007-content.svg",
+      "slideId": "logic"
+    },
+    {
+      "id": "finance",
+      "page": 8,
+      "type": "content",
+      "file": "008-content.svg",
+      "slideId": "finance"
+    },
+    {
+      "id": "ch3",
+      "page": 9,
+      "type": "chapter",
+      "file": "009-chapter.svg",
+      "slideId": "ch3"
+    },
+    {
+      "id": "lessons",
+      "page": 10,
+      "type": "content",
+      "file": "010-content.svg",
+      "slideId": "lessons"
+    },
+    {
+      "id": "arch",
+      "page": 11,
+      "type": "content",
+      "file": "011-content.svg",
+      "slideId": "arch",
+      "findings": [
+        {
+          "code": "content-truncated",
+          "message": "text \"整合苏银生活月活与园区/招商渠道 · 聚合服务商\" was truncated with an ellipsis — widen the layout, shorten the source content, or accept the cut if the tail wasn't essential"
+        }
+      ]
+    },
+    {
+      "id": "loops",
+      "page": 12,
+      "type": "content",
+      "file": "012-content.svg",
+      "slideId": "loops"
+    },
+    {
+      "id": "ch4",
+      "page": 13,
+      "type": "chapter",
+      "file": "013-chapter.svg",
+      "slideId": "ch4"
+    },
+    {
+      "id": "pilot",
+      "page": 14,
+      "type": "content",
+      "file": "014-content.svg",
+      "slideId": "pilot",
+      "findings": [
+        {
+          "code": "out-of-bounds",
+          "message": "text \"场景A＝制造型培训代发闭环（组织侧）；场景B＝科\" falls outside the 1280×720 page (text [64,1346] y=688 outside 1280x720) — shorten the content, split the slide, or mark the element data-bleed if this is intentional bleed printing"
+        }
+      ]
+    },
+    {
+      "id": "acceptance",
+      "page": 15,
+      "type": "content",
+      "file": "015-content.svg",
+      "slideId": "acceptance"
+    },
+    {
+      "id": "risk",
+      "page": 16,
+      "type": "content",
+      "file": "016-content.svg",
+      "slideId": "risk"
+    },
+    {
+      "id": "decisions",
+      "page": 17,
+      "type": "content",
+      "file": "017-content.svg",
+      "slideId": "decisions"
+    },
+    {
+      "id": "ending",
+      "page": 18,
+      "type": "ending",
+      "file": "018-ending.svg",
+      "slideId": "ending"
+    }
+  ]
+}

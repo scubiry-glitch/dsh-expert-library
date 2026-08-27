@@ -216,18 +216,24 @@ test('ppt: more than 3 content experts fails at compile time', () => {
 
 // ── 4. Research report ──────────────────────────────────────────────────────
 
-test('report (multi): 梳理 → 研判(fan-out) → 融合成文 with dataLine embedded', () => {
+test('report (multi): 梳理 → 研判(fan-out) → 融合成文 → 渲染与生成 with dataLine embedded', () => {
   const result = compileCollab('collab.research-report',
     { topic: 'T', data: 'D', dataLine: '\n可用素材/数据（带口径）：\nD' },
     { 'role.researcher': ['researcher'], 'role.analyst': ['bk-004', 'bk-005'], 'role.writer': ['docs-coordinator'] },
   )
   const expanded = expand(result)
   if (!expanded) return
-  assert.deepEqual(expanded.tasks.map(task => task.id), ['t1', 't2', 't3', 't4'])
-  assert.deepEqual(expanded.tasks.map(task => task.subject), ['资料与数据梳理', '专家研判（bk-004）', '专家研判（bk-005）', '融合成文'])
-  assert.deepEqual(expanded.tasks.map(task => task.dependsOn), [[], ['t1'], ['t1'], ['t1', 't2', 't3']])
-  assert.deepEqual(expanded.tasks.map(task => task.assigneeExpertId), ['researcher', 'bk-004', 'bk-005', 'docs-coordinator'])
+  assert.deepEqual(expanded.tasks.map(task => task.id), ['t1', 't2', 't3', 't4', 't5'])
+  assert.deepEqual(expanded.tasks.map(task => task.subject), ['资料与数据梳理', '专家研判（bk-004）', '专家研判（bk-005）', '融合成文', '渲染与生成（HTML5 → PDF/PPT → 视频）'])
+  assert.deepEqual(expanded.tasks.map(task => task.dependsOn), [[], ['t1'], ['t1'], ['t1', 't2', 't3'], ['t4']])
+  assert.deepEqual(expanded.tasks.map(task => task.assigneeExpertId), ['researcher', 'bk-004', 'bk-005', 'docs-coordinator', 'docs-coordinator'])
   assert.equal(expanded.tasks[1]?.description, '以本人立场独立研判：核心判断 → 关键事实与分析（数字带口径）→ 展望与不确定性。主题：T\n可用素材/数据（带口径）：\nD')
+  // Render node: three skills + completion checkpoint bound.
+  const render = expanded.tasks[4]
+  assert.ok(render?.description.includes('finesse-ui'))
+  assert.ok(render?.description.includes('pptfast'))
+  assert.ok(render?.description.includes('video-shotcraft'))
+  assert.ok(render?.description.includes('等待用户确认'))
 })
 
 test('report (single expert): variant template drops the analyst task entirely', () => {

@@ -1,0 +1,48 @@
+{
+  "project": "租赁平台安全能力_20260823",
+  "rendered_at": "2026-08-23",
+  "files": {
+    "研报_租赁平台安全能力_20260823.html": {
+      "bytes": 22406,
+      "sha256": "46dc7fa8feb1c0e62f2cb625f327bb32d27a9b67a382c13e1dd476c72d1c6b99"
+    },
+    "研报_租赁平台安全能力_20260823.pdf": {
+      "bytes": 454069,
+      "sha256": "e54f5cf0a304198c7876cf07e3ea28c5cf0275e0ae0c81fbf8cd19641ba4ae64",
+      "pages": 6
+    },
+    "租赁平台安全能力_20260823.pptx": {
+      "bytes": 71947,
+      "sha256": "a2edd26255850104cedc0a422d3a265831cfba3fb775224cc9d1cfbeb07095c7",
+      "slides": 14
+    },
+    "video.mp4": {
+      "bytes": 11563383,
+      "sha256": "e8f6269afc65938578c8ff53adca4afeb5749e2c64fc740aae4425fb04076d70",
+      "duration_s": 58,
+      "resolution": "1280x720@30fps"
+    }
+  },
+  "render_checks": {
+    "html_overflow_horizontal": "none (playwright DOM scan)",
+    "pdf_footer_visible": "6/6 pages (98wiki ｜ 智见 / 行业研究报告)",
+    "pdf_blank_pages": 0,
+    "pdf_cover_kpi_present": true,
+    "pdf_last_page_sources": true,
+    "pptfast_validate": "OK, 0 warnings",
+    "pptfast_audit": "0 findings (14 pages, no truncation/overflow/overlap)",
+    "video_qa": "5 frames sampled (4s/20s/33s/47s/55s): luma 57.9/54.5/39.0/56.1/56.3 varies with scene structure (cover/title/KPI/facts/outro); Remotion 4.0.484 h264 crf20, 58.0s"
+  },
+  "screenshots": [
+    "render_check_p01.png",
+    "render_check_full.png",
+    "render_check_pdf_p1.png",
+    "render_check_pdf_p2.png",
+    "render_check_pdf_p4.png",
+    "qa_v_4.png",
+    "qa_v_20.png",
+    "qa_v_33.png",
+    "qa_v_47.png",
+    "qa_v_55.png"
+  ]
+}

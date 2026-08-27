@@ -354,7 +354,7 @@ test('compiler golden: loaded-pack templates compile to the same ExecutionPlan d
     assert.equal(fromDisk.ok, fromMemory.ok, `${templateId}: ok must match`)
     if (fromDisk.ok) {
       assert.equal(fromDisk.plan.digest, fromMemory.plan.digest, `${templateId}: digest must be identical`)
-      assert.deepEqual(fromDisk.plan.tasks.map(t => t.id), ['t1', 't2'])
+      assert.deepEqual(fromDisk.plan.tasks.map(t => t.id), ['t1', 't2', 't3'])
       assert.deepEqual(fromDisk.plan.roster.filter(m => m.slotId === 'role.reviewer').map(m => m.expertId), ['bk-024', 'bk-004'])
     } else {
       assert.equal(fromDisk.errorKind, fromMemory.errorKind, `${templateId}: errorKind must match`)

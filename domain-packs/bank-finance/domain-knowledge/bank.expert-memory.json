@@ -45,8 +45,8 @@
   "snapshot": {
     "id": "bank-v1-2026-08-23",
     "takenAt": "2026-08-23T00:00:00Z",
-    "digest": "08b30ead27aa6b107f1e853cb20cb4e7435dd5c62f4cd073209fc6b58e6f9234",
-    "recordCount": 4
+    "digest": "15a90248122133df8e770b7e44126ef9f378c48e152d3596ef62c0472b73fd80",
+    "recordCount": 6
   },
   "retrievalProfiles": [
     {

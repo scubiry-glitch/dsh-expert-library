@@ -1,0 +1,114 @@
+{
+  "manifestVersion": 1,
+  "generator": "pptfast preview",
+  "pptfastVersion": "0.20.0",
+  "title": "租赁平台安全能力_20260823",
+  "slide": {
+    "width": 1280,
+    "height": 720
+  },
+  "checks": {
+    "svg": "completed",
+    "pixels": "not-requested"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "page": 1,
+      "type": "cover",
+      "file": "001-cover.svg",
+      "slideId": "cover"
+    },
+    {
+      "id": "conclusion",
+      "page": 2,
+      "type": "content",
+      "file": "002-content.svg",
+      "slideId": "conclusion"
+    },
+    {
+      "id": "boundary",
+      "page": 3,
+      "type": "content",
+      "file": "003-content.svg",
+      "slideId": "boundary"
+    },
+    {
+      "id": "evidence",
+      "page": 4,
+      "type": "content",
+      "file": "004-content.svg",
+      "slideId": "evidence"
+    },
+    {
+      "id": "effective",
+      "page": 5,
+      "type": "content",
+      "file": "005-content.svg",
+      "slideId": "effective"
+    },
+    {
+      "id": "electrical",
+      "page": 6,
+      "type": "content",
+      "file": "006-content.svg",
+      "slideId": "electrical"
+    },
+    {
+      "id": "drivers",
+      "page": 7,
+      "type": "content",
+      "file": "007-content.svg",
+      "slideId": "drivers"
+    },
+    {
+      "id": "formula",
+      "page": 8,
+      "type": "content",
+      "file": "008-content.svg",
+      "slideId": "formula"
+    },
+    {
+      "id": "solution",
+      "page": 9,
+      "type": "content",
+      "file": "009-content.svg",
+      "slideId": "solution"
+    },
+    {
+      "id": "protocol",
+      "page": 10,
+      "type": "content",
+      "file": "010-content.svg",
+      "slideId": "protocol"
+    },
+    {
+      "id": "outlook",
+      "page": 11,
+      "type": "content",
+      "file": "011-content.svg",
+      "slideId": "outlook"
+    },
+    {
+      "id": "risks",
+      "page": 12,
+      "type": "content",
+      "file": "012-content.svg",
+      "slideId": "risks"
+    },
+    {
+      "id": "appendix",
+      "page": 13,
+      "type": "content",
+      "file": "013-content.svg",
+      "slideId": "appendix"
+    },
+    {
+      "id": "ending",
+      "page": 14,
+      "type": "ending",
+      "file": "014-ending.svg",
+      "slideId": "ending"
+    }
+  ]
+}

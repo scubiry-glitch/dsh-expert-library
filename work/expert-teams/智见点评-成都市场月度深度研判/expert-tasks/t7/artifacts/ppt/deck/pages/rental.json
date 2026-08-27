@@ -1,0 +1,24 @@
+{
+  "components": [
+    {
+      "type": "kpi_cards",
+      "items": [
+        { "value": "12,587", "unit": "套", "label": "租赁成交（yoy +6.8%）", "delta": "up", "icon": "key-round" },
+        { "value": "2,468", "unit": "元/月", "label": "套均租金（yoy -1.4%）", "delta": "down", "icon": "banknote" },
+        { "value": "25,567", "unit": "套", "label": "租赁新增挂牌（+1.3%）", "delta": "up", "icon": "badge-plus" },
+        { "value": "2.4-2.6", "unit": "%", "label": "租金回报率（年租÷套均总价）", "delta": "flat", "icon": "percent" }
+      ]
+    },
+    {
+      "type": "bullets",
+      "style": "default",
+      "items": [
+        "买卖与租赁背离：二手买卖收缩，租赁成交 +6.8% 逆势上行",
+        "租金稳中微降（-1.4%），出租效率未见恶化",
+        "回报率 2.4%-2.6% 低位徘徊：观察是否随价格回落而上行（关注指标）"
+      ]
+    }
+  ],
+  "footnote": "租赁数据至 2026-07，政研通 zyt 口径",
+  "notes": "租赁市场相对健康：量升价稳，回报率低位。是买卖市场的对冲面。"
+}

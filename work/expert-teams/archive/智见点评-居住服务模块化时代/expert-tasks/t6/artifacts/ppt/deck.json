@@ -1,0 +1,483 @@
+{
+  "version": "4",
+  "filename": "智见点评-居住服务模块化时代-讨论稿",
+  "narrative": "boardroom-report",
+  "theme": {
+    "id": "consulting"
+  },
+  "meta": {
+    "organization": "智见点评",
+    "authors": [
+      {
+        "name": "智见点评 · 融合研判",
+        "role": "讨论稿 · 四位专家匿名标注 Y/C/L/X",
+        "org": "智见"
+      }
+    ],
+    "date": "2026-08",
+    "version": "讨论稿 v1",
+    "confidentiality": "internal",
+    "copyright": "98wiki ｜ 智见 / 行业研究报告"
+  },
+  "assets": {
+    "images": {}
+  },
+  "seed": 20260825,
+  "slides": [
+    {
+      "type": "cover",
+      "id": "cover",
+      "heading": "居住服务进入「专业角色可拆分、可验证、可单独付费」时代？",
+      "components": [],
+      "notes": "开场：这是智见点评的融合研判讨论稿，主题是居住服务是否进入专业角色可拆分、可验证、可单独付费的时代。四位数研专家匿名标注 Y/C/L/X。",
+      "layout": "left-anchor"
+    },
+    {
+      "type": "content",
+      "id": "keynote",
+      "beat": "anchor",
+      "heading": "主基调：会，而且已经启动",
+      "components": [
+        {
+          "type": "verdict_banner",
+          "text": "会，而且已经启动。依据不是概念推演，是三组实证。",
+          "tone": "positive",
+          "icon": "sparkles"
+        },
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "5",
+              "unit": "万+",
+              "label": "客户管家承接线索 2026.5–7（内部样本单源）",
+              "delta": "up",
+              "icon": "users"
+            },
+            {
+              "value": "7.4",
+              "unit": "%",
+              "label": "商机转带看率 · 客户管家 vs 大盘 5.0%",
+              "delta": "up",
+              "icon": "trending-up"
+            },
+            {
+              "value": "14.6",
+              "unit": "%",
+              "label": "2026Q2 利润率（搜狐 08-22）",
+              "delta": "up",
+              "icon": "percent"
+            }
+          ]
+        }
+      ],
+      "footnote": "单量同比增近两成而人员未扩（财新）；GTV 重回增长、利润近翻倍（36氪/TIKR）｜ Y/C/L/X 方向一致：价值锚点从信息差移向决策差",
+      "notes": "主基调结论先行：角色拆分已在发生，可单独付费尚未全面成立，中间隔着分账重构与责任界定。三组实证分别来自客户管家试点、平台量价背离、外部制度挤压。",
+      "layout": "stacked-poster"
+    },
+    {
+      "type": "content",
+      "id": "kpi",
+      "beat": "dense",
+      "arrangement": "kpi_focus",
+      "heading": "五组关键数字（均带口径）",
+      "components": [
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "5",
+              "unit": "万+",
+              "label": "承接线索（5–7月）",
+              "delta": "up",
+              "icon": "users"
+            },
+            {
+              "value": "7.4",
+              "unit": "%",
+              "label": "客户组转带看率",
+              "delta": "up",
+              "icon": "trending-up"
+            },
+            {
+              "value": "14.6",
+              "unit": "%",
+              "label": "Q2 利润率",
+              "delta": "up",
+              "icon": "percent"
+            },
+            {
+              "value": "≈2",
+              "unit": "×",
+              "label": "利润近翻倍",
+              "delta": "up",
+              "icon": "rocket"
+            }
+          ]
+        }
+      ],
+      "footnote": "转带看率 vs 大盘 5.0%（相对约四成）；GTV 重回增长（36氪/TIKR）；Q2 单量增近两成、人员未扩（财新）；客户管家为单源内部样本，以 2 万线索随机对照为准",
+      "notes": "五组数字均带口径与来源。7.4% vs 5.0% 的相对提升约四成，但只验证了转带看一段，带看转签、客诉、毛利尚未验证。",
+      "layout": "quiet-frame"
+    },
+    {
+      "type": "content",
+      "id": "bounds",
+      "heading": "边界条件：基调下修的四个前提",
+      "components": [
+        {
+          "type": "row_cards",
+          "items": [
+            {
+              "icon": "scale",
+              "title": "分账与责任两道门槛（Y）",
+              "text": "可单独付费尚未全面成立；ACN 需从房客源分佣升级为角色模块分账，责任界定先行。"
+            },
+            {
+              "icon": "shield-check",
+              "title": "三个制度条件（L）",
+              "text": "结果可验证 · 分账可执行 · 责任可追偿；窗口期约 12–18 个月（研判推断）。"
+            },
+            {
+              "icon": "gavel",
+              "title": "从业制度迟到补课（X）",
+              "text": "只拆责任不建制度，会把一人包办的模糊责任升级为无人负责的碎片化甩锅。"
+            },
+            {
+              "icon": "link",
+              "title": "不破坏 ACN 协同（C）",
+              "text": "模块结果必须可验证、付费与成交脱钩可单列，否则模块化退化为变相提佣。"
+            }
+          ]
+        }
+      ],
+      "footnote": "偏离观点降级规则：任一条件不成立，主基调需下修。匿名标注：Y 渠道崛起派 · C 存量统筹派 · L 制度派 · X 海外监管派",
+      "notes": "四条边界条件来自四位专家，是基调下修的触发条件。",
+      "layout": "tone-adaptive-content"
+    },
+    {
+      "type": "content",
+      "id": "fact-supply",
+      "heading": "事实一：供给侧角色开始制度性分化",
+      "components": [
+        {
+          "type": "chart",
+          "chart_type": "bar",
+          "direction": "vertical",
+          "axes": {
+            "y_title": "商机转带看率（%）",
+            "show_grid": true
+          },
+          "series": [
+            {
+              "name": "商机转带看率",
+              "data": [
+                {
+                  "x": "客户管家",
+                  "y": 7.4
+                },
+                {
+                  "x": "同期大盘",
+                  "y": 5
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "tag_row",
+          "title": "模块链",
+          "items": [
+            "客户管家",
+            "懂盘者",
+            "带看撮合",
+            "签约",
+            "报告",
+            "装修",
+            "租赁管家"
+          ],
+          "emphasis": "first"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "包办经纪人首次拆为「咨询角色 + 履约角色」（L）",
+            "收入与成交脱钩，买方第一次可为决策服务单独付费（C）"
+          ]
+        }
+      ],
+      "footnote": "单源内部样本、选择效应未排除、仅验证转带看一段；转签/客诉/毛利未验证，不可外推",
+      "notes": "客户管家是第一个可观测样本：咨询与履约首次分家。柱状图高度按真实数值归一。",
+      "layout": "image-lead-split"
+    },
+    {
+      "type": "content",
+      "id": "fact-platform",
+      "heading": "事实二：平台端量价背离",
+      "components": [
+        {
+          "type": "chart",
+          "chart_type": "bar",
+          "direction": "vertical",
+          "axes": {
+            "y_title": "2026Q2 同比（约值 %）",
+            "show_grid": true
+          },
+          "series": [
+            {
+              "name": "2026Q2 同比（约值）",
+              "data": [
+                {
+                  "x": "二手成交单量",
+                  "y": 20
+                },
+                {
+                  "x": "经纪人规模",
+                  "y": 0
+                },
+                {
+                  "x": "利润",
+                  "y": 100
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "行业第一次靠「效率」而非「规模」兑现增长（C）",
+            "模块化分工的财务镜像：同样线索池、更少的人、更结构化的服务（L）",
+            "人均效能替代人海扩张，为「少而精」专业者供给创造财务前提（X）"
+          ]
+        }
+      ],
+      "footnote": "「近两成 / 近翻倍」为公开报道表述，图中按 ≈+20% / ≈+100% 归一示意，非精确值（研判推断）",
+      "notes": "量价背离是本轮研判的核心财务证据：单量增长近两成，经纪人规模没有同步扩大，利润近翻倍。",
+      "layout": "bento-panel"
+    },
+    {
+      "type": "content",
+      "id": "fact-external",
+      "heading": "事实三：外部制度环境挤压信息租金",
+      "components": [
+        {
+          "type": "timeline",
+          "layout": "horizontal",
+          "milestones": [
+            {
+              "date": "07-31",
+              "title": "青岛通报 22 家中介",
+              "desc": "合规端"
+            },
+            {
+              "date": "08-13",
+              "title": "深圳国企零中介费平台",
+              "desc": "价格端",
+              "highlight": true
+            },
+            {
+              "date": "08-19",
+              "title": "新华社资金协同治理",
+              "desc": "履约端"
+            },
+            {
+              "date": "08-22",
+              "title": "财新：单量增近两成",
+              "desc": "平台端"
+            },
+            {
+              "date": "08-23",
+              "title": "36氪/TIKR：GTV 重回增长",
+              "desc": "平台端"
+            },
+            {
+              "date": "08-24",
+              "title": "成都租房官方避坑",
+              "desc": "信息端"
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "价格端、合规端、履约端、信息端四方挤压",
+            "静态房源信息正在公共化、廉价化，捆绑定价里的信息费被外部力量归零（L）"
+          ]
+        }
+      ],
+      "footnote": "证据窗：2025-08-25 — 2026-08-25",
+      "notes": "外部信号时间线：监管与公共平台同步压缩信息差生存空间。",
+      "layout": "banner-heading"
+    },
+    {
+      "type": "content",
+      "id": "why",
+      "beat": "dense",
+      "heading": "归因：为什么是此刻",
+      "components": [
+        {
+          "type": "bullets",
+          "items": [
+            "信息成本坍塌：静态信息边际成本趋零，靠信息差吃饭的角色被压缩（L）",
+            "决策复杂度上升：决策支持难被 AI 平权；家庭 65% 资产在房子，「买得对」才是问题（Y）",
+            "旧模式不可验证：多重委托+双向收费+结果捆绑；海外仅在可拆、可验、可追前提下拆分（X）",
+            "内部条件具备：ACN 六环节自然延伸；14.6% 利润率提供分账改革空间（Y）"
+          ],
+          "style": "numbered"
+        },
+        {
+          "type": "tag_row",
+          "title": "海外分级持证对照",
+          "items": [
+            "香港分级发牌",
+            "台湾签章负责",
+            "新加坡CEA分级",
+            "德州TREC两级+赔偿基金",
+            "北卡BIC督导"
+          ],
+          "emphasis": "none"
+        }
+      ],
+      "footnote": "海外制度只允许「可拆、可验、可追」前提下的拆分，是模块化的制度模板而非障碍",
+      "notes": "四因叠加：信息成本坍塌是最底层变量，决策复杂度是需求侧推力，旧模式不可验证是制度根源，ACN 是内部条件。",
+      "layout": "two-column"
+    },
+    {
+      "type": "content",
+      "id": "chain",
+      "beat": "anchor",
+      "heading": "机制链：模块化如何自我强化",
+      "components": [
+        {
+          "type": "steps",
+          "items": [
+            {
+              "title": "静态信息贬值",
+              "text": "信息费被外部力量归零"
+            },
+            {
+              "title": "决策复杂度上升",
+              "text": "顾问价值升值"
+            },
+            {
+              "title": "专业角色拆分",
+              "text": "咨询 × 履约 × 模块，客户管家为首个样本"
+            },
+            {
+              "title": "模块结果可验证",
+              "text": "过程透明、责任可溯"
+            },
+            {
+              "title": "分账/付费与专业者供给",
+              "text": "与成交脱钩、可单列；职业化正反馈"
+            }
+          ]
+        }
+      ],
+      "footnote": "量化口径建议：模块渗透率 · 建议采纳率 · 删选项后满意度 · 转带看/带看转签 · 客诉 · 复购 · 模块贡献毛利 · 协同成本",
+      "notes": "机制链从信息贬值出发，经决策复杂度、角色拆分、结果可验证，最终落到分账付费与专业者供给的正反馈。",
+      "layout": "split-band"
+    },
+    {
+      "type": "content",
+      "id": "insight",
+      "heading": "洞察：拆的不是人，是责任",
+      "components": [
+        {
+          "type": "row_cards",
+          "items": [
+            {
+              "icon": "scale",
+              "title": "拆的不是人，是责任（L）",
+              "text": "收费从结果佣金部分转向过程服务费；行为模式从居间向委托迁移。"
+            },
+            {
+              "icon": "badge-check",
+              "title": "终点不是去中介，是经纪职业化（C）",
+              "text": "收入与单次成交脱钩后，职业稳定性与专业积累才形成正反馈。"
+            },
+            {
+              "icon": "route",
+              "title": "从业者只有两条出路（Y）",
+              "text": "成为懂盘者式的深度专业者，或成为模块化链条上的执行节点。"
+            }
+          ]
+        }
+      ],
+      "footnote": "经纪行业正在变成重服务业：这是模块化时代的行业级结论",
+      "notes": "三位专家的洞察收敛到同一个判断：模块化不是去中介，而是重新定义专业与责任的边界。",
+      "layout": "image-lead-split"
+    },
+    {
+      "type": "content",
+      "id": "outlook",
+      "beat": "dense",
+      "heading": "展望：短中长期路线图",
+      "components": [
+        {
+          "type": "callout",
+          "variant": "info",
+          "text": "短期验证纪律：2 万条线索随机对照（客户管家组 vs 传统直分组，60 天，转化/客诉/NPS/贡献毛利）；转化提升但毛利或满意度不升，则不扩张。",
+          "icon": "list-checks"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "短期（12–18 个月，研判推断）：增「删选项后满意度」检验与「归责清晰度」一票否决（Y/X）",
+            "中期：ACN 从一单分蛋糕到服务链分账；3 城试点（自营/加盟/混合）；先增值后核心、卖方先于买方（Y）"
+          ]
+        }
+      ],
+      "footnote": "长期：二手是主战场（链条长、低频、决策复杂，L）；一手受渠道分销约束。责任部门：智见牵头，客户产品/ACN规则/财务分账/法务合规设计 3 城试点",
+      "notes": "路线图：短期验证、中期分账制度、长期主战场。纪律优先于扩张。",
+      "layout": "banner-heading"
+    },
+    {
+      "type": "content",
+      "id": "risks",
+      "heading": "不确定性：四点风险",
+      "components": [
+        {
+          "type": "bullets",
+          "items": [
+            "R1 单源样本：7.4% vs 5% 选择效应未排除，随机对照前不得外推（四位共识）",
+            "R2 协同成本：转带看漏单、责任扯皮是最大暗礁，法务与 ACN 规则先行（L）",
+            "R3 AI 平权：可能压缩懂盘者中间层，价值锚点放决策与履约而非信息（L）",
+            "R4 零中介费扩大 × 监管缺位：试点预留毛利安全垫（Y）；服务费定价与责任界定无规则（X）"
+          ]
+        }
+      ],
+      "footnote": "政策该管信息披露、资金监管、责任划分；把服务费压到零只会消灭专业化供给（L）",
+      "notes": "四点不确定性：样本外推纪律是共识底线，协同成本是最大运营暗礁。",
+      "layout": "quiet-frame"
+    },
+    {
+      "type": "content",
+      "id": "caliber",
+      "heading": "数据口径与来源",
+      "components": [
+        {
+          "type": "bullets",
+          "items": [
+            "数据来源：贝壳S分享 · 财新 · 搜狐 · 36氪 · TIKR · 新华社 · 深圳国企 · 青岛 · 成都 · 内部材料（多源）",
+            "口径：客户管家为单源内部样本，以 2 万线索随机对照为准；约/≈为表述换算，研判推断为估计",
+            "时段：2026Q2 及 2026 年 5–7 月；证据窗 2025-08-25 — 2026-08-25；区域：全国多城"
+          ],
+          "style": "divided"
+        }
+      ],
+      "footnote": "匿名标注：Y渠道崛起 · C存量统筹 · L制度派 · X海外监管 ｜ 心智模型：渠道/存量/制度/海外 ｜ 内部密度 N=81 ｜ S=186.6 ｜ L=5 ｜ R=8 ｜ 正式稿去除匿名标注",
+      "notes": "所有数字带口径与来源；预测类结论标注研判推断。",
+      "layout": "two-column"
+    },
+    {
+      "type": "ending",
+      "id": "ending",
+      "heading": "智见点评 · 讨论稿交付",
+      "components": [],
+      "notes": "收尾：讨论稿交付，等待用户确认是否继续（视频精修 / PPT 调整 / 转正式稿）。",
+      "layout": "tone-adaptive-ending"
+    }
+  ]
+}

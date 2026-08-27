@@ -1,0 +1,9 @@
+{
+  "taskId": "t15",
+  "status": "completed",
+  "attempt": 1,
+  "output": "已修复 P5「优势 4 · 深度」页截图布局：截图右侧占满页高、原内容向左压缩（原路径覆盖，9 页结构不变）。目录：/root/zhijian/dsh-expert-library/work/研报交付_20260825_贝壳优势_合作前提/\n- 贝壳优势_合作前提_分页版.html 新 sha256=6c2b53274891ce743ffe2f4bdeaf087dcb730c47b6bfe38e37f853dc779c402f（旧 cbcf3f0c…708723）\n- Designer_渲染检查记录.md 追加第 10 节「v5 深度页截图布局修复」；_check/page-1..9.png + deck-full-1440.png 重截\n布局改动：P5 改双栏——`.depth-split{grid-template-columns:minmax(0,1fr) minmax(0,38%)}`，左侧 61% 放原内容（五维表 11px 紧凑 / harness 4 卡 / 协作流＋核心表述 / 结论卡），右侧截图栏占满页高（`.shot.tall` flex 列 + `img{flex:1;object-fit:contain}` 防变形，保留 hairline 边框/圆角/figcaption）；实测 1440×900 图框 448×619 占满、图片 contain 不变形；五维表 min-width 720→680 消除桌面左栏 2px 横滚；≤1024px 截图降为下方通栏（220px）、≤720px 140px（原行为）。\n检查结果：9 页 × 5 视口（1440/1280/1366/390/320）overflowY 全 0（45 断言）；桌面 tableScroll=false、移动端容器内横滚为设计行为；页点第 5 点直达「优势 4 · 深度」、End→9/9；reduced-motion 通过；console/pageerror 0。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787646253619
+}

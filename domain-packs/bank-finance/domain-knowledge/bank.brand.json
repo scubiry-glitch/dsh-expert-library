@@ -1,0 +1,56 @@
+{
+  "id": "bank.brand",
+  "version": "1.0.0",
+  "schemaVersion": 2,
+  "domain": "banking.jiangsu.visual",
+  "boundary": "江苏银行域视觉规范（蓝金变体）：主蓝 #2d5bd8、深蓝 #2447b8、金 #c98a2e（金文字压深 #8a5a14 保对比度）、tinted 底 #eef1f8 系；对应 finesse-ui Set 9 Cobalt Trust（product-palettes.md §4：--accent:#2D5BD8、--accent-2:#E08A2E——任务口径以 #2d5bd8/#c98a2e 为准，Set 9 的 #E08A2E 仅参考）；语义色（绿/红）与品牌色分离；对比度下限 4.5:1。渲染银行域页面须先读本声明，不再依赖任务文本口述色值。",
+  "ontology": {
+    "entities": [
+      {
+        "id": "brand-color",
+        "description": "品牌主色/深色/金色/金文字压深/tinted 底"
+      },
+      {
+        "id": "semantic-color",
+        "description": "语义色（绿/红）与品牌色分离"
+      },
+      {
+        "id": "finesse-set9",
+        "description": "finesse-ui product-palettes Set 9 Cobalt Trust 参考值"
+      }
+    ],
+    "relations": [
+      {
+        "id": "brand-maps-to-finesse",
+        "from": "brand-color",
+        "to": "finesse-set9",
+        "description": "品牌色映射到 finesse Set 9 参考值"
+      }
+    ]
+  },
+  "collections": [
+    {
+      "id": "visual-spec",
+      "root": "domain-knowledge",
+      "format": "manifest",
+      "description": "品牌与视觉规范声明（boundary 文本即规范本体）"
+    }
+  ],
+  "snapshot": {
+    "id": "bank-brand-blue-gold-2026-08-25",
+    "takenAt": "2026-08-23T00:00:00Z",
+    "digest": "6c84b6935453178c87978e6432b32ddc4eec4b0dd3708f208c7c3ac20c7563c9",
+    "recordCount": 1
+  },
+  "retrievalProfiles": [
+    {
+      "id": "full-read",
+      "method": "full-read"
+    }
+  ],
+  "policies": {
+    "citation": "optional",
+    "freshness": "static",
+    "access": "readonly"
+  }
+}

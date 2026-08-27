@@ -1,0 +1,62 @@
+{
+  "id": "beike-bluegold",
+  "label": "贝壳蓝金 · Beike Blue & Gold",
+  "style": {
+    "colors": {
+      "bg": "#EDF0F6",
+      "surface": "#FFFFFF",
+      "panel": "#F4F6FA",
+      "primary": "#1D2F5E",
+      "accent": "#9A6A18",
+      "text": "#121A2B",
+      "muted": "#5C6A82",
+      "border": "#DDE2E9",
+      "cardStroke": "#E4E9F0",
+      "chartPalette": [
+        "#2D5BD8",
+        "#B97A1E",
+        "#7A8698",
+        "#1D2F5E",
+        "#2F7A55"
+      ]
+    },
+    "fonts": {
+      "heading": [
+        "Microsoft YaHei",
+        "PingFang SC",
+        "Noto Sans CJK SC",
+        "sans-serif"
+      ],
+      "body": [
+        "Microsoft YaHei",
+        "PingFang SC",
+        "Noto Sans CJK SC",
+        "sans-serif"
+      ]
+    },
+    "shape": {
+      "radius": 12
+    },
+    "id": "beike-bluegold",
+    "defaultBackgrounds": {
+      "cover": {
+        "kind": "gradient",
+        "from": "#E8EDF6",
+        "to": "#F8FAFD"
+      },
+      "chapter": {
+        "kind": "color",
+        "value": "#EDF0F6"
+      },
+      "content": {
+        "kind": "color",
+        "value": "#EDF0F6"
+      },
+      "ending": {
+        "kind": "gradient",
+        "from": "#E8EDF6",
+        "to": "#F8FAFD"
+      }
+    }
+  }
+}

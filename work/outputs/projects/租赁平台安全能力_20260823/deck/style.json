@@ -1,0 +1,13 @@
+{
+  "colors": {
+    "bg": "#f4f6f9",
+    "surface": "#ffffff",
+    "panel": "#eef3f8",
+    "primary": "#1a3a5c",
+    "accent": "#c9a96e",
+    "text": "#1f2733",
+    "muted": "#5b6570",
+    "border": "#d8dfe8",
+    "chartPalette": ["#1a3a5c", "#c9a96e", "#5b8db8", "#8fa3c8"]
+  }
+}

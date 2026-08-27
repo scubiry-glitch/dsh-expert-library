@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>南京江北新区「政府+贝壳」合资收储可行性 · 融合研判（正式稿）</title>
+<style>
+/* ============================================================
+   finesse-ui · product register · 贝壳蓝金 (Cobalt Trust + Gold)
+   token contract — no raw hex outside :root
+   ============================================================ */
+:root{
+  --page:#edf0f6; --bg:#ffffff; --panel-2:#f4f6fa;
+  --border:rgba(20,32,56,.08); --border-strong:rgba(20,32,56,.14);
+  --ink-1:#121a2b; --ink-2:#3a465c; --ink-3:#69768c;
+  --accent:#2D5BD8; --accent-2:#C98A2E; --accent-soft:rgba(45,91,216,.10);
+  --accent-2-soft:rgba(201,138,46,.12);
+  --accent-2-deep:#B97A1E; --accent-2-ink:#8A5A14; --slate:#7A8698;
+  --on-accent:#ffffff; --on-gold:#1c1507;
+  --glow:rgba(45,91,216,.30);
+  --up:#2F7A55; --down:#C0453C; --warn:#8F5E10;
+  --shadow:0 1px 3px rgba(20,34,64,.06);
+  --shadow-lg:0 40px 90px -50px rgba(20,34,64,.35);
+  --r:20px; --r-sm:12px; --r-lg:32px;
+  --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--page);
+  color:var(--ink-2);
+  font-family:var(--font-ui);
+  font-size:15px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+.page{
+  max-width:1080px; margin:26px auto 60px;
+  background:var(--bg);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+  overflow:hidden;
+  position:relative;
+}
+.page::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:220px;
+  background:radial-gradient(420px 240px at 92% -12%, rgba(45,91,216,.10), transparent 62%),
+             radial-gradient(300px 200px at 6% -8%, rgba(201,138,46,.08), transparent 60%);
+  pointer-events:none;
+}
+.wrap{padding:0 52px;}
+
+/* ---------- masthead ---------- */
+.masthead{padding:56px 52px 28px; position:relative;}
+.kicker{
+  display:flex; align-items:center; gap:10px;
+  font-size:12px; font-weight:700; letter-spacing:.14em; color:var(--accent);
+}
+.kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-2);}
+h1{
+  margin-top:14px; font-size:30px; line-height:1.32; letter-spacing:-.01em;
+  color:var(--ink-1); font-weight:800; text-wrap:balance;
+}
+h1 .gold{color:var(--accent-2);}
+.subtitle{margin-top:10px; font-size:15px; color:var(--ink-3);}
+.meta{
+  margin-top:22px; display:flex; flex-wrap:wrap; gap:8px 0;
+  font-size:12.5px; color:var(--ink-3);
+  border-top:1px solid var(--border); padding-top:16px;
+}
+.meta b{color:var(--ink-2); font-weight:600;}
+.meta .sep{color:var(--border-strong); margin:0 14px;}
+
+/* ---------- hero conclusion ---------- */
+.hero{
+  margin:26px 52px 0; border-radius:var(--r);
+  background:linear-gradient(135deg,#15213f 0%,#1d2f5e 55%,#27427f 100%);
+  color:#eef2fb; padding:30px 32px;
+  position:relative; overflow:hidden;
+}
+.hero::after{
+  content:""; position:absolute; right:-70px; top:-70px; width:240px; height:240px;
+  border-radius:50%; background:radial-gradient(circle, rgba(201,138,46,.28), transparent 65%);
+}
+.hero .tag{
+  display:inline-flex; align-items:center; gap:6px;
+  font-size:11.5px; font-weight:700; letter-spacing:.12em; color:#ffd98a;
+  background:rgba(201,138,46,.16); border:1px solid rgba(201,138,46,.35);
+  padding:4px 10px; border-radius:999px;
+}
+.hero h2{margin-top:14px; font-size:21px; line-height:1.5; font-weight:800; color:#ffffff; text-wrap:balance;}
+.hero h2 .hl{color:#ffd98a;}
+.hero p{margin-top:12px; font-size:14px; line-height:1.8; color:#c6d2ee;}
+.hero .keyline{margin-top:16px; display:flex; flex-wrap:wrap; gap:8px;}
+.hero .keyline span{
+  font-size:12px; color:#dfe7f8; background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14); padding:4px 12px; border-radius:999px;
+}
+
+/* ---------- section anatomy ---------- */
+section{padding:44px 0 8px;}
+.sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:22px;}
+.sec-num{
+  font-size:13px; font-weight:800; color:var(--accent-2-ink);
+  border:1px solid var(--accent-2-deep); border-radius:8px;
+  padding:2px 9px; letter-spacing:.04em; flex:none;
+  background:var(--accent-2-soft);
+}
+.sec-head h2{font-size:21px; font-weight:800; color:var(--ink-1); letter-spacing:-.01em;}
+.sec-head .en{font-size:12px; color:var(--ink-3); letter-spacing:.08em; margin-left:auto; text-transform:uppercase;}
+.sec-lead{font-size:14.5px; color:var(--ink-2); margin-bottom:20px; max-width:820px;}
+.sec-lead b{color:var(--ink-1);}
+
+/* ---------- KPI tiles ---------- */
+.kpi-grid{display:grid; grid-template-columns:repeat(6,1fr); gap:14px;}
+.kpi{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:14px 15px 13px; box-shadow:var(--shadow); position:relative;
+}
+.kpi .lab{font-size:11.5px; color:var(--ink-3); font-weight:600; display:flex; align-items:center; gap:6px;}
+.kpi .lab .chip{font-size:10px; font-weight:700; padding:1px 6px; border-radius:999px;}
+.kpi .chip.up{color:var(--up); background:rgba(47,122,85,.10);}
+.kpi .chip.down{color:var(--down); background:rgba(192,69,60,.10);}
+.kpi .chip.warn{color:var(--warn); background:rgba(183,122,22,.12);}
+.kpi .val{
+  margin-top:7px; font-size:25px; font-weight:800; color:var(--ink-1);
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em; line-height:1.1;
+}
+.kpi .val small{font-size:12.5px; font-weight:700; color:var(--ink-3); margin-left:2px;}
+.kpi .sub{margin-top:5px; font-size:11px; color:var(--ink-3); line-height:1.5;}
+.kpi.key{background:linear-gradient(150deg,#1d2f5e,#2a4b8f); border-color:transparent;}
+.kpi.key .lab,.kpi.key .sub{color:#b9c8ec;}
+.kpi.key .val{color:#ffffff;}
+
+/* ---------- cards & grids ---------- */
+.grid{display:grid; gap:16px;}
+.grid.cols-2{grid-template-columns:1fr 1fr;}
+.grid.cols-3{grid-template-columns:repeat(3,1fr);}
+.card{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r);
+  padding:22px 24px; box-shadow:var(--shadow);
+}
+.card h3{font-size:15.5px; font-weight:800; color:var(--ink-1); display:flex; align-items:center; gap:9px;}
+.card h3 .no{
+  flex:none; width:24px; height:24px; border-radius:8px; background:var(--accent-soft);
+  color:var(--accent); font-size:13px; font-weight:800;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.card h3 .no.gold{background:var(--accent-2-soft); color:var(--accent-2-ink);}
+.card p{margin-top:10px; font-size:13.5px; line-height:1.8; color:var(--ink-2);}
+.card .bignum{margin-top:8px; font-size:26px; font-weight:800; color:var(--ink-1); font-variant-numeric:tabular-nums; letter-spacing:-.02em;}
+.card .bignum small{font-size:13px; color:var(--ink-3); font-weight:700;}
+.card .numrow{display:flex; align-items:baseline; gap:8px; margin-top:8px; flex-wrap:wrap;}
+.card .numrow .bignum{margin-top:0;}
+.tag{font-size:11px; font-weight:700; padding:2px 8px; border-radius:999px;}
+.tag.calc{color:var(--accent); background:var(--accent-soft);}
+.tag.est{color:var(--accent-2-ink); background:var(--accent-2-soft);}
+.tag.src{color:var(--ink-3); background:var(--panel-2); border:1px solid var(--border); font-weight:600;}
+
+/* ---------- chart blocks ---------- */
+.chart-box{
+  background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r);
+  padding:20px 22px 14px; position:relative;
+}
+.chart-box .ctitle{font-size:13.5px; font-weight:800; color:var(--ink-1);}
+.chart-box .csub{font-size:11.5px; color:var(--ink-3); margin-top:2px;}
+.chart-box svg{display:block; width:100%; height:auto; margin-top:14px;}
+.chart-legend{display:flex; gap:16px; flex-wrap:wrap; margin-top:10px; font-size:11.5px; color:var(--ink-3);}
+.chart-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px;}
+.axis-label{font-size:10.5px;}
+
+.bar-val{font-size:11px; font-weight:700; font-variant-numeric:tabular-nums;}
+.bar-lab{font-size:11.5px; font-weight:600;}
+
+/* ---------- risk / checklists ---------- */
+.list{list-style:none; margin-top:12px;}
+.list li{
+  position:relative; padding:9px 0 9px 26px; font-size:13.5px; line-height:1.75;
+  border-bottom:1px solid var(--border); color:var(--ink-2);
+}
+.list li:last-child{border-bottom:none;}
+.list li::before{
+  content:""; position:absolute; left:4px; top:17px; width:8px; height:8px; border-radius:3px;
+  background:var(--accent-soft); border:1px solid var(--accent);
+}
+.list li b{color:var(--ink-1);}
+.list.risk li::before{background:rgba(192,69,60,.12); border-color:var(--down);}
+.list.mitig li::before{background:rgba(47,122,85,.14); border-color:var(--up);}
+.list.flag li::before{background:var(--accent-2-soft); border-color:var(--accent-2);}
+
+/* ---------- tables ---------- */
+.tbl-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:var(--r-sm);}
+table{width:100%; border-collapse:collapse; font-size:13px; background:var(--bg);}
+th{
+  text-align:left; font-size:11.5px; font-weight:700; color:var(--ink-3);
+  background:var(--panel-2); padding:10px 14px; letter-spacing:.03em;
+  border-bottom:1px solid var(--border-strong); white-space:nowrap;
+}
+td{padding:10px 14px; border-bottom:1px solid var(--border); color:var(--ink-2); vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td.num,th.num{text-align:right; font-variant-numeric:tabular-nums;}
+td b{color:var(--ink-1);}
+
+/* ---------- watchlist ---------- */
+.watch{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+.watch .wcard{
+  background:var(--bg); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:16px 16px 14px; box-shadow:var(--shadow);
+}
+.watch .wcard .widx{font-size:11px; font-weight:800; color:var(--accent-2-ink); letter-spacing:.06em;}
+.watch .wcard p{margin-top:8px; font-size:12.5px; line-height:1.7; color:var(--ink-2);}
+
+/* ---------- appendix / footnote ---------- */
+.appendix{
+  margin:40px 52px 0; border-top:1px solid var(--border-strong); padding:26px 0 34px;
+}
+.appendix h3{font-size:14px; font-weight:800; color:var(--ink-1); margin-bottom:12px;}
+.appendix p{font-size:12px; line-height:1.9; color:var(--ink-3);}
+.appendix p b{color:var(--ink-2);}
+.src-badge{display:inline-block; font-size:10.5px; font-weight:700; color:var(--accent);
+  border:1px solid var(--accent); border-radius:999px; padding:1px 8px; margin-right:6px;}
+
+/* ---------- footer ---------- */
+.web-footer{
+  margin:0 52px; border-top:1px solid var(--border-strong);
+  padding:22px 0 34px; display:flex; justify-content:space-between; align-items:center;
+  font-size:12px; color:var(--ink-3);
+}
+.web-footer b{color:var(--ink-2);}
+
+/* ---------- motion (feedback only) ---------- */
+.reveal{opacity:0; transform:translateY(14px); transition:opacity .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1);}
+.reveal.in{opacity:1; transform:none;}
+@media (prefers-reduced-motion: reduce){
+  .reveal{opacity:1; transform:none; transition:none;}
+}
+
+/* ---------- print / A4 ---------- */
+@page{
+  size:A4;
+  margin:15mm 13mm 16mm;
+  @bottom-center{
+    content:"98wiki ｜ 智见 / 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:8.5pt; color:#69768c;
+  }
+  @bottom-right{content:"智见点评 · 2026-08"; font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif; font-size:8.5pt; color:#69768c;}
+}
+@media print{
+  body{background:#ffffff; font-size:11pt;}
+  .page{margin:0; max-width:none; box-shadow:none; border:none; border-radius:0;}
+  .wrap{padding:0;}
+  .masthead{padding:6px 0 16px;}
+  .hero{margin:14px 0 0;}
+  section{padding:26px 0 4px; page-break-inside:auto;}
+  .kpi-grid,.watch{grid-template-columns:repeat(3,1fr);}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  .card,.chart-box,.kpi,.wcard,table{page-break-inside:avoid;}
+  section,.appendix{page-break-before:auto;}
+  section:has(.sec-head){}
+  .sec-break{page-break-before:always;}
+  .web-footer{display:none;}
+  .reveal{opacity:1; transform:none;}
+  a{color:inherit; text-decoration:none;}
+}
+</style>
+</head>
+<body>
+<div class="page" id="top">
+
+  <!-- ================= masthead ================= -->
+  <header class="masthead">
+    <div class="kicker"><span class="dot"></span>智见点评 · 行业研究报告<span class="dot" style="margin-left:2px;"></span>正式稿</div>
+    <h1>南京江北新区「政府 + 贝壳」<br>合资收储可行性<span class="gold"> · 融合研判</span></h1>
+    <div class="subtitle">多专家独立研判 × 框架 D 融合（行情 / 政策 / 风险 / 产品）· 回答管委会四问，附可执行行动建议</div>
+    <div class="meta">
+      <span><b>出品</b> 智见点评专家团队</span><span class="sep"></span>
+      <span><b>区域</b> 南京（全市 + 江北新区 / 浦口 / 六合）</span><span class="sep"></span>
+      <span><b>基准时点</b> 2026-07（贝壳成出口径）</span><span class="sep"></span>
+      <span><b>成文</b> 2026-08</span>
+    </div>
+  </header>
+
+  <!-- ================= hero conclusion ================= -->
+  <div class="hero">
+    <span class="tag">KEYNOTE · 主基调</span>
+    <h2>南京尚未确认底部，但已进入「<span class="hl">量先企稳、价未确认</span>」的底部区间；<br>2027 年大概率 L 型磨底而非二次深跌。应当托底收储，当前正是布局窗口——<br>收储不是赌底，而是用政策手段<span class="hl">加速底部确认</span>。</h2>
+    <p>四问结论：① 该托底，折扣定 <b style="color:#ffd98a;">评估价 6 折基准、7 折封顶</b>；② 挂牌量 1/10（约 8,000 套）只作 2-3 年滚动目标，首期试点 500-1,000 套；③ 法拍通道量级可控（月挂拍占挂牌 3%-6%【估算】），风险是定价项而非阻断项；④ 三通道模型成立但须分两本账披露 ROE，常态化目标 2%-4%。</p>
+    <div class="keyline">
+      <span>再贷款 1Y 1.75%（Wind）</span>
+      <span>租金回报率 2.29% 已覆盖资金成本（自算）</span>
+      <span>年资金 10-14 亿元【测算】</span>
+      <span>占南京 2025 财政收入不足 1%</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ================= 01 核心结论 ================= -->
+    <section id="s1">
+      <div class="sec-head"><span class="sec-num">01</span><h2>核心结论与执行纪律</h2><span class="en">Key Conclusions</span></div>
+      <div class="grid cols-3">
+        <div class="card reveal">
+          <h3><span class="no">1</span>折扣是模型生命线</h3>
+          <p>收购锚定评估价 <b>6 折基准、7 折封顶</b>（仅限次新 / 地铁沿线优质标的）。d=0.7 时江北纯租赁毛收益率 2.44%<span class="tag calc">测算</span>已低于综合资金成本 2.5%，越折越亏。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">2</span>不搞一次性全量兜底</h3>
+          <p>挂牌量 1/10（约 8,000 套）只作 <b>2-3 年滚动目标</b>。公开承诺全量兜底将诱发抛售，形成「收-挂-再收」循环。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">3</span>先试点、后放量</h3>
+          <p>首期试点 <b>500-1,000 套</b>验证三通道去化与回款，跑通后滚动放大至 1,500-2,000 套/年（年资金 10-14 亿元<span class="tag calc">测算</span>，占南京 2025 年一般公共预算收入 1,620.91 亿元不足 1%，财政可承受）。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">4</span>三通道比例与主次</h3>
+          <p>建议 <b>保租 40%-50% / 安置 25%-35% / 销售 25%</b>。二次销售是退出通道而非主通道，放量须后置到价格企稳确认之后（2027H2）。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no gold">5</span>ROE 分两本账披露</h3>
+          <p>首年 ROE 30%-40%<span class="tag calc">测算</span>是收购价差一次性兑现（7 折收→9 折卖毛利约 14%/套），非常态收益；常态年租赁通道 ROE 0.3%-1%<span class="tag calc">测算</span>，须向管委会如实披露，<b>常态化目标定 2%-4%</b>。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no gold">SPV</span>合资结构建议</h3>
+          <p>政府平台 <b>51% 控股</b>、贝壳 <b>49% 运营</b>；政府以税费补贴与改造融资入股、少出现金。贝壳角色从卖房渠道升级为政府端资产运营商，守折扣与清场两条纪律。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 02 行情 ================= -->
+    <section id="s2" class="sec-break">
+      <div class="sec-head"><span class="sec-num">02</span><h2>行情：租先于售、量先于价，回暖次序已启动</h2><span class="en">Market</span></div>
+      <p class="sec-lead">数据口径：<b>贝壳成出口径，2026-07 基准</b>（政研通 · 贝壳研究院/贝壳平台）。卖端尚未确认底部，租赁端领先指标已全面回暖。</p>
+
+      <div class="kpi-grid">
+        <div class="kpi reveal">
+          <div class="lab">二手成交均价 <span class="chip up">+1.56%</span></div>
+          <div class="val">16,893<small>元/㎡</small></div>
+          <div class="sub">2026-07 · 3-6 月环比四连负后 7 月转正</div>
+        </div>
+        <div class="kpi key reveal">
+          <div class="lab">贝壳房价指数 <span class="chip warn">创新低</span></div>
+          <div class="val">64.2</div>
+          <div class="sub">2018-11=100 · 2025-12 为 68.3；上海 80.3 已回升</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">租赁成交量 <span class="chip up">年内新高</span></div>
+          <div class="val">12,074<small>套/月</small></div>
+          <div class="sub">4-7 月连续放大 · 租金指数 90.5 缓升</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">套均租金 <span class="chip up">+10.1%</span></div>
+          <div class="val">3,029<small>元/月</small></div>
+          <div class="sub">环比 +10.1%（6-7 月连续回升）· 同比 -3.29%</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">成交周期 <span class="chip down">7.8 月</span></div>
+          <div class="val">7.8<small>个月</small></div>
+          <div class="sub">上海 3.5 个月 · 仍为买方市场特征</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">年化租金回报率 <span class="chip up">覆盖成本</span></div>
+          <div class="val">2.29<small>%</small></div>
+          <div class="sub">自算（3,029×12÷159 万）· 2026-03 为 2.03% · 高于再贷款 1.75%</div>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:16px;">
+        <div class="chart-box reveal">
+          <div class="ctitle">南京二手成交均价 · 月度环比（2026 年 3-7 月）</div>
+          <div class="csub">贝壳成出口径 · 单位 % · 7 月转正为筑底临界信号</div>
+          <svg viewBox="0 0 380 300" role="img" aria-label="南京二手成交均价月度环比柱状图">
+            <line x1="20" y1="150" x2="360" y2="150" stroke="rgba(20,32,56,.14)" stroke-width="1"/>
+            <text x="18" y="144" class="axis-label" fill="#69768c">0</text>
+            <g>
+              <rect x="22" y="48.4" width="40" height="101.6" rx="3" fill="rgba(192,69,60,.85)"/>
+              <text x="42" y="42" text-anchor="middle" class="bar-val" fill="var(--down)">-3.63%</text>
+              <text x="42" y="300" text-anchor="middle" class="bar-lab" fill="#69768c">3月</text>
+            </g>
+            <g>
+              <rect x="88" y="120.6" width="40" height="29.4" rx="3" fill="rgba(192,69,60,.8)"/>
+              <text x="108" y="114" text-anchor="middle" class="bar-val" fill="var(--down)">-1.05%</text>
+              <text x="108" y="300" text-anchor="middle" class="bar-lab" fill="#69768c">4月</text>
+            </g>
+            <g>
+              <rect x="154" y="103.8" width="40" height="46.2" rx="3" fill="rgba(192,69,60,.8)"/>
+              <text x="174" y="97" text-anchor="middle" class="bar-val" fill="var(--down)">-1.65%</text>
+              <text x="174" y="300" text-anchor="middle" class="bar-lab" fill="#69768c">5月</text>
+            </g>
+            <g>
+              <rect x="220" y="105.2" width="40" height="44.8" rx="3" fill="rgba(192,69,60,.8)"/>
+              <text x="240" y="98" text-anchor="middle" class="bar-val" fill="var(--down)">-1.60%</text>
+              <text x="240" y="300" text-anchor="middle" class="bar-lab" fill="#69768c">6月</text>
+            </g>
+            <g>
+              <rect x="286" y="106.3" width="40" height="43.7" rx="3" fill="var(--up)"/>
+              <text x="306" y="99" text-anchor="middle" class="bar-val" fill="var(--up)">+1.56%</text>
+              <text x="306" y="300" text-anchor="middle" class="bar-lab" fill="#69768c">7月</text>
+            </g>
+            <text x="352" y="140" text-anchor="end" class="axis-label" fill="#69768c">环比 %</text>
+          </svg>
+          <div class="chart-legend">
+            <span><i style="background:var(--down);"></i>环比下跌</span>
+            <span><i style="background:var(--up);"></i>环比回升（7 月转正）</span>
+          </div>
+        </div>
+
+        <div class="chart-box reveal">
+          <div class="ctitle">贝壳房价指数对比（2018-11 = 100）</div>
+          <div class="csub">南京仍在创新低 · 上海已回升 · 价未确认底部</div>
+          <svg viewBox="0 0 380 240" role="img" aria-label="贝壳房价指数对比柱状图">
+            <line x1="20" y1="210" x2="360" y2="210" stroke="rgba(20,32,56,.14)" stroke-width="1"/>
+            <g>
+              <rect x="40" y="59.7" width="62" height="150.3" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+              <text x="71" y="52" text-anchor="middle" class="bar-val" fill="var(--accent)">68.3</text>
+              <text x="71" y="233" text-anchor="middle" class="bar-lab" fill="#69768c">南京 2025-12</text>
+            </g>
+            <g>
+              <rect x="160" y="68.8" width="62" height="141.2" rx="4" fill="var(--accent)"/>
+              <text x="191" y="61" text-anchor="middle" class="bar-val" fill="var(--accent)">64.2</text>
+              <text x="191" y="233" text-anchor="middle" class="bar-lab" fill="#69768c">南京 2026-07</text>
+            </g>
+            <g>
+              <rect x="280" y="33.3" width="62" height="176.7" rx="4" fill="var(--accent-2-deep)"/>
+              <text x="311" y="26" text-anchor="middle" class="bar-val" fill="var(--accent-2-ink)">80.3</text>
+              <text x="311" y="233" text-anchor="middle" class="bar-lab" fill="#69768c">上海 2026-07</text>
+            </g>
+            <text x="350" y="205" text-anchor="end" class="axis-label" fill="#69768c">指数</text>
+          </svg>
+          <div class="chart-legend">
+            <span><i style="background:var(--accent);"></i>南京（深蓝=最新）</span>
+            <span><i style="background:var(--accent-2-deep);"></i>上海（对比）</span>
+            <span style="color:var(--down);">南京仍处下行通道</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:16px;">
+        <div class="chart-box reveal">
+          <div class="ctitle">资金成本 vs 租金回报（%）</div>
+          <div class="csub">租金回报 2.29% 已覆盖再贷款 1.75% · 逼近综合成本 2.5%</div>
+          <svg viewBox="0 0 380 210" role="img" aria-label="租金回报率与资金成本对比条形图">
+            <g>
+              <text x="20" y="34" class="bar-lab" fill="#69768c">租金回报 2026-07</text>
+              <rect x="170" y="22" width="137.4" height="16" rx="4" fill="var(--accent-2-deep)"/>
+              <text x="312" y="35" class="bar-val" fill="var(--accent-2-ink)">2.29%</text>
+            </g>
+            <g>
+              <text x="20" y="64" class="bar-lab" fill="#69768c">租金回报 2026-03</text>
+              <rect x="170" y="52" width="121.8" height="16" rx="4" fill="var(--accent-2-soft)" stroke="var(--accent-2-deep)" stroke-width="1.2"/>
+              <text x="296" y="65" class="bar-val" fill="var(--ink-3)">2.03%</text>
+            </g>
+            <g>
+              <text x="20" y="94" class="bar-lab" fill="#69768c">再贷款 1Y（Wind）</text>
+              <rect x="170" y="82" width="105" height="16" rx="4" fill="var(--accent)"/>
+              <text x="280" y="95" class="bar-val" fill="var(--accent)">1.75%</text>
+            </g>
+            <g>
+              <text x="20" y="124" class="bar-lab" fill="#69768c">综合资金成本【测算】</text>
+              <rect x="170" y="112" width="150" height="16" rx="4" fill="var(--warn)"/>
+              <text x="325" y="125" class="bar-val" fill="var(--warn)">2.50%</text>
+            </g>
+            <text x="20" y="158" class="axis-label" fill="#69768c">刻度：1% = 60px · 来源：Wind EDB、团队测算</text>
+          </svg>
+        </div>
+
+        <div class="card reveal">
+          <h3><span class="no">区</span>区级示意：洼地区收储性价比成立</h3>
+          <div class="tbl-wrap" style="margin-top:12px;">
+            <table>
+              <thead><tr><th>区域（2026-07）</th><th class="num">成交均价</th><th class="num">套均租金</th><th>收储定位</th></tr></thead>
+              <tbody>
+                <tr><td><b>浦口</b></td><td class="num">1.2 万/㎡</td><td class="num">1,990 元/月</td><td>近园区板块与 B2B 集体宿舍需求匹配度最高</td></tr>
+                <tr><td><b>六合</b></td><td class="num">7,990 元/㎡</td><td class="num">1,398 元/月</td><td>价格洼地，适合低成本保租</td></tr>
+                <tr><td><b>建邺</b></td><td class="num">2.5 万/㎡</td><td class="num">4,217 元/月</td><td>高租金板块（对比参照）</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:12px; font-size:12.5px; color:var(--ink-3);">收储目标区恰是价格洼地、租金回报率更高；洼地区收储性价比成立。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 03 政策 ================= -->
+    <section id="s3">
+      <div class="sec-head"><span class="sec-num">03</span><h2>政策：托底工具齐备、成本可承受、方向与全国一致</h2><span class="en">Policy</span></div>
+      <p class="sec-lead">低成本资金窗口已开，南京此时不动将错过再贷款窗口；半市场化合资模式优于国企单干，但要防两个失灵。</p>
+      <div class="grid cols-3">
+        <div class="card reveal">
+          <h3><span class="no">资</span>低成本资金窗口</h3>
+          <div class="numrow">
+            <span class="bignum">1.75<small>%</small></span>
+            <span class="tag src">Wind EDB</span>
+          </div>
+          <p>保障性住房再贷款 1 年期利率 1.75%（央行 EDB）。5Y LPR 3.5%、1Y LPR 3.0%（2026-08-20，5Y 连续 15 期不变）。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">全</span>全国政策主线</h3>
+          <div class="numrow">
+            <span class="bignum">3,000<small>亿</small></span>
+            <span class="tag src">公开报道</span>
+          </div>
+          <p>「3000 亿资金托底、80 城国企入场收房」（2026-06 综述，公开报道）确认收储为政策主线。资金结构以再贷款为主、财政补贴交易环节税费，综合成本压至 2.5% 以内<span class="tag calc">测算</span>。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">联</span>政策联动设计</h3>
+          <p>将「卖旧买新税费减免」与收储联动：收储低价房源做保租房，同时释放改善置换需求。财政承受力验证：年资金 10-14 亿元<span class="tag calc">测算</span>，占南京 2025 年一般公共预算收入（1,620.91 亿元，决算数）<b>不足 1%</b>。</p>
+        </div>
+      </div>
+      <div class="grid cols-2" style="margin-top:16px;">
+        <div class="card reveal">
+          <h3><span class="no">模</span>合资模式：优于国企单干</h3>
+          <p>贝壳有渠道去化与运营能力，从卖房渠道升级为政府端资产运营商。政府以税费补贴与改造融资入股、少出现金，SPV 结构政府平台 51% 控股、贝壳 49% 运营。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">警</span>防两个失灵 + 一条铁律</h3>
+          <p>① 防<b>政府接盘化</b>：合资公司若成接盘通道，亏损最终仍由财政兜底，「占财政比例小」不等于「风险小」；② 防<b>平台定价化</b>：贝壳掌握定价权需制度化约束；③ 铁律：折扣、规模上限与退出机制<b>制度化一次说清</b>，避免挤牙膏式加码拉长观望期。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 04 风险 ================= -->
+    <section id="s4" class="sec-break">
+      <div class="sec-head"><span class="sec-num">04</span><h2>风险：法拍通道量级可控，风险是定价项而非阻断项</h2><span class="en">Risk</span></div>
+      <p class="sec-lead">法拍月挂拍占挂牌约 <b>3%-6%</b><span class="tag est">估算</span>，与收储目标大体匹配，供给无瓶颈；建议法拍占比控制在收购总量 50% 以内，其余收购低于市场价房源。</p>
+
+      <div class="kpi-grid">
+        <div class="kpi reveal">
+          <div class="lab">法拍占挂牌比例 <span class="tag est" style="font-size:10px;">估算</span></div>
+          <div class="val">3-6<small>%</small></div>
+          <div class="sub">月挂拍占挂牌约 3%-6% · 无房源级明细，±30% 波动带</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">江北月挂拍</div>
+          <div class="val">60-180<small>套/月</small></div>
+          <div class="sub">年化约 720-2,160 套 · 与收储目标大体匹配</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">法拍占比上限（收购总量）</div>
+          <div class="val">50<small>%</small></div>
+          <div class="sub">其余收购低于市场价房源，分散清场与产权风险</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">风险缓冲（内置 6 折上限价）<span class="tag calc" style="font-size:10px;">测算建议</span></div>
+          <div class="val">5-8<small>%</small></div>
+          <div class="sub">另设 2%-3% 风险备付金</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">单项目清场纠纷最大侵蚀</div>
+          <div class="val">3-5<small>单价差</small></div>
+          <div class="sub">集中爆发时可吃掉 3-5 个点的价差利润</div>
+        </div>
+        <div class="kpi reveal">
+          <div class="lab">销售通道去化时长（压力测试）</div>
+          <div class="val">12-18<small>个月</small></div>
+          <div class="sub">按回款 12-18 个月做压力测试，账期侵蚀首年 ROE</div>
+        </div>
+      </div>
+
+      <div class="grid cols-2" style="margin-top:16px;">
+        <div class="card reveal">
+          <h3><span class="no" style="background:rgba(192,69,60,.12); color:var(--down);">险</span>法律风险清单</h3>
+          <ul class="list risk">
+            <li><b>腾退清场难</b>：带租约 / 带占有为最大头，处置周期与成本不可控</li>
+            <li><b>税费转嫁与历史欠费</b>：卖方税费约定不明，物业费 / 暖气费等欠费追偿难</li>
+            <li><b>产权瑕疵</b>：查封 / 抵押 / 共有 / 唯一住房 / 执行异议，过户周期拉长</li>
+            <li><b>程序冗长</b>：流拍变卖程序冗长、评估价滞后失真</li>
+          </ul>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no" style="background:rgba(47,122,85,.14); color:var(--up);">缓</span>缓释措施（七件套）</h3>
+          <ul class="list mitig">
+            <li>收购前置「<b>产权 / 占用 / 税费 / 户口</b>」四查尽调</li>
+            <li>优先收空置无瑕疵标的</li>
+            <li>6 折上限价<b>内置税费与腾退成本</b>，预留 5%-8% 风险缓冲<span class="tag calc">测算建议</span></li>
+            <li>设 2%-3% <b>风险备付金</b></li>
+            <li>与法院建立批量推送与确权<b>绿色通道</b></li>
+            <li>政府背书<b>腾退兜底</b></li>
+            <li>舆论以保租房叙事正面包装，避免「政府为不良资产背书」观感</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 05 产品 ================= -->
+    <section id="s5">
+      <div class="sec-head"><span class="sec-num">05</span><h2>产品：模型成立靠三低</h2><span class="en">Product & Model</span></div>
+      <p class="sec-lead">低成本资金（再贷款 1.75%）+ 低折扣收购（6 折基准）+ 低运营成本（B2B 长租约锁定出租率）。<b>租赁通道本身不赚钱</b>，压舱石是 B2B 集体宿舍与安置订单，二次销售是退出通道。</p>
+
+      <div class="grid cols-3">
+        <div class="card reveal">
+          <h3><span class="no">折</span>折扣敏感性（江北纯租赁毛收益率）</h3>
+          <div class="tbl-wrap" style="margin-top:12px;">
+            <table>
+              <thead><tr><th>收购折扣</th><th class="num">毛收益率</th><th>vs 综合成本 2.5%</th></tr></thead>
+              <tbody>
+                <tr><td>6 折（d=0.6）<span class="tag calc">测算</span></td><td class="num"><b style="color:var(--up);">2.85%</b></td><td style="color:var(--up);">跑赢 · 基准情形</td></tr>
+                <tr><td>7 折（d=0.7）<span class="tag calc">测算</span></td><td class="num" style="color:var(--warn);">2.44%</td><td style="color:var(--warn);">低于成本 · 生命线</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>6 折收购相对市价留有约 40% 安全边际<span class="tag calc">测算</span>，即便 2027 年江北补跌 3%-5%<span class="tag calc">测算</span>亦无损模型。</p>
+        </div>
+
+        <div class="chart-box reveal">
+          <div class="ctitle">三通道建议比例（中值示意）</div>
+          <div class="csub">保租 40%-50% / 安置 25%-35% / 销售 25% · 建议区间</div>
+          <svg viewBox="0 0 380 240" role="img" aria-label="三通道比例环形图">
+            <circle cx="190" cy="110" r="72" fill="none" stroke="var(--panel-2)" stroke-width="34"/>
+            <circle cx="190" cy="110" r="72" fill="none" stroke="var(--accent)" stroke-width="34"
+              stroke-dasharray="203.6 249.8" stroke-dashoffset="0" transform="rotate(-90 190 110)"/>
+            <circle cx="190" cy="110" r="72" fill="none" stroke="var(--accent-2)" stroke-width="34"
+              stroke-dasharray="135.7 317.7" stroke-dashoffset="-203.6" transform="rotate(-90 190 110)"/>
+            <circle cx="190" cy="110" r="72" fill="none" stroke="var(--slate)" stroke-width="34"
+              stroke-dasharray="113.1 340.3" stroke-dashoffset="-339.3" transform="rotate(-90 190 110)"/>
+            <text x="190" y="104" text-anchor="middle" style="font-size:15px; font-weight:800;" fill="#121a2b">三通道</text>
+            <text x="190" y="122" text-anchor="middle" style="font-size:11px;" fill="#69768c">建议区间中值</text>
+            <g style="font-size:11.5px;" fill="#3a465c">
+              <rect x="52" y="196" width="11" height="11" rx="3" fill="var(--accent)"/><text x="70" y="205">保租 45%</text>
+              <rect x="152" y="196" width="11" height="11" rx="3" fill="var(--accent-2-deep)"/><text x="170" y="205">安置 30%</text>
+              <rect x="252" y="196" width="11" height="11" rx="3" fill="var(--slate)"/><text x="270" y="205">销售 25%</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="card reveal">
+          <h3><span class="no gold">账</span>ROE 两本账（必须分情景披露）</h3>
+          <div class="tbl-wrap" style="margin-top:12px;">
+            <table>
+              <thead><tr><th>情景</th><th class="num">ROE</th><th>性质</th></tr></thead>
+              <tbody>
+                <tr><td>首年（含收购价差）<span class="tag calc">测算</span></td><td class="num"><b>30%-40%</b></td><td>一次性兑现（7 折收→9 折卖毛利约 14%/套）</td></tr>
+                <tr><td>常态年（租赁通道）<span class="tag calc">测算</span></td><td class="num">0.3%-1%</td><td>租赁本身不赚钱</td></tr>
+                <tr><td>常态化目标</td><td class="num" style="color:var(--up);"><b>2%-4%</b></td><td>含 B2B 与安置订单后的稳态</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>收储不是终点，<b>改造才是价值</b>；保租房通道须独立考核保障属性（定价与人群覆盖），防止把保障房当库存消化工具。</p>
+        </div>
+      </div>
+
+      <div class="grid cols-3" style="margin-top:16px;">
+        <div class="card reveal">
+          <h3><span class="no">B</span>B2B 集体宿舍（压舱石）</h3>
+          <div class="numrow">
+            <span class="bignum">≥90<small>%</small></span>
+            <span class="tag calc">测算</span>
+          </div>
+          <p>与京东 / 美团等平台企业签订长租约，员工分级：一线多人合租 / 宿舍、基层整租一居、中高层品质一居两居。<b>长租约锁定出租率 ≥90%</b>，决定租赁通道利差是否成立。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">门</span>收储硬门槛</h3>
+          <div class="numrow">
+            <span class="bignum">≥2.5<small>%</small></span>
+            <span class="tag calc">测算</span>
+          </div>
+          <p>租金回报率 ≥2.5% 应设为收储<b>硬门槛</b>写入合资协议；只收「现金流覆盖型」房源（6-7 折内、可租可售）。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">售</span>二次销售通道纪律</h3>
+          <p>按「好房子」标准设门槛（区位 / 房龄 / 品质），<b>低质老破小不收</b>；放量后置到价格企稳确认后（2027H2）——边收边卖等于把挂牌量送回去，与托底逻辑相悖。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 06 不确定性 ================= -->
+    <section id="s6" class="sec-break">
+      <div class="sec-head"><span class="sec-num">06</span><h2>不确定性与趋势：基调下修触发条件</h2><span class="en">Risks to Thesis</span></div>
+      <p class="sec-lead">以下情形若成立，主基调需相应下修；每一条都配有可执行闸门或边界。</p>
+      <div class="grid cols-2">
+        <div class="card reveal">
+          <h3><span class="no">1</span>2027 全国二次探底 / 江北补跌超 5%<span class="tag calc">测算</span></h3>
+          <p>南京筑底推迟。6 折安全垫可覆盖，触发<b>重启闸门</b>：贝壳指数再创新低且环比跌幅扩大，则<b>暂停收购、只租不收</b>。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">2</span>租赁放量是毕业季季节性</h3>
+          <p>产业人口净流出持续，出租率 ≥90% 假设不成立，收储沉淀为财政资产。9-10 月为验证窗口；租金回报率 ≥2.5% 硬门槛是<b>全部模型的第一性约束</b>。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">3</span>销售去化慢 + 安置回款财政节奏</h3>
+          <p>7.8 个月成交周期下去化或超 12 个月，账期侵蚀首年 ROE。须按回款 <b>12-18 个月</b>做压力测试。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">4</span>清场纠纷集中爆发</h3>
+          <p>单项目亏损可吃掉 <b>3-5 个点</b>价差利润。靠四查尽调 + 风险备付金 + 政府腾退兜底对冲。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">5</span>政策强刺激致价格提前反弹</h3>
+          <p>收储窗口收窄，属<b>良性风险</b>：只影响规模、不影响方向。</p>
+        </div>
+        <div class="card reveal">
+          <h3><span class="no">6</span>再贷款额度与细则未落地</h3>
+          <p>落地前财政补贴承担过渡成本。另：法拍占比 3%-6% 为<span class="tag est">估算</span>，本轮无房源级明细，规模测算存在 <b>±30% 波动带</b>，需实测校准。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 07 未来关注 ================= -->
+    <section id="s7">
+      <div class="sec-head"><span class="sec-num">07</span><h2>未来关注：盯住八个信号</h2><span class="en">Watchlist</span></div>
+      <div class="watch">
+        <div class="wcard reveal"><div class="widx">SIGNAL 01</div><p>8-10 月全市二手成交价环比能否<b>连续为正</b>、贝壳指数止跌——价格企稳第一信号</p></div>
+        <div class="wcard reveal"><div class="widx">SIGNAL 02</div><p>租赁成交与租金<b>连续三个月同步回升</b>，毕业季退坡后能否守住</p></div>
+        <div class="wcard reveal"><div class="widx">SIGNAL 03</div><p>成交周期从 7.8 个月向 <b>6 个月收敛</b>——流通改善比指数更敏感</p></div>
+        <div class="wcard reveal"><div class="widx">SIGNAL 04</div><p>江北新区（浦口 / 六合）成交价与法拍挂拍量<b>月度变化</b>——补跌是否兑现、供给池是否放大</p></div>
+        <div class="wcard reveal"><div class="widx">SIGNAL 05</div><p>保障性住房再贷款<b>南京落地额度与利率执行</b>，及 5Y LPR 调整节奏——决定 d=0.6/0.7 谁是基准</p></div>
+        <div class="wcard reveal"><div class="widx">SIGNAL 06</div><p>挂牌存量（新增挂牌×成交周期）是否转入<b>下行通道</b>——收储规模决策核心变量</p></div>
+        <div class="wcard reveal"><div class="widx">SIGNAL 07</div><p>京东 / 美团 <b>B2B 签约进度与出租率兑现</b>——租赁通道利差是否成立</p></div>
+        <div class="wcard reveal"><div class="widx">SIGNAL 08</div><p>法拍月挂拍量<b>实测校准</b>（当前 3%-6% 为估算，±30% 波动带）</p></div>
+      </div>
+    </section>
+
+    <!-- ================= appendix ================= -->
+    <div class="appendix">
+      <h3>附录 · 数据来源与口径说明</h3>
+      <p>
+        <span class="src-badge">政研通</span><b>贝壳研究院 / 贝壳平台 · 成出口径 · 2026-07 基准</b>：南京二手成交均价 16,893 元/㎡、贝壳房价指数（2018-11=100）64.2、成交套均总价 159 万元/套、租赁套均租金 3,029 元/月、租赁成交量 12,074 套/月、租金指数 90.5、成交周期 7.8 个月、新增挂牌约 9,949 套/月；区级示意（浦口 / 六合 / 建邺）为 2026-07 数据。年化租金回报率 2.29% 为自算（3,029×12÷159 万）。
+      </p>
+      <p style="margin-top:8px;">
+        <span class="src-badge">Wind</span><b>万得 EDB</b>：保障性住房再贷款 1 年期利率 1.75%；5Y LPR 3.5%、1Y LPR 3.0%（2026-08-20，5Y 连续 15 期不变）；南京市一般公共预算收入 2023 年 1,619.98 亿 / 2024 年 1,596.02 亿 / 2025 年 1,620.91 亿元（决算数）。
+      </p>
+      <p style="margin-top:8px;">
+        <span class="src-badge">公开报道</span>「3000 亿资金托底、80 城国企入场收房」（2026-06 全国收储综述）。
+      </p>
+      <p style="margin-top:8px;">
+        <span class="src-badge">标注</span><b>【测算】</b>为团队测算值（模型推演），<b>【估算】</b>为量级估算（法拍占比 3%-6% 无房源级明细，规模测算存在 ±30% 波动带）；全篇无实测值编造。预测性表述（2027 走势、出租率、去化时长）均为<b>研判推断</b>，不构成收益承诺。
+      </p>
+      <p style="margin-top:8px;">
+        <b>背景</b>：2026-08-24 江北新区管委会专题座谈会（管委会副主任孙小军、建交局副局长彭向勇出席；贝壳南京链家总经理王朕等参会）提出「政府 + 贝壳」合资收购低价房源（法拍房、低于市场价房源）的可行性研究四问。
+      </p>
+    </div>
+
+    <footer class="web-footer">
+      <span><b>98wiki ｜ 智见 / 行业研究报告</b> · 智见点评 · 南京江北新区合资收储可行性</span>
+      <span>融合研判 · 正式稿 · 2026-08</span>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function(){
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  var els = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold:.12});
+  els.forEach(function(e){ io.observe(e); });
+})();
+</script>
+</body>
+</html>

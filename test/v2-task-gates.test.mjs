@@ -101,9 +101,10 @@ function teamFixture(plan, overrides = {}) {
     members: [{ id: 'sess-member', name: '成员甲', joinedAt: 1, status: 'idle' }],
     tasks: [
       { id: 't1', subject: '专家研判', status: 'completed', dependencies: [], output: '## 研判\n上海二手房市场筑底迹象明显。', createdAt: 1, updatedAt: 1 },
-      { id: 't2', subject: '融合成稿', status: 'in_progress', dependencies: ['t1'], assignee: '成员甲', attemptId: 'a1', attempt: 1, createdAt: 1, updatedAt: 1, planTask: { logicalId: 't2' } },
+      { id: 't2', subject: '融合成稿', status: 'completed', dependencies: ['t1'], output: '## 融合\n上海二手房市场筑底迹象明显。', createdAt: 1, updatedAt: 1, planTask: { logicalId: 't2' } },
+      { id: 't3', subject: '渲染与生成', status: 'in_progress', dependencies: ['t2'], assignee: '成员甲', attemptId: 'a1', attempt: 1, createdAt: 1, updatedAt: 1, planTask: { logicalId: 't3' } },
     ],
-    taskSeq: 2,
+    taskSeq: 3,
     ...overrides,
   }
 }
@@ -111,16 +112,16 @@ function teamFixture(plan, overrides = {}) {
 /** A task record the completing member owns (as update_task sees it). */
 function fusionTask(overrides = {}) {
   return {
-    id: 't2',
-    subject: '融合成稿',
+    id: 't3',
+    subject: '渲染与生成',
     status: 'in_progress',
-    dependencies: ['t1'],
+    dependencies: ['t2'],
     assignee: '成员甲',
     attemptId: 'a1',
     attempt: 1,
     createdAt: 1,
     updatedAt: 1,
-    planTask: { logicalId: 't2' },
+    planTask: { logicalId: 't3' },
     ...overrides,
   }
 }
@@ -131,7 +132,7 @@ function syntheticStamp(gates, overrides = {}) {
     planId: 'ep-test',
     policies: [{ id: 'test.quality', version: '1.0.0' }],
     gates,
-    deliverables: [{ id: 'd1', fromTasks: ['t1', 't2'] }],
+    deliverables: [{ id: 'd1', fromTasks: ['t1', 't2', 't3'] }],
     maxRepairRounds: 2,
     ...overrides,
   }
@@ -163,15 +164,15 @@ test('stampQualityPlan copies the compiled gate chain (zhijian binds t2)', () =>
   assert.deepEqual(stamp.gates.map(gate => gate.chainOrder), [0, 1])
   for (const gate of stamp.gates) {
     assert.equal(gate.severity, 'hard')
-    assert.deepEqual(gate.appliesTo, ['t2'])
+    assert.deepEqual(gate.appliesTo, ['t3'])
   }
-  assert.deepEqual(stamp.deliverables, [{ id: 'd1', fromTasks: ['t2'] }])
+  assert.deepEqual(stamp.deliverables, [{ id: 'd1', fromTasks: ['t3'] }])
   // Zhijian policy declares maxRepairRounds 2 — the design cap.
   assert.equal(stamp.maxRepairRounds, 2)
   // Output-schema contracts are stamped so completion can validate the output
   // against the declared template (framework A: five required section markers).
   assert.deepEqual(stamp.outputTemplates.map(template => template.id), ['zhijian.output.A'])
-  assert.deepEqual(stamp.taskOutputSchemas, { t1: 'zhijian.output.A', t2: 'zhijian.output.A' })
+  assert.deepEqual(stamp.taskOutputSchemas, { t1: 'zhijian.output.A', t2: 'zhijian.output.A', t3: 'zhijian.output.A' })
   assert.ok(stamp.schemaStructure !== undefined, 'zhijian policy declares schema-structure')
   assert.equal(stamp.schemaStructure?.severity, 'hard')
   const contract = stamp.outputTemplates[0]
@@ -197,7 +198,7 @@ test('completion blocked: real expert name in the output fails compliance-anonym
   assert.ok(outcome !== undefined, 'a gate must apply to the fusion task')
   assert.ok(outcome.blocked !== undefined, 'hard gate must block the completion')
   assert.equal(outcome.blocked.gateId, 'compliance-anonymization')
-  assert.equal(outcome.blocked.taskId, 't2')
+  assert.equal(outcome.blocked.taskId, 't3')
   assert.ok(outcome.blocked.reason.includes('blocked-identity'), `reason must cite the issue code: ${outcome.blocked.reason}`)
   assert.ok(outcome.blocked.reason.includes('顾云昌'), 'reason must cite the offending evidence')
   assert.ok(
@@ -258,7 +259,7 @@ test('gate failure message includes the gate id and the correction text', () => 
   const message = taskGateBlockedError(blocked.blocked).message
   assert.ok(message.includes('compliance-anonymization'), `message must name the gate: ${message}`)
   assert.ok(message.includes('correction: 实名字段仅内部视图；对外只列「领域·首字母」'), 'message must carry the correction verbatim')
-  assert.ok(message.includes('task t2 completion blocked'), 'message must identify the task')
+  assert.ok(message.includes('task t3 completion blocked'), 'message must identify the task')
   assert.ok(message.includes('attempt 1/2'), 'message must state where the budget stands')
 })
 
@@ -275,7 +276,7 @@ test('soft-gate warnings attach to the result (and would land on TeamTask.gateWa
       kind: 'deterministic',
       phase: 'style',
       severity: 'soft',
-      appliesTo: ['t2'],
+      appliesTo: ['t3'],
       chainOrder: 0,
     },
   ])
@@ -321,7 +322,7 @@ test('deriveQualityScore: hard all pass = 80 + soft pass ratio ×20; hard fail =
       kind: 'deterministic',
       phase: 'style',
       severity: 'soft',
-      appliesTo: ['t2'],
+      appliesTo: ['t3'],
       chainOrder: 0,
     },
   ])
@@ -341,7 +342,7 @@ test('deriveQualityScore: hard all pass = 80 + soft pass ratio ×20; hard fail =
       kind: 'deterministic',
       phase: 'style',
       severity: 'soft',
-      appliesTo: ['t2'],
+      appliesTo: ['t3'],
       chainOrder: 0,
     },
     {
@@ -351,7 +352,7 @@ test('deriveQualityScore: hard all pass = 80 + soft pass ratio ×20; hard fail =
       kind: 'deterministic',
       phase: 'data',
       severity: 'soft',
-      appliesTo: ['t2'],
+      appliesTo: ['t3'],
       chainOrder: 1,
     },
   ])
@@ -400,7 +401,7 @@ test('output satisfying every required section passes the schema-structure gate'
 test('JSON output-template contract: invalid JSON fails with correction, valid JSON passes', () => {
   const stamp = syntheticStamp([], {
     outputTemplates: [{ id: 'test.json', media: ['json'], sections: [] }],
-    taskOutputSchemas: { t2: 'test.json' },
+    taskOutputSchemas: { t3: 'test.json' },
     schemaStructure: { policyId: 'test.quality', severity: 'hard' },
   })
   const team = teamFixture(zhijianPlan(), { qualityPlan: stamp })
@@ -455,6 +456,15 @@ test('subjectWithQualityMark is idempotent — replaces the old marker, never st
 
 /** A task project so `commitTaskUpdate` writes the durable result.json. */
 const PROJECT = {
+  path: 'expert-tasks/t3',
+  inputPath: 'expert-tasks/t3/input/task.json',
+  outputPath: 'expert-tasks/t3/output/result.json',
+  artifactsPath: 'expert-tasks/t3/artifacts',
+  version: 1,
+}
+
+/** Project for the no-policy ad-hoc fixture, whose manual task stays t2. */
+const ADHOC_PROJECT = {
   path: 'expert-tasks/t2',
   inputPath: 'expert-tasks/t2/input/task.json',
   outputPath: 'expert-tasks/t2/output/result.json',
@@ -463,7 +473,7 @@ const PROJECT = {
 }
 
 async function writeProjectDirs(root) {
-  await mkdir(join(root, 'team-tool', 'expert-tasks', 't2', 'output'), { recursive: true })
+  await mkdir(join(root, 'team-tool', 'expert-tasks', 't3', 'output'), { recursive: true })
 }
 
 test('tool: quality_score/repair_count forced into the result even when the member output never mentions them', async () => {
@@ -482,7 +492,7 @@ test('tool: quality_score/repair_count forced into the result even when the memb
     await writeProjectDirs(stateRoot)
     const exec = { agent: member, session: member.session, signal: new AbortController().signal }
 
-    const result = await tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
+    const result = await tool.execute({ task_id: 't3', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
     // The member's output contains no score — the system forces the fields in.
     assert.equal(result.quality_score, 100)
     assert.equal(result.repair_count, 0)
@@ -513,7 +523,7 @@ test('tool: repair_count increments across blocked retries and stays accurate af
     await writeTeamFixture(stateRoot, team)
     await writeProjectDirs(stateRoot)
     const exec = { agent: member, session: member.session, signal: new AbortController().signal }
-    const complete = (output) => tool.execute({ task_id: 't2', status: 'completed', output, attempt_id: 'a1' }, exec)
+    const complete = (output) => tool.execute({ task_id: 't3', status: 'completed', output, attempt_id: 'a1' }, exec)
 
     // 1st blocked attempt → repairCount 1, score 39 (59 × 2/3), marker 硬门未过.
     await assert.rejects(complete(COMPLIANCE_LEAK), /compliance-anonymization/)
@@ -553,7 +563,7 @@ test('tool: no-policy team still records qualityScore: null / repairCount: 0 —
       id: 'team-adhoc',
       name: '自由团队',
       tasks: [
-        { id: 't2', subject: '随便写', status: 'in_progress', dependencies: [], assignee: '成员甲', attemptId: 'a1', attempt: 1, createdAt: 1, updatedAt: 1, project: PROJECT },
+        { id: 't2', subject: '随便写', status: 'in_progress', dependencies: [], assignee: '成员甲', attemptId: 'a1', attempt: 1, createdAt: 1, updatedAt: 1, project: ADHOC_PROJECT },
       ],
     })
     delete team.qualityPlan
@@ -568,7 +578,7 @@ test('tool: no-policy team still records qualityScore: null / repairCount: 0 —
     assert.equal(result.status, 'completed')
     assert.equal(result.quality_score, null, 'no policy ⇒ quality_score null but the field exists')
     assert.equal(result.repair_count, 0)
-    const record = JSON.parse(await readFile(join(stateRoot, 'team-adhoc', PROJECT.outputPath), 'utf8'))
+    const record = JSON.parse(await readFile(join(stateRoot, 'team-adhoc', ADHOC_PROJECT.outputPath), 'utf8'))
     assert.equal('qualityScore' in record, true, 'result.json must always carry qualityScore')
     assert.equal(record.qualityScore, null)
     assert.equal('repairCount' in record, true, 'result.json must always carry repairCount')
@@ -595,7 +605,7 @@ test('tool: human-readable text output shows 质量分 X ｜ 修复 N 轮 (no-po
 
     // Gated team: clean pass → 质量分 100 ｜ 修复 0 轮.
     await writeTeamFixture(join(workspace, '.expert-teams'), toolTeamFixture(zhijianPlan()))
-    const gated = await tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
+    const gated = await tool.execute({ task_id: 't3', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
     const gatedText = renderOf(gated)
     assert.match(gatedText, /质量分/, 'text output must carry 质量分')
     assert.match(gatedText, /修复/, 'text output must carry 修复')
@@ -649,17 +659,17 @@ test('score enters the evaluation result and the durable subject through the too
 
     // Hard-gate block: marker carries 硬门未过 and the derived score.
     await assert.rejects(
-      tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_LEAK, attempt_id: 'a1' }, exec),
+      tool.execute({ task_id: 't3', status: 'completed', output: COMPLIANCE_LEAK, attempt_id: 'a1' }, exec),
       /compliance-anonymization/,
     )
     let team = await readTeam(join(workspace, '.expert-teams'), 'team-tool')
-    assert.equal(team?.tasks[0]?.subject, '融合成稿 〔质 39·硬门未过〕')
+    assert.equal(team?.tasks[0]?.subject, '渲染与生成 〔质 39·硬门未过〕')
 
     // Fixed retry: marker replaced (single, no stacking), score 100.
-    const fixed = await tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
+    const fixed = await tool.execute({ task_id: 't3', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
     assert.equal(fixed.status, 'completed')
     team = await readTeam(join(workspace, '.expert-teams'), 'team-tool')
-    assert.equal(team?.tasks[0]?.subject, '融合成稿 〔质 100〕')
+    assert.equal(team?.tasks[0]?.subject, '渲染与生成 〔质 100〕')
   } finally {
     await rm(dir, { recursive: true, force: true })
   }
@@ -740,7 +750,7 @@ test('policy granting no repair rounds blocks forever (budget 0)', () => {
       kind: 'deterministic',
       phase: 'compliance',
       severity: 'hard',
-      appliesTo: ['t2'],
+      appliesTo: ['t3'],
       chainOrder: 0,
     },
   ], { maxRepairRounds: 0 })
@@ -752,6 +762,47 @@ test('policy granting no repair rounds blocks forever (budget 0)', () => {
   }
   const message = taskGateBlockedError(evaluateTaskCompletionGates(team, fusionTask({ gateFailCount: 5 }), COMPLIANCE_LEAK).blocked).message
   assert.ok(message.includes('grants no repair rounds'), 'message must explain the zero-budget contract')
+})
+
+/* ---------------------------------------------------------------------------
+ * Logical → physical task rebinding (fan-out)
+ * ------------------------------------------------------------------------- */
+
+test('logical t2 gates bind to physical t6 after five-reviewer fan-out', () => {
+  // Five reviewers (all 行业研究, claim realestate.research.review) fan the
+  // logical reviewer task t1 into physical t1..t5; the fusion logical task t2
+  // becomes physical t6. The stamped gates target logical t2, so selection
+  // must rebind them to the completing physical task id — otherwise the
+  // quality runtime cannot find the artifact and fails with
+  // `gate-artifact-missing`.
+  const selected = ['bk-024', 'bk-025', 'bk-011', 'bk-031', 'bk-010']
+  const plan = zhijianPlan(selected)
+  const reviewerTasks = selected.map((expertId, index) => ({
+    id: `t${index + 1}`,
+    subject: `专家研判 ${expertId}`,
+    status: 'completed',
+    dependencies: [],
+    output: '研判完成。',
+    createdAt: 1,
+    updatedAt: 1,
+    planTask: { logicalId: 't1', fanOutIndex: index },
+  }))
+  const physicalFusion = fusionTask({
+    id: 't6',
+    dependencies: reviewerTasks.map(item => item.id),
+    planTask: { logicalId: 't2' },
+  })
+  const team = teamFixture(plan, {
+    tasks: [...reviewerTasks, physicalFusion],
+    taskSeq: 6,
+  })
+  const outcome = evaluateTaskCompletionGates(team, physicalFusion, CITED_NUMBER)
+  assert.ok(outcome !== undefined)
+  assert.equal(outcome.blocked, undefined, outcome.blocked?.reason)
+  const issues = outcome.result.rounds.flatMap(round =>
+    round.results.flatMap(result => result.issues))
+  assert.equal(issues.some(issue => issue.code === 'gate-artifact-missing'), false)
+  assert.ok(outcome.score >= QUALITY_BASE_SCORE, `score ${outcome.score} in the pass band`)
 })
 
 /* ---------------------------------------------------------------------------
@@ -771,29 +822,31 @@ test('deliverable-targeted gate composes every source task output once all sourc
       chainOrder: 0,
       config: { requiredSections: ['# 结论'] },
     },
-  ])
+  ], { deliverables: [{ id: 'd1', fromTasks: ['t2', 't3'] }] })
   const team = teamFixture(zhijianPlan(), {
     qualityPlan: stamp,
     tasks: [
       { id: 't1', subject: '专家研判', status: 'completed', dependencies: [], output: '# 结论\n上海二手房市场筑底迹象明显。', createdAt: 1, updatedAt: 1 },
-      { id: 't2', subject: '融合成稿', status: 'in_progress', dependencies: ['t1'], assignee: '成员甲', attemptId: 'a1', attempt: 1, createdAt: 1, updatedAt: 1, planTask: { logicalId: 't2' } },
+      { id: 't2', subject: '融合成稿', status: 'completed', dependencies: ['t1'], output: '# 结论\n融合稿。', createdAt: 1, updatedAt: 1, planTask: { logicalId: 't2' } },
+      { id: 't3', subject: '渲染与生成', status: 'in_progress', dependencies: ['t2'], assignee: '成员甲', attemptId: 'a1', attempt: 1, createdAt: 1, updatedAt: 1, planTask: { logicalId: 't3' } },
     ],
   })
-  // t1 (completed) carries the required section; t2's own output does not —
-  // the composed deliverable still passes because t1 contributes it.
-  const outcome = evaluateTaskCompletionGates(team, fusionTask(), '融合稿正文，无章节标题。')
+  // t2 (completed) carries the required section; t3's own output does not —
+  // the composed deliverable still passes because t2 contributes it.
+  const outcome = evaluateTaskCompletionGates(team, fusionTask(), '渲染稿正文，无章节标题。')
   assert.ok(outcome !== undefined, 'gate applies once all deliverable sources are complete')
-  assert.equal(outcome.blocked, undefined, 'composed artifact must contain t1\'s section')
+  assert.equal(outcome.blocked, undefined, 'composed artifact must contain t2\'s section')
   // When an upstream source is not complete the deliverable cannot be composed:
   // no gate applies, exactly like today.
   const incomplete = teamFixture(zhijianPlan(), {
     qualityPlan: stamp,
     tasks: [
-      { id: 't1', subject: '专家研判', status: 'pending', dependencies: [], createdAt: 1, updatedAt: 1 },
-      { id: 't2', subject: '融合成稿', status: 'in_progress', dependencies: ['t1'], createdAt: 1, updatedAt: 1, planTask: { logicalId: 't2' } },
+      { id: 't1', subject: '专家研判', status: 'completed', dependencies: [], createdAt: 1, updatedAt: 1 },
+      { id: 't2', subject: '融合成稿', status: 'pending', dependencies: ['t1'], createdAt: 1, updatedAt: 1, planTask: { logicalId: 't2' } },
+      { id: 't3', subject: '渲染与生成', status: 'in_progress', dependencies: ['t2'], createdAt: 1, updatedAt: 1, planTask: { logicalId: 't3' } },
     ],
   })
-  const none = evaluateTaskCompletionGates(incomplete, fusionTask(), '融合稿正文。')
+  const none = evaluateTaskCompletionGates(incomplete, fusionTask(), '渲染稿正文。')
   assert.equal(none, undefined, 'no complete deliverable ⇒ no gates run')
 })
 
@@ -870,7 +923,7 @@ function toolTeamFixture(plan, overrides = {}) {
     qualityPlan: stampQualityPlan(plan),
     members: [{ id: 'sess-member', name: '成员甲', joinedAt: 1, status: 'idle' }],
     tasks: [
-      { id: 't2', subject: '融合成稿', status: 'in_progress', dependencies: [], assignee: '成员甲', attemptId: 'a1', attempt: 1, createdAt: 1, updatedAt: 1, planTask: { logicalId: 't2' } },
+      { id: 't3', subject: '渲染与生成', status: 'in_progress', dependencies: [], assignee: '成员甲', attemptId: 'a1', attempt: 1, createdAt: 1, updatedAt: 1, planTask: { logicalId: 't3' } },
     ],
     taskSeq: 1,
     ...overrides,
@@ -894,7 +947,7 @@ test('tool: completion blocked by a failing hard gate — task stays in_progress
     await writeTeamFixture(join(workspace, '.expert-teams'), toolTeamFixture(zhijianPlan()))
     const exec = { agent: member, session: member.session, signal: new AbortController().signal }
     await assert.rejects(
-      tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_LEAK, attempt_id: 'a1' }, exec),
+      tool.execute({ task_id: 't3', status: 'completed', output: COMPLIANCE_LEAK, attempt_id: 'a1' }, exec),
       (error) => {
         assert.match(error.message, /compliance-anonymization/, 'error must name the gate')
         assert.match(error.message, /correction: 实名字段仅内部视图；对外只列「领域·首字母」/, 'error must carry the correction')
@@ -927,11 +980,11 @@ test('tool: retry after fixing the output succeeds — budget counter kept, task
     const exec = { agent: member, session: member.session, signal: new AbortController().signal }
 
     await assert.rejects(
-      tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_LEAK, attempt_id: 'a1' }, exec),
+      tool.execute({ task_id: 't3', status: 'completed', output: COMPLIANCE_LEAK, attempt_id: 'a1' }, exec),
       /compliance-anonymization/,
     )
 
-    const second = await tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
+    const second = await tool.execute({ task_id: 't3', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
     assert.equal(second.status, 'completed')
     assert.equal(second.output, COMPLIANCE_FIXED)
     assert.equal(second.gate_warnings, undefined, 'clean pass carries no warnings')
@@ -944,7 +997,7 @@ test('tool: retry after fixing the output succeeds — budget counter kept, task
     assert.equal(task?.attemptId, undefined, 'terminal work drops its capability')
 
     // Idempotent re-read of a terminal task includes the durable record.
-    const again = await tool.execute({ task_id: 't2', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
+    const again = await tool.execute({ task_id: 't3', status: 'completed', output: COMPLIANCE_FIXED, attempt_id: 'a1' }, exec)
     assert.equal(again.status, 'completed')
   } finally {
     await rm(dir, { recursive: true, force: true })
@@ -968,14 +1021,14 @@ test('tool: soft-gate warnings attach to the result and the durable task record'
         kind: 'deterministic',
         phase: 'style',
         severity: 'soft',
-        appliesTo: ['t2'],
+        appliesTo: ['t3'],
         chainOrder: 0,
       },
     ])
     await writeTeamFixture(join(workspace, '.expert-teams'), toolTeamFixture(zhijianPlan(), { qualityPlan: stamp }))
     const phrasey = '## 结论\n综上所述，市场正在回暖。总而言之，政策在发力。综上所述，成交量回升。总而言之，价格企稳。综上所述，库存下降。总而言之，预期改善。'
     const result = await tool.execute(
-      { task_id: 't2', status: 'completed', output: phrasey, attempt_id: 'a1' },
+      { task_id: 't3', status: 'completed', output: phrasey, attempt_id: 'a1' },
       { agent: member, session: member.session, signal: new AbortController().signal },
     )
     assert.equal(result.status, 'completed')
@@ -984,7 +1037,7 @@ test('tool: soft-gate warnings attach to the result and the durable task record'
     const team = await readTeam(join(workspace, '.expert-teams'), 'team-tool')
     assert.ok(team?.tasks[0]?.gateWarnings?.some(line => line.includes('style-lint')), 'warnings must persist on the task')
     // Soft penalties lower the score and are visible in the subject marker.
-    assert.equal(team?.tasks[0]?.subject, '融合成稿 〔质 80〕')
+    assert.equal(team?.tasks[0]?.subject, '渲染与生成 〔质 80〕')
   } finally {
     await rm(dir, { recursive: true, force: true })
   }
@@ -1040,7 +1093,7 @@ test('stamped quality plan round-trips through the durable team record and still
     assert.deepEqual(loaded.qualityPlan?.policies, plan.bindings.qualityPolicies)
     assert.deepEqual(loaded.qualityPlan?.gates.map(gate => gate.gateId), ['data-citation', 'compliance-anonymization'])
     assert.equal(loaded.qualityPlan?.maxRepairRounds, 2)
-    const outcome = evaluateTaskCompletionGates(loaded, loaded.tasks[1], COMPLIANCE_LEAK)
+    const outcome = evaluateTaskCompletionGates(loaded, loaded.tasks[2], COMPLIANCE_LEAK)
     assert.ok(outcome?.blocked !== undefined, 'the persisted stamp must still block')
     assert.equal(outcome.blocked.gateId, 'compliance-anonymization')
   } finally {

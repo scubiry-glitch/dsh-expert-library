@@ -1,0 +1,33 @@
+[
+ {
+  "date": "2026-08-25",
+  "revision": "v2.1",
+  "project": "智见点评·贝壳Q2经营杠杆归因",
+  "change": "新增独立「渠道视角维度卡片」（β 是底色、α 是种子，剪刀差最像 α；四格要点+注脚）；PDF 仍 9 页 0 越界；PPT compare 页渠道视角 callout 维度卡，audit 0 findings"
+ },
+ {
+  "date": "2026-08-25",
+  "revision": "v2",
+  "project": "智见点评·贝壳Q2经营杠杆归因",
+  "register": "product",
+  "surface": "研报/报告页",
+  "palette": "cobalt-trust 贝壳蓝金",
+  "accent": "#2D5BD8",
+  "accent2": "#E08A2E",
+  "change": "并入渠道视角（居住服务·Y 杨现领）：剪刀差再定位、AI 信息平权解读、中台系统复制条件、差分两洞、验证节点③改 AI 成本披露；主基调不变；PDF 7→9 页；PPT 10 页同构更新"
+ },
+ {
+  "date": "2026-08-25",
+  "project": "智见点评·贝壳Q2经营杠杆归因",
+  "register": "product",
+  "surface": "研报/报告页",
+  "palette": "cobalt-trust 贝壳蓝金",
+  "accent": "#2D5BD8",
+  "accent2": "#E08A2E",
+  "soul": "editorial-research",
+  "spectacle": 2,
+  "density": 7,
+  "motion": "css-fade-up-only",
+  "notes": "贝壳蓝金为场景主题指定；金仅用于 α 段与数据高亮；β 蓝、α 金贯穿全篇"
+ }
+]

@@ -1,0 +1,9 @@
+{
+  "taskId": "t6",
+  "subject": "Designer·叠加贝壳生态研判更新HTML+PDF",
+  "description": "## 任务：把贝壳生态研判结论叠加更新进 STAID v1 HTML/PDF（正式稿）\n\n### 背景\n已有交付（2026-08-25 由你完成）：/root/zhijian/dsh-expert-library/work/研报交付_20260825_智见BP_汇报大纲_STAID_v1_HTML/\n- 智见BP_汇报大纲_STAID_v1_视觉稿.html（贝壳蓝金 product register，单文件自包含）\n- 智见BP_汇报大纲_STAID_v1_视觉稿.pdf（16 页 A4，98wiki 页脚约定）\n- Designer_渲染检查记录.md\n\n### 输入\n等待 t5 融合结论《贝壳生态研判_智见BP_STAID_v1_结论.md》完成（四位贝壳生态专家：杨现领 bk-033 渠道崛起派 + 左晖 e08-08 平台经济 + 柴强 bk-018 存量统筹 + 琉 bank-11 银行战略咨询，框架 B 四段式）。\n\n### 你的任务\n1. 读 t5 产出的融合结论稿\n2. 在现有 智见BP_汇报大纲_STAID_v1_视觉稿.html 基础上**新增一个章节「贝壳生态研判结论」（置于支撑机制之后或作为附录），并把关键增补/修正建议融入正文相关处**（保持既有贝壳蓝金设计语言、finesse-ui product register 规范、单文件自包含）\n3. 输出：\n   - 更新后的 HTML（同一路径覆盖 智见BP_汇报大纲_STAID_v1_视觉稿.html，或新建 智见BP_汇报大纲_STAID_v2_贝壳生态版.html 保留原版——推荐新建 v2 保留原版）\n   - 更新后的 PDF（weasyprint A4，98wiki 页脚约定）\n   - Designer_渲染检查记录.md 追加「贝壳生态研判版」一节（sha256、页数、检查项）\n4. 渲染检查：无横向溢出、对比度 ≥4.5:1、表格无截断、reduced-motion 回退、PDF 页脚逐页断言\n\n完成后向队长汇报：交付路径、sha256、新增章节内容摘要、检查结果。",
+  "dependencies": [
+    "t5"
+  ],
+  "createdAt": 1787637400192
+}

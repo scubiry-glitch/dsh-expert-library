@@ -1,0 +1,93 @@
+{
+  "manifestVersion": 1,
+  "generator": "pptfast preview",
+  "pptfastVersion": "0.20.0",
+  "title": "智见_资金监管与平台价值_正式稿_20260823",
+  "slide": {
+    "width": 1280,
+    "height": 720
+  },
+  "checks": {
+    "svg": "completed",
+    "pixels": "not-requested"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "page": 1,
+      "type": "cover",
+      "file": "001-cover.svg",
+      "slideId": "cover"
+    },
+    {
+      "id": "keynote",
+      "page": 2,
+      "type": "content",
+      "file": "002-content.svg",
+      "slideId": "keynote"
+    },
+    {
+      "id": "timeline",
+      "page": 3,
+      "type": "content",
+      "file": "003-content.svg",
+      "slideId": "timeline"
+    },
+    {
+      "id": "market",
+      "page": 4,
+      "type": "content",
+      "file": "004-content.svg",
+      "slideId": "market"
+    },
+    {
+      "id": "platform",
+      "page": 5,
+      "type": "content",
+      "file": "005-content.svg",
+      "slideId": "platform"
+    },
+    {
+      "id": "why",
+      "page": 6,
+      "type": "content",
+      "file": "006-content.svg",
+      "slideId": "why"
+    },
+    {
+      "id": "outlook",
+      "page": 7,
+      "type": "content",
+      "file": "007-content.svg",
+      "slideId": "outlook"
+    },
+    {
+      "id": "risks",
+      "page": 8,
+      "type": "content",
+      "file": "008-content.svg",
+      "slideId": "risks"
+    },
+    {
+      "id": "takeaway",
+      "page": 9,
+      "type": "content",
+      "file": "009-content.svg",
+      "slideId": "takeaway"
+    },
+    {
+      "id": "sources",
+      "page": 10,
+      "type": "content",
+      "file": "010-content.svg",
+      "slideId": "sources"
+    },
+    {
+      "id": "closing",
+      "page": 11,
+      "type": "ending",
+      "file": "011-ending.svg",
+      "slideId": "closing"
+    }
+  ]
+}

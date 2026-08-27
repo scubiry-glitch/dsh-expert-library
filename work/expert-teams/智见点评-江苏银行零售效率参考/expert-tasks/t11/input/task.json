@@ -1,0 +1,9 @@
+{
+  "taskId": "t11",
+  "subject": "渲染与生成（HTML5→PDF/PPT）",
+  "description": "渲染与生成（HTML5→PDF/PPT）：基于 t9 融合稿修订版 v2（江苏银行零售效率参考），按 finesse-ui product register 规范渲染三件套：\n①HTML5 视觉稿：江苏银行主题配色（建议银行蓝金/深蓝+金），卡片式布局，三线（人效重构/AI规模化/场景获客）各占维度卡，领导质询意见（袁军/高增银）作为\"领导质询\"标注区；A4 打印友好；\n②PDF：weasyprint A4，页脚「98wiki ｜ 智见 / 行业研究报告」+页码；\n③PPTX：pptfast 可编辑，带演讲备注；\n④渲染检查：Playwright 宽屏+A4 截图，无遮挡/溢出/页脚可见，更新 MANIFEST 与 checksums。\n完成后告知。",
+  "dependencies": [
+    "t9"
+  ],
+  "createdAt": 1787631506618
+}

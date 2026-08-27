@@ -1,0 +1,577 @@
+{
+ "version": "4",
+ "filename": "租赁平台安全能力_20260823",
+ "narrative": "boardroom-report",
+ "theme": {
+  "id": "consulting",
+  "style": {
+   "colors": {
+    "bg": "#f4f6f9",
+    "surface": "#ffffff",
+    "panel": "#eef3f8",
+    "primary": "#1a3a5c",
+    "accent": "#c9a96e",
+    "text": "#1f2733",
+    "muted": "#5b6570",
+    "border": "#d8dfe8",
+    "chartPalette": [
+     "#1a3a5c",
+     "#c9a96e",
+     "#5b8db8",
+     "#8fa3c8"
+    ]
+   }
+  }
+ },
+ "meta": {
+  "organization": "98wiki ｜ 智见",
+  "authors": [
+   {
+    "name": "智见点评团队",
+    "role": "行业研究"
+   }
+  ],
+  "date": "2026-08-23",
+  "version": "1.0",
+  "confidentiality": "public"
+ },
+ "assets": {
+  "images": {}
+ },
+ "seed": 20260823,
+ "slides": [
+  {
+   "type": "cover",
+   "id": "cover",
+   "heading": "租赁平台安全能力：确定性溢价与责任敞口的边界",
+   "components": [],
+   "layout": "fashion-masthead"
+  },
+  {
+   "type": "content",
+   "id": "conclusion",
+   "beat": "anchor",
+   "heading": "核心结论：能溢价的是确定性，不是保证",
+   "components": [
+    {
+     "type": "verdict_banner",
+     "text": "能溢价的是确定性，不是保证：租客愿意为「我知道风险、我看到整改、我有人赔付」付费，没有人能买到「绝对安全」。",
+     "tone": "warning",
+     "icon": "shield-check"
+    },
+    {
+     "type": "bullets",
+     "items": [
+      "平台六项过程责任：发现、分级、披露、督促、下架、保险",
+      "产权人承担法定维修义务，赔付按过错归因",
+      "四件套量化入合同：分级、停租阈值、SLA、赔付边界"
+     ]
+    }
+   ],
+   "notes": "开篇定调：安全是服务溢价的入口，但只对确定性定价。谁承诺零事故，谁就在第一次事故时崩塌。",
+   "layout": "side-highlight"
+  },
+  {
+   "type": "content",
+   "id": "boundary",
+   "beat": "dense",
+   "heading": "责任边界：过程责任六项，止步于结果承诺",
+   "components": [
+    {
+     "type": "comparison",
+     "columns": [
+      "平台（过程权）",
+      "产权人（财产权）",
+      "保险（风险池）"
+     ],
+     "rows": [
+      {
+       "label": "安全巡检与风险分级",
+       "cells": [
+        "承担",
+        "—",
+        "—"
+       ]
+      },
+      {
+       "label": "风险告知与披露",
+       "cells": [
+        "承担",
+        "—",
+        "—"
+       ]
+      },
+      {
+       "label": "整改督促与停租下架",
+       "cells": [
+        "承担（停租阈值=责任分洪闸）",
+        "拒不整改者责任移转",
+        "—"
+       ]
+      },
+      {
+       "label": "房屋本体维修改造",
+       "cells": [
+        "不承担",
+        "法定无限义务",
+        "—"
+       ]
+      },
+      {
+       "label": "事故赔付",
+       "cells": [
+        "过错归因：漏检/未告知/未下架",
+        "拒不整改后出租",
+        "不可抗力/使用不当"
+       ]
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "variant": "warn",
+     "text": "平台不做责任的终点：责任以证据链为界、不以金额为界——巡检记录、风险告知单、整改SLA、下架凭证，谁在证据链上失守谁担责。"
+    }
+   ],
+   "notes": "三权分立划界：平台管过程、业主管本体、保险管赔付。这是服务溢价与责任敞口的边界所在。",
+   "layout": "bento-panel"
+  },
+  {
+   "type": "content",
+   "id": "evidence",
+   "beat": "dense",
+   "heading": "证据：四组关键事实",
+   "components": [
+    {
+     "type": "kpi_cards",
+     "items": [
+      {
+       "value": "12.7",
+       "unit": "/万套",
+       "label": "每万套风险 · 2026Q1",
+       "delta": "flat",
+       "icon": "activity"
+      },
+      {
+       "value": "-42%",
+       "unit": "",
+       "label": "漏气同比 · 闭环见效",
+       "delta": "down",
+       "icon": "trending-down"
+      },
+      {
+       "value": "2.5",
+       "unit": "万套",
+       "label": "18个月拦截风险房源",
+       "delta": "up",
+       "icon": "shield-x"
+      },
+      {
+       "value": "10",
+       "unit": "万套+",
+       "label": "成都燃气联合管控",
+       "delta": "up",
+       "icon": "building-2"
+      }
+     ]
+    },
+    {
+     "type": "bullets",
+     "items": [
+      "2026-07 无地线冰箱漏电投诉（媒体口径）：电气在原地",
+      "累计赔付金超 2 亿元（媒体口径，性质待拆分）",
+      "无锡/深圳/杭州九个月三地立法，安全义务显性化"
+     ]
+    }
+   ],
+   "notes": "四组证据：管控有效、结构偏科、入口成熟、监管法定。事故下降与责任模糊并存。",
+   "layout": "image-lead-split"
+  },
+  {
+   "type": "content",
+   "id": "effective",
+   "beat": "dense",
+   "heading": "管控有效：漏气降42%的闭环逻辑",
+   "components": [
+    {
+     "type": "bullets",
+     "items": [
+      "2026Q1 每万套风险 12.7、漏气同比降 42%（企业披露口径）",
+      "42% 的降幅只能来自干预闭环：发现→处置→复验",
+      "12.7 是发现率不是事故率；降幅须与检出量分离",
+      "成都燃气合作（超十万套）：平台不自建安检队，联合管控"
+     ]
+    },
+    {
+     "type": "callout",
+     "variant": "info",
+     "text": "口径警示：42% 是改善还是口径红利，需台账/出险/投诉三方交叉验证。"
+    }
+   ],
+   "notes": "燃气路径已跑通：可单套闭环、可量化、可交付。这是安全溢价模型成立的第一块证据。",
+   "layout": "bento-panel"
+  },
+  {
+   "type": "content",
+   "id": "electrical",
+   "beat": "dense",
+   "heading": "电气盲区：燃气与电气的一进一退",
+   "components": [
+    {
+     "type": "comparison",
+     "columns": [
+      "燃气（已跑通）",
+      "电气（未闭合）"
+     ],
+     "rows": [
+      {
+       "label": "风险性质",
+       "cells": [
+        "可单套闭环",
+        "整栋楼接地系统缺陷"
+       ]
+      },
+      {
+       "label": "单套成本",
+       "cells": [
+        "百元至千元级",
+        "数千至数万元"
+       ]
+      },
+      {
+       "label": "监管压力",
+       "cells": [
+        "爆燃关注度高",
+        "常被民事化为「房屋瑕疵」"
+       ]
+      },
+      {
+       "label": "溢价可生成性",
+       "cells": [
+        "可检测可交付",
+        "无法证明交付"
+       ]
+      }
+     ]
+    },
+    {
+     "type": "callout",
+     "variant": "warn",
+     "text": "2026-07 无地线冰箱漏电受伤投诉（媒体披露口径）：责任按「缺陷归属」切割——冰箱属租客、无地线属房屋。"
+    }
+   ],
+   "notes": "偏科不是态度问题，是结构问题。平台若承诺「电气安全交付」，即打开无底洞。",
+   "layout": "banner-heading"
+  },
+  {
+   "type": "content",
+   "id": "drivers",
+   "beat": "dense",
+   "heading": "归因一：三重驱动",
+   "components": [
+    {
+     "type": "row_cards",
+     "items": [
+      {
+       "title": "存量欠账暴露",
+       "text": "成都租赁房源大量为 2000 年前后老房，无地线、燃气超期是历史欠账；产权人无动力也无能力整改，平台站在第一暴露面"
+      },
+      {
+       "title": "买方市场转服务力",
+       "text": "租客用脚投票，安全是服务力权重最高的单项；谁先建立可量化安全能力，谁获得选择率溢价"
+      },
+      {
+       "title": "监管显性化",
+       "text": "无锡、深圳、杭州九个月内立法，平台安全义务从自愿投入变成法定成本"
+      }
+     ]
+    }
+   ],
+   "notes": "三重驱动叠加：存量欠账、买方市场、监管法定——安全成为租赁平台主战场的原因。",
+   "layout": "asymmetric-triptych"
+  },
+  {
+   "type": "content",
+   "id": "formula",
+   "beat": "anchor",
+   "heading": "归因二：投入强度公式",
+   "components": [
+    {
+     "type": "verdict_banner",
+     "text": "平台投入强度 = 整改可闭环度 × 监管压力 × 溢价可生成性",
+     "tone": "neutral",
+     "icon": "sigma"
+    },
+    {
+     "type": "bullets",
+     "items": [
+      "燃气三项全高：可单套闭环、爆燃监管倒逼、可交付「安心租」溢价",
+      "电气三项全低：单套无解、监管压力小、无法证明交付",
+      "偏科不是态度问题，是结构问题"
+     ]
+    },
+    {
+     "type": "callout",
+     "variant": "info",
+     "text": "责任边界成为核心矛盾的根源：义务与能力错配——维修义务法定在产权人，产权人不居住不巡检；平台有触达能力却无法定义务。"
+    }
+   ],
+   "notes": "投入强度公式解释燃气电气一进一退；义务与能力错配解释责任边界矛盾。",
+   "layout": "stacked-poster"
+  },
+  {
+   "type": "content",
+   "id": "solution",
+   "beat": "dense",
+   "heading": "破解：证据链划界与停租分洪闸",
+   "components": [
+    {
+     "type": "steps",
+     "items": [
+      {
+       "title": "巡检记录",
+       "text": "发现即留痕，分级全流程可审计"
+      },
+      {
+       "title": "风险告知单",
+       "text": "披露标准化，责任归属显性告知"
+      },
+      {
+       "title": "整改SLA",
+       "text": "7日闭环：燃气≥90%，电气单列"
+      },
+      {
+       "title": "停租下架",
+       "text": "达标即下架：责任分洪闸"
+      }
+     ]
+    }
+   ],
+   "footnote": "责任以证据链为界、不以金额为界；停租阈值后仍出租，责任自动移转业主。",
+   "notes": "证据链四件套：谁在证据链上失守谁担责。停租阈值是责任分洪闸而非风控工具。",
+   "layout": "image-lead-split"
+  },
+  {
+   "type": "content",
+   "id": "protocol",
+   "beat": "dense",
+   "heading": "验证协议：6个月盯五指标",
+   "components": [
+    {
+     "type": "data_table",
+     "columns": [
+      {
+       "key": "metric",
+       "label": "观察指标"
+      },
+      {
+       "key": "threshold",
+       "label": "阈值 / 基线"
+      },
+      {
+       "key": "signal",
+       "label": "指向"
+      }
+     ],
+     "rows": [
+      {
+       "cells": {
+        "metric": "巡检覆盖率",
+        "threshold": "十万套月度巡检占比",
+        "signal": "↑"
+       }
+      },
+      {
+       "cells": {
+        "metric": "发现率（每万套风险）",
+        "threshold": "12.7 基线（企业披露口径）",
+        "signal": "↓"
+       }
+      },
+      {
+       "cells": {
+        "metric": "7日整改闭环率",
+        "threshold": "燃气 ≥90%，电气单列（建议值）",
+        "signal": "≥90%"
+       }
+      },
+      {
+       "cells": {
+        "metric": "重复风险率",
+        "threshold": "同一房源复发",
+        "signal": "≤5%"
+       }
+      },
+      {
+       "cells": {
+        "metric": "赔付率",
+        "threshold": "赔付/安全服务收入 ≤30-40%（建议值）",
+        "signal": "↓"
+       },
+       "emphasis": "highlight"
+      }
+     ],
+     "source": "建议阈值为研判框架值；统计口径需第三方核验"
+    },
+    {
+     "type": "callout",
+     "variant": "info",
+     "text": "五数同向改善 → 溢价模型成立、可复制；闭环率 <70% 或重复率抬头 → 出口堵塞，先修出口再扩规模；赔付率超健康线 → 分级失效，收缩承诺而非加投入。"
+    }
+   ],
+   "notes": "6个月验证窗口（2026-08 起）：成都样本是全国试验田。",
+   "layout": "two-column"
+  },
+  {
+   "type": "content",
+   "id": "outlook",
+   "beat": "dense",
+   "heading": "展望：电气破局三条腿",
+   "components": [
+    {
+     "type": "steps",
+     "items": [
+      {
+       "title": "披露前置",
+       "text": "签约前强制披露电气检测结果，告知标准化"
+      },
+      {
+       "title": "保险嵌入",
+       "text": "电气事故险嵌入租金、精算定价，赔付走保险不走平台自有资金"
+      },
+      {
+       "title": "数据对接",
+       "text": "无地线问题数据化，对接城市更新与老旧小区改造专项"
+      }
+     ]
+    },
+    {
+     "type": "bullets",
+     "items": [
+      "平台角色：风险揭示者 + 保险组织者，不做整改兜底者",
+      "制度机会：验证后写入地方标准——先行者制定规则",
+      "海外参照：日本赁贷住宅管理业法、美国出租人维修义务法定化"
+     ]
+    }
+   ],
+   "notes": "电气破局三条腿 + 制度机会。平台做规则与连接，专业的事交给专业的人。",
+   "layout": "stacked-poster"
+  },
+  {
+   "type": "content",
+   "id": "risks",
+   "beat": "dense",
+   "heading": "四大不确定性",
+   "components": [
+    {
+     "type": "row_cards",
+     "items": [
+      {
+       "title": "① 口径风险",
+       "text": "12.7 与 -42% 的分母、基期未独立核实，需三方交叉验证"
+      },
+      {
+       "title": "② 出口盲区",
+       "text": "2.5 万套拦截房源去向未披露，或只是账面安全"
+      },
+      {
+       "title": "③ 赔付性质",
+       "text": "2 亿元+（媒体披露口径）是保障金还是事故赔付未拆分"
+      },
+      {
+       "title": "④ 司法尾部风险",
+       "text": "致死事故下「承诺安全」可能被认定管理义务"
+      }
+     ]
+    }
+   ],
+   "footnote": "6个月观察期不覆盖完整冬季（燃气事故高发季），同比口径受季节性干扰——需一个完整年度再下结论。",
+   "notes": "四大不确定性：口径、出口、赔付性质、司法尾部风险。",
+   "layout": "split-band"
+  },
+  {
+   "type": "content",
+   "id": "appendix",
+   "beat": "dense",
+   "heading": "口径附录：数字、口径与核验状态",
+   "components": [
+    {
+     "type": "data_table",
+     "columns": [
+      {
+       "key": "item",
+       "label": "数字"
+      },
+      {
+       "key": "caliber",
+       "label": "口径"
+      },
+      {
+       "key": "status",
+       "label": "核验状态"
+      }
+     ],
+     "rows": [
+      {
+       "cells": {
+        "item": "每万套风险 12.7 / 漏气 -42%",
+        "caliber": "贝壳成出口径（新浪财经 2026-05-19）",
+        "status": "统计口径需第三方核验"
+       }
+      },
+      {
+       "cells": {
+        "item": "成都燃气合作 10 万套+",
+        "caliber": "企业披露（乐居财经 2026-08-08）",
+        "status": "中国建设报/央广网可核验"
+       }
+      },
+      {
+       "cells": {
+        "item": "18 个月拦截 2.5 万套",
+        "caliber": "企业披露（网易 2026-07-13）",
+        "status": "凤凰网/北京商报可核验"
+       }
+      },
+      {
+       "cells": {
+        "item": "赔付金 2 亿元+",
+        "caliber": "媒体披露（格隆汇）",
+        "status": "性质待拆分"
+       }
+      },
+      {
+       "cells": {
+        "item": "无地线漏电投诉",
+        "caliber": "媒体披露（新浪科技 2026-08-13）",
+        "status": "可核验存在"
+       }
+      },
+      {
+       "cells": {
+        "item": "无锡/深圳/杭州政策",
+        "caliber": "政府公报/区政府网/住保房管局",
+        "status": "可核验存在"
+       }
+      }
+     ],
+     "source": "政策时段：2025-09 至 2026-08；行业经验估值与建议阈值为研判框架值"
+    },
+    {
+     "type": "callout",
+     "variant": "info",
+     "text": "预测类表述均为研判推断。一句话收束：平台做的是「确定性生意」，不是「安全保证生意」。"
+    }
+   ],
+   "notes": "口径附录：每个数字的口径与核验状态逐条列明。",
+   "layout": "asymmetric-triptych"
+  },
+  {
+   "type": "ending",
+   "id": "ending",
+   "heading": "平台做的是确定性生意，不是安全保证生意",
+   "components": [],
+   "layout": "rail-ending"
+  }
+ ]
+}

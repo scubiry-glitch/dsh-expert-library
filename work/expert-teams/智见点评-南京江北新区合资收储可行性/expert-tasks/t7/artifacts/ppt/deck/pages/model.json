@@ -1,0 +1,74 @@
+{
+  "components": [
+    {
+      "type": "chart",
+      "chart_type": "donut",
+      "center_total": true,
+      "series": [
+        {
+          "name": "三通道",
+          "data": [
+            {
+              "x": "保租",
+              "y": 45
+            },
+            {
+              "x": "安置",
+              "y": 30
+            },
+            {
+              "x": "销售",
+              "y": 25
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "data_table",
+      "columns": [
+        {
+          "key": "item",
+          "label": "收购折扣",
+          "align": "left"
+        },
+        {
+          "key": "yield",
+          "label": "江北纯租赁毛收益率",
+          "align": "right"
+        },
+        {
+          "key": "vs",
+          "label": "对比综合成本 2.5%",
+          "align": "left"
+        }
+      ],
+      "rows": [
+        {
+          "cells": {
+            "item": "6 折（d=0.6）【测算】",
+            "yield": "2.85%",
+            "vs": "跑赢 · 基准情形"
+          },
+          "emphasis": "highlight"
+        },
+        {
+          "cells": {
+            "item": "7 折（d=0.7）【测算】",
+            "yield": "2.44%",
+            "vs": "低于成本 · 模型生命线"
+          }
+        },
+        {
+          "cells": {
+            "item": "6 折相对市价安全边际【测算】",
+            "yield": "约 40%",
+            "vs": "江北 2027 补跌 3-5% 亦无损模型"
+          }
+        }
+      ],
+      "source": "三通道为建议区间中值示意；收益率与成本均为团队测算"
+    }
+  ],
+  "notes": "模型成立靠三低：低成本资金、低折扣收购、低运营成本。6 折是基准情形，7 折是上限也是红线。"
+}

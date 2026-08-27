@@ -67,6 +67,14 @@
       "evidenceRefs": [
         "zhijian:roster"
       ]
+    },
+    {
+      "capability": "bank.review",
+      "proficiency": 1,
+      "coverage": "medium",
+      "evidenceRefs": [
+        "zhijian:roster"
+      ]
     }
   ],
   "persona": {

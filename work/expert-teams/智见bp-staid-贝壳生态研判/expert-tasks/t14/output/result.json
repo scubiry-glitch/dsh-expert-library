@@ -1,0 +1,9 @@
+{
+  "taskId": "t14",
+  "status": "completed",
+  "attempt": 1,
+  "output": "已完成 v3 合并修订（原路径覆盖，9→8 页，两张用户截图 base64 内嵌）。目录：/root/zhijian/dsh-expert-library/work/研报交付_20260825_贝壳优势_合作前提/\n- 贝壳优势_合作前提_分页版.html 新 sha256=08b3e9cf0dfea3c5ac945871d46ee8bf211e60f024f1c7a745f2ba335b394f4f（旧 5e840015…96e2；60KB→558KB，base64 内嵌预期内）\n- Designer_渲染检查记录.md 追加第 8 节「v3 合并修订」；_check/page-1..8.png + deck-full-1440.png 重截\n页序（8 页）：P1 封面 → P2 信用 → P3 真实 → P4 优势3·基础设施与标准闭环（合并页）→ P5 优势4·深度（一页说完）→ P6 补充优势 → P7 条款 → P8 封底。\n图片内嵌：图1 好房子标示（1098×1012）→ P4 C端标示卡旁 200px 缩略（三列媒体格：人民日报｜C端卡｜截图）；图2 Expert Teams 活动界面（872×934）→ P5 专家多轮协作流旁 180px 缩略（flow-media 双列：依赖链流＋核心表述 | 截图）；均带 hairline 边框+圆角+figcaption，alt 写明内容概要，响应式缩放（≤1024px 220/200、≤720px 140）。\n合并策略：估值三锚+指数三卡紧凑化（9px 内边距、11px 正文），案例区 2+3 混合网格，闭环条收尾；P5 五维表 11px 紧凑 + harness 4 卡行 + 协作流+图 + 结论卡。\n检查结果：8 页 × 5 视口（1440/1280/1366/390/320）overflowY 全 0（40 断言）；合并页横向越界 0；两图 5 视口全部加载成功；键盘 End/Home、页点第 4 点直达合并页实测正确；reduced-motion 通过；console/pageerror 0。源稿 md 无需改动（合并为版式调整，内容已在上轮同步）。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787644165682
+}

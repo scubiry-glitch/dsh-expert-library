@@ -1,0 +1,111 @@
+{
+ "version": "1",
+ "narrative": "boardroom-report",
+ "theme": "beike",
+ "filename": "智见点评-居住服务模块化时代-讨论稿",
+ "seed": 20260825,
+ "meta": {
+  "organization": "智见点评",
+  "authors": [
+   {
+    "name": "智见点评 · 融合研判",
+    "role": "讨论稿 · 四位专家匿名标注 Y/C/L/X",
+    "org": "智见"
+   }
+  ],
+  "date": "2026-08",
+  "version": "讨论稿 v1",
+  "confidentiality": "internal",
+  "copyright": "98wiki ｜ 智见 / 行业研究报告"
+ },
+ "pages": [
+  {
+   "id": "cover",
+   "type": "cover",
+   "heading": "居住服务进入「专业角色可拆分、可验证、可单独付费」时代？"
+  },
+  {
+   "id": "keynote",
+   "type": "content",
+   "heading": "主基调：会，而且已经启动",
+   "beat": "anchor",
+   "focus": "verdict_banner",
+   "summary": "客户管家试点、平台量价背离、外部制度挤压，同向指向角色拆分时代的到来"
+  },
+  {
+   "id": "kpi",
+   "type": "content",
+   "heading": "五组关键数字（均带口径）",
+   "beat": "dense",
+   "focus": "kpi_cards"
+  },
+  {
+   "id": "bounds",
+   "type": "content",
+   "heading": "边界条件：基调下修的四个前提",
+   "focus": "row_cards"
+  },
+  {
+   "id": "fact-supply",
+   "type": "content",
+   "heading": "事实一：供给侧角色开始制度性分化",
+   "focus": "chart"
+  },
+  {
+   "id": "fact-platform",
+   "type": "content",
+   "heading": "事实二：平台端量价背离",
+   "focus": "chart"
+  },
+  {
+   "id": "fact-external",
+   "type": "content",
+   "heading": "事实三：外部制度环境挤压信息租金",
+   "focus": "timeline"
+  },
+  {
+   "id": "why",
+   "type": "content",
+   "heading": "归因：为什么是此刻",
+   "beat": "dense",
+   "focus": "bullets"
+  },
+  {
+   "id": "chain",
+   "type": "content",
+   "heading": "机制链：模块化如何自我强化",
+   "beat": "anchor",
+   "focus": "steps"
+  },
+  {
+   "id": "insight",
+   "type": "content",
+   "heading": "洞察：拆的不是人，是责任",
+   "focus": "row_cards"
+  },
+  {
+   "id": "outlook",
+   "type": "content",
+   "heading": "展望：短中长期路线图",
+   "beat": "dense",
+   "focus": "callout"
+  },
+  {
+   "id": "risks",
+   "type": "content",
+   "heading": "不确定性：四点风险",
+   "focus": "bullets"
+  },
+  {
+   "id": "caliber",
+   "type": "content",
+   "heading": "数据口径与来源",
+   "focus": "bullets"
+  },
+  {
+   "id": "ending",
+   "type": "ending",
+   "heading": "智见点评 · 讨论稿交付"
+  }
+ ]
+}

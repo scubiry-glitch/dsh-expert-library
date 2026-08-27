@@ -1,0 +1,45 @@
+{
+  "name": "人社厅培训供需平台-汇报前方案完善-渲染",
+  "id": "人社厅培训供需平台-汇报前方案完善-渲染",
+  "description": "江苏银行向行领导汇报《关于省人社厅培训供需平台项目推进有关事项的汇报》前的圆桌研讨方案完善报告渲染：由 Designer 专家将已完成圆桌研讨产出（_team_outputs.md + _external_facts.md + _designer_brief.md）渲染为 HTML 单文件（江苏银行蓝金、finesse-ui），并输出 Designer_渲染检查记录.md。",
+  "captainSessionId": "session-ef365555-d3dd-4136-92c0-4c831113d0bb",
+  "createdAt": 1787659812487,
+  "members": [
+    {
+      "id": "e50b5037-7309-437c-95d9-286a639c5e75",
+      "name": "designer",
+      "role": "product/UI designer",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1787659814212,
+      "status": "removed"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "subject": "渲染 HTML 单文件：圆桌研讨·省人社厅培训供需平台项目汇报前方案完善",
+      "description": "按任务书渲染《圆桌研讨 · 省人社厅培训供需平台项目汇报前方案完善》HTML 单文件报告。请先读取以下四个文件（按顺序）：\n1. 设计任务书（必须逐条遵守）：/root/.openclaw/workspace/99wiki/projects/人社厅培训供需平台/_designer_brief.md —— 含色彩令牌、版式、结构、检查项、内容纪律\n2. 内容源（圆桌研讨产出全文，五位银行专家发言+融合纪要）：/root/.openclaw/workspace/99wiki/projects/人社厅培训供需平台/_team_outputs.md\n3. 外部事实核查（带来源 URL 的官方数字）：/root/.openclaw/workspace/99wiki/projects/人社厅培训供需平台/_external_facts.md\n4. finesse-ui 技能（渲染规范）：/root/zhijian/dsh-expert-library/knowledge/skills/finesse-ui/SKILL.md（product register：报告/研报阅读页，高密度、清晰度优先；需要时读其 references/product-ui.md 与 references/mobile-floor.md）\n视觉参照稿（江苏银行蓝金配色已验证与任务书一致，可参考其排版）：/root/.openclaw/workspace/99wiki/projects/AI培训五走进/20260824_2027寒假培训项目建议方案_人社厅.html\n\n【交付物】\nA. /root/.openclaw/workspace/99wiki/projects/人社厅培训供需平台/20260825_圆桌研讨_培训供需平台方案完善.html —— 自包含单文件，零外链（无外链字体/CDN/JS/图片，图片一律纯 CSS 或 base64 内嵌）；A4 打印友好（@page size A4 + @media print 固定页脚：文档名+第 X 页/共 Y 页，print-color-adjust:exact）；body overflow-x:clip，390px/320px 视口无横向滚动；表格容器 overflow-x:auto 但单元格文字不得截断（窄列 white-space:nowrap，宽列自动换行）；正文/表格/标签对比度 ≥4.5:1；阴影只用 tinted 色；禁纯黑 #000 大面积。\nB. 同目录 Designer_渲染检查记录.md —— 记录：产物 sha256、逐项检查结果（无横向溢出/对比度抽查/表格截断/打印页脚）、设计决策摘要。\n\n【内容结构】按任务书第 27-37 行：封面 → 一、结论速览（执行摘要+证据强度总表）→ 二、方案完善点诊断（P0/P1/P2）→ 三、三本账（直接/间接/战略三张测算表+敏感性表，参数带口径与假设、注明需核实部门）→ 四、行领导提问清单（≥8 问 Q&A 卡片，含\"为什么是我们做\"\"106人天值不值\"\"类目审核不过怎么办\"\"数据怎么用\"）→ 五、类目二选一决策建议（首选路径/触发切换条件/B计划时间表/变通空间）→ 六、冷启动与风险预案 → 七、专家论点卡（匿名「领域·首字母」+证据强度高/中/低+歧见）→ 八、专家分歧记录+开放问题 → 附录（口径与假设清单、外部资料来源含 URL、底稿关键信息摘录）。\n\n【内容纪律（硬性）】所有收益数字带口径与「假设（需XX核实）」标注；不引入底稿外未证实表述（严禁出现\"105门储备课程\"）；专家对外匿名（零售金融·W、零售金融分析·一、银行战略·袁、银行经营·高、零售/网络金融·梁）；三本账分别立账严禁加总；直接账口径为「行内闭环市场化流水」；外部数字标来源（江苏省人社厅官方答复 2025-07、中新网 2025-01-14、微信平台规则、农村金融时报网 2026-02）；底稿事实：微信小程序最多5类目/已占4、教育服务需办学资质、综合生活服务无资质硬要求但有巡检下架风险、106人天、个贷部/科技部/网金部分工。\n完成后向队长汇报：产物路径、sha256、检查结果摘要。",
+      "status": "completed",
+      "assignee": "designer",
+      "dependencies": [],
+      "attempt": 1,
+      "createdAt": 1787659823089,
+      "updatedAt": 1787661298722,
+      "project": {
+        "path": "expert-tasks/t1",
+        "inputPath": "expert-tasks/t1/input/task.json",
+        "outputPath": "expert-tasks/t1/output/result.json",
+        "artifactsPath": "expert-tasks/t1/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "output": "交付物 A：/root/.openclaw/workspace/99wiki/projects/人社厅培训供需平台/20260825_圆桌研讨_培训供需平台方案完善.html（自包含单文件，70,675B，sha256=fb3f975abd51110e9373145ce89a0897316c6735d0b2b167a9fa3bdd92d5c656）。交付物 B：同目录 Designer_渲染检查记录.md。\n\n结构：封面+结论速览(执行摘要+证据强度总表12行)+方案完善点诊断(P0/P1/P2共12项)+三本账(直接账7–76万/年、收敛中性50–200万/年、间接账25–800万/年、战略账定性+敏感性低/中/高表，参数均带口径与「假设(需XX核实)」)+行领导提问清单10问(含必答四问)+类目二选一决策(首选路径一、三触发条件、B计划时间表、主体在他结算在我变通、合规红线)+冷启动与风险预案(供给/需求/地推/6项风险表)+专家论点卡5张(领域·首字母匿名+证据强度+歧见)+分歧对照表5议题×5专家+开放问题10项+附录(口径假设清单13项/外部来源9条含URL/底稿摘录)。\n\n检查全绿(独立实测)：①WeasyPrint 69 A4渲染20页，@page margin boxes页脚「文档名+第X页/共Y页」每页正确；Chromium page.pdf() 20页固定页脚同样每页正确(双引擎验证)；②Playwright 1280/390/320三档 scrollWidth==clientWidth 无横向滚动，宽表容器内滚动、单元格无截断；③对比度逐对计算≥4.5:1(金底#8A6A2B/#FBF5E8=4.62等15组)；④内容纪律grep：无「105门」、必答四问齐、五专家匿名、43处假设标注、外部来源URL齐、底稿事实齐、HTML解析无错。\n\n重要并发发现：目标路径曾被并行团队写入(圆桌-人社厅培训供需平台方案完善 的 t14 Designer 与 渲染-人社厅培训供需平台方案完善 的 t1)。圆桌团队已归档且其 t14 状态为 pending(未完成)；其遗留在路径上的最终版(sha256=0e5178c9…)缺少打印页脚硬性要求(全文无 counter(page)/margin boxes，与其自述检查记录不符)。本交付已恢复为本版本并经完整复验；并行残留备份于 /tmp/parallel_orphan.html。建议队长去重/关停其他渲染任务。",
+      "qualityScore": null,
+      "repairCount": 0
+    }
+  ],
+  "taskSeq": 1,
+  "completionNotifiedAt": 1787661298769
+}

@@ -1,0 +1,9 @@
+{
+  "taskId": "t1",
+  "status": "completed",
+  "attempt": 1,
+  "output": "【QA 结论】✅ QA 通过，无需修复（未改动 HTML，无修复前/后记录）。\n【最终 sha256】d8344849b1a8c9e9a46dcb6a6974851c762998f383f0371ae3726aae1f7414d2（sha256sum 重算 + _acceptance_check.py 交叉验证一致，69,103 字节）\n【四项检查摘要】\na. 无横向溢出：1440/768/390/320 四视口 scrollWidth−clientWidth 均 = 0px（_render_check.py，playwright chromium-1234 实测）；320px 关键元素 boundingBox（.nav/.u-grid/.duty-list/.ax-grid/.foot-bar/.dr-name）全部在视口内\nb. 对比度：六组脚本实测 5.54–15.40:1 全达标；额外 10 组真实元素合成复核 5.23–13.12:1 全达标（正文 13.12、次级 6.06/5.26、强调蓝 7.87、金 5.23/5.91、白字/主蓝 5.83、蓝软底 11.32）；全页白字元素仅 4 处且均在主蓝上\nc. 表格截断：文档无 <table>（u-grid 26 chips / duty-list 26 行 / ax-grid 25 chips 网格布局，DOM 实测），320px 0px 溢出，无横向截断\nd. 打印页脚：@media print 规则齐全（.nav/.hero .meta-chips/.no-print 打印隐藏、.card/.duty-row/.u-chip/.ax-chip/.panel 去阴影白底、page-break-inside:avoid 多组、.print-only 仅打印显示）；.print-only 页脚含来函依据/截止 2026-08-25 16:00/联系人 耿卫 025-87798857\n【finesse-ui 合规自检】7/7：tinted 底色（--bg #eef1f8）、hairline 边框（--hair/--blue-hair/--gold-hair 共 26 处）、无纯黑阴影（rgba(23,43,99,…)）、对比度≥4.5:1、单文件自包含（0 外部 http/@import/url(http)，字体系统栈无外链）、蓝金主色 #2d5bd8/#c98a2e 应用位置已逐项定位（详见记录 §3）。skill 本机现已可用，已按 Set 9 Cobalt Trust 色板复核（旧记录称不可用，本次补充确认无需改稿）\n【设计决策要点】① 江苏银行高亮卡（§01 .jsb-card 金 hairline+金渐变底+金融赋能金标，五项要点原文摘录；§05 第 25 行 duty-row.jb 金高亮）；② 蓝金分离：主蓝承载结构/强调/白字底，金仅品牌级强调且金文字压深 #8a5a14；③ 职责分工 26 主体（25 家+南京市人民政府）三处清单原文逐字逐序（验收脚本作用域化全 PASS）；④ 金融相关单位口径：省委金融办/省财政厅/省税务局按职责金融属性标注，省文旅厅标牵头、南京市政府标试点城市，口径已在稿内图例与说明卡声明；⑤ 数字带口径：座谈会 2026-08-07/截止 2026-08-25 16:00/联系人电话传真邮箱/每季度 1 次/25 家，仅格式规范化未改含义\n【交付物】/root/.openclaw/workspace/99wiki/projects/文旅体商融合专班/Designer_渲染检查记录.md（11.7KB，中文 Markdown，含四项检查实测值、合规自检清单、内容验收、结论）",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787638657069
+}

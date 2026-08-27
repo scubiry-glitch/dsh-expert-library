@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>居住服务进入「专业角色可拆分、可验证、可单独付费」时代？</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "98wiki ｜ 智见 / 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<h1>居住服务进入「专业角色可拆分、可验证、可单独付费」时代？</h1>
+<p><strong>——客户管家×懂盘者×履约模块：重写佣金制还是增加一层成本？</strong></p>
+<p><em>98wiki 选题 2 · 加速趋势 · 智见点评团队深度研究 · 2026-08-25</em></p>
+<hr>
+<h2>摘要</h2>
+<p>主基调：<strong>会，而且已经启动。</strong> 客户管家试点（2026年5-7月承接超5万条线索、商机转带看率7.4%对同期大盘5%、收入与单笔成交脱钩并与懂盘者/带看撮合/签约/报告/装修/租赁管家构成模块链）是这条机制链的第一个可观测样本；贝壳Q2"二手成交单量同比增近两成而经纪人规模未同步扩大、利润率14.6%、利润近翻倍"是模块化分工的结果侧证据；深圳国企零中介费平台等四路外部信号同向压缩"信息费"空间。四维判断（规模↑/质量↑/风险转移/资源中介能力重定义）与验证协议（2万线索随机对照，60天转化/客诉/NPS/贡献毛利四指标 + 删选项后满意度 + 归责清晰度一票否决）共同构成"可证伪、可撤回"的研判框架。<strong>判断错误的最大损失：把"线索清洗岗位"误判为"行业制度变迁"，或在协同成本吃掉专业化收益时过早扩张。</strong></p>
+<hr>
+<h2>一、核心判断（一句话可证伪结论）</h2>
+<p><strong>若「专业角色拆分」带来的增量价值（消费者决策质量↑+经纪人收入稳定性↑+平台毛利↑）高于协同成本（分账复杂度、搭便车、激励扭曲、责任扯皮），居住服务将进入"角色可拆分、可验证、可单独付费"时代；否则客户管家只是新增一个线索清洗岗位，7.4% 转带看只是优质线索优先分配的选择效应。</strong></p>
+<p>四份专家研判（居住服务·Y/C/L/X）方向一致，但都明确：<strong>「可拆分」已发生，「可单独付费」尚未成立</strong>，中间隔着两道门槛——ACN 分账规则重构（从"房客源分佣"升级为"服务链分账"）与责任界定（模块化后出问题找谁）。</p>
+<hr>
+<h2>二、关键数字与口径（论点卡升级）</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>数字</th>
+<th>来源</th>
+<th>日期</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>客户管家承接 5万+ 条线索</td>
+<td>贝壳 2026Q2 管理层 S 分享</td>
+<td>08-21</td>
+<td>内部单源样本（2026年5-7月，多城）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>商机转带看率 7.4% vs 大盘 5%（相对+48%）</td>
+<td>同上</td>
+<td>08-21</td>
+<td>内部单源；<strong>过程指标，仅验证"转带看"一段</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>二手成交单量同比 +近两成</td>
+<td>财新</td>
+<td>08-22</td>
+<td>媒体转述财报口径</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Q2 利润率 14.6%</td>
+<td>搜狐</td>
+<td>08-22</td>
+<td>财报口径</td>
+</tr>
+<tr>
+<td>5</td>
+<td>GTV 重回增长</td>
+<td>36氪</td>
+<td>08-23</td>
+<td>财报口径</td>
+</tr>
+<tr>
+<td>6</td>
+<td>利润近翻倍</td>
+<td>TIKR</td>
+<td>08-23</td>
+<td>财报口径</td>
+</tr>
+<tr>
+<td>7</td>
+<td>深圳国企零中介费平台上线</td>
+<td>公开报道</td>
+<td>08-13</td>
+<td>事件</td>
+</tr>
+<tr>
+<td>8</td>
+<td>青岛通报 22 家中介</td>
+<td>公开报道</td>
+<td>07-31</td>
+<td>事件</td>
+</tr>
+<tr>
+<td>9</td>
+<td>某城租赁人效 4-7 月 3 单→5.6 单、零开单率 25%→&lt;10%</td>
+<td>管理层 S 分享</td>
+<td>08-21</td>
+<td>内部样本（选题1 交叉引用）</td>
+</tr>
+<tr>
+<td>10</td>
+<td>客户管家 5 万线索、转带看 7.4%（与#1/#2 同源）</td>
+<td>同上</td>
+<td>08-21</td>
+<td>内部单源</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ 单源标注：客户管家 7.4% 为内部样本，公开渠道暂无法独立核实，需以 2 万线索随机对照结果为准。<strong>不得外推为"拆分优于包办"的定论。</strong></p>
+</blockquote>
+<hr>
+<h2>三、引假设分析（前提拆解 · 至少 3 个假设）</h2>
+<p>本研判结论依赖五个前提假设，逐一检验：</p>
+<p><strong>假设 1：静态信息持续贬值（信息成本坍塌是最底层变量）</strong><br>
+- 依据：AI 信息平权 + 深圳零中介费平台 + 成都官方避坑 + 挂牌价成交价唾手可得；房源静态信息边际成本趋零（廖俊平：信息成本是交易成本的核心）。<br>
+- 成立概率：<strong>高</strong>。这是四份研判的共同起点，且有 2026 年 8 月多路信号实证。<br>
+- 最脆弱处：若监管叫停 AI 房源信息聚合、或零佣平台数据质量崩塌，信息差可能部分回潮。<br>
+- 失效后：模块化的需求侧推力减弱，但决策复杂度上升（假设2）仍单独支撑拆分逻辑。</p>
+<p><strong>假设 2：决策复杂度持续上升，决策支持短期内无法被 AI 平权</strong><br>
+- 依据：置换链条、税费统筹、限购限贷、居住价值评估；中国家庭 65% 资产压在房子上，"买得对"比"买得起"更难（杨现领）。<br>
+- 成立概率：<strong>高</strong>（结构性，与市场周期无关）。<br>
+- 最脆弱处：AI 若在 12-18 个月内实现对复杂决策的可靠支持（如全流程置业模拟），"顾问价值"锚点松动。<br>
+- 失效后：模块化只剩"履约"段可收费，价值链大幅收窄。</p>
+<p><strong>假设 3：2 万线索随机对照能区分"专业溢价"与"销售轰炸"</strong><br>
+- 依据：验证协议设计（客户管家组 vs 传统直分组，60 天窗口，四指标）。<br>
+- 成立概率：<strong>中</strong>。随机对照在方法上正确，但需补"删选项后满意度"（杨现领建议）与"归责清晰度一票否决"（徐斌建议）。<br>
+- 最脆弱处：线索质量优先分配的选择效应若不通过随机化完全消除，7.4% 领先可能虚高。<br>
+- 失效后：若 RCT 显示转化提升但毛利/满意度不升 → 不扩张（止损线已写入验证协议）。</p>
+<p><strong>假设 4：ACN 能从"一单分蛋糕"升级为"服务链分账"</strong><br>
+- 依据：ACN 已验证合作分佣机制（房客源三要素拆分），扩展为六环节（获客-匹配-带看-谈判-签约-履约）是自然延伸。<br>
+- 成立概率：<strong>中</strong>。涉及百万级经纪人利益再分配，组织惯性是最大阻力。<br>
+- 最脆弱处：模块价值度量缺失（各环节贡献难以精确计价），分账摩擦可能吃掉专业化收益。<br>
+- 失效后：模块化停留在自营/高学历小圈层，"可单独付费"不成立。</p>
+<p><strong>假设 5：监管为"可验证服务付费"留出制度空间</strong><br>
+- 依据：新华社资金协同治理方向正确（管信息披露/资金监管/责任划分而非压费）；但深圳零中介费平台有扩大化可能。<br>
+- 成立概率：<strong>中低</strong>。这是四位专家共同列出的<strong>最大外部变量</strong>。<br>
+- 最脆弱处：若"零中介费"扩大化，付费可验证服务的制度空间被压缩，专业者长期供给萎缩。<br>
+- 失效后：模块化失去定价空间，行业退回信息差时代——<strong>本判断的最强反方落点</strong>。</p>
+<hr>
+<h2>四、推导分析（机制传导 · 单位经济 · 敏感性）</h2>
+<h3>4.1 机制链</h3>
+<pre><code>静态信息贬值 → 决策复杂度上升 → 专业角色拆分（客户管家/懂盘者/履约模块）
+→ 模块结果可验证（带看记录/报告/签约合规/资金监管）
+→ 分账/付费（ACN 服务链分账，收入与单笔成交脱钩）
+→ 专业者长期供给（职业稳定性与专业积累正反馈）
+</code></pre>
+<h3>4.2 单位经济测算（研判推断，见测算模型 xlsx）</h3>
+<p><strong>2 万线索 RCT 场景（每组分 1 万条）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>传统直分组</th>
+<th>客户管家组</th>
+<th>增量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>转带看率</td>
+<td>5.0%</td>
+<td>7.4%</td>
+<td>+2.4pp</td>
+</tr>
+<tr>
+<td>带看数</td>
+<td>500</td>
+<td>740</td>
+<td>+240</td>
+</tr>
+<tr>
+<td>带看转签率（假设）</td>
+<td>15%</td>
+<td>15%</td>
+<td>—</td>
+</tr>
+<tr>
+<td>成交单数</td>
+<td>75</td>
+<td>111</td>
+<td>+36</td>
+</tr>
+<tr>
+<td>单均佣金（2.0%×300万）</td>
+<td>6 万</td>
+<td>6 万</td>
+<td>—</td>
+</tr>
+<tr>
+<td>佣金总额</td>
+<td>450 万</td>
+<td>666 万</td>
+<td>+216 万</td>
+</tr>
+</tbody>
+</table>
+<p><strong>平台毛利（分账 75%、协同成本 8%、线索成本 60 元/条）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>传统组</th>
+<th>管家组</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>平台毛利润</td>
+<td>16.5 万</td>
+<td>53.2 万</td>
+</tr>
+<tr>
+<td>贡献利润率</td>
+<td>3.7%</td>
+<td>8.0%</td>
+</tr>
+</tbody>
+</table>
+<h3>4.3 敏感性矩阵（平台毛利 · 万元/万条线索）</h3>
+<table>
+<thead>
+<tr>
+<th>转带看率 \ 协同成本率</th>
+<th>6%</th>
+<th>8%</th>
+<th>10%</th>
+<th>12%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6.0%</td>
+<td>42.6</td>
+<td>31.8</td>
+<td>21.0</td>
+<td>10.2</td>
+</tr>
+<tr>
+<td><strong>7.4%（实测）</strong></td>
+<td><strong>66.5</strong></td>
+<td><strong>53.2</strong></td>
+<td><strong>39.9</strong></td>
+<td><strong>26.6</strong></td>
+</tr>
+<tr>
+<td>9.0%</td>
+<td>93.9</td>
+<td>77.7</td>
+<td>61.5</td>
+<td>45.3</td>
+</tr>
+</tbody>
+</table>
+<p><strong>读法</strong>：协同成本率从 8% 升至 12%，7.4% 场景下平台毛利从 53.2 万降至 26.6 万（-50%）；转带看率回落至 6%（选择效应真实值），毛利降至 31.8 万。<strong>结论对"协同成本"与"转带看率"双参数敏感，任一恶化超 50% 即翻转。</strong> 反转点：协同成本 &gt;12% 且转带看 &lt;6.5% 时，模块化平台毛利低于传统模式（16.5 万）。</p>
+<h3>4.4 参与者与利益再分配</h3>
+<ul>
+<li><strong>消费者</strong>：从"为成交结果付全包佣金"转向"为决策服务付费"——获益前提是删选项后满意度验证通过，否则只是多角色销售轰炸。</li>
+<li><strong>经纪人</strong>：分化两级——懂盘者式深度专业者（决策价值，收入与成交脱钩后更稳定）vs 模块化执行节点（收入降低、被 AI 替代风险）。</li>
+<li><strong>平台（贝壳）</strong>：14.6% 利润率提供分账改革摩擦成本的空间；模块化是"渠道内部二次革命"的主场。</li>
+<li><strong>监管</strong>：新华社资金协同治理方向正确；但"零中介费"若扩大化将压缩专业供给（廖俊平：盯零中介费是管错对象）。</li>
+<li><strong>竞品/新进入者</strong>：深圳国企零佣平台是免费信息撮合的对照样本，倒逼专业价值向决策/履约/风控集中。</li>
+</ul>
+<hr>
+<h2>五、未来预演（情景推演 · 3 情景）</h2>
+<h3>情景 A：基准情景（概率 50%）——模块化试点跑通，缓慢扩张</h3>
+<ul>
+<li><strong>触发条件</strong>：2 万线索 RCT 四指标通过（转化↑、毛利↑、NPS 不降、客诉不升），删选项满意度为正；3 城试点（自营/加盟/混合各一）分账与认证同步落地。</li>
+<li><strong>时间线</strong>：3 个月 RCT 出结果；6-9 个月 3 城试点扩展；12-18 个月验证可复制性后决定是否全面推开。</li>
+<li><strong>验证信号</strong>：模块渗透率（模块链上成交占比）逐季上升；客户管家组带看转签率与大盘差距收窄（说明效率扩散而非仅优质线索）。</li>
+<li><strong>可证伪指标</strong>：试点城市模块贡献毛利为正且 &gt; 传统模式。</li>
+</ul>
+<h3>情景 B：乐观情景（概率 25%）——模块化+分级持证形成正反馈</h3>
+<ul>
+<li><strong>触发条件</strong>：监管配套出台模块资格认证与责任签章规则（对标香港分级发牌/德州 TREC 赔偿基金）；AI 平权只压缩信息层、不压缩决策层；深圳零佣平台数据质量暴露缺陷。</li>
+<li><strong>时间线</strong>：12 个月内 ACN 服务链分账规则发布；24 个月内模块化渗透率 &gt;30%；中国经纪管理追平海外制度水位。</li>
+<li><strong>验证信号</strong>：监管文件出现"模块资格""责任签章"表述；试点城市经纪人收入方差下降（专业化让低收入端上移）。</li>
+<li><strong>反方落地（我错了）</strong>：消费者为咨询单独付费意愿大幅上升（复购率 &gt;40%）。</li>
+</ul>
+<h3>情景 C：悲观情景（概率 25%）——协同成本吃掉专业化收益</h3>
+<ul>
+<li><strong>触发条件</strong>：RCT 显示转化提升但贡献毛利不升（协同成本 &gt;12%）；或"零中介费"扩大化压缩总收费盘；或 AI 12 个月内实现复杂决策支持（假设 2 失效）。</li>
+<li><strong>时间线</strong>：3-6 个月 RCT 证伪；9 个月内试点收缩或停摆；模块化退回"客户管家=线索清洗岗位"。</li>
+<li><strong>验证信号</strong>：客户管家组客诉上升、归责纠纷曝光；试点城市经纪人流失（专业者不增反减）；模块贡献毛利为负。</li>
+<li><strong>止损线</strong>：验证协议原文——"若转化提升但毛利/满意度不升，则不扩张"；徐斌补充一票否决——归责清晰度不达标即停。</li>
+</ul>
+<hr>
+<h2>六、反方压力测试（≥2 个反方观点）</h2>
+<p><strong>反方 1：7.4% vs 5% 只是线索清洗的幸存者偏差</strong><br>
+- 论证：客户管家承接的可能是平台优先分配的优质线索，转带看率高不因"专业拆分"而因"线索质量"；单源内部样本无公开渠道可核。<br>
+- 回应：承认。这正是 2 万线索随机对照要回答的问题——<strong>RCT 出结果前，本报告所有"模块化效率"表述均标为方向性证据而非定论</strong>。若 RCT 显示无显著差异，核心判断整体撤回。</p>
+<p><strong>反方 2：模块化是变相提佣/成本转移</strong><br>
+- 论证：把一揽子佣金拆成多模块计费，总收费可能上升；消费者未必愿意为"咨询"单独付费；分账复杂化制造搭便车。<br>
+- 回应：柴强三条边界——模块结果可验证、付费与成交脱钩可单列、拆分不得破坏 ACN 协同，否则退化为变相提佣；"删选项后满意度"检验直接区分专业溢价与销售轰炸。若毛利/满意度不升即不扩张，成本转移无从谈起。</p>
+<p><strong>反方 3（最强）：零中介费扩大化 + 监管定价规则缺位，模块化失去制度空间</strong><br>
+- 论证：深圳国企零佣平台若铺开，行业总收费盘缩小，分账改革与价格战同时发生；监管对"服务费单独付费"无定价与责任界定规则，试点最大外部变量不可控。<br>
+- 回应：部分接受。这正是<strong>本判断的薄弱点</strong>——建议 3 城试点预留毛利安全垫、法务/ACN 规则先行，并把"监管规则落地"列为情景 A 的触发条件。若 12-18 个月窗口期内监管未表态，基调下修。</p>
+<p><strong>本判断最薄弱处</strong>：①客户管家单源样本不可独立核实；②协同成本完全靠推断（8% 为假设值）；③窗口期 12-18 个月为研判估计，无实证锚点。</p>
+<hr>
+<h2>七、战略收口（五维）</h2>
+<h3>1. 规模影响</h3>
+<ul>
+<li>模块化不改变二手房 GTV 总量，但改变<strong>收入结构</strong>：从"一口价佣金"转向"服务清单+结果对账"；模块链渗透率是核心观察指标。</li>
+<li>测算：若模块渗透率从 0 升至 30%（3 年），模块化场景下同等线索池的平台毛利可提升 2.2 倍（16.5 万→53.2 万/万条线索，敏感性中值）。</li>
+</ul>
+<h3>2. 质量传导</h3>
+<ul>
+<li>对服务对象（消费者）：删选项满意度、NPS 若通过 RCT，决策质量确实提升。</li>
+<li>对资产质量/经营质量：Q2"量增人不增、利润率 14.6%"说明经营杠杆从人海转向人效；若模块化失败，人效提升可能回吐。</li>
+</ul>
+<h3>3. 风险敞口</h3>
+<ul>
+<li><strong>信用风险</strong>：中性（不涉信贷敞口）。</li>
+<li><strong>操作/声誉风险</strong>：↑——模块责任拆分不清 → 客诉无处归责 → 声誉风险集中（徐斌"无责任模块"论）；协同成本未量化是最大暗礁。</li>
+<li><strong>合规风险</strong>：监管对"服务费单独付费"无规则 → 试点需法务先行。</li>
+</ul>
+<h3>4. 资源中介能力</h3>
+<ul>
+<li>从"资金中介/信息撮合"向"判断+履约"迁移：平台的角色从信息管道变为<strong>专业能力编排者</strong>（模块标准制定、验证、分账、责任追溯）——资源中介能力重定义，若建成模块认证/分账基础设施，形成新的平台壁垒。</li>
+</ul>
+<h3>5. 行动建议（三级）</h3>
+<p>🔴 <strong>立刻做（本周期内）</strong>：智见牵头完成 2 万线索 RCT 方案细化——加入"删选项后满意度"（杨现领）与"归责清晰度一票否决"（徐斌）；法务/ACN 规则组启动"服务链分账"制度预研（廖俊平）。</p>
+<p>🟡 <strong>本季做（Q3-Q4）</strong>：3 城试点选城（自营/加盟/混合三种经纪结构各一城，杨现领）；模块资格认证+责任签章+诚信档案与分账规则同步设计（徐斌）；财务分账系统原型。</p>
+<p>🟢 <strong>观察等待</strong>：监管对"服务费单独付费"的表态（深圳零佣平台后续动向）；AI 对决策支持能力的突破（假设 2 验证）；客户管家组带看转签/客诉/复购的持续观测（穿透"转带看"一段）。</p>
+<hr>
+<h2>八、外部增量清单（≥10，本次研究新增）</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>新知识</th>
+<th>来源</th>
+<th>日期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>客户管家 5-7 月承接超 5 万条线索，收入与单笔成交脱钩</td>
+<td>贝壳 Q2 管理层 S 分享</td>
+<td>08-21</td>
+</tr>
+<tr>
+<td>2</td>
+<td>商机转带看率 7.4% vs 同期大盘 5%（相对 +48%）</td>
+<td>同上</td>
+<td>08-21</td>
+</tr>
+<tr>
+<td>3</td>
+<td>客户管家与懂盘者/带看撮合/签约/报告/装修/租赁管家构成模块链</td>
+<td>同上</td>
+<td>08-21</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Q2 二手成交单量 +近两成而经纪人规模未同步扩大</td>
+<td>财新</td>
+<td>08-22</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Q2 利润率 14.6%</td>
+<td>搜狐</td>
+<td>08-22</td>
+</tr>
+<tr>
+<td>6</td>
+<td>GTV 重回增长</td>
+<td>36氪</td>
+<td>08-23</td>
+</tr>
+<tr>
+<td>7</td>
+<td>利润近翻倍</td>
+<td>TIKR</td>
+<td>08-23</td>
+</tr>
+<tr>
+<td>8</td>
+<td>深圳国企零中介费平台上线（信息免费化挤压）</td>
+<td>公开报道</td>
+<td>08-13</td>
+</tr>
+<tr>
+<td>9</td>
+<td>香港/台湾/新加坡/德州/北卡分级持证与责任签章制度对照</td>
+<td>徐斌海外监管材料（BK-019 知识包）</td>
+<td>知识库</td>
+</tr>
+<tr>
+<td>10</td>
+<td>美国 2024 NAR 和解后佣金谈判化、flat-fee 与 a la carte 拆分</td>
+<td>廖俊平海外对照（BK-002 知识包）</td>
+<td>知识库</td>
+</tr>
+<tr>
+<td>11</td>
+<td>某城租赁人效 3→5.6 单、零开单率 25%→&lt;10%（经营杠杆旁证）</td>
+<td>管理层 S 分享</td>
+<td>08-21</td>
+</tr>
+<tr>
+<td>12</td>
+<td>经纪人 Token 先享设计（佣金闭环、算力赊销内部先例）</td>
+<td>内部 BP 材料</td>
+<td>08-14</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>九、来源清单</h2>
+<ol>
+<li>贝壳 2026Q2 业绩电话会管理层 S 分享（08-21，内部材料，飞书归档 #251/#252）</li>
+<li>财新：二手成交增长而经纪人未扩张（08-22）</li>
+<li>搜狐：Q2 利润率 14.6%（08-22）</li>
+<li>36氪：GTV 重回增长（08-23）</li>
+<li>TIKR：利润近翻倍与收入回落（08-23）</li>
+<li>深圳国企零中介费平台上线报道（08-13）</li>
+<li>新华社：二手房资金协同治理（08-19）</li>
+<li>成都租房官方避坑指南（08-24）</li>
+<li>青岛通报 22 家中介（07-31）</li>
+<li>智见点评团队专家知识包：廖俊平（BK-002）、徐斌（BK-019）、杨现领（BK-033）、柴强（BK-018）</li>
+<li>98wiki 内部知识图谱（documents.json：经纪制度 60+ 节点、贝壳研究院经纪赛道报告 DOC-0086、经纪人 Token 先享 DOC-0296/0297）</li>
+</ol>
+<hr>
+<p><em>── 98wiki 选题 2 深度研究 · 智见点评团队（Y/C/L/X 四位居住服务专家）· 2026-08-25 · 数字带口径，单源已标注，验证协议出结果前为研判推断 ──</em></p>
+</body>
+</html>

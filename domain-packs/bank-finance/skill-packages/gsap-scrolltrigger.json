@@ -1,0 +1,16 @@
+{
+  "id": "gsap-scrolltrigger",
+  "name": "gsap-scrolltrigger",
+  "version": "0.0.0-local",
+  "schemaVersion": 2,
+  "source": {
+    "kind": "builtin",
+    "root": "skills/gsap-scrolltrigger",
+    "digest": "c4d4fd040b057aa6a9ee4df59159a8762a31812d8d2473d237ffd8a48b84b725",
+    "license": "MIT"
+  },
+  "contributions": {},
+  "permissions": {
+    "execScripts": []
+  }
+}

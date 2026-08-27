@@ -14,6 +14,7 @@ import { fileURLToPath } from 'node:url'
 import { isSafeKnowledgeId } from '../lib/knowledge.js'
 import { isSafeSkillId, resolveSkill, MAX_SKILL_BYTES } from '../lib/skills.js'
 import { topicRouteFor, scenarioForTopic } from '../lib/zhijian/routing.js'
+import { normalizeExpertId, zhijianMetaById } from '../lib/zhijian/registry.js'
 import { routeRequest } from '../lib/zhijian/tools.js'
 
 /** Minimal stand-in plugin context: a logger that records nothing. */
@@ -138,5 +139,21 @@ test('routeRequest output is anonymized: no real names in candidates', () => {
     assert.ok(candidate.id.startsWith('bk-'))
     assert.ok(candidate.bk.startsWith('BK-'))
     assert.ok(candidate.initials.length > 0)
+  }
+})
+
+test('public expert ids normalize to canonical lowercase ids and resolve', () => {
+  // Trim + lowercase: the exact display forms that previously failed
+  // expert_review_apply validation (大小写敏感注册表匹配).
+  assert.equal(normalizeExpertId('BK-033'), 'bk-033')
+  assert.equal(normalizeExpertId('E08-08'), 'e08-08')
+  assert.equal(normalizeExpertId('BK-018'), 'bk-018')
+  assert.equal(normalizeExpertId('BK-002'), 'bk-002')
+  assert.equal(normalizeExpertId('BK-019'), 'bk-019')
+  assert.equal(normalizeExpertId(' BK-033 '), 'bk-033', 'surrounding whitespace is trimmed')
+  assert.equal(normalizeExpertId('bk-033'), 'bk-033', 'canonical ids pass through unchanged')
+  // Every reported failing id must resolve to its canonical registry entry.
+  for (const id of ['BK-033', 'E08-08', 'BK-018', 'BK-002', 'BK-019']) {
+    assert.ok(zhijianMetaById(id) !== undefined, `${id} resolves after normalization`)
   }
 })

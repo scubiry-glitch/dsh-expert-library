@@ -1,0 +1,25 @@
+{
+  "components": [
+    {
+      "type": "data_table",
+      "columns": [
+        { "key": "item", "label": "情景", "align": "left" },
+        { "key": "roe", "label": "ROE", "align": "right" },
+        { "key": "nature", "label": "性质", "align": "left" }
+      ],
+      "rows": [
+        { "cells": { "item": "首年（含收购价差）【测算】", "roe": "30%-40%", "nature": "一次性兑现：7 折收→9 折卖，毛利约 14%/套" }, "emphasis": "highlight" },
+        { "cells": { "item": "常态年（租赁通道）【测算】", "roe": "0.3%-1%", "nature": "租赁本身不赚钱，靠规模与运营" } },
+        { "cells": { "item": "常态化目标（含 B2B/安置）", "roe": "2%-4%", "nature": "B2B 长租约锁定出租率 ≥90% + 安置订单现金流" } }
+      ],
+      "source": "ROE 均为团队测算；销售去化按回款 12-18 个月压力测试；出租率 ≥90% 为测算假设"
+    },
+    {
+      "type": "callout",
+      "variant": "warn",
+      "icon": "alert-triangle",
+      "text": "首年 ROE 30%-40% 是一次性价差兑现，非常态收益；必须与常态年租赁 ROE 分两本账，向管委会如实披露，防止把一次性收益当作可持续回报。"
+    }
+  ],
+  "notes": "收储不是终点，改造才是价值。保租房通道须独立考核保障属性，防止把保障房当库存消化工具。"
+}

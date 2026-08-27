@@ -1,0 +1,107 @@
+{
+  "manifestVersion": 1,
+  "generator": "pptfast preview",
+  "pptfastVersion": "0.20.0",
+  "title": "智见点评-江苏银行零售效率参考-讨论稿",
+  "slide": {
+    "width": 1280,
+    "height": 720
+  },
+  "checks": {
+    "svg": "completed",
+    "pixels": "not-requested"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "page": 1,
+      "type": "cover",
+      "file": "001-cover.svg",
+      "slideId": "cover"
+    },
+    {
+      "id": "keynote",
+      "page": 2,
+      "type": "content",
+      "file": "002-content.svg",
+      "slideId": "keynote"
+    },
+    {
+      "id": "safety",
+      "page": 3,
+      "type": "content",
+      "file": "003-content.svg",
+      "slideId": "safety"
+    },
+    {
+      "id": "tracks",
+      "page": 4,
+      "type": "content",
+      "file": "004-content.svg",
+      "slideId": "tracks"
+    },
+    {
+      "id": "line1",
+      "page": 5,
+      "type": "content",
+      "file": "005-content.svg",
+      "slideId": "line1"
+    },
+    {
+      "id": "line2",
+      "page": 6,
+      "type": "content",
+      "file": "006-content.svg",
+      "slideId": "line2"
+    },
+    {
+      "id": "line3",
+      "page": 7,
+      "type": "content",
+      "file": "007-content.svg",
+      "slideId": "line3"
+    },
+    {
+      "id": "leaders",
+      "page": 8,
+      "type": "content",
+      "file": "008-content.svg",
+      "slideId": "leaders"
+    },
+    {
+      "id": "attribution",
+      "page": 9,
+      "type": "content",
+      "file": "009-content.svg",
+      "slideId": "attribution"
+    },
+    {
+      "id": "roadmap",
+      "page": 10,
+      "type": "content",
+      "file": "010-content.svg",
+      "slideId": "roadmap"
+    },
+    {
+      "id": "redteam",
+      "page": 11,
+      "type": "content",
+      "file": "011-content.svg",
+      "slideId": "redteam"
+    },
+    {
+      "id": "appendix",
+      "page": 12,
+      "type": "content",
+      "file": "012-content.svg",
+      "slideId": "appendix"
+    },
+    {
+      "id": "ending",
+      "page": 13,
+      "type": "ending",
+      "file": "013-ending.svg",
+      "slideId": "ending"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "manifestVersion": 1,
+  "generator": "pptfast preview",
+  "pptfastVersion": "0.20.0",
+  "title": "贝壳2026Q2经营杠杆归因_讨论稿.pptx",
+  "slide": {
+    "width": 1280,
+    "height": 720
+  },
+  "checks": {
+    "svg": "completed",
+    "pixels": "not-requested"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "page": 1,
+      "type": "cover",
+      "file": "001-cover.svg",
+      "slideId": "cover"
+    },
+    {
+      "id": "kpi",
+      "page": 2,
+      "type": "content",
+      "file": "002-content.svg",
+      "slideId": "kpi"
+    },
+    {
+      "id": "split",
+      "page": 3,
+      "type": "content",
+      "file": "003-content.svg",
+      "slideId": "split"
+    },
+    {
+      "id": "facts",
+      "page": 4,
+      "type": "content",
+      "file": "004-content.svg",
+      "slideId": "facts"
+    },
+    {
+      "id": "chain",
+      "page": 5,
+      "type": "content",
+      "file": "005-content.svg",
+      "slideId": "chain"
+    },
+    {
+      "id": "compare",
+      "page": 6,
+      "type": "content",
+      "file": "006-content.svg",
+      "slideId": "compare"
+    },
+    {
+      "id": "verify",
+      "page": 7,
+      "type": "content",
+      "file": "007-content.svg",
+      "slideId": "verify"
+    },
+    {
+      "id": "nodes",
+      "page": 8,
+      "type": "content",
+      "file": "008-content.svg",
+      "slideId": "nodes"
+    },
+    {
+      "id": "outlook",
+      "page": 9,
+      "type": "content",
+      "file": "009-content.svg",
+      "slideId": "outlook"
+    },
+    {
+      "id": "ending",
+      "page": 10,
+      "type": "ending",
+      "file": "010-ending.svg",
+      "slideId": "ending"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "taskId": "t6",
+  "subject": "渲染与生成（HTML5 → PDF/PPT → 视频）",
+  "description": "把 讨论稿（t2 融合稿全文，用 expert_teams_status 读取）渲染成最终交付件，三步走：\n第 1 步 生成 HTML5 视觉稿：按 knowledge/skills/finesse-ui/SKILL.md 规范做高质感（never cheap）视觉稿，product register（研报/报告页），craft floor（tinted neutrals、hairline borders、对比度），配色按场景主题（如贝壳蓝金），卡片式布局、数据高亮、A4 打印友好。\n第 2 步 转 PDF + PPT：PDF 用 weasyprint（A4、页脚「98wiki ｜ 智见 / 行业研究报告」）；PPT 用 pptfast 技能（~/.agents/skills 或 pptfast CLI）转可编辑 PPTX，数字带口径、预测标注「研判推断」。\n第 3 步 渲染检查 + 视频（可选）：截图检查（无遮挡/溢出/页脚可见）并记录 sha256；条件允许时用 knowledge/skills/video-shotcraft/SKILL.md 做 60-90s 电影感短视频（Remotion + 页面截图 + 2.5D 运镜）。\n\n完成后检查点（重要）：把交付文件清单（路径 + sha256）写入 output，并向队长汇报交付物，等待用户确认是否继续（如视频精修/PPT 调整/转正式稿）——不要静默结束，渲染节点是可选增强而非终点。",
+  "dependencies": [
+    "t5"
+  ],
+  "createdAt": 1787626920059
+}

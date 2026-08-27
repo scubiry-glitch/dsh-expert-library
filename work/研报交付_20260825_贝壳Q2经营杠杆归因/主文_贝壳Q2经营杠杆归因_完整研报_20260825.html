@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>贝壳 Q2 经营杠杆归因：β 记账、α 应收，90 天差分核销</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "98wiki ｜ 智见 / 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<h1>贝壳 Q2 经营杠杆归因：β 记账、α 应收，90 天差分核销</h1>
+<p><strong>——「交易回升、经纪人不扩张、利润率抬升」来自 AI 与组织重构，还是市场反弹的短期红利？</strong></p>
+<p><em>98wiki 选题 1 · 当期高热 · 智见点评团队深度研究（6 位专家：4 行业研究 + 2 跨域红队）· 2026-08-25</em></p>
+<hr>
+<h2>摘要</h2>
+<p><strong>主基调：利润改善以市场 β 与低基数为主；组织/AI α 有先行证据但证据等级不足，"新经营杠杆"是待验证假说而非既成事实。</strong> 2026Q2 利润近翻倍、利润率升至 14.6%（02423.HK），改善大头记在市场 β 账上；全部分析的锚点是"量升人平"剪刀差——上半年二手成交单量增长近两成而经纪人规模未同步扩大（财新 08-22），与 2015-16、2020-21 两轮"量升人增"周期规律截然不同，这是 α 正在起作用的先行证据。<strong>裁决点：6 城 90 天差分</strong>——控制市场成交增速后人效净提升不足 10% 或贡献利润不升，撤回 α 判断。<strong>判断错误的最大损失：把 β 误记为 α</strong>——Q3 成交回落时固定成本摊薄反转、利润率回吐，"α 是否还在"将是最残酷的压力测试。</p>
+<hr>
+<h2>一、核心判断（一句话可证伪结论）</h2>
+<p><strong>若「盘级经营+人房客重配+知识 Skill」的组织/AI α 能被 3 城以上稳定复制（跨城衰减 &lt;30%），贝壳将出现"交易量增而服务者不同比扩张"的新经营杠杆（利润率中枢 10-12%→13-15%，估值逻辑从周期股切效率股）；否则本轮利润近翻倍是"低基数+市场回暖"的 β 行情，Q3 成交回落即证伪。</strong></p>
+<p>六份研判方向收敛但证据等级分层（<strong>补充居住服务·Y 杨现领渠道视角后共七份</strong>）：<br>
+- <strong>β 为主</strong>（陶琦 T：β 估六成上下；夏磊 X：+4.6pct 中 β 贡献 2.5-3pct）<br>
+- <strong>α 已现雏形但未证实</strong>（丁祖昱 D 乐观判断——α 约占一半、14.6% 是新中枢——本次未采纳为主基调，因依据均为内部单源；降级为边界条件）<br>
+- <strong>α 是发动机、β 是放大器</strong>（吴璟 W：最硬证据是剪刀差）<br>
+- <strong>按假 α 定价</strong>（马斯克红队：neutral-bearish，等 90 天差分）<br>
+- <strong>α 证据全是"相关"非"因果"</strong>（张一鸣：无同口径对照组，不可外推）<br>
+- <strong>剪刀差最像 α：β 是底色、α 是种子</strong>（杨现领 Y：行业出清只解释"人少"，解释不了"量涨而人不增"——历史每轮量升都伴随扩招；渠道价值从静态信息转向决策服务）</p>
+<hr>
+<h2>二、关键数字与口径</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>数字</th>
+<th>来源</th>
+<th>日期</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>二手成交单量 +近两成</td>
+<td>财新</td>
+<td>08-22</td>
+<td>公开可核实（另有 exmoo 口径 +18.6%、人民网 +25%，<strong>不可交叉相乘</strong>）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>二手交易金额 <strong>-15.6%</strong></td>
+<td>exmoo</td>
+<td>08-22</td>
+<td>单量升、金额降 = 以价换量</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Q2 利润率 14.6%</td>
+<td>搜狐/智通财经/新京报</td>
+<td>08-22</td>
+<td>02423.HK 财报口径，可核实</td>
+</tr>
+<tr>
+<td>4</td>
+<td>上半年净利润 38.79 亿元</td>
+<td>同上</td>
+<td>08-22</td>
+<td>可核实</td>
+</tr>
+<tr>
+<td>5</td>
+<td>利润近翻倍</td>
+<td>TIKR</td>
+<td>08-23</td>
+<td>含显著低基数效应</td>
+</tr>
+<tr>
+<td>6</td>
+<td>GTV 重回增长</td>
+<td>36氪</td>
+<td>08-23</td>
+<td>财报口径</td>
+</tr>
+<tr>
+<td>7</td>
+<td>经纪人规模未同步扩大</td>
+<td>财新</td>
+<td>08-22</td>
+<td>可核实；含行业出清后幸存者结构（T 补充）</td>
+</tr>
+<tr>
+<td>8</td>
+<td>租赁样本人效 3 单→5.6 单</td>
+<td>管理层 S 分享</td>
+<td>08-21</td>
+<td><strong>内部单源，具体数字需核实</strong>；零开单率 25%→&lt;10%</td>
+</tr>
+<tr>
+<td>9</td>
+<td>客户管家转带看 7.4% vs 5%</td>
+<td>同上</td>
+<td>08-21</td>
+<td><strong>内部单源</strong>；缺单位线索成本与 AI 成本分母</td>
+</tr>
+<tr>
+<td>10</td>
+<td>2025 二手交易额占比约 48%</td>
+<td>行业研究·T</td>
+<td>—</td>
+<td>结构性 β 主战场</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>⚠️ 单源标注：人效、零开单率、客户管家三组数字均为管理层 S 分享的内部单源样本，公开渠道未获独立交叉验证；同店口径、单位线索成本、AI 调用成本/单、贡献利润率、城市复制率五项关键变量未披露。</p>
+</blockquote>
+<hr>
+<h2>三、引假设分析（前提拆解）</h2>
+<p><strong>假设 1：市场回暖是 β 的合法解释（量增摊薄固定成本）</strong><br>
+- 依据：人数不变、单量 +约 20%，人均单量自然 +约 20%（W）；经营杠杆弹性 1.5-2 倍（X）。<br>
+- 成立概率：<strong>高</strong>。这是经营杠杆的算术，非管理胜利（T）。<br>
+- 最脆弱处：以价换量（金额 -15.6%）若持续，每单佣金变薄，利润率传导打折（X）。<br>
+- 失效后：β 贡献被高估，α 占比上调——但需差分验证。</p>
+<p><strong>假设 2："量升人平"剪刀差是 α 的先行证据</strong><br>
+- 依据：与 2015-16、2020-21 两轮"量升人增"截然不同（X/T 共识）。<br>
+- 成立概率：<strong>中</strong>。剪刀差真实，但含行业出清幸存者结构（分母收缩抬高人均，T）——"不扩张"不全是组织主动选择。<br>
+- 最脆弱处：经纪人人数口径漂移（转客户管家/灵活用工，D 提示）。<br>
+- 失效后：剪刀差只是幸存者效应，α 证据归零。</p>
+<p><strong>假设 3：零开单率压降是组织 α 的最可信证据</strong><br>
+- 依据：市场 β 只改变分母（把"不开单的人"变"开一单的人"），压不动 25%→&lt;10% 的量级分布改变，需要机制性力量（W）。<br>
+- 成立概率：<strong>中-高</strong>（四份研判一致认可）。<br>
+- 最脆弱处：样本范围与门店进出（同店口径）未披露，试点盘可能是优选盘（X）；马斯克拆解：纯分母操纵最多解释 3→4 单（+33%），剩余 +47% 归因未验证。<br>
+- 失效后：人效提升主要是淘汰低产者，α 显著缩水。</p>
+<p><strong>假设 4：客户管家/AI 是净 α（而非成本堆砌）</strong><br>
+- 依据：转带看率 7.4% vs 5%（+48% 相对溢价）。<br>
+- 成立概率：<strong>低-中</strong>。5 万条相对平台月线索占比很小（试点规模，X）；缺单位线索成本与 AI 调用成本/单两个分母（T/W）。<br>
+- 最脆弱处：AI 成本若被资本化或留在集团层，14.6% 贡献利润率虚高（马斯克）；窗口恰是旺季+回暖段，优势被 β 放大（T）。<br>
+- 失效后：AI 杠杆为负或中性，"AI 新经营杠杆"叙事不成立。</p>
+<p><strong>假设 5：α 可跨城复制（城市复制率达标）</strong><br>
+- 依据：盘级拆分前提是单盘 GTV 足够大、盘源密度足够高（X）。<br>
+- 成立概率：<strong>低-中</strong>。1-2 个样板城跑通是样板工程，3 城以上稳定复制才是真能力（D/T 共识）；三四线复制率天然偏低（X）。<br>
+- 最脆弱处：张一鸣三条件——动作标准化（SOP/系统内嵌，不依赖明星店长）、成本可观测（AI 成本/单 &lt; 节省的培训流失成本）、多城复制率（跨城衰减 &lt;30%）。<br>
+- 失效后：α 只是头部城市个案，新经营杠杆不成立。</p>
+<hr>
+<h2>四、推导分析（机制传导 · 单位经济 · 敏感性）</h2>
+<h3>4.1 机制链（逐环剥离）</h3>
+<pre><code>市场回暖 → 盘级拆分/人房客重配 → 零开单率下降 → 人效提升 → 固定成本摊薄 → 利润率
+    │              │                    │            │
+   β段：          α段（组织）：         最可信α       AI段：转带看+48%
+  单量+20%       零开单率25%→&lt;10%      证据          但缺成本分母
+  →人均+20%      （分布效应非能力跃迁）
+</code></pre>
+<h3>4.2 α/β 量化拆分（研判推断，专家估算）</h3>
+<p><strong>人效拆解（租赁样本，内部单源）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>拆解</th>
+<th>数值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>人均单数总提升</td>
+<td>3 → 5.6 单（+86.7%）</td>
+<td>管理层 S 分享</td>
+</tr>
+<tr>
+<td>市场 β 贡献</td>
+<td>约 +20%</td>
+<td>单量 +近两成，人数不变</td>
+</tr>
+<tr>
+<td>分母操纵（清退零开单者）</td>
+<td>最多 +33%（3→4 单）</td>
+<td>马斯克拆解</td>
+</tr>
+<tr>
+<td><strong>组织/AI α（残差）</strong></td>
+<td><strong>约 +47%（4→6.2 单）</strong></td>
+<td>归因未验证：AI 真提效 vs 城市结构 β vs 样本偏差</td>
+</tr>
+</tbody>
+</table>
+<p><strong>利润率桥接（+4.6pct 拆分，X 估算）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>驱动</th>
+<th>贡献</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>市场 β（单量×弹性 1.5-2）</td>
+<td>+2.5~3pct</td>
+<td>经营杠杆</td>
+</tr>
+<tr>
+<td>组织/AI α</td>
+<td>+1~1.5pct</td>
+<td>人效/零开单率/客户管家</td>
+</tr>
+<tr>
+<td>基数与一次性</td>
+<td>其余</td>
+<td>2025Q2 基数约 10%</td>
+</tr>
+</tbody>
+</table>
+<h3>4.3 敏感性（研判推断）</h3>
+<ul>
+<li><strong>复制率弹性</strong>：城市复制率 20%/50%/80% → 全平台人效提升 1.3/3.3/5.3 倍</li>
+<li><strong>α 衰减</strong>：若零开单率改善的 60% 来自淘汰低产者 → α 贡献减半</li>
+<li><strong>AI 净成本</strong>：AI 调用+复核成本 &gt; 效率节省 → AI 杠杆为负（马斯克止损线：AI 成本使 GTV 成本率 +0.5pct 而利润率改善 &lt;1pct → 负 α）</li>
+<li><strong>反转点</strong>：Q3 成交回落假设下，固定成本摊薄反转、利润率回吐 → "α 是否还在"即见分晓（W）</li>
+</ul>
+<h3>4.4 参与者与利益再分配</h3>
+<ul>
+<li><strong>贝壳平台</strong>：若 α 成立，估值逻辑从周期股切效率股；若 β 退潮，利润翻倍重新归类 β 行情</li>
+<li><strong>经纪人</strong>：人效提升 = 尾部"0 变 1"修复（不是"3 变 6"能力跃迁）→ 低产者被清退的结构性压力；幸存者人均产出提升</li>
+<li><strong>消费者/业主</strong>：以价换量（金额 -15.6%）→ 业主降价促成交，单量涨金额跌</li>
+<li><strong>行业格局</strong>：2025 二手交易额占比约 48% 的结构性提升 → 二手房基本盘平台吃市场结构红利</li>
+<li><strong>监管/政策</strong>：政策脉冲（城中村改造货币化安置、收储）若驱动回暖，β 持续性存疑</li>
+</ul>
+<hr>
+<h2>五、未来预演（情景推演）</h2>
+<h3>情景 A：基准情景（概率 50%）——β 为主、α 部分验证</h3>
+<ul>
+<li><strong>触发条件</strong>：Q3 财报利润率守住（β 退潮后微降但不回吐）；6 城差分人效净提升 ≥10% 但 &lt;20%；AI 成本随量收敛。</li>
+<li><strong>时间线</strong>：3 个月 Q3 财报；6-9 个月 6 城差分出结果；12-18 个月复制率确认。</li>
+<li><strong>验证信号</strong>：同店 GTV/人逐季上行；零开单率在对照组不降、实验组继续降（排除霍桑效应）。</li>
+<li><strong>可证伪指标</strong>：差分后人效净提升 &lt;10% → α 判断撤回。</li>
+</ul>
+<h3>情景 B：乐观情景（概率 25%）——α 被多城验证，新经营杠杆成立</h3>
+<ul>
+<li><strong>触发条件</strong>：3 城以上稳定复制（跨城衰减 &lt;30%）；AI 成本/单 &lt; 节省的培训流失成本；按能级配对差分（高能级组北京/上海/成都、中能级组武汉/西安/郑州）分层达标。</li>
+<li><strong>时间线</strong>：12 个月内城市复制率 &gt;50%；24 个月内利润率中枢 10-12%→13-15%；经纪行业增长模式从劳动力扩张切人效扩张。</li>
+<li><strong>验证信号</strong>：飞轮正反馈出现在服务者留存（人效→收入→再投入→人效，张一鸣）；行业成本函数从"人海规模"转向"组织资本"。</li>
+<li><strong>反方落地（我错了）</strong>：D 的乐观判断——α 约占一半、14.6% 是新中枢——若差分通过且 AI 成本收敛，基调上调至"α 已显形"。</li>
+</ul>
+<h3>情景 C：悲观情景（概率 25%）——β 退潮，利润回吐，α 证伪</h3>
+<ul>
+<li><strong>触发条件</strong>：Q3 成交回落、固定成本摊薄反转、利润率回吐；或差分显示实验组无显著差异（人效提升来自分母操纵）；或 AI 成本使 GTV 成本率 +0.5pct 而利润率改善 &lt;1pct（负 α）。</li>
+<li><strong>时间线</strong>：3-6 个月 Q3 财报证伪；9 个月内差分证伪；利润翻倍重新归类"低基数+市场回暖"β 行情。</li>
+<li><strong>验证信号</strong>：挂牌量增速高于成交增速且成交周期未缩短 → "流动性修复"成色不足（T 检验）；城市复制率 &lt;50%（马斯克止损线）。</li>
+<li><strong>止损线</strong>：验证协议原文——人效净提升 &lt;10% 或贡献利润不升 → 撤回 α；组织 α 回到试点重来（W）。</li>
+</ul>
+<hr>
+<h2>六、反方压力测试（≥2 个反方观点）</h2>
+<p><strong>反方 1：人效提升是分母操纵（淘汰低产者），不是生产率提高</strong><br>
+- 论证：马斯克拆解——清退零开单者（25%→10%）最多解释 3→4 单（+33%）；"经纪人不扩张"含行业出清幸存者结构（T）。<br>
+- 回应：承认，α 剩余 +47% 的归因（AI 真提效 vs 城市结构 β vs 样本偏差）现有披露无法区分；这正是 6 城差分要回答的问题。<strong>若差分无显著差异，α 判断整体撤回。</strong></p>
+<p><strong>反方 2：14.6% 利润率虚高（AI 成本未入账）</strong><br>
+- 论证：AI 调用/复核/算力成本是否计入未披露，按未入账处理；AI 物理天花板 = 可数字化环节占比（约三成），恒小于 1（马斯克）。<br>
+- 回应：部分接受。AI 成本披露列为三关之一（W 的验证三关）；若 AI 成本使 GTV 成本率 +0.5pct 而利润率改善 &lt;1pct，即负 α，止损。</p>
+<p><strong>反方 3（最强）：本轮是纯 β 行情，α 是叙事</strong><br>
+- 论证：单量+近两成、利润近翻倍大部分可由低基数+政策刺激解释；客户管家 5 万条相对平台占比很小；窗口是旺季+回暖段，优势被 β 放大（T/X）。<br>
+- 回应：承认 β 占大头（主基调如此）；但"量升人平"剪刀差与 2015-16/2020-21 两轮规律不同，是 α 的先行证据——<strong>不排除，但需差分核销</strong>。若 Q3 成交回落而利润率站住，α 转正；若利润率回吐，β 行情确认。</p>
+<p><strong>本判断最薄弱处</strong>：①三组 α 数字均为内部单源，公开渠道无法独立核实；②利润率 14.6% 缺去年同期与 Q1 基数（需财务补）；③AI 调用成本/单、同店口径、城市复制率未披露，α 净贡献无法量化。</p>
+<hr>
+<h2>七、战略收口（五维）</h2>
+<h3>1. 规模影响</h3>
+<ul>
+<li>单量 +近两成（财新）/GTV 重回增长（36氪）为市场 β 主驱动；但<strong>金额 -15.6%（exmoo）</strong>揭示以价换量，规模增长含金量打折。</li>
+<li>若 α 成立：量升人平剪刀差常态化 → 收入增长不再依赖人头扩张，规模弹性从劳动力转向效率。</li>
+</ul>
+<h3>2. 质量传导</h3>
+<ul>
+<li>服务对象：人效提升来自"0 变 1"尾部修复，是服务覆盖面改善而非质量跃迁（T）；转带看率 +48% 若真实，决策质量有提升。</li>
+<li>经营质量：14.6% 利润率若含 AI 成本未入账水分，质量存疑。</li>
+</ul>
+<h3>3. 风险敞口</h3>
+<ul>
+<li><strong>市场风险</strong>：β 退潮风险（政策脉冲退坡、Q3 成交回落）→ 利润率回吐。</li>
+<li><strong>经营风险</strong>：α 证伪风险（差分无差异、复制率低）；组织惯性（百万经纪人利益再分配）。</li>
+<li><strong>操作/声誉风险</strong>：单源样本外推误读（把个案当趋势，W 纠偏）；AI 成本黑洞。</li>
+<li><strong>数据风险</strong>：口径混用（财新单量/exmoo 金额/人民网 25%/TIKR 利润不可交叉相乘）。</li>
+</ul>
+<h3>4. 资源中介能力</h3>
+<ul>
+<li>从"资金中介/信息撮合"向"判断+履约"迁移的又一证据：客户管家承接线索、盘级经营拆分角色。</li>
+<li>若 α 成立，平台的核心资产从"经纪人数量与门店数"变为"同店 GTV/人与稳定开单率"——资源中介能力的度量标准重定义（W/T 共识）。</li>
+</ul>
+<h3>5. 行动建议（三级）</h3>
+<p>🔴 <strong>立刻做（本周期内）</strong>：智见牵头按能级配对设计 6 城 90 天差分（高能级组北京/上海/成都、中能级组武汉/西安/郑州；对照组同口径监测零开单率防霍桑效应；判定用"同店 GTV/人"）；财务补 2025Q2 利润率基数与 Q1 数据。</p>
+<p>🟡 <strong>本季做（Q3-Q4）</strong>：经营杠杆桥接表按城市落地（财务/平台运营/租赁/新房/AI 产品）；AI 调用成本/单核算入账（BOM 级拆解）；挂牌量-成交周期观测补 β 旁证。</p>
+<p>🟢 <strong>观察等待</strong>：Q3 财报（成交回落假设下利润率能否站住——第一关）；6 城差分结果（2026Q4）；AI 成本披露；城市复制率（3 城以上稳定复制才算真能力）。</p>
+<hr>
+<h2>八、外部增量清单（≥10，本次研究新增）</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>新知识</th>
+<th>来源</th>
+<th>日期</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>"量升人平"剪刀差（单量+近两成、经纪人不扩）与 2015-16/2020-21 两轮规律不同</td>
+<td>财新</td>
+<td>08-22</td>
+</tr>
+<tr>
+<td>2</td>
+<td>二手金额 -15.6%（以价换量，exmoo 口径）</td>
+<td>exmoo</td>
+<td>08-22</td>
+</tr>
+<tr>
+<td>3</td>
+<td>单量 +25%（人民网口径，与财新/exmoo 不一致）</td>
+<td>人民网</td>
+<td>08-24</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Q2 利润率 14.6%（02423.HK）</td>
+<td>搜狐/智通财经/新京报</td>
+<td>08-22</td>
+</tr>
+<tr>
+<td>5</td>
+<td>上半年净利 38.79 亿元</td>
+<td>同上</td>
+<td>08-22</td>
+</tr>
+<tr>
+<td>6</td>
+<td>行业经纪人深度流失后的幸存者结构（分母收缩抬高人均）</td>
+<td>行业研究·T 研判</td>
+<td>08-25</td>
+</tr>
+<tr>
+<td>7</td>
+<td>马斯克分母操纵拆解：清退零开单者最多解释 3→4 单（+33%）</td>
+<td>跨域红队研判</td>
+<td>08-25</td>
+</tr>
+<tr>
+<td>8</td>
+<td>AI 生产函数物理上限 = 可数字化环节占比（约三成），恒小于 1</td>
+<td>同上</td>
+<td>08-25</td>
+</tr>
+<tr>
+<td>9</td>
+<td>张一鸣可复制三条件（SOP/成本可观测/跨城衰减&lt;30%）</td>
+<td>跨域研判</td>
+<td>08-25</td>
+</tr>
+<tr>
+<td>10</td>
+<td>夏磊能级配对差分设计（高能级 vs 中低能级组）</td>
+<td>行业研究·X 研判</td>
+<td>08-25</td>
+</tr>
+<tr>
+<td>11</td>
+<td>2025 二手交易额占比约 48%（结构性 β 主战场）</td>
+<td>行业研究·T</td>
+<td>—</td>
+</tr>
+<tr>
+<td>12</td>
+<td>长江证券中报点评"效率持续兑现"、大摩上调目标价</td>
+<td>长江证券/大摩</td>
+<td>08-24/25</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>九、来源清单</h2>
+<ol>
+<li>贝壳 2026Q2 业绩电话会管理层 S 分享（08-21，内部材料）</li>
+<li>财新：二手成交增长而经纪人未扩张（08-22）</li>
+<li>搜狐/智通财经/新京报：Q2 利润率 14.6%、净利 38.79 亿（08-22）</li>
+<li>exmoo：单量+18.6%、金额-15.6%（08-22）</li>
+<li>人民网：单量+25%（08-24）</li>
+<li>36氪：GTV 重回增长（08-23）</li>
+<li>TIKR：利润近翻倍（08-23）</li>
+<li>长江证券中报点评（08-25）、大摩上调目标价（08-24）</li>
+<li>智见点评团队 7 位专家研判：陶琦（BK-031·T）、丁祖昱（BK-024·D）、吴璟（BK-011·W）、夏磊（BK-010·X）、杨现领（BK-033·Y·渠道生态）、张一鸣（s-01·组织效率·跨域）、马斯克（s-03·第一性原理·跨域红队）</li>
+<li>98wiki 内部知识图谱（Q2 管理层 S 分享、经营/专家引擎/Skill 故事线）</li>
+</ol>
+<hr>
+<p><em>── 98wiki 选题 1 深度研究 · 智见点评团队（T/D/W/X + 张一鸣/马斯克跨域）· 2026-08-25 · 数字带口径，单源已标注，6 城差分出结果前为研判推断 ──</em></p>
+</body>
+</html>

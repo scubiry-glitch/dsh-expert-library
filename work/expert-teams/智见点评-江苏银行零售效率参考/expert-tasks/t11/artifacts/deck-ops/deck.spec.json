@@ -1,0 +1,39 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "consulting",
+  "filename": "智见点评-江苏银行零售效率参考-运营版v2-讨论稿",
+  "seed": 20260826,
+  "meta": {
+    "organization": "智见点评",
+    "authors": [
+      { "name": "王一帆", "role": "银行零售·零售运营专家", "org": "智见点评" },
+      { "name": "杨现领", "role": "居住服务·渠道生态专家", "org": "智见点评" },
+      { "name": "陶琦", "role": "行业研究·数据方法专家", "org": "智见点评" },
+      { "name": "张一鸣", "role": "组织效率·跨域专家", "org": "智见点评" },
+      { "name": "马斯克", "role": "第一性原理·跨域红队", "org": "智见点评" }
+    ],
+    "date": "2026-08-25",
+    "version": "运营版 v2（可落地版 · 三轮质询已并入）",
+    "confidentiality": "internal"
+  },
+  "pages": [
+    { "id": "cover", "type": "cover", "heading": "江苏银行零售效率参考 · 运营版：产品线 × 方法 × 运营方案" },
+    { "id": "concl", "type": "content", "heading": "1 分钟结论：五句话讲清楚", "beat": "anchor" },
+    { "id": "scoring", "type": "content", "heading": "场景价值评估与落地顺序（5 维打分）", "beat": "dense" },
+    { "id": "scene1", "type": "content", "heading": "场景 1 · 消费贷线：用信转化洞（第一批）", "beat": "dense" },
+    { "id": "scene2", "type": "content", "heading": "场景 2 · 信用卡线：激活与收入结构（第三批）", "beat": "dense" },
+    { "id": "scene3", "type": "content", "heading": "场景 3 · 电销：名单分层与中收口径（第二批）", "beat": "dense" },
+    { "id": "scene4", "type": "content", "heading": "场景 4 · 柜面/咨询：管户重配（第二批）", "beat": "dense" },
+    { "id": "scene5", "type": "content", "heading": "场景 5 · 线上进件：AI 初审与政策流量（第三批）", "beat": "dense" },
+    { "id": "methods", "type": "content", "heading": "方法库 A/B/C/D：是什么 / 用在哪 / 怎么落地 / 验证", "beat": "dense" },
+    { "id": "action", "type": "content", "heading": "行动计划：做什么 / 谁负责 / 交付物", "beat": "breathing" },
+    { "id": "safety", "type": "content", "heading": "数据安全闸门：DEALBREAKER 一票否决", "beat": "anchor" },
+    { "id": "risk", "type": "content", "heading": "风险与底线：红队并置 + 四不放手", "beat": "dense" },
+    { "id": "ending", "type": "ending", "heading": "谢谢 · 行内素材找问题，贝壳方法给解法" }
+  ]
+}

@@ -561,12 +561,15 @@ test('roster-only requiredCapabilities do not force a ToolProvider (zhijian pack
   // The logical reviewer task carries the selected ids for deterministic fan-out.
   const t1 = result.plan.tasks.find(t => t.id === 't1')
   const t2 = result.plan.tasks.find(t => t.id === 't2')
+  const t3 = result.plan.tasks.find(t => t.id === 't3')
   assert.deepEqual(t1.expertIds, ['bk-024', 'bk-025'])
-  // role.fusion is an optional slot (min 0): the fusion task stays in the
-  // shared pool (unassigned), matching the V1 `expert_review_apply` runtime —
-  // no auto-filled member is pinned to it.
+  // role.fusion is an optional slot (min 0): the fusion + render tasks stay in
+  // the shared pool (unassigned), matching the V1 `expert_review_apply`
+  // runtime — no auto-filled member is pinned to them.
   assert.deepEqual(t2.expertIds, [])
-  assert.deepEqual(result.plan.executionOrder, ['t1', 't2'])
+  assert.deepEqual(t3.expertIds, [])
+  assert.deepEqual(t3.dependsOn, ['t2'])
+  assert.deepEqual(result.plan.executionOrder, ['t1', 't2', 't3'])
 })
 
 test('diversity.fields grows the auto roster to distinct fields (up to cardinality.max)', () => {

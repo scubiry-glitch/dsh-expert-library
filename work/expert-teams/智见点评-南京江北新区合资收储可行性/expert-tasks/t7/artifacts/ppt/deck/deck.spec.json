@@ -1,0 +1,97 @@
+{
+  "version": "1",
+  "narrative": "boardroom-report",
+  "theme": "beike-bluegold",
+  "filename": "南京江北新区合资收储可行性-融合研判",
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "南京江北新区「政府+贝壳」合资收储可行性"
+    },
+    {
+      "id": "conclusion",
+      "type": "content",
+      "heading": "核心结论：该托底，窗口已开",
+      "beat": "anchor"
+    },
+    {
+      "id": "four-questions",
+      "type": "content",
+      "heading": "管委会四问 · 速答",
+      "beat": "dense"
+    },
+    {
+      "id": "discipline",
+      "type": "content",
+      "heading": "执行纪律五条",
+      "beat": "dense"
+    },
+    {
+      "id": "market-kpi",
+      "type": "content",
+      "heading": "行情总览：租先于售、量先于价",
+      "beat": "dense"
+    },
+    {
+      "id": "market-chart",
+      "type": "content",
+      "heading": "价格筑底信号：7 月环比转正",
+      "beat": "dense"
+    },
+    {
+      "id": "policy",
+      "type": "content",
+      "heading": "政策窗口与财政可承受",
+      "beat": "dense"
+    },
+    {
+      "id": "risk",
+      "type": "content",
+      "heading": "法拍通道：量级可控，风险是定价项",
+      "beat": "dense"
+    },
+    {
+      "id": "model",
+      "type": "content",
+      "heading": "商业模型：三低 + 三通道",
+      "beat": "dense"
+    },
+    {
+      "id": "roe",
+      "type": "content",
+      "heading": "ROE 两本账：分情景披露",
+      "beat": "anchor"
+    },
+    {
+      "id": "pace",
+      "type": "content",
+      "heading": "收储节奏：小步快走、滚动放大",
+      "beat": "anchor"
+    },
+    {
+      "id": "uncertainty",
+      "type": "content",
+      "heading": "不确定性：基调下修触发条件",
+      "beat": "dense"
+    },
+    {
+      "id": "watchlist",
+      "type": "content",
+      "heading": "未来关注：八个信号",
+      "beat": "breathing"
+    },
+    {
+      "id": "actions",
+      "type": "content",
+      "heading": "行动建议：管委会 × 贝壳",
+      "beat": "dense"
+    },
+    {
+      "id": "ending",
+      "type": "ending",
+      "heading": "谢谢观看 · 详见正式稿"
+    }
+  ],
+  "seed": 47133368
+}

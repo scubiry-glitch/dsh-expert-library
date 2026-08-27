@@ -1,0 +1,75 @@
+{
+ "id": "beike",
+ "label": "Beike Blue-Gold",
+ "style": {
+  "id": "beike",
+  "allowCustomBackground": true,
+  "colors": {
+   "bg": "#e9eef0",
+   "surface": "#ffffff",
+   "panel": "#f1f5f6",
+   "primary": "#0b7a8c",
+   "accent": "#a86f10",
+   "text": "#13262e",
+   "muted": "#4e6874",
+   "border": "#d8e2e5",
+   "cardStroke": "#dde6e9",
+   "chartPalette": [
+    "#0b7a8c",
+    "#a86f10",
+    "#2bb8c9",
+    "#085768",
+    "#56707c"
+   ],
+   "accentPool": [
+    "#0b7a8c",
+    "#a86f10",
+    "#2bb8c9",
+    "#085768",
+    "#8a9ba3"
+   ]
+  },
+  "fonts": {
+   "heading": [
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Noto Sans CJK SC",
+    "Segoe UI",
+    "sans-serif"
+   ],
+   "body": [
+    "PingFang SC",
+    "Microsoft YaHei",
+    "Noto Sans CJK SC",
+    "Segoe UI",
+    "sans-serif"
+   ]
+  },
+  "shape": {
+   "radius": 10,
+   "gapScale": 1.0
+  },
+  "defaultBackgrounds": {
+   "cover": {
+    "kind": "color",
+    "value": "#e9eef0"
+   },
+   "chapter": {
+    "kind": "color",
+    "value": "#e9eef0"
+   },
+   "content": {
+    "kind": "color",
+    "value": "#e9eef0"
+   },
+   "ending": {
+    "kind": "color",
+    "value": "#e9eef0"
+   }
+  }
+ },
+ "brand": {},
+ "tags": [
+  "beike-blue-gold"
+ ]
+}

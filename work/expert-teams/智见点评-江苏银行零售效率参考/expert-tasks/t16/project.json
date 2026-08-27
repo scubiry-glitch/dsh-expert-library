@@ -1,0 +1,10 @@
+{
+  "path": "expert-tasks/t16",
+  "inputPath": "expert-tasks/t16/input/task.json",
+  "outputPath": "expert-tasks/t16/output/result.json",
+  "artifactsPath": "expert-tasks/t16/artifacts",
+  "version": 1,
+  "taskId": "t16",
+  "status": "completed",
+  "updatedAt": 1787634267891
+}

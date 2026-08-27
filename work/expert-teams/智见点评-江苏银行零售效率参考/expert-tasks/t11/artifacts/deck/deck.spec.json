@@ -1,0 +1,39 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "consulting",
+  "filename": "智见点评-江苏银行零售效率参考-讨论稿",
+  "seed": 20260825,
+  "meta": {
+    "organization": "智见点评",
+    "authors": [
+      { "name": "王一帆", "role": "银行零售·零售运营专家", "org": "智见点评" },
+      { "name": "杨现领", "role": "居住服务·渠道生态专家", "org": "智见点评" },
+      { "name": "陶琦", "role": "行业研究·数据方法专家", "org": "智见点评" },
+      { "name": "张一鸣", "role": "组织效率·跨域专家", "org": "智见点评" },
+      { "name": "马斯克", "role": "第一性原理·跨域红队", "org": "智见点评" }
+    ],
+    "date": "2026-08-25",
+    "version": "讨论稿 v3（三轮质询已并入）",
+    "confidentiality": "internal"
+  },
+  "pages": [
+    { "id": "cover", "type": "cover", "heading": "江苏银行零售效率参考：贝壳验证协议比结论更有价值" },
+    { "id": "keynote", "type": "content", "heading": "关键性结论：验证协议优先，数据安全一票否决", "beat": "anchor" },
+    { "id": "safety", "type": "content", "heading": "数据安全专项 · 跨线闸门（dealbreaker）", "beat": "anchor" },
+    { "id": "tracks", "type": "content", "heading": "三线并重 · 分三级推进", "beat": "dense" },
+    { "id": "line1", "type": "content", "heading": "线1 人效重构：客户经理管户重配（现在干）", "beat": "dense" },
+    { "id": "line2", "type": "content", "heading": "线2 AI 规模化：人工基线 + 两档验证（试点）", "beat": "dense" },
+    { "id": "line3", "type": "content", "heading": "线3 场景生态获客：渠道协同三件套", "beat": "dense" },
+    { "id": "leaders", "type": "content", "heading": "领导质询 · 三轮修订并入（袁军 / 高增银 / 梁斌）", "beat": "anchor" },
+    { "id": "attribution", "type": "content", "heading": "归因分析 · 三线剥离：β 记账、α 应收、90 天差分核销", "beat": "dense" },
+    { "id": "roadmap", "type": "content", "heading": "施工图 · 四里程碑钉死（T+15 / T+30 / T+90 / T+180）", "beat": "breathing" },
+    { "id": "redteam", "type": "content", "heading": "反方压力测试 · 风险锚点与对冲", "beat": "dense" },
+    { "id": "appendix", "type": "content", "heading": "数据口径与来源 · 行内数据待补", "beat": "breathing" },
+    { "id": "ending", "type": "ending", "heading": "谢谢 · 三线并重、差分核销、安全落地" }
+  ]
+}
