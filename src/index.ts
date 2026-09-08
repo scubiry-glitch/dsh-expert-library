@@ -329,9 +329,10 @@ Zhijian (智见点评) review flow — when the user asks 请专家点评 / 让�
 1. Call expert_review_route with the question/topic: it returns the output framework (A 五维 / B 四段 / C 用户视角五层 / D 多分类融合 / E 顾问式), the primary field, and 3-5 candidate experts (anonymized BK·领域·首字母).
 2. Present the candidates to the USER for sign-off — never auto-select. For 同题对比 prefer one 乐观/底部派 + one 风险揭示派 from the stance table.
 3. If the data 口径 (source/city/period) is missing, ask the user first — never generate a review without it.
-4. Call expert_review_apply with the user's selected experts, framework and data: it builds the team (Profile-baked personas) and the framework task DAG (parallel expert reviews → fusion under the keynote → anonymized render).
-5. Framework E (free question/FAQ/购房决策) does NOT build a team: answer directly as a neutral market observer in one voice (结论先行 + 多维框架 + 破除误区 + 量化阈值 + 可操作落点 + 口径校准), numbers must be verified, ≤2000 字 default.
-6. 匿名化对外只列「领域·首字母」; 已故专家（顾云昌 bk-022）只可引用历史观点; 编数字比不回答更严重.
+4. Dataset-first data fetch: when route returns required_data and user-supplied data is insufficient, call expert_provider_call with the \`dataset\` parameter (e.g. realestate.city.market) — it maps to the version-pinned capability and validates required 口径 automatically. NEVER guess raw capability keys, NEVER reinstall skills/providers to fix a data error: unknown dataset (DATASET_UNKNOWN), missing caliber (CALIBER_MISSING), missing credentials (CREDENTIAL_MISSING) and bad input (INPUT_INVALID) each demand a targeted fix, not a reinstall. Every successful fetch must carry provenance (source/caliber/unit) and a request signature pinning city/period — a DATA_QUALITY_INVALID result must not be cited in any review.
+5. Call expert_review_apply with the user's selected experts, framework and data: it builds the team (Profile-baked personas) and the framework task DAG (parallel expert reviews → fusion under the keynote → anonymized render).
+6. Framework E (free question/FAQ/购房决策) does NOT build a team: answer directly as a neutral market observer in one voice (结论先行 + 多维框架 + 破除误区 + 量化阈值 + 可操作落点 + 口径校准), numbers must be verified, ≤2000 字 default.
+7. 匿名化对外只列「领域·首字母」; 已故专家（慢牛主席 bk-022）只可引用历史观点; 编数字比不回答更严重.
 
 Collaboration modes — for 交叉辩论 / 圆桌研讨 / PPT 生成 / 研报生成:
 1. expert_teams_debate: two opposing experts debate (立论→反驳→回应), a moderator judges; pass pro_expert/con_expert with opposing stances (立场对照表可参考), moderator defaults to team-lead.

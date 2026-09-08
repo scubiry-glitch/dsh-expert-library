@@ -75,10 +75,14 @@ test('registerProviderCallTool registers expert_provider_call with the required 
   // `parameters` is the compiled JSON schema (implicit open object root).
   const props = tool.parameters.properties
   assert.equal(props.capability.type, 'string')
+  assert.equal(props.dataset.type, 'string', 'dataset-first calling is the preferred entry')
+  assert.equal(props.version.type, 'string')
   assert.equal(props.input.type, 'object')
   assert.equal(props.input.additionalProperties, true)
   assert.equal(props.context.type, 'string')
-  assert.deepEqual(tool.parameters.required, ['capability', 'input'])
+  // capability is optional at the schema level: a dataset call binds it via
+  // the registry gate; execute() fails closed when neither is provided.
+  assert.deepEqual(tool.parameters.required, ['input'])
   assert.match(tool.description, /financial\.stock\.snapshot/)
   assert.match(tool.description, /realestate\.indicators\.timeseries/)
   assert.match(tool.description, /realestate\.listing\.search/)

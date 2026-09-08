@@ -49,6 +49,28 @@ function requireCaptain(exec: ToolRunContext): Agent {
 }
 
 /**
+ * Data plan: stable dataset ids a routed topic should fetch through
+ * `expert_provider_call({ dataset })` — the model never guesses capability
+ * keys; unregistered domains (bank/pipeline 特级) declare no datasets yet and
+ * the captain supplies user-proven data instead.
+ */
+export function requiredDatasetsForRoute(primaryField: string): readonly string[] {
+  switch (primaryField) {
+    case '行业研究':
+    case '城市发展':
+      return ['realestate.indicators.catalog', 'realestate.city.market', 'realestate.city.compare']
+    case '政策制度':
+      return ['realestate.policy']
+    case '宏观经济':
+      return ['financial.macro']
+    case '居住服务':
+      return ['realestate.listing.search', 'realestate.rent.market']
+    default:
+      return []
+  }
+}
+
+/**
  * Route one request to a framework and candidate roster.
  *
  * The free-form `question` participates in routing: when the `topic` type
@@ -165,6 +187,11 @@ export function registerZhijianTools(
             items: { type: 'string' },
             description: '归型澄清：进入 apply 前仍需向用户确认的口径问题（数据来源/城市/时段/敏感脱敏等 required 项）。',
           },
+          required_data: {
+            type: 'array',
+            items: { type: 'string' },
+            description: '数据计划：本话题建议通过 expert_provider_call({ dataset }) 获取的稳定数据集 id（禁止直接猜 capability key）。',
+          },
         },
       },
       render: (_args, value) => [{
@@ -180,6 +207,7 @@ export function registerZhijianTools(
       const scenario = scenarioForTopic(args.topic, result.framework, args.question)
       const clarify = scenario === undefined ? [] : clarificationSetFor({ scenarioId: scenario.id })
       const clarifyNeeded = pendingRequiredQuestions(clarify, {}).map(question => question.question)
+      const requiredData = requiredDatasetsForRoute(result.primaryField)
       return {
         topic: result.topic,
         framework: result.framework,
@@ -202,6 +230,7 @@ export function registerZhijianTools(
         ...(result.capabilityNote !== undefined ? { capability_note: result.capabilityNote } : {}),
         ...(result.mentalModelsCount !== undefined ? { mental_models_count: result.mentalModelsCount } : {}),
         ...(clarifyNeeded.length > 0 ? { clarify_needed: clarifyNeeded } : {}),
+        ...(requiredData.length > 0 ? { required_data: [...requiredData] } : {}),
       }
     },
   }))
@@ -386,6 +415,10 @@ export function registerZhijianTools(
 
 /** Render the route result as compact text for the captain. */
 function renderRoute(result: ZhijianRouteResult): string {
+  // Render receives either the raw execute return (camelCase) or the
+  // schema-validated output (snake_case); read both defensively.
+  const renderable = result as ZhijianRouteResult & { required_data?: readonly string[] }
+  const requiredData = renderable.requiredData ?? renderable.required_data
   const lines = [
     `话题：${result.topic}`,
     `框架：${result.framework}（${frameworkById(result.framework)?.name ?? ''}）`,
@@ -396,6 +429,9 @@ function renderRoute(result: ZhijianRouteResult): string {
     ...(result.constraints !== undefined ? [`约束：${result.constraints}`] : []),
     ...(result.capabilityNote !== undefined ? [`${result.capabilityNote}`] : []),
     ...(result.mentalModelsCount !== undefined ? [`心智模型注册表：${result.mentalModelsCount} 个模型（可反查专家）`] : []),
+    ...(requiredData !== undefined && requiredData.length > 0
+      ? [`数据计划（dataset-first，经 expert_provider_call({ dataset }) 获取；缺口径先问用户，禁止猜 capability 或重装 skill）：${requiredData.join('、')}`]
+      : []),
     `\n立场对照（同题对比选法）：`,
     ...STANCE_TABLE.map(pair => `  - ${pair.topic}：乐观/底部 ${pair.optimistic.join('、')} vs 风险 ${pair.risk.join('、')}${pair.unique !== undefined ? `；独特视角 ${pair.unique.join('、')}` : ''}`),
     `\n执行约束：${ROUTING_CONSTRAINTS.join('；')}`,

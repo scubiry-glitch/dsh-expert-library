@@ -275,6 +275,8 @@ export interface ZhijianRouteResult {
   readonly capabilityNote?: string
   /** P1.4: 心智模型注册表规模. */
   readonly mentalModelsCount?: number
+  /** Data plan: stable dataset ids this topic should fetch (dataset-first, no key guessing). */
+  readonly requiredData?: readonly string[]
 }
 
 /** Durable review metadata stored on the team record. */

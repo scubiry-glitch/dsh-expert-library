@@ -40,6 +40,13 @@ import type { ExpertTeamsProviderCalledData } from '../event-types.ts'
 import type { TeamState } from '../types.ts'
 import type { ProviderTransportService } from './provider-service.ts'
 import type { ProviderEnvelope } from '../v2/provider-runtime.ts'
+import {
+  resolveDatasetRequest,
+  validateDatasetProvenance,
+  ZHIJIAN_DATASETS,
+  type DatasetDefinition,
+  type DatasetError,
+} from './dataset-registry.ts'
 
 /** Max serialized chars of `data` kept in the model-facing result. */
 export const PROVIDER_CALL_MAX_DATA_CHARS = 32_000
@@ -48,6 +55,9 @@ export const PROVIDER_CALL_MAX_DATA_CHARS = 32_000
 export interface ProviderCallResult {
   ok: boolean
   capability: string
+  dataset?: string
+  datasetVersion?: string
+  signature?: string
   provider?: string
   operation?: string
   transportId?: string
@@ -64,6 +74,9 @@ const PROVIDER_CALL_OUTPUT_SCHEMA = {
   properties: {
     ok: { type: 'boolean', required: true },
     capability: { type: 'string', required: true },
+    dataset: { type: 'string' },
+    datasetVersion: { type: 'string' },
+    signature: { type: 'string' },
     provider: { type: 'string' },
     operation: { type: 'string' },
     transportId: { type: 'string' },
@@ -79,10 +92,11 @@ type ProviderCallOutput = InferValue<typeof PROVIDER_CALL_OUTPUT_SCHEMA>
 
 const TOOL_DESCRIPTION = [
   '调用专家库 provider 能力层（Wind 金融 / 政研通 zyt / 贝壳 beike）获取数据或执行受控操作。',
-  'capability 能力 id 示例：financial.stock.snapshot（Wind 行情快照）、financial.stock.quote、financial.stock.kline、financial.index.quote、financial.macro.query（Wind 宏观/EDB）、financial.fund.screen、financial.docs.search、realestate.indicators.timeseries（政研通指标时序）、realestate.indicators.catalog、realestate.city.compare（多城对比）、realestate.listing.search（贝壳房源检索）、realestate.market.trend、realestate.policy.search、realestate.geo.code 等。',
-  'input 为对应 provider 契约的参数 JSON 对象（字段以该能力契约为准，如 windcode/city/code）。',
+  '优先 dataset-first 调用：传 dataset（已注册数据集 id，如 realestate.city.market、realestate.listing.search、realestate.policy、realestate.rent.market、financial.stock.quote、financial.macro），系统自动映射到版本钉扎的 capability 并校验必填口径；未注册 dataset、缺口径、凭据缺失、参数错误都不会触发安装或 key 猜测，只会返回结构化修正错误。',
+  '直接传 capability 仍兼容（如 financial.stock.snapshot、realestate.indicators.timeseries、realestate.city.compare），但新增业务应优先走 dataset。',
+  'input 为对应能力契约的参数 JSON 对象（字段以该能力契约为准，如 windcode/city/code）。',
   '写/敏感操作（realestate.rent.appoint、realestate.sell.list、realestate.agent.contact 等）必须获得用户审批（allowed-once）后才执行；审批不可用或未批准时失败关闭（write-requires-approval / APPROVAL_REJECTED）。',
-  '返回信封：ok / capability / provider / operation / provenance（含 caliber、unit）/ warnings / error；data 过大时截断并带 truncated 标记，provenance/warnings/error 完整保留。',
+  '返回信封：ok / capability / dataset / provenance（含 caliber、unit）/ warnings / error；data 过大时截断并带 truncated 标记，provenance/warnings/error 完整保留。',
 ].join('\n')
 
 /* ------------------------------------------------------------------ *
@@ -264,6 +278,21 @@ export function summarizeEnvelope(envelope: ProviderEnvelope, capability: string
   return base
 }
 
+function dataPreviewText(data: unknown, maxChars = 6000): string | undefined {
+  if (data === undefined || data === null) return undefined
+  let text: string
+  try {
+    text = typeof data === 'string' ? data : JSON.stringify(data)
+  } catch {
+    return undefined
+  }
+  if (typeof text !== 'string' || text === '' || text === 'undefined') return undefined
+  if (text.length > maxChars) {
+    return `${text.slice(0, maxChars)}…（共 ${text.length} 字符，超出展示上限已截断，完整数据见结构化 data 字段）`
+  }
+  return text
+}
+
 function renderProviderCallText(value: ProviderCallResult): string {
   const where = value.provider !== undefined && value.operation !== undefined
     ? `${value.provider}::${value.operation}`
@@ -272,6 +301,10 @@ function renderProviderCallText(value: ProviderCallResult): string {
     const lines = [`[provider] ${where} 成功`]
     if (value.truncated !== undefined) {
       lines.push(`data 已截断：${String(value.truncated.chars)} 字符 → 保留 ${String(value.truncated.kept)} 字符（见 data._preview）`)
+    }
+    const dataPreview = dataPreviewText(value.data)
+    if (dataPreview !== undefined) {
+      lines.push(`data: ${dataPreview}`)
     }
     for (const warning of value.warnings ?? []) {
       if (isRecord(warning) && typeof warning['code'] === 'string') {
@@ -287,16 +320,85 @@ function renderProviderCallText(value: ProviderCallResult): string {
   return lines.join('\n')
 }
 
+/* ------------------------------------------------------------------ *
+ *  Dataset gate (dataset-first calling)
+ *
+ *  `dataset` is the model-facing contract; provider capability ids stay an
+ *  implementation detail resolved (and version-pinned) by the registry. The
+ *  gate runs BEFORE plan-allowance and capability resolution so contract
+ *  errors (unknown dataset, version mismatch, missing caliber) surface even
+ *  when the provider service is down, and never suggest reinstalling.
+ * ------------------------------------------------------------------ */
+
+/** Result of the pure dataset gate applied to raw tool args. */
+export type DatasetGateResult =
+  | {
+      readonly ok: true
+      readonly capability: string
+      readonly input: Record<string, unknown>
+      readonly dataset?: { readonly id: string; readonly version: string; readonly signature: string; readonly definition: DatasetDefinition }
+    }
+  | { readonly ok: false; readonly error: DatasetError }
+
+/**
+ * Pure: resolve raw `{ capability?, dataset?, version?, input? }` args into a
+ * bound capability (+ dataset metadata) or a structured dataset error.
+ */
+export function applyDatasetRequest(args: { readonly capability?: string; readonly dataset?: string; readonly version?: string; readonly input?: unknown }): DatasetGateResult {
+  const input = args.input
+  if (args.dataset === undefined) {
+    if (typeof args.capability !== 'string' || args.capability === '') {
+      return { ok: false, error: { code: 'INPUT_INVALID', retry: 'never', correction: '必须提供 dataset（首选）或 capability 之一' } }
+    }
+    if (input !== undefined && !isRecord(input)) {
+      return { ok: false, error: { code: 'INPUT_INVALID', retry: 'never', correction: 'input 必须是参数 JSON 对象' } }
+    }
+    return { ok: true, capability: args.capability, input: (input ?? {}) as Record<string, unknown> }
+  }
+  if (input === undefined || !isRecord(input)) {
+    return { ok: false, error: { code: 'INPUT_INVALID', retry: 'never', correction: `dataset 调用必须提供 input 参数对象（字段见数据集契约）` } }
+  }
+  const resolved = resolveDatasetRequest({ dataset: args.dataset, input, ...(args.version === undefined ? {} : { version: args.version }) })
+  if ('error' in resolved) return { ok: false, error: resolved.error }
+  // A dataset call that ALSO names a capability must agree with the pinned
+  // mapping — contradictions fail closed instead of silently rebinding.
+  if (args.capability !== undefined && args.capability !== resolved.binding.id) {
+    return {
+      ok: false,
+      error: {
+        code: 'INPUT_INVALID',
+        retry: 'never',
+        correction: `数据集「${args.dataset}」映射到 capability「${resolved.binding.id}」，与传入的「${args.capability}」不一致；请去掉 capability 或改用映射值`,
+      },
+    }
+  }
+  return {
+    ok: true,
+    capability: resolved.binding.id,
+    input: resolved.input,
+    dataset: { id: resolved.definition.dataset, version: resolved.definition.version, signature: resolved.signature, definition: resolved.definition },
+  }
+}
+
 async function executeProviderCall(
   ctx: Context,
-  args: { capability: string; input?: unknown; context?: string },
+  args: { capability?: string; dataset?: string; version?: string; input?: unknown; context?: string },
   exec: { agent?: unknown; signal?: AbortSignal },
 ): Promise<ProviderCallResult> {
   const fail = (code: string, correction: string, details?: unknown): ProviderCallResult => ({
     ok: false,
-    capability: args.capability,
+    capability: typeof args.capability === 'string' ? args.capability : (args.dataset ?? ''),
+    ...(args.dataset !== undefined ? { dataset: args.dataset } : {}),
     error: { code, retry: 'never', correction, ...(details === undefined ? {} : { details }) },
   })
+
+  // Dataset gate first: contract errors are independent of provider uptime.
+  const gated = applyDatasetRequest(args)
+  if (!gated.ok) {
+    return fail(gated.error.code, gated.error.correction, gated.error.details)
+  }
+  const capability = gated.capability
+  const datasetInfo = gated.dataset
 
   const service = ctx.get('providerTransport') as ProviderTransportService | undefined
   if (!providerCallToolEligible(service)) {
@@ -308,33 +410,64 @@ async function executeProviderCall(
   // only invoke capabilities granted by their plan-linked tasks.
   const caller = await resolveProviderCallerContext(ctx, exec)
   const allowance = resolveCapabilityAllowance(caller.team, caller.sessionId)
-  if (allowance.constrained && !allowance.allowed.includes(args.capability)) {
-    return fail('CAPABILITY_NOT_ALLOWED', capabilityCorrection(args.capability, allowance), {
+  if (allowance.constrained && !allowance.allowed.includes(capability)) {
+    return fail('CAPABILITY_NOT_ALLOWED', capabilityCorrection(capability, allowance), {
       allowed: [...allowance.allowed],
       tasks: [...allowance.fromTasks],
     })
   }
 
   const resolved = service.resolver.resolve({
-    capability: args.capability,
+    capability,
     constraints: { availableCredentials: service.availableCredentials(), readOnly: false },
     context: args.context,
   })
   if (resolved.status !== 'bound' || resolved.binding === undefined) {
     const reasons = resolved.rejections.map(rejection => `${rejection.providerId}(${rejection.reason})`).join('; ')
-    return fail('CAPABILITY_UNBOUND', `无法绑定能力「${args.capability}」：${reasons || '无候选 provider'}`, { rejections: resolved.rejections })
+    return fail('CAPABILITY_UNBOUND', `无法绑定能力「${capability}」：${reasons || '无候选 provider'}`, { rejections: resolved.rejections })
   }
 
   let envelope: ProviderEnvelope
   try {
     envelope = await service.invoke(
-      { binding: resolved.binding, input: args.input ?? {}, context: args.context },
+      { binding: resolved.binding, input: gated.input, context: args.context },
       { agent: exec.agent, signal: exec.signal },
     )
   } catch (error) {
     return fail('PROVIDER_CALL_ERROR', error instanceof Error ? error.message : String(error))
   }
-  const result = summarizeEnvelope(envelope, args.capability)
+  const result = summarizeEnvelope(envelope, capability)
+  if (datasetInfo !== undefined) {
+    result.dataset = datasetInfo.id
+    result.datasetVersion = datasetInfo.version
+    result.signature = datasetInfo.signature
+    // Fetch gate (tiered): source/caliber are the identity+caliber contract —
+    // a successful envelope without them is a data-quality FAILURE (reviews
+    // must never cite unprovable numbers). unit is provider-dependent: the
+    // zyt series envelope does not carry one, so a missing unit degrades to a
+    // warning; same for an empty series payload (nothing to cite, but not a
+    // transport failure).
+    if (envelope.ok) {
+      const warnings = [...(result.warnings ?? [])]
+      const provenanceError = validateDatasetProvenance(datasetInfo.definition, result.provenance)
+      if (provenanceError !== undefined) {
+        return fail('DATA_QUALITY_INVALID', provenanceError.correction, {
+          missing: provenanceError.details?.missing,
+          dataset: datasetInfo.id,
+          signature: datasetInfo.signature,
+          provenance: result.provenance,
+        })
+      }
+      const unitValue = result.provenance?.['unit']
+      if (unitValue === undefined || unitValue === null || unitValue === '') {
+        warnings.push({ code: 'provenance.unit.missing', severity: 'warning', message: `数据集「${datasetInfo.id}」返回缺少单位（unit）；引用数值前必须先确认单位` })
+      }
+      if (isRecord(result.data) && Array.isArray(result.data['series']) && result.data['series'].length === 0) {
+        warnings.push({ code: 'dataset.empty-series', severity: 'warning', message: `数据集「${datasetInfo.id}」返回空序列（series=[]）；该城市×指标可能无覆盖，禁止据空序列下结论` })
+      }
+      result.warnings = warnings
+    }
+  }
   // 审计埋点：provider 调用（含失败）写入团队事件流，队长/活动面板可追踪。
   // 修复观测点「provider 失败只存在于成员口头汇报、无审计记录」。
   try {
@@ -399,12 +532,14 @@ export function registerProviderCallTool(ctx: Context): void {
     name: 'expert_provider_call',
     description: TOOL_DESCRIPTION,
     parameters: {
-      capability: { type: 'string', required: true, description: 'provider 能力 id（如 financial.stock.snapshot、realestate.indicators.timeseries、realestate.listing.search）。' },
+      dataset: { type: 'string', description: `已注册数据集 id（首选入口；自动映射版本钉扎的 capability 并校验口径）：${ZHIJIAN_DATASETS.map(definition => definition.dataset).join('、')}。` },
+      version: { type: 'string', description: '数据集契约版本（可选；缺省取注册表当前版本）。' },
+      capability: { type: 'string', description: 'provider 能力 id（兼容入口；与 dataset 同传时必须与映射一致）。如 financial.stock.snapshot、realestate.indicators.timeseries、realestate.listing.search。' },
       input: {
         type: 'object',
         required: true,
         additionalProperties: true,
-        description: '该能力契约的参数 JSON 对象（如 {"windcode":"600519.SH"} / {"city":"北京","code":"SH_PRICE"}）。',
+        description: '该能力契约的参数 JSON 对象（如 {"windcode":"600519.SH"} / {"city":"杭州","period":"2025-01","metric":"成交量"}）。',
       },
       context: { type: 'string', description: '审计上下文（任务/计划 id），透传给 provider 调用记录。' },
     },
