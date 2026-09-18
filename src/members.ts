@@ -17,7 +17,7 @@ import { installModelSelection, type Agent, type ModelSelection } from '@deepsee
 // Declaration merge only: makes ctx.subagents visible.
 import { foldSubagentDescriptor } from '@deepseek-ai/dsh-subagent'
 import { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
-import type { SessionId } from '@deepseek-ai/dsh-session'
+import type { SessionEvent, SessionId } from '@deepseek-ai/dsh-session'
 import { join } from 'node:path'
 import { guardSubagentDelivery, installContinuableMemberSetup, queueMemberPrompt, sessionOwnEvents } from './harness-compat.ts'
 import { readRetiredMemberIds, readTeamSync } from './state.ts'
@@ -260,7 +260,10 @@ export function installMemberSelectionRuntime(ctx: Context, stateDir: string): M
     const child = childCtx.agent
     if (child === undefined) return () => undefined
     const suffix = sessionOwnEvents(child.session)
-    const descriptor = foldSubagentDescriptor(suffix)
+    // `sessionOwnEvents` is the harness-compat boundary: it reads either the
+    // modern `ownEvents()` or the legacy `events[]` shape, so it can only type
+    // its elements as `unknown`. The descriptor fold needs real rows.
+    const descriptor = foldSubagentDescriptor(suffix as readonly SessionEvent[])
     if (descriptor?.mode !== 'continuable' || !descriptor.label.startsWith(MEMBER_LABEL_PREFIX)) {
       return () => undefined
     }
@@ -563,7 +566,7 @@ export function installRetiredMemberGuard(ctx: Context, stateDir: string): void 
     runtime.listDescendants = guardedDescendants
     const restoreDelivery = guardSubagentDelivery(runtime, async (sender, childId) => {
       const cwd = (sender as Agent | undefined)?.session?.header?.cwd ?? process.cwd()
-      return readRetiredMemberIds(join(cwd, stateDir)).has(childId)
+      return (await readRetiredMemberIds(join(cwd, stateDir))).has(childId)
     })
     return () => {
       if (runtime.listChildren === guardedChildren) runtime.listChildren = listChildren

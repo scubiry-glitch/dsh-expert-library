@@ -21,7 +21,7 @@ import { DomainPacksCard } from './domain-packs-card.tsx'
 import { ManageCard } from './manage-card.tsx'
 
 /** Required services: conversation nodes, slots, and sessions navigation. */
-export const inject = ['uiConversation', 'slots', 'sessions', 'settingsScope']
+export const inject = ['conversationEvents', 'slots', 'sessions', 'settingsScope']
 
 /**
  * Mount the floater through a body portal (the web shell has no top-right
@@ -43,7 +43,7 @@ export function apply(ctx: ClientContext): void {
     host.remove()
   }, 'expert-teams: activity panel')
 
-  ctx.uiConversation.events.register(agentTeamsCardDefinition)
+  ctx.conversationEvents.register(agentTeamsCardDefinition)
 
   const settingsScope = ctx.settingsScope.bind<ExpertLibrarySettings>({ namespace: 'expert-library' })
   ctx.slots.register({

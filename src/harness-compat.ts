@@ -55,11 +55,14 @@ export function installContinuableMemberSetup(ctx: Context, setup: ContinuableSe
   const installed = new WeakSet<object>()
   const active = new Set<() => void>()
   ctx.effect(() => {
-    const stop = ctx.on('agent/session-start', function (this: Context, { agent }: { agent: Agent }) {
+    const stop = ctx.on('agent/session-start', function (this: unknown, { agent }: { agent: Agent }) {
       // rc.1 binds the listener's this to the agent's plugin-injected scoped
       // context (Scoped<Agent>). The raw `agent.ctx` payload object is
       // unwrapped — every service read on it throws "without inject".
-      const childCtx = this
+      // `Scoped<Agent>` is a branded marker type declared in dsh-scope, which
+      // is only a transitive dependency here, so `this` stays `unknown` and
+      // the service reads below take the Context view of the same object.
+      const childCtx = this as Context
       if (installed.has(agent)) return
       // Deliberately synchronous: awaiting here loses the first-request race.
       let teardown: () => void
