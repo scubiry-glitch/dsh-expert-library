@@ -83,6 +83,13 @@ export interface ExpertLibrarySettings {
   knowledgeDir?: string
   /** Domain pack directory name under each workspace root (read-only preview; default `domain-packs`). */
   packsDir?: string
+  /**
+   * Directory holding packs vendored from external sources. Empty falls back
+   * to `<DSH_HOME>/vendor-packs`, and to disabled when there is no DSH home.
+   */
+  vendorPacksDir?: string
+  /** Locator hosts whose packs install on validation success, without review. */
+  packSourceAllowlist?: string[]
   /** Member subagent provider name (`spawn` or `fork`). */
   memberProvider?: string
   /** Member delegation depth cap; `0` forbids delegation. */
@@ -150,6 +157,8 @@ export const ExpertLibrarySettingsSchema: z<ExpertLibrarySettings> = z.object({
   stateDir: z.string(),
   knowledgeDir: z.string(),
   packsDir: z.string(),
+  vendorPacksDir: z.string(),
+  packSourceAllowlist: z.array(z.string()),
   memberProvider: z.string(),
   memberMaxDepth: z.natural(),
   maxMembers: z.natural(),

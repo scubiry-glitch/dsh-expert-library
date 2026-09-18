@@ -35,6 +35,7 @@ import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
 import { parseExpert, parseScenario } from '../expert-library/registry.ts'
+import { handlePackSourceRoutes, type PackSourceRuntime } from './pack-source-routes.ts'
 import { isSafeKnowledgeId } from '../knowledge.ts'
 import { isSafeSkillId } from '../skills.ts'
 
@@ -136,6 +137,7 @@ export async function handleManage(
   url: URL,
   workspace: string,
   knowledgeDir: string,
+  packSource?: PackSourceRuntime,
 ): Promise<void> {
   const roots = manageKnowledgeRoots(workspace, knowledgeDir)
   const path = url.pathname.replace(/\/+$/, '')
@@ -393,6 +395,13 @@ export async function handleManage(
         return
       }
       send(200, { ok: true, stdout: output.stdout.slice(-4000), stderr: output.stderr.slice(-2000) })
+      return
+    }
+
+    // ── pack source: vendored external packs ────────────────────────────────
+    // Delegated after the in-repo routes so `/packs/rebuild` keeps winning for
+    // its own path; the delegate claims only its own leaves.
+    if (packSource !== undefined && await handlePackSourceRoutes(req, res, url, packSource)) {
       return
     }
 

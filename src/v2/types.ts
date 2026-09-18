@@ -765,6 +765,40 @@ export interface SkillPackageManifest {
   }
 }
 
+/**
+ * Trust tier a vendored pack was admitted under. Recorded for audit; the
+ * runtime never branches on it (selection stays with `enabledPacks`).
+ */
+export type PackTrustTier = 'reviewed' | 'auto-allowlisted' | 'community'
+
+/**
+ * Audit-only provenance of a pack vendored from an external source.
+ *
+ * Mirrors `SkillPackageManifest.source.upstreamProvenance`: plain strings
+ * captured once at install time and **never dereferenced at runtime**. The
+ * runtime stays hermetic — the locator is a record of where the content came
+ * from, not a channel anything reads.
+ *
+ * Lives inside `pack.json`, so it falls under the pack tree digest: editing
+ * the recorded revision by hand breaks `generated/pack.sha256`.
+ */
+export interface PackProvenance {
+  /** Scope-qualified fetch locator, recorded verbatim as given. */
+  readonly locator: string
+  /** Immutable revision the pack is pinned to — a commit id, never a branch. */
+  readonly revision: string
+  /** Pack tree digest recorded at install time. */
+  readonly digest: string
+  /** Ref the operator asked for before resolution (tag or branch), when given. */
+  readonly requestedRef?: string
+  /** License identifier the source declared, when it declared one. */
+  readonly license?: string
+  /** Tier this install was admitted under. */
+  readonly trust?: PackTrustTier
+  /** Install instant, ISO-8601. */
+  readonly installedAt?: string
+}
+
 /** Pack-level metadata (pack.json). */
 export interface PackMeta {
   readonly id: SafeId
@@ -776,6 +810,11 @@ export interface PackMeta {
   readonly dependsOn?: readonly string[]
   /** Caliber declarations (data-source mappings) for the Data gate. */
   readonly caliberDeclarations?: Record<string, string>
+  /**
+   * Present only for packs vendored from an external source; absent for packs
+   * built in-repo. Audit metadata — the runtime never reads it.
+   */
+  readonly provenance?: PackProvenance
 }
 
 /**

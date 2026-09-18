@@ -73,6 +73,10 @@ export interface ToolsConfig {
    * the write surface is loopback-only. Never logged.
    */
   manageToken?: string
+  /** Directory holding vendored external packs; empty disables that surface. */
+  vendorPacksDir?: string
+  /** Locator hosts whose packs install on validation success, without review. */
+  packSourceAllowlist?: readonly string[]
   /** Workspace domain pack ids enabled for runtime compile; absent/empty = every valid workspace pack. */
   enabledPacks?: readonly string[]
   /** Workspace domain pack id order (first = highest precedence); absent = discovery order. */

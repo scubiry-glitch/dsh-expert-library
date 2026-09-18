@@ -48,6 +48,19 @@ import type { TeamState } from './types.ts'
 import { droppedSessionEvents } from './events.ts'
 import { handleManage } from './host/manage.ts'
 import { authorizeManageRequest, resolveManageToken } from './host/auth.ts'
+
+/**
+ * Resolve the vendored-pack root. Deliberately not under the plugin module
+ * root: that directory is replaced on package upgrade, which would silently
+ * drop every installed pack. Empty when no DSH home is known — the
+ * pack-source surface then refuses rather than choosing somewhere to write.
+ */
+function resolveVendorPacksDir(configured: string | undefined): string {
+  const explicit = configured?.trim()
+  if (explicit !== undefined && explicit !== '') return explicit
+  const home = process.env['DSH_HOME']?.trim()
+  return home === undefined || home === '' ? '' : join(home, 'vendor-packs')
+}
 import {
   installExpertLibrarySettings,
   type ExpertLibrarySettings,
@@ -74,6 +87,8 @@ import {
   registerProviderCallTool,
 } from './host/provider-tool.ts'
 import { discoverPackDirs, discoverPackDirsIn, listDomainPacks, previewDomainPack } from './v2/preview.ts'
+import { loadPackFromDir } from './v2/pack-loader.ts'
+import { readRegistry } from './host/pack-registry.ts'
 import { buildZhijianDomainPack } from './v2/zhijian-pack.ts'
 import { resolveRuntimePack } from './v2/runtime-pack.ts'
 import type { DomainPackV2 } from './v2/types.ts'
@@ -233,6 +248,14 @@ export interface Config {
    * the settings file. Unset means the write surface is loopback-only.
    */
   manageToken?: string
+  /**
+   * Directory holding packs vendored from external sources. Defaults to
+   * `<DSH_HOME>/vendor-packs`; empty (no DSH home) disables the pack-source
+   * surface entirely rather than picking a directory to write into.
+   */
+  vendorPacksDir?: string
+  /** Locator hosts whose packs install on validation success, without review. */
+  packSourceAllowlist?: string[]
   /** Prompt-section order for the usage policy (default `117`, after delegation policy). */
   promptSectionOrder?: number
   /** Whether the usage policy section is announced to agents (default `true`). */
@@ -307,6 +330,8 @@ export const Config: z<Config> = z.object({
   knowledgeDir: z.string().default('knowledge'),
   packsDir: z.string().default('domain-packs'),
   manageToken: z.string().default(''),
+  vendorPacksDir: z.string().default(''),
+  packSourceAllowlist: z.array(z.string()).default([]),
   promptSectionOrder: z.natural().default(117),
   announceToAgent: z.boolean().default(true),
   defaultModel: memberModelSchema,
@@ -373,6 +398,8 @@ export function apply(ctx: Context, config: Config): void {
     knowledgeDir: config.knowledgeDir ?? 'knowledge',
     packsDir: config.packsDir ?? 'domain-packs',
     manageToken: config.manageToken,
+    vendorPacksDir: resolveVendorPacksDir(config.vendorPacksDir),
+    packSourceAllowlist: config.packSourceAllowlist ?? [],
     enabledPacks: config.enabledPacks,
     packPriority: config.packPriority,
     expertModelOverrides: config.expertModelOverrides,
@@ -515,6 +542,8 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.knowledgeDir = value.knowledgeDir ?? 'knowledge'
     runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
     runtimeConfig.manageToken = value.manageToken
+    runtimeConfig.vendorPacksDir = resolveVendorPacksDir(value.vendorPacksDir)
+    runtimeConfig.packSourceAllowlist = value.packSourceAllowlist ?? []
     runtimeConfig.enabledPacks = value.enabledPacks
     runtimeConfig.packPriority = value.packPriority
     runtimeConfig.expertModelOverrides = value.expertModelOverrides
@@ -969,7 +998,24 @@ export function apply(ctx: Context, config: Config): void {
         | undefined
       const firstWorkspace = registry?.list()?.[0]?.path
       const workspace = firstWorkspace !== undefined && firstWorkspace !== '' ? firstWorkspace : process.cwd()
-      await handleManage(ctx, req, res, url, workspace, runtimeConfig.knowledgeDir)
+      await handleManage(ctx, req, res, url, workspace, runtimeConfig.knowledgeDir, {
+        vendorRoot: runtimeConfig.vendorPacksDir ?? '',
+        allowlist: runtimeConfig.packSourceAllowlist ?? [],
+        // Every id already visible to the runtime — built-in packs, workspace
+        // packs, and the vendored ledger — so a new pack cannot shadow one by
+        // reusing its id (mergePackLayers would resolve the duplicate by
+        // precedence, silently overwriting).
+        knownPackIds: async () => {
+          const ids = new Set<string>()
+          for (const dir of await discoverPackDirs(ctx, runtimeConfig.packsDir ?? 'domain-packs')) {
+            const loaded = await loadPackFromDir(dir.dir)
+            if (loaded.pack !== undefined) ids.add(loaded.pack.pack.id)
+          }
+          const registry = await readRegistry(runtimeConfig.vendorPacksDir ?? '')
+          for (const entry of registry.packs) ids.add(entry.id)
+          return [...ids]
+        },
+      })
     },
   }), 'expert-teams: manual library management routes')
 
