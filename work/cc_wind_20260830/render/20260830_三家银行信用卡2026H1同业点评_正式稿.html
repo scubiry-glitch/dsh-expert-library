@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三家银行信用卡业务2026H1同业点评 · 正式稿</title>
+<style>
+/* finesse · 2026-08-30 v2 · A=navy-gold · B=700/400 · C=report-rail · D=css-only · E=policy-print · SOUL=6 · SPECTACLE=2 · DENSITY=7 */
+:root{
+  --navy:#1a3a5c; --navy-deep:#132c47; --navy-ink:#24496f;
+  --gold:#c9a96e; --gold-deep:#b08a4e; --gold-soft:#efe5d0;
+  --paper:#fbfaf7; --card:#ffffff;
+  --ink-1:#1d2834; --ink-2:#46525f; --ink-3:#75808c;
+  --line:rgba(26,58,92,.12); --line-soft:rgba(26,58,92,.07);
+  --up:#1a3a5c; --down:#a3513c;
+  --shadow:0 1px 3px rgba(26,58,92,.06);
+  --r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{overflow-x:clip}
+body{
+  background:#ece9e3; color:var(--ink-1);
+  font-family:"Source Han Sans SC","Noto Sans CJK SC","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  font-size:10pt; line-height:1.6;
+}
+.page{
+  width:186mm; min-height:277mm;
+  margin:6mm auto; padding:9mm 0 12mm;
+  background:var(--paper); position:relative;
+  page-break-after:always;
+  box-shadow:0 2px 14px rgba(26,58,92,.10);
+}
+.page:last-child{page-break-after:auto}
+@media print{
+  body{background:var(--paper)}
+  .page{width:186mm;min-height:277mm;margin:0;padding:0 0 12mm;box-shadow:none}
+}
+/* ---------- 页脚（打印时每页重复） ---------- */
+.footer{
+  position:fixed; left:0; right:0; bottom:0; height:6.5mm;
+  background:var(--card);
+  border-top:1.5px solid var(--gold);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 12mm; font-size:7.4pt; color:var(--ink-3); letter-spacing:.02em;
+  z-index:50;
+}
+.footer .f-left{color:var(--navy);font-weight:600}
+@media print{.footer{position:fixed;bottom:0;left:0;right:0;width:100%}}
+/* ---------- 通用 ---------- */
+.sec-head{display:flex;align-items:baseline;gap:7pt;margin-bottom:6pt;padding-right:26pt}
+.sec-no{font-size:8.4pt;font-weight:700;color:var(--gold-deep);letter-spacing:.1em}
+.sec-title{font-size:13.5pt;font-weight:800;color:var(--navy);letter-spacing:.01em}
+.sec-title small{font-size:8.2pt;color:var(--ink-3);font-weight:500;margin-left:6pt}
+.gold-rule{height:2px;background:linear-gradient(90deg,var(--gold),transparent 80%);border:0;margin:0 0 6pt}
+.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+.up{color:var(--up);font-weight:700}
+.down{color:var(--down);font-weight:700}
+h3{font-size:10pt;font-weight:700;color:var(--navy);margin-bottom:2.5pt}
+p.body{font-size:8.3pt;color:var(--ink-2)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:7.5pt 10pt}
+.card+.card{margin-top:7pt}
+.grid{display:grid;gap:7pt}
+.g2{grid-template-columns:1fr 1fr}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+/* ---------- KPI ---------- */
+.kpi{padding:8pt 10pt}
+.kpi .k-label{font-size:7.8pt;color:var(--ink-3);letter-spacing:.05em;margin-bottom:2.5pt}
+.kpi .k-num{font-size:15.5pt;font-weight:800;color:var(--navy);line-height:1.2;letter-spacing:-.01em}
+.kpi .k-sub{font-size:7.5pt;color:var(--ink-3);margin-top:2.5pt;line-height:1.5}
+.kpi .k-delta{display:inline-block;font-size:7.4pt;font-weight:700;padding:0.5pt 5pt;border-radius:999px;margin-top:3pt}
+.kpi .k-delta.neg{background:rgba(163,81,60,.10);color:var(--down)}
+.kpi .k-delta.pos{background:rgba(26,58,92,.08);color:var(--navy)}
+/* ---------- 图表 ---------- */
+.chart-title{font-size:8.4pt;font-weight:700;color:var(--navy);margin-bottom:5pt}
+.chart-title .note{font-weight:400;color:var(--ink-3);font-size:7.2pt}
+.hbar-row{display:grid;grid-template-columns:40pt minmax(0,1fr) 58pt;align-items:center;gap:6pt;margin-bottom:5pt}
+.hbar-row .h-lab{font-size:7.9pt;color:var(--ink-2);text-align:right;white-space:nowrap}
+.hbar-track{background:rgba(26,58,92,.06);border-radius:999px;height:10.5pt;overflow:hidden}
+.hbar-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--navy),var(--navy-ink));min-width:2pt}
+.hbar-fill.gold{background:linear-gradient(90deg,var(--gold-deep),var(--gold))}
+.hbar-fill.warn{background:linear-gradient(90deg,#8c4433,#a3513c)}
+.hbar-val{font-size:8.2pt;font-weight:700;color:var(--ink-1);text-align:right;white-space:nowrap}
+.hbar-val small{font-weight:400;color:var(--ink-3);font-size:7pt}
+/* 正负条 */
+.diff-row{display:grid;grid-template-columns:64pt minmax(0,1fr) minmax(0,1fr) 58pt;gap:6pt;align-items:center;margin-bottom:6pt}
+.diff-lab{font-size:7.9pt;color:var(--ink-2);text-align:right;white-space:nowrap}
+.diff-axis{position:relative;height:11pt;background:linear-gradient(90deg,rgba(163,81,60,.08),rgba(26,58,92,.06) 50%,rgba(26,58,92,.08));border-radius:999px}
+.diff-axis .mid{position:absolute;left:50%;top:-1.5pt;bottom:-1.5pt;width:1.5px;background:var(--ink-3)}
+.diff-fill{position:absolute;top:1pt;bottom:1pt;border-radius:999px}
+.diff-fill.neg{right:50%;background:linear-gradient(270deg,#8c4433,#a3513c)}
+.diff-fill.pos{left:50%;background:linear-gradient(90deg,var(--navy),var(--navy-ink))}
+.diff-val{font-size:8.2pt;font-weight:700;white-space:nowrap}
+.diff-val.pos{color:var(--up);text-align:left}
+.diff-val.neg{color:var(--down);text-align:right}
+/* 堆叠分解条 */
+.stack-row{display:flex;height:12pt;border-radius:999px;overflow:hidden;margin:4pt 0 3pt}
+.stack-a{background:linear-gradient(90deg,var(--navy),var(--navy-ink))}
+.stack-b{background:linear-gradient(90deg,var(--gold-deep),var(--gold))}
+.stack-c{background:rgba(26,58,92,.14)}
+/* ---------- 表格 ---------- */
+table.cmp{width:100%;border-collapse:collapse;font-size:8.3pt;table-layout:fixed}
+table.cmp th{background:var(--navy);color:#fff;font-weight:600;padding:4pt 6pt;text-align:right;font-size:8pt}
+table.cmp th:first-child{text-align:left}
+table.cmp td{padding:3.8pt 6pt;border-bottom:1px solid var(--line-soft);text-align:right;vertical-align:top;overflow-wrap:break-word}
+table.cmp td:first-child{text-align:left;color:var(--ink-2);font-size:7.9pt;white-space:nowrap}
+table.cmp tr:nth-child(even) td{background:rgba(26,58,92,.025)}
+table.cmp .hl{font-weight:800;color:var(--navy)}
+table.cmp .hl-warn{font-weight:800;color:var(--down)}
+table.cmp .row-em td{border-bottom:1.5px solid var(--gold)}
+table.cmp td.note-td{font-size:7.2pt;color:var(--ink-3);padding-top:4pt;text-align:left;line-height:1.55;white-space:normal}
+table.mon{width:100%;border-collapse:collapse;font-size:8pt}
+table.mon th{background:var(--gold-soft);color:var(--navy);font-weight:700;padding:3.5pt 6pt;text-align:left;font-size:7.8pt;border-bottom:1.5px solid var(--gold)}
+table.mon td{padding:3pt 6pt;border-bottom:1px solid var(--line-soft)}
+table.mon td:first-child{font-weight:600;color:var(--ink-1);white-space:nowrap}
+table.mon td.num{text-align:right}
+table.matrix{width:100%;border-collapse:collapse;font-size:7.15pt;table-layout:fixed}
+table.matrix th{background:var(--navy);color:#fff;font-weight:600;padding:2.6pt 5pt;text-align:left;font-size:7.1pt}
+table.matrix td{padding:2.4pt 5pt;border-bottom:1px solid var(--line-soft);vertical-align:top;line-height:1.4}
+table.matrix td:first-child{background:var(--gold-soft);color:var(--navy);font-weight:700;white-space:nowrap;width:13%}
+table.matrix tr:nth-child(even) td{background:rgba(26,58,92,.025)}
+/* ---------- 摘要编号卡 ---------- */
+.sum-card{display:flex;gap:9pt;padding:7pt 11pt}
+.sum-no{flex:none;width:18pt;height:18pt;border-radius:50%;background:var(--navy);color:var(--gold);
+  font-size:9pt;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1pt}
+.sum-body h3{font-size:9.8pt;margin-bottom:1.5pt}
+.sum-body p{font-size:8.5pt;color:var(--ink-2)}
+.sum-body .hl{font-weight:700;color:var(--navy)}
+.sum-body .hlw{font-weight:700;color:var(--down)}
+/* ---------- 链条款卡片 ---------- */
+.chain-card{padding:8pt 10pt;display:flex;flex-direction:column}
+.chain-tag{display:inline-block;font-size:7.2pt;font-weight:700;color:var(--navy);background:var(--gold-soft);
+  border:1px solid rgba(201,169,110,.55);border-radius:999px;padding:0.5pt 6pt;margin-bottom:4pt;letter-spacing:.04em;align-self:flex-start}
+.chain-card h3{font-size:9.6pt;margin-bottom:2pt}
+.chain-card .chain{margin-top:3pt;border-left:2px solid var(--gold);padding-left:8pt}
+.chain-card .step{font-size:7.9pt;color:var(--ink-2);margin-bottom:3.5pt;line-height:1.45}
+.chain-card .step b{color:var(--navy)}
+.chain-card .chain-note{border-top:1px dashed var(--line);margin-top:3pt;padding-top:3.5pt;font-size:7.5pt;color:var(--ink-3);line-height:1.55}
+.chain-card .m-num{font-size:11.5pt;font-weight:800;color:var(--navy);line-height:1.3}
+.chain-card .m-num small{font-size:7.4pt;font-weight:600;color:var(--ink-3)}
+/* ---------- 金句条 ---------- */
+.takeaway{background:linear-gradient(90deg,rgba(26,58,92,.05),rgba(201,169,110,.10));
+  border:1px solid var(--line);border-left:3px solid var(--gold);
+  padding:6pt 11pt;font-size:8.8pt;color:var(--navy);font-weight:600;margin-top:8pt}
+/* ---------- 列表 ---------- */
+ul.clean{list-style:none}
+ul.clean li{position:relative;padding-left:10pt;margin-bottom:3pt;font-size:8.3pt;color:var(--ink-2)}
+ul.clean li::before{content:"";position:absolute;left:1pt;top:5pt;width:3.5pt;height:3.5pt;border-radius:1pt;background:var(--gold-deep)}
+ul.clean li b{color:var(--ink-1)}
+.risk-li li::before{background:var(--down)}
+ul.tight li{margin-bottom:1.5pt;font-size:7.5pt}
+.gap-note{font-size:7.2pt;color:var(--ink-3);line-height:1.55}
+.gap-note b{color:var(--ink-2)}
+/* ---------- 封面横幅 ---------- */
+.cover-band{background:linear-gradient(135deg,var(--navy-deep) 0%,var(--navy) 62%,var(--navy-ink) 100%);
+  border-radius:var(--r);padding:11pt 16pt 10pt;position:relative;overflow:hidden;color:#fff}
+.cover-band::after{content:"";position:absolute;right:-30pt;top:-30pt;width:150pt;height:150pt;
+  border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.20),transparent 62%)}
+.cover-band::before{content:"";position:absolute;left:0;bottom:0;height:2.5px;width:100%;
+  background:linear-gradient(90deg,var(--gold),transparent 85%)}
+.cover-kicker{font-size:8pt;letter-spacing:.22em;color:var(--gold);font-weight:600;margin-bottom:3pt}
+h1{font-size:17pt;font-weight:800;color:#fff;line-height:1.3;letter-spacing:.01em;text-wrap:balance}
+.cover-sub{font-size:9pt;color:rgba(255,255,255,.85);margin-top:3pt}
+.cover-meta{display:flex;flex-wrap:wrap;gap:3pt 12pt;margin-top:6pt;font-size:7.6pt;color:rgba(255,255,255,.70)}
+.cover-meta b{color:var(--gold);font-weight:600}
+.pg-no{position:absolute;top:3mm;right:0;font-size:7.6pt;color:var(--ink-3);font-weight:600}
+</style>
+</head>
+<body>
+
+<!-- ============ 页脚（打印每页重复） ============ -->
+<div class="footer">
+  <span class="f-left">智见点评 · 2026H1 信用卡同业对比</span>
+  <span class="f-right">数据来源：三家银行2026半年报、Wind、银数观卡</span>
+</div>
+
+<!-- ============ 第 1 页 · 封面横幅 + 核心速览 + 一、关键性结论 ============ -->
+<section class="page">
+  <div class="pg-no">01 / 06</div>
+  <div class="cover-band">
+    <div class="cover-kicker">智见点评 · 行业研究报告 · 银行零售金融</div>
+    <h1>交易涨、余额跌：信用卡进入客群经营竞赛</h1>
+    <div class="cover-sub">三家银行信用卡业务 2026H1 同业点评 · 正式稿（行领导汇报版）</div>
+    <div class="cover-meta">
+      <span>数据期：<b>2026H1</b>（截至 2026-06-30）</span>
+      <span>数据来源：<b>浦发 / 民生 / 邮储 2026 半年报、Wind、银数观卡</b></span>
+      <span>分析框架：<b>银行零售金融五层</b>（战略 / 客群经营 / 产品 / 资产 / 风险）</span>
+    </div>
+  </div>
+
+  <div class="grid g4" style="margin-top:7pt">
+    <div class="card kpi">
+      <div class="k-label">三家信用卡余额（2026-06-30）</div>
+      <div class="k-num">全线下行</div>
+      <div class="k-sub">浦发 3,785.45 亿（<span class="down">-2.8%</span>）<br>民生 4,064.57 亿（<span class="down">-6.0%</span>）<br>邮储 1,894.15 亿（<span class="down">-9.6%</span>）</div>
+      <span class="k-delta neg">行业共性，非个案失速</span>
+    </div>
+    <div class="card kpi">
+      <div class="k-label">信用卡不良率梯队</div>
+      <div class="k-num">1.45% → 4.22%</div>
+      <div class="k-sub">邮储 1.45%（持平）<br>浦发 2.01%（+0.09pct）<br>民生 4.22%（+0.35pct）</div>
+      <span class="k-delta pos">表观分化，前瞻承压</span>
+    </div>
+    <div class="card kpi">
+      <div class="k-label">交易 / 余额剪刀差</div>
+      <div class="k-num">+18.40% vs -6.0%</div>
+      <div class="k-sub">民生交易额 +18.40%、8.25 亿笔；透支余额 -6.0%<br>邮储快捷消费 +16.65%、透支 -9.6%</div>
+      <span class="k-delta pos">客户在用卡、少分期、早还款</span>
+    </div>
+    <div class="card kpi">
+      <div class="k-label">政策红利：当期主引擎</div>
+      <div class="k-num">+10.93%</div>
+      <div class="k-sub">邮储账单分期 +10.93%（贴息全流程自动处理）<br>浦发国补叠加交易 120 多万笔 / 惠及 86 万户</div>
+      <span class="k-delta neg">会计增量，退坡不确定</span>
+    </div>
+  </div>
+
+  <div class="sec-head" style="margin-top:9pt"><span class="sec-no">01 KEY CONCLUSIONS</span><span class="sec-title">关键性结论（执行摘要 · 五条关键判断）</span></div>
+  <hr class="gold-rule">
+  <div class="card sum-card">
+    <div class="sum-no">1</div>
+    <div class="sum-body">
+      <h3>余额收缩是行业共性动作，不是个案失速</h3>
+      <p>浦发 <span class="hl num">3,785.45 亿</span>（-2.8%）、民生 <span class="hl num">4,064.57 亿</span>（-6.0%）、邮储 <span class="hl num">1,894.15 亿</span>（-9.6%，较 2024 峰值 2,382.21 亿累计 -20.5%）；参照平安银行信用卡应收账款同样收缩（<span class="hl num">4,025.90 亿</span>，不良率 2.23%）。行业已从「规模竞赛」转入「客群经营竞赛」。</p>
+    </div>
+  </div>
+  <div class="card sum-card">
+    <div class="sum-no">2</div>
+    <div class="sum-body">
+      <h3>「交易涨、余额跌」的剪刀差是范式切换信号</h3>
+      <p>民生交易额 <span class="hl num">3,691.57 亿</span>（+18.40%）、<span class="hl num">8.25 亿笔</span>（+10.29%），余额却 -6.0%；邮储快捷消费 +16.65% 而透支 -9.6%。客户在用卡、少分期、早还款：支付属性强化、生息资产属性弱化。</p>
+    </div>
+  </div>
+  <div class="card sum-card">
+    <div class="sum-no">3</div>
+    <div class="sum-body">
+      <h3>风险分层清晰，且「表观稳健」必须用生成率证伪</h3>
+      <p>不良率：邮储 1.45%（持平）&lt; 浦发 2.01%（+0.09pct）&lt; 民生 <span class="hlw num">4.22%</span>（+0.35pct，不良额 171.64 亿）。邮储不良生成率（年化）<span class="hlw num">3.68%</span>（+0.62pct）已亮灯；民生为行业尾部样本。时点不良率是结果，生成率 / 迁徙率 / 动用率才是过程。</p>
+    </div>
+  </div>
+  <div class="card sum-card">
+    <div class="sum-no">4</div>
+    <div class="sum-body">
+      <h3>客群经营与异业合作进入「客群共建」阶段，两条路径已验证</h3>
+      <p>民生×山姆：付费会员池做客群分层，信用卡做入口、财富客群做承接（金卡及以上金融资产 <span class="hl num">30,524.70 亿</span>、+8.09%；财富中收 <span class="hl num">30.13 亿</span>、+47.66%）；浦发「汽车分期+N」：新能源车分期 <span class="hl num">297.97 亿</span>（+1.8%，全行业收缩中唯一正增长细分场景），i 车贷新能源占比超 60%。</p>
+    </div>
+  </div>
+  <div class="card sum-card">
+    <div class="sum-no">5</div>
+    <div class="sum-body">
+      <h3>政策红利是当期主引擎，也是最大不确定项</h3>
+      <p>贴息与国补直接拉动三家交易与分期（邮储账单分期 +10.93%、浦发国补叠加交易 120 多万笔 / 惠及 86 万户、民生「财政贴息＋分期优惠」），但补贴驱动的分期增长属于会计增量，三家均未披露贴息业务占比。退坡情景下（专家弹性推断：贴息退坡 1pct，分期需求增速回落约 5–10pct），内生增长能力才是护城河。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 第 2 页 · 二、核心指标对照 ============ -->
+<section class="page">
+  <div class="pg-no">02 / 06</div>
+  <div class="sec-head"><span class="sec-no">02 KEY METRICS</span><span class="sec-title">关键事实（一）：三家 2026H1 信用卡核心指标对照</span></div>
+  <hr class="gold-rule">
+
+  <div class="card" style="padding:6pt 9pt">
+    <table class="cmp">
+      <tr><th style="width:22%">指标（2026-06-30）</th><th>浦发</th><th>民生</th><th>邮储</th></tr>
+      <tr class="row-em"><td>信用卡余额（各行口径）</td><td class="hl num">3,785.45 亿</td><td class="hl num">4,064.57 亿</td><td class="hl num">1,894.15 亿</td></tr>
+      <tr><td>较上年末</td><td class="num">-2.8%</td><td class="num">-6.0%</td><td class="num">-9.6%</td></tr>
+      <tr><td>vs 历史峰值</td><td class="num">2022 峰值 4,336.93 亿（-12.7%）</td><td class="num">—</td><td class="num">2024 峰值 2,382.21 亿（-20.5%）</td></tr>
+      <tr><td>交易 / 消费</td><td style="font-size:7.4pt">未披露交易额（国补交易 120 多万笔）</td><td class="num">3,691.57 亿（+18.40%）<br>8.25 亿笔（+10.29%）</td><td class="num">消费金额 4,322.22 亿<br>快捷消费 +16.65%</td></tr>
+      <tr class="row-em"><td>信用卡不良率</td><td class="hl num">2.01%（+0.09pct）</td><td class="hl-warn num">4.22%（+0.35pct）</td><td class="hl num">1.45%（持平）</td></tr>
+      <tr><td>不良额</td><td class="num">76.04 亿</td><td class="num">171.64 亿</td><td class="num">27.30 亿</td></tr>
+      <tr><td>不良生成率（年化）</td><td class="num">未披露</td><td class="num">未披露</td><td class="hl num">3.68%（+0.62pct）</td></tr>
+      <tr><td>未使用额度（表外）</td><td class="num">6,420.52 亿</td><td class="num">5,202.60 亿</td><td class="num">5,106.17 亿</td></tr>
+      <tr><td>额度动用率</td><td class="num">37.1%</td><td class="hl num">43.9%</td><td class="num">27.1%</td></tr>
+      <tr><td>卡量</td><td class="num">未披露</td><td class="num">未披露</td><td class="num">3,784.28 万张（2022 峰值 4,282 万，-11.6%）</td></tr>
+      <tr><td>信用卡条线人数</td><td class="num">卡中心 8,088 人<br>（2022 峰值 11,975，-32.5%）</td><td class="num">总行口径卡中心 3,597 人 ※</td><td class="num">未披露</td></tr>
+      <tr><td>AUM（全行零售）</td><td class="num">月日均 5 万+ 客户 487.30 万户（+3.84%）</td><td class="num">35,350.53 亿（+7.65%）</td><td class="num">19.18 万亿（+0.88 万亿）</td></tr>
+      <tr><td colspan="4" class="note-td">※ 口径脚注：①三家余额口径分别为「信用卡及透支 / 信用卡透支 / 透支及其他」，不完全一致，横向比较存在轻微失真；②民生 3,597 人为<b>总行口径</b>（分中心融合人员已计入属地分行），与浦发卡中心口径（8,088 人）<b>不可直接对比</b>；③不良率均为半年报按产品披露口径（Wind「个人贷款不良率」字段与半年报零售口径不一致，本稿跨行对比一律采用半年报口径，Wind 仅作趋势参照、不作外推）。</td></tr>
+    </table>
+  </div>
+
+  <div class="grid g2" style="margin-top:7pt">
+    <div class="card">
+      <div class="chart-title">表内余额 vs 表外未使用额度 <span class="note">亿元 · 2026-06-30 · 额度均超表内余额（1.35–2.70 倍）</span></div>
+      <div class="hbar-row"><span class="h-lab">浦发</span><div class="hbar-track"><div class="hbar-fill" style="width:58.2%"></div></div><span class="hbar-val num">3,785.45 <small>表内</small></span></div>
+      <div class="hbar-row"><span class="h-lab"></span><div class="hbar-track"><div class="hbar-fill gold" style="width:98.8%"></div></div><span class="hbar-val num">6,420.52 <small>额度</small></span></div>
+      <div class="hbar-row" style="margin-top:3pt"><span class="h-lab">民生</span><div class="hbar-track"><div class="hbar-fill" style="width:62.5%"></div></div><span class="hbar-val num">4,064.57</span></div>
+      <div class="hbar-row"><span class="h-lab"></span><div class="hbar-track"><div class="hbar-fill gold" style="width:80.0%"></div></div><span class="hbar-val num">5,202.60</span></div>
+      <div class="hbar-row" style="margin-top:3pt"><span class="h-lab">邮储</span><div class="hbar-track"><div class="hbar-fill" style="width:29.1%"></div></div><span class="hbar-val num">1,894.15</span></div>
+      <div class="hbar-row"><span class="h-lab"></span><div class="hbar-track"><div class="hbar-fill gold" style="width:78.6%"></div></div><span class="hbar-val num">5,106.17</span></div>
+      <div class="gap-note" style="margin-top:3pt"><b>读法：</b>授信在、活跃在，缺的是「生息支用」——银行没有抽贷，是客户不借了（主动去杠杆）+ 银行主动压高风险额度。</div>
+    </div>
+    <div class="card">
+      <div class="chart-title">额度动用率 <span class="note">表内余额 ÷ 未使用额度（近似） · 2026-06-30</span></div>
+      <div class="hbar-row"><span class="h-lab">邮储</span><div class="hbar-track"><div class="hbar-fill" style="width:54.2%"></div></div><span class="hbar-val num">27.1%</span></div>
+      <div class="hbar-row"><span class="h-lab">浦发</span><div class="hbar-track"><div class="hbar-fill gold" style="width:74.2%"></div></div><span class="hbar-val num">37.1%</span></div>
+      <div class="hbar-row"><span class="h-lab">民生</span><div class="hbar-track"><div class="hbar-fill warn" style="width:87.8%"></div></div><span class="hbar-val num">43.9%</span></div>
+      <div class="chart-title" style="margin-top:7pt">表外是最大隐性变量</div>
+      <ul class="clean tight">
+        <li>三家未使用额度合计约 <b class="num">1.67 万亿</b>，均超表内余额（1.35–2.70 倍）</li>
+        <li>额度是不可撤销承诺，动用率是顺周期变量</li>
+        <li>民生 43.9% 最高、叠加最高不良率，是最敏感组合：<b>动用率每升 1pct ≈ 52 亿新增表内敞口</b></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 第 3 页 · 三、五层分析（一）战略层 + （二）客群经营层（重点） ============ -->
+<section class="page">
+  <div class="pg-no">03 / 06</div>
+  <div class="sec-head"><span class="sec-no">03 LAYER 1 · STRATEGY</span><span class="sec-title">五层分析（一）战略层：信用卡的独立叙事结束</span></div>
+  <hr class="gold-rule">
+  <p class="body" style="margin-bottom:6pt">三家在做同一件事：把信用卡从「独立利润中心」塞回「零售一体化」。<b style="color:var(--navy)">信用卡部门的价值锚点正从「信贷规模」迁移到「客群入口＋数据入口」。</b></p>
+  <div class="grid g3">
+    <div class="card">
+      <h3>民生：组织融合最彻底</h3>
+      <p class="body">分中心与分行一体化融合，融合人员计入属地分行（总行口径卡中心 3,597 人）——信用卡事业部制向分行制回摆的样本，考核回归属地综合贡献。</p>
+    </div>
+    <div class="card">
+      <h3>浦发：人力压降 + 场景补位</h3>
+      <p class="body">卡中心人员较 2022 年峰值 11,975 人压降 32.5%（约 4,000 人）至 8,088 人，以「1+2+3」场景矩阵与车生态补位。</p>
+    </div>
+    <div class="card">
+      <h3>邮储：集约化 + 数智化替代人海</h3>
+      <p class="body">消费信贷审批上收、平均审批时效 3 小时以内；大模型客服上半年服务 <b class="num">1,536.40 万人次</b>，人机协同服务新范式。</p>
+    </div>
+  </div>
+
+  <div class="sec-head" style="margin-top:9pt"><span class="sec-no">04 LAYER 2 · CUSTOMER</span><span class="sec-title">五层分析（二）客群经营层（本篇重点）：三个样板、一套方法论</span><small>联名发卡已不新鲜，新鲜的是「以会员池做客群分层、以客群质量论成败」</small></div>
+  <hr class="gold-rule">
+
+  <div class="grid g3">
+    <div class="card chain-card">
+      <span class="chain-tag">样板一 · 最值得研究</span>
+      <h3>民生 × 山姆：付费会员池 → 财富客群</h3>
+      <p class="body">山姆付费年费（<b class="num">260 / 680 元档</b>）天然完成客群筛选——中产家庭、高消费力、品质偏好。半年报原文：「与山姆建立长期稳定的合作关系，获取优质的财富客群」。信用卡是入口，财富经营是承接。</p>
+      <div class="m-num num">+47.66% <small>财富中收 30.13 亿 · 贵宾 510.35 万户（+6.68%）</small></div>
+      <div class="chain">
+        <div class="step"><b>① 场景准入：</b>联名权益嵌入会员体系，会员画像做风控前置</div>
+        <div class="step"><b>② 客群筛选：</b>总行模型层完成、分行名单化执行（金卡及以上占零售 AUM 86.35%）</div>
+        <div class="step"><b>③ 联动转化：</b>会员日驻点 + 财富产品联动（青岛分行 2026-04「品味山姆 乐享民生」）</div>
+      </div>
+      <div class="chain-note"><b>边界：</b>获客数 / 转化率 / AUM 贡献未披露，属待验证项；存量不良仍在消化（不良率 4.22%）——入口模式尚未改善资产端。</div>
+    </div>
+    <div class="card chain-card">
+      <span class="chain-tag">样板二 · 收缩中唯一正增长</span>
+      <h3>浦发「汽车分期+N」：新能源车生态</h3>
+      <p class="body">信用卡新能源车分期余额 <b class="num">297.97 亿</b>（较上年末 +5.36 亿、+1.8%，总余额 -2.8% 背景下逆势）；零售端 i 车贷新能源贷款 <b class="num">309.56 亿</b>、占汽车贷款超 60%（较上年末提升超 10pct），「卡+贷」双入口并行。</p>
+      <div class="m-num num">297.97 亿 <small>新能源车分期余额 · 国补交易 120 多万笔 / 86 万户</small></div>
+      <div class="chain">
+        <div class="step"><b>① 总行主机厂准入</b>（品牌 / 车型 / 贴息政策谈判）</div>
+        <div class="step"><b>② 分行属地经销商驻点</b>（渠道 + 客户触达）</div>
+        <div class="step"><b>③ 国补 / 贴息嵌入支付</b>（政策红利直达交易）</div>
+        <div class="step"><b>④ 「汽车分期+N」全生命周期</b>（充电 / 保险 / 后市场 / 绿色权益）</div>
+      </div>
+      <div class="chain-note"><b>边界：</b>297.97 亿仅占其信用卡余额 7.9%，尚不足以扭转整体收缩；风险点在新车残值波动与主机厂贴息依赖（补贴退坡 → 客户成本跳升 → 逾期回补）。</div>
+    </div>
+    <div class="card chain-card">
+      <span class="chain-tag">样板三 · 大基数 × 高频活动</span>
+      <h3>邮储大众客群：低风险但低生息</h3>
+      <p class="body">结存卡量 <b class="num">3,784.28 万张</b>，较峰值 -11.6% 后走平（2026H1 环比 +0.06%）；营销活动 5,700 万人次带动消费超 500 亿、快捷消费 +16.65%、「周六5折」品牌常态化；以万事达世界卡向上渗透。</p>
+      <div class="m-num num">5,700 万人次 <small>带动消费超 500 亿</small></div>
+      <div class="m-num num" style="font-size:9.5pt">5,006 元 <small>卡均透支（较 2024 峰值 5,958 元 -16%）</small></div>
+      <div class="chain-note"><b>代价：</b>卡均透支约 5,006 元（-16% vs 峰值），低风险客群同样低生息——邮储面临「资产收益不足」的隐性成本。</div>
+    </div>
+  </div>
+
+  <div class="takeaway">客群经营小结：民生「向上买客群」（山姆）、浦发「向场景要客群」（车生态）、邮储「向存量要活跃」（大众基本盘）。共性方法论：以会员池 / 场景池做客群分层（STP），以「信用卡 → 财富 / 综合贡献迁移率」论成败，而不是联名卡张数。</div>
+
+  <div class="card" style="margin-top:7pt">
+    <h3>同业参照（2025–2026 同类异业合作）</h3>
+    <p class="body">交行山姆优逸白金（同池竞争，2026 年出现会员费代扣服务调整，提示联名权益履约的脆弱性）；中信麦德龙联名卡；中信 / 建行京东联名卡；平安汽车金融传统强项；银行网点进商超（2026-08 公开报道，成本最低最易批量复制）。<b style="color:var(--navy)">判断：个案不可复制（取决于本地是否有头部付费制商超），方法论可复制——没有山姆的城市用本地头部商超替代。</b></p>
+  </div>
+</section>
+
+<!-- ============ 第 4 页 · （三）产品层 + （四）资产层 ============ -->
+<section class="page">
+  <div class="pg-no">04 / 06</div>
+  <div class="sec-head"><span class="sec-no">05 LAYER 3 · PRODUCT</span><span class="sec-title">五层分析（三）产品层：分期「政策工具化」<small>内生定价能力普遍弱化</small></span></div>
+  <hr class="gold-rule">
+
+  <div class="card" style="padding:6pt 9pt">
+    <div class="chart-title">产品矩阵盘点（四角色结构） <span class="note">来源：三家 2026 半年报业务表述整理</span></div>
+    <table class="matrix">
+      <tr><th>产品角色</th><th>浦发</th><th>民生</th><th>邮储</th></tr>
+      <tr><td>引流产品</td><td>「1+2+3」场景营销矩阵、66 夜生活、世界杯热点营销、境外消费券包</td><td>山姆合作获客、聚惠民生日、网格化社区营销</td><td>「周六5折」品牌、5,700 万人次活动、万事达世界卡（向上引流）</td></tr>
+      <tr><td>转化产品</td><td>爱宠 / 财富客群年费卡矩阵、新能源车分期</td><td>信用卡 → 财富迁移（山姆客群专属承接）</td><td>账单分期（贴息自动处理）、快捷支付</td></tr>
+      <tr><td>收益产品</td><td>汽车分期+N（利息 + 厂商贴息 + 车生态交叉销售）</td><td>财富中收（信用卡入口的最终变现场）</td><td>分期利息（贴息补贴下的量增价降）</td></tr>
+      <tr><td>留存产品</td><td>宠物生态「金融 + 场景 + 服务」、绿色积分（10.2 亿）</td><td>会员权益打通、代发 / 社区生态</td><td>县域返乡服务、家邮小宝亲子专区</td></tr>
+    </table>
+  </div>
+
+  <div class="grid g2" style="margin-top:7pt">
+    <div class="card">
+      <h3>产品要素与真实成本账 <span style="font-size:7.2pt;color:var(--gold-deep)">（行业通行区间 / 经验值，非行内实际数据）</span></h3>
+      <ul class="clean tight">
+        <li><b>商超联名卡三科目：</b>获客 CPA 300–800 元/户（商超联名 500–1,000 元/户，须算「权益投入 ÷ AUM 沉淀」回收比）；消费返现 1–2%（月封顶）；收单费率 0.3–0.4%（标准 0.5–0.6%），让渡收单利润换场景数据 + 账户落地，属战略预算</li>
+        <li><b>汽车分期三笔账：</b>经销商返点 2–4%；主机厂贴息 2,000–8,000 元/台；银行净收益约 2–4%。<b>单笔车分期算总账</b>（利息 + 贴息 + 车险 / 充电 / 权益交叉销售）</li>
+        <li><b>落地周期：</b>联名卡总行谈判到分行执行约 6–12 个月（谈判 3–6 月 + 联调 2–3 月 + 备案 1–2 月 + 分行分解 1 月）</li>
+        <li><b>经验法则：</b>「看着好卖不动」= 刚性年费弱权益、高门槛权益、小众 IP 卡；「低调但跑量」= 无年费返现卡、场景联名、贴息分期卡——邮储「周六5折」是模板</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>产品竞争分析（四问）</h3>
+      <ul class="clean tight">
+        <li><b>客户为何选它？</b>选「每月确定能省下来的钱」，拼权益兑付确定性不拼卡面：<b>权益实用度 &gt; 授信额度 &gt; 还款便利 &gt; 卡面</b>（一线经验排序）</li>
+        <li><b>银行为何能持续提供？</b>靠场景数据的经营变现（收单 + 账户 + 画像），而非单卡盈亏</li>
+        <li><b>优势可否复制？</b>会员池模式方法论可复制、个案依赖本地商超；贴息自动化（邮储）是系统能力，可复制</li>
+        <li><b>增长是否依赖补贴？</b>当期三家增长均含政策补贴成分（会计增量），剔除贴息后的内生需求均无法拆分披露——产品端最大透明度缺口</li>
+      </ul>
+      <div class="takeaway" style="margin-top:6pt"><b>结构判断：</b>「引流 → 转化 → 收益 → 留存」链路完整，但收益型产品高度依赖政策补贴与分期渗透，<b>真实风险定价能力是共同短板</b>。</div>
+    </div>
+  </div>
+
+  <div class="sec-head" style="margin-top:9pt"><span class="sec-no">06 LAYER 4 · ASSET</span><span class="sec-title">五层分析（四）资产层：三个背离决定经营质量</span></div>
+  <hr class="gold-rule">
+
+  <div class="card" style="border-color:rgba(201,169,110,.55);background:linear-gradient(180deg,#fffdf8,#fff)">
+    <h3 style="color:var(--gold-deep)">历史序列断点提示：线性外推已被证伪的变量（不作分析重点、不作趋势外推）</h3>
+    <div class="grid g2" style="margin-top:2pt">
+      <ul class="clean tight">
+        <li>① 浦发余额：2023–24 压降被 2025 回升证伪、回升又被 2026H1 回落证伪——判断为 3,700–3,900 亿区间震荡、压降近尾声但回升动能不足</li>
+        <li>② 浦发不良率双峰震荡（2020 峰 2.52% → 2023–24 冲高 2.43% / 2.45% → 2025 回落 1.92% → 2026H1 回升 2.01%），受核销节奏影响，不能外推</li>
+        <li>③ 邮储卡量净减斜率拐平（环比 +0.06%），「持续净减」外推失效——清沉睡卡接近尾声</li>
+      </ul>
+      <ul class="clean tight">
+        <li>④ 邮储透支见顶（2024）滞后浦发（2022）两年，收缩周期处于中段</li>
+        <li>⑤ 邮储 2026H1 消费金额 4,322.22 亿为<b>半年值</b>，不可与年度值直接同比</li>
+        <li>⑥ 邮储不良率持平不可外推为「资产质量稳定」——生成率维持 3.5%+ 而分母继续收缩，未来 6–12 个月大概率被动上行（典型证伪场景）</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-top:7pt">
+    <div class="card">
+      <h3>背离一 · 交易与余额背离（剪刀差）</h3>
+      <div class="chart-title" style="margin-top:3pt">民生 / 邮储：交易高增 vs 余额收缩 <span class="note">单位 %</span></div>
+      <div class="diff-row">
+        <span class="diff-lab">民生 交易</span>
+        <div class="diff-axis"><div class="diff-fill pos" style="width:92.0%"></div><div class="mid"></div></div>
+        <div class="diff-axis"><div class="diff-fill neg" style="width:30.0%"></div><div class="mid"></div></div>
+        <span class="diff-val neg num">余额 -6.0%</span>
+      </div>
+      <div class="diff-row">
+        <span class="diff-lab">邮储 快捷消费</span>
+        <div class="diff-axis"><div class="diff-fill pos" style="width:83.3%"></div><div class="mid"></div></div>
+        <div class="diff-axis"><div class="diff-fill neg" style="width:48.0%"></div><div class="mid"></div></div>
+        <span class="diff-val neg num">透支 -9.6%</span>
+      </div>
+      <div class="gap-note"><span class="up">+18.40% / +16.65%</span> vs <span class="down">-6.0% / -9.6%</span>。交易高增、余额收缩，未使用额度仍在扩张（浦发 6,420.52 亿 +2.9%、民生 5,202.60 亿 +2.62%）——银行没有抽贷，是客户不借了。</div>
+    </div>
+    <div class="card">
+      <h3>背离二 · 流量与变现背离（民生最典型）</h3>
+      <p class="body" style="margin-top:2pt">笔均 <b class="num">447 元</b> 的小额高频交易撑起 +18.40%，但「活跃 → 生息」转化率三家均未披露——这是比余额更关键的经营变量。</p>
+      <hr class="gold-rule" style="margin:6pt 0">
+      <h3>背离三 · 量与价背离（邮储最典型）</h3>
+      <p class="body">卡均透支 <b class="num">5,006 元</b>（-16% vs 峰值 5,958 元）、卡均半年消费 <b class="num">11,421 元</b>——量差难补价差，低风险与低收益同源。</p>
+      <div class="takeaway" style="margin-top:6pt">三个背离的共同指向：<b>生息转化与风险定价</b>取代规模，成为信用卡经营质量的度量衡。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 第 5 页 · （五）风险层 ============ -->
+<section class="page">
+  <div class="pg-no">05 / 06</div>
+  <div class="sec-head"><span class="sec-no">07 LAYER 5 · RISK</span><span class="sec-title">五层分析（五）风险层：表观分化、前瞻承压，口径纪律是前提</span></div>
+  <hr class="gold-rule">
+
+  <div class="grid g3" style="margin-bottom:7pt">
+    <div class="card">
+      <h3>民生 4.22% <span style="font-size:7.6pt;color:var(--down)">（+0.35pct）警戒水位</span></h3>
+      <ul class="clean tight risk-li">
+        <li>总部不良 <b class="num">184.25 亿</b> 中信用卡占 93.2%，需专项治理；<b>2026H2 若破 4.5% 应升格定性</b></li>
+        <li>不良额净增 42.9 亿（+2.6%），处置力度不足（收缩 + 等待）</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>浦发 2.01% <span style="font-size:7.6pt;color:var(--gold-deep)">（+0.09pct）可控但面扩散</span></h3>
+      <ul class="clean tight">
+        <li>回升幅度为零售各品种中最小（同期零售整体 1.67%、+0.20pct）</li>
+        <li>客群结构优化提供缓冲；经营贷 2.09%、+0.40pct 跳升，风险面扩散</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>邮储 1.45% <span style="font-size:7.6pt;color:var(--gold-deep)">（持平）表观最优有「保质期」</span></h3>
+      <ul class="clean tight risk-li">
+        <li>不良生成率（年化）<b class="num">3.68%</b>（+0.62pct）——核销清收主动出清（不良额 -9.8%）</li>
+        <li>生成率维持 3.5%+ 且分母收缩，6–12 个月不良率大概率被动上行</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid g2" style="margin-bottom:7pt">
+    <div class="card">
+      <h3>民生 +0.35pct 的量化分解 <span style="font-size:7.2pt;color:var(--gold-deep)">（团队推断 · 非官方统计）</span></h3>
+      <div class="stack-row"><div class="stack-a" style="width:70%"></div><div class="stack-b" style="width:28%"></div><div class="stack-c" style="width:2%"></div></div>
+      <div class="gap-note">深蓝：分母收缩贡献约 <b>70%</b>（余额 -6.0% 被动抬升，若余额持平不良率仅约 3.97%）｜金色：不良额净增贡献约 <b>28%</b>（+2.6%）｜浅色：其他（团队推断）。</div>
+      <p class="body" style="margin-top:2pt"><b style="color:var(--navy)">结论：高企主因是「存量不良 + 分母收缩放大 + 处置力度不足」，而非新生成暴增</b>（「获客下沉滞后暴露」的解释证据不足）。三行不良额变动印证处置分野：邮储 <b class="num">-9.8%</b>（核销清收主动出清）、浦发 +1.5%（调诉结合 + 不良 ABS）、民生 +2.6%（收缩 + 等待）。</p>
+    </div>
+    <div class="card">
+      <h3>外部合作风险红线（经营面之外）</h3>
+      <ul class="clean tight risk-li">
+        <li>客户与数据回行内、授信决策权不外包，联合风控责任条款写入协议；防车企自营金融反客为主</li>
+        <li>贴息存量到期后实际利率跳升的逾期回补，需提前测算到期分布</li>
+      </ul>
+      <hr class="gold-rule" style="margin:5pt 0">
+      <h3>山姆模式的风险折扣</h3>
+      <ul class="clean tight risk-li">
+        <li>山姆解决「未来客群」（财富客群向上输送），不解决「存量不良」；新客占比爬坡需 12–24 个月，复制者勿错配预期</li>
+        <li>优质客群 ≠ 无限额度：山姆新户同样适用新户 Vintage 12 期不良 &gt;1.5% 预警线，防「高额度 + 权益获客」过度授信</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>最需要盯的前瞻信号</h3>
+    <ul class="clean tight risk-li">
+      <li><b>邮储不良生成率（年化）3.68%（+0.62pct）</b>：时点持平靠核销压住，生成率维持 3.5%+ 而分母继续收缩，未来 6–12 个月不良率大概率被动上行——「不良率持平」不可外推为「资产质量稳定」（线性外推被证伪的典型场景）</li>
+      <li><b>表外是最大隐性变量</b>：三家未使用额度合计约 <b class="num">1.67 万亿</b>，额度是不可撤销承诺，动用率是顺周期变量——民生 43.9% 最高、叠加最高不良率是最敏感组合（动用率每升 1pct ≈ 52 亿新增表内敞口）</li>
+      <li><b>时点不良率是结果，生成率 / 迁徙率 / 动用率才是过程</b>——监测重心应放在过程指标</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============ 第 6 页 · 四、归因 + 五、收尾 + 六、监测 + 七、数据缺口 ============ -->
+<section class="page">
+  <div class="pg-no">06 / 06</div>
+  <div class="sec-head"><span class="sec-no">08 ATTRIBUTION</span><span class="sec-title">归因分析：四个跨层关键矛盾（背离）</span></div>
+  <hr class="gold-rule">
+  <div class="grid g2" style="margin-bottom:7pt">
+    <div class="card">
+      <h3>① 交易繁荣 ≠ 资产质量背书</h3>
+      <p class="body">民生交易 +18.40% 与不良 4.22% 并存：笔均 <b class="num">447 元</b> 高频周转赚收单与流量价值、不沉淀表内资产，流量繁荣不构成背书；高企主因是存量 + 分母收缩 + 处置不足，非新客下沉即时暴露。</p>
+    </div>
+    <div class="card">
+      <h3>② 时点稳健 ≠ 过程承压</h3>
+      <p class="body">邮储不良率持平与生成率 <b class="num">3.68%</b> 并存：核销换来的表观平稳，透支未来处置空间。</p>
+    </div>
+    <div class="card">
+      <h3>③ 政策增量 ≠ 内生能力</h3>
+      <p class="body">贴息 / 国补拉动分期与交易，会计增量不等于能力增量；贴息占比未披露，「增长质量」不可比。</p>
+    </div>
+    <div class="card">
+      <h3>④ 组织收缩 vs 能力保全</h3>
+      <p class="body">民生分中心并入分行方向正确，但专业风控 / 审批 / 催收能力在融合期易摊薄；浦发裁撤 32.5% 人力后靠场景与模型补位。底线：专业风控不流失、指标权重不稀释、属地催收不失控。</p>
+    </div>
+  </div>
+
+  <div class="sec-head" style="margin-top:6pt"><span class="sec-no">09 ACTION</span><span class="sec-title">收尾：同业启示与分阶段行动建议</span></div>
+  <hr class="gold-rule">
+  <div class="takeaway" style="margin-top:0;margin-bottom:7pt">对全行业的三个判断：① 信用卡 KPI 体系应从「余额、卡量」切换为<b>「活跃率、生息转化率、客群综合贡献（AUM 联动）、风险调整后收益」四维</b>；② 异业合作的价值在客群不在卡面，比拼「会员池转化率」与「信用卡 → 财富迁移率」；③ 新能源车分期是「增长点 → 基本盘」最佳候选场景（政策同频 + 客群优质 + 唯一正增长）。</div>
+  <div class="grid g3" style="margin-bottom:7pt">
+    <div class="card" style="background:linear-gradient(180deg,rgba(26,58,92,.04),#fff)">
+      <h3>立刻做（0–3 个月）</h3>
+      <ul class="clean tight">
+        <li>「三件套」月度监测：生成率&gt;3.5%、动用率&gt;45%、不良率&gt;2.5%</li>
+        <li>本地头部付费制商超盘点与准入评估；贴息分期到期分布测算</li>
+      </ul>
+    </div>
+    <div class="card" style="background:linear-gradient(180deg,rgba(201,169,110,.10),#fff)">
+      <h3>本季做（3–6 个月）</h3>
+      <ul class="clean tight">
+        <li>贴息承接合规三道闸：真实消费核验 + 息费明示 + 资金流向监控</li>
+        <li>商超 × 财富客群样板在一个分行落地（KPI 绑定客群贡献）；车分期经销商网络对表</li>
+      </ul>
+    </div>
+    <div class="card" style="background:linear-gradient(180deg,rgba(163,81,60,.06),#fff)">
+      <h3>观察等待（6–12 个月）</h3>
+      <ul class="clean tight risk-li">
+        <li>民生 4.5% 与邮储生成率 3.5% 两个同业风向标</li>
+        <li>贴息政策延续性；新能源车残值走势与车型集中度</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>监测指标体系（建议月度报送）</h3>
+      <table class="mon" style="margin-top:3pt">
+        <tr><th>指标</th><th style="text-align:right">预警阈值（建议）</th><th style="text-align:right">2026H1 三家基准</th></tr>
+        <tr><td>信用卡不良率</td><td class="num">&gt;2.5% 预警 / &gt;3.0% 红线</td><td class="num">邮储 1.45% / 浦发 2.01% / 民生 4.22%</td></tr>
+        <tr><td>不良生成率（年化）</td><td class="num">&gt;3.5% 预警</td><td class="num">邮储 3.68%（浦发、民生未披露）</td></tr>
+        <tr><td>额度动用率</td><td class="num">&gt;45% 预警</td><td class="num">邮储 27.1% / 浦发 37.1% / 民生 43.9%</td></tr>
+        <tr><td>贴息分期余额占比</td><td class="num">首期建台账，退坡情景 50% / 100% 压力测试</td><td class="num">三家均未披露</td></tr>
+        <tr><td>交易 / 余额剪刀差</td><td class="num">交易正增 + 余额负增持续 2 个季度 → 审查定价</td><td class="num">民生最典型</td></tr>
+        <tr><td>新户 Vintage 12 期不良</td><td class="num">&gt;1.5% 预警</td><td class="num">三家均未披露</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>数据缺口与待验证项（诚实清单）</h3>
+      <div class="gap-note" style="margin-top:2pt">
+        ① 三家均未披露：贴息 / 国补占比、信用卡向财富迁移率、「活跃→生息」转化率；浦发、民生未披露不良生成率 / 迁徙率 / 共债指数；浦发未披露交易额与卡量。<b>本稿对未披露指标未做任何估算或外推。</b><br>
+        ② 民生 × 山姆量化效果（获客数 / 转化率 / AUM 贡献）未披露，仅有行级间接佐证；三家余额口径不一致（信用卡及透支 / 信用卡透支 / 透支及其他），横向比较为近似对照；Wind「信用卡贷款余额」字段经核验与年报严重不符（浦发 2.21 万亿 vs 年报 3,785.45 亿），口径失真，已禁用于本稿。<br>
+        ③ Wind「个人贷款不良率」与半年报零售口径存在系统性差异（如民生 0.77% vs 2.01%），仅作趋势参照；浦发个人贷款不良率趋势上行（2019Q2 0.30% → 2026Q2 1.28%）而全行不良率下行（2.05% → 1.25%），方向性佐证零售风险仍在上升通道；外部机构案例数字（平安、招行、交行、中信等）来自公开披露，以原文为准。<br>
+        <b>本稿为行业分析材料，非投资建议；标注「推断」处为分析性判断，非官方统计。</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

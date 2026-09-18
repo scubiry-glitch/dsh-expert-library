@@ -52,7 +52,7 @@ test('bank-finance pack validates clean with bank-09 + e13-* 江苏银行高层'
   const pack = buildBankDomainPack()
   const result = validateDomainPack(pack)
   assert.equal(result.ok, true, JSON.stringify(result.diagnostics.filter(d => d.severity === 'error')))
-  assert.equal(pack.experts.length, 4)
+  assert.equal(pack.experts.length, 6)
   const ids = pack.experts.map(e => e.id)
   assert.ok(ids.includes('bank-09'))
   assert.ok(ids.includes('e13-01') && ids.includes('e13-02') && ids.includes('e13-03'))
@@ -80,13 +80,24 @@ test('bank pack declares local 99wiki as its knowledge base', () => {
   }
   // 场景知识策略引用 99wiki
   assert.ok(pack.scenarios[0].knowledgePolicy.optional?.includes('bank-99wiki'))
+  assert.ok(pack.scenarios[0].knowledgePolicy.optional?.includes('bank-analytics'))
+  // 银行分析数据库 provider + 领域知识清单
+  const analyticsProvider = pack.knowledgeProviders.find(x => x.id === 'bank-analytics')
+  assert.ok(analyticsProvider !== undefined)
+  assert.equal(analyticsProvider.kind, 'database')
+  assert.deepEqual(analyticsProvider.scopes, ['99wiki/projects/银行分析数据库'])
+  const analytics = pack.domainKnowledge.find(x => x.id === 'bank.analytics')
+  assert.ok(analytics !== undefined)
+  assert.equal(analytics.collections.length, 7)
+  assert.ok(analytics.collections.some(c => c.id === 'analytics-provenance'))
+  assert.ok(analytics.boundary.includes('meta_sources'))
 })
 
 test('bank pack bundles both consulting skills with pack-relative roots', () => {
   const pack = buildBankDomainPack()
-  assert.equal(pack.skillPackages.length, 2)
+  assert.equal(pack.skillPackages.length, 7)
   const ids = pack.skillPackages.map(s => s.id).sort()
-  assert.deepEqual(ids, ['bank-retail-finance-analysis', 'strategy-consulting'])
+  assert.deepEqual(ids, ['bank-activity-eval','bank-retail-finance-analysis','finesse-ui','gsap-core','gsap-scrolltrigger','gsap-timeline','strategy-consulting'])
   const retail = pack.skillPackages.find(s => s.id === 'bank-retail-finance-analysis')
   assert.equal(retail.source.kind, 'builtin')
   assert.equal(retail.source.root, 'skills/bank-retail-finance-analysis')
@@ -103,10 +114,51 @@ test('bank pack reuses the shared framework B template with bank prefix', () => 
   assert.equal(pack.methodPacks.some(m => m.id === 'bank.method.retail-ops'), true)
 })
 
+test('bank pack carries methodology-distilled gates / method packs / output template (v1.1.0)', () => {
+  const pack = buildBankDomainPack()
+  // 质量硬门：直引逐字回验 + 历史时点标注（信用卡方法论提取团队实测沉淀）
+  const gateIds = pack.qualityPolicies[0].gates.map(g => g.id)
+  assert.ok(gateIds.includes('pii-redaction'))
+  assert.ok(gateIds.includes('quote-verbatim'))
+  assert.ok(gateIds.includes('historical-timestamp'))
+  // 方法包：阈值测算协议 + 口径还原对标协议
+  const methodIds = pack.methodPacks.map(m => m.id)
+  assert.ok(methodIds.includes('bank.method.threshold-calc'))
+  assert.ok(methodIds.includes('bank.method.caliber-restore'))
+  assert.ok(methodIds.includes('bank.method.customer-tiering'))
+  assert.ok(methodIds.includes('bank.method.work-chains'))
+  assert.ok(methodIds.includes('bank.method.incentive-governance'))
+  assert.ok(methodIds.includes('bank.method.partnership-diligence'))
+  assert.ok(methodIds.includes('bank.method.tiered-pnl'))
+  assert.ok(methodIds.includes('bank.method.attribution'))
+  // 口径对照表输出模板
+  const caliber = pack.outputTemplates.find(x => x.id === 'bank.output.caliber-table')
+  assert.ok(caliber !== undefined)
+  assert.deepEqual(caliber.sections.map(x => x.id), ['指标名','会计科目','经济实质','本行口径','外部口径','分母口径','差异说明','可比结论与不可比项'])
+  // 场景接线：bank-retail / bank-strategy 亦引用新方法包
+  const retail = pack.scenarios.find(x => x.id === 'bank-retail')
+  assert.ok(retail.routingPolicy.assertions[0].includes('incentive-governance'))
+  const strategy = pack.scenarios.find(x => x.id === 'bank-strategy')
+  assert.ok(strategy.routingPolicy.assertions[0].includes('tiered-pnl'))
+  // 六条工作链：链目齐备
+  const chains = pack.methodPacks.find(m => m.id === 'bank.method.work-chains')
+  for (const name of ['年度经营计划模板','活动与定价测试','口径对照表','阈值与定价验算','客群工程全链','线上转化+消保一体化']) {
+    assert.ok(chains.body.includes(name), `work-chains 缺链：${name}`)
+  }
+  // 输出模板：方法论七字段记录
+  const methodRecord = pack.outputTemplates.find(t => t.id === 'bank.output.method-record')
+  assert.ok(methodRecord !== undefined)
+  assert.deepEqual(methodRecord.sections.map(s => s.id), ['编号','方法名','出处','原文关键句','方法拆解','适用条件与边界','可迁移性初判'])
+  // 场景接线：bank-credit-card 声明 methodology-extraction intent 并引用新模板/门
+  const card = pack.scenarios.find(s => s.id === 'bank-credit-card')
+  assert.ok(card.intents.includes('methodology-extraction'))
+  assert.ok(card.routingPolicy.assertions[0].includes('method-record'))
+})
+
 // ── 2. 单一注册表 / 单一数据层 ───────────────────────────────────────────────
 
 test('bank-09 is merged into the native expert registry (single merge point)', () => {
-  assert.equal(BANK_EXPERTS.length, 4)
+  assert.equal(BANK_EXPERTS.length, 6)
   assert.equal(BANK_EXPERTS[0].bk, 'BANK-09')
   assert.equal(ZHIJIAN_EXPERT_BY_ID.has('bank-09'), true)
   assert.equal(isZhijianExpertId('bank-09'), true)
@@ -135,7 +187,7 @@ test('routeRequest routes 零售金融 to framework B with bank-09 candidate', (
   const candidate = result.candidates.find(c => c.id === 'bank-09')
   assert.ok(candidate !== undefined, 'bank-09 must be a candidate for 零售金融')
   assert.equal(candidate.bk, 'BANK-09')
-  assert.equal(candidate.initials, 'W')
+  assert.equal(candidate.initials, 'X')
 })
 
 test('scenarioForTopic resolves bank-retail / bank-strategy', () => {

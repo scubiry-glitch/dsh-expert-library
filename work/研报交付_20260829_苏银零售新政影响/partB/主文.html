@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>房地产信贷新政对江苏银行零售业务部的影响分析 · 99wiki 行业研究</title>
+<style>
+/* finesse · register=product · Set 4 "Teal & Clay"（product-palettes.md §Set 4）
+ * 字体：Noto Serif CJK SC（展示）+ Noto Sans CJK SC（正文）
+ * DENSITY=8 SPECTACLE=2 · 拒绝"金融=藏青+金"与 AI 紫默认 · 全部图表数据驱动几何 */
+:root{
+  --page:#e9eeed; --bg:#ffffff; --panel-2:#f1f5f4; --panel-3:#e6edec;
+  --border:rgba(16,38,38,.07); --border-2:rgba(16,38,38,.16);
+  --ink-1:#0f2322; --ink-2:#3a4b4a; --ink-3:#6b7d7c;
+  --accent:#176C6B; --accent-2:#C4633F; --accent-soft:rgba(23,108,107,.10);
+  --clay-soft:rgba(196,99,63,.12);
+  --on-accent:#ffffff;
+  --up:#2C7A62; --down:#C0453C; --warn:#B77A16;
+  --up-soft:rgba(44,122,98,.12); --down-soft:rgba(192,69,60,.10); --warn-soft:rgba(183,122,22,.12);
+  --shadow:0 1px 3px rgba(19,61,74,.05);
+  --shadow-lg:0 40px 90px -50px rgba(19,61,74,.34);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:clip}
+body{
+  background:var(--page); color:var(--ink-2);
+  font-family:"Noto Sans CJK SC","Noto Sans CJK TC",-apple-system,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.78; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{color:var(--ink-1); overflow-wrap:anywhere}
+.shell{max-width:1240px; margin:28px auto 48px; background:var(--bg);
+  border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow-lg); overflow:hidden; position:relative}
+.shell::before{content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(430px 220px at 94% -6%, rgba(23,108,107,.07), transparent 62%)}
+/* ============ 页骨架 ============ */
+.page{padding:52px 60px 0; min-height:1754px; display:flex; flex-direction:column; position:relative;
+  border-top:1px solid var(--border)}
+.page:first-child{border-top:none}
+.pbody{flex:1}
+.pfoot{display:flex; justify-content:space-between; align-items:center; gap:16px;
+  border-top:1px solid var(--border-2); padding:14px 0 18px; margin-top:26px;
+  font-size:11px; color:var(--ink-3); letter-spacing:.04em}
+.pfoot .sig{font-weight:600; color:var(--ink-2)}
+.pfoot .pno{font-variant-numeric:tabular-nums}
+/* ============ 页首 ============ */
+.eyebrow{display:flex; align-items:baseline; gap:12px; margin-bottom:14px}
+.eyebrow .no{font-family:"Noto Serif CJK SC",serif; font-size:30px; font-weight:900; color:var(--accent); line-height:1}
+.eyebrow .crumb{font-size:11.5px; letter-spacing:.22em; color:var(--ink-3); font-weight:600}
+h2.ptitle{font-family:"Noto Serif CJK SC","Songti SC",serif; font-size:27px; line-height:1.38;
+  letter-spacing:.01em; margin-bottom:10px}
+.plede{font-size:14.5px; color:var(--ink-2); border-left:3px solid var(--accent);
+  padding:2px 0 2px 14px; margin:12px 0 18px; text-wrap:pretty}
+.plede b,.plede strong{color:var(--ink-1)}
+p{margin:0 0 11px; text-wrap:pretty}
+b,strong{color:var(--ink-1)}
+.hl{color:var(--accent); font-weight:700}
+.hlc{color:var(--accent-2); font-weight:700}
+.micro{font-size:11px; letter-spacing:.06em; color:var(--ink-3); font-weight:600}
+.small{font-size:12px; color:var(--ink-3)}
+/* ============ 标注徽标（来源绑定） ============ */
+.src{display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.03em;
+  border-radius:4px; padding:0 6px; margin:0 2px; vertical-align:1px; white-space:nowrap}
+.b-wind{background:var(--accent-soft); color:var(--accent)}
+.b-calc{border:1px solid var(--accent); color:var(--accent); background:transparent}
+.b-est{background:var(--clay-soft); color:var(--accent-2)}
+.b-inf{background:var(--warn-soft); color:var(--warn)}
+.b-doc{border:1px solid var(--border-2); color:var(--ink-2); background:var(--panel-2)}
+.b-todo{border:1px dashed var(--down); color:var(--down); background:var(--down-soft)}
+/* ============ 视觉对象通用 ============ */
+.visual{margin:16px 0 14px; page-break-inside:avoid}
+.vis-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:9px}
+.vis-head .vt{font-size:12.5px; font-weight:700; color:var(--ink-1); letter-spacing:.02em}
+.vis-head .vt::before{content:"▎"; color:var(--accent-2); margin-right:4px}
+.vis-head .vu{font-size:11px; color:var(--ink-3)}
+/* ============ 表格 ============ */
+table.vis-table{width:100%; border-collapse:collapse; font-size:12.2px; line-height:1.55}
+.vis-table th{background:var(--accent); color:var(--on-accent); font-weight:700; text-align:left;
+  padding:7px 10px; font-size:11.8px; letter-spacing:.04em; border:1px solid var(--accent)}
+.vis-table td{border:1px solid var(--border-2); padding:7px 10px; vertical-align:top; background:var(--bg)}
+.vis-table tr:nth-child(even) td{background:var(--panel-2)}
+.vis-table td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; color:var(--ink-1)}
+.vis-table td.ctr{text-align:center; white-space:nowrap}
+.dir{display:inline-block; font-size:10.5px; font-weight:700; border-radius:4px; padding:1px 7px; white-space:nowrap}
+.dir-pos{background:var(--up-soft); color:var(--up)}
+.dir-neg{background:var(--down-soft); color:var(--down)}
+.dir-neu{background:var(--panel-3); color:var(--ink-2)}
+.dir-opt{background:var(--clay-soft); color:var(--accent-2)}
+.dir-mix{background:var(--warn-soft); color:var(--warn)}
+/* ============ KPI 瓦片 ============ */
+.kpis{display:flex; flex-wrap:wrap; gap:12px}
+.kpi{flex:1 1 200px; min-width:180px; background:var(--panel-2); border:1px solid var(--border);
+  border-top:3px solid var(--accent); border-radius:10px; padding:13px 15px 11px}
+.kpi.alt{border-top-color:var(--accent-2)}
+.kpi .kv{font-family:"Noto Serif CJK SC",serif; font-size:27px; font-weight:900; color:var(--accent);
+  line-height:1.15; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+.kpi.alt .kv{color:var(--accent-2)}
+.kpi .kk{font-size:12px; font-weight:700; color:var(--ink-1); margin-top:3px}
+.kpi .ks{font-size:10.8px; color:var(--ink-3); margin-top:3px; line-height:1.5}
+/* ============ 数据驱动条形图（条高 = value/max，绝对定位锚底，几何精确） ============ */
+.chart{display:flex; align-items:stretch; gap:26px; height:210px; padding:0 6px; position:relative;
+  border-bottom:2px solid var(--border-2); margin-bottom:64px}
+.chart .col{flex:1; max-width:150px; position:relative; height:100%}
+.chart .bar{position:absolute; bottom:0; left:11%; width:78%; border-radius:6px 6px 0 0; background:var(--accent)}
+.chart .bar.c2{background:var(--accent-2)}
+.chart .bar.c3{background:#8a9a98}
+.chart .lab{position:absolute; top:100%; left:-24%; right:-24%; margin-top:9px; text-align:center; line-height:1.45}
+.chart .lab .lv{display:block; font-size:13px; font-weight:800; color:var(--ink-1); font-variant-numeric:tabular-nums}
+.chart .lab .lv small{display:block; font-size:10px; font-weight:600; color:var(--accent-2)}
+.chart .lab .ln{display:block; font-size:11.5px; color:var(--ink-2); font-weight:600; margin-top:1px}
+.chart .lab .ln small{display:block; font-weight:400; color:var(--ink-3); font-size:10px}
+/* 横向条（负向指标：条长=跌幅绝对值） */
+.hbar{margin:7px 0; display:flex; align-items:center; gap:10px}
+.hbar .hl-lab{flex:0 0 118px; font-size:12px; font-weight:600; color:var(--ink-1); text-align:right; line-height:1.3}
+.hbar .hl-track{flex:1; background:var(--panel-3); border-radius:4px; height:20px; position:relative}
+.hbar .hl-fill{height:100%; border-radius:4px; background:var(--accent)}
+.hbar .hl-fill.c2{background:var(--accent-2)}
+.hbar .hl-fill.c3{background:#8a9a98}
+.hbar .hl-val{flex:0 0 118px; font-size:12.5px; font-weight:800; color:var(--ink-1); font-variant-numeric:tabular-nums}
+/* ============ 机制图（流程盒 + 箭头） ============ */
+.mech{display:flex; flex-wrap:wrap; align-items:stretch; gap:8px}
+.mech .mstep{flex:1 1 150px; min-width:140px; background:var(--panel-2); border:1px solid var(--border-2);
+  border-radius:9px; padding:10px 12px; position:relative}
+.mech .mstep.hot{background:var(--accent-soft); border-color:var(--accent)}
+.mech .mstep.clay{background:var(--clay-soft); border-color:var(--accent-2)}
+.mech .mstep .ms-t{font-size:12.5px; font-weight:800; color:var(--ink-1); line-height:1.35}
+.mech .mstep .ms-d{font-size:11px; color:var(--ink-2); margin-top:4px; line-height:1.55}
+.mech .mstep .ms-d b{color:var(--accent)}
+.mech .arr{align-self:center; color:var(--accent); font-size:17px; font-weight:900; flex:0 0 auto}
+.mrow{display:flex; align-items:flex-start; gap:8px; margin:6px 0}
+.mrow .mrole{flex:0 0 92px; font-size:11px; font-weight:800; letter-spacing:.06em; color:var(--accent);
+  padding-top:10px; line-height:1.4}
+/* ============ 闸门 / 阶段卡 ============ */
+.gates{display:flex; flex-wrap:wrap; gap:12px}
+.gate{flex:1 1 200px; min-width:190px; border:1px solid var(--border-2); border-radius:11px;
+  background:var(--bg); padding:0 0 11px; overflow:hidden}
+.gate .g-h{background:var(--accent); color:var(--on-accent); padding:7px 12px; display:flex; gap:8px; align-items:baseline}
+.gate .g-h .gn{font-family:"Noto Serif CJK SC",serif; font-size:17px; font-weight:900}
+.gate .g-h .gt{font-size:12.5px; font-weight:800; letter-spacing:.05em}
+.gate.alt .g-h{background:var(--accent-2)}
+.gate .g-r{padding:9px 12px 0; font-size:11.6px; line-height:1.6}
+.gate .g-r b{display:block; font-size:10.5px; letter-spacing:.1em; color:var(--accent-2); margin-bottom:2px}
+/* ============ 阶段时间轴 ============ */
+.phases{display:flex; flex-wrap:wrap; gap:12px; counter-reset:ph}
+.phase{flex:1 1 300px; min-width:290px; border:1px solid var(--border-2); border-radius:11px; background:var(--bg); overflow:hidden}
+.phase .ph-h{padding:8px 13px; color:var(--on-accent); background:var(--accent);
+  display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.phase.p2 .ph-h{background:#2b5f5e}
+.phase.p3 .ph-h{background:var(--accent-2)}
+.phase .ph-h .ph-t{font-size:13px; font-weight:800; letter-spacing:.04em}
+.phase .ph-h .ph-w{font-size:10.5px; font-weight:600; opacity:.92}
+.phase .ph-b{padding:10px 13px 12px}
+.act{border-top:1px dashed var(--border-2); padding:8px 0 7px; font-size:11.8px; line-height:1.6}
+.act:first-child{border-top:none; padding-top:2px}
+.act .a-no{display:inline-block; font-family:"Noto Serif CJK SC",serif; font-weight:900; color:var(--accent-2);
+  margin-right:6px; font-size:13px}
+.act .a-t{font-weight:800; color:var(--ink-1)}
+.act .a-m{display:block; font-size:10.8px; color:var(--ink-2); margin-top:3px}
+.act .a-m i{font-style:normal; color:var(--accent); font-weight:700}
+/* ============ 提示条 ============ */
+.strip{border-radius:10px; padding:11px 15px; font-size:12.4px; line-height:1.65; margin:14px 0; border:1px solid}
+.strip.takeaway{background:var(--accent-soft); border-color:var(--accent)}
+.strip.takeaway .st{font-weight:800; color:var(--accent); margin-right:6px}
+.strip.gap{background:var(--down-soft); border-color:var(--down)}
+.strip.gap .st{font-weight:800; color:var(--down); margin-right:6px}
+.strip.note{background:var(--panel-2); border-color:var(--border-2)}
+.strip.note .st{font-weight:800; color:var(--ink-1); margin-right:6px}
+/* ============ 封面 ============ */
+.cover{padding-top:74px}
+.cover .c-brand{display:flex; justify-content:space-between; align-items:center; gap:16px;
+  border-bottom:2px solid var(--ink-1); padding-bottom:14px}
+.cover .c-brand .b1{font-family:"Noto Serif CJK SC",serif; font-size:19px; font-weight:900; color:var(--ink-1); letter-spacing:.12em}
+.cover .c-brand .b2{font-size:11px; letter-spacing:.28em; color:var(--ink-3); font-weight:600}
+.cover .c-kick{margin-top:52px; font-size:12px; letter-spacing:.34em; color:var(--accent-2); font-weight:800}
+.cover h1{font-family:"Noto Serif CJK SC","Songti SC",serif; font-size:44px; line-height:1.34;
+  letter-spacing:.015em; margin:14px 0 8px; font-weight:900}
+.cover .c-sub{font-size:16.5px; color:var(--ink-2); font-weight:600; line-height:1.7; margin-bottom:6px}
+.cover .c-rule{width:88px; height:5px; background:var(--accent-2); border-radius:3px; margin:22px 0 26px}
+.cover .c-meta{display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--border-2); border-radius:12px; overflow:hidden; margin-bottom:30px}
+.cover .c-meta .m{flex:1 1 300px; min-width:260px; padding:12px 16px; border-top:1px solid var(--border); background:var(--panel-2)}
+.cover .c-meta .m:nth-child(-n+2){border-top:none}
+.cover .c-meta .m .mk{font-size:10.5px; letter-spacing:.18em; color:var(--accent); font-weight:800; margin-bottom:3px}
+.cover .c-meta .m .mv{font-size:12.3px; color:var(--ink-1); font-weight:600; line-height:1.6}
+.cover .c-kpis .vis-head{margin-bottom:10px}
+.cover .c-abs{margin-top:26px; font-size:12.8px; color:var(--ink-2); line-height:1.8;
+  border:1px dashed var(--border-2); border-radius:10px; padding:13px 16px; background:var(--bg)}
+/* ============ SVG 图表通用 ============ */
+svg.svgchart{width:100%; height:auto; display:block}
+svg.svgchart text{font-family:"Noto Sans CJK SC",sans-serif}
+/* ============ SVG 图表通用（字面量色值：weasyprint 不解析 SVG 样式中的 var()/rgba()） ============ */
+svg.svgchart{width:100%; height:auto; display:block}
+svg.svgchart text{font-family:"Noto Sans CJK SC",sans-serif}
+svg .axis{stroke:#d9dedd; stroke-width:1}
+svg .gridline{stroke:#e6ebea; stroke-width:1}
+svg .dataline{stroke:#C4633F; stroke-width:3; fill:none; stroke-linecap:round}
+svg .refline{stroke:#8a9a98; stroke-width:1.4; stroke-dasharray:5 4}
+svg .ptlab{font-size:12px; font-weight:800; fill:#0f2322}
+svg .axlab{font-size:10.5px; fill:#6b7d7c}
+svg .annlab{font-size:11px; fill:#3a4b4a}
+/* ============ 动效：默认即终态，reduced-motion 与打印静态一致 ============ */
+@keyframes breathe{0%,100%{opacity:1}50%{opacity:.55}}
+.dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent-2);
+  margin-right:7px; animation:breathe 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){ .dot{animation:none; opacity:1} }
+@media print{ .dot{animation:none; opacity:1} }
+a{color:var(--accent); text-decoration:none}
+/* ============ 打印 / weasyprint（A4 纵向） ============ */
+@media print{
+  @page{
+    size:A4; margin:13mm 11mm 15mm 11mm;
+    @bottom-center{ content:"98wiki ｜ 智见 / 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+      font-family:"Noto Sans CJK SC",sans-serif; font-size:7.6pt; color:#6b7d7c; letter-spacing:.04em }
+  }
+  html,body{overflow:visible}
+  body{background:#fff; font-size:9.1pt; line-height:1.53}
+  .shell{max-width:none; margin:0; border:none; border-radius:0; box-shadow:none}
+  .shell::before{display:none}
+  .page{min-height:0; padding:0 0 6pt; border-top:none; page-break-after:always; display:block}
+  .page:last-child{page-break-after:auto}
+  .pfoot{display:none}
+  .pbody{display:block}
+  h2.ptitle{font-size:15pt; margin-bottom:4pt}
+  .eyebrow .no{font-size:15pt}
+  .eyebrow{margin-bottom:5pt}
+  .plede{font-size:9.4pt; margin:4pt 0 6pt}
+  p{margin-bottom:4.8pt}
+  .visual{margin:6pt 0 5pt}
+  .vis-head{margin-bottom:3.5pt}
+  .vis-table{font-size:7.7pt}
+  .vis-table th,.vis-table td{padding:3pt 5pt}
+  .kpis{gap:6pt}
+  .kpi{padding:4.5pt 7pt; min-width:0; flex:1 1 150px}
+  .kpi .kv{font-size:13pt}
+  .kpi .kk{font-size:8pt}
+  .kpi .ks{font-size:7pt}
+  .chart{height:86pt; gap:14pt; margin-bottom:40pt}
+  .chart .lab .lv{font-size:8.5pt}
+  .chart .lab .ln{font-size:7.8pt}
+  .chart .lab .ln small{font-size:6.8pt}
+  .visual svg.svgchart{width:70%; margin:0 auto}
+  .mech .mstep{padding:5pt 7pt; min-width:0}
+  .mech .mstep .ms-t{font-size:8.3pt}
+  .mech .mstep .ms-d{font-size:7.2pt}
+  .gates{gap:6pt}
+  .gate{min-width:0}
+  .gate .g-h{padding:5pt 10px}
+  .gate .g-r{font-size:7.4pt}
+  .phases{gap:6pt}
+  .phase{min-width:0}
+  .act{font-size:7.6pt}
+  .act .a-m{font-size:7pt}
+  .strip{font-size:8.2pt; padding:5pt 8pt; margin:6pt 0}
+  .cover{padding-top:16pt}
+  .cover h1{font-size:24pt; margin:8pt 0 4pt}
+  .cover .c-kick{margin-top:14pt; font-size:8.5pt}
+  .cover .c-sub{font-size:10.5pt}
+  .cover .c-rule{margin:10pt 0 12pt}
+  .cover .c-meta .m{padding:6pt 9pt; min-width:0}
+  .cover .c-meta .m .mv{font-size:8pt}
+  .cover .c-abs{font-size:8.2pt; padding:8pt 10pt; margin-top:10pt}
+  svg.svgchart .ptlab{font-size:8.4pt}
+  svg.svgchart .axlab{font-size:7pt}
+  svg.svgchart .annlab{font-size:7.6pt}
+  .hbar .hl-lab{flex-basis:82px; font-size:8pt}
+  .hbar .hl-val{flex-basis:82px; font-size:8.4pt}
+  .hbar .hl-track{height:12px}
+  .mrow .mrole{flex-basis:64px; font-size:7.4pt; padding-top:6pt}
+}
+</style>
+</head>
+<body>
+<main class="shell">
+
+<!-- ================= P01 封面 ================= -->
+<section class="page cover" id="p01" data-page="1">
+  <div class="pbody">
+    <div class="c-brand">
+      <div class="b1">98wiki · 行业研究</div>
+      <div class="b2">RETAIL BANKING × POLICY TRANSMISSION</div>
+    </div>
+    <div class="c-kick">99wiki 研究主文 · PART B · 2026-08-29</div>
+    <h1>房地产信贷新政对江苏银行<br>零售业务部的影响分析</h1>
+    <div class="c-sub">直接冲击有限、间接链条深、结构性机会大于总量风险——五层框架下的传导、敞口与行动</div>
+    <div class="c-rule"></div>
+    <div class="c-meta">
+      <div class="m"><div class="mk">研究对象</div><div class="mv">江苏银行（600919.SH）零售业务部</div></div>
+      <div class="m"><div class="mk">政策事件</div><div class="mv">2026-08-28 中国人民银行、国家金融监督管理总局《关于改革完善房地产信贷管理 推动加快构建房地产发展新模式的意见》（七章 36 条）</div></div>
+      <div class="m"><div class="mk">方法框架</div><div class="mv">银行零售金融五层分析（战略—客群—产品—资产—风险）× 政策传导链</div></div>
+      <div class="m"><div class="mk">数据期</div><div class="mv">银行数据 2026Q2 / 2025FY（Wind）；宏观与城市数据截至 2026-07（Wind EDB：央行 / 国家统计局 / 南京市统计局）</div></div>
+    </div>
+    <div class="visual c-kpis">
+      <div class="vis-head"><span class="vt"><span class="dot"></span>封面 KPI · 底数四锚点</span><span class="vu">口径：2026Q2 · Wind</span></div>
+      <div class="kpis">
+        <div class="kpi"><div class="kv">36.22%</div><div class="kk">零售贷款占比</div><div class="ks">零售贷款 10,034 亿元（Wind，2026Q2）</div></div>
+        <div class="kpi alt"><div class="kv">约 8.9%</div><div class="kk">按揭占总贷款比重</div><div class="ks">2,462.43 亿 / 27,703 亿，计算值（Wind，2026Q2）</div></div>
+        <div class="kpi"><div class="kv">1.64%</div><div class="kk">净息差</div><div class="ks">全行口径（Wind，2026Q2）</div></div>
+        <div class="kpi alt"><div class="kv">0.81%</div><div class="kk">不良贷款率</div><div class="ks">全行口径（Wind，2026Q2）</div></div>
+      </div>
+    </div>
+    <div class="c-abs"><b>读这份报告的方式：</b>本报告把一份房地产信贷文件放进零售业务部的框架里读——按揭仅占总贷款约 8.9%（计算值），决定了直接冲击有限；但按揭是获客与主办关系的入口产品，消费贷 3,276.11 亿元（2025 年报，Wind）是零售第一大盘，决定了间接链条深。正文 10 页沿"传导总图—底数—五层分析—区域禀赋—行动—观察指标"推进，所有关键数字带来源标注，缺失数据（个贷不良率等）一律标注"待补数"而非估算。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">01 / 12</span></footer>
+</section>
+
+<!-- ================= P02 政策事件与传导总图 ================= -->
+<section class="page" id="p02" data-page="2">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">01</span><span class="crumb">第一章 · 政策事件与传导总图</span></div>
+    <h2 class="ptitle">一份房地产信贷文件，为什么摆在零售业务部的案头</h2>
+    <p class="plede">2026-08-28，中国人民银行、国家金融监督管理总局发布《关于改革完善房地产信贷管理 推动加快构建房地产发展新模式的意见》（七章 36 条）<span class="src b-doc">《意见》原文</span>。这是房地产信贷管理文件，但江苏银行的敞口结构决定了它必须被零售条线逐条拆读：按揭占总贷款约 8.9%（计算值），直接规则变化落在按揭；而按揭又是获客入口，零售第一大盘消费贷（3,276.11 亿元，2025 年报，Wind）深嵌地产链的宏观传导。</p>
+    <p>把七章 36 条压缩到零售视角，真正构成传导的落点可以归纳为六条链条。其中<b>条款③（期限 30→40 年）与条款④（预售按揭竣工备案后发放）</b>直接改写按揭产品要素，是零售业务部必须逐项改造的"硬规则"；<b>条款①（开发贷主办银行制度）</b>改变的不是产品而是获客入口——楼盘项目的按揭客源将向主办行集中；条款②（受托支付）与条款⑤（资金封闭管理）分别作用于放款流程合规与开发商现金流环境；条款⑥（宏观审慎逆周期机制）则为未来的首付与利率工具预留了制度化接口。</p>
+    <p>读表方法上，这张总图应按"谁被直接改写"来读，而不是按条款顺序读。零售业务部在政策文本里要找的是三样东西：改写自家产品要素的硬规则、改变自家获客入口的制度安排、以及决定自家客群收入与行为环境的宏观变量。六条传导链恰好各占其一：③④是硬规则，①是入口制度，⑤⑥是环境变量，②则是流程合规的底线条款——落点不同，应对的紧迫度、责任主体与观察指标也不同，这正是第九章行动建议按三个阶段排布的依据。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V1 · 《意见》条款 → 江苏银行零售业务部传导总图</span><span class="vu">条款口径：《意见》原文；方向判断为分析结论</span></div>
+      <table class="vis-table">
+        <tr><th style="width:21%">《意见》条款</th><th style="width:15%">直接作用对象</th><th>传导至江苏银行零售业务部的路径</th><th style="width:12%">方向</th></tr>
+        <tr><td>① 开发贷主办银行制度</td><td>房企 / 项目融资</td><td>楼盘按揭客源向主办行集中 → 零售按揭获客入口重构</td><td class="ctr"><span class="dir dir-neg">结构性（偏紧）</span></td></tr>
+        <tr><td>② 按揭受托支付</td><td>放款流程</td><td>支付定向至监管 / 主办行账户 → 零售放款操作合规成本微增，挪用风险下降</td><td class="ctr"><span class="dir dir-neu">中性</span></td></tr>
+        <tr><td>③ 按揭期限 30→40 年</td><td>借款人</td><td>月供降约 15% → 刚需月供门槛下降 → 零售按揭可承接客群扩围</td><td class="ctr"><span class="dir dir-pos">利好（测算）</span></td></tr>
+        <tr><td>④ 预售按揭竣工备案后发放</td><td>购房人 / 银行</td><td>期房按揭起息与投放后移 2-3 年 → 按揭规模增速短期回落；现房 / 二手按揭相对受益</td><td class="ctr"><span class="dir dir-mix">短空长稳</span></td></tr>
+        <tr><td>⑤ 资金封闭管理</td><td>项目资金</td><td>开发商现金流承压 → 其员工 / 上下游客群收入与消费信贷需求传导</td><td class="ctr"><span class="dir dir-neg">间接偏空</span></td></tr>
+        <tr><td>⑥ 宏观审慎逆周期机制</td><td>首付 / 利率 / 集中度</td><td>未来按揭利率与首付存在制度化下调接口 → 零售按揭定价弹性与政策期权</td><td class="ctr"><span class="dir dir-opt">期权（偏正）</span></td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V2 · 六条链条的落点分层：零售条线该盯什么</span><span class="vu">分层为编辑归纳</span></div>
+      <div class="mech">
+        <div class="mstep hot"><div class="ms-t">直接条款（改产品）</div><div class="ms-d"><b>③ 期限</b> 与 <b>④ 放款时点</b>：产品要素、系统与流程必须改造，是行动清单第一期的事。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep clay"><div class="ms-t">入口条款（改获客）</div><div class="ms-d"><b>① 主办银行制</b>：新房按揭客源与项目主办资格绑定，公司 / 零售联动成为获客前提。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep"><div class="ms-t">环境条款（改背景）</div><div class="ms-d"><b>② 流程合规 · ⑤ 间接传导 · ⑥ 政策期权</b>：不直接落在零售报表上，但决定消费贷环境与定价弹性。</div></div>
+      </div>
+    </div>
+    <div class="strip takeaway"><span class="st">本页结论</span>六条传导链的方向并不一致：③⑥偏正、①偏紧、⑤间接偏空、④短空长稳、②中性。组合起来正是执行摘要的总判断——<b>"直接冲击有限、间接链条深、结构性机会大于总量风险"</b>。读懂方向的不一致，才不会被单一条款的标题带偏：真正需要正面应对的是入口之争（①）与节奏重构（④），其余条款决定的是环境变量与期权价值。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">02 / 12</span></footer>
+</section>
+
+<!-- ================= P03 银行底数仪表 ================= -->
+<section class="page" id="p03" data-page="3">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">02</span><span class="crumb">第二章 · 银行底数仪表</span></div>
+    <h2 class="ptitle">底数决定权重分布：8.9% 的按揭占比意味着什么</h2>
+    <p class="plede">同一份新政落在不同的资产负债表上，冲击完全不同。江苏银行的底数是：贷款总额 27,703 亿元、零售贷款 10,034 亿元、占比 36.22%（均为 2026Q2，Wind）；其中个人住房贷款 2,462.43 亿元，占总贷款约 8.9%（计算值）<span class="src b-wind">Wind，2026Q2</span><span class="src b-calc">计算值</span>。零售资产重心在消费贷而非按揭——这是理解全部后续分析的锚点。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V3 · 银行底数仪表盘</span><span class="vu">口径逐项标注；Wind 2026Q2 / 2025FY / 2026H1</span></div>
+      <div class="kpis">
+        <div class="kpi"><div class="kv">27,703 亿</div><div class="kk">贷款总额</div><div class="ks">2026Q2（Wind）</div></div>
+        <div class="kpi"><div class="kv">10,034 亿</div><div class="kk">零售贷款余额</div><div class="ks">占比 36.22%，2026Q2（Wind）</div></div>
+        <div class="kpi alt"><div class="kv">2,462.43 亿</div><div class="kk">个人住房贷款余额</div><div class="ks">占总贷款约 8.9%（计算值），2026Q2（Wind）</div></div>
+        <div class="kpi alt"><div class="kv">3,276.11 亿</div><div class="kk">消费贷余额</div><div class="ks">零售第一大盘，2025 年报（Wind）</div></div>
+        <div class="kpi"><div class="kv">545.70 亿</div><div class="kk">经营贷余额</div><div class="ks">2025 年报（Wind）</div></div>
+        <div class="kpi"><div class="kv">1.64%</div><div class="kk">净息差</div><div class="ks">全行口径，2026Q2（Wind）</div></div>
+        <div class="kpi"><div class="kv">0.81%</div><div class="kk">不良贷款率</div><div class="ks">全行口径，2026Q2（Wind）</div></div>
+        <div class="kpi alt"><div class="kv">46.05%</div><div class="kk">个贷利息收入占比</div><div class="ks">占利息收入比重（收入构成口径，非资产占比），Wind</div></div>
+      </div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V4 · 零售资产结构：消费贷 &gt; 按揭 &gt; 经营贷</span><span class="vu">2025 年报口径（Wind）；条高 = 余额 / 最大值</span></div>
+      <div class="chart">
+        <div class="col"><div class="bar" style="height:100%"></div><div class="lab"><span class="lv">3,276.11 亿</span><span class="ln">消费贷<small>零售第一大资产</small></span></div></div>
+        <div class="col"><div class="bar c2" style="height:76.2%"></div><div class="lab"><span class="lv">2,495.32 亿</span><span class="ln">住房贷款<small>2025 年报口径</small></span></div></div>
+        <div class="col"><div class="bar c3" style="height:16.7%"></div><div class="lab"><span class="lv">545.70 亿</span><span class="ln">经营贷<small>零售第三位</small></span></div></div>
+      </div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V5 · 敞口三层占比：新政直接射程的几何直观</span><span class="vu">2026Q2（Wind）；条长 = 余额 / 贷款总额</span></div>
+      <div class="hbar"><div class="hl-lab">贷款总额</div><div class="hl-track"><div class="hl-fill" style="width:100%"></div></div><div class="hl-val">27,703 亿 · 100%</div></div>
+      <div class="hbar"><div class="hl-lab">零售贷款</div><div class="hl-track"><div class="hl-fill c2" style="width:36.2%"></div></div><div class="hl-val">10,034 亿 · 36.22%</div></div>
+      <div class="hbar"><div class="hl-lab">个人住房贷款</div><div class="hl-track"><div class="hl-fill c3" style="width:8.9%"></div></div><div class="hl-val">2,462.43 亿 · 约 8.9%</div></div>
+    </div>
+    <p>结构要点有三。其一，零售内部"消费贷 &gt; 按揭 &gt; 经营贷"（2025 年报：3,276 / 2,495 / 546 亿，Wind），消费贷是第一大零售资产，按揭退居第二——这与按揭主导型银行面对新政的处境完全不同。其二，盈利与质量底色平稳：2026H1 营业收入 247.71 亿元（+9.80%）、归母净利润 112.94 亿元（+7.99%）；净息差 1.64%、不良率 0.81%（均 2026Q2，Wind）。其三，口径纪律：46.05% 是<b>个人贷款业务利息收入占利息收入的比重</b>，属收入构成口径，不能与资产占比混用。</p>
+    <p>口径纪律在底数页尤其重要。46.05% 是个人贷款业务利息收入占利息收入的比重，属收入构成口径——它说明个贷业务对利息收入的贡献度，但不等于零售资产占总资产的比重，两个口径直接换算会得出错误结论。同理，零售贷款 10,034 亿元与个人住房贷款 2,462.43 亿元的期别均为 2026Q2，而消费贷、经营贷与住房贷款的结构数为 2025 年报口径——跨期别比较必须注明，本报告的结构判断均以同期数为限。同业比较在此不做展开：在统一机构范围、时间与指标口径之前，任何"高于 / 低于同业"的表述都不具备可比性，宁可留白不做伪精确排名。</p>
+    <div class="strip gap"><span class="st">数据缺口</span>个人贷款不良率、住房按揭不良率明细 <b>Wind 未披露 → 列入补数协议（待补数）</b>。本报告凡涉及个贷资产质量的分层判断，均以全行不良率 0.81%（2026Q2）作总量参照并标注"推断"，不以估算值冒充明细。</div>
+    <div class="strip note"><span class="st">机构底数</span>总部南京；18 家分行；江苏省内县域全覆盖；布局长三角 / 珠三角 / 环渤海；子公司含苏银理财、苏银凯基消费金融、苏银金租（公司档案，Wind）。对"主办银行卡位"的意义在第八章区域禀赋中展开。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">03 / 12</span></footer>
+</section>
+
+<!-- ================= P04 战略层 ================= -->
+<section class="page" id="p04" data-page="4">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">03</span><span class="crumb">第三章 · 五层分析 · 战略层</span></div>
+    <h2 class="ptitle">战略层：方向——"按揭小、消费大"的结构缓冲与战略再平衡</h2>
+    <p class="plede">新政周期里，零售银行的战略问题从"要不要做按揭"变成"<b>按揭怎么 position、消费贷怎么防传导、财富怎么接现金流</b>"。对江苏银行零售业务部，这三个问题共享同一个事实前提：按揭占比约 8.9%（计算值），直接营收冲击测算有限，但按揭是获客与主办关系的入口产品。</p>
+    <p><b>命题一：直接冲击的量级测试。</b>即便期房按揭新增投放当年下降三成，对全行营收的影响也在低个位数百分比量级——测算推断，非精确口径<span class="src b-est">测算</span><span class="src b-inf">推断</span>。这个量级测试的意义不在数字本身，而在战略含义：按揭的直接营收权重低，意味着战略层不必为按揭的利润表冲击过度定价，而应把管理注意力放在入口事件的重构上。反过来说，也正因为冲击有限，"借新政收缩按揭"并不是一个自动成立的战略选项——收缩的代价将以获客入口的形式在两三年后才显现。</p>
+    <p><b>命题二：入口产品悖论。</b>房子是家庭最大资产负债事件，按揭客户的交叉销售价值（代发、财富、消金、卡）远超贷款本身利差。条款④把期房放款整体后移至竣工备案后，等式"放款后移 = 入口事件后移 = 客户旅程重构"成立——这才是战略层真正的课题：按揭需要从"利润引擎"重定位为"<b>入口 + 合规 + 政策期权</b>"的组合角色。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V6 · 战略定位象限：低直接营收占比 × 高入口价值</span><span class="vu">横轴为数据锚点（8.9%，计算值）；纵轴为定性维度（示意）</span></div>
+      <svg class="svgchart" viewBox="0 0 560 300" role="img" aria-label="战略定位象限图：江苏银行按揭位于低占比高入口价值区">
+        <rect x="46" y="16" width="112" height="130" fill="#176C6B" fill-opacity=".10" rx="8"/>
+        <text x="58" y="40" font-size="11" font-weight="700" fill="#176C6B">入口 + 期权定位区</text>
+        <text x="58" y="56" font-size="11" fill="#176C6B">（低占比 × 高入口价值）</text>
+        <line x1="46" y1="252" x2="540" y2="252" stroke="#d9dedd" stroke-width="1"/>
+        <line x1="46" y1="16" x2="46" y2="252" stroke="#d9dedd" stroke-width="1"/>
+        <line x1="156" y1="16" x2="156" y2="252" stroke="#8a9a98" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="164" y="30" font-size="11" font-weight="700" fill="#3a4b4a">苏银按揭：8.9%（计算值，2026Q2）</text>
+        <line x1="46" y1="146" x2="540" y2="146" stroke="#e6ebea" stroke-width="1"/>
+        <text x="52" y="160" font-size="10.5" fill="#6b7d7c">入口价值中性带</text>
+        <circle cx="156" cy="70" r="8" fill="#C4633F"/>
+        <circle cx="156" cy="70" r="13" fill="none" stroke="#C4633F" stroke-opacity=".35" stroke-width="2"/>
+        <text x="172" y="88" font-size="12" font-weight="800" fill="#0f2322">按揭：低直接营收 × 高交叉销售价值</text>
+        <text x="172" y="104" font-size="11" fill="#3a4b4a">代发 · 财富 · 消金 · 卡（入口产品属性）</text>
+        <text x="46" y="270" font-size="10.5" fill="#6b7d7c">0%</text>
+        <text x="166" y="270" font-size="10.5" fill="#6b7d7c">10%</text>
+        <text x="289" y="270" font-size="10.5" fill="#6b7d7c">20%</text>
+        <text x="413" y="270" font-size="10.5" fill="#6b7d7c">30%</text>
+        <text x="526" y="270" font-size="10.5" fill="#6b7d7c">40%</text>
+        <text x="46" y="290" font-size="10.5" font-weight="700" fill="#6b7d7c">横轴：按揭占总贷款比重（%，2026Q2，计算值锚点）｜纵轴：入口与交叉销售价值（定性，向上越高）</text>
+      </svg>
+    </div>
+    <p><b>命题三：政策期权组合。</b>宏观审慎逆周期机制（条款⑥）给按揭利率与首付留了制度化下调接口。策略上应把 40 年按揭与后续可能的存量工具视为<b>政策期权组合</b>：期权不需要天天行权，但需要提前预留定价与系统弹性——否则期权到期时，落地速度就是竞争力差距。</p>
+    <p>三个命题合起来，指向资源配置的重新分配：按揭条线的考核重心从当年投放规模转向入口指标（主办行资格项目数、交叉销售率）与合规指标（双面披露执行、资金流向监控覆盖）；消费贷条线的增量预算向共债可控客群倾斜；财富条线则要把"2-3 年资金窗口"写进产品货架的默认排布。战略层的输出不是一句定位语，而是这三张被改写的考核与预算清单——第九章的行动建议是它的时间表版本。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V7 · 政策期权组合表：接口、触发与预留弹性</span><span class="vu">条款口径：《意见》原文；预留动作为策略建议</span></div>
+      <table class="vis-table">
+        <tr><th style="width:24%">制度接口</th><th style="width:30%">政策内容</th><th style="width:24%">对零售的含义</th><th>预留弹性</th></tr>
+        <tr><td>宏观审慎逆周期机制</td><td>首付比例、利率、集中度的制度化调节接口（条款⑥）</td><td>按揭定价弹性 = 政策期权，偏正</td><td>定价授权预案与系统参数化改造前置</td></tr>
+        <tr><td>40 年期限档位</td><td>期限 30→40 年，月供降约 15%（测算）</td><td>刚需承接客群扩围</td><td>双面披露话术与适当性管理先行</td></tr>
+        <tr><td>存量工具想象空间</td><td>后续可能的存量按揭工具（推断）</td><td>存量客户的重定价与交叉销售触点</td><td>客户旅程数据结构预留工具位</td></tr>
+      </table>
+    </div>
+    <div class="strip takeaway"><span class="st">本页结论</span>战略层答案是三句话：<b>按揭小</b>（占比 8.9%，直接冲击有限）——不因新政收缩按揭；<b>消费大</b>（3,276.11 亿第一大盘）——防的是宏观传导而非政策本身；<b>财富接现金流</b>——把放款后移创造的 2-3 年资金窗口变成理财与存款场景。三件事要在客户旅程的时间轴上重新排布，而不是在三张报表上各自为战。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">04 / 12</span></footer>
+</section>
+
+<!-- ================= P05 客群经营层 ================= -->
+<section class="page" id="p05" data-page="5">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">04</span><span class="crumb">第四章 · 五层分析 · 客群经营层</span></div>
+    <h2 class="ptitle">客群经营层：对象——三条客群主线的旅程重塑</h2>
+    <p class="plede">客群层的问题是"新政改变了谁的旅程"。答案不是抽象的"购房者"，而是三条各自独立、又彼此咬合的主线：<b>期房刚需（主线 A）</b>的旅程被条款④整体拉长；<b>卖旧买新改善（主线 B）</b>卡在"旧房卖不掉"的资金错配上；<b>消费信贷基本盘（主线 C）</b>则通过就业与收入链条间接受影响。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V8 · 三主线旅程机制图：阶段、窗口与合规约束</span><span class="vu">时间与幅度均出自底稿口径（2-3 年 / 15% 为测算或政策口径）</span></div>
+      <div class="mrow"><div class="mrole">主线 A<br>期房刚需</div>
+        <div class="mech" style="flex:1">
+          <div class="mstep"><div class="ms-t">签约期房</div><div class="ms-d">旅程起点：签约不再等于放款。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep clay"><div class="ms-t">等待竣工备案（2-3 年）</div><div class="ms-d"><b>金融空窗态</b>：已付首付、无负债、无房。财富管理（闲置首付打理）、消费分期、装修贷预约的真实窗口。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep"><div class="ms-t">竣工备案后放款</div><div class="ms-d">起息与投放后移；交叉销售事件整体后移。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep hot"><div class="ms-t">40 年久期还贷态</div><div class="ms-d">月供降约 15% 释放当期现金流；<b>40 年绑定期</b>让生命周期价值更长。</div></div>
+        </div>
+      </div>
+      <div class="mrow"><div class="mrole">主线 B<br>卖旧买新</div>
+        <div class="mech" style="flex:1">
+          <div class="mstep"><div class="ms-t">旧房在售（瓶颈）</div><div class="ms-d">南京二手 -5.4% 仍在出清（Wind EDB，2026-07），"旧房卖不掉"是改善链条的第一约束。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep clay"><div class="ms-t">资金桥接需求</div><div class="ms-d">旧房出售款与新房按揭放款的时间差 → 桥接类融资真实需求；<b>必须以合规产品承接</b>。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep hot"><div class="ms-t">买入新房（按揭承接）</div><div class="ms-d">南京新房 -1.8% 率先修复；二手房按揭不受竣工备案约束，承接效率更高。</div></div>
+          <div class="arr">⤳</div>
+          <div class="mstep"><div class="ms-t">合规闸</div><div class="ms-d">严禁消费贷违规流入楼市；带押过户等合规配套优先。</div></div>
+        </div>
+      </div>
+      <div class="mrow"><div class="mrole">主线 C<br>消费基本盘</div>
+        <div class="mech" style="flex:1">
+          <div class="mstep"><div class="ms-t">房企回款后移</div><div class="ms-d">条款④⑤叠加：开发商现金流环境收紧。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep"><div class="ms-t">地产链就业与收入承压</div><div class="ms-d">建筑地产链就业与收入传导至消费信贷需求与资产质量——<b>双传导</b>。</div></div>
+          <div class="arr">⇄</div>
+          <div class="mstep hot"><div class="ms-t">反向缓冲</div><div class="ms-d">"能拿房再还贷"+ 月供下降释放购房家庭当期现金流，边际利好消费。</div></div>
+        </div>
+      </div>
+    </div>
+    <p><b>主线 A 的经营含义：</b>等待期内的"金融空窗态"是被新政新创造出来的服务场景——客户的首付资金在账上停 2-3 年，这既是理财与存款的天然窗口，也是消费分期与装修贷预约的提前卡位点；放款事件后移使代发归集、AUM 提升的交叉销售节奏整体后移，但 40 年绑定期意味着客户生命周期价值反而更长。<b>主线 B 的经营含义：</b>需求真实但合规敏感，资金桥接必须以合规产品承接，零售端的价值在于"接得住"而不是"绕得开"。<b>主线 C 的经营含义：</b>3,276.11 亿元消费贷的净效应取决于区域就业结构——江苏本土就业对地产链依赖低于全国平均（制造业占比高），缓冲垫相对厚；该判断为定性推断，需就业结构数据验证<span class="src b-inf">推断</span>。</p>
+    <p>用客群经营的分层语言重述：三条主线即三层 STP。主线 A 的切分变量是旅程阶段（空窗态 / 还贷态），目标客群是已签约未放款与新增签约家庭，定位是"等待期的资金管家 + 40 年的现金流顾问"；主线 B 的切分变量是持仓结构（已持有本行住房贷款 + 改善意向标签），定位是合规的资金桥接方案，而不是一笔孤立的贷款；主线 C 的切分变量是共债水平与收入敏感度，定位是现金流释放下的边际消费承接。三层的共同点是：定位都写在客户的问题上，而不是银行的产品库存上——这也是交叉销售不滑向强制捆绑的前提。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>三条主线共享同一个经营法则：<b>客群的分界线从"有没有房"变成"处在旅程的哪个阶段"</b>。空窗态客群要的是资金打理与预约类服务，桥接客群要的是合规的资金衔接，还贷态客群要的是 40 年维度的现金流安排。客群经营层的动作清单必须按旅程阶段重写，而不是按产品条线罗列。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">05 / 12</span></footer>
+</section>
+
+<!-- ================= P06 产品层 ================= -->
+<section class="page" id="p06" data-page="6">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">05</span><span class="crumb">第五章 · 五层分析 · 产品层</span></div>
+    <h2 class="ptitle">产品层：武器——按揭要素重构与产品组合再定位</h2>
+    <p class="plede">产品层的任务是回答"卖什么、怎么卖、什么不能碰"。新政把按揭产品要素拆开重装：<b>期限、放款时点、价格梯度、支付方式</b>四个要素全部变动；同时月供下降释放的现金流给消费贷与财富创造了边际场景——但每一条扩张路径旁边都站着一条合规约束。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V9 · 双面测算：月供更轻 ≠ 更便宜</span><span class="vu">测算口径：100 万元 / 3.06% 等额本息（测算）；条高 = 数值 / 组内最大值</span></div>
+      <div class="chart">
+        <div class="col"><div class="bar" style="height:100%"></div><div class="lab"><span class="lv">4,247 元</span><span class="ln">月供 · 30 年期<small>基准档</small></span></div></div>
+        <div class="col"><div class="bar" style="height:85.1%"></div><div class="lab"><span class="lv">3,614 元</span><span class="ln">月供 · 40 年期<small>降约 15%（测算）</small></span></div></div>
+        <div class="col"><div class="bar c3" style="height:72%"></div><div class="lab"><span class="lv">52.9 万</span><span class="ln">总利息 · 30 年期<small>基准档</small></span></div></div>
+        <div class="col"><div class="bar c2" style="height:100%"></div><div class="lab"><span class="lv">73.5 万</span><span class="ln">总利息 · 40 年期<small>升约 39%（测算）</small></span></div></div>
+      </div>
+      <div class="small" style="margin-top:6px">销售话术必须双面披露：40 年档位月供下降约 15%（4,247→3,614 元）改善刚需承接，但总利息上升约 39%（52.9 万→73.5 万）——<b>适当性管理前置</b>，不允许只讲月供不讲利息。<span class="src b-est">测算</span></div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V10 · 产品协同链：触发场景 → 主产品 → 关联产品 → 约束</span><span class="vu">框架口径：产品协同链（触发—主—关联—约束）</span></div>
+      <div class="mech">
+        <div class="mstep"><div class="ms-t">① 签约期房</div><div class="ms-d">触发场景：购房签约，旅程起点。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep clay"><div class="ms-t">② 按揭预约 + 首付资金理财</div><div class="ms-d">主产品承接 + 2-3 年闲置资金场景。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep hot"><div class="ms-t">③ 竣工备案放款</div><div class="ms-d">新增<b>竣工备案核验</b>环节；与主办行（若非本行）的数据协作是运营新课题。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep clay"><div class="ms-t">④ 代发归集 + 信用卡 + 消金额度预审批</div><div class="ms-d">放款事件触发的交叉销售束。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep hot"><div class="ms-t">⑤ 40 年生命周期财富规划</div><div class="ms-d">70 岁仍在还贷的客户，其养老金融需求结构改变。</div></div>
+      </div>
+      <div class="small" style="margin-top:6px"><b>全链约束：</b>适当性 · 资金流向监控 · 销售合规——约束不是链条末端的补丁，而是每一环的准入条件。</div>
+    </div>
+    <p><b>要素级变化清单：</b>① 期限档位 30→40 年（双面测算见 V9）；② 放款时点改为竣工备案后，流程需新增竣工备案核验环节，跨行数据协作重建；③ 价格梯度——现房与二手房按揭不受竣工备案约束，与期房按揭形成<b>流动性价差</b>，二手房按揭可作为短期主推；④ 受托支付——支付指令定向至监管账户 / 主办行账户，跨行协作流程需重建。<b>消费贷与消金（苏银凯基）：</b>月供下降释放的家庭现金流是消费贷需求的边际支撑，但严禁消费贷资金违规流入房市，首付桥接需求必须由合规产品承接，共债监测（房贷 + 消金双高客群）前移。<b>财富 / AUM：</b>等待竣工期的首付闲置资金（2-3 年期）是理财与存款的天然场景；40 年久期负债客户的全生命周期财富规划是长线交叉销售主题。</p>
+    <p>以产品竞争分析的三问自检：客户为何选择——40 年档位把月供门槛降低约 15%（测算），改善刚需承接力，二手房按揭则以放款效率取胜；银行为何能持续提供——低资金成本区位（江苏存款禀赋）与低不良基座（0.81%，2026Q2）支撑长久期资产经营；优势是否可复制——产品要素本身没有秘密，可复制的是竣工备案核验的运营能力、跨行数据协作与主办行卡位，这三者才构成切换期的真实壁垒。凡依赖补贴或风险下沉换来的增长，均不在本报告建议之列。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>产品层的再定位逻辑是"<b>按揭重定位、消费贷守住边界、财富接住时间差</b>"：按揭从利润引擎转为入口与期权；消费贷吃现金流释放的边际红利但不得越合规边界半步；财富管理把 2-3 年的资金窗口与 40 年的久期客户都变成经营对象。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">06 / 12</span></footer>
+</section>
+
+<!-- ================= P07 资产层 ================= -->
+<section class="page" id="p07" data-page="7">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">06</span><span class="crumb">第六章 · 五层分析 · 资产层</span></div>
+    <h2 class="ptitle">资产层：结果——规模、收益、久期三维变化</h2>
+    <p class="plede">资产层检验的是策略最终落在资产负债表上的形状。<b>规模</b>：期房按揭投放节奏后移 2-3 年，余额增速短期回落；<b>收益</b>：新发放按揭利率处于 3.06% 的低位平台（全国口径，2026Q2），40 年期限并不带来更高利率；<b>久期</b>：40 年资产与相对偏短的负债之间的缺口扩大。三个维度合起来，重写了按揭资产的角色。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V11 · 全国按揭余额：连续净减少的背景板</span><span class="vu">全国口径（Wind EDB，央行）；条高 = 余额 / 最大值</span></div>
+      <div class="chart">
+        <div class="col"><div class="bar" style="height:100%"></div><div class="lab"><span class="lv">37.90 万亿</span><span class="ln">前期高点<small>全国按揭余额</small></span></div></div>
+        <div class="col"><div class="bar c2" style="height:95.8%"></div><div class="lab"><span class="lv">36.29 万亿</span><span class="ln">最新值<small>-4.2%（连续净减少）</small></span></div></div>
+      </div>
+      <div class="small" style="margin-top:6px">行业背景：全国按揭余额已连续净减少（37.90→36.29 万亿，-4.2%）<span class="src b-wind">Wind EDB</span>。江苏银行的对冲项是现房 / 二手房按揭与"卖旧买新"链条；零售总量增长引擎仍以消费贷为主，但需警惕其宏观敏感性。</div>
+    </div>
+    <p><b>收益维度：</b>全国新发放按揭利率 3.06%（2026Q2）处于低位平台，40 年期限并不带来更高利率（期限溢价受宏观审慎约束），反而拉长资产久期；在全行净息差 1.64%（2026Q2，Wind）的背景下，按揭的税后风险调整收益需要重算——<b>低收益率 + 超长久期</b>的组合，使按揭更多承担"入口 + 合规 + 政策期权"角色而非利润引擎。<b>久期与流动性维度：</b>40 年资产久期与存款 / 理财负债久期的缺口扩大；利率下行平台中再定价风险可控，利率反转上行期的资产贬值风险后移——需要资产负债表层面做期限对冲（此为司库职责，零售提供久期数据）。</p>
+    <p>久期协作的界面需要在此说清：零售条线的职责是把按揭账簿的期限分布、重定价节奏与还款行为做成司库可用的数据供给，对冲工具的选择与执行在资产负债表层面完成。这意味着切换期内零售报送的颗粒度要求上升——40 年档位上线后，新增投放的期限、利率、放款时点三张台账要能按月合并，否则司库的缺口计算将系统性失真。资产层给零售运营的反向要求，往往比它给投资决策的建议更具体。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V12 · 资产三维变化表：新政前后方向与口径</span><span class="vu">"新政后"列均为方向判断（测算 / 推断已标注）</span></div>
+      <table class="vis-table">
+        <tr><th style="width:13%">维度</th><th style="width:30%">新政前（现状锚点）</th><th style="width:31%">新政后（方向）</th><th>判断依据与口径</th></tr>
+        <tr><td><b>规模</b></td><td>按揭 2,462.43 亿，占总贷款约 8.9%（2026Q2，计算值）</td><td>期房按揭投放节奏后移 2-3 年，增速短期回落；现房 / 二手为对冲项</td><td>条款④；全国按揭余额 -4.2%（Wind EDB）</td></tr>
+        <tr><td><b>收益</b></td><td>新发放按揭利率 3.06% 低位平台；全行净息差 1.64%（2026Q2）</td><td>低收益率 + 超长久期 → 按揭角色 = 入口 + 合规 + 政策期权，非利润引擎</td><td>宏观审慎约束期限溢价；测算 + 推断</td></tr>
+        <tr><td><b>久期</b></td><td>负债以存款 / 理财为主，久期短于 40 年资产</td><td>久期缺口扩大；再定价风险可控，利率反转风险后移</td><td>条款③；期限对冲为司库职责，推断</td></tr>
+        <tr><td><b>风险调整收益</b></td><td>全行不良率 0.81%（2026Q2）；个贷 / 按揭不良明细缺</td><td>按揭不良率通常为零售最低档；低资金成本区位下风险调整后收益优于表观利差</td><td><b>推断，待不良明细验证（待补数）</b></td></tr>
+      </table>
+    </div>
+    <div class="strip takeaway"><span class="st">本页结论</span>资产层的结论不是"按揭不能做"，而是"<b>用什么标尺考核按揭</b>"：若用利润引擎的标尺，40 年低息按揭永远不及格；若用入口 + 合规 + 期权的标尺，它恰恰是新政环境下少数仍在增值的战略资产。考核标尺切换，是资产层给战略层的反哺。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">07 / 12</span></footer>
+</section>
+
+<!-- ================= P08 风险层 ================= -->
+<section class="page" id="p08" data-page="8">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">07</span><span class="crumb">第七章 · 五层分析 · 风险层</span></div>
+    <h2 class="ptitle">风险层：边界——五道闸门与厚安全垫下的真风险</h2>
+    <p class="plede">总量安全垫是厚的：低不良（0.81%，2026Q2）+ 按揭低占比（约 8.9%，计算值）。但真正的风险不在总量，而在两处错配与一个切换期：<b>资产久期拉长（40 年）与利率下行平台（新发放按揭 3.06%、全行净息差 1.64%）的错配</b>；以及"购房者付首付、银行未放款"阶段的开发商关联风险传导。风险层的任务是把这些风险翻译成五道可执行的闸门。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V13 · 五道闸门：风险源 → 应对动作</span><span class="vu">应对动作为策略建议；风险数据均出自底稿口径</span></div>
+      <div class="gates">
+        <div class="gate"><div class="g-h"><span class="gn">01</span><span class="gt">入口闸门 · 主办银行制</span></div>
+          <div class="g-r"><b>风险源</b>新房按揭客源向项目主办行集中，非主办行获客成本上升。<b>应对</b>公司 / 零售联动争夺江苏省内重点项目主办资格；非主办项目探索与主办行的按揭转介合作模式（合规前提）。</div></div>
+        <div class="gate alt"><div class="g-h"><span class="gn">02</span><span class="gt">切换期闸门 · 2026-2028</span></div>
+          <div class="g-r"><b>风险源</b>"付首付、未放款"阶段开发商资金链风险（全国开发投资 -19.2%）可能以项目停工形式传导为客群投诉与声誉风险。<b>应对</b>已签约未放款存量逐笔重检抵押与在建工程状态。</div></div>
+        <div class="gate"><div class="g-h"><span class="gn">03</span><span class="gt">抵押物闸门 · LTV</span></div>
+          <div class="g-r"><b>风险源</b>南京二手 -5.4%、70 城 -3.4%（2026-07，Wind EDB），抵押物估值仍在下行；40 年期限放大价值波动的暴露年限。<b>应对</b>抵押率（LTV）动态管理，估值数据按月回看。</div></div>
+        <div class="gate alt"><div class="g-h"><span class="gn">04</span><span class="gt">共债闸门 · 多头负债</span></div>
+          <div class="g-r"><b>风险源</b>按揭 + 消费贷 + 信用卡多持客群，面临收入预期下行与利息总额上升 39%（测算）的叠加压力。<b>应对</b>双持客群压力测试与分层限额，共债集中度纳入月度监测。</div></div>
+        <div class="gate"><div class="g-h"><span class="gn">05</span><span class="gt">合规闸门 · 资金流向</span></div>
+          <div class="g-r"><b>风险源</b>卖旧买新桥接需求诱发消费贷 / 经营贷违规入楼市的动机。<b>应对</b>受托支付与资金流向监控嵌入流程；40 年按揭销售必须双面披露总利息成本（适当性）。</div></div>
+      </div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V14 · 安全垫与错配对照：总量安全 ≠ 局部无险</span><span class="vu">对照为编辑归纳；数据口径 2026Q2（Wind）</span></div>
+      <table class="vis-table">
+        <tr><th style="width:26%">维度</th><th style="width:37%">安全垫（现状）</th><th>错配 / 传导路径（需要闸门的原因）</th></tr>
+        <tr><td><b>资产质量</b></td><td>不良率 0.81%（2026Q2，Wind），全行口径低位</td><td>个贷 / 按揭不良明细缺（待补数）→ 分层质量不可见，需共债与 Vintage 监测补位</td></tr>
+        <tr><td><b>敞口结构</b></td><td>按揭占总贷款约 8.9%（计算值），直接射程有限</td><td>入口被主办银行制重构 → 风险表现为获客与关系风险，而非资产质量风险</td></tr>
+        <tr><td><b>久期 / 利率</b></td><td>利率下行平台（3.06% 新发放），再定价风险可控</td><td>40 年久期 vs 短久期负债；利率反转上行期资产贬值风险后移但未消失</td></tr>
+        <tr><td><b>切换期（2026-2028）</b></td><td>存量已签约未放款规模可控（台账重检可覆盖）</td><td>开发投资 -19.2% 背景下，停工 → 客诉 → 声誉风险的传导快于报表风险</td></tr>
+      </table>
+    </div>
+    <p>五道闸门建议固化为两条治理线：一条是<b>预警线</b>——客诉水平、Vintage 逾期、共债集中度、LTV 偏离度各设阈值，触线即暂停对应渠道的扩张动作；一条是<b>升级路径</b>——触线后在短时限内完成风险复盘并给出收口方案，避免"边扩张边出险"的并行态。闸门的意义不是限制业务，而是让每一个扩张动作都带着可观测的边界条件运行——这与风险层"每项客群和产品策略都要回填风险约束"的框架要求一致。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>五道闸门的排序不是并列关系，而是<b>时间轴关系</b>：切换期闸门（02）与合规闸门（05）是 0-3 个月就必须落地的；入口闸门（01）与共债闸门（04）贯穿全年；抵押物闸门（03）随价格数据逐月校准。风险层给行动建议的贡献，是让每一条扩张动作都自带边界。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">08 / 12</span></footer>
+</section>
+
+<!-- ================= P09 区域禀赋 ================= -->
+<section class="page" id="p09" data-page="9">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">08</span><span class="crumb">第八章 · 区域禀赋：江苏腹地 × 南京样本</span></div>
+    <h2 class="ptitle">区域禀赋：南京修复斜率领先，抵押物池的边际改善</h2>
+    <p class="plede">江苏银行的基本盘在江苏，样本城市南京给出了区域相对优势的证据：南京新房价格同比 <b>-1.8%</b>（2026-07），自 2026-03 的 <b>-4.1%</b> 快速修复，<b>修复弹性在可比城市中最大</b>；二手 -5.4%，探底后连续 6 个月收窄（Wind EDB，2026-07）。对比全国 70 城新房 -3.4%、北京新房 -2.3%：<b>南京新房修复斜率领先，区域资产价格环境边际改善</b>。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V15 · 南京新房修复斜率：两个月度锚点连线</span><span class="vu">仅绘制已披露月度锚点（Wind EDB，2026-03 / 2026-07），不插值</span></div>
+      <svg class="svgchart" viewBox="0 0 560 210" role="img" aria-label="南京新房价格同比从2026年3月的-4.1%修复至7月的-1.8%，高于70城与北京">
+        <line x1="46" y1="20" x2="540" y2="20" stroke="#e6ebea" stroke-width="1"/><text x="8" y="24" font-size="10.5" fill="#6b7d7c">0%</text>
+        <line x1="46" y1="52" x2="540" y2="52" stroke="#e6ebea" stroke-width="1"/><text x="8" y="56" font-size="10.5" fill="#6b7d7c">-1%</text>
+        <line x1="46" y1="84" x2="540" y2="84" stroke="#e6ebea" stroke-width="1"/><text x="8" y="88" font-size="10.5" fill="#6b7d7c">-2%</text>
+        <line x1="46" y1="116" x2="540" y2="116" stroke="#e6ebea" stroke-width="1"/><text x="8" y="120" font-size="10.5" fill="#6b7d7c">-3%</text>
+        <line x1="46" y1="148" x2="540" y2="148" stroke="#e6ebea" stroke-width="1"/><text x="8" y="152" font-size="10.5" fill="#6b7d7c">-4%</text>
+        <line x1="46" y1="180" x2="540" y2="180" stroke="#e6ebea" stroke-width="1"/><text x="8" y="184" font-size="10.5" fill="#6b7d7c">-5%</text>
+        <line x1="46" y1="180" x2="540" y2="180" stroke="#d9dedd" stroke-width="1"/>
+        <line x1="46" y1="128.8" x2="540" y2="128.8" stroke="#8a9a98" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="392" y="124" font-size="10.5" fill="#6b7d7c">70 城新房 -3.4%（参照线）</text>
+        <line x1="46" y1="93.6" x2="540" y2="93.6" stroke="#8a9a98" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="392" y="89.6" font-size="10.5" fill="#6b7d7c">北京新房 -2.3%（参照线）</text>
+        <line x1="60" y1="151.2" x2="500" y2="77.6" stroke="#C4633F" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="60" cy="151.2" r="6" fill="#176C6B"/>
+        <circle cx="500" cy="77.6" r="6" fill="#C4633F"/>
+        <text x="46" y="176" font-size="12" font-weight="800" fill="#0f2322">-4.1%</text>
+        <text x="468" y="66" font-size="12" font-weight="800" fill="#C4633F">-1.8%</text>
+        <text x="40" y="200" font-size="10.5" fill="#6b7d7c">2026-03</text>
+        <text x="462" y="200" font-size="10.5" fill="#6b7d7c">2026-07</text>
+        <text x="210" y="60" font-size="11" font-weight="700" fill="#3a4b4a">Δ +2.3pct / 4 个月</text>
+        <text x="210" y="76" font-size="11" fill="#3a4b4a">修复弹性在可比城市中最大（Wind EDB）</text>
+      </svg>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V16 · 同比跌幅对比：负向指标，条长 = 跌幅绝对值</span><span class="vu">价格同比，2026-07（Wind EDB）；条越短 = 修复越好</span></div>
+      <div class="hbar"><div class="hl-lab">南京新房</div><div class="hl-track"><div class="hl-fill" style="width:33.3%"></div></div><div class="hl-val">-1.8%（率先修复）</div></div>
+      <div class="hbar"><div class="hl-lab">北京新房</div><div class="hl-track"><div class="hl-fill c3" style="width:42.6%"></div></div><div class="hl-val">-2.3%</div></div>
+      <div class="hbar"><div class="hl-lab">70 城新房</div><div class="hl-track"><div class="hl-fill c3" style="width:63.0%"></div></div><div class="hl-val">-3.4%</div></div>
+      <div class="hbar"><div class="hl-lab">南京二手</div><div class="hl-track"><div class="hl-fill c2" style="width:100%"></div></div><div class="hl-val">-5.4%（连续 6 个月收窄）</div></div>
+    </div>
+    <p>这组数据的资产层含义：江苏银行零售按揭的<b>核心抵押物池（南京及江苏城市）估值压力正在缓解</b>，切换期风险低于全国平均。结构上"新房率先修复、二手仍在出清"正是卖旧买新客群的夹缝场景（第五章主线 B）：新房承接已经启动、旧房出清还在压价格——资金错配与桥接需求同时存在。<b>机构禀赋放大了这一优势：</b>总部南京、18 家分行、江苏省内县域全覆盖（公司档案，Wind），省内新开盘项目大多落在分支行服务半径之内，主办行资格卡位的组织触点密度高于多数同业——此为推断，需项目级数据验证<span class="src b-inf">推断</span>。</p>
+    <p>把区域禀赋转译为经营语言：修复斜率领先，意味着新增按揭的抵押物折价担忧小于按全国均值直觉外推的水平；二手出清收窄，意味着卖旧买新链条的桥接周期在缩短、桥接产品的风险窗口随之收窄；县域全覆盖，则意味着主办行资格的争夺可以下沉到省内非中心城市——那里恰恰是大型同业服务触点相对稀薄的地方（推断）。三个禀赋各有对应的动作：第一个支撑按揭投放的节奏信心，第二个支撑主线 B 的产品排期，第三个支撑公司 / 零售联动的项目清单优先级。</p>
+    <div class="strip gap"><span class="st">时效限制</span>南京市统计局销售面积口径仅更新至 2026-02（-13.5%），时效受限，<b>列为补数协议（待补数）</b>；本页城市级定量以 Wind EDB 价格序列为准，不以过期销售数据外推。</div>
+    <div class="strip takeaway"><span class="st">本页结论</span>区域禀赋不是一句"深耕江苏"的口号，而是三个可验证的事实：<b>修复斜率领先</b>（新房 -1.8% vs 70 城 -3.4%）、<b>二手出清可控</b>（跌幅连续 6 个月收窄）、<b>组织触点密集</b>（县域全覆盖）。三者叠加，使主办银行制的入口之争对江苏银行是"防守有余、进攻有据"的战场，而非单纯的利空。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">09 / 12</span></footer>
+</section>
+
+<!-- ================= P10 行动建议 ================= -->
+<section class="page" id="p10" data-page="10">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">09</span><span class="crumb">第九章 · 分阶段行动建议</span></div>
+    <h2 class="ptitle">行动建议：三阶段八动作，每条自带指标与约束</h2>
+    <p class="plede">行动建议按"<b>制度落地 → 结构切换 → 新模式稳态</b>"三阶段展开，与政策生效节奏对齐：第一阶段把条款③④的硬规则变成系统与流程；第二阶段在切换期抢占替代战场；第三阶段把 40 年久期客群变成财富经营的长期资产。每条动作均按"动作—客群—指标—约束"四要素给出。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V17 · 三阶段路线图与八项行动卡</span><span class="vu">指标与约束口径同底稿；完成时点为建议节奏</span></div>
+      <div class="phases">
+        <div class="phase">
+          <div class="ph-h"><span class="ph-t">第一阶段 · 制度落地期</span><span class="ph-w">0-3 个月</span></div>
+          <div class="ph-b">
+            <div class="act"><span class="a-no">1</span><span class="a-t">按揭产品要素改造</span><span class="a-m">40 年档位上线、竣工备案核验流程、受托支付跨行协作 SOP。<i>指标</i>：流程时效、改造成本；<i>约束</i>：双面披露总利息。</span></div>
+            <div class="act"><span class="a-no">2</span><span class="a-t">存量已签约未放款台账重检</span><span class="a-m">逐笔确认项目竣工预期与抵押状态。<i>指标</i>：重检覆盖率 100%；<i>约束</i>：客诉预警线。</span></div>
+            <div class="act"><span class="a-no">3</span><span class="a-t">主办银行资格卡位</span><span class="a-m">与公司条线联动，圈定江苏省内重点新开盘项目清单。<i>指标</i>：主办行资格项目数、可承接按揭项目渗透率。</span></div>
+          </div>
+        </div>
+        <div class="phase p2">
+          <div class="ph-h"><span class="ph-t">第二阶段 · 结构切换期</span><span class="ph-w">3-12 个月</span></div>
+          <div class="ph-b">
+            <div class="act"><span class="a-no">4</span><span class="a-t">二手房 / 现房按揭主推策略</span><span class="a-m">不受竣工备案约束的替代战场，联动带押过户。<i>指标</i>：二手按揭新增占比。</span></div>
+            <div class="act"><span class="a-no">5</span><span class="a-t">"卖旧买新"客群 STP</span><span class="a-m">已持有本行住房贷款 + 有改善意向标签客群，合规产品承接资金桥接。<i>指标</i>：转化率、资金流向合规率。</span></div>
+            <div class="act"><span class="a-no">6</span><span class="a-t">消费贷共债压力测试</span><span class="a-m">房贷 + 消金双持客群分层限额。<i>指标</i>：Vintage 逾期、共债集中度。</span></div>
+          </div>
+        </div>
+        <div class="phase p3">
+          <div class="ph-h"><span class="ph-t">第三阶段 · 新模式稳态期</span><span class="ph-w">12 个月 +</span></div>
+          <div class="ph-b">
+            <div class="act"><span class="a-no">7</span><span class="a-t">40 年客群全生命周期财富规划产品线</span><span class="a-m">养老金融重定义：为 70 岁仍在还贷的客户重排现金流与保障结构。<i>指标</i>：按揭客户 AUM 转化、产品持有数。</span></div>
+            <div class="act"><span class="a-no">8</span><span class="a-t">宏观审慎期权储备</span><span class="a-m">若首付 / 利率工具启用，48 小时内可落地的定价与系统预案。<i>指标</i>：预案演练完成率。</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p><b>三阶段的内在逻辑：</b>第一阶段解决"合规可用"——没有竣工备案核验与受托支付 SOP，一切获客动作都带瑕疵运行；第二阶段解决"增长接续"——期房通道收窄的窗口期，二手与现房按揭是唯一不受竣工备案约束的替代战场，卖旧买新 STP 与共债测试一攻一守同时铺开；第三阶段解决"价值兑现"——40 年绑定期客群的 AUM 转化是按揭入口价值的最终变现形式，宏观审慎期权储备则保证政策窗口开启时第一个落地。三个阶段共用一条主线：<b>按揭经营从"放款时点"前移到"签约时点"、后延到"全生命周期"</b>。</p>
+    <p>复盘节奏上，八项动作共用一张月度复盘表：防御动作（2、6）看覆盖率与触线次数，进攻动作（3、4、5）看转化与占比，期权动作（7、8）看演练与预案完成率。复盘表的目的不是考核本身，而是让第十一章的观察指标有人认领——每个指标背后必须有一个动作、一个责任主体和一个失败信号，缺一即视为动作未落地。这样，行动建议与观察指标就形成了闭环：指标验证判断，动作兑现指标，复盘回收证据。</p>
+    <div class="strip takeaway"><span class="st">执行提示</span>八项动作中，<b>动作 2（台账重检）与动作 6（共债测试）是防御性底线，优先级高于一切进攻动作</b>——切换期的客诉与共债事件，足以抵消二手按揭主推带来的全部增量。防御动作完成之前，进攻指标不设考核权重。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">10 / 12</span></footer>
+</section>
+
+<!-- ================= P11 观察指标与补数协议 ================= -->
+<section class="page" id="p11" data-page="11">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">10</span><span class="crumb">第十章 · 观察指标与补数协议</span></div>
+    <h2 class="ptitle">观察指标与补数协议：让证据决定判断的存废</h2>
+    <p class="plede">本报告的判断需要在切换期接受证据检验。观察指标回答"哪些数据会证实或证误上述判断"；补数协议回答"哪些关键数据当前缺失、用什么替代口径、如何补齐"。两者合起来，是这份研究从"观点"走向"可验证框架"的交接件，同时构成 Part C 逻辑附件的素材接口。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V18 · 观察指标表：八项指标各自回答什么问题</span><span class="vu">指标清单同底稿；"回答什么问题"列为编辑归纳</span></div>
+      <table class="vis-table">
+        <tr><th style="width:30%">观察指标</th><th style="width:52%">回答什么问题</th><th>关联章节</th></tr>
+        <tr><td>本行期房按揭放款时点分布</td><td>放款后移幅度是否如预期落在 2-3 年区间</td><td>第三章 / 第五章主线 A</td></tr>
+        <tr><td>40 年期按揭占比</td><td>刚需客群对新档位的真实承接度</td><td>第五章产品层</td></tr>
+        <tr><td>二手房按揭新增占比</td><td>替代战场策略是否兑现</td><td>第九章行动 4</td></tr>
+        <tr><td>按揭客户交叉销售率</td><td>"入口产品"定位是否成立</td><td>第三章战略层</td></tr>
+        <tr><td>消费贷 Vintage 与共债集中度</td><td>宏观传导是否正在侵蚀资产质量</td><td>第五章主线 C / 第七章闸门 04</td></tr>
+        <tr><td>主办行资格项目数</td><td>入口之争的卡位进度</td><td>第七章闸门 01 / 第九章行动 3</td></tr>
+        <tr><td>南京 / 江苏二手价格收窄斜率</td><td>抵押物池与卖旧买新场景的边际变化</td><td>第八章区域禀赋</td></tr>
+        <tr><td>全国按揭余额月度净变动</td><td>行业总量出清是否接近尾声</td><td>第六章资产层</td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V19 · 补数协议：缺失数据、替代口径与补齐路径（不计入 Part C 第 16 卡）</span><span class="vu">优先级为编辑建议（推断）；当前以标注口径为准</span></div>
+      <table class="vis-table">
+        <tr><th style="width:8%">编号</th><th style="width:34%">待补数项</th><th style="width:40%">当前替代口径</th><th>补齐路径 / 优先级</th></tr>
+        <tr><td>①</td><td>个人贷款不良率、住房按揭不良率（<b>Wind 未披露 → 待补数</b>）</td><td>全行不良率 0.81%（2026Q2，Wind）作总量参照；分层判断一律标"推断"</td><td>2025 年报 / 2026 中报明细检索；<b>高</b></td></tr>
+        <tr><td>②</td><td>个人贷款余额绝对值的权威披露口径交叉验证</td><td>零售贷款 10,034 亿 / 占比 36.22%（Wind，2026Q2）</td><td>年报与监管披露双源核对；中</td></tr>
+        <tr><td>③</td><td>零售 AUM、按揭客户交叉销售率等经营指标</td><td>框架性判断（入口价值高），无数量化</td><td>内部经营数据，非公开渠道；中</td></tr>
+        <tr><td>④</td><td>南京商品房销售面积市统计局口径更新</td><td>当前仅至 2026-02（-13.5%），时效受限</td><td>随统计局发布节奏滚动更新；中</td></tr>
+      </table>
+    </div>
+    <p><b>使用规则：</b>观察指标按月回看，任何一项连续两个观察期反向运行，即触发对应章节结论的降级复核——例如二手按揭新增占比连续未起量，则"替代战场"判断需要重估；南京二手收窄斜率重新走阔，则抵押物闸门的 LTV 动态管理应即时收紧。补数协议中编号 ①（个贷 / 按揭不良明细）优先级最高，因为它同时约束风险层的共债闸门与资产层的风险调整收益判断，是当前证据链上最大的一块空白。</p>
+    <p><b>与 Part C 的接口约定：</b>本页两表构成逻辑附件的素材边界——Part C 的 15 张逻辑卡与逻辑图以本主文的章节与口径为基准展开，不引入底稿之外的新数字；独立补数协议在 Part C 中单列（不作为第 16 卡），与本页 V19 同源同口径。若补数协议任一项在附件制作期间获得新数据，应先修订本表并同步更新正文对应标注，而不是在附件中静默替换口径。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>研究纪律落在两句话上：<b>判断必须绑定证据（观察指标），缺口必须公开（补数协议）</b>。凡 Wind 未披露的数据，本报告一律以"待补数"标注并给出替代口径，不以估算值冒充明细——这既是 Part B 与 Part C 的衔接界面，也是对外披露的口径底线。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">11 / 12</span></footer>
+</section>
+
+<!-- ================= P12 尾页来源披露 ================= -->
+<section class="page" id="p12" data-page="12">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">11</span><span class="crumb">尾页 · 来源披露与方法说明</span></div>
+    <h2 class="ptitle">来源披露：每一个数字的来路</h2>
+    <p class="plede">本报告全部内容以研究底稿为唯一内容源：银行数据取自 <b>Wind（600919.SH 财务与档案，2026Q2 / 2025FY / 2026H1）</b>；政策条款以 <b>《意见》原文</b>为准；宏观与城市数据取自 <b>Wind EDB（央行 / 国家统计局 / 南京市统计局，截至 2026-07）</b>。所有"测算"为模型测算口径，"推断"为分析性判断，其余数字均有 Wind 代码级来源。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V20 · 来源体系表：来源、覆盖、口径与局限</span><span class="vu">来源披露总表</span></div>
+      <table class="vis-table">
+        <tr><th style="width:24%">来源</th><th style="width:30%">覆盖内容</th><th style="width:22%">期别 / 口径</th><th>局限</th></tr>
+        <tr><td><b>Wind</b>（600919.SH 财务与档案）</td><td>银行底数、经营与收入构成指标</td><td>2026Q2 / 2025FY / 2026H1</td><td>个贷不良率、按揭不良率明细未披露 → 待补数</td></tr>
+        <tr><td><b>《意见》原文</b></td><td>政策条款（七章 36 条）</td><td>2026-08-28 发布</td><td>实施细则与地方落地文件待后续追踪</td></tr>
+        <tr><td><b>Wind EDB</b>（央行 / 国家统计局 / 南京市统计局）</td><td>宏观与城市价格、开发投资数据</td><td>截至 2026-07</td><td>南京销售面积口径仅更新至 2026-02</td></tr>
+        <tr><td><b>《房地产信贷新政点评 v3》</b>（同日）</td><td>北京、南京价格序列交叉参照</td><td>2026-07</td><td>引用口径与 EDB 一致</td></tr>
+        <tr><td><b>贝壳政研通（zyt）通道</b></td><td>城市级数据补充通道</td><td>本 session 已验证调用（15+ 次）</td><td>未返回数值明细；城市级定量以 Wind 为准</td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">视觉对象 V21 · 标注体系：四类来源标签的语义约定</span><span class="vu">正文标注约定</span></div>
+      <div class="mech">
+        <div class="mstep hot"><div class="ms-t">（Wind，2026Q2）</div><div class="ms-d">Wind 代码级来源数据，附期别口径；未经加工。</div></div>
+        <div class="mstep clay"><div class="ms-t">（《意见》原文）</div><div class="ms-d">政策条款表述，以文件原文为准，不做转述加工。</div></div>
+        <div class="mstep"><div class="ms-t">（计算值）</div><div class="ms-d">以已披露数值直接计算：如 2,462.43 亿 / 27,703 亿 ≈ 8.9%。</div></div>
+        <div class="mstep"><div class="ms-t">（测算）/（推断）</div><div class="ms-d">模型测算口径 / 分析性判断：如月供 -15%、总利息 +39%、区域缓冲判断。</div></div>
+      </div>
+    </div>
+    <p><b>方法说明：</b>本报告采用银行零售金融五层分析框架（战略层决定方向、客群经营层决定对象、产品层决定武器、资产层决定结果、风险层决定边界）× 政策传导链，把七章 36 条翻译为零售条线的可执行命题。全文区分事实、推断与建议；不虚构数字、不把集团与银行口径混用、不把余额与发生额混用；缺失数据以"待补数"标注并纳入补数协议（第十一章）。<b>关联交付：</b>Part C 逻辑附件（15 张逻辑卡 + 逻辑图 + 独立补数协议）与本主文同版本目录交付，两者分别通过各自分型验收后方可组成完整研究包。</p>
+    <div class="strip note"><span class="st">免责声明</span>本报告为行业研究用途，基于公开信息与已披露数据制作，不构成任何投资建议或经营承诺。数据期与口径以文中标注为准；后续政策实施细则、统计口径修订或披露更新可能影响本报告结论，请以最新披露为准。</div>
+    <div class="strip takeaway"><span class="st">版本信息</span>99wiki 研究主文 Part B · 2026-08-29 · 内容源：内容底稿_苏银零售新政影响_v1.md（唯一内容源，未增删观点）· 页脚署名全篇按 2026-08-16 约定统一输出，无历史署名残留。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">12 / 12</span></footer>
+</section>
+
+</main>
+</body>
+</html>

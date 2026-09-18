@@ -1,0 +1,9 @@
+{
+  "taskId": "t3",
+  "subject": "渲染B：p05–p08（二下/2.7/三/四）",
+  "description": "按契约 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md（先通读，纪律部分逐条遵守）与设计系统 .build_html/theme.css，用 md /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md 为唯一内容源，产出 4 个片段文件到 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/：\n- p05.html 二(下) 2.5+2.6（算力中心五要素卡阵；电价对比条形图 0.30—0.35/0.60—0.80/0.10—0.15（情景灰显标\"政策未放开\"）；「均在规划阶段」flag）\n- p06.html 二·2.7（token 成本公式链图；六来源表全量保留、确定性列徽标化含「待书面确认」flag-w；限制条件五条编号全量；结论 .concl 原句强调块）\n- p07.html 三、资源禀赋（中央/地方两卡+3.3 三方互补段全文；三角互补定性示意图）\n- p08.html 四、地方资质价值（四维度卡+银协金服案例全文+时间线点睛图 1987→银政通→2026-09-01挂牌/1.2亿/39倍PE；「资质红利在交割时即告清零」强调块）\n格式与页眉页脚模板严格按 spec 第二节；页码 05–08/共13。完成后自查（无溢出/无遮挡/表格未断/零 script），向队长回报 flag 落位清单与自查结论。若 arch_review.md 已有针对你页面的排版建议，先采纳再动工。",
+  "dependencies": [
+    "t1"
+  ],
+  "createdAt": 1788602569602
+}

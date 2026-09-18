@@ -1,0 +1,17 @@
+{
+  "id": "bank-activity-eval",
+  "name": "bank-activity-eval",
+  "version": "0.0.0-local",
+  "schemaVersion": 2,
+  "source": {
+    "kind": "builtin",
+    "root": "skills/bank-activity-eval",
+    "digest": "bc4178b257a7dbb23f5b643690b161d2224047f1b5ea05ddaeaca1be092ff2b7",
+    "license": "UNLICENSED"
+  },
+  "contributions": {},
+  "permissions": {
+    "execScripts": [],
+    "internalOnly": true
+  }
+}

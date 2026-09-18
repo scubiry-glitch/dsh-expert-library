@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>房地产信贷新政对江苏银行零售信贷部的影响分析（v2） · 99wiki 行业研究</title>
+<style>
+/* finesse · register=product · Set 4 "Teal & Clay"（product-palettes.md §Set 4）
+ * 字体：Noto Serif CJK SC（展示）+ Noto Sans CJK SC（正文）
+ * DENSITY=8 SPECTACLE=2 · 拒绝"金融=藏青+金"与 AI 紫默认 · 全部图表数据驱动几何
+ * v2：沿用 v1 既定设计，不推翻；新增双口径/同业对照/政研通量价/六闸门内容组件 */
+:root{
+  --page:#e9eeed; --bg:#ffffff; --panel-2:#f1f5f4; --panel-3:#e6edec;
+  --border:rgba(16,38,38,.07); --border-2:rgba(16,38,38,.16);
+  --ink-1:#0f2322; --ink-2:#3a4b4a; --ink-3:#6b7d7c;
+  --accent:#176C6B; --accent-2:#C4633F; --accent-soft:rgba(23,108,107,.10);
+  --clay-soft:rgba(196,99,63,.12);
+  --on-accent:#ffffff;
+  --up:#2C7A62; --down:#C0453C; --warn:#B77A16;
+  --up-soft:rgba(44,122,98,.12); --down-soft:rgba(192,69,60,.10); --warn-soft:rgba(183,122,22,.12);
+  --shadow:0 1px 3px rgba(19,61,74,.05);
+  --shadow-lg:0 40px 90px -50px rgba(19,61,74,.34);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:clip}
+body{
+  background:var(--page); color:var(--ink-2);
+  font-family:"Noto Sans CJK SC","Noto Sans CJK TC",-apple-system,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.78; -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{color:var(--ink-1); overflow-wrap:anywhere}
+.shell{max-width:1240px; margin:28px auto 48px; background:var(--bg);
+  border:1px solid var(--border); border-radius:22px; box-shadow:var(--shadow-lg); overflow:hidden; position:relative}
+.shell::before{content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(430px 220px at 94% -6%, rgba(23,108,107,.07), transparent 62%)}
+/* ============ 页骨架 ============ */
+.page{padding:52px 60px 0; min-height:1754px; display:flex; flex-direction:column; position:relative;
+  border-top:1px solid var(--border)}
+.page:first-child{border-top:none}
+.pbody{flex:1}
+.pfoot{display:flex; justify-content:space-between; align-items:center; gap:16px;
+  border-top:1px solid var(--border-2); padding:14px 0 18px; margin-top:26px;
+  font-size:11px; color:var(--ink-3); letter-spacing:.04em}
+.pfoot .sig{font-weight:600; color:var(--ink-2)}
+.pfoot .pno{font-variant-numeric:tabular-nums}
+/* ============ 页首 ============ */
+.eyebrow{display:flex; align-items:baseline; gap:12px; margin-bottom:14px}
+.eyebrow .no{font-family:"Noto Serif CJK SC",serif; font-size:30px; font-weight:900; color:var(--accent); line-height:1}
+.eyebrow .crumb{font-size:11.5px; letter-spacing:.22em; color:var(--ink-3); font-weight:600}
+h2.ptitle{font-family:"Noto Serif CJK SC","Songti SC",serif; font-size:27px; line-height:1.38;
+  letter-spacing:.01em; margin-bottom:10px}
+.plede{font-size:14.5px; color:var(--ink-2); border-left:3px solid var(--accent);
+  padding:2px 0 2px 14px; margin:12px 0 18px; text-wrap:pretty}
+.plede b,.plede strong{color:var(--ink-1)}
+p{margin:0 0 11px; text-wrap:pretty}
+b,strong{color:var(--ink-1)}
+.hl{color:var(--accent); font-weight:700}
+.hlc{color:var(--accent-2); font-weight:700}
+.micro{font-size:11px; letter-spacing:.06em; color:var(--ink-3); font-weight:600}
+.small{font-size:12px; color:var(--ink-3)}
+/* ============ 标注徽标（来源绑定） ============ */
+.src{display:inline-block; font-size:10.5px; font-weight:600; letter-spacing:.03em;
+  border-radius:4px; padding:0 6px; margin:0 2px; vertical-align:1px; white-space:nowrap}
+.b-wind{background:var(--accent-soft); color:var(--accent)}
+.b-bk{background:var(--up-soft); color:var(--up)}
+.b-calc{border:1px solid var(--accent); color:var(--accent); background:transparent}
+.b-est{background:var(--clay-soft); color:var(--accent-2)}
+.b-inf{background:var(--warn-soft); color:var(--warn)}
+.b-int{background:#ffffff; border:1px solid var(--accent-2); color:var(--accent-2)}
+.b-doc{border:1px solid var(--border-2); color:var(--ink-2); background:var(--panel-2)}
+.b-todo{border:1px dashed var(--down); color:var(--down); background:var(--down-soft)}
+/* ============ 视觉对象通用 ============ */
+.visual{margin:16px 0 14px; page-break-inside:avoid}
+.vis-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:9px}
+.vis-head .vt{font-size:12.5px; font-weight:700; color:var(--ink-1); letter-spacing:.02em}
+.vis-head .vt::before{content:"▎"; color:var(--accent-2); margin-right:4px}
+.vis-head .vu{font-size:11px; color:var(--ink-3)}
+/* ============ 表格 ============ */
+table.vis-table{width:100%; border-collapse:collapse; font-size:12.2px; line-height:1.55}
+.vis-table th{background:var(--accent); color:var(--on-accent); font-weight:700; text-align:left;
+  padding:7px 10px; font-size:11.8px; letter-spacing:.04em; border:1px solid var(--accent)}
+.vis-table td{border:1px solid var(--border-2); padding:7px 10px; vertical-align:top; background:var(--bg)}
+.vis-table tr:nth-child(even) td{background:var(--panel-2)}
+.vis-table td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700; color:var(--ink-1)}
+.vis-table td.ctr{text-align:center; white-space:nowrap}
+.vis-table tr.hl-row td{background:var(--accent-soft); font-weight:700}
+.dir{display:inline-block; font-size:10.5px; font-weight:700; border-radius:4px; padding:1px 7px; white-space:nowrap}
+.dir-pos{background:var(--up-soft); color:var(--up)}
+.dir-neg{background:var(--down-soft); color:var(--down)}
+.dir-neu{background:var(--panel-3); color:var(--ink-2)}
+.dir-opt{background:var(--clay-soft); color:var(--accent-2)}
+.dir-mix{background:var(--warn-soft); color:var(--warn)}
+/* ============ KPI 瓦片 ============ */
+.kpis{display:flex; flex-wrap:wrap; gap:12px}
+.kpi{flex:1 1 200px; min-width:180px; background:var(--panel-2); border:1px solid var(--border);
+  border-top:3px solid var(--accent); border-radius:10px; padding:13px 15px 11px}
+.kpi.alt{border-top-color:var(--accent-2)}
+.kpi .kv{font-family:"Noto Serif CJK SC",serif; font-size:27px; font-weight:900; color:var(--accent);
+  line-height:1.15; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+.kpi.alt .kv{color:var(--accent-2)}
+.kpi .kk{font-size:12px; font-weight:700; color:var(--ink-1); margin-top:3px}
+.kpi .ks{font-size:10.8px; color:var(--ink-3); margin-top:3px; line-height:1.5}
+/* ============ 数据驱动条形图（条高 = value/max，绝对定位锚底，几何精确） ============ */
+.chart{display:flex; align-items:stretch; gap:26px; height:210px; padding:0 6px; position:relative;
+  border-bottom:2px solid var(--border-2); margin-bottom:64px}
+.chart .col{flex:1; max-width:150px; position:relative; height:100%}
+.chart .bar{position:absolute; bottom:0; left:11%; width:78%; border-radius:6px 6px 0 0; background:var(--accent)}
+.chart .bar.c2{background:var(--accent-2)}
+.chart .bar.c3{background:#8a9a98}
+.chart .lab{position:absolute; top:100%; left:-24%; right:-24%; margin-top:9px; text-align:center; line-height:1.45}
+.chart .lab .lv{display:block; font-size:13px; font-weight:800; color:var(--ink-1); font-variant-numeric:tabular-nums}
+.chart .lab .lv small{display:block; font-size:10px; font-weight:600; color:var(--accent-2)}
+.chart .lab .ln{display:block; font-size:11.5px; color:var(--ink-2); font-weight:600; margin-top:1px}
+.chart .lab .ln small{display:block; font-weight:400; color:var(--ink-3); font-size:10px}
+/* 发散条形（Q2 缺口对照）：中轴 0，向上超额 / 向下缺口 */
+.chart.duo{border-bottom-color:transparent}
+.chart.duo::before{content:""; position:absolute; left:0; right:0; top:50%; border-top:1.5px dashed #8a9a98}
+.chart.duo .bar.up{bottom:50%}
+.chart.duo .bar.dn{top:50%; bottom:auto; border-radius:0 0 6px 6px}
+/* 横向条（条长 = value/max） */
+.hbar{margin:7px 0; display:flex; align-items:center; gap:10px}
+.hbar .hl-lab{flex:0 0 150px; font-size:12px; font-weight:600; color:var(--ink-1); text-align:right; line-height:1.3}
+.hbar .hl-lab small{display:block; font-size:10px; font-weight:400; color:var(--ink-3)}
+.hbar .hl-track{flex:1; background:var(--panel-3); border-radius:4px; height:20px; position:relative}
+.hbar .hl-fill{height:100%; border-radius:4px; background:var(--accent)}
+.hbar .hl-fill.c2{background:var(--accent-2)}
+.hbar .hl-fill.c3{background:#8a9a98}
+.hbar .hl-val{flex:0 0 190px; font-size:12.5px; font-weight:800; color:var(--ink-1); font-variant-numeric:tabular-nums; line-height:1.35}
+.hbar .hl-val small{display:block; font-size:10px; font-weight:400; color:var(--ink-3)}
+/* ============ 机制图（流程盒 + 箭头） ============ */
+.mech{display:flex; flex-wrap:wrap; align-items:stretch; gap:8px}
+.mech .mstep{flex:1 1 150px; min-width:140px; background:var(--panel-2); border:1px solid var(--border-2);
+  border-radius:9px; padding:10px 12px; position:relative}
+.mech .mstep.hot{background:var(--accent-soft); border-color:var(--accent)}
+.mech .mstep.clay{background:var(--clay-soft); border-color:var(--accent-2)}
+.mech .mstep .ms-t{font-size:12.5px; font-weight:800; color:var(--ink-1); line-height:1.35}
+.mech .mstep .ms-d{font-size:11px; color:var(--ink-2); margin-top:4px; line-height:1.55}
+.mech .mstep .ms-d b{color:var(--accent)}
+.mech .arr{align-self:center; color:var(--accent); font-size:17px; font-weight:900; flex:0 0 auto}
+.mrow{display:flex; align-items:flex-start; gap:8px; margin:6px 0}
+.mrow .mrole{flex:0 0 92px; font-size:11px; font-weight:800; letter-spacing:.06em; color:var(--accent);
+  padding-top:10px; line-height:1.4}
+/* ============ 闸门 / 阶段卡 ============ */
+.gates{display:flex; flex-wrap:wrap; gap:12px}
+.gate{flex:1 1 200px; min-width:190px; border:1px solid var(--border-2); border-radius:11px;
+  background:var(--bg); padding:0 0 11px; overflow:hidden}
+.gate .g-h{background:var(--accent); color:var(--on-accent); padding:7px 12px; display:flex; gap:8px; align-items:baseline}
+.gate .g-h .gn{font-family:"Noto Serif CJK SC",serif; font-size:17px; font-weight:900}
+.gate .g-h .gt{font-size:12.5px; font-weight:800; letter-spacing:.05em}
+.gate.alt .g-h{background:var(--accent-2)}
+.gate.new .g-h{background:#2b5f5e}
+.gate .g-r{padding:9px 12px 0; font-size:11.6px; line-height:1.6}
+.gate .g-r b{display:block; font-size:10.5px; letter-spacing:.1em; color:var(--accent-2); margin-bottom:2px}
+/* ============ 阶段时间轴 ============ */
+.phases{display:flex; flex-wrap:wrap; gap:12px; counter-reset:ph}
+.phase{flex:1 1 300px; min-width:290px; border:1px solid var(--border-2); border-radius:11px; background:var(--bg); overflow:hidden}
+.phase .ph-h{padding:8px 13px; color:var(--on-accent); background:var(--accent);
+  display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.phase.p2 .ph-h{background:#2b5f5e}
+.phase.p3 .ph-h{background:var(--accent-2)}
+.phase .ph-h .ph-t{font-size:13px; font-weight:800; letter-spacing:.04em}
+.phase .ph-h .ph-w{font-size:10.5px; font-weight:600; opacity:.92}
+.phase .ph-b{padding:10px 13px 12px}
+.act{border-top:1px dashed var(--border-2); padding:8px 0 7px; font-size:11.8px; line-height:1.6}
+.act:first-child{border-top:none; padding-top:2px}
+.act .a-no{display:inline-block; font-family:"Noto Serif CJK SC",serif; font-weight:900; color:var(--accent-2);
+  margin-right:6px; font-size:13px}
+.act .a-t{font-weight:800; color:var(--ink-1)}
+.act .a-m{display:block; font-size:10.8px; color:var(--ink-2); margin-top:3px}
+.act .a-m i{font-style:normal; color:var(--accent); font-weight:700}
+/* ============ 提示条 ============ */
+.strip{border-radius:10px; padding:11px 15px; font-size:12.4px; line-height:1.65; margin:14px 0; border:1px solid}
+.strip.takeaway{background:var(--accent-soft); border-color:var(--accent)}
+.strip.takeaway .st{font-weight:800; color:var(--accent); margin-right:6px}
+.strip.gap{background:var(--down-soft); border-color:var(--down)}
+.strip.gap .st{font-weight:800; color:var(--down); margin-right:6px}
+.strip.note{background:var(--panel-2); border-color:var(--border-2)}
+.strip.note .st{font-weight:800; color:var(--ink-1); margin-right:6px}
+/* ============ 封面 ============ */
+.cover{padding-top:74px}
+.cover .c-brand{display:flex; justify-content:space-between; align-items:center; gap:16px;
+  border-bottom:2px solid var(--ink-1); padding-bottom:14px}
+.cover .c-brand .b1{font-family:"Noto Serif CJK SC",serif; font-size:19px; font-weight:900; color:var(--ink-1); letter-spacing:.12em}
+.cover .c-brand .b2{font-size:11px; letter-spacing:.28em; color:var(--ink-3); font-weight:600}
+.cover .c-kick{margin-top:52px; font-size:12px; letter-spacing:.34em; color:var(--accent-2); font-weight:800}
+.cover h1{font-family:"Noto Serif CJK SC","Songti SC",serif; font-size:44px; line-height:1.34;
+  letter-spacing:.015em; margin:14px 0 8px; font-weight:900}
+.cover .c-sub{font-size:16.5px; color:var(--ink-2); font-weight:600; line-height:1.7; margin-bottom:6px}
+.cover .c-rule{width:88px; height:5px; background:var(--accent-2); border-radius:3px; margin:22px 0 26px}
+.cover .c-meta{display:flex; flex-wrap:wrap; gap:0; border:1px solid var(--border-2); border-radius:12px; overflow:hidden; margin-bottom:30px}
+.cover .c-meta .m{flex:1 1 300px; min-width:260px; padding:12px 16px; border-top:1px solid var(--border); background:var(--panel-2)}
+.cover .c-meta .m:nth-child(-n+2){border-top:none}
+.cover .c-meta .m .mk{font-size:10.5px; letter-spacing:.18em; color:var(--accent); font-weight:800; margin-bottom:3px}
+.cover .c-meta .m .mv{font-size:12.3px; color:var(--ink-1); font-weight:600; line-height:1.6}
+.cover .c-kpis .vis-head{margin-bottom:10px}
+.cover .c-abs{margin-top:26px; font-size:12.8px; color:var(--ink-2); line-height:1.8;
+  border:1px dashed var(--border-2); border-radius:10px; padding:13px 16px; background:var(--bg)}
+/* ============ SVG 图表通用（字面量色值：weasyprint 仅认 presentation attributes） ============ */
+svg.svgchart{width:100%; height:auto; display:block}
+svg.svgchart text{font-family:"Noto Sans CJK SC",sans-serif}
+svg .axis{stroke:#d9dedd; stroke-width:1}
+svg .gridline{stroke:#e6ebea; stroke-width:1}
+svg .dataline{stroke:#C4633F; stroke-width:3; fill:none; stroke-linecap:round}
+svg .refline{stroke:#8a9a98; stroke-width:1.4; stroke-dasharray:5 4}
+svg .ptlab{font-size:12px; font-weight:800; fill:#0f2322}
+svg .axlab{font-size:10.5px; fill:#6b7d7c}
+svg .annlab{font-size:11px; fill:#3a4b4a}
+/* ============ 动效：默认即终态，reduced-motion 与打印静态一致 ============ */
+@keyframes breathe{0%,100%{opacity:1}50%{opacity:.55}}
+.dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--accent-2);
+  margin-right:7px; animation:breathe 2.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){ .dot{animation:none; opacity:1} }
+@media print{ .dot{animation:none; opacity:1} }
+a{color:var(--accent); text-decoration:none}
+/* ============ 打印 / weasyprint（A4 纵向） ============ */
+@media print{
+  @page{
+    size:A4; margin:13mm 11mm 15mm 11mm;
+    @bottom-center{ content:"98wiki ｜ 智见 / 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+      font-family:"Noto Sans CJK SC",sans-serif; font-size:7.6pt; color:#6b7d7c; letter-spacing:.04em }
+  }
+  html,body{overflow:visible}
+  body{background:#fff; font-size:9.1pt; line-height:1.53}
+  .shell{max-width:none; margin:0; border:none; border-radius:0; box-shadow:none}
+  .shell::before{display:none}
+  .page{min-height:0; padding:0 0 6pt; border-top:none; page-break-after:always; display:block}
+  .page:last-child{page-break-after:auto}
+  .pfoot{display:none}
+  .pbody{display:block}
+  h2.ptitle{font-size:15pt; margin-bottom:4pt}
+  .eyebrow .no{font-size:15pt}
+  .eyebrow{margin-bottom:5pt}
+  .plede{font-size:9.4pt; margin:4pt 0 6pt}
+  p{margin-bottom:4.8pt}
+  .visual{margin:6pt 0 5pt}
+  .vis-head{margin-bottom:3.5pt}
+  .vis-table{font-size:7.7pt}
+  .vis-table th,.vis-table td{padding:3pt 5pt}
+  .kpis{gap:6pt}
+  .kpi{padding:4.5pt 7pt; min-width:0; flex:1 1 150px}
+  .kpi .kv{font-size:13pt}
+  .kpi .kk{font-size:8pt}
+  .kpi .ks{font-size:7pt}
+  .chart{height:86pt; gap:14pt; margin-bottom:40pt}
+  .chart .lab .lv{font-size:8.5pt}
+  .chart .lab .ln{font-size:7.8pt}
+  .chart .lab .ln small{font-size:6.8pt}
+  .visual svg.svgchart{width:70%; margin:0 auto}
+  .mech .mstep{padding:5pt 7pt; min-width:0}
+  .mech .mstep .ms-t{font-size:8.3pt}
+  .mech .mstep .ms-d{font-size:7.2pt}
+  .gates{gap:6pt}
+  .gate{min-width:0}
+  .gate .g-h{padding:5pt 10px}
+  .gate .g-r{font-size:7.4pt}
+  .phases{gap:6pt}
+  .phase{min-width:0}
+  .act{font-size:7.6pt}
+  .act .a-m{font-size:7pt}
+  .strip{font-size:8.2pt; padding:5pt 8pt; margin:6pt 0}
+  .cover{padding-top:16pt}
+  .cover h1{font-size:24pt; margin:8pt 0 4pt}
+  .cover .c-kick{margin-top:14pt; font-size:8.5pt}
+  .cover .c-sub{font-size:10.5pt}
+  .cover .c-rule{margin:10pt 0 12pt}
+  .cover .c-meta .m{padding:6pt 9pt; min-width:0}
+  .cover .c-meta .m .mv{font-size:8pt}
+  .cover .c-abs{font-size:8.2pt; padding:8pt 10pt; margin-top:10pt}
+  svg.svgchart .ptlab{font-size:8.4pt}
+  svg.svgchart .axlab{font-size:7pt}
+  svg.svgchart .annlab{font-size:7.6pt}
+  .hbar .hl-lab{flex-basis:96px; font-size:8pt}
+  .hbar .hl-lab small{font-size:6.6pt}
+  .hbar .hl-val{flex-basis:110px; font-size:8.4pt}
+  .hbar .hl-val small{font-size:6.8pt}
+  .hbar .hl-track{height:12px}
+  .mrow .mrole{flex-basis:64px; font-size:7.4pt; padding-top:6pt}
+  /* —— 密页打印压缩：P03 双口径底数、P10 区域证据（内容不变，仅收紧密度使各页恰好一张 A4）—— */
+  #p03 p{line-height:1.45; font-size:8.8pt}
+  #p03 .plede{font-size:8.9pt; line-height:1.48}
+  #p03 h2.ptitle{font-size:14pt}
+  #p03 .vis-table{font-size:7pt}
+  #p03 .vis-table th,#p03 .vis-table td{padding:2.2pt 3.6pt}
+  #p03 .hbar{margin:4pt 0}
+  #p03 .hbar .hl-track{height:10px}
+  #p03 .hbar .hl-lab{flex-basis:92px}
+  #p03 .hbar .hl-val{flex-basis:104px}
+  #p03 .small{font-size:6.8pt}
+  #p10 p{line-height:1.47}
+  #p10 .plede{font-size:9pt; line-height:1.5}
+  #p10 .vis-table{font-size:7.2pt}
+  #p10 .vis-table th,#p10 .vis-table td{padding:2.4pt 4pt}
+  #p10 .chart{height:78pt; margin-bottom:34pt}
+  #p10 .visual svg.svgchart{width:60%}
+  #p10 .strip{font-size:7.8pt}
+  /* —— 密页打印压缩第二轮：P03 追加 + P08/P09/P12/P13（内容不变，仅收紧密度）—— */
+  #p03 p{margin-bottom:3.6pt; font-size:8.6pt; line-height:1.42}
+  #p03 .plede{font-size:8.6pt; line-height:1.44; margin:3pt 0 5pt}
+  #p03 h2.ptitle{font-size:13.5pt; margin-bottom:3pt}
+  #p03 .vis-table{font-size:6.8pt}
+  #p03 .vis-table th,#p03 .vis-table td{padding:1.8pt 3.2pt}
+  #p03 .hbar{margin:2.6pt 0}
+  #p03 .hbar .hl-track{height:8px}
+  #p03 .strip{font-size:7.3pt; padding:3.5pt 6pt; margin:4.5pt 0}
+  #p03 .vis-head{margin-bottom:2.5pt}
+  #p03 .visual{margin:5pt 0 4pt}
+  #p08 p{line-height:1.45; font-size:8.9pt}
+  #p08 .plede{font-size:8.9pt; line-height:1.47}
+  #p08 .vis-table{font-size:7pt}
+  #p08 .vis-table th,#p08 .vis-table td{padding:2.2pt 3.6pt}
+  #p08 .hbar{margin:3.2pt 0}
+  #p08 .hbar .hl-track{height:9px}
+  #p08 .strip{font-size:7.6pt; padding:4pt 7pt; margin:5pt 0}
+  #p08 .chart{height:80pt; margin-bottom:36pt}
+  #p08 .hbar .hl-lab{flex-basis:88px}
+  #p08b p{line-height:1.42; font-size:8.7pt}
+  #p08b .plede{font-size:8.7pt; line-height:1.44}
+  #p08b .vis-table{font-size:6.9pt}
+  #p08b .vis-table th,#p08b .vis-table td{padding:2pt 3.4pt}
+  #p08b .strip{font-size:7.4pt; padding:4pt 7pt; margin:4.5pt 0}
+  #p08b .chart{height:78pt; margin-bottom:34pt}
+  #p08b .visual svg.svgchart{width:78%}
+  #p05 p{line-height:1.44; font-size:8.8pt}
+  #p05 .plede{font-size:8.8pt; line-height:1.46}
+  #p05 .vis-table{font-size:7.2pt}
+  #p05 .vis-table th,#p05 .vis-table td{padding:2.2pt 3.6pt}
+  #p05 .mech .mstep .ms-d{font-size:7.2pt}
+  #p05 .strip{font-size:7.6pt; padding:4pt 7pt; margin:5pt 0}
+  #p05 .chart{height:80pt; margin-bottom:36pt}
+  #p09 .plede{font-size:8.8pt; line-height:1.46}
+  #p09 p{line-height:1.45}
+  #p09 .vis-table{font-size:7pt}
+  #p09 .vis-table th,#p09 .vis-table td{padding:2.2pt 3.6pt}
+  #p09 .gate .g-r{font-size:7pt}
+  #p09 .gate .g-h{padding:4pt 10px}
+  #p09 .strip{font-size:7.6pt; padding:4pt 7pt; margin:5pt 0}
+  #p12 p{line-height:1.45}
+  #p12 .vis-table{font-size:7pt}
+  #p12 .vis-table th,#p12 .vis-table td{padding:2.2pt 3.6pt}
+  #p12 .strip{font-size:7.6pt; padding:4pt 7pt; margin:5pt 0}
+  #p13 p{line-height:1.45}
+  #p13 .vis-table{font-size:7pt}
+  #p13 .vis-table th,#p13 .vis-table td{padding:2.2pt 3.6pt}
+  #p13 .strip{font-size:7.5pt; padding:4pt 7pt; margin:4.5pt 0}
+  #p13 .mech .mstep .ms-d{font-size:6.9pt}
+}
+</style>
+</head>
+<body>
+<main class="shell">
+
+<!-- ================= P01 封面 ================= -->
+<section class="page cover" id="p01" data-page="1">
+  <div class="pbody">
+    <div class="c-brand">
+      <div class="b1">98wiki · 行业研究</div>
+      <div class="b2">RETAIL CREDIT × POLICY TRANSMISSION</div>
+    </div>
+    <div class="c-kick">99wiki 研究主文 · PART B · V2 修订版 · 2026-08-29</div>
+    <h1>房地产信贷新政对江苏银行<br>零售信贷部的影响分析</h1>
+    <div class="c-sub">双口径底数下的非对称冲击——房贷管入口、网贷管利润：传导、敞口与行动</div>
+    <div class="c-rule"></div>
+    <div class="c-meta">
+      <div class="m"><div class="mk">研究对象</div><div class="mv">江苏银行（600919.SH）零售信贷部</div></div>
+      <div class="m"><div class="mk">政策事件</div><div class="mv">2026-08-28 中国人民银行、国家金融监督管理总局《关于改革完善房地产信贷管理 推动加快构建房地产发展新模式的意见》（七章 36 条）</div></div>
+      <div class="m"><div class="mk">方法框架</div><div class="mv">银行零售金融五层分析（战略—客群—产品—资产—风险）× 政策传导链 × 双口径底数</div></div>
+      <div class="m"><div class="mk">数据期</div><div class="mv">对外口径 Wind（底数统一 2026Q2；营收 / 归母净利 2026H1）；内部管理口径周报驾驶舱（26Q2 报告期内最新快照 2026-05-21，99wiki 内部资料·引用注明出处）；同业对照 2026-03-31（26Q2 待补）；宏观与城市数据截至 2026-07（Wind EDB、贝壳政研通·贝壳交付口径）</div></div>
+    </div>
+    <div class="visual c-kpis">
+      <div class="vis-head"><span class="vt"><span class="dot"></span>封面 KPI · 双口径底数四锚点</span><span class="vu">管理口径 2026-05-21（内部资料）· 全行口径 2026Q2（Wind）</span></div>
+      <div class="kpis">
+        <div class="kpi"><div class="kv">5,489.79 亿</div><div class="kk">管理口径零售信贷总盘子</div><div class="ks">周报驾驶舱 2026-05-21 期内快照（26Q2 报告期 · 99wiki 内部资料·引用注明出处）</div></div>
+        <div class="kpi alt"><div class="kv">45.1%</div><div class="kk">房贷占管理口径比重</div><div class="ks">2,477.42 亿——自营第一大资产（驾驶舱·内部资料）</div></div>
+        <div class="kpi"><div class="kv">79.0%</div><div class="kk">网贷净收入占比</div><div class="ks">存量平均收益率 8.30%（5-21），部门利润引擎（驾驶舱·内部资料）</div></div>
+        <div class="kpi alt"><div class="kv">0.81%</div><div class="kk">全行不良贷款率</div><div class="ks">风险层安全垫参照（Wind，2026Q2）</div></div>
+      </div>
+    </div>
+    <div class="c-abs"><b>读这份报告的方式：</b>本报告把一份房地产信贷文件放进零售信贷部的框架里读，并把底数分成两本账——对外披露的"个人消费贷款 3,261.14 亿元"（2026Q2，Wind）<b>合并了网贷</b>，不能作为结构判断依据；内部管理口径（周报驾驶舱 26Q2 期内最新快照 2026-05-21）总盘子 5,489.79 亿元，<b>自营第一大资产是房贷（45.1%），不是消费贷</b>，部门净收入引擎是网贷（79.0%）。由此得出的总判断是"<b>规模冲击大、收入冲击可控</b>"的非对称格局：两条高权重传导链都打在房贷的入口与节奏上，而利润盘子只受间接传导。正文 12 页沿"传导总图—双口径底数—同业对照—五层分析—区域证据—行动—观察指标"推进，关键数字一律带来源标注；内部驾驶舱数据标注"99wiki 内部资料·引用注明出处"；缺失数据（个贷不良率等）标注"待补数"而非估算；底数期间统一 2026Q2——驾驶舱用报告期内最新快照（5-21）并明示日期，同业对照用 2026-03-31 完整期（26Q2 待补），不跨期混排。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">01 / 14</span></footer>
+</section>
+
+<!-- ================= P02 政策传导总图（v2 权重列） ================= -->
+<section class="page" id="p02" data-page="2">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">01</span><span class="crumb">第一章 · 政策事件与传导总图</span></div>
+    <h2 class="ptitle">一份房地产信贷文件，打在零售信贷部的哪些地方：权重列重排</h2>
+    <p class="plede">2026-08-28，中国人民银行、国家金融监督管理总局发布《关于改革完善房地产信贷管理 推动加快构建房地产发展新模式的意见》（七章 36 条）<span class="src b-doc">《意见》原文</span>。传导权重经过重估，依据是一个此前被口径掩盖的事实：房贷占部门管理口径 <b>45.1%</b>（2,477.42 亿，驾驶舱 2026-05-21<span class="src b-int">驾驶舱·内部资料</span>），是主办银行制与放款后移条款的<b>直接作用对象</b>；而部门净收入引擎网贷（净收入占比 79.0%）不在房地产信贷规则的直接射程内。权重列据此重排：两条"高"权重链都落在房贷上。</p>
+    <p>读这张总图要按"权重列"读，而不是按条款顺序读。权重分五档：<b>高</b>——直接改写部门第一资产（房贷）的入口或节奏，需要一期动作响应；<b>中高</b>——重写产品要素，是产品与系统改造清单；<b>中</b>——通过开发商现金流与地产链就业间接传导，决定网贷客群的收入环境；<b>低</b>——流程合规成本，纳入 SOP 即可；<b>期权</b>——为未来首付与利率工具预留的制度化接口，不产生当期动作但需要预留弹性。最后一行是对照行：网贷不受房地产信贷规则直接约束，却通过"月供下降释放购房家庭现金流"间接受益，同时受互联网贷款监管这条独立合规主线约束——这一行是把传导图与双口径底数接起来的关键。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 1 · 《意见》条款 → 零售信贷部传导总图</span><span class="vu">条款口径：《意见》原文；权重为分析判断，依据逐行标注</span></div>
+      <table class="vis-table">
+        <tr><th style="width:19%">《意见》条款</th><th>传导路径</th><th style="width:13%">冲击权重</th><th style="width:26%">权重依据与口径</th></tr>
+        <tr><td>① 开发贷主办银行制度</td><td>楼盘按揭客源向主办行集中 → 房贷获客入口重构</td><td class="ctr"><span class="dir dir-neg">高</span></td><td>房贷 2,477.42 亿、占管理口径 45.1%，自营第一大资产（驾驶舱 2026-05-21，内部资料）</td></tr>
+        <tr><td>② 按揭受托支付</td><td>支付定向监管 / 主办行账户 → 流程合规成本微增</td><td class="ctr"><span class="dir dir-neu">低</span></td><td>流程影响，不动资产与收入结构（《意见》原文）</td></tr>
+        <tr><td>③ 按揭期限 30→40 年</td><td>月供降约 15% → 刚需承接扩围；总利息 +39% 需双面披露</td><td class="ctr"><span class="dir dir-mix">中高</span></td><td>产品要素重写；月供与利息为测算口径（100 万 / 3.06%）<span class="src b-est">测算</span></td></tr>
+        <tr><td>④ 预售按揭竣工备案后发放</td><td>期房房贷投放后移 2-3 年 → 规模节奏与净收入计划缺口</td><td class="ctr"><span class="dir dir-neg">高</span></td><td>直接打节奏：房贷年目标 24.79 亿净收入、当前达成 103.7%（驾驶舱·内部资料）</td></tr>
+        <tr><td>⑤ 资金封闭管理</td><td>开发商现金流承压 → 地产链就业 / 收入 → 网贷共债传导</td><td class="ctr"><span class="dir dir-mix">中（间接）</span></td><td>环境变量，共债闸门的主要输入</td></tr>
+        <tr><td>⑥ 宏观审慎逆周期机制</td><td>首付 / 利率制度化下调接口 → 房贷政策期权</td><td class="ctr"><span class="dir dir-opt">期权（偏正）</span></td><td>《意见》原文；预留定价与系统弹性</td></tr>
+        <tr><td>（对照）网贷业务</td><td>不受房地产信贷规则直接约束；受收入预期、共债、互联网贷款监管间接传导</td><td class="ctr"><span class="dir dir-mix">低-中（间接受益）</span></td><td>网贷 2,321.89 亿（5-21 平均余额口径）、净收入占比 79.0%（驾驶舱·内部资料）；月供下降释放现金流</td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 2 · 六条链条的落点分层：两本账各盯什么</span><span class="vu">分层为编辑归纳</span></div>
+      <div class="mech">
+        <div class="mstep hot"><div class="ms-t">直接条款（打房贷节奏与要素）</div><div class="ms-d"><b>③ 期限</b> 与 <b>④ 放款时点</b>：产品要素、系统与放款流程必须改造；④ 直接威胁房贷净收入计划的下半年达成。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep clay"><div class="ms-t">入口条款（打房贷获客）</div><div class="ms-d"><b>① 主办银行制</b>：新房按揭客源与项目主办资格绑定，公司 / 零售联动成为获客前提。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep"><div class="ms-t">环境条款（改背景）</div><div class="ms-d"><b>② 流程合规 · ⑤ 间接传导 · ⑥ 政策期权</b>：不直接落在部门报表上，决定经营环境与期权价值。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep"><div class="ms-t">旁路（网贷对照）</div><div class="ms-d">月供下降释放现金流<b>间接受益</b>；但互联网贷款监管（集中度、联合贷出资比例）是另一条独立合规主线。</div></div>
+      </div>
+    </div>
+    <div class="strip takeaway"><span class="st">本页结论</span>权重列的结论是"<b>规模冲击大、收入冲击可控</b>"的非对称格局<span class="src b-inf">推断</span>：两条高权重链条（①④）都打在房贷——占管理口径 45.1% 的规模基本盘——的入口与节奏上；而部门利润盘子（网贷净收入占比 79.0%）只受间接传导。应对因此必须分两本账：房贷账管节奏与入口（产品改造、主办资格、二手替代），网贷账管共债与监管（压力测试、监管台账）。后续章节按这两本账展开。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">02 / 14</span></footer>
+</section>
+
+<!-- ================= P03 双口径底数（v2 核心修订） ================= -->
+<section class="page" id="p03" data-page="3">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">02</span><span class="crumb">第二章 · 双口径底数</span></div>
+    <h2 class="ptitle">两本账：对外"消费贷"合并了网贷，管理口径下房贷才是自营第一大</h2>
+    <p class="plede">分析零售信贷部必须分双口径，这是全篇分析的结构前提。对外披露的"个人消费贷款 3,261.14 亿元"（2026Q2，Wind）<span class="src b-wind">Wind，2026Q2</span><b>合并了网贷</b>，不能作为结构判断依据；内部管理口径（周报驾驶舱 26Q2 报告期内最新快照 2026-05-21<span class="src b-int">驾驶舱·内部资料</span>）零售信贷总盘子 <b>5,489.79 亿元</b>，其中自营第一大资产是<b>房贷（2,477.42 亿、45.1%）</b>，部门净收入第一来源是<b>网贷（57.2 亿、79.0%）</b>——"消费贷是第一大盘"的旧口径不成立。</p>
+    <div class="strip note"><span class="st">期间纪律</span>底数统一 <b>2026Q2</b>：对外披露口径全部为 26Q2 期末值（Wind）；内部驾驶舱 6-30 期末快照尚未产出，采用报告期内最新快照（<b>2026-05-21</b>）并明示日期；同业对照因五家 26Q2 分产品数据未齐，暂用 <b>2026-03-31</b> 完整期（26Q2 待补，列入补数协议）——<b>不允许跨期混排在同一张表内</b>，驾驶舱平均余额口径与期末余额口径亦不直接互比。</div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 3 · 管理口径：零售信贷产品净收入拆解（2026-05-21 期内快照 · 26Q2 报告期）</span><span class="vu">周报驾驶舱 2026-05-21 期内快照 · 平均余额口径 · 99wiki 内部资料，引用注明出处</span></div>
+      <table class="vis-table">
+        <tr><th>产品</th><th style="width:16%">平均余额（亿元）</th><th style="width:10%">占比</th><th style="width:11%">收益率</th><th style="width:14%">净收入（亿元）</th><th style="width:13%">净收入占比</th><th style="width:13%">年目标达成</th></tr>
+        <tr><td><b>房贷</b></td><td class="num">2,477.42</td><td class="num">45.1%</td><td class="num">2.94%</td><td class="num">10.0</td><td class="num">13.8%</td><td class="num">103.7%</td></tr>
+        <tr class="hl-row"><td>网贷（利润引擎）</td><td class="num">2,321.89</td><td class="num">42.3%</td><td class="num">8.30%</td><td class="num">57.2</td><td class="num">79.0%</td><td class="num">102.9%</td></tr>
+        <tr><td>自营消费贷</td><td class="num">404.70</td><td class="num">7.4%</td><td class="num">3.60%</td><td class="num">2.7</td><td class="num">3.7%</td><td class="num">75.6%</td></tr>
+        <tr><td>卡分期</td><td class="num">198.58</td><td class="num">3.6%</td><td class="num">4.75%</td><td class="num">1.8</td><td class="num">2.5%</td><td class="num">108.5%</td></tr>
+        <tr><td>卡循环</td><td class="num">53.65</td><td class="num">1.0%</td><td class="num">4.11%</td><td class="num">0.5</td><td class="num">0.7%</td><td class="num">129.2%</td></tr>
+        <tr><td>经营贷</td><td class="num">33.55</td><td class="num">0.6%</td><td class="num">2.54%</td><td class="num">0.2</td><td class="num">0.3%</td><td class="num">57.7%</td></tr>
+        <tr><td><b>合计</b></td><td class="num">5,489.79</td><td class="num">100%</td><td class="num">5.28%</td><td class="num">72.4</td><td class="num">100%</td><td class="num">101.5%</td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 4 · 双口径对照：对外"个人消费贷款"的合并构成（统一 26Q2）</span><span class="vu">条长 = 数值 / 3,261.14 亿；推算区间按中值示意并标注</span></div>
+      <div class="hbar"><div class="hl-lab">对外「个人消费贷款」含网贷<small>2026Q2 期末（Wind）</small></div><div class="hl-track"><div class="hl-fill c3" style="width:100%"></div></div><div class="hl-val">3,261.14 亿 · 100%<small>占总贷款 11.77%（Wind）</small></div></div>
+      <div class="hbar"><div class="hl-lab">其中 · 网贷期末推算<small>= 3,261.14 − 自营消费贷（计算值）</small></div><div class="hl-track"><div class="hl-fill" style="width:86.5%"></div></div><div class="hl-val">2,790-2,850 亿 · 86.5%<small>按区间中值 2,820 示意 · 待 6-30 驾驶舱核验</small></div></div>
+      <div class="hbar"><div class="hl-lab">其中 · 自营消费贷<small>期内快照约 405-470 亿</small></div><div class="hl-track"><div class="hl-fill c2" style="width:13.4%"></div></div><div class="hl-val">约 405-470 亿 · 13.4%<small>5-21 平均余额 404.70 · 按区间中值示意</small></div></div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 5 · 对外披露口径（Wind）：用于对外可比与监管语境</span><span class="vu">统一期间 2026Q2（Wind）；营收 / 归母净利为 2026H1</span></div>
+      <table class="vis-table">
+        <tr><th style="width:34%">指标</th><th style="width:36%">数值</th><th>期别 / 口径</th></tr>
+        <tr><td>贷款总额</td><td class="num">27,703 亿元</td><td>2026Q2（Wind）</td></tr>
+        <tr><td>零售贷款余额 / 占比</td><td class="num">10,034 亿元 / 36.22%</td><td>2026Q2（Wind）</td></tr>
+        <tr><td>个人住房贷款</td><td class="num">2,462.43 亿元（占总贷款约 8.9%，计算值）</td><td>2026Q2（Wind）<span class="src b-calc">计算值</span></td></tr>
+        <tr><td>个人消费贷款（对外，<b>含网贷</b>）</td><td class="num">3,261.14 亿元（占总贷款 11.77%）</td><td>2026Q2（Wind）——不作结构观点</td></tr>
+        <tr><td>个人经营性贷款</td><td class="num">545.41 亿元</td><td>2026Q2（Wind）</td></tr>
+        <tr><td>净息差 / 不良率</td><td class="num">1.64% / 0.81%</td><td>2026Q2（Wind）</td></tr>
+        <tr><td>营收 / 归母净利</td><td class="num">247.71 亿（+9.80%）/ 112.94 亿（+7.99%）</td><td>2026H1（Wind）</td></tr>
+      </table>
+    </div>
+    <p><b>辅助口径（26Q2 报告期内）：</b>自营新发放利率 3.17%（2026-05-21，环比 -2bp；结构：房贷 28% / 消贷 69% / 经营贷 3%），网贷（现金贷）新发放 12.55%（2026-04-28 时点，6-8 月轨迹见第七章；4 月月内 13.30%→11.99%、-131bp）；4 月目标缺口：合计 -117.94 亿 vs 财摘目标 -100 亿，其中消费贷 -68.95 亿、网贷 -19.83 亿（2026-04-30）。个贷快照（2026-03-31，合计 5,556 亿）移至同业对照章统一期间使用。这组数字说明：部门的规模压力在 4 月已经显形，新政的节奏冲击是在已有缺口上的加压。</p>
+    <p><b>双口径使用纪律：</b>其一，对外分析不得以合并口径作结构观点——任何"消费贷是第一大盘""消费贷主导"的表述在对外语境下都会误读结构；其二，对内经营判断以驾驶舱单列口径为准——驾驶舱"网贷"=现金贷（互联网平台合作放款），与自营消费贷分列、单设年目标（145.0 亿），对外披露时并入"个人消费贷款"，故对外口径不可反推自营结构；其三，网贷三个数不可直接互比——5-21 平均余额 2,321.89 亿、3-31 期末快照 2,330 亿、对外合并口径推算期末 2,790-2,850 亿（计算值），期末余额权威核验与 6-30 期末快照列入补数协议<span class="src b-todo">待补数</span>；其四，管理口径数据均属 <b>99wiki 内部资料，引用注明出处，敏感数据不外发</b>（敏感边界详见尾页）。</p>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">03 / 14</span></footer>
+</section>
+
+<!-- ================= P04 同业对照 ================= -->
+<section class="page" id="p04" data-page="4">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">03</span><span class="crumb">第三章 · 同业对照：五家可比城商行</span></div>
+    <h2 class="ptitle">同业对照：网贷占比 41.9% 双第一——利润引擎最重，敏感度也最高</h2>
+    <p class="plede">同业坐标取个贷快照 <b>2026-03-31</b>——五家可比城商行的最新完整期（五家 26Q2 分产品数据未齐，<b>26Q2 待补</b>并列入补数协议<span class="src b-int">个贷快照·内部资料</span>）：江苏银行网贷 2,330 亿元，<b>绝对额与占比双第一（41.9%）</b>；房贷规模第二（2,478 亿，仅次于北京银行 3,257 亿）。这张表给出部门结构画像的同业位置——"<b>房贷入口 + 网贷利润</b>"双引擎，且网贷引擎在同业中最重。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 6 · 五家城商行个贷结构对照（个贷快照 2026-03-31）</span><span class="vu">个贷快照 2026-03-31（同业可比最新完整期，26Q2 待补）；余额为期末口径，与驾驶舱平均余额口径不可直比；单位：亿元；99wiki 内部资料</span></div>
+      <table class="vis-table">
+        <tr><th>银行</th><th style="width:13%">房贷</th><th style="width:13%">消费贷</th><th style="width:13%">经营贷</th><th style="width:13%">信用卡</th><th style="width:13%">网贷</th><th style="width:14%">网贷占比</th></tr>
+        <tr class="hl-row"><td>江苏银行</td><td class="num">2,478</td><td class="num">470</td><td class="num">38</td><td class="num">240</td><td class="num">2,330</td><td class="num">41.9%</td></tr>
+        <tr><td>北京银行</td><td class="num">3,257</td><td class="num">448</td><td class="num">1,118</td><td class="num">140</td><td class="num">1,809</td><td class="num">26.7%</td></tr>
+        <tr><td>宁波银行</td><td class="num">1,030</td><td class="num">1,370</td><td class="num">136</td><td class="num">393</td><td class="num">922</td><td class="num">23.9%</td></tr>
+        <tr><td>上海银行</td><td class="num">1,629</td><td class="num">658</td><td class="num">17</td><td class="num">295</td><td class="num">673</td><td class="num">20.6%</td></tr>
+        <tr><td>南京银行</td><td class="num">865</td><td class="num">390</td><td class="num">96</td><td class="num">182</td><td class="num">887</td><td class="num">36.7%</td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 7 · 网贷占个贷比重对照：江苏银行 41.9% 居首</span><span class="vu">个贷快照 2026-03-31（内部资料）；条高 = 占比 / 41.9%</span></div>
+      <div class="chart">
+        <div class="col"><div class="bar c2" style="height:100%"></div><div class="lab"><span class="lv">41.9%</span><span class="ln">江苏银行<small>2,330 亿 · 绝对额亦第一</small></span></div></div>
+        <div class="col"><div class="bar" style="height:87.6%"></div><div class="lab"><span class="lv">36.7%</span><span class="ln">南京银行<small>887 亿</small></span></div></div>
+        <div class="col"><div class="bar c3" style="height:63.7%"></div><div class="lab"><span class="lv">26.7%</span><span class="ln">北京银行<small>1,809 亿</small></span></div></div>
+        <div class="col"><div class="bar c3" style="height:57.0%"></div><div class="lab"><span class="lv">23.9%</span><span class="ln">宁波银行<small>922 亿</small></span></div></div>
+        <div class="col"><div class="bar c3" style="height:49.2%"></div><div class="lab"><span class="lv">20.6%</span><span class="ln">上海银行<small>673 亿</small></span></div></div>
+      </div>
+    </div>
+    <p><b>对照读法：</b>可比性来自三统一——机构范围（五家可比城商行）、时点（统一 2026-03-31 完整期，本表不与他表跨期混排）、指标（个贷五分类），故占比可直接比较。结构差异各有解释：北京银行以房贷与经营贷见长（3,257 亿 / 1,118 亿），宁波银行押注消费贷（1,370 亿，五家最高），上海银行个贷盘子最小且结构均衡，南京银行是网贷占比第二（36.7%）的跟随者。江苏银行的画像因此独特：房贷规模第二保证了入口体量，网贷占比第一决定了利润弹性——也决定了共债与监管敏感度第一。</p>
+    <p><b>把对照翻译成新政语境：</b>主办银行制重塑房贷入口时，江苏银行的入口体量（房贷 2,478 亿）意味着守入口的收益大；而网贷占比 41.9% 的结构意味着，一旦地产链收入传导侵蚀网贷客群，本行的暴露高于任何一家可比同业。这就是风险层把"共债闸门"与"网贷监管闸门"并列为主闸门的同业依据——占比第一不仅是成绩单，也是敏感性排名。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>双引擎画像的同业坐标：<b>房贷入口第二、网贷利润第一</b>。战略层据此把资源分成两本账——房贷账守住入口体量的同业位次（主办资格 + 二手替代），网贷账在占比第一的结构上优先补齐共债监测与监管跟踪，让利润引擎的同业优势不以风险出清为代价。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">04 / 14</span></footer>
+</section>
+
+<!-- ================= P05 战略层：双引擎 ================= -->
+<section class="page" id="p05" data-page="5">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">04</span><span class="crumb">第四章 · 五层分析 · 战略层（双引擎）</span></div>
+    <h2 class="ptitle">战略层：双引擎再平衡——"房贷管入口、网贷管利润"</h2>
+    <p class="plede">新政打在房贷引擎的<b>节奏</b>上（放款后移、入口收窄），不打在网贷引擎的<b>利润</b>上（现金贷不受房地产信贷规则约束）。部门战略问题随之从"按揭怎么 position"升级为双引擎再平衡：既不是弃房贷保网贷，也不是两线平均用力，而是给两个引擎各配一套目标、考核与风险约束。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 8 · 双引擎结构卡：规模、收益与新政打点</span><span class="vu">数据：驾驶舱 2026-05-21（99wiki 内部资料）；打点为分析判断</span></div>
+      <div class="mech">
+        <div class="mstep hot"><div class="ms-t">引擎一 · 房贷（管入口）</div><div class="ms-d"><b>2,477.42 亿 · 45.1%</b>（自营第一大，5-21 平均余额口径）；存量收益率 2.94%，净收入 10.0 亿、占比 13.8%。<br>价值 = 入口 + 主办关系 + 规模基本盘。<br>新政打点：① 入口收窄 · ④ 放款后移。</div></div>
+        <div class="arr">⇄</div>
+        <div class="mstep clay"><div class="ms-t">引擎二 · 网贷（管利润）</div><div class="ms-d"><b>2,321.89 亿 · 42.3%</b>（5-21 平均余额口径）；存量收益率 8.30%，净收入 57.2 亿、占比 <b>79.0%</b>。<br>角色 = 部门利润引擎（现金贷 / 平台合作）。<br>传导：间接受益于月供下降释放现金流；受共债与互联网贷款监管约束。</div></div>
+      </div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 9 · 部门净收入结构：网贷 57.2 亿 vs 房贷 10.0 亿</span><span class="vu">2026-05-21 快照（驾驶舱·内部资料）；条高 = 净收入 / 57.2 亿</span></div>
+      <div class="chart">
+        <div class="col"><div class="bar c2" style="height:100%"></div><div class="lab"><span class="lv">57.2 亿</span><span class="ln">网贷<small>占比 79.0% · 收益率 8.30%</small></span></div></div>
+        <div class="col"><div class="bar" style="height:17.5%"></div><div class="lab"><span class="lv">10.0 亿</span><span class="ln">房贷<small>占比 13.8% · 收益率 2.94%</small></span></div></div>
+        <div class="col"><div class="bar c3" style="height:4.7%"></div><div class="lab"><span class="lv">2.7 亿</span><span class="ln">自营消费贷<small>占比 3.7%</small></span></div></div>
+        <div class="col"><div class="bar c3" style="height:4.4%"></div><div class="lab"><span class="lv">2.5 亿</span><span class="ln">卡类 + 经营贷<small>合计占比 3.5%（计算值）</small></span></div></div>
+      </div>
+      <div class="small" style="margin-top:6px">读图提醒：8.30% 与 2.94% 是表观收益率对比，<b>不能直接用作产品取舍依据</b>——网贷高风险高定价，风险调整后收益才是比较基准（第七章资产层）<span class="src b-inf">推断</span>。此图说明的是收入结构：新政打击的"入口与节奏"在房贷，动摇不了的"利润盘子"在网贷。动能佐证：4-28→5-21 三周部门净收入增量 +10.2 亿中网贷贡献 +8.7 亿（85%，驾驶舱双快照·内部资料）。<b>口径注记</b>：图中 8.30% 为存量平均收益率（5-21），与现金贷新发放定价 13.37%（8-12）分开读——差异来自早期低价存量滚动出清，不是同一资产的利差变化。</div>
+    </div>
+    <p><b>战略问题由此改写为三个。</b>其一，房贷的<b>入口价值</b>如何在新政周期里守住——主办银行资格是公司 / 零售联动的卡位战，二手房按揭是不受竣工备案约束的替代战场；其二，网贷的<b>利润护城河</b>（8.30% 收益率、79.0% 净收入占比）如何在居民收入预期承压期保持资产质量——护城河的砖石不是定价，而是共债监测与客群分层，且存量利差正被低定价新钱稀释（卡分期 5.99%→4.75%、自营新发放 3.19%→3.17%，详见第七章资产层）；其三，两个引擎的<b>客户联动</b>：房贷客户是网贷的优质白名单来源（有房、有稳定月供记录），反向网贷行为数据可用于房贷准入——入口收窄会连锁削弱网贷优质获客，这是"入口之争"的第二层含义<span class="src b-inf">推断</span>。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 10 · 政策期权组合表：房贷账的弹性预留</span><span class="vu">条款口径：《意见》原文；预留动作为策略建议</span></div>
+      <table class="vis-table">
+        <tr><th style="width:24%">制度接口</th><th style="width:30%">政策内容</th><th style="width:22%">对零售信贷部的含义</th><th>预留弹性</th></tr>
+        <tr><td>宏观审慎逆周期机制</td><td>首付比例、利率、集中度的制度化调节接口（条款⑥）</td><td>房贷定价弹性 = 政策期权，偏正</td><td>定价授权预案与系统参数化改造前置</td></tr>
+        <tr><td>40 年期限档位</td><td>期限 30→40 年，月供降约 15%（测算）</td><td>刚需承接客群扩围，改善入口承接</td><td>双面披露话术与适当性管理先行</td></tr>
+        <tr><td>存量工具想象空间</td><td>后续可能的存量按揭工具（推断）</td><td>存量客户的重定价与交叉销售触点</td><td>客户旅程数据结构预留工具位</td></tr>
+      </table>
+    </div>
+    <p><b>双记账纪律与全年目标情景：</b>考核标尺同步升级——驾驶舱"净收入"只回答规模贡献，价值贡献以计财部真实 EVA 为准，2026H1 产品层面仅网贷 +0.91% 为正（详见第七章资产层）；全年三档情景（2026-06-02 战启动会，内部资料）：双贷 6-30 实际约 438 亿略超中性（430），年末中性 700 亿意味着 H2 需净增约 262 亿（消费贷 +135、经营贷 +126）——在节奏冲击 + 缩表惯性 + 合规压降三重约束下，中性达成必须依赖消费类投放放量，与"严禁违规冲量"的合规闸门形成<b>直接张力</b>；战役 D（对公家庭消金 120 亿中性）是对公-零售联动的增量抓手。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>战略层答案是双引擎各司其职：<b>房贷管入口</b>——考核重心从当年投放规模转向主办行资格项目数、二手按揭新增占比与交叉销售率；<b>网贷管利润</b>——考核重心从余额增速转向风险调整后收益、共债集中度与监管合规。宏观审慎章节留给房贷的期权组合（40 年档位 + 未来存量工具）要提前预留定价与系统弹性——期权不需要天天行权，但窗口开启时，落地速度就是竞争力。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">05 / 14</span></footer>
+</section>
+
+<!-- ================= P06 客群层：三主线 ================= -->
+<section class="page" id="p06" data-page="6">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">05</span><span class="crumb">第五章 · 五层分析 · 客群经营层（三主线）</span></div>
+    <h2 class="ptitle">客群经营层：三条主线的旅程重塑——网贷客群单列成线</h2>
+    <p class="plede">客群层的问题是"新政改变了谁的旅程"。答案是三条各自独立又彼此咬合的主线：<b>期房房贷客群（主线 A）</b>的旅程被条款④整体拉长；<b>卖旧买新改善客群（主线 B）</b>迎来数据支持的解冻窗口；<b>网贷客群（主线 C）</b>单独成线——因为管理口径下它才是部门净收入的第一来源（79.0%），不再是"消费贷基本盘"的附注。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 11 · 三主线旅程机制图：阶段、窗口与合规约束</span><span class="vu">时间与幅度为政策口径或测算；联动关系为推断</span></div>
+      <div class="mrow"><div class="mrole">主线 A<br>期房房贷客群</div>
+        <div class="mech" style="flex:1">
+          <div class="mstep"><div class="ms-t">签约期房</div><div class="ms-d">旅程起点：签约不再等于放款。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep clay"><div class="ms-t">等待竣工备案（2-3 年）</div><div class="ms-d"><b>金融空窗态</b>：首付资金理财、装修贷预约的真实窗口。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep"><div class="ms-t">竣工备案后放款</div><div class="ms-d">投放与交叉销售事件整体后移。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep hot"><div class="ms-t">40 年久期还贷态</div><div class="ms-d">月供降约 15% 释放当期现金流；<b>同时是网贷白名单来源</b>——入口收窄连锁削弱网贷优质获客<span class="src b-inf">推断</span>。</div></div>
+        </div>
+      </div>
+      <div class="mrow"><div class="mrole">主线 B<br>卖旧买新改善</div>
+        <div class="mech" style="flex:1">
+          <div class="mstep"><div class="ms-t">链条解冻（数据支持）</div><div class="ms-d">京宁二手成交量同比转正、南京价格跌幅收窄（第九章政研通·贝壳口径证据）。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep hot"><div class="ms-t">二手房按揭承接</div><div class="ms-d">不受竣工备案时点约束 + 带押过户联动，替代战场。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep clay"><div class="ms-t">桥接融资需求</div><div class="ms-d">旧房出售款与新房放款的时间差 → 必须合规承接。</div></div>
+          <div class="arr">⤳</div>
+          <div class="mstep"><div class="ms-t">合规闸</div><div class="ms-d">严禁消费贷 / 网贷资金违规入楼（风险闸门）。</div></div>
+        </div>
+      </div>
+      <div class="mrow"><div class="mrole">主线 C<br>网贷客群</div>
+        <div class="mech" style="flex:1">
+          <div class="mstep"><div class="ms-t">2,322 亿盘子</div><div class="ms-d">现金贷 / 平台合作（对外并入消费贷）；13.37% 新发放定价（8-12）与存量 8.30%（5-21）分开读。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep"><div class="ms-t">负向传导</div><div class="ms-d">地产链就业 / 收入承压 → 共债风险上行；41.9% 占比同业第一，暴露最高。</div></div>
+          <div class="arr">⇄</div>
+          <div class="mstep hot"><div class="ms-t">正向缓冲</div><div class="ms-d">"能拿房再还贷"+ 月供下降 → 购房家庭现金流改善，头部客群流动性压力边际缓解。</div></div>
+          <div class="arr">→</div>
+          <div class="mstep clay"><div class="ms-t">模型要求</div><div class="ms-d">风险模型须纳入房价预期变量<span class="src b-inf">推断</span>。</div></div>
+        </div>
+      </div>
+    </div>
+    <p><b>主线 A 的经营含义：</b>等待期是被新政新创造的服务场景——首付资金在账 2-3 年，是理财、存款与装修贷预约的提前卡位点；放款事件后移使代发归集与交叉销售节奏整体后移，但 40 年绑定期拉长了客户生命周期价值。<b>主线 B 的经营含义：</b>需求真实且开始有量价数据支撑，零售端的价值在"接得住"——二手房按揭主推 + 带押过户联动，桥接需求以合规产品承接而不是绕开监管。<b>主线 C 的经营含义：</b>利润引擎客群要做分层经营——购房家庭月供下降 15% 改善偿付比，头部客群额度策略可适度前移<span class="src b-inf">推断</span>；地产链收入下行的长尾客群，共债预警相应加码。</p>
+    <p>用客群经营的分层语言重述：主线 A 的切分变量是旅程阶段（空窗态 / 还贷态），定位是"等待期的资金管家 + 40 年的现金流顾问"；主线 B 的切分变量是持仓结构（存量房贷客 + 改善标签），定位是合规的资金衔接方案；主线 C 的切分变量是共债水平与收入敏感度，定位是"现金流改善的承接者 + 共债风险的守门人"。三层的共同点是：定位写在客户的问题上，而不是银行的产品库存上——这是交叉销售不滑向强制捆绑的前提，也是两条引擎客户联动（白名单互供）能够合规运转的前提。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>客群分界线从"有没有房"变成"<b>处在哪条引擎的哪个旅程阶段</b>"：空窗态客群要资金打理，桥接客群要合规衔接，还贷态客群要长周期现金流安排，网贷客群要分层额度与共债守门。三条主线彼此咬合——A 的还贷态客户是 C 的白名单来源，B 的按揭承接是 A 的替代入口——客群经营因此必须按旅程阶段而非产品条线重写动作清单。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">06 / 14</span></footer>
+</section>
+
+<!-- ================= P07 产品层 ================= -->
+<section class="page" id="p07" data-page="7">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">06</span><span class="crumb">第六章 · 五层分析 · 产品层（武器）</span></div>
+    <h2 class="ptitle">产品层：房贷四要素重装，网贷守利润，消费贷守住合规增量</h2>
+    <p class="plede">产品层回答"卖什么、怎么卖、什么不能碰"。新政把房贷产品的<b>期限、放款时点、价格梯度、支付方式</b>四个要素全部重装；网贷作为利润引擎要预判两件间接事；自营消费贷本来就有缺口（达成 75.6%），新政周期里只能做合规增量——每一条扩张路径旁边都站着一条合规约束。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 12 · 双面测算：月供更轻 ≠ 更便宜</span><span class="vu">测算口径：100 万元 / 3.06% 等额本息（测算）；条高 = 数值 / 组内最大值</span></div>
+      <div class="chart">
+        <div class="col"><div class="bar" style="height:100%"></div><div class="lab"><span class="lv">4,247 元</span><span class="ln">月供 · 30 年期<small>基准档</small></span></div></div>
+        <div class="col"><div class="bar" style="height:85.1%"></div><div class="lab"><span class="lv">3,614 元</span><span class="ln">月供 · 40 年期<small>降约 15%（测算）</small></span></div></div>
+        <div class="col"><div class="bar c3" style="height:72%"></div><div class="lab"><span class="lv">52.9 万</span><span class="ln">总利息 · 30 年期<small>基准档</small></span></div></div>
+        <div class="col"><div class="bar c2" style="height:100%"></div><div class="lab"><span class="lv">73.5 万</span><span class="ln">总利息 · 40 年期<small>升约 39%（测算）</small></span></div></div>
+      </div>
+      <div class="small" style="margin-top:6px">销售话术必须双面披露：40 年档位月供下降约 15%（4,247→3,614 元 / 百万）改善刚需承接，但总利息上升约 39%（52.9 万→73.5 万）——<b>适当性管理前置</b>，不允许只讲月供不讲利息。<span class="src b-est">测算</span></div>
+    </div>
+    <p><b>房贷武器清单：</b>① 40 年档位上线（双面测算见图 12）；② 竣工备案核验流程 + 与主办行的数据协作；③ 二手 / 现房按揭的流动性价差定价——它们不受竣工备案约束，与期房按揭形成价差，是切换期的主推；④ 受托支付跨行 SOP。<b>产品定位要清醒：</b>房贷收益率 2.94% 低于自营新发放均值 3.17%（2026-05-21，驾驶舱·内部资料），是低收益长久期资产——它的价值在入口、主办关系与 45.1% 的规模基本盘，<b>不在利差</b>。</p>
+    <p><b>网贷（部门利润引擎）：</b>驾驶舱"网贷"=现金贷（互联网平台合作放款），与自营消费贷分列、单设年目标 145.0 亿；存量收益率 8.30%（5-21）与新发放定价 13.37%（8-12）分开读——差异来自早期低价存量滚动出清，利润引擎在增配高定价新资产；新发放月度轨迹 <b>6 月 13.17%→7 月 13.66%→8-12 13.37%</b>，高位波动需跟踪（4 月月内曾 13.30%→11.99%、-131bp）。不受新政直接约束，但要预判两件间接事：其一，购房家庭月供下降 15% 改善偿付比，头部客群额度策略可适度前移<span class="src b-inf">推断</span>；其二，地产链收入下行客群的共债预警需加码。<b>互联网贷款监管（集中度、联合贷出资比例、地方监管口径）是与房地产宏观审慎并行的另一条合规主线</b>，且离利润引擎更近。<b>自营消费贷 / 卡：</b>404.70 亿盘子、年目标达成仅 75.6%（2026-05-21）——缺口本来就在，新政周期里避免以违规用途冲量；与房贷场景联动（装修、家装分期）是合规增量方向。<b>交叉销售链路：</b>房贷放款事件（后移至竣工备案）→ 代发归集 + 信用卡 + 消金白名单预审批 → 网贷优质客群筛选 → 40 年生命周期信贷管理——入口事件后移不消失，只是推迟且生命周期拉长。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 13 · 交叉销售链路：入口事件后移，生命周期拉长</span><span class="vu">框架口径：触发场景 → 主产品 → 关联产品 → 约束</span></div>
+      <div class="mech">
+        <div class="mstep"><div class="ms-t">① 签约期房 / 二手成交</div><div class="ms-d">触发场景：签约与过户是两条并列入口。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep clay"><div class="ms-t">② 按揭承接 + 首付资金理财</div><div class="ms-d">空窗期 2-3 年的理财与存款场景。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep hot"><div class="ms-t">③ 竣工备案后放款</div><div class="ms-d">新增核验环节；入口事件整体后移但不消失。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep clay"><div class="ms-t">④ 代发归集 + 卡 + 消金预审批</div><div class="ms-d">放款事件触发的交叉销售束。</div></div>
+        <div class="arr">→</div>
+        <div class="mstep hot"><div class="ms-t">⑤ 网贷白名单筛选</div><div class="ms-d">房贷客户 = 网贷优质客群来源；行为数据反哺房贷准入。</div></div>
+      </div>
+      <div class="small" style="margin-top:6px"><b>全链约束：</b>适当性 · 资金流向监控 · 销售合规——约束不是链条末端的补丁，而是每一环的准入条件；④⑤ 两环的联动以客户授权与数据最小化为前提。</div>
+    </div>
+    <div class="strip takeaway"><span class="st">本页结论</span>产品层的再定位逻辑是"<b>房贷重装要素、网贷守住利润、消费贷只做合规增量</b>"：房贷以 40 年档位 + 竣工备案核验 + 二手价差定价重建竞争力，但以入口而非利差计价；网贷以共债预警与监管台账守护 79% 的净收入盘子；消费贷以家装分期等场景联动补 75.6% 的达成缺口，严禁违规冲量。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">07 / 14</span></footer>
+</section>
+
+<!-- ================= P08 资产层 ================= -->
+<section class="page" id="p08" data-page="8">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">07</span><span class="crumb">第七章 · 五层分析 · 资产层（上）：收益、动量与缺口</span></div>
+    <h2 class="ptitle">资产层（上）："量缩利增"的动量与 Q2 缺口归因</h2>
+    <p class="plede">资产层检验总判断怎么落在表上，分四个维度读：<b>收益</b>——净收入结构（网贷 79.0% / 房贷 13.8%）决定新政对部门利润的传导比例有限；<b>动量</b>——4-28→5-21 双快照显示"量缩利增"（合计平均余额 -18.2 亿、净收入 +10.2 亿，网贷贡献 85%）；<b>缺口</b>——Q2 末 -139.5 亿的归因纪律是本章的治理结论。先用收益率梯度给出两本账的定价坐标系。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 14 · 收益率梯度：从 2.94% 到 13.37% 的两本账</span><span class="vu">条长 = 收益率 / 13.37%；新发放定价（时点数）与存量平均收益率两口径并列、分开读（驾驶舱·内部资料）</span></div>
+      <div class="hbar"><div class="hl-lab">网贷 · 现金贷新发放（最新）<small>2026-08-12</small></div><div class="hl-track"><div class="hl-fill c2" style="width:100%"></div></div><div class="hl-val">13.37%<small>月度轨迹 6 月 13.17%→7 月 13.66%，高位波动</small></div></div>
+      <div class="hbar"><div class="hl-lab">网贷 · 现金贷新发放（历史点）<small>2026-04-28</small></div><div class="hl-track"><div class="hl-fill c2" style="width:93.9%"></div></div><div class="hl-val">12.55%<small>4 月月内轨迹 13.30%→11.99%（-131bp）</small></div></div>
+      <div class="hbar"><div class="hl-lab">网贷 · 存量平均收益率<small>2026-05-21（内部资料）</small></div><div class="hl-track"><div class="hl-fill c2" style="width:62.1%"></div></div><div class="hl-val">8.30%<small>净收入 57.2 亿 · 占比 79.0%</small></div></div>
+      <div class="hbar"><div class="hl-lab">自营新发放均值<small>2026-05-21，环比 -2bp</small></div><div class="hl-track"><div class="hl-fill" style="width:23.7%"></div></div><div class="hl-val">3.17%<small>结构：房贷 28% / 消贷 69% / 经营贷 3%</small></div></div>
+      <div class="hbar"><div class="hl-lab">房贷 · 存量收益率<small>2026-05-21（内部资料）</small></div><div class="hl-track"><div class="hl-fill" style="width:22.0%"></div></div><div class="hl-val">2.94%<small>低于自营新发放均值——入口资产</small></div></div>
+      <div class="small" style="margin-top:6px">口径注记：上两行为新发放定价（时点数）、第三行为存量平均收益率（5-21），口径不同分开读——差异来自早期低价存量滚动出清。风险读法：高收益对应高风险客群与共债暴露，风险调整后收益才是比较基准；全行净息差 1.64%（2026Q2，Wind）为背景板。</div>
+    </div>
+    <p><b>规模维度：</b>部门在<b>缩表惯性</b>中运营——4 月单月 -118 亿、5-15 快照 YTD -295 亿、5-21 总盘 5,489.79 亿（mom -164.46 亿）<span class="src b-int">驾驶舱·内部资料</span>；新政的节奏冲击（期房放款后移）叠加在缩表趋势上，<b>40 年按揭扩围（月供 -15%）与二手按揭承接是少数对冲工具</b>，二手承接的战略权重因此再上调。房贷年目标 24.79 亿净收入、当前达成 103.7%（2026-05-21）——缓冲会被放款后移吃掉，是"暂时的富裕"<span class="src b-inf">推断</span>；网贷（2026-03-31 期末口径 2,330 亿）在 4 月负增长（-19.83 亿）之后，需要盯的是回升斜率而不是单月反弹。房贷 8 月一线自报新增预测为 <b>0</b>——新政（竣工备案后移）的节奏冲击已从推断进入一线预期<span class="src b-int">驾驶舱周度 · 内部资料</span>。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 15 · Q2 目标缺口对照：房贷 / 卡超额 vs 消费类缺口（2026-04-30）</span><span class="vu">中轴 = 0：青色向上为超额、陶色向下为缺口；条长 ∝ |值| / 96.36 亿（驾驶舱缺口表·内部资料）</span></div>
+      <div class="chart duo">
+        <div class="col"><div class="bar up" style="height:2.2%"></div><div class="lab"><span class="lv">+4.66 亿</span><span class="ln">房贷<small>超额 · 安全垫最厚</small></span></div></div>
+        <div class="col"><div class="bar up" style="height:10.1%"></div><div class="lab"><span class="lv">+21.18 亿</span><span class="ln">信用卡<small>超额 · 实为少降</small></span></div></div>
+        <div class="col"><div class="bar dn c2" style="height:46%"></div><div class="lab"><span class="lv">-96.36 亿</span><span class="ln">自营消费贷<small>缺口主体</small></span></div></div>
+        <div class="col"><div class="bar dn c2" style="height:28.3%"></div><div class="lab"><span class="lv">-59.23 亿</span><span class="ln">网贷<small>缺口主体</small></span></div></div>
+        <div class="col"><div class="bar dn c2" style="height:4.6%"></div><div class="lab"><span class="lv">-9.74 亿</span><span class="ln">经营贷<small>缺口</small></span></div></div>
+      </div>
+      <div class="small" style="margin-top:6px">合计缺口 -139.5 亿（当期 mom -117.94 vs 财摘目标 -100.0）。<b>归因纪律</b>：房贷是当前唯一超进度的大资产、安全垫最厚；信用卡超额实为"较自目标少降 21 亿"（缩表口径）；缺口主体在消费类，与新政无直接因果——<b>不让新政背锅，也不借新政放松消费类投放纪律</b>（合规闸门权重相应上调）<span class="src b-inf">推断，依据驾驶舱缺口表·内部资料</span>。</div>
+    </div>
+    <p><b>动量与稀释（4-28→5-21 双快照）：</b>三周内部门净收入 62.2→72.4 亿（+10.2），其中网贷 48.5→57.2（+8.7、占 85%），同期平均余额全线阴跌（合计 5,508.01→5,489.79、-18.2 亿）——"<b>量缩利增</b>"靠高定价资产滚动支撑。<b>新钱稀释证据链</b>：卡分期收益率 5.99%→4.75%（-124bp）、网贷 8.33%→8.30%（-3bp）、自营新发放 3.19%→3.17%——低定价新资产滚动正在稀释存量收益，资产端定价下行是全谱系趋势，40 年按揭（首年利息更低）会加重该趋势；部门对冲依赖网贷高定价增量（新发放 13.37%（8-12），月度轨迹 6 月 13.17%→7 月 13.66%、高位波动）——护城河要靠增量动能，不能吃存量利差。最新周度再证动量脆弱：消费贷 432.3（6-27，MTD +60 冲量）→ 371.2（7-16，单月回吐 <b>-82.7 亿</b>）→ 370.4（8-13）——"季末冲量-季初回吐"循环坐实，与 Q2 消费缺口互为印证<span class="src b-int">驾驶舱周度 · 内部资料</span>。</p>
+    <p><b>久期维度：</b>40 年资产 vs 短久期负债的缺口扩大；网贷久期短、重定价快（现金贷 13.37%（8-12）高定价随行就市），两本账的利率敏感方向相反——组合层面反而形成自然对冲<span class="src b-inf">推断，需司库验证</span>。房贷收益率 2.94% + 40 年久期的组合在净息差 1.64%（2026Q2，Wind）的全行背景下，资本占用与久期风险需要司库对冲——利率反转上行期的资产贬值风险只是后移，并未消失。</p>
+      </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">08 / 14</span></footer>
+</section>
+
+<!-- ================= P09 资产层（下）：久期与风险调整后收益 ================= -->
+<section class="page" id="p08b" data-page="9">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">07</span><span class="crumb">第七章 · 五层分析 · 信用卡专项与周度轨迹</span></div>
+    <h2 class="ptitle">信用卡专项与周度轨迹：唯一"主动缩量"资产的全套体检</h2>
+    <p class="plede">本页把信用卡专项与最新周度读数集中核验，标尺是<b>双记账纪律</b>——驾驶舱"净收入"（正数、规模贡献）与计财部"真实 EVA"（扣还原不良 / 费用 / 资本后的价值贡献）分开读：2026H1 产品层面仅网贷 +0.91% 为正；风险调整后收益标尺下<b>不能以表观 8.30% 对比 2.94%</b>，房贷不良通常零售最低档（全行 0.81%，明细待补）<span class="src b-int">计财口径 · 驾驶舱 · 内部资料</span>。<b>全年目标情景一行：</b>双贷年末中性 700 亿 vs 6-30 现状约 438 亿，H2 需净增 +262 亿——与合规压降直接张力（2026-06-02 战启动会三档，内部资料）。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 16 · 周度余额轨迹表：消费贷"冲量-回吐"与信用卡持续压降（6-27 / 7-16 / 8-13）</span><span class="vu">三期：6-27 / 7-16 / 8-13；纵轴余额（亿元）；陶 = 消费贷、青 = 信用卡（驾驶舱周度 · 内部资料）</span></div>
+      <svg class="svgchart" style="width:66%" viewBox="0 0 720 268" role="img" aria-label="消费贷与信用卡周度余额轨迹折线图">
+        <line x1="70" y1="240" x2="690" y2="240" stroke="#8a9a98" stroke-width="1.5"/>
+        <line x1="70" y1="196" x2="690" y2="196" stroke="#d8e0de" stroke-width="1"/>
+        <line x1="70" y1="152" x2="690" y2="152" stroke="#d8e0de" stroke-width="1"/>
+        <line x1="70" y1="108" x2="690" y2="108" stroke="#d8e0de" stroke-width="1"/>
+        <line x1="70" y1="64" x2="690" y2="64" stroke="#d8e0de" stroke-width="1"/>
+        <line x1="70" y1="20" x2="690" y2="20" stroke="#d8e0de" stroke-width="1"/>
+        <text x="62" y="244" text-anchor="end" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">200</text>
+        <text x="62" y="200" text-anchor="end" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">250</text>
+        <text x="62" y="156" text-anchor="end" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">300</text>
+        <text x="62" y="112" text-anchor="end" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">350</text>
+        <text x="62" y="68" text-anchor="end" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">400</text>
+        <text x="62" y="24" text-anchor="end" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">450</text>
+        <polyline points="140,35.6 380,89.3 620,90" fill="none" stroke="#C4633F" stroke-width="2.5"/>
+        <circle cx="140" cy="35.6" r="4" fill="#C4633F"/><circle cx="380" cy="89.3" r="4" fill="#C4633F"/><circle cx="620" cy="90" r="4" fill="#C4633F"/>
+        <text x="140" y="24" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="13" font-weight="bold" fill="#C4633F">432.3</text>
+        <text x="380" y="79" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="13" font-weight="bold" fill="#C4633F">371.2</text>
+        <text x="620" y="80" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="13" font-weight="bold" fill="#C4633F">370.4</text>
+        <polyline points="140,213.6 380,216 620,222" fill="none" stroke="#176C6B" stroke-width="2.5"/>
+        <circle cx="140" cy="213.6" r="4" fill="#176C6B"/><circle cx="380" cy="216" r="4" fill="#176C6B"/><circle cx="620" cy="222" r="4" fill="#176C6B"/>
+        <text x="140" y="203" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="13" font-weight="bold" fill="#176C6B">230.0</text>
+        <text x="380" y="206" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="13" font-weight="bold" fill="#176C6B">227.3</text>
+        <text x="620" y="210" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="13" font-weight="bold" fill="#176C6B">220.4</text>
+        <text x="255" y="52" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#8a5a3f">6 月 MTD +60 冲量 → 7 月回吐 -82.7 亿</text>
+        <text x="500" y="196" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#176C6B">持续压降 · 8 月自报再 -9.1</text>
+        <text x="140" y="262" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">06-27</text>
+        <text x="380" y="262" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">07-16</text>
+        <text x="620" y="262" text-anchor="middle" font-family="Noto Sans CJK SC, sans-serif" font-size="12" fill="#5a6b69">08-13</text>
+      </svg>
+      <div class="small" style="margin-top:6px">三个周度事实：①消费贷 6 月 MTD +60 亿冲至 432.3、<b>7 月单月回吐 -82.7 亿</b>至 371.2——"季末冲量-季初回吐"循环坐实，与目标情景（H2 中性需 +135 亿）的合规张力加剧；②信用卡持续压降、8 月自报再 -9.1 亿；③房贷 8 月一线自报新增预测为 0——节奏冲击进入一线预期。同期读数：个贷合计 5,479.6 亿、较 6 月末 -95.0 亿；收入进度（8-12）：房贷 15.3 亿（序时 100.3%）、网贷 91.4 亿（102.7%）双稳，消费贷 73.4% 偏低。</div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 17 · 2026H1 产品真实 EVA 对照：仅网贷为正</span><span class="vu">中轴 = 0，青色向上为正、陶色向下为负；条长 ∝ |EVA| / 2.93（计财部口径 · 2026-06-30 · 内部资料）</span></div>
+      <div class="chart duo">
+        <div class="col"><div class="bar up" style="height:3%"></div><div class="lab"><span class="lv">+0.19%</span><span class="ln">个贷合计<small>同比 -0.14</small></span></div></div>
+        <div class="col"><div class="bar up" style="height:14.3%"></div><div class="lab"><span class="lv">+0.91%</span><span class="ln">网贷<small>唯一正主力 · 同比 -0.29</small></span></div></div>
+        <div class="col"><div class="bar dn c2" style="height:1.3%"></div><div class="lab"><span class="lv">-0.08%</span><span class="ln">房贷<small>同比 -0.11</small></span></div></div>
+        <div class="col"><div class="bar dn c2" style="height:44.8%"></div><div class="lab"><span class="lv">-2.85%</span><span class="ln">信用卡<small>同比再恶化 -0.27</small></span></div></div>
+        <div class="col"><div class="bar dn c2" style="height:46%"></div><div class="lab"><span class="lv">-2.93%</span><span class="ln">卡部随e贷<small>同比改善 +1.57</small></span></div></div>
+        <div class="col"><div class="bar dn c2" style="height:9.4%"></div><div class="lab"><span class="lv">-0.60%</span><span class="ln">自营消费贷<small>同比 +0.02</small></span></div></div>
+        <div class="col"><div class="bar dn c2" style="height:0.6%"></div><div class="lab"><span class="lv">-0.04%</span><span class="ln">经营贷<small>同比 -0.55</small></span></div></div>
+      </div>
+      <div class="small" style="margin-top:6px">双记账纪律：驾驶舱"净收入"回答规模贡献，本图回答价值贡献。个贷合计 +0.19% 为组合数；<b>产品层面仅网贷 +0.91% 为正</b>——"规模达标 ≠ 价值创造"，信用卡 Q2"超额"的另一面即在此（要点见下表）。</div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 18 · 信用卡专项五要点（99wiki 内部资料）</span><span class="vu">期间标注：余额轨迹至 8-13；收益率至 8-12；EVA 为 2026H1</span></div>
+      <table class="vis-table">
+        <tr><th style="width:17%">要点</th><th>结论与数据</th></tr>
+        <tr><td><b>① 主动缩量</b></td><td>唯一"主动缩量"的自营大资产：271.36（25 末）→ <b>220.4（8-13）</b>，YTD -66.9 亿（<b>-24.6%</b>），8 月自报再 -9.1 亿</td></tr>
+        <tr><td><b>② 考核错位</b></td><td>Q2"超额达标 +21.18 亿"实为较自目标（压降 27 亿）<b>少降 21 亿</b>——考核语言与经营现实错位</td></tr>
+        <tr><td><b>③ 收益三线下移</b></td><td>存量卡分期 5.99%→5.66%→4.75%→4.81%（8-12）、卡循环 5.24%→3.44%；新发放 7 月定价 4.85%（环比 -6bp）、投放占比仅 2.67%</td></tr>
+        <tr><td><b>④ 新政三线传导</b></td><td><b>受益线</b>：月供 -15% 利好卡交易 / 账单分期，竣工等待期 = 装修分期场景窗口；<b>受损线</b>：共债推升卡不良（还原不良损失 4.37% 上行为证据）；<b>挤压线</b>：消费贷冲量-回吐后再冲量将抬升违规入卡风险，卡条线合规闸门同步上调</td></tr>
+        <tr><td><b>⑤ 打法与结构证据</b></td><td>随e贷"以价补险"（EVA -2.93% 但同比 +1.57、不良损失同比 -1.50pct）值得复制优化；分行重客极度分化（完成率 32%~1110%，北京支用 2.34 亿居首）→ 总行需输出标准化打法</td></tr>
+      </table>
+    </div>
+    <div class="strip takeaway"><span class="st">本页结论</span>信用卡的战略定位应从"规模资产"切换为"<b>场景与客群资产</b>"——EVA 为负意味着靠规模冲考核创造的是账面收入而非价值；新政周期恰是转型窗口（按揭白名单交叉销售、装修分期场景、随e贷风控模式复制）。考核纪律：<b>EVA 转正前不冲规模</b>。观察：卡 EVA 转正时点、随e贷不良损失趋势、月供客群分期渗透率。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">09 / 14</span></footer>
+</section>
+
+<!-- ================= P09 风险层：六道闸门 ================= -->
+<section class="page" id="p09" data-page="10">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">08</span><span class="crumb">第八章 · 五层分析 · 风险层（六道闸门）</span></div>
+    <h2 class="ptitle">风险层：六道闸门</h2>
+    <p class="plede">总量安全垫是厚的：全行不良率 0.81%（2026Q2，Wind<span class="src b-wind">Wind，2026Q2</span>）。但真正的边界在四条线上：<b>网贷集中度</b>——2,330 亿（2026-03-31）在五家可比城商行中绝对额与占比双第一（41.9%），7 月零售新增投放中平台网贷占比 87.86%，叠加现金贷新发放 13.37%（8-12）高位波动，共债与监管敏感度同业最高；<b>房贷久期与低收益</b>——2.94% 低于自营新发放均值 3.17%，40 年久期拉大利率风险，真实 EVA 已转负（-0.08%）；<b>信用卡价值毁损</b>——综合 EVA -2.85%（还原不良损失 4.37% 上行），YTD 压降 -66.9 亿仍在缩表；<b>切换期</b>——"已首付未放款"场景的开发商关联传导。六道闸门中离利润引擎最近的是<b>网贷监管闸门</b>。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 19 · 六道闸门：风险源 → 应对动作</span><span class="vu">应对动作为策略建议；风险数据均出自底稿口径</span></div>
+      <div class="gates">
+        <div class="gate"><div class="g-h"><span class="gn">01</span><span class="gt">入口闸门 · 主办银行制</span></div>
+          <div class="g-r"><b>风险源</b>新房按揭客源向主办行集中，非主办行获客收窄。<b>应对</b>公司 / 零售联动争主办资格；非主办项目谈按揭转介合作。</div></div>
+        <div class="gate alt"><div class="g-h"><span class="gn">02</span><span class="gt">切换期闸门 · 2026-2028</span></div>
+          <div class="g-r"><b>风险源</b>"已首付未放款"存量暴露于项目停工与开发商资金链风险（全国开发投资 -19.2%，Wind EDB）。<b>应对</b>存量逐笔重检，台账覆盖率 100%。</div></div>
+        <div class="gate"><div class="g-h"><span class="gn">03</span><span class="gt">抵押物闸门 · LTV</span></div>
+          <div class="g-r"><b>风险源</b>政研通·贝壳口径：北京二手价自底部回升 5.2%、南京同比跌幅收窄至 -14.9%，但南京贝壳官方指数仍在阴跌（64.2，2026-07）。<b>应对</b>LTV 动态管理分城施策——"量升价未稳"不给放松依据。</div></div>
+        <div class="gate alt"><div class="g-h"><span class="gn">04</span><span class="gt">共债闸门 · 多头负债</span></div>
+          <div class="g-r"><b>风险源</b>房贷 + 网贷 + 卡多持客群；网贷 41.9% 占比同业第一，共债暴露同业最高；收入预期下行 + 房贷总利息 +39%（测算）叠加情景。<b>应对</b>压力测试必测叠加情景，共债集中度月度监测。</div></div>
+        <div class="gate"><div class="g-h"><span class="gn">05</span><span class="gt">合规闸门 · 资金流向</span></div>
+          <div class="g-r"><b>风险源</b>卖旧买新桥接需求诱发消费贷 / 网贷资金违规入楼市。<b>应对</b>桥接需求严禁入楼市；40 年按揭双面披露；受托支付流程嵌入。</div></div>
+        <div class="gate new"><div class="g-h"><span class="gn">06</span><span class="gt">网贷监管闸门</span></div>
+          <div class="g-r"><b>风险源</b>互联网贷款集中度、联合贷出资比例、地方监管口径变化——比房地产新政更直接约束部门利润引擎（净收入占比 79.0%）的变量。<b>应对</b>建立监管跟踪台账，新规变量纳入定价与额度预案。</div></div>
+      </div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 20 · 安全垫与错配对照：总量安全 ≠ 局部无险</span><span class="vu">对照为编辑归纳；数据口径逐行标注</span></div>
+      <table class="vis-table">
+        <tr><th style="width:20%">维度</th><th style="width:36%">安全垫（现状）</th><th>错配 / 传导路径（需要闸门的原因）</th></tr>
+        <tr><td><b>资产质量</b></td><td>全行不良率 0.81%（2026Q2，Wind），总量低位</td><td>个贷 / 按揭不良明细缺（待补数）→ 分层质量不可见，需共债与 Vintage 监测补位</td></tr>
+        <tr><td><b>敞口结构</b></td><td>房贷占管理口径 45.1%，规模基本盘稳定（内部资料）</td><td>入口被主办银行制重构 → 风险表现为获客与关系风险，而非当期资产质量风险</td></tr>
+        <tr><td><b>集中度</b></td><td>网贷 2,330 亿（2026-03-31 期末口径），净收入贡献 79.0%（5-21）</td><td>占比 41.9% 同业第一 + 新发放 13.37%（8-12）高位波动 + 7 月新增投放 87.86% 经平台渠道 → 共债与监管敏感度同业最高</td></tr>
+        <tr><td><b>久期 / 利率</b></td><td>网贷重定价快，方向与房贷相反（组合自然对冲，推断）</td><td>40 年久期 vs 短久期负债缺口扩大；利率反转上行期的资产贬值风险后移但未消失</td></tr>
+        <tr><td><b>切换期（2026-2028）</b></td><td>已签约未放款存量可用台账重检覆盖</td><td>开发投资 -19.2% 背景下，停工 → 客诉 → 声誉风险的传导快于报表风险</td></tr>
+      </table>
+    </div>
+    <p>六道闸门建议固化为两条治理线：一条是<b>预警线</b>——客诉水平、Vintage 逾期、共债集中度、LTV 偏离度、监管变量清单各设阈值，触线即暂停对应渠道的扩张动作；一条是<b>升级路径</b>——触线后短时限内完成风险复盘并给出收口方案。特别说明第六道闸门的定位：互联网贷款监管不是房地产政策的子集，而是平行变量——它的落地节奏不由《意见》决定，却直接约束净收入占比 79.0% 的引擎，跟踪优先级因此高于多数房地产细则。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>六道闸门是<b>时间轴关系</b>：切换期闸门（02）与合规闸门（05）0-3 个月必须落地；网贷监管闸门（06）与共债闸门（04）、入口闸门（01）贯穿全年；抵押物闸门（03）随政研通·贝壳量价数据逐月校准。风险层给行动建议的贡献，是让每个扩张动作自带边界条件运行。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">10 / 14</span></footer>
+</section>
+
+<!-- ================= P10 区域证据：政研通·贝壳量价 ================= -->
+<section class="page" id="p10" data-page="11">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">09</span><span class="crumb">第九章 · 区域证据：政研通·贝壳口径城市量价</span></div>
+    <h2 class="ptitle">区域证据：京宁二手量价解冻——"量先起、价未稳"</h2>
+    <p class="plede">本章引入政研通·贝壳口径城市量价证据（2026-08-29 实取，内部数据视图<span class="src b-bk">贝壳交付口径</span>）：南京（零售信贷基本盘样本）二手成交量 3-6 月同比连续为正、成交价同比跌幅从 -22.8% 收窄至 -14.9%；北京（对照样本）二手成交量 3-7 月同比连续为正、成交价自底部回升 5.2%。这是"卖旧买新链条解冻"的早期证据——但贝壳官方指数仍在阴跌，抵押物 LTV 不给放松依据。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 21 · 南京五指标明细 + 北京对照（政研通·贝壳交付口径）</span><span class="vu">2026-08-29 实取，dataView=internal/gov；带看 / 去化 / 官方指数仅城市级不可降维</span></div>
+      <table class="vis-table">
+        <tr><th style="width:24%">指标（代码）</th><th style="width:44%">读数与走势</th><th>对部门的含义</th></tr>
+        <tr><td>二手成交量（SH_VOL）</td><td>2026-03 小阳春 <b>4,684 套</b>（环比 +234%）；3-6 月同比连续为正（+23.6 / +17.1 / +6.2 / +8.1%）；7 月 2,392 套</td><td>卖旧端放量 → 二手按揭与联动 cross-sell 窗口</td></tr>
+        <tr><td>二手成交价（SH_PRICE）</td><td>19,340→16,634 元/㎡；同比 <b>-22.8%→-14.9% 收窄</b>；7 月环比转涨（16,893）</td><td>跌幅收窄但仍为负 → LTV 不放松</td></tr>
+        <tr><td>新增挂牌量（SUP_SH_LISTING）</td><td>同比 -20%~-35% 持续收缩</td><td>供给压力缓解，支撑量价修复的可持续性</td></tr>
+        <tr><td>带看量（VISIT_VOL）</td><td>3 月 14.3 万脉冲后 6-7 月同比转负（-15.0%）；转化率 7 月 2.7%（3 月 3.3%）</td><td>需求脉冲回落 → 窗口判断需按月复核</td></tr>
+        <tr><td>贝壳官方房价指数（KE_PRICE_INDEX）</td><td><b>64.2</b>（2026-07，2018-11=100）；月均仍跌 0.7-1.0</td><td>官方口径仍在阴跌 → 抵押物审慎口径不变</td></tr>
+        <tr><td>北京（对照样本）</td><td>二手成交量 3-7 月同比连续为正（年内月成交峰值 7,920 套）；成交价自底部 42,866 回升至 45,103 元/㎡（<b>+5.2%</b>），同比 -22.1%→-9.9%</td><td>一线对照印证"量先起"，价回升尚未扩散至南京</td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 22 · 南京二手成交量同比：连续四个月为正（3-6 月）</span><span class="vu">政研通·贝壳交付口径（SH_VOL）；条高 = 同比 / +23.6%</span></div>
+      <div class="chart">
+        <div class="col"><div class="bar c2" style="height:100%"></div><div class="lab"><span class="lv">+23.6%</span><span class="ln">2026-03<small>小阳春 · 4,684 套</small></span></div></div>
+        <div class="col"><div class="bar" style="height:72.5%"></div><div class="lab"><span class="lv">+17.1%</span><span class="ln">2026-04<small>同比连续为正</small></span></div></div>
+        <div class="col"><div class="bar" style="height:26.3%"></div><div class="lab"><span class="lv">+6.2%</span><span class="ln">2026-05<small>涨幅收窄但仍为正</small></span></div></div>
+        <div class="col"><div class="bar" style="height:34.3%"></div><div class="lab"><span class="lv">+8.1%</span><span class="ln">2026-06<small>小幅回升</small></span></div></div>
+      </div>
+      <div class="small" style="margin-top:6px">京宁互证：北京二手成交量 3-7 月同比连续为正（年内月成交峰值 7,920 套，未披露逐月同比数值）——两地"卖旧"端放量互为印证；南京 7 月成交量回落至 2,392 套，同比持续性列入观察指标。</div>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 23 · 贝壳官方房价指数：基点至今仍在阴跌</span><span class="vu">KE_PRICE_INDEX，2018-11=100（贝壳交付口径）；仅绘两个披露锚点，不插值</span></div>
+      <svg class="svgchart" viewBox="0 0 560 210" role="img" aria-label="贝壳官方房价指数从2018年11月基点100降至2026年7月的64.2，官方口径仍在阴跌">
+        <line x1="46" y1="36" x2="540" y2="36" stroke="#e6ebea" stroke-width="1"/><text x="8" y="40" font-size="10.5" fill="#6b7d7c">100</text>
+        <line x1="46" y1="68" x2="540" y2="68" stroke="#e6ebea" stroke-width="1"/><text x="8" y="72" font-size="10.5" fill="#6b7d7c">90</text>
+        <line x1="46" y1="100" x2="540" y2="100" stroke="#e6ebea" stroke-width="1"/><text x="8" y="104" font-size="10.5" fill="#6b7d7c">80</text>
+        <line x1="46" y1="132" x2="540" y2="132" stroke="#e6ebea" stroke-width="1"/><text x="8" y="136" font-size="10.5" fill="#6b7d7c">70</text>
+        <line x1="46" y1="164" x2="540" y2="164" stroke="#e6ebea" stroke-width="1"/><text x="8" y="168" font-size="10.5" fill="#6b7d7c">60</text>
+        <line x1="46" y1="180" x2="540" y2="180" stroke="#d9dedd" stroke-width="1"/>
+        <line x1="60" y1="36" x2="500" y2="150.6" stroke="#C4633F" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="60" cy="36" r="6" fill="#176C6B"/>
+        <circle cx="500" cy="150.6" r="6" fill="#C4633F"/>
+        <text x="72" y="30" font-size="12" font-weight="800" fill="#0f2322">100（基点）</text>
+        <text x="404" y="142" font-size="12" font-weight="800" fill="#C4633F">64.2（2026-07）</text>
+        <text x="200" y="96" font-size="11" font-weight="700" fill="#3a4b4a">累计 -35.8%（计算值）</text>
+        <text x="200" y="112" font-size="11" fill="#3a4b4a">近月月均仍跌 0.7-1.0 点 → 官方口径仍在阴跌</text>
+        <text x="40" y="200" font-size="10.5" fill="#6b7d7c">2018-11（=100）</text>
+        <text x="446" y="200" font-size="10.5" fill="#6b7d7c">2026-07</text>
+        <text x="46" y="24" font-size="10.5" font-weight="700" fill="#6b7d7c">纵轴：贝壳官方房价指数（KE_PRICE_INDEX，2018-11=100）</text>
+      </svg>
+    </div>
+    <p><b>对部门的含义：</b>"卖旧"端放量 + 挂牌收缩 + 成交价跌幅收窄 = 改善链条解冻的早期证据，支持二手房按揭主推策略与卖旧买新客群经营（第五章主线 B 的数据支点）；但官方指数未企稳，抵押物 LTV 动态管理不给放松依据。把城市证据与全国数据拼合——全国商品房销售 -11.8%、开发投资 -19.2%（Wind EDB，截至 2026-07）<span class="src b-wind">Wind EDB</span>——判断不变：<b>窗口在二手，风险在期房</b>。带看转化率回落（3.3%→2.7%）提示窗口的持续性需要按月复核，这正是观察指标把"京宁二手成交量同比持续性、南京贝壳官方指数何时走平"列入的原因。</p>
+    <div class="strip note"><span class="st">口径边界</span>本页数据为贝壳政研通·贝壳交付口径（2026-08-29 实取，dataView=internal/gov，内部数据视图）；带看 / 去化 / 官方指数仅城市级、<b>不可降维</b>至板块或楼盘；与 Wind EDB 官方价格序列并行使用，互为交叉验证而非替代。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">11 / 14</span></footer>
+</section>
+
+<!-- ================= P11 行动建议 ================= -->
+<section class="page" id="p11" data-page="12">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">10</span><span class="crumb">第十章 · 分阶段行动建议</span></div>
+    <h2 class="ptitle">行动建议：三阶段十一动作，两本账各有清单</h2>
+    <p class="plede">行动建议按"<b>制度落地 → 结构切换 → 新模式稳态</b>"三阶段展开，与政策生效节奏对齐，且按双引擎分账：房贷账的动作管入口与节奏（①②③⑤⑥⑧⑨），网贷账的动作管利润与合规（④⑦），联动作动管两个引擎的客户接口（⑩⑪）。每条动作均按"动作—客群—指标—约束"给出落点。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 24 · 三阶段路线图与十一项行动卡</span><span class="vu">指标与约束口径同底稿；完成时点为建议节奏</span></div>
+      <div class="phases">
+        <div class="phase">
+          <div class="ph-h"><span class="ph-t">第一阶段 · 制度落地期</span><span class="ph-w">0-3 个月</span></div>
+          <div class="ph-b">
+            <div class="act"><span class="a-no">1</span><span class="a-t">房贷产品要素改造</span><span class="a-m">40 年档位 + 竣工备案核验 + 受托支付 SOP 落地。<i>指标</i>：流程时效；<i>约束</i>：总利息 +39% 双面披露。</span></div>
+            <div class="act"><span class="a-no">2</span><span class="a-t">已签约未放款台账 100% 重检</span><span class="a-m">逐笔确认竣工预期与抵押状态。<i>指标</i>：重检覆盖率；<i>约束</i>：客诉预警线。</span></div>
+            <div class="act"><span class="a-no">3</span><span class="a-t">主办银行资格卡位</span><span class="a-m">公司 / 零售联动圈定省内重点项目。<i>指标</i>：主办行资格项目数。</span></div>
+            <div class="act"><span class="a-no">4</span><span class="a-t">网贷监管跟踪台账建立</span><span class="a-m">互联网贷款新规变量：集中度、联合贷出资比例、地方口径。<i>指标</i>：变量清单更新及时率。</span></div>
+          </div>
+        </div>
+        <div class="phase p2">
+          <div class="ph-h"><span class="ph-t">第二阶段 · 结构切换期</span><span class="ph-w">3-12 个月</span></div>
+          <div class="ph-b">
+            <div class="act"><span class="a-no">5</span><span class="a-t">二手房按揭主推 + 带押过户联动</span><span class="a-m">政研通量数据支持窗口判断（第九章）。<i>指标</i>：二手按揭新增占比。</span></div>
+            <div class="act"><span class="a-no">6</span><span class="a-t">卖旧买新客群 STP</span><span class="a-m">存量房贷客 + 改善标签；桥接需求合规承接。<i>指标</i>：转化率、资金流向合规率。</span></div>
+            <div class="act"><span class="a-no">7</span><span class="a-t">网贷共债压力测试</span><span class="a-m">收入预期下行 + 房贷利息 +39% 叠加情景；头部客群额度策略前移。<i>指标</i>：Vintage、共债集中度。</span></div>
+            <div class="act"><span class="a-no">8</span><span class="a-t">自营消费贷缺口合规补法</span><span class="a-m">75.6% 达成率缺口以家装分期等场景联动补齐，严禁冲量违规。<i>指标</i>：场景联动新增占比。</span></div>
+          </div>
+        </div>
+        <div class="phase p3">
+          <div class="ph-h"><span class="ph-t">第三阶段 · 新模式稳态期</span><span class="ph-w">12 个月 +</span></div>
+          <div class="ph-b">
+            <div class="act"><span class="a-no">9</span><span class="a-t">40 年客群全生命周期信贷管理产品线</span><span class="a-m">生命周期拉长后的信贷与财富安排。<i>指标</i>：客户产品持有数。</span></div>
+            <div class="act"><span class="a-no">10</span><span class="a-t">宏观审慎期权预案</span><span class="a-m">首付 / 利率工具启用后 48 小时可落地。<i>指标</i>：预案演练完成率。</span></div>
+            <div class="act"><span class="a-no">11</span><span class="a-t">网贷-房贷客户联动模型</span><span class="a-m">月供记录作网贷白名单、网贷行为数据反哺房贷准入。<i>约束</i>：客户授权与数据最小化。</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p><b>三阶段的内在逻辑：</b>第一阶段解决"合规可用"——没有竣工备案核验、受托支付 SOP 与监管台账，一切获客动作都带瑕疵运行；第二阶段解决"增长接续"——期房通道收窄的窗口期，二手按揭是替代战场，共债测试一攻一守同时铺开；第三阶段解决"价值兑现"——40 年绑定期客群的全生命周期经营是入口价值的最终变现形式，联动模型把两个引擎的客户接口制度化。三个阶段共用一条主线：<b>房贷经营从"放款时点"前移到"签约时点"、后延到"全生命周期"；网贷经营从"余额增速"切换到"风险调整后收益"</b>。</p>
+    <p>复盘节奏上，十一项动作共用一张月度复盘表：防御动作（2、4、7）看覆盖率与触线次数，进攻动作（3、5、6、8）看转化与占比，期权与联动动作（9、10、11）看演练与模型迭代。复盘表的目的不是考核本身，而是让第十一章的观察指标有人认领——每个指标背后必须有一个动作、一个责任主体和一个失败信号。</p>
+    <div class="strip takeaway"><span class="st">执行提示</span>十一项动作中，<b>动作 2（台账重检）、动作 4（网贷监管台账）与动作 7（共债测试）是防御性底线，优先级高于一切进攻动作</b>——切换期的客诉事件与网贷监管变量，任何一项失控都足以抵消二手按揭主推的全部增量。防御动作完成之前，进攻指标不设考核权重。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">12 / 14</span></footer>
+</section>
+
+<!-- ================= P12 观察指标与补数协议 ================= -->
+<section class="page" id="p12" data-page="13">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">11</span><span class="crumb">第十一章 · 观察指标与补数协议</span></div>
+    <h2 class="ptitle">观察指标与补数协议：让证据决定判断的存废</h2>
+    <p class="plede">本报告的判断需要在切换期接受证据检验。观察指标回答"哪些数据会证实或证误上述判断"；补数协议回答"哪些关键数据当前缺失、用什么替代口径、如何补齐"。口径校准：政研通城市量价通道已恢复引用，不再是缺口；底数期间统一 2026Q2 后，补数协议第⑤项为"期间统一待补项"（驾驶舱 6-30 期末快照、五家同业 26Q2 分产品、网贷期末余额权威核验）。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 25 · 观察指标表：八项指标各自回答什么问题</span><span class="vu">指标清单同底稿；"回答什么问题"列为编辑归纳</span></div>
+      <table class="vis-table">
+        <tr><th style="width:34%">观察指标</th><th style="width:48%">回答什么问题</th><th>关联章节</th></tr>
+        <tr><td>本行期房房贷放款时点分布与后移幅度</td><td>放款后移是否如预期落在 2-3 年区间</td><td>第一章 / 第五章主线 A</td></tr>
+        <tr><td>40 年期按揭占比</td><td>刚需客群对新档位的真实承接度</td><td>第六章产品层</td></tr>
+        <tr><td>二手房按揭新增占比</td><td>替代战场策略是否兑现</td><td>第十章行动 5</td></tr>
+        <tr><td>房贷净收入计划达成率（驾驶舱月度）</td><td>103.7% 的缓冲被后移吃掉的速度</td><td>第七章资产层</td></tr>
+        <tr><td>网贷余额回升斜率与新增定价（13.37% 基准，8-12；月度轨迹跟踪）</td><td>4 月 -19.83 亿后利润引擎的修复力度</td><td>第七章 / 第九章闸门 06</td></tr>
+        <tr><td>共债集中度与 Vintage</td><td>共债风险是否正在侵蚀 79% 的净收入盘子</td><td>第八章闸门 04</td></tr>
+        <tr><td>主办行资格项目数</td><td>入口之争的卡位进度</td><td>第八章闸门 01 / 第十章行动 3</td></tr>
+        <tr><td>京宁二手成交量同比持续性、南京贝壳官方指数何时走平</td><td>区域解冻窗口的持续性与抵押物审慎口径能否放松</td><td>第九章区域证据 / 闸门 03</td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 26 · 补数协议：缺失数据、替代口径与补齐路径（不计入 Part C 第 16 卡）</span><span class="vu">优先级为编辑建议（推断）；当前以标注口径为准</span></div>
+      <table class="vis-table">
+        <tr><th style="width:8%">编号</th><th style="width:34%">待补数项</th><th style="width:38%">当前替代口径</th><th>补齐路径 / 优先级</th></tr>
+        <tr><td>①</td><td>政研通城市量价（<b>已恢复</b>——贝壳口径城市量价已引用于第九章）</td><td>贝壳交付口径 2026-08-29 实取；城市级不可降维</td><td>按月滚动更新；<b>已完成</b></td></tr>
+        <tr><td>②</td><td>个贷不良率、房贷不良率（Wind 未披露 → <b>待补数</b>）</td><td>全行不良率 0.81%（2026Q2，Wind）作总量参照；分层判断标"推断"</td><td>中报 / 年报明细检索；<b>高</b></td></tr>
+        <tr><td>③</td><td>零售 AUM（不在零售信贷部范围，列联动观察）</td><td>框架性判断（入口价值高），不数量化</td><td>内部经营数据联动观察；中</td></tr>
+        <tr><td>④</td><td>南京商品房销售面积市统计局口径更新</td><td>城市量价以贝壳交付口径为准（第九章）</td><td>随统计局发布节奏滚动；中</td></tr>
+        <tr><td>⑤</td><td><b>期间统一待补项</b>：驾驶舱 2026-06-30 期末快照（现用 5-21 期内快照）；五家同业 26Q2 分产品个贷快照（现用 3-31）；网贷期末余额权威核验（现推算 2,790-2,850 亿 = 3,261.14 − 自营消费贷）</td><td>管理口径以 5-21 期内快照并明示日期；同业以 3-31 完整期单独标注期间；跨期不换算、不混排</td><td>6-30 快照与同业 26Q2 数据产出后统一换表；<b>高</b></td></tr>
+      </table>
+    </div>
+    <p><b>使用规则：</b>观察指标按月回看，任何一项连续两个观察期反向运行，即触发对应章节结论的降级复核——例如二手按揭新增占比连续未起量，则"替代战场"判断需要重估；南京贝壳官方指数重新走阔，则抵押物闸门的 LTV 动态管理应即时收紧。补数协议中编号 ②（个贷 / 按揭不良明细）与 ⑤（期间统一待补项）优先级最高：前者约束共债闸门与风险调整后收益判断，后者决定全部底数表能否在同一期间上安全对表——都是当前证据链上最大的空白。</p>
+    <p><b>与 Part C 的接口约定：</b>本页两表构成逻辑附件的素材边界——Part C 的 15 张逻辑卡与逻辑图以本主文的章节与口径为基准展开，不引入底稿之外的新数字；独立补数协议在 Part C 中单列（不作为第 16 卡），与本页 V23 同源同口径。若补数协议任一项在附件制作期间获得新数据，应先修订本表并同步更新正文对应标注，而不是在附件中静默替换口径。</p>
+    <div class="strip takeaway"><span class="st">本页结论</span>研究纪律落在两句话上：<b>判断必须绑定证据（观察指标），缺口必须公开（补数协议）</b>。凡 Wind 未披露或内外口径未核对的数据，本报告一律以"待补数"标注并给出替代口径，不以估算值冒充明细——这既是 Part B 与 Part C 的衔接界面，也是内部资料引用的口径底线。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">13 / 14</span></footer>
+</section>
+
+<!-- ================= P13 尾页来源披露 ================= -->
+<section class="page" id="p13" data-page="14">
+  <div class="pbody">
+    <div class="eyebrow"><span class="no">12</span><span class="crumb">尾页 · 来源披露与敏感边界</span></div>
+    <h2 class="ptitle">来源披露：每一个数字的来路与边界</h2>
+    <p class="plede">本报告全部内容以研究底稿 v2 为唯一内容源：对外口径取自 <b>Wind（600919.SH，底数统一 2026Q2；营收 / 归母净利 2026H1）</b>；政策条款以 <b>《意见》原文</b>为准；内部管理口径取自 <b>周报驾驶舱快照（2026-04-28 / 04-30 / 05-21）与五家城商行个贷月度快照（2026-03-31）</b>；宏观与城市数据取自 <b>Wind EDB（截至 2026-07）</b>；城市二手量价取自 <b>贝壳政研通·贝壳交付口径（2026-08-29 实取）</b>。所有"测算 / 推断"徽标保留，其余数字均可溯源。</p>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 27 · 来源体系表：来源、覆盖、口径与边界</span><span class="vu">来源披露总表</span></div>
+      <table class="vis-table">
+        <tr><th style="width:26%">来源</th><th style="width:30%">覆盖内容</th><th style="width:20%">期别 / 口径</th><th>边界与局限</th></tr>
+        <tr><td><b>Wind</b>（600919.SH）</td><td>对外披露口径：底数、营收、息差、不良</td><td>底数统一 2026Q2；营收 / 净利 2026H1</td><td>个贷不良率、按揭不良率明细未披露 → 待补数</td></tr>
+        <tr><td><b>《意见》原文</b></td><td>政策条款（七章 36 条）</td><td>2026-08-28 发布</td><td>实施细则与地方落地文件待追踪</td></tr>
+        <tr><td><b>周报驾驶舱</b><span class="src b-int">99wiki 内部资料</span></td><td>管理口径：产品净收入拆解、达成率、新发放利率</td><td>26Q2 期内快照：04-28 / 04-30 / 05-21（6-30 期末待补）</td><td><b>引用须注明出处，敏感数据不外发</b></td></tr>
+        <tr><td><b>五家城商行个贷月度快照</b><span class="src b-int">99wiki 内部资料</span></td><td>同业对照：个贷五分类</td><td>2026-03-31（同业可比最新完整期，26Q2 待补）</td><td>同上；占比为个贷口径非全口径资产</td></tr>
+        <tr><td><b>Wind EDB</b>（央行 / 国家统计局 / 南京市统计局）</td><td>宏观与全国量价：销售 -11.8%、开发投资 -19.2%</td><td>截至 2026-07</td><td>南京销售面积口径更新滞后 → 补数协议④</td></tr>
+        <tr><td><b>贝壳政研通·贝壳交付口径</b></td><td>城市二手量价：成交量 / 成交价 / 挂牌 / 带看 / 官方指数</td><td>2026-08-29 实取，dataView=internal/gov</td><td>带看 / 去化 / 官方指数仅城市级<b>不可降维</b></td></tr>
+      </table>
+    </div>
+    <div class="visual">
+      <div class="vis-head"><span class="vt">图表 28 · 标注体系：六类来源标签的语义约定</span><span class="vu">正文标注约定</span></div>
+      <div class="mech">
+        <div class="mstep hot"><div class="ms-t">（Wind，期别）</div><div class="ms-d">Wind 代码级来源数据，附期别口径；对外语境使用。</div></div>
+        <div class="mstep"><div class="ms-t">（《意见》原文）</div><div class="ms-d">政策条款表述，以文件原文为准，不做转述加工。</div></div>
+        <div class="mstep clay"><div class="ms-t">（驾驶舱·内部资料）</div><div class="ms-d">周报驾驶舱与个贷快照：99wiki 内部资料，<b>引用注明出处、敏感数据不外发</b>。</div></div>
+        <div class="mstep"><div class="ms-t">（贝壳交付口径）</div><div class="ms-d">政研通城市量价：2026-08-29 实取；城市级指标不可降维。</div></div>
+        <div class="mstep"><div class="ms-t">（计算值）</div><div class="ms-d">以已披露数值直接计算：如 2,462.43 / 27,703 ≈ 8.9%。</div></div>
+        <div class="mstep"><div class="ms-t">（测算）/（推断）/（待补数）</div><div class="ms-d">模型测算 / 分析判断 / 缺失数据标注：如月供 -15%、自然对冲、不良明细。</div></div>
+      </div>
+    </div>
+    <p><b>方法说明：</b>本报告采用银行零售金融五层分析框架（战略层决定方向、客群经营层决定对象、产品层决定武器、资产层决定结果、风险层决定边界）× 政策传导链 × 双口径底数，把七章 36 条翻译为零售信贷部的可执行命题。全文区分事实、推断与建议；不虚构数字、不把集团与银行口径混用、不把余额与发生额混用、不把对外合并口径与管理单列口径混用。<b>关联交付：</b>Part C 逻辑附件（15 张逻辑卡 + 逻辑图 + 独立补数协议）与本主文同版本目录交付，两者分别通过各自分型验收后方可组成完整研究包。</p>
+    <div class="strip note"><span class="st">敏感边界</span>本报告含 99wiki 内部资料（周报驾驶舱、五家城商行个贷快照、政研通内部数据视图）——<b>引用注明出处、敏感数据不外发</b>；城市级过程指标（带看 / 去化 / 官方指数）仅到城市颗粒度，不降维至板块、楼盘或客户。</div>
+    <div class="strip note"><span class="st">免责声明</span>本报告为行业研究用途，基于公开信息与已披露数据制作，不构成任何投资建议或经营承诺。数据期与口径以文中标注为准；后续政策实施细则、统计口径修订或披露更新可能影响本报告结论，请以最新披露为准。</div>
+    <div class="strip takeaway"><span class="st">版本信息</span>99wiki 研究主文 Part B · <b>v2 修订版</b> · 2026-08-29 · 内容源：内容底稿_苏银零售新政影响_v2.md（唯一内容源）。v2 相对 v1 的关键修订：①研究对象明确为"零售信贷部"；②双口径结构纠正——对外"消费贷 3,276 亿"合并网贷不作结构观点，管理口径下自营第一大资产为房贷、净收入引擎为网贷；③新增同业对照表；④新增政研通·贝壳口径城市量价证据节；⑤风险层扩为六道闸门（新增网贷监管闸门）；⑥全文标注内部资料敏感边界；⑦期间统一修订：底数仪表盘统一 2026Q2，对外消费贷 / 经营贷换用 Wind 26Q2 值（3,261.14 / 545.41 亿），驾驶舱以 5-21 期内快照明示日期，同业对照保持 2026-03-31 并标注 26Q2 待补。页脚署名全篇按 2026-08-16 约定统一输出，无历史署名残留。</div>
+  </div>
+  <footer class="pfoot"><span class="sig">98wiki ｜ 智见 / 行业研究报告</span><span class="pno">14 / 14</span></footer>
+</section>
+
+</main>
+</body>
+</html>

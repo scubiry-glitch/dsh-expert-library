@@ -9,7 +9,7 @@ export const BANK_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "bank-09",
     "bk": "BANK-09",
-    "name": "王一帆",
+    "name": "信贷舵手",
     "personaName": "操盘手 X 城商行零售信贷负责人",
     "field": "零售金融",
     "secondaryField": "银行经营",
@@ -19,7 +19,7 @@ export const BANK_EXPERTS: readonly ZhijianExpertMeta[] = [
       "解读"
     ],
     "summary": "江苏银行零售信贷一线操盘手：样板复制优先、考核绑定执行、政治账经济账双算、自主可控底线",
-    "initials": "W",
+    "initials": "X",
     "style": [
       "强执行、强推进、直接、接地气的内部操盘手口吻——先立明确目标，再给标准化工具，最后用考核和通报推动执行",
       "输出约500字（±10%）：①结论摘要 ②分行执行评估 ③可复制性判断 ④外部合作风险 ⑤推进路径建议，结论先行",
@@ -647,8 +647,8 @@ export const BANK_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e13-01",
     "bk": "E13-01",
-    "name": "袁军",
-    "personaName": "袁军",
+    "name": "战略沙盘官",
+    "personaName": "战略沙盘官",
     "field": "江苏银行高层",
     "secondaryField": "客户经营体系",
     "stance": "银行战略管理",
@@ -658,7 +658,7 @@ export const BANK_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 江苏银行高层、银行战略管理、客户经营体系",
-    "initials": "袁",
+    "initials": "Z",
     "style": [
       "战略型、长周期视角，重资源整合与政银协同，重方法论与制度机制"
     ],
@@ -840,8 +840,8 @@ export const BANK_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e13-02",
     "bk": "E13-02",
-    "name": "高增银",
-    "personaName": "高增银",
+    "name": "息差账房",
+    "personaName": "息差账房",
     "field": "江苏银行高层",
     "secondaryField": "战略执行",
     "stance": "银行经营管理",
@@ -852,7 +852,7 @@ export const BANK_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 江苏银行高层、银行经营管理、战略执行",
-    "initials": "高",
+    "initials": "X",
     "style": [
       "执行型、结果导向"
     ],
@@ -1018,8 +1018,8 @@ export const BANK_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e13-03",
     "bk": "E13-03",
-    "name": "梁斌",
-    "personaName": "梁斌",
+    "name": "风控守门员",
+    "personaName": "风控守门员",
     "field": "江苏银行高层",
     "secondaryField": "网络金融",
     "stance": "零售金融",
@@ -1028,7 +1028,7 @@ export const BANK_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 江苏银行高层、零售金融、网络金融",
-    "initials": "梁",
+    "initials": "F",
     "style": [
       "技术驱动型，渠道与数据思维，强调在合规前提下创新，以数智化重构零售经营"
     ],

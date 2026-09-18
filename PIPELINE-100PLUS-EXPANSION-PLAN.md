@@ -72,7 +72,7 @@ pipeline（内容生产流水线）的专家库模块已上线（PRD §6.5 标�
 | 房地产专家 Profile | `domain-packs/zhijian-realestate/source/raw-profiles/` | 33 位（BK-002~034，已在包内） | 基线，不动 |
 | 政研通专家 Profile | `/root/.openclaw/workspace/98wiki/feishu/20260810_政研通专家Profile_BK1-31.zip` | 31 位（BK-002~032 同名集，含 md 版） | 作为 BK 集**差异核对源**（补 md/原始材料） |
 | BK Profile 散件 | `/root/.openclaw/workspace/98wiki/feishu/*专家Profile_BK-*.json` | 27 份 | 同上，交叉验证字段完整性 |
-| 银行专家 | `/root/.openclaw/workspace/skills/bank-99/`、`BANK-09 王一帆`（专家体系） | 1+ 位 + skill | **新建 bank-99 领域包**（BANK 命名空间） |
+| 银行专家 | `/root/.openclaw/workspace/skills/bank-99/`、`BANK-09 信贷舵手`（专家体系） | 1+ 位 + skill | **新建 bank-99 领域包**（BANK 命名空间） |
 | 专家体系文档 | `/root/.openclaw/workspace/99wiki/projects/专家体系/`（BANK-99 调用说明、王一帆画像） | 文档 | 包文档与调用说明 |
 | 会议纪要/逐字稿 | `98wiki/feishu/*智能纪要/逐字稿*`、`meeting-notes/` | 多份 | P2「人物转专家」素材源 |
 | 原始材料（文章/访谈/研报） | `专家材料/`（skill 素材） | 部分 | 挂 `knowledge/experts/<id>/` |
@@ -107,7 +107,7 @@ Source（散落素材：Profile JSON/docx、总表、skill zip、BANK 画像、�
 ```text
 domain-packs/
 ├── zhijian-realestate/   # 已有（BK-002~034，33 位）——P0 仅做补全与核对
-└── bank-finance/         # 新建（BANK 命名空间；首发 BANK-09 王一帆 + bank-99 skill 引用）
+└── bank-finance/         # 新建（BANK 命名空间；首发 BANK-09 信贷舵手 + bank-99 skill 引用）
     ├── pack.json         # id: bank-finance, schemaVersion: 2
     ├── experts/          # bank-09.json …
     ├── scenarios/        # bank-review / credit-card-analysis（对应江苏银行归档任务）
@@ -167,7 +167,7 @@ domain-packs/
 | P0.1 | 盘点所有本地专家素材，输出素材清单 | `domain-packs/MATERIAL-INVENTORY.md` | 清单覆盖 §2.3 全部条目，标注去重关系 |
 | P0.2 | 泛化 `build-zhijian-data.mjs` → 通用 `build-packs.mjs`（多源 adapter + 双命名空间 + 字段 diff） | `scripts/build-packs.mjs` + `scripts/pack-sources/*.mjs` | BK 基线重建后产物与现有 `experts.generated.ts` 逐字节一致（golden 对比） |
 | P0.3 | 政研通 zip + feishu 27 份与包内 raw 交叉核对 | 字段级 diff 报告；补 md/原始材料到 `source/` | 33 位 BK 全字段齐备；差异清单 ≤ 阈值并注明原因 |
-| P0.4 | 新建 `bank-finance` 领域包（BANK-09 王一帆 + bank-99 skill 引用 + 江苏银行归档任务 → 场景） | `domain-packs/bank-finance/` | `validateDomainPack` 零错误；`build-zhijian-pack.mjs` 可重建；`pnpm test` 全绿 |
+| P0.4 | 新建 `bank-finance` 领域包（BANK-09 信贷舵手 + bank-99 skill 引用 + 江苏银行归档任务 → 场景） | `domain-packs/bank-finance/` | `validateDomainPack` 零错误；`build-zhijian-pack.mjs` 可重建；`pnpm test` 全绿 |
 | P0.5 | BANK 质量策略（脱敏规则）接入质量链 | `quality-policies/bank.json` + gate 测试 | 含手机号/账号样例的测试通过脱敏 gate |
 | P0.6 | 打包发布 | 新版本插件 | Web UI 专家卡片可见 bank-09；`expert_teams_add_member(expert='bank-09')` 可建队 |
 

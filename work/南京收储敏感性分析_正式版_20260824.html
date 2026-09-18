@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>南京江北新区合资收储敏感性分析（正式版 · 20260824）</title>
+<style>
+@page {
+  size: A4;
+  margin: 22mm 17mm 19mm 17mm;
+  @top-center {
+    content: "智见行业研究 ｜ 行业研究报告";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-bottom: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: bottom; padding-bottom: 2mm;
+  }
+  @bottom-center {
+    content: "智见行业研究 ｜ 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family: "Noto Sans CJK SC", sans-serif;
+    font-size: 8pt; color: #8a8f99;
+    border-top: 0.5pt solid #c9ced6;
+    width: 100%; vertical-align: top; padding-top: 2mm;
+  }
+}
+@page :first { @top-center { content: none; border: none; } }
+html { -weasy-hyphens: auto; }
+body {
+  font-family: "Noto Sans CJK SC", "Noto Sans CJK HK", sans-serif;
+  font-size: 9.0pt; line-height: 1.56; color: #1f2733; margin: 0;
+  text-align: justify;
+}
+/* ---- 封面 ---- */
+.cover { page-break-after: always; text-align: center; padding-top: 30mm; }
+.cover .kicker { font-size: 10pt; color: #b8860b; letter-spacing: 3pt; margin-bottom: 8mm; }
+.cover h1.title {
+  font-size: 21pt; font-weight: 700; color: #14304f; text-align: center;
+  margin: 0 0 4mm 0; letter-spacing: 1pt; line-height: 1.4;
+}
+.cover .subtitle {
+  text-align: center; font-size: 12pt; color: #3d5573; font-weight: 600;
+  margin: 0 0 10mm 0;
+}
+.cover .rule { border: none; border-top: 1.6pt solid #14304f; margin: 0 auto 8mm auto; width: 60%; }
+.cover .meta {
+  background: #f3f6fa; border-left: 3pt solid #14304f; border-right: 3pt solid #14304f;
+  padding: 4mm 6mm; font-size: 9pt; line-height: 1.7; margin: 0 auto 8mm auto;
+  text-align: left; width: 82%;
+}
+.cover .meta p { margin: 0.8mm 0; }
+.kpi-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 4mm; margin: 0 auto 10mm auto; width: 90%; }
+.kpi-card {
+  border: 1pt solid #b9c4d2; border-top: 3pt solid #14304f; background: #ffffff;
+  padding: 3mm 3mm; width: 42%; text-align: center; page-break-inside: avoid;
+}
+.kpi-card .k { font-size: 8pt; color: #5b6570; margin-bottom: 1mm; }
+.kpi-card .v { font-size: 13.5pt; font-weight: 700; color: #14304f; }
+.kpi-card .s { font-size: 7.6pt; color: #8a8f99; margin-top: 0.6mm; }
+/* ---- 正文 ---- */
+h2 {
+  font-size: 13pt; color: #14304f; margin: 4.5mm 0 2mm 0;
+  padding-bottom: 1mm; border-bottom: 1.2pt solid #b9c4d2; font-weight: 700;
+  page-break-after: avoid;
+}
+h3 { font-size: 10.8pt; color: #23486e; margin: 3mm 0 1.4mm 0; font-weight: 700; page-break-after: avoid; }
+p { margin: 0 0 1.8mm 0; }
+strong { color: #10263f; }
+table {
+  width: 100%; border-collapse: collapse; margin: 1.6mm 0 2.6mm 0;
+  font-size: 7.8pt; line-height: 1.4; table-layout: fixed;
+  page-break-inside: auto;
+}
+th, td {
+  border: 0.5pt solid #aab4c0; padding: 1.4mm 1.8mm;
+  vertical-align: top; word-wrap: break-word; overflow-wrap: anywhere;
+}
+th { background: #14304f; color: #ffffff; font-weight: 600; text-align: center; }
+tr:nth-child(even) td { background: #f5f8fb; }
+tr { page-break-inside: avoid; }
+blockquote {
+  margin: 2.2mm 0; padding: 2mm 4mm; background: #fbf6ec;
+  border-left: 3pt solid #b8860b; font-size: 8.8pt; color: #5a4a1e;
+}
+ul { margin: 1mm 0 2.4mm 0; padding-left: 5.5mm; }
+li { margin: 0.5mm 0; }
+ul.refs { font-size: 8.4pt; }
+ul.refs li { word-wrap: break-word; overflow-wrap: anywhere; }
+.note { font-size: 8.4pt; color: #5b6570; }
+.tag { display: inline-block; background:#14304f; color:#fff; font-size:7.4pt; padding:0.2mm 1.6mm; border-radius:1.5mm; margin-right:1mm; }
+.tag-inf { background:#8a6d1a; }
+.tag-ok { background:#1d6f42; }
+.tag-risk { background:#a33; }
+.callout {
+  background: #eef4fb; border-left: 3pt solid #14304f; padding: 2.5mm 4mm;
+  font-size: 9.2pt; margin: 2.5mm 0; page-break-inside: avoid;
+}
+.svg-wrap { text-align: center; margin: 2.5mm 0; page-break-inside: avoid; }
+.svg-wrap svg { max-width: 100%; height: auto; }
+.figure-cap { font-size: 8pt; color: #5b6570; text-align: center; margin: 0.8mm 0 3mm 0; }
+</style>
+</head>
+<body>
+<h1>南京江北新区合资收储敏感性分析（正式版 · 20260824）</h1>
+<blockquote>
+<p>测算体系参照《沪八条「收购二手住房→保障性租赁住房」资产转换单元经济研究（优化版）》第三章（判定式 → 锚点测算 → 组合判定 → 敏感性矩阵 → 换算关系 → CAPEX/空置 → 放量资金与贴息）。<br>
+数据：政研通·贝壳研究院/贝壳平台（成出口径，2026-07 基准）· Wind EDB · 智见点评专家团融合稿。全部测算标注【测算】，可复算（附录 A）。</p>
+</blockquote>
+<hr>
+<h2>一、模型设定与判定式</h2>
+<p><strong>判定式：租金收益率 r ≥ 资金成本 c</strong>，其中：</p>
+<blockquote>
+<p><strong>式 1</strong>　r = 12 × R_m × q × o ÷ (d × P_m)</p>
+</blockquote>
+<p><strong>盈亏平衡折扣（式 2）</strong>：令 r = c，解出给定资金成本下的最大可承受收购折扣：</p>
+<blockquote>
+<p><strong>式 2</strong>　d* = 12 × R_m × q × o ÷ (c × P_m)</p>
+</blockquote>
+<p><strong>净口径（式 3）</strong>：法拍/低价标的须计入改造与风险成本（见第七章），定义真实回报率：</p>
+<blockquote>
+<p><strong>式 3</strong>　r_net = 式 1 − CAPEX 摊销率 − 风险备付金率</p>
+</blockquote>
+<p><strong>与上海版（沪八条）的模型差异</strong>：① 收购标的为法拍/低价房源，折扣更深（0.55–0.80 vs 上海 0.75–0.90）；② 南京租金收益率基数更高（K/P_m ≈ 1.71% vs 上海 1.41%）；③ 收益结构为三通道混合模型（保租/安置/销售），ROE 是核心判据而非单一租金利差；④ 法拍特有成本（翻新、税费/腾退缓冲、清场空置）须显式入模。</p>
+<h2>二、基准参数（南京版）</h2>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>符号</th>
+<th>取值</th>
+<th>依据</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>标的</td>
+<td>—</td>
+<td>江北新区 94㎡（浦口/六合次新、法拍房）</td>
+<td>全市套均面积口径</td>
+</tr>
+<tr>
+<td>市场公允价值</td>
+<td>P_m</td>
+<td>113 万元（浦口 1.2 万/㎡ × 94㎡；六合 7,990 元/㎡ × 94 ≈ 75 万为低端参照）</td>
+<td>政研通区级示意（2026-07）</td>
+</tr>
+<tr>
+<td>市场月租金</td>
+<td>R_m</td>
+<td>1,990 元/月（浦口套均；六合 1,398 元）</td>
+<td>政研通区级示意</td>
+</tr>
+<tr>
+<td>租金折扣</td>
+<td>q</td>
+<td>0.9（保租房制度上限）</td>
+<td>2022 年制度规则</td>
+</tr>
+<tr>
+<td>出租率</td>
+<td>o</td>
+<td>0.90（基准；B2B 集体宿舍锁定 ≥90%）</td>
+<td>专家团建议 + 假设</td>
+</tr>
+<tr>
+<td>收缴率</td>
+<td>—</td>
+<td>1.0（基准）</td>
+<td>假设</td>
+</tr>
+<tr>
+<td>收购折扣</td>
+<td>d</td>
+<td>0.55–0.80</td>
+<td>法拍市场惯例【测算】</td>
+</tr>
+<tr>
+<td>资金成本</td>
+<td>c</td>
+<td>1.75%（再贷款）/ 2.5%（综合）/ 3.5%（市场化）</td>
+<td>Wind EDB</td>
+</tr>
+<tr>
+<td>经常性成本率</td>
+<td>—</td>
+<td>0.6pp（CAPEX 摊销 0.4–0.6pp + 备付金 0.1–0.2pp）</td>
+<td>第七章【测算】</td>
+</tr>
+</tbody>
+</table>
+<p><strong>基准年净租金 K</strong> = 12 × 1,990 × 0.9 × 0.9 = 19,343 元；<strong>K/P_m = 1.7118%</strong>。</p>
+<h2>三、锚点测算（条件式，全部标注【测算】）</h2>
+<p><strong>锚点 A——标的与收购折扣（实测 × 测算）</strong>：江北新区浦口区二手成交均价 1.2 万/㎡（政研通区级示意，2026-07），94㎡ 标的公允价值约 113 万元；法拍房/低于市场价房源按市场惯例以评估价 6–7 折成交（首拍 7–8 折、二拍 5.6–6.4 折、低价房 8–9 折）【测算】——<strong>收购价 67.8–79.1 万元/套</strong>。法拍房公允价值不可直接观测（流拍与折扣并存），6 折基准内含税费/腾退缓冲 5–8%【测算】。</p>
+<p><strong>锚点 B——租金收益率（实测 × 测算，双口径并列）</strong>：① 标的级：浦口 94㎡ 月租 1,990 元（政研通）→ 年毛租金 23,880 元 → 对 6 折收购价（67.8 万）毛收益率 <strong>3.52%</strong>；九折纳管 → <strong>3.17%</strong>；90% 出租率折后 <strong>2.85%</strong>（对 7 折收购价相应为 3.02% → 2.72% → 2.45%）。② 全市平均（政研通）：套均租金 3,029 元 / 套均总价 159 万 → 年化回报率 <strong>2.29%</strong>（2026-07，自 2026-03 的 2.03% 抬升）。<strong>收购标的（洼地区+深折扣）收益率高于全市平均，方向与上海版相反但逻辑一致——折扣越深、回报率越高。</strong></p>
+<p><strong>锚点 C——资金成本（Wind 确认）</strong>：保障性住房再贷款 1 年期 <strong>1.75%</strong>（央行 EDB）vs 5Y LPR 3.5% vs 1Y LPR 3.0%；综合（含区财政配套）约 2.0%–3.0%【测算】。再贷款与市场化融资之间隔着 175bp 政策红利——<strong>用足再贷款通道与依赖市场化融资，对南京收储是"成立"与"不成立"的区别</strong>。</p>
+<p><strong>锚点 D——三通道组合判定（条件式）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>通道</th>
+<th>收购折扣</th>
+<th>收益逻辑</th>
+<th>对资金成本 1.75%</th>
+<th>对资金成本 2.5%</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>保租房</td>
+<td>6 折（r_net 2.25%）</td>
+<td>租金净利差</td>
+<td>+0.50pp</td>
+<td>−0.25pp</td>
+<td>1.75% 下成立；2.5% 下临界</td>
+</tr>
+<tr>
+<td>拆迁安置</td>
+<td>6 折收、8 折安置</td>
+<td>一次性价差 22.6 万/套 ≈ 收购价 33%</td>
+<td>现金流确定（政府订单）</td>
+<td>同左</td>
+<td>不依赖利率，<strong>成立</strong></td>
+</tr>
+<tr>
+<td>二次销售</td>
+<td>6 折收、9 折卖</td>
+<td>毛利 26.9 万/套 ≈ 收购价 40%（扣翻新 7 万）</td>
+<td>价格下行敏感</td>
+<td>同左</td>
+<td><strong>价格企稳确认前后置</strong></td>
+</tr>
+</tbody>
+</table>
+<div class="svg-wrap">
+<svg width="730" height="150" viewBox="0 0 730 150" xmlns="<a href="http://www.w3.org/2000/svg">http://www.w3.org/2000/svg</a>" font-family="Noto Sans CJK SC">
+<rect x="24" y="30" width="212" height="96" rx="6" fill="#1d6f42"/>
+<text x="130" y="52" fill="#fff" font-size="12" text-anchor="middle">保租通道</text>
+<text x="130" y="74" fill="#fff" font-size="9" text-anchor="middle">6折收·r_net 2.25%</text>
+<text x="130" y="94" fill="#d6ecd6" font-size="9" text-anchor="middle">1.75% 成立(+0.50pp)</text>
+<text x="130" y="112" fill="#ffffff" font-size="10" text-anchor="middle">租金利差·现金流型</text>
+<rect x="256" y="30" width="212" height="96" rx="6" fill="#8a6d1a"/>
+<text x="362" y="52" fill="#fff" font-size="12" text-anchor="middle">安置通道</text>
+<text x="362" y="74" fill="#fff" font-size="9" text-anchor="middle">6折收·8折安置</text>
+<text x="362" y="94" fill="#f3e7c9" font-size="9" text-anchor="middle">价差 22.6万/套≈33%</text>
+<text x="362" y="112" fill="#ffffff" font-size="10" text-anchor="middle">政府订单·确定性</text>
+<rect x="488" y="30" width="212" height="96" rx="6" fill="#a33"/>
+<text x="594" y="52" fill="#fff" font-size="12" text-anchor="middle">销售通道</text>
+<text x="594" y="74" fill="#fff" font-size="9" text-anchor="middle">6折收·9折卖</text>
+<text x="594" y="94" fill="#f6d6d6" font-size="9" text-anchor="middle">毛利 26.9万/套≈40%</text>
+<text x="594" y="112" fill="#ffffff" font-size="10" text-anchor="middle">价格敏感·后置</text>
+</svg>
+<div class="figure-cap">图 1｜三通道组合判定（6 折收购基准【测算】）</div>
+</div>
+
+<p><strong>读表结论</strong>：三通道中<strong>安置通道不依赖利率、现金流确定（政府订单）</strong>，是组合的压舱石；保租通道在 1.75% 资金下成立、2.5% 下临界，靠租金利差；销售通道收益率最高但价格下行敏感，<strong>在价格企稳确认前（贝壳指数未转升）应保持 ≤25% 权重并后置</strong>。</p>
+<h2>四、盈亏平衡折扣分析</h2>
+<p><strong>式 2/式 3 复算（毛口径与净口径）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>资金成本 c</th>
+<th>d*（毛）</th>
+<th>d*（净）</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.75%（再贷款）</td>
+<td>9.8 折</td>
+<td><strong>7.3 折</strong></td>
+<td>净口径 7 折以内成立；6 折基准留有余量</td>
+</tr>
+<tr>
+<td>2.0%（综合低端）</td>
+<td>8.6 折</td>
+<td>6.6 折</td>
+<td>需深度折扣</td>
+</tr>
+<tr>
+<td>2.5%（综合中端）</td>
+<td>6.8 折</td>
+<td>5.5 折</td>
+<td>仅 5.5 折以内成立</td>
+</tr>
+<tr>
+<td>3.0%（综合高端）</td>
+<td>5.7 折</td>
+<td>4.8 折</td>
+<td>基本不可行</td>
+</tr>
+<tr>
+<td>3.5%（市场化）</td>
+<td>4.9 折</td>
+<td>4.2 折</td>
+<td>不可行</td>
+</tr>
+</tbody>
+</table>
+<p><strong>敏感区间</strong>（租金 ±10%、P_m ±11%：K/P_m = 1.38%–2.13%）：d<em>(净,1.75%) = </em><em>5.9–9.1 折</em><em>；d</em>(净,2.5%) = 4.4–6.9 折。</p>
+<p><strong>读表结论：资金成本每上升 1pp，盈亏平衡折扣需加深约 0.56 折（1.75% 档）/0.27 折（2.5% 档）/0.14 折（3.5% 档），随 c 上升递减——"再贷款通道是氧气"由此量化。</strong> 反向换算：收购折扣每收紧 0.5 折，租金收益率下降约 0.17–0.24pp（南京 r 基数高于上海，敏感度高于上海的 0.10–0.13pp）。</p>
+<h2>五、敏感性矩阵：收购折扣 × 资金成本</h2>
+<p><strong>表 A（毛口径 r，%）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>d \ c</th>
+<th>1.75%</th>
+<th>2.5%</th>
+<th>3.5%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.55</td>
+<td>3.11（+1.36）</td>
+<td>3.11（+0.61）</td>
+<td>3.11（−0.39）</td>
+</tr>
+<tr>
+<td>0.60</td>
+<td>2.85（+1.10）</td>
+<td>2.85（+0.35）</td>
+<td>2.85（−0.65）</td>
+</tr>
+<tr>
+<td>0.65</td>
+<td>2.63（+0.88）</td>
+<td>2.63（+0.13）</td>
+<td>2.63（−0.87）</td>
+</tr>
+<tr>
+<td>0.70</td>
+<td>2.45（+0.70）</td>
+<td>2.45（−0.05）</td>
+<td>2.45（−1.05）</td>
+</tr>
+<tr>
+<td>0.75</td>
+<td>2.28（+0.53）</td>
+<td>2.28（−0.22）</td>
+<td>2.28（−1.22）</td>
+</tr>
+<tr>
+<td>0.80</td>
+<td>2.14（+0.39）</td>
+<td>2.14（−0.36）</td>
+<td>2.14（−1.36）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>表 B（净口径 r_net = r − 0.6pp，%）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>d \ c</th>
+<th>1.75%</th>
+<th>2.5%</th>
+<th>3.5%</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.55</td>
+<td>2.51（+0.76）</td>
+<td>2.51（+0.01）</td>
+<td>2.51（−0.99）</td>
+</tr>
+<tr>
+<td>0.60</td>
+<td>2.25（+0.50）</td>
+<td>2.25（−0.25）</td>
+<td>2.25（−1.25）</td>
+</tr>
+<tr>
+<td>0.65</td>
+<td>2.03（+0.28）</td>
+<td>2.03（−0.47）</td>
+<td>2.03（−1.47）</td>
+</tr>
+<tr>
+<td>0.70</td>
+<td>1.85（+0.10）</td>
+<td>1.85（−0.65）</td>
+<td>1.85（−1.65）</td>
+</tr>
+<tr>
+<td>0.75</td>
+<td>1.68（−0.07）</td>
+<td>1.68（−0.82）</td>
+<td>1.68（−1.82）</td>
+</tr>
+<tr>
+<td>0.80</td>
+<td>1.54（−0.21）</td>
+<td>1.54（−0.96）</td>
+<td>1.54（−1.96）</td>
+</tr>
+</tbody>
+</table>
+<div class="svg-wrap">
+<svg width="730" height="200" viewBox="0 0 730 200" xmlns="<a href="http://www.w3.org/2000/svg">http://www.w3.org/2000/svg</a>" font-family="Noto Sans CJK SC">
+<text x="100" y="22" fill="#14304f" font-size="10" text-anchor="middle">收购折扣（净口径 r_net）\ 资金成本</text>
+<text x="280" y="22" fill="#14304f" font-size="10" text-anchor="middle">1.75% 再贷款</text>
+<text x="450" y="22" fill="#14304f" font-size="10" text-anchor="middle">2.5% 综合</text>
+<text x="620" y="22" fill="#14304f" font-size="10" text-anchor="middle">3.5% 市场化</text>
+<text x="100" y="52" fill="#14304f" font-size="10" text-anchor="middle">5.5折</text>
+<rect x="200" y="38" width="160" height="26" rx="6" fill="#1d6f42"/>
+<text x="280" y="55" fill="#fff" font-size="8.5" text-anchor="middle">成立 +0.76pp</text>
+<rect x="370" y="38" width="160" height="26" rx="6" fill="#8a6d1a"/>
+<text x="450" y="55" fill="#fff" font-size="8.5" text-anchor="middle">临界 +0.01pp</text>
+<rect x="540" y="38" width="160" height="26" rx="6" fill="#a33"/>
+<text x="620" y="55" fill="#fff" font-size="8.5" text-anchor="middle">缺口 0.99pp</text>
+<text x="100" y="86" fill="#14304f" font-size="10" text-anchor="middle">6折</text>
+<rect x="200" y="72" width="160" height="26" rx="6" fill="#1d6f42"/>
+<text x="280" y="89" fill="#fff" font-size="8.5" text-anchor="middle">成立 +0.50pp</text>
+<rect x="370" y="72" width="160" height="26" rx="6" fill="#a33"/>
+<text x="450" y="89" fill="#fff" font-size="8.5" text-anchor="middle">缺口 0.25pp</text>
+<rect x="540" y="72" width="160" height="26" rx="6" fill="#a33"/>
+<text x="620" y="89" fill="#fff" font-size="8.5" text-anchor="middle">缺口 1.25pp</text>
+<text x="100" y="120" fill="#14304f" font-size="10" text-anchor="middle">6.5折</text>
+<rect x="200" y="106" width="160" height="26" rx="6" fill="#1d6f42"/>
+<text x="280" y="123" fill="#fff" font-size="8.5" text-anchor="middle">成立 +0.28pp</text>
+<rect x="370" y="106" width="160" height="26" rx="6" fill="#a33"/>
+<text x="450" y="123" fill="#fff" font-size="8.5" text-anchor="middle">缺口 0.47pp</text>
+<rect x="540" y="106" width="160" height="26" rx="6" fill="#a33"/>
+<text x="620" y="123" fill="#fff" font-size="8.5" text-anchor="middle">缺口 1.47pp</text>
+<text x="100" y="154" fill="#14304f" font-size="10" text-anchor="middle">7折</text>
+<rect x="200" y="140" width="160" height="26" rx="6" fill="#8a6d1a"/>
+<text x="280" y="157" fill="#fff" font-size="8.5" text-anchor="middle">临界 +0.10pp</text>
+<rect x="370" y="140" width="160" height="26" rx="6" fill="#a33"/>
+<text x="450" y="157" fill="#fff" font-size="8.5" text-anchor="middle">缺口 0.65pp</text>
+<rect x="540" y="140" width="160" height="26" rx="6" fill="#a33"/>
+<text x="620" y="157" fill="#fff" font-size="8.5" text-anchor="middle">缺口 1.65pp</text>
+</svg>
+<div class="figure-cap">图 2｜净口径敏感性热力：收购折扣 × 资金成本（基准 K/P_m=1.71%，经常性成本 0.6pp【测算】）</div>
+</div>
+
+<p><strong>读表结论</strong>：① <strong>净口径下 1.75% 再贷款资金时，5.5–6.5 折"成立"、7 折"临界"、7.5 折以上"缺口"</strong>——专家团"6 折基准、7 折封顶"纪律得到精确量化；② <strong>综合资金 2.5% 时仅 5.5 折成立，3.5% 全区间缺口 ≥0.99pp</strong>——资金结构是第二生命线；③ 深度折扣（5.5 折以下）需核查"是否只收劣质资产"的筛选偏差（法拍房源质量分层），折扣纪律不能无限让渡。</p>
+<h2>六、敏感性矩阵：运营变量（出租率 × 租金 × 收缴率）</h2>
+<p><strong>出租率 o（d=0.7 固定，r = 2.717% × o）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>o</th>
+<th>0.80</th>
+<th>0.85</th>
+<th>0.90（基准）</th>
+<th>0.95</th>
+<th>1.00</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>r（毛）</td>
+<td>2.17%</td>
+<td>2.31%</td>
+<td>2.45%</td>
+<td>2.58%</td>
+<td>2.72%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>租金 R_m（d=0.7、o=0.9）</strong>：1,791 元（−10%）→ 2.20%；1,990 元 → 2.45%；2,189 元（+10%）→ 2.69%。<strong>收缴率 95%</strong> → r 降 0.12pp。</p>
+<p><strong>换算关系</strong>：出租率每降 5pp ≈ r 降 0.12pp ≈ 收购折扣收紧 0.035（约 0.35 折）；租金每降 10% ≈ r 降 0.25pp ≈ 折扣收紧 0.07（约 0.7 折）【测算】。</p>
+<p><strong>读表结论</strong>：<strong>B2B 集体宿舍锁定出租率 ≥90% 是租赁通道成立的关键</strong>——出租率跌至 85%，净口径下 6 折收购即跌破临界（等价折扣恶化 0.35 折）；六合标的（月租 1,398 元）收益率低于浦口约 0.5pp，只适合低成本保租/安置通道，不适合销售通道。</p>
+<h2>七、CAPEX 与空置期的影响（法拍特有成本）</h2>
+<table>
+<thead>
+<tr>
+<th>成本项</th>
+<th>量级【测算】</th>
+<th>性质</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>翻新 CAPEX（"好房子"标准）</td>
+<td>7–10 万/套 ÷ 20 年摊销 = 0.44%–0.63%（10 年摊销 0.9%–1.3%）</td>
+<td>经常性</td>
+</tr>
+<tr>
+<td>风险备付金</td>
+<td>2–3% 一次性 → 年化 0.10%–0.15%</td>
+<td>经常性（摊销）</td>
+</tr>
+<tr>
+<td>税费/腾退缓冲</td>
+<td>5–8%（一次性，已内置 6 折上限价）</td>
+<td>一次性</td>
+</tr>
+<tr>
+<td>清场+改造期空置</td>
+<td>3–6 个月 → 首年 −0.5–1.2pp</td>
+<td>一次性（首年）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>经常性合计 0.5–0.8pp（取中 0.6pp）</strong>——式 3 净口径的依据。<strong>若翻新按 10 年摊销（0.9–1.3pp），经常性成本升至 1.0–1.5pp，净口径 1.75% 资金下盈亏平衡折扣收窄至 5.3 折</strong>——翻新标准（10 年 vs 20 年）直接决定可行性区间，建议按"10 年翻新周期"做保守测算。<strong>毛口径"7 折可讨论"、净口径"7 折已是临界线"，这正是 6 折基准的数学依据。</strong></p>
+<h2>八、放量资金情景与贴息成本</h2>
+<p><strong>收购资金量情景</strong>（浦口 6 折收购价 67.8 万/套）：</p>
+<table>
+<thead>
+<tr>
+<th>情景</th>
+<th>规模</th>
+<th>资金量【测算】</th>
+<th>占南京 2025 年一般公共预算收入（1,620.91 亿，Wind）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首期试点</td>
+<td>500–1,000 套</td>
+<td>≈3.4–6.8 亿元</td>
+<td>≈0.2%–0.4%</td>
+</tr>
+<tr>
+<td>年化放量</td>
+<td>1,500–2,000 套/年</td>
+<td>≈10–14 亿元/年</td>
+<td>≈0.6%–0.9%</td>
+</tr>
+<tr>
+<td>兜底 1/10（滚动目标）</td>
+<td>约 8,000 套（2–3 年）</td>
+<td>≈54 亿元</td>
+<td>≈3.3%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>贴息成本测算</strong>：若综合资金成本 2.5% 与再贷款 1.75% 的差额（0.75pp）由市/区财政贴息承接，年化放量 10–14 亿对应年贴息约 <strong>0.75–1.05 亿元</strong>，占南京财政约 <strong>0.05%–0.06%</strong>【测算】——贴息成本极低，财政完全可承受；即便按悲观缺口（净口径 2.5% 资金下 d=0.6 缺口 0.25pp）兜底，年贴息约 0.25–0.35 亿元，仍不足财政 0.03%。<strong>但须警惕"贴息刚性化"与"收购即补贴"的路径依赖，折扣与资金红线不能因财政可承受而放松</strong>（对标上海版结论：规模不能跑在回报率前面）。</p>
+<p><strong>退出通道（REITs）</strong>：南京保租房 REITs 通道尚在建设期【测算，参照上海城投宽庭 REIT 年可供分配约 1.27 亿的体量】，10–14 亿/年收购规模下 REITs 承接能力有限——<strong>收储资金短期以再贷款+财政为主，REITs 是长期退出选项而非短期前提</strong>；先有稳定出租率与收缴，才有估值与退出。</p>
+<h2>九、ROE 敏感性（三通道混合模型）</h2>
+<p><strong>模型设定</strong>（100 套基准）：收购折扣 d、卖出折扣 s、安置价 8 折、自有资金 30%、融资 70% × 2.0%；保租 40 套（净租金 65.8 万/年，运营 15%）、安置 30 套（价差一次性）、销售 30 套（卖 9 折，翻新 7 万/套扣减）。</p>
+<p><strong>表 1：收购折扣 → 首年 ROE（第一杠杆）</strong></p>
+<table>
+<thead>
+<tr>
+<th>d</th>
+<th>0.55</th>
+<th>0.60</th>
+<th>0.65</th>
+<th>0.70（基准）</th>
+<th>0.75</th>
+<th>0.80</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首年 ROE【测算】</td>
+<td>≈99%</td>
+<td>≈74%</td>
+<td>≈53%</td>
+<td><strong>≈35%</strong></td>
+<td>≈19%</td>
+<td>≈5%</td>
+</tr>
+</tbody>
+</table>
+<div class="svg-wrap">
+<svg width="730" height="150" viewBox="0 0 730 150" xmlns="<a href="http://www.w3.org/2000/svg">http://www.w3.org/2000/svg</a>" font-family="Noto Sans CJK SC">
+<text x="60" y="22" fill="#14304f" font-size="10" text-anchor="middle">首年ROE vs 收购折扣</text>
+<rect x="80" y="20" width="76" height="100" rx="4" fill="#1d6f42"/><text x="118" y="132" fill="#14304f" font-size="9" text-anchor="middle">5.5折 99%</text>
+<rect x="176" y="38" width="76" height="82" rx="4" fill="#1d6f42"/><text x="214" y="132" fill="#14304f" font-size="9" text-anchor="middle">6折 74%</text>
+<rect x="272" y="53" width="76" height="67" rx="4" fill="#1d6f42"/><text x="310" y="132" fill="#14304f" font-size="9" text-anchor="middle">6.5折 53%</text>
+<rect x="368" y="68" width="76" height="52" rx="4" fill="#8a6d1a"/><text x="406" y="132" fill="#14304f" font-size="9" text-anchor="middle">7折 35%</text>
+<rect x="464" y="84" width="76" height="36" rx="4" fill="#a33"/><text x="502" y="132" fill="#14304f" font-size="9" text-anchor="middle">7.5折 19%</text>
+<rect x="560" y="99" width="76" height="21" rx="4" fill="#a33"/><text x="598" y="132" fill="#14304f" font-size="9" text-anchor="middle">8折 5%</text>
+</svg>
+<div class="figure-cap">图 3｜首年 ROE 对收购折扣的敏感性（100 套基准，卖 9 折/安置 8 折/自有 30%【测算】）</div>
+</div>
+
+<p><strong>表 2：销售折扣 → 首年 ROE（d=0.7 固定）</strong></p>
+<table>
+<thead>
+<tr>
+<th>卖出折扣 s</th>
+<th>0.95</th>
+<th>0.90（基准）</th>
+<th>0.85</th>
+<th>0.80</th>
+<th>0.75</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>销售毛利/套【测算】</td>
+<td>21.3 万</td>
+<td>15.6 万</td>
+<td>10.0 万</td>
+<td>4.3 万</td>
+<td>−1.4 万</td>
+</tr>
+<tr>
+<td>首年 ROE【测算】</td>
+<td>42%</td>
+<td><strong>35%</strong></td>
+<td>28%</td>
+<td>21%</td>
+<td>13.5%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>表 3：通道权重 → 首年 ROE（d=0.7）</strong></p>
+<table>
+<thead>
+<tr>
+<th>保租/安置/销售</th>
+<th>40/30/30（基准）</th>
+<th>50/25/25</th>
+<th>40/35/25</th>
+<th>45/35/20</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>首年 ROE【测算】</td>
+<td>35%</td>
+<td>29.5%</td>
+<td>34%</td>
+<td>31%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>情景压力测试</strong>：悲观（2027 补跌，卖 8 折、安置 7.5 折）→ ROE <strong>13.5%</strong>；乐观（卖 9.5 折、安置 8.5 折）→ <strong>49%</strong>；销售通道失效（转保租保底）→ <strong>15.9%</strong>。</p>
+<p><strong>读表结论</strong>：① <strong>ROE 三杠杆排序：收购折扣 &gt; 销售折扣 &gt; 通道权重</strong>——折扣从 7 折加深到 6 折，ROE 从 35% 升至 74%（翻倍）；② 销售通道是 ROE 放大器而非稳定器（卖 8 折以下毛利被翻新成本吞噬），<strong>价格企稳确认前销售权重应 ≤25% 且后置</strong>；③ "保租+安置"是安全垫——销售完全失效时 ROE 仍正（15.9%）；④ 悲观情景 ROE 13.5% 仍远高于常态租赁 ROE（0.3%–1%），<strong>价差是一次性收益、经营是长期账，须对管委会与贝壳分两本账披露</strong>。</p>
+<h2>十、决策红线与重启闸门（条件式）</h2>
+<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>红线（净口径）</th>
+<th>触发动作</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>收购折扣 d</td>
+<td>&gt; 7 折：临界；&gt; 7.5 折：不成立</td>
+<td>7 折以上停收，回到 6 折基准</td>
+</tr>
+<tr>
+<td>综合资金成本 c</td>
+<td>&gt; 2.5%：仅 ≤5.5 折成立</td>
+<td>资金结构以再贷款为主；c&gt;3% 暂停</td>
+</tr>
+<tr>
+<td>出租率 o</td>
+<td>&lt; 85%：利差等价恶化 0.35 折</td>
+<td>B2B 签约不足即降节奏、提备付金</td>
+</tr>
+<tr>
+<td>贝壳房价指数</td>
+<td>再创新低且环比跌幅扩大</td>
+<td><strong>重启闸门：只租不收</strong></td>
+</tr>
+<tr>
+<td>租金回报率（净口径）</td>
+<td>&lt; 2.5%：现金流覆盖型硬门槛</td>
+<td>写入合资协议，不达门槛不收</td>
+</tr>
+<tr>
+<td>翻新摊销周期</td>
+<td>10 年摊销时盈亏折扣收窄至 5.3 折</td>
+<td>按 10 年做保守测算，控制翻新标准</td>
+</tr>
+<tr>
+<td>销售通道</td>
+<td>成交周期 &gt; 12 个月或卖出价 &lt; 8.5 折</td>
+<td>转保租保底，销售后置 2027H2</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>附录 A：复算表（全部中间计算）</h2>
+<ul>
+<li>基准：K = 12 × 1,990 × 0.9 × 0.9 = 19,343 元；K/P_m = 1.7118%（P_m = 113 万）</li>
+<li>r(d) = 1.7118% ÷ d：0.55→3.11%；0.60→2.85%；0.65→2.63%；0.70→2.45%；0.75→2.28%；0.80→2.14%</li>
+<li>r_net(d) = r − 0.6pp：0.55→2.51%；0.60→2.25%；0.65→2.03%；0.70→1.85%；0.75→1.68%；0.80→1.54%</li>
+<li>d*(毛) = 1.7118% ÷ c：1.75%→9.8 折；2.0%→8.6 折；2.5%→6.8 折；3.0%→5.7 折；3.5%→4.9 折</li>
+<li>d*(净) = 1.7118% ÷ (c+0.6%)：1.75%→7.3 折；2.0%→6.6 折；2.5%→5.5 折；3.0%→4.8 折；3.5%→4.2 折</li>
+<li>锚点 B 链（d=0.6）：23,880÷67.8 万 = 3.52% → ×0.9 = 3.17% → ×0.9 = 2.85%</li>
+<li>敏感区间（租金 ±10%、P_m ±11%）：K/P_m = 1.382%–2.128% → d*(净,1.75%) = 5.9–9.1 折</li>
+<li>换算：折扣收紧 0.5 折 ≈ r 降 0.17–0.24pp；利率每升 1pp 需折扣加深 0.56 折（1.75% 档）/0.27 折（2.5% 档）/0.14 折（3.5% 档）</li>
+<li>三通道（d=0.6）：安置价差 22.6 万/套；销售毛利 26.9 万/套（9 折卖、翻新 7 万）</li>
+<li>CAPEX：7–10 万 ÷ 20 年 ÷ 79 万 = 0.44%–0.63%；10 年摊销 0.9%–1.3%；备付金 2–3% ≈ 0.10%–0.15%/年</li>
+<li>资金量：500–1,000 套 × 67.8 万 = 3.4–6.8 亿；1,500–2,000 套/年 = 10–14 亿/年；8,000 套 ≈ 54 亿</li>
+<li>贴息：10–14 亿 × 0.75pp ≈ 0.75–1.05 亿/年（占财政 0.05%–0.06%）</li>
+<li>ROE 基准（d=0.7）：保租净 21.5 万 + 安置 339 万 + 销售 468 万 = 828.5 万 ÷ 自有 2,373 万 = 34.9%</li>
+<li>ROE 情景：d=0.6→74.4%；卖 8 折→20.6%；悲观 13.5%；乐观 49.2%；销售失效 15.9%</li>
+</ul>
+<hr>
+<p><em>测算：智见行业研究 · 2026-08-24 · 数据源：政研通·贝壳（成出口径 2026-07）/ Wind EDB / 专家团融合稿；法拍量级与翻新单价为【估算】，待贝壳房源级数据（BEIKE_MCP_API_KEY）与首批项目实测校准。</em></p>
+</body>
+</html>

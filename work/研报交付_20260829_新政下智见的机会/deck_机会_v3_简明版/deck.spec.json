@@ -1,0 +1,90 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "zhijian-bluegold",
+  "filename": "新政下智见的机会_v3_简明版",
+  "seed": 20260829,
+  "meta": {
+    "organization": "智见 · 行业研究",
+    "authors": [
+      {
+        "name": "智见点评团队",
+        "role": "机会扫描 v3 · 简明版"
+      }
+    ],
+    "date": "2026-08-29",
+    "confidentiality": "internal"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "新政下智见的机会 · 简明版",
+      "summary": "1+N 新政 × 智见机会扫描 ｜「每次制度开票，都是一次 Token 的铸造。」"
+    },
+    {
+      "id": "overview",
+      "type": "content",
+      "heading": "速览：一句话战略与框架五句话",
+      "beat": "anchor"
+    },
+    {
+      "id": "why",
+      "type": "content",
+      "heading": "为什么必须做：三个倒计时与三种死法",
+      "beat": "dense"
+    },
+    {
+      "id": "token",
+      "type": "content",
+      "heading": "Token 是什么：带防伪码的电子回执",
+      "beat": "dense"
+    },
+    {
+      "id": "clients-a",
+      "type": "content",
+      "heading": "六类客户（上）：部委 · 监管 · 金融",
+      "beat": "dense"
+    },
+    {
+      "id": "clients-b",
+      "type": "content",
+      "heading": "六类客户（下）：城投 · 开发商 · C 端",
+      "beat": "dense"
+    },
+    {
+      "id": "priority",
+      "type": "content",
+      "heading": "优先级：两台发动机，其余全是期权",
+      "beat": "anchor"
+    },
+    {
+      "id": "plan",
+      "type": "content",
+      "heading": "90 天八项清单：每项一枚 Token",
+      "beat": "dense"
+    },
+    {
+      "id": "discipline",
+      "type": "content",
+      "heading": "不做什么与风险：三不＝三卖",
+      "beat": "anchor"
+    },
+    {
+      "id": "caliber",
+      "type": "content",
+      "heading": "口径与行动：数字带口径，60 天两灯塔",
+      "beat": "breathing"
+    },
+    {
+      "id": "closing",
+      "type": "ending",
+      "heading": "2026Q4，先签先赢",
+      "summary": "98wiki ｜ 智见 / 机会扫描 · 底稿 v3（简明版）· 2026-08-29"
+    }
+  ]
+}

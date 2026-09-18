@@ -1,0 +1,97 @@
+{
+  "taskId": "t6",
+  "renderVersion": "v2 · 审计账本式纸墨系统",
+  "status": "completed",
+  "note": "t6 已完成且终态不可变；本文件记录 v2 重做（按队长指定设计方向）的交付指纹，供队长登记或另立任务留痕。",
+  "deliverables": [
+    {
+      "kind": "HTML5 视觉稿 v2",
+      "path": "expert-tasks/t6/artifacts/AI无佣与人机协同_正式稿_v2.html",
+      "sha256": "743637950561aa22bc91510917942aef0086bdbeef34e1e99be2e3f07c0361cb",
+      "url": "https://yy.meizu.life/render/智见点评-服务业务/ai-wuyong-renji-v2.html"
+    },
+    {
+      "kind": "PDF v2 (A4,12页)",
+      "path": "expert-tasks/t6/artifacts/AI无佣与人机协同_正式稿_v2.pdf",
+      "sha256": "5748db6dc86cc0894a6048a74e19fdc6f8fe153783fa2145d084ee24b0f8c000",
+      "url": "https://yy.meizu.life/render/智见点评-服务业务/ai-wuyong-renji-v2.pdf"
+    },
+    {
+      "kind": "PPTX v2 (可编辑,13页,全页备注)",
+      "path": "expert-tasks/t6/artifacts/AI无佣与人机协同_汇报版_v2.pptx",
+      "sha256": "0f414e4e094279989817caf4fb17bca466b01edb299e9ad1799e9564d0daa7d5",
+      "url": "https://yy.meizu.life/render/智见点评-服务业务/ai-wuyong-renji-v2.pptx"
+    },
+    {
+      "kind": "v1 历史版(未覆盖)",
+      "path": "expert-tasks/t6/artifacts/AI无佣与人机协同_正式稿_v1.html|.pdf|AI无佣与人机协同_汇报版_v1.pptx",
+      "sha256": "cb96e6636ff4daf195c59df60e94a7d5715d55b53343249476d222fef1a4ddf9",
+      "url": "https://yy.meizu.life/render/智见点评-服务业务/ai-wuyong-renji.html"
+    },
+    {
+      "kind": "交付说明 v2",
+      "path": "expert-tasks/t6/artifacts/交付说明_v2.md",
+      "sha256": "c2d4d0a574126b43ff079968784dd10284ca973db2144f61acd589bdc52d51af"
+    },
+    {
+      "kind": "门禁报告 v2",
+      "path": "expert-tasks/t6/artifacts/gates_report_v2.json",
+      "sha256": "681a0e4f89988685556dc4e988f0bcf0780f38ff88d2625e1566f1b9285b70c6"
+    },
+    {
+      "kind": "九档视口证据",
+      "path": "expert-tasks/t6/artifacts/validation_viewports_v2.json",
+      "sha256": "1de8d7f899112c44a0a3837ed1a5afc46e44905abe18472d150346859d971168"
+    },
+    {
+      "kind": "PPT 结构预检 v2",
+      "path": "expert-tasks/t6/artifacts/validation_pptx_structure_v2.json",
+      "sha256": "51a017cdb1aa971c197c1dcbbdd975b050aec412e4bdb56051d59fb312e9471c"
+    }
+  ],
+  "design": {
+    "system": "审计账本式纸墨",
+    "paper": "#F1EEE7",
+    "card": "#FDFCF9",
+    "accent_peacock_teal": "#10605A",
+    "accent_antique_gold": "#9A6B22",
+    "hairline_column_rules": true
+  },
+  "render_check": {
+    "detector_p0": 0,
+    "viewports": [
+      320,
+      360,
+      375,
+      414,
+      480,
+      600,
+      768,
+      1024,
+      1280
+    ],
+    "viewport_failures": 0,
+    "contrast_pairs_passed": "20/20",
+    "pdf_pages": 12,
+    "pdf_rasterized_pages": 12,
+    "shorts_dir": "expert-tasks/t6/artifacts/shots_v2/"
+  },
+  "gates": {
+    "G1_text": "pass",
+    "G2_numbers": "pass",
+    "G3_design": "pass",
+    "G4_ppt": "pass (error 0 / warning 0 / not_checked 1)",
+    "G5_pdf": "pass"
+  },
+  "exhibits": {
+    "成本树八段表": 8,
+    "责任矩阵格数": 4,
+    "三类场景": 3,
+    "观察面板行数": 5
+  },
+  "not_done": [
+    "PPTX 逐页预览图（本机无 LibreOffice/PowerPoint）",
+    "人工肉眼复核（以运行态几何+对比度+检测器+PDF 栅格化代替）",
+    "视频（按本轮指令不做）"
+  ]
+}

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "贝索斯",
-    "publicLabel": "贝索斯",
-    "initials": "贝"
+    "internalName": "飞轮指挥官",
+    "publicLabel": "飞轮指挥官",
+    "initials": "F"
   },
   "domains": [
     "realestate.general",

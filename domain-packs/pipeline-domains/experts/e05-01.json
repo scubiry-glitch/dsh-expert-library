@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "周华",
-    "publicLabel": "周华",
-    "initials": "周"
+    "internalName": "品牌掌门",
+    "publicLabel": "品牌掌门",
+    "initials": "P"
   },
   "domains": [
     "realestate.general"

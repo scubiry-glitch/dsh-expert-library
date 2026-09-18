@@ -1,6 +1,6 @@
 {
   "id": "bank-strategy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "domain": "banking",
   "intents": [
@@ -20,7 +20,7 @@
   ],
   "routingPolicy": {
     "assertions": [
-      "E13 江苏银行高层（pipeline 命名空间，公众人物实名）：袁军 e13-01 战略/客户经营，高增银 e13-02 量化目标评审，梁斌 e13-03 零售/网络金融/数智化。敏感数据按 pii-redaction 硬门脱敏。"
+      "E13 江苏银行高层（pipeline 命名空间，行业花名）：战略沙盘官 e13-01 战略/客户经营，息差账房 e13-02 量化目标评审，风控守门员 e13-03 零售/网络金融/数智化。敏感数据按 pii-redaction 硬门脱敏。产品线损益评审引用 bank.method.tiered-pnl，对标与口径处理引用 bank.method.caliber-restore。"
     ],
     "candidateHints": [
       "e13-01",
@@ -37,7 +37,8 @@
     ],
     "optional": [
       "local-knowledge",
-      "bank-99wiki"
+      "bank-99wiki",
+      "bank-analytics"
     ]
   },
   "toolPolicy": {

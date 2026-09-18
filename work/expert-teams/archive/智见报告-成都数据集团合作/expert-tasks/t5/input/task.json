@@ -1,0 +1,11 @@
+{
+  "taskId": "t5",
+  "subject": "口径校对：G1/G2 双门禁逐页核对",
+  "description": "对 13 个片段 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/p01–p13.html 逐页执行双门禁校对（契约=/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md 第四节第五节，内容源=同目录上级的 md 主文档）：\nG1 口径门：① spec 四所列存疑短语逐项在对应页命中且为徽标（class 含 flag）且文字与 md 逐字一致；② 章名/节名与 md 完全一致；③ 无新增事实判断、无结论化改写（对照 md 逐句扫）。\nG2 数字门：spec 五数字锚点逐 token grep 核对（注意全角破折号 — 与千分位写法照抄 md）；同时反向扫描片段中出现的所有数字，凡 md 不在案的数字一律标记（图内坐标刻度/页码/序号除外）。\n结构门：13 页 marker 配对、页眉四件/页脚页码连续、表格行数与 md 一致（六来源表 6 行、6.3 矩阵 7 行）、无 script 标签。\n处置：微瑕（错字/漏徽标/数字写法偏差/漏页眉元素）直接修复片段文件并在报告中注明改动；结构性问题（内容缺失/疑似改写/溢出风险）只报告不动手，交回队长调度。产出 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/proof_report.md（逐页结论表）并向队长汇报。",
+  "dependencies": [
+    "t2",
+    "t3",
+    "t4"
+  ],
+  "createdAt": 1788602586654
+}

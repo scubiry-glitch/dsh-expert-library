@@ -1,10 +1,11 @@
 {
   "id": "bank-credit-card",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "domain": "banking",
   "intents": [
-    "credit-card-performance"
+    "credit-card-performance",
+    "methodology-extraction"
   ],
   "requiredCapabilities": [
     {
@@ -20,7 +21,7 @@
   ],
   "routingPolicy": {
     "assertions": [
-      "信用卡经营以 bank-09 操盘视角主答（考核/渠道/客户分层），收益模型与资负视角联动 BK 金融数据派。"
+      "信用卡经营以 bank-09 操盘视角主答（考核/渠道/客户分层），收益模型与资负视角联动 BK 金融数据派。方法论提取类任务（methodology-extraction）优先使用 bank.output.method-record 七字段记录模板，直引句须过 quote-verbatim 门、历史样本数字须过 historical-timestamp 门；阈值类结论引用 bank.method.threshold-calc（历史参数必须本行重算），对标前引用 bank.method.caliber-restore（同源材料不构成独立验证）；客群工程引用 bank.method.customer-tiering，任务启动时按目的整链取用 bank.method.work-chains 六条成品工作链。"
     ],
     "candidateHints": [
       "bank-09"
@@ -35,7 +36,8 @@
     ],
     "optional": [
       "local-knowledge",
-      "bank-99wiki"
+      "bank-99wiki",
+      "bank-analytics"
     ]
   },
   "toolPolicy": {

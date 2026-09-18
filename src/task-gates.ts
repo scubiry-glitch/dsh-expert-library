@@ -63,7 +63,7 @@ import {
 } from './v2/quality.ts'
 import { createBuiltinGateEvaluators, type BuiltinComplianceTerms } from './v2/builtin-gates.ts'
 import type { StampedGate, StampedOutputTemplate, StampedQualityPlan, TeamState, TeamTask } from './types.ts'
-import { ZHIJIAN_EXPERTS } from './zhijian/data/experts.generated.ts'
+import { ZHIJIAN_LEGACY_REAL_NAMES } from './zhijian/data/realname-blocklist.generated.ts'
 
 /* ------------------------------------------------------------------ */
 /* Apply-time stamp                                                    */
@@ -196,16 +196,19 @@ let zhijianComplianceCache: BuiltinComplianceTerms | undefined
  * The anonymization terms the zhijian policy's `compliance-anonymization`
  * gate enforces: every zhijian expert's real name is blocked from external
  * deliverables (对外只列「领域·首字母」), and the names of deceased experts
- * (已故专家, e.g. bk-022 顾云昌) are only allowed in explicitly historical
+ * (已故专家, e.g. bk-022 慢牛主席) are only allowed in explicitly historical
  * citations (handled by the gate's historical markers).
  */
 export function zhijianComplianceTerms(): BuiltinComplianceTerms {
   if (zhijianComplianceCache !== undefined) return zhijianComplianceCache
+  // 花名制（2026-08 anonymize pass）：运行时 meta 只带花名——花名即对外合法称谓，
+  // 绝不能进 blockedTerms。改名前的「原实名」由静态遗留清单继续对外屏蔽，
+  // 已故专家条目保留历史引用豁免语义。
   const blockedTerms: string[] = []
   const deceasedTerms: string[] = []
-  for (const meta of ZHIJIAN_EXPERTS) {
-    blockedTerms.push(meta.name)
-    if (meta.deceased === true) deceasedTerms.push(meta.name)
+  for (const entry of ZHIJIAN_LEGACY_REAL_NAMES) {
+    blockedTerms.push(entry.term)
+    if (entry.deceased === true) deceasedTerms.push(entry.term)
   }
   zhijianComplianceCache = { blockedTerms, deceasedTerms }
   return zhijianComplianceCache

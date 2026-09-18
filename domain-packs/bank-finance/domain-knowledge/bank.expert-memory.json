@@ -1,6 +1,6 @@
 {
   "id": "bank.expert-memory",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "domain": "banking.retail",
   "boundary": "银行金融领域专家 Profile 基线（2026-08-23，BANK-09 首发）：身份（匿名）、领域（零售金融/银行经营）、立场（操盘手）、风格、心智模型（样板复制/考核绑定/政治账经济账双算/自主可控）、金句、禁区、分析步骤、评估模型（emm 加权+一票否决）与输出 rubric；不含实时业务数据。",
@@ -45,7 +45,7 @@
   "snapshot": {
     "id": "bank-v1-2026-08-23",
     "takenAt": "2026-08-23T00:00:00Z",
-    "digest": "15a90248122133df8e770b7e44126ef9f378c48e152d3596ef62c0472b73fd80",
+    "digest": "7511109ef440a9c2e7a8c97a483b1659f74ea916778be7fa94e35159e10ac7ad",
     "recordCount": 6
   },
   "retrievalProfiles": [

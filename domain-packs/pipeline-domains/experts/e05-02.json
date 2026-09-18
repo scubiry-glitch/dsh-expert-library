@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "孙丽",
-    "publicLabel": "孙丽",
-    "initials": "孙"
+    "internalName": "品牌哨兵",
+    "publicLabel": "品牌哨兵",
+    "initials": "P"
   },
   "domains": [
     "realestate.general"

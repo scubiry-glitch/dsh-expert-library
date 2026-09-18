@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "林小红",
-    "publicLabel": "林小红",
-    "initials": "林"
+    "internalName": "智能哨兵",
+    "publicLabel": "智能哨兵",
+    "initials": "Z"
   },
   "domains": [
     "realestate.general"

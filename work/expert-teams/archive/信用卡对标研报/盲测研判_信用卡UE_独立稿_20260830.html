@@ -1,0 +1,468 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><style>
+@page { size: A4; margin: 16mm 15mm 18mm 15mm;
+  @bottom-left { content: "智见点评 · 独立盲测研判"; font-family: "Noto Sans CJK SC"; font-size: 7pt; color: #8a9a94; }
+  @bottom-right { content: "第 " counter(page) " 页 / 共 " counter(pages) " 页"; font-family: "Noto Sans CJK SC"; font-size: 7pt; color: #8a9a94; } }
+* { box-sizing: border-box; }
+body { font-family: "Noto Sans CJK SC", sans-serif; font-size: 9.3pt; line-height: 1.62; color: #22302c; margin: 0; }
+.cover { background: #0e6a55; color: #fff; padding: 20px 22px 16px; border-radius: 4px; margin-bottom: 12px; }
+.cover .brand { font-size: 8pt; letter-spacing: .2em; color: #bcd8cf; margin-bottom: 10px; }
+.cover h1 { font-family: "Noto Serif CJK SC", serif; font-size: 20pt; font-weight: 900; margin: 0 0 6px; line-height: 1.3; }
+.cover .sub { font-size: 10pt; color: #d9ebe5; margin-bottom: 8px; }
+.cover .meta { font-size: 7.5pt; color: #a7c8be; border-top: 1px solid rgba(255,255,255,.25); padding-top: 7px; }
+.cards { display: flex; gap: 8px; margin: 0 0 14px; }
+.card { flex: 1; background: #fff; border: 1px solid #d8e4df; border-top: 3px solid #a9741f; border-radius: 3px; padding: 8px 10px; }
+.card .num { font-family: "Noto Serif CJK SC", serif; font-size: 15pt; font-weight: 900; color: #0e6a55; line-height: 1.15; }
+.card .lbl { font-size: 7.2pt; color: #5c6d67; margin-top: 3px; line-height: 1.4; }
+h2 { font-family: "Noto Serif CJK SC", serif; font-size: 13pt; color: #0e6a55; border-left: 5px solid #0e6a55; padding-left: 9px; margin: 20px 0 8px; page-break-after: avoid; }
+h3 { font-size: 10.5pt; color: #a9741f; margin: 13px 0 6px; page-break-after: avoid; }
+p { margin: 5px 0; } li { margin: 2.5px 0; }
+blockquote { margin: 10px 0; padding: 8px 12px; background: #f2f7f5; border-left: 4px solid #a9741f; color: #0e4a3c; font-weight: 700; font-size: 9.8pt; }
+blockquote p { margin: 0; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 8.2pt; }
+th { background: #0e6a55; color: #fff; font-weight: 700; padding: 4.5px 6px; text-align: left; border: 1px solid #0b5847; }
+td { padding: 4px 6px; border: 1px solid #d8e4df; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f9f7; }
+tr { page-break-inside: avoid; }
+strong { color: #0b4a3c; }
+code { background: #fdf6ea; color: #8a5a12; font-family: "Noto Sans CJK SC"; font-size: 8.2pt; padding: 0 3px; border-radius: 2px; font-weight: 700; }
+hr { border: none; border-top: 1px dashed #c8d6d0; margin: 14px 0; }
+ol, ul { padding-left: 18px; margin: 5px 0; }
+</style></head>
+<body><div class="cover"><div class="brand">98wiki ｜ 智见点评 · 交叉验证盲测</div><h1>江苏银行信用卡 2026 中报季 · 独立盲测研判</h1>
+<div class="sub">UE 恒等式诊断 × 六行对标 × 转正条件 × 客群重构 × 抓手判定</div><div class="meta">独立交叉验证稿 ｜ 2026-08-30 ｜ 四专家独立进程 + 队长总裁判 ｜ 含行内数据 · 勿发公网</div></div>
+<div class="cards"><div class="card"><div class="num">-2.85%</div><div class="lbl">信用卡 EVA（风险成本 4.37% 单因素）</div></div><div class="card"><div class="num">1.51%</div><div class="lbl">过线平衡点（风险成本≤1.5% 转）</div></div><div class="card"><div class="num">w≈40%</div><div class="lbl">高风险口袋占比（1/3~1/2）</div></div><div class="card"><div class="num">-0.35%</div><div class="lbl">剔除网贷后个贷 EVA（单引擎）</div></div></div><blockquote>
+<p>独立交叉验证稿｜2026-08-30｜盲测纪律：仅基于已核验数据底座与内部库重跑，未接触出题方结论
+方法：四人独立专家进程（操盘手/数据实操/战略咨询/金融数据派，互不可见）并行研判 + 队长恒等式验算总裁判
+标注：<code>测算</code>＝披露值推导｜<code>估算</code>＝量级推断｜<code>研判推断</code>＝分析性判断｜<code>待补</code>＝观察清单</p>
+</blockquote>
+<hr />
+<h2>卷首 · 五锚点速览</h2>
+<table>
+<thead>
+<tr>
+<th>锚点</th>
+<th>结论</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>① 高风险口袋占比 w</td>
+<td><strong>≈1/3~1/2，中枢 40%</strong>（两段损失模型，参数区间 34-47%，详见 §五）</td>
+</tr>
+<tr>
+<td>② 过线表</td>
+<td>风险成本 4.37%→EVA <strong>−2.85%</strong>｜3.5%→−2.0%｜2.5%→<strong>−1.0%（减亏线）</strong>｜1.5%→<strong>≈0（过线）</strong>，精确平衡点 1.51%<code>测算</code></td>
+</tr>
+<tr>
+<td>③ 四抓手排序</td>
+<td><strong>汽车分期 ＞ 财政贴息账单分期 ＞ 中收年费卡 ＞ 交易经营（冻结）</strong></td>
+</tr>
+<tr>
+<td>④ 最值钱杠杆</td>
+<td><strong>降风险成本</strong>：每 −1pct＝EVA +1pct≈<strong>+2.27亿/年</strong>，全程空间 2.86pct≈<strong>6.5亿/年</strong><code>测算</code></td>
+</tr>
+<tr>
+<td>⑤ 剔除网贷后个贷 EVA</td>
+<td><strong>−0.35%（区间 −0.40~−0.30）</strong><code>测算</code>——零售是网贷单引擎，剔掉即全面毁值</td>
+</tr>
+</tbody>
+</table>
+<p><strong>总判断</strong>：不是卖得便宜，是坏得太多。当期任务不是做量，是用正 EVA 抓手对冲存量出清；单靠出清过不了线，转正必须「出清＋客群上移」双轮。</p>
+<hr />
+<h2>一、恒等式体检：数字先于结论</h2>
+<p><strong>金句：这张 EVA 表没有假数——8 行全部闭合，唯一的"矛盾"是读表方式。</strong></p>
+<ol>
+<li><strong>全表闭合</strong>。jsbank_product_eva_h1（2026-06-30，计财部口径）8 行逐行验算：<strong>EVA＝净收益率−还原不良损失率−运营成本−资本成本</strong>，残差全部 ≤0.01pct（纯四舍五入）<code>测算</code>。</li>
+<li><strong>「净收益率」＝客户收益率−资金成本</strong>，不含运营。反证：若含运营，信用卡应为 2.60−4.37−0.78＝−2.55，与表载 −2.85 不符；按"不含运营"读，4.90−2.30−0.31−4.37−0.78＝−2.86≈−2.85 ✓<code>测算</code>。隐含 FTP 资金成本各产品 1.41~2.96pct，量级自洽。</li>
+<li><strong>锚点中"资本成本 1.08 vs 0.78 差 0.30"的缺口＝运营成本列 0.31</strong>（0.78+0.31≈1.09，0.01 舍入）。倒推 1.08 者用了"净收益率−风险−资本"两步法、漏掉运营项。<strong>0.78 是正确列值</strong><code>测算</code>。</li>
+<li><strong>两口径纪律</strong>：周报序列自洽验证 230.0+57.3＝287.3≈官方反推 287.2 亿——周报趋势线锚定官方口径 ✓；DB 快照 271.36 亿与官方差 15.84 亿（−5.8%）成因未明→<code>待补</code>。水平值引官方（−60.58 亿/−21.09%），节奏引周报（230.0→227.3→220.4 亿），<strong>任何比率不跨口径混拼</strong>。</li>
+<li><strong>卡分期 104.3% 是序时完成率不是年达成率</strong>：全年达成仅 2.8/4.31＝65.0%<code>测算</code>；且分子被动缩水（净收入 3.1→2.8 亿、日均 193.44→186.66 亿、执行定价 5.66%→4.81%）——"达标"表象弱于读数<code>研判推断</code>。</li>
+</ol>
+<h2>二、Q1 亏损解剖：刀口在风险项</h2>
+<p><strong>金句：收益端挖潜填不平风险口子——4.37% 的损失率吃掉 4.90% 客户收益率的 89%。</strong></p>
+<table>
+<thead>
+<tr>
+<th>恒等式项</th>
+<th>2026H1</th>
+<th>同比</th>
+<th>对 EVA 贡献</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>客户收益率</td>
+<td>4.90%</td>
+<td>−0.20pct</td>
+<td>−0.20</td>
+</tr>
+<tr>
+<td>资金成本（隐含）</td>
+<td>2.30%</td>
+<td>≈−0.14pct</td>
+<td>+0.14</td>
+</tr>
+<tr>
+<td>＝净收益率</td>
+<td>2.60%</td>
+<td>−0.06pct</td>
+<td>−0.06</td>
+</tr>
+<tr>
+<td>运营成本</td>
+<td>0.31%</td>
+<td>−0.04pct</td>
+<td>+0.04</td>
+</tr>
+<tr>
+<td><strong>风险成本</strong></td>
+<td><strong>4.37%</strong></td>
+<td><strong>+0.25pct</strong></td>
+<td><strong>−0.25</strong></td>
+</tr>
+<tr>
+<td>资本成本</td>
+<td>0.78%</td>
+<td>0.00</td>
+<td>0.00</td>
+</tr>
+<tr>
+<td><strong>＝EVA</strong></td>
+<td><strong>−2.85%</strong></td>
+<td>−0.27pct</td>
+<td>归因闭合 ✓</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>归因闭合</strong>：EVA 同比 −0.27pct 几乎全部由风险成本 +0.25pct 解释，收益/资金/运营/资本项互相抵消后近似中性<code>测算</code>。</li>
+<li><strong>水平证据</strong>：风险成本 4.37%＞净收益率 2.60%，且为个贷合计 2.13% 的 2.05 倍<code>测算</code>。</li>
+<li><strong>横向证据（个贷七产品 EVA）</strong>：网贷 +0.91 ＞ 其他消费贷 +0.05 ＞ 经营贷 −0.04 ＞ 房贷 −0.08 ＞ 消费贷 −0.60 ＞ <strong>信用卡 −2.85</strong> ＞ 卡部随e贷 −2.93。高收益救不了高风险：随e贷 8.53% 收益率对 7.61% 损失率照样垫底。</li>
+<li><strong>结构性次因</strong>：风险—定价错配。客户收益率 4.90% 远低于随e贷 8.53%/网贷 8.32%——承担了类现金贷的风险，没拿到类现金贷的价格<code>研判推断</code>。</li>
+</ol>
+<h2>三、Q2 七行定位：出清最深，企稳最末</h2>
+<p><strong>金句：别人在企稳，我们在清仓——但这正是先出清者先企稳的位置。</strong></p>
+<table>
+<thead>
+<tr>
+<th>行</th>
+<th>余额(亿)</th>
+<th>较上年末</th>
+<th>名义不良率(存量)</th>
+<th>流量/强度信号</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>平安</td>
+<td>4,025.90</td>
+<td>−0.70%</td>
+<td>2.23%（−0.01）</td>
+<td>唯一不良率下行；消费 9,485.47 亿（强度 2.35×<code>测算</code>）</td>
+</tr>
+<tr>
+<td>浦发</td>
+<td>3,785.45</td>
+<td>−2.77%</td>
+<td>2.01%（+0.09）</td>
+<td>新能源车分期 297.97 亿（+5.36，稀缺正增长）；国补 120 万笔</td>
+</tr>
+<tr>
+<td>农行</td>
+<td>8,158.49</td>
+<td>−4.03%</td>
+<td>2.05%（+0.17）</td>
+<td>消费超 1 万亿（强度 ≥1.20×）</td>
+</tr>
+<tr>
+<td>招行</td>
+<td>8,909.08</td>
+<td>−5.13%</td>
+<td>1.90%（+0.16）</td>
+<td><strong>新生成不良 236.98 亿（+39.29）</strong>；交易 −5.43%（强度 2.09×）</td>
+</tr>
+<tr>
+<td>民生</td>
+<td>4,064.57</td>
+<td>−6.01%</td>
+<td><strong>4.22%（+0.35）</strong></td>
+<td>电子支付 +18.4%、笔均 447 元——量换风险的负面样本</td>
+</tr>
+<tr>
+<td>邮储</td>
+<td>1,894.15</td>
+<td>−9.55%</td>
+<td>1.45%（持平）</td>
+<td><strong>生成率 3.68%（+0.62）</strong>；半年处置≈39 亿≈期末不良 1.4 倍<code>测算</code>——存量靠核销泵出</td>
+</tr>
+<tr>
+<td><strong>本行</strong></td>
+<td><strong>226.6</strong></td>
+<td><strong>−21.09%（官方）</strong></td>
+<td>官方<code>待补</code></td>
+<td>还原损失率 4.37%（含核销流量口径）；周报 8/13 220.4 亿、7 月单月 −9 亿</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li><strong>口径声明</strong>：六行披露期末存量、本行 4.37% 是期间损失流量（含核销），不同维度只做量级对照——4.37% 落在六行名义不良带（1.45-4.22%）外顶部。<strong>不做伪精确排名</strong>。</li>
+<li><strong>位置判断</strong>：压降深度为第二名邮储的 2.2 倍<code>测算</code>；城商行五家 YTD −70 亿垫底、上海银行 7 月已单月 +4 亿转正。<strong>UE 七行尾部区间，出清后期</strong><code>研判推断</code>。</li>
+<li><strong>行业风险带</strong>：剔除民生离群值后名义带微幅收窄（1.45-2.24→1.45-2.23），但流量端（邮储生成率、招行新生成）未收窄——<strong>行业"账面收敛、生成高位"</strong><code>研判推断</code>。</li>
+<li><strong>宏观底色</strong>：住户短贷一年 −13,801 亿（−6.62%<code>测算</code>）；社零 5 月 −0.6%/6 月 +1.0%/7 月 +0.6%。收缩是行业性的，本行只是收缩得更坚决。</li>
+<li><strong>积极面</strong>：8 月中旬节奏收窄至约 −3.6 亿/月<code>测算</code>（7 月 −9 亿），单月降幅向 −3 亿信号线靠拢。</li>
+</ol>
+<h2>四、Q3 转正条件：过线表与弹性表</h2>
+<p><strong>金句：降险 1 个点＝2.27 亿——这一个杠杆顶提价十个点。</strong></p>
+<p><strong>过线表</strong>（EVA＝1.51−风险成本<code>测算</code>；金额按官方口径 226.6 亿年化）：</p>
+<table>
+<thead>
+<tr>
+<th>风险成本</th>
+<th>EVA</th>
+<th>年化金额</th>
+<th>定位</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4.37%（当前）</td>
+<td>−2.85%</td>
+<td><strong>−6.46亿</strong></td>
+<td>出清期（风险损耗总量 9.90 亿<code>测算</code>）</td>
+</tr>
+<tr>
+<td>4.0%（红线建议）</td>
+<td>−2.49%</td>
+<td>−5.64亿</td>
+<td>止损线</td>
+</tr>
+<tr>
+<td>3.5%</td>
+<td>−1.99%</td>
+<td>−4.51亿</td>
+<td>生成率信号阈值</td>
+</tr>
+<tr>
+<td><strong>2.5%</strong></td>
+<td><strong>−0.99%</strong></td>
+<td>−2.24亿</td>
+<td><strong>减亏里程碑（EVA 收窄至 −1% 内）</strong></td>
+</tr>
+<tr>
+<td>2.0%</td>
+<td>−0.49%</td>
+<td>−1.11亿</td>
+<td>—</td>
+</tr>
+<tr>
+<td><strong>1.51%</strong></td>
+<td><strong>0</strong></td>
+<td>0</td>
+<td><strong>重启门槛（精确平衡点）</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>弹性表</strong>（每 1pct 变动＝EVA ±1pct≈2.27 亿/年<code>测算</code>）：</p>
+<table>
+<thead>
+<tr>
+<th>杠杆</th>
+<th>可达空间</th>
+<th>年化价值</th>
+<th>可达性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>降风险</strong></td>
+<td>4.37→1.51%，共 <strong>2.86pct</strong></td>
+<td><strong>≈6.5亿</strong></td>
+<td>中高：出清贡献前半程，Vintage 成熟需 4-6 季验证</td>
+</tr>
+<tr>
+<td>提价</td>
+<td>≈0.3pct<code>估算</code></td>
+<td>≈0.7亿</td>
+<td>低：收益率已 −0.20pct，高风险期提价触发逆向选择，<strong>须随降险解锁、顺序不可颠倒</strong></td>
+</tr>
+<tr>
+<td>中收</td>
+<td>&lt;0.1pct<code>估算</code></td>
+<td>&lt;0.2亿</td>
+<td>中低：银行卡手续费年收入仅约 0.7 亿（H1 0.35 亿、−35.2%），翻倍才 +0.15pct</td>
+</tr>
+<tr>
+<td>资金/运营</td>
+<td>≤0.1pct</td>
+<td>≤0.2亿</td>
+<td>低：运营 0.31% 已是个贷最低档；资金受 FTP 与净息差 1.64% 约束</td>
+</tr>
+</tbody>
+</table>
+<p><strong>裁定：最值钱杠杆＝降风险成本</strong>——空间是提价的近 10 倍、中收的 30 倍<code>测算</code>，且是提价的前置条件。四人独立研判 4/4 同判。</p>
+<h2>五、Q4 客群端：w≈1/3~1/2，一半靠出清、一半靠上移</h2>
+<p><strong>金句：每 3 元信用卡余额，约有 1 元沉在高损失口袋。</strong></p>
+<p><strong>两段模型</strong>：4.37%＝w×L_h＋(1−w)×L_g。</p>
+<ol>
+<li><strong>参数与解</strong>：低段 L_g＝1.5%（本行消费贷还原 1.34% 与招行名义 1.90% 之间取中<code>估算</code>）；高段 L_h 取 7.6~10%（随e贷 7.61% 至其上浮，覆盖纯循环户）。解得 <strong>w＝34%~47%，中枢约 40%</strong><code>测算</code>。</li>
+<li><strong>敏感性</strong>：L_g 1.0~2.0%、L_h 8~12% 时 w＝24%~48%；即便 L_h 放宽到 15%（次级循环户），w 仍约 19%——<strong>量级结论稳健：少数高风险口袋贡献大部分损失</strong><code>测算</code>。</li>
+<li><strong>情景路径</strong><code>研判推断</code>：压 w 至 12-15% 可达减亏线 2.5%；过重启线 1.5%，在 w≤10% 时还须低段压至 0.6-1.0%（房贷量级）——<strong>单靠出清过不了线，必须"出清＋客群上移"双轮</strong>，时点看 2027 末-2028。</li>
+<li><strong>附注视角</strong>（非本问口径）：按资本维度反推，资本成本 0.78%÷(8%×13%)≈75%，与监管信用卡一般风险权重自洽<code>测算</code>——合格交易者（45% 权重）占比提升可再省资本约 0.31pct；信用卡在个贷中余额权重仅 3.5-4.6%<code>测算</code>，其意义在风险传染信号而非体量。</li>
+<li><strong>表外 534.33 亿（−5.19%）</strong>：为表内约 2.4 倍<code>测算</code>。激活条件：生成率连续 2 季＜3.5%＋Vintage 企稳＋红线 4.0% 内＋白名单（房贷/代发/车贷客群）先行。弹性：每激活 5%（约 27 亿）全投低段，组合损失率稀释约 0.30pct<code>测算</code>；渗入高风险口袋则弹性归零反噬。</li>
+<li><strong>收窄证据</strong>：招行新生成 +39.29 亿、邮储生成率 3.68% 表明行业流量未收窄；唯平安 −0.01pct 率先企稳。本行应以自身流量信号（S1-S4）为准，不被名义不良率后视镜误导。</li>
+</ol>
+<h2>六、Q5 四抓手 UE 门槛判定</h2>
+<p><strong>金句：抓手的价值不在故事大小，在 UE 符号。</strong></p>
+<table>
+<thead>
+<tr>
+<th>抓手</th>
+<th>边际 UE<code>测算/估算</code></th>
+<th>规模弹性</th>
+<th>同业验证</th>
+<th>达标条件</th>
+<th>风险边界</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①汽车分期</td>
+<td>利息 4.0%＋吉利返佣 2.1-2.7%−资金 2.30−运营 0.31−风险 1.0%（车场景+厂商贴息客群）−资本 0.78 ≈ <strong>+1.7~+2.2%</strong></td>
+<td>大：50 亿投放→年 EVA 约 +1 亿</td>
+<td><strong>浦发新能源车分期 297.97 亿/+5.36 亿 ✓</strong>（占卡余额 7.87% 仍正增长）</td>
+<td>吉利银河 2.0% 贴息档＋比亚迪 5免2（上海银行无此产品，差异化在手）；返佣 2.7 高档只给高产能分行</td>
+<td><strong>返佣转成本 7% 的建行式打法坚决不跟</strong>（UE 即转负）；厂商集中度 ≤60%</td>
+<td><strong>✓ 第一</strong></td>
+</tr>
+<tr>
+<td>②财政贴息账单分期</td>
+<td>标价 4.75-5.66%−资金运营资本 3.39−边际风险 1.0<code>估算</code> ≈ <strong>+0.4~+1.4%</strong></td>
+<td>中：渗透率提升，卡分期日均回 190 亿+</td>
+<td><strong>邮储账单分期 +10.93% ✓</strong>、浦发国补 120 万笔</td>
+<td>9 月上线自动处理流程</td>
+<td>分期渗透不得放松准入，防"以分期掩延期"</td>
+<td><strong>✓ 第二</strong></td>
+</tr>
+<tr>
+<td>③中收年费卡</td>
+<td>中收无风险无资本，1 亿＝+0.44pct EVA——模型最干净</td>
+<td>小：现实空间 0.2-0.5 亿/年<code>估算</code>（招行非息 97.76 亿/半年，体量差百倍不可比）</td>
+<td>招行参照 ✓</td>
+<td>高端白名单+权益体系，2027 年才可能上量</td>
+<td>权益成本前置，出清期不宜投获客费用</td>
+<td><strong>△ 第三（培育）</strong></td>
+</tr>
+<tr>
+<td>④交易经营</td>
+<td>循环放量 +20%（+10.5 亿）→利息 +0.51 亿 vs 边际损失 +0.80 亿（按 7.61% 口袋）＝<strong>−0.29 亿，负 UE</strong></td>
+<td>大但有毒</td>
+<td>民生 +18.4%↔不良 4.22% 反例 ✓；招行收缩 −5.43% ✓</td>
+<td>无——w 未出清前不碰</td>
+<td>高风险口袋未出清前冻结</td>
+<td><strong>✗ 第四（冻结）</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>排序：汽车分期 ＞ 贴息账单分期 ＞ 年费卡 ＞ 交易经营</strong>。前三者共同点：增量落在低风险口袋或零风险科目；第四者在当前客群结构下每一元增量都是负 EVA。</p>
+<h2>七、Q6 行动路线</h2>
+<table>
+<thead>
+<tr>
+<th>优先级</th>
+<th>动作</th>
+<th>观察指标</th>
+<th>节奏</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td><strong>降险主杠杆</strong>：还原损失率红线 4.0%，超线冻结新投放＋回收高风险额度；AI 准入按 Vintage 预测损失分层定价</td>
+<td>生成率（连续 2 季＜3.5%）、新客 12 个月 Vintage、w（40%→35%）</td>
+<td>即刻，月度经营会</td>
+</tr>
+<tr>
+<td>P2</td>
+<td><strong>汽车分期放量</strong>：吉利 2.0% 档＋比亚迪 5免2 主打</td>
+<td>月投放、综合收益率（利息+返佣）、门店级 UE≥0.5%、30+ 逾期</td>
+<td>9 月起，Q4 余额 +20 亿<code>估算</code></td>
+</tr>
+<tr>
+<td>P3</td>
+<td><strong>贴息账单分期</strong>：对标邮储自动化，做渗透率抓手</td>
+<td>分期渗透率、卡分期日均（→190 亿+）、卡循环进度（89.3%→序时）</td>
+<td>9 月上线，Q4 见效</td>
+</tr>
+<tr>
+<td>P4</td>
+<td>年费卡方案（不投放）、交易冻结、表外 534 亿白名单分批解锁</td>
+<td>白名单转化率、高风险闲置额度压降</td>
+<td>Q4 完成方案</td>
+</tr>
+<tr>
+<td>信号门</td>
+<td>单月降幅收窄至 −3 亿内连续 3 个月＋生成率连续 2 季回落＋Vintage 连续 3-4 季企稳，双条件同时满足才谈重启</td>
+<td>S1-S4 全入表</td>
+<td><strong>转正不设时间表</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>八、Q7 单引擎之辨：剔除网贷后个贷 EVA ≈ −0.35%</h2>
+<p><strong>金句：所谓零售利润引擎，其实是网贷单引擎——42% 的余额扛起 79% 的净收入。</strong></p>
+<ol>
+<li><strong>算法</strong>：EVA 是余额口径收益率，用<strong>余额加权</strong>（收入加权只适用于贡献度分析）。网贷权重两期稳定：余额 42.3%、净收入 78.0-79.0%<code>测算</code>（04-28/05-21 双期验算 ✓）。</li>
+<li><strong>两法互证</strong>：自上而下 (0.19%×5489.79−0.91%×2321.89)÷3167.9＝<strong>−0.34%</strong>；自下而上（房贷 −0.08/消费贷 −0.60/经营贷 −0.04/信用卡系 −2.85×252.23 亿日均）＝<strong>−0.37%</strong>。<strong>点估计 −0.35%，区间 −0.40~−0.30</strong><code>测算</code>。</li>
+<li><strong>金额视角</strong>：年化 EVA——网贷 +21.1 亿、信用卡系 −7.2 亿、消费贷 −2.4 亿、房贷 −2.0 亿<code>测算</code>。非网贷零售整体在毁值。</li>
+<li><strong>含义</strong><code>研判推断</code>：①信用卡不是当期利润工具，考核应从利润转向<strong>减亏里程碑</strong>（−2.85%→−1% 内）；②单引擎高度依赖 13.37-13.66% 定价的现金贷，且其风险成本 3.80%（+0.25pct）在抬升——<strong>引擎自身有温度</strong>；③正因引擎没有替代方案，压降都不敢做——所以汽车分期（低风险正 EVA）必须年内跑通，它是 2027 年信用卡重建的第一块基石。</li>
+</ol>
+<h2>九、专家组共识与分歧（总裁判裁定）</h2>
+<table>
+<thead>
+<tr>
+<th>议题</th>
+<th>共识/分歧</th>
+<th>裁定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1 亏损主因</td>
+<td>4/4 一致：风险成本单因素</td>
+<td>采信</td>
+</tr>
+<tr>
+<td>过线表</td>
+<td>4/4 一致（4.37→−2.85/3.5→−2.0/2.5→−1.0/1.5→≈0，平衡点 1.51%）</td>
+<td>采信</td>
+</tr>
+<tr>
+<td>最值钱杠杆</td>
+<td>4/4 一致：降风险成本</td>
+<td>采信</td>
+</tr>
+<tr>
+<td>Q7 剔网贷 EVA</td>
+<td>4/4 一致：−0.34~−0.37%</td>
+<td>采信 −0.35%（−0.40~−0.30）</td>
+</tr>
+<tr>
+<td>w 反推</td>
+<td><strong>真分歧</strong>：47%（高段取随e贷 7.61%）vs 34%（高段取 10%）vs 4.1%（误读为信用卡占个贷权重）vs 75%（资本维度）</td>
+<td>取同题两解合并：<strong>w≈1/3~1/2、中枢 40%</strong>；另两解降为附注视角</td>
+</tr>
+<tr>
+<td>四抓手排序</td>
+<td>仅操盘手正面回答；另三家按杠杆维度作答</td>
+<td>以四抓手版为基准，杠杆排序（降险＞提价＞中收＞运营）作为其上层逻辑——<strong>所有抓手从属于降险主杠杆</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>来源披露</h2>
+<ul>
+<li>数据底座（已核验）：数据底座_20260830 / _Wind补充 / _官方口径补充 / _新增三家 / 风险校准_风控守门员（同目录）。同业数字=半年报原文逐项核验（置信=高）；江苏官方=媒体转引+Wind 交叉（不良率 0.81%=high）；内部=计财 EVA 表与周报（置信=高）。</li>
+<li>内部库：bank_analytics.db（jsbank_product_eva_h1 / retail_product_income / jsbank_income_progress_weekly / jsbank_retail_loan_weekly / retail_loan_snapshot / peer_city_product_weekly / partner_auto_pricing / partner_housing_products / jsbank_new_pricing_weekly）。</li>
+<li>盲测流程：四位专家独立 pi 进程（--no-session、互不可见、仅喂底座），并行限速后串行补跑，产出 6.3-9.7KB×4；队长独立验算恒等式与总裁判融合。本稿完成前未读取出题方对照材料。</li>
+<li><strong>待补清单</strong>：江苏银行信用卡单独不良率/生成率/核销额/催收回收率/消费金额/卡量（官方未披露或 Wind null）；客户级 RFM 与 Vintage；快照与官方口径 16 亿差成因。</li>
+<li>敏感性：含行内数据，成品勿发公网。测算/估算/研判推断非官方统计。</li>
+</ul></body></html>

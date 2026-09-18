@@ -922,7 +922,11 @@ function isTeamState(value: unknown, expectedId: string): value is TeamState {
   const memberNames = new Set(members.map(member => member.name))
   const taskById = new Map(tasks.map(task => [task.id, task]))
   for (const task of tasks) {
-    if (task.assignee !== undefined && !memberNames.has(task.assignee)) return false
+    // `captain` (CAPTAIN_KEY) is a legal assignee: expert_teams_reassign_task
+    // uses assignee="captain" for captain takeover, and beginTaskAttempt then
+    // stamps CAPTAIN_KEY — it is never a member name, so exempt it here or a
+    // takeover would corrupt the whole team record's validity.
+    if (task.assignee !== undefined && task.assignee !== CAPTAIN_KEY && !memberNames.has(task.assignee)) return false
     for (const dependency of task.dependencies) {
       if (!taskIds.has(dependency)) return false
     }

@@ -1,0 +1,9 @@
+{
+  "taskId": "t8",
+  "subject": "Designer：五层展开版重渲染HTML（v2）",
+  "description": "依赖t7（md更新为五层展开版v2）完成后执行。从更新后的 /root/zhijian/dsh-expert-library/work/浙江三强2026半年报·零售金融点评.md 重渲染HTML（finesse register：深青墨#0e6a55+琥珀金#a9741f、白卡不透明、五层各成完整章节——章眼金句用accent左边框引言块、三强对照卡用小表、推论带编号、机会/风险用虚线胶囊），覆盖输出 /root/zhijian/dsh-expert-library/work/浙江三强2026半年报·零售金融点评.html；门禁：G1数字对账（md vs html逐token一致零新增）+G3双视口（1280/375零溢出、AA对比度）；截图更新 shots/；完成后 update_task(completed) 回报sha256与变更点。发布环节由队长执行。",
+  "dependencies": [
+    "t7"
+  ],
+  "createdAt": 1788145456037
+}

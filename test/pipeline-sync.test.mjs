@@ -11,10 +11,10 @@ import assert from 'node:assert/strict'
 import { normalizePipelineProfile, derivePipelineMeta, emitPipelineRoster } from '../scripts/sync-pipeline-experts.mjs'
 import { parseZhijianSource } from '../scripts/zhijian-source.mjs'
 
-/** 线上详情样张（E08-08 左晖 / E13-02 高增银，字段与线上一致，无 classification/initials）。 */
+/** 线上详情样张（E08-08 难而正确君 / E13-02 高增银，字段与线上一致，无 classification/initials）。 */
 const SAMPLE_LEFT = {
   expert_id: 'E08-08',
-  name: '左晖',
+  name: '难而正确君',
   domain: ['房地产', '平台经济', '服务品质', '长期主义'],
   persona: { style: ['平台与产业互联网视角'], tone: '克制' },
   method: { frameworks: ['平台生态论'], analysis_steps: ['看服务品质'] },
@@ -28,8 +28,8 @@ const SAMPLE_LEFT = {
 test('normalizePipelineProfile derives standard Profile deterministically', () => {
   const { profile, derived } = normalizePipelineProfile(SAMPLE_LEFT)
   assert.equal(profile.expert_id, 'E08-08')
-  assert.equal(profile.name, '左晖')
-  assert.equal(profile.initials, '左')
+  assert.equal(profile.name, '难而正确君')
+  assert.equal(profile.initials, '难')
   assert.equal(profile.classification.category, '房地产')
   assert.equal(derived.field, '房地产')
   assert.equal(derived.stance, '平台经济')
@@ -60,12 +60,12 @@ test('emitPipelineRoster groups by field with parser-compatible rows', async () 
   const roster = emitPipelineRoster([b, a].map(({ profile, derived }) => ({ profile, derived })))
   assert.ok(roster.includes('### 1. 房地产（1 位）'))
   assert.ok(roster.includes('### 2. 江苏银行高层（1 位）'))
-  assert.ok(roster.includes('| E08-08 | 左晖 | 左晖 | 平台经济 | 服务品质 |'))
+  assert.ok(roster.includes('| E08-08 | 难而正确君 | 难而正确君 | 平台经济 | 服务品质 |'))
   // parser 可回读：roster 行格式与 parseRoster 兼容
   const { parseRoster } = await import('../scripts/zhijian-source.mjs')
   const parsed = parseRoster(roster)
   assert.equal(parsed.size, 2)
-  assert.equal(parsed.get('E08-08').name, '左晖')
+  assert.equal(parsed.get('E08-08').name, '难而正确君')
 })
 
 test('pipeline-domains source parses into e01/e08 namespaced metas (E13 moved to bank)', async () => {
@@ -86,7 +86,7 @@ test('pipeline-domains source parses into e01/e08 namespaced metas (E13 moved to
   assert.equal(bank.ok, true, JSON.stringify(bank.errors))
   const bankIds = bank.experts.map(e => e.id)
   assert.ok(bankIds.includes('e13-01') && bankIds.includes('e13-02') && bankIds.includes('e13-03'))
-  assert.equal(bank.experts.length, 4)
+  assert.equal(bank.experts.length, 6)
   // S 特级/XHS：pipeline-general source 41 位
   const general = await parseZhijianSource('domain-packs/pipeline-general/source')
   assert.equal(general.ok, true, JSON.stringify(general.errors))

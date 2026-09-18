@@ -1,0 +1,451 @@
+{
+  "type": "Part C 逻辑附件（v2 重做）",
+  "standard": "wiki-gated-research · 99wiki 分型验收（Part C 验收器 · logic-annex-v2）",
+  "generated_at": "2026-08-30T01:51:46",
+  "logic_template_id": "logic-annex-v2",
+  "content_source": "内容底稿_苏银零售新政影响_v2.md（唯一内容源；v1 结构口径结论作废）",
+  "deliverable": {
+    "html": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/逻辑附件.html",
+    "pdf": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/逻辑附件.pdf",
+    "gate": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/gate_partC.json",
+    "shots": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/shots",
+    "version_dir": "v2/partC（本轮 v2 交付目录）"
+  },
+  "html_sha256": "aaccaa1a5a81ff9daaed6091675f83b2bddad061b150c82ead845ac9ff80eaa1",
+  "pdf_sha256": "2f596d3889ea2d2028f7f29a1441b507dc52cb12ec9315e7cf25dd37d5a82fe2",
+  "last_render": {
+    "time": "2026-08-30T01:51:42",
+    "method": "weasyprint 69.0 · A4 portrait · source=逻辑附件.html @media print",
+    "a4_pdf_pages": 19
+  },
+  "count_proofs": {
+    "quick_cards": {
+      "count": 15,
+      "ids": [
+        "01",
+        "02",
+        "03",
+        "04",
+        "05",
+        "06",
+        "07",
+        "08",
+        "09",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+      ],
+      "single_summary_grid": true
+    },
+    "detail_cards": {
+      "count": 15,
+      "ids": [
+        "01",
+        "02",
+        "03",
+        "04",
+        "05",
+        "06",
+        "07",
+        "08",
+        "09",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15"
+      ],
+      "per_card_complete": {
+        "01": {
+          "title": true,
+          "prem_items": 7,
+          "chain_steps": 3,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-01",
+          "plain": true,
+          "plain_cjk": 68
+        },
+        "02": {
+          "title": true,
+          "prem_items": 6,
+          "chain_steps": 3,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-02",
+          "plain": true,
+          "plain_cjk": 85
+        },
+        "03": {
+          "title": true,
+          "prem_items": 9,
+          "chain_steps": 4,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-03",
+          "plain": true,
+          "plain_cjk": 101
+        },
+        "04": {
+          "title": true,
+          "prem_items": 5,
+          "chain_steps": 3,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-04",
+          "plain": true,
+          "plain_cjk": 47
+        },
+        "05": {
+          "title": true,
+          "prem_items": 7,
+          "chain_steps": 3,
+          "conf": "置信度 · 中",
+          "dep": true,
+          "fig": "C-05",
+          "plain": true,
+          "plain_cjk": 77
+        },
+        "06": {
+          "title": true,
+          "prem_items": 4,
+          "chain_steps": 3,
+          "conf": "置信度 · 中",
+          "dep": true,
+          "fig": "C-06",
+          "plain": true,
+          "plain_cjk": 70
+        },
+        "07": {
+          "title": true,
+          "prem_items": 5,
+          "chain_steps": 3,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-07",
+          "plain": true,
+          "plain_cjk": 63
+        },
+        "08": {
+          "title": true,
+          "prem_items": 6,
+          "chain_steps": 3,
+          "conf": "置信度 · 中",
+          "dep": true,
+          "fig": "C-08",
+          "plain": true,
+          "plain_cjk": 56
+        },
+        "09": {
+          "title": true,
+          "prem_items": 5,
+          "chain_steps": 3,
+          "conf": "置信度 · 中",
+          "dep": true,
+          "fig": "C-09",
+          "plain": true,
+          "plain_cjk": 88
+        },
+        "10": {
+          "title": true,
+          "prem_items": 4,
+          "chain_steps": 3,
+          "conf": "置信度 · 中",
+          "dep": true,
+          "fig": "C-10",
+          "plain": true,
+          "plain_cjk": 71
+        },
+        "11": {
+          "title": true,
+          "prem_items": 5,
+          "chain_steps": 3,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-11",
+          "plain": true,
+          "plain_cjk": 55
+        },
+        "12": {
+          "title": true,
+          "prem_items": 4,
+          "chain_steps": 3,
+          "conf": "置信度 · 中",
+          "dep": true,
+          "fig": "C-12",
+          "plain": true,
+          "plain_cjk": 64
+        },
+        "13": {
+          "title": true,
+          "prem_items": 6,
+          "chain_steps": 3,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-13",
+          "plain": true,
+          "plain_cjk": 59
+        },
+        "14": {
+          "title": true,
+          "prem_items": 5,
+          "chain_steps": 3,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-14",
+          "plain": true,
+          "plain_cjk": 80
+        },
+        "15": {
+          "title": true,
+          "prem_items": 5,
+          "chain_steps": 3,
+          "conf": "置信度 · 高",
+          "dep": true,
+          "fig": "C-15",
+          "plain": true,
+          "plain_cjk": 74
+        }
+      }
+    },
+    "logic_diagrams": {
+      "count": 15,
+      "min_required": 12,
+      "ids": [
+        "C-01",
+        "C-02",
+        "C-03",
+        "C-04",
+        "C-05",
+        "C-06",
+        "C-07",
+        "C-08",
+        "C-09",
+        "C-10",
+        "C-11",
+        "C-12",
+        "C-13",
+        "C-14",
+        "C-15"
+      ],
+      "types": {
+        "C-01": "对照条形",
+        "C-02": "对照条形",
+        "C-03": "对照条形",
+        "C-04": "对照条形",
+        "C-05": "时间轴",
+        "C-06": "决策树",
+        "C-07": "时间轴",
+        "C-08": "错配矩阵",
+        "C-09": "传导链",
+        "C-10": "决策树",
+        "C-11": "对照条形",
+        "C-12": "错配矩阵",
+        "C-13": "对照条形",
+        "C-14": "对照条形",
+        "C-15": "决策树"
+      },
+      "type_coverage": [
+        "传导链",
+        "决策树",
+        "对照条形",
+        "时间轴",
+        "错配矩阵"
+      ],
+      "all_have_viewbox_and_primitives": true
+    },
+    "plain_summaries": 15,
+    "key_takeaways": 8,
+    "alt_explanations": {
+      "count": 4,
+      "min_required": 3,
+      "rows_per_alt": [
+        4,
+        4,
+        4,
+        4
+      ]
+    },
+    "protocol": {
+      "blocks": 1,
+      "items": 4,
+      "observation_indicators": 8,
+      "counted_as_card16": false,
+      "note": "v2 更新：政研通通道已恢复（旧缺口①作废）；底数仪表盘统一期间=2026Q2；4 项缺口（沿用底稿编号②③④⑤）=不良率明细/零售AUM/南京统计局销售面积/期间统一待补（驾驶舱 6-30 期末快照·同业 26Q2·网贷期末余额核验 2,790-2,850 亿推算）"
+    },
+    "source_badges": {
+      "required": [
+        "b-wind",
+        "b-doc",
+        "b-int",
+        "b-bk",
+        "b-est",
+        "b-inf"
+      ],
+      "counts": {
+        "b-wind": 6,
+        "b-doc": 17,
+        "b-int": 37,
+        "b-bk": 10,
+        "b-est": 6,
+        "b-inf": 25,
+        "b-calc": 1
+      }
+    }
+  },
+  "dom_checks": {
+    "engine": "playwright Chromium, viewport 1440x1200, file:// 加载后 DOM 检查（未用正则判嵌套）",
+    "nested_p_count": 0,
+    "js_errors": [],
+    "console_errors": [],
+    "horizontal_overflow": false,
+    "element_escapes": [],
+    "element_escape_count": 0,
+    "banned_styles": [],
+    "old_template_class_hits": [],
+    "old_signature_hits": [],
+    "placeholder_hits": [],
+    "footer_uniform": "98wiki ｜ 智见 / 行业研究报告"
+  },
+  "a4_pdf": {
+    "pages": 19,
+    "footer_missing_pages": [],
+    "text_block_overflow": []
+  },
+  "screenshots": {
+    "wide": [
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/shots/wide_first_hero.png",
+        "target": "首：附件头+导读（hero，含双口径与敏感边界）",
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无溢出/越界/禁用样式、计数通过）"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/shots/wide_mid_card08.png",
+        "target": "中：详细逻辑卡 08（卖旧买新资金错配与合规桥接）",
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无溢出/越界/禁用样式、计数通过）"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/shots/wide_last_protocol.png",
+        "target": "末：补数协议独立区块（v2 更新版 4 缺口+8 指标）",
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无溢出/越界/禁用样式、计数通过）"
+      }
+    ],
+    "a4": [
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/shots/a4_p01.png",
+        "page": 1,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出（逐页署名已验证）"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/shots/a4_p10.png",
+        "page": 10,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出（逐页署名已验证）"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partC/shots/a4_p19.png",
+        "page": 19,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出（逐页署名已验证）"
+      }
+    ],
+    "method_note": "本机渲染模型无图像输入通道（read_image 不可用），按纪律以 DOM 几何审计 + 截图存档替代目检并在此注明；截图已生成可供人工复核"
+  },
+  "scope_note": "Part C 验收器不检查主文页数/封面/KPI/正文 10000 字门（属 Part B 验收器）；本附件无 .page/.cover/KPI 为正常结构",
+  "checks": [
+    {
+      "item": "logic_template_id=logic-annex-v2（html 根属性 + meta 双标注）",
+      "pass": true,
+      "detail": "attr=logic-annex-v2 meta=logic-annex-v2 data=logic-annex-v2"
+    },
+    {
+      "item": "1 套总结速览卡：qcard = 15（唯一 qgrid，编号 01-15）",
+      "pass": true,
+      "detail": "count=15 single_grid=True nums_ok=True"
+    },
+    {
+      "item": "详细逻辑卡 = 15（编号 01-15，无第 16 卡）",
+      "pass": true,
+      "detail": "count=15 nums_ok=True protocol_is_lcard=False"
+    },
+    {
+      "item": "每卡结构完整：论题+前提(≥2)+推理链(≥3 步)+置信度+依赖数据+白话总结",
+      "pass": true,
+      "detail": "01:✓(置信度 · 高); 02:✓(置信度 · 高); 03:✓(置信度 · 高); 04:✓(置信度 · 高); 05:✓(置信度 · 中); 06:✓(置信度 · 中); 07:✓(置信度 · 高); 08:✓(置信度 · 中); 09:✓(置信度 · 中); 10:✓(置信度 · 中); 11:✓(置信度 · 高); 12:✓(置信度 · 中); 13:✓(置信度 · 高); 14:✓(置信度 · 高); 15:✓(置信度 · 高)"
+    },
+    {
+      "item": "置信度 ∈ {高,中,低} 且逐卡标注",
+      "pass": true,
+      "detail": "distribution=['中', '高']"
+    },
+    {
+      "item": "逻辑图 ≥12（SVG，含 viewBox、非空、宽>100px，5 类型全覆盖）",
+      "pass": true,
+      "detail": "count=15 types=['传导链', '决策树', '对照条形', '时间轴', '错配矩阵']"
+    },
+    {
+      "item": "15 条每卡白话总结（.plain，每条 ≥15 汉字）",
+      "pass": true,
+      "detail": "count=15 cjk=[68, 85, 101, 47, 77, 70, 63, 56, 88, 71, 55, 64, 59, 80, 74]"
+    },
+    {
+      "item": "Key Takeaways 5-8 条",
+      "pass": true,
+      "detail": "8"
+    },
+    {
+      "item": "替代解释与验证设计 ≥3 组（每组含验证设计行）",
+      "pass": true,
+      "detail": "count=4 rows=[4, 4, 4, 4] has_verify=[True, True, True, True]"
+    },
+    {
+      "item": "补数协议 = 1 个独立区块（4 项缺口 + 8 项观察指标，不计入 15 卡；v2：政研通已恢复不再列缺）",
+      "pass": true,
+      "detail": "blocks=1 items=4 obs=8 in_lcard=False"
+    },
+    {
+      "item": "来源徽标六类覆盖（Wind/《意见》/驾驶舱·内部资料/政研通·贝壳/测算/推断 均出现）",
+      "pass": true,
+      "detail": "{\"b-wind\": 6, \"b-doc\": 17, \"b-int\": 37, \"b-bk\": 10, \"b-est\": 6, \"b-inf\": 25, \"b-calc\": 1}"
+    },
+    {
+      "item": "无旧模板类名 / 无旧署名 / 无占位句",
+      "pass": true,
+      "detail": "class=[] sig=[] ph=[]"
+    },
+    {
+      "item": "nested_p_count == 0（Chromium DOM 标准，禁正则）",
+      "pass": true,
+      "detail": "0"
+    },
+    {
+      "item": "无 JS 错误",
+      "pass": true,
+      "detail": "pageerror=[]; console.error=[]"
+    },
+    {
+      "item": "无横向溢出 / 无越界元素 / 无禁用样式（宽屏 1440）",
+      "pass": true,
+      "detail": "scrollW=1440 winW=1440 escapes=0 banned=[]"
+    },
+    {
+      "item": "页脚统一署名（HTML footer + A4 PDF 每页 @bottom-center）",
+      "pass": true,
+      "detail": "footer='98wiki ｜ 智见 / 行业研究报告' pdf缺页=[]"
+    },
+    {
+      "item": "A4 PDF 无文本块越界",
+      "pass": true,
+      "detail": "[]"
+    }
+  ],
+  "result": "PASS"
+}

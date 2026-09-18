@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>江苏银行信用卡业务对标研报（2026 中报季）</title>
+<style>
+/* ============================================================
+   江苏银行信用卡业务对标研报 · policy-print register
+   finesse-ui 五轴：ink-teal #0e6a55 + amber #a9741f / 700·400 /
+   report-rail / CSS-only charts / SOUL 6 · SPECTACLE 2 · DENSITY 7
+   基础层 = print（weasyprint）；@media screen 叠加左轨与屏显。
+   ============================================================ */
+:root{
+  --paper:#f6f1e6; --paper-deep:#ece4d0; --card:#fdfaf2; --card-2:#f7f2e4;
+  --teal:#0e6a55; --teal-deep:#0a4a3b; --teal-ink:#143b31;
+  --teal-wash:#e4ede7; --amber:#a9741f; --amber-ink:#7a5312;
+  --amber-wash:#f4e8cf; --amber-line:#d9c193;
+  --warn:#9c3a22; --warn-wash:#f3e2da;
+  --hairline:#d8cdb4; --muted:#5c6a60;
+  --serif:"Noto Serif CJK SC",serif;
+  --sans:"Noto Sans CJK SC",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-weasy-hyphens:none}
+body{
+  font-family:var(--sans);font-weight:400;color:var(--teal-ink);
+  font-size:12.5px;line-height:1.62;background:var(--card);
+  overflow-wrap:anywhere;
+}
+b,strong{font-weight:700}
+p{margin:0 0 8px}
+/* ---------- 页面（A4 / 命名页） ---------- */
+@page{
+  size:A4;margin:19mm 15mm 17mm 15mm;
+  @top-right{content:string(chap);font-family:var(--sans);font-size:8px;color:var(--muted);letter-spacing:.12em}
+  @bottom-center{content:"99wiki ｜ 智见点评 · 行业研究 — " counter(page) " / " counter(pages);
+    font-family:var(--sans);font-size:8.5px;color:var(--muted);letter-spacing:.08em}
+}
+@page cover{margin:0;@top-right{content:none}@bottom-center{content:none}}
+@page back{margin:0;@top-right{content:none}@bottom-center{content:none}}
+/* ---------- 左轨（仅屏显） ---------- */
+.rail{display:none}
+/* ---------- 主文档流 ---------- */
+.doc{max-width:680px;margin:0 auto}
+section{page-break-inside:auto}
+hr{border:none;border-top:1px solid var(--hairline);margin:14px 0}
+/* ---------- 封面 ---------- */
+.cover{
+  page:cover;width:210mm;height:297mm;padding:14mm 13mm 12mm;
+  background:var(--paper);display:flex;flex-direction:column;
+  page-break-after:always;page-break-inside:avoid;
+}
+.cv-top{display:flex;justify-content:space-between;align-items:baseline}
+.brand{font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.22em}
+.stamp{
+  font-size:9.5px;font-weight:700;color:var(--warn);letter-spacing:.24em;
+  border:1.5px solid var(--warn);padding:2px 9px 2px 11px;border-radius:2px;
+}
+.cv-band{height:9mm;background:var(--teal);margin:12px 0 0;border-bottom:2.5px solid var(--amber)}
+.cv-title{
+  font-family:var(--serif);font-weight:700;font-size:39px;line-height:1.28;
+  color:var(--teal-deep);letter-spacing:.02em;margin:26px 0 10px;
+}
+.cv-sub{font-size:14.5px;font-weight:700;color:var(--amber-ink);letter-spacing:.06em;margin-bottom:8px}
+.cv-ver{font-size:10.5px;color:var(--muted);letter-spacing:.1em}
+.cv-ver span{border-bottom:1px solid var(--hairline);padding-bottom:3px}
+.cv-quote{
+  margin:16px 0 0;padding:9px 14px;background:var(--amber-wash);
+  border-left:4px solid var(--amber);font-family:var(--serif);font-weight:700;
+  font-size:14.5px;color:var(--teal-ink);
+}
+.numstrip{
+  display:flex;margin-top:18px;background:var(--card);
+  border:1px solid var(--hairline);border-radius:6px;
+  box-shadow:0 1px 0 rgba(20,59,49,.06);
+  page-break-inside:avoid;
+}
+.numcell{flex:1 1 0;padding:13px 12px 11px}
+.numcell + .numcell{border-left:1px solid var(--hairline)}
+.numcell .num{font-family:var(--serif);font-weight:700;font-size:25px;color:var(--teal-deep);letter-spacing:.01em}
+.numcell .nl{font-size:10.5px;font-weight:700;color:var(--amber-ink);margin-top:3px;letter-spacing:.04em}
+.numcell .nn{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5}
+.cv-nav{
+  margin-top:auto;padding-top:10px;border-top:1px dashed var(--amber-line);
+  display:flex;flex-wrap:wrap;
+}
+.cv-nav span{font-size:9.5px;color:var(--muted);letter-spacing:.06em;margin-right:4px}
+.cv-nav span::after{content:"·";margin-left:4px;color:var(--amber-line)}
+.cv-nav span:last-child::after{content:""}
+/* ---------- 章节标题（report-rail 章头） ---------- */
+h2.sheet-title{
+  string-set:chap attr(data-run);
+  bookmark-level:1;bookmark-label:attr(data-full);
+  break-before:page;margin:2px 0 12px;padding:10px 0 9px;
+  border-top:3px solid var(--teal);border-bottom:1px solid var(--hairline);
+}
+.ch-no{
+  display:inline-block;font-family:var(--serif);font-weight:700;font-size:11px;
+  color:var(--card);background:var(--teal);padding:2px 8px;border-radius:2px;
+  letter-spacing:.18em;margin-right:10px;vertical-align:3px;
+}
+.ch-title{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--teal-deep);letter-spacing:.01em}
+/* ---------- 引言块 / 金句 ---------- */
+blockquote{
+  border-left:4px solid var(--amber);background:var(--amber-wash);
+  padding:9px 14px;margin:10px 0 12px;page-break-inside:avoid;
+}
+blockquote p{margin:0;font-family:var(--serif);font-weight:700;font-size:14px;color:var(--teal-ink)}
+blockquote.grand{
+  border-left:none;background:var(--teal-wash);border-top:1px solid var(--teal);
+  border-bottom:1px solid var(--teal);text-align:center;padding:13px 16px;
+}
+blockquote.grand p{font-size:15.5px;color:var(--teal-deep)}
+.meta-line{
+  font-size:10px;color:var(--muted);border:1px dashed var(--hairline);
+  border-radius:4px;padding:6px 10px;margin:0 0 10px;
+}
+/* ---------- 表格 ---------- */
+table{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:11px;line-height:1.5;page-break-inside:avoid}
+th{
+  background:var(--teal);color:var(--card);font-weight:700;text-align:left;
+  padding:5px 8px;border:1px solid var(--teal-deep);font-size:10.5px;letter-spacing:.05em;
+}
+td{padding:5px 8px;border:1px solid var(--hairline);vertical-align:top}
+tbody tr:nth-child(even) td{background:var(--card-2)}
+table strong{color:inherit}
+.ov-table col,.ov-table th:first-child{width:15%}
+.role-table th:first-child{width:14%}
+.ue-table th:first-child{width:24%}
+.ue-table th:nth-child(2){width:20%}
+.grip-table th:first-child{width:11%}
+.grip-table th:nth-child(2){width:52%}
+.grip-table th:nth-child(3){width:26%}
+/* ---------- 结构组件 ---------- */
+.blk-label{margin:10px 0 0;font-size:10.5px;letter-spacing:.14em;color:var(--amber-ink)}
+.blk-label strong{font-weight:700}
+p.facts{border-left:3px solid var(--teal);padding-left:11px;margin:10px 0 10px}
+p.facts > strong{color:var(--teal-deep)}
+p > strong:first-child{color:var(--teal-deep)}
+ul,ol{margin:4px 0 10px;padding-left:20px}
+li{margin:0 0 6px}
+ul.inferences{list-style:none;padding-left:0;margin-top:8px}
+ul.inferences > li{
+  border-left:1px solid var(--hairline);padding:2px 0 4px 12px;margin:0 0 9px;
+}
+.chip{
+  display:inline-block;background:var(--teal-deep);color:var(--card);
+  font-weight:700;font-size:10.5px;padding:1px 8px;border-radius:2px;
+  letter-spacing:.08em;margin-right:6px;vertical-align:1px;
+}
+strong.edge{color:var(--amber-ink)}
+ol.core-list li{margin-bottom:8px}
+.risk-strip{
+  background:var(--warn-wash);border-left:4px solid var(--warn);
+  padding:9px 13px;margin:10px 0;page-break-inside:avoid;
+}
+.risk-strip strong:first-child{color:var(--warn)}
+p.panel{
+  border:1px solid var(--hairline);border-left:4px solid var(--teal);
+  background:var(--card-2);padding:9px 13px;margin:10px 0;page-break-inside:avoid;
+}
+p.panel strong:first-child{color:var(--teal-deep)}
+p.panel.signals{border-left-color:var(--amber)}
+p.panel.signals strong:first-child{color:var(--amber-ink)}
+p.panel.bounds{border-left-color:var(--amber-line)}
+/* ---------- 四级标注 tag ---------- */
+.lv{
+  display:inline-block;font-size:8.5px;font-weight:700;color:var(--amber-ink);
+  background:var(--amber-wash);border:1px solid var(--amber-line);border-radius:2px;
+  padding:0 4px;margin:0 2px;vertical-align:1.5px;line-height:1.45;letter-spacing:.06em;
+  white-space:nowrap;
+}
+/* ---------- 机会/风险 虚线胶囊 ---------- */
+.or-wrap{margin:12px 0 4px;page-break-inside:avoid}
+.or-label{font-weight:700;color:var(--teal-deep);font-size:11px;letter-spacing:.08em;margin-right:6px}
+.cap{
+  display:inline-block;border:1px dashed var(--teal);border-radius:999px;
+  padding:2px 11px;margin:3px 6px 3px 0;font-size:10.8px;background:var(--teal-wash);
+}
+.cap b{font-weight:700;color:var(--teal-deep)}
+.cap-risk{border-color:var(--warn);background:var(--warn-wash)}
+.cap-risk b{color:var(--warn)}
+/* ---------- 点睛图通用 ---------- */
+figure.chart{
+  background:var(--card);border:1px solid var(--hairline);border-radius:6px;
+  padding:12px 15px 10px;margin:14px 0;page-break-inside:avoid;
+  box-shadow:0 1px 0 rgba(20,59,49,.05);
+}
+.chart-title{
+  font-family:var(--serif);font-weight:700;font-size:12.5px;color:var(--teal-deep);
+  margin-bottom:9px;letter-spacing:.02em;
+}
+.chart-cap{font-size:9.8px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--hairline);padding-top:6px}
+.legend{display:flex;margin:2px 0 8px}
+.legend span{font-size:9.8px;color:var(--muted);margin-right:16px}
+.legend .sw{display:inline-block;width:9px;height:9px;border-radius:1px;margin-right:4px;vertical-align:-1px}
+.sw.r1{background:var(--teal-wash);border:1px solid var(--teal)}
+.sw.r2{background:var(--amber)}
+.sw.mseg-a{background:var(--amber)}
+.sw.mseg-b{background:var(--teal)}
+/* 零轴发散条（第一章/总论） */
+.drow{display:flex;align-items:center;margin:3px 0}
+.drow.hl .dlabel{font-weight:700;color:var(--teal-deep)}
+.dlabel{flex:0 0 122px;text-align:right;font-size:10.8px;padding-right:8px;color:var(--teal-ink)}
+.dlabel-w{flex-basis:128px}
+.dzone{position:relative;height:14px}
+.dz-neg{flex:74 1 0%}
+.dz-pos{flex:25 1 0%;border-left:1.5px solid var(--teal-ink)}
+.dz-full{flex:1 1 0%;border-left:none;border-right:1.5px solid var(--teal-ink)}
+.dz-full .dbar{left:auto;right:0}
+.dbar{position:absolute;top:1px;height:12px;border-radius:1px}
+.dbar.dn{background:var(--amber);right:0}
+.dbar.dp{background:var(--teal);left:0}
+.dbar.hl,.dbar.rowhl{background:var(--teal-ink)}
+.dval{flex:0 0 62px;font-size:10.8px;font-weight:700;padding-left:7px;font-variant-numeric:tabular-nums}
+.dval.pos{color:var(--teal-deep)}
+.dval.neg{color:var(--amber-ink)}
+.dhead{display:flex;margin-bottom:2px}
+.dhead-cell{font-size:9px;color:var(--muted);letter-spacing:.1em}
+/* 成对条（第三章） */
+.prow{display:flex;align-items:center;margin:4px 0}
+.pstack{flex:1 1 0%}
+.pz{position:relative;display:block;height:13px;margin:1px 0}
+.pbar{position:absolute;left:0;top:1px;height:11px;border-radius:1px}
+.pbar.r1{background:var(--teal-wash);border:1px solid var(--teal)}
+.pbar.r2{background:var(--amber)}
+.pval{position:absolute;top:-2px;font-size:9.5px;font-weight:700;color:var(--teal-deep);white-space:nowrap}
+.pval.pvin{color:var(--card)}
+.pbar-miss{position:absolute;left:0;top:2px;height:9px;width:5%;border:1px dashed var(--hairline);border-radius:1px}
+.pmiss{position:absolute;left:6%;top:-2px;font-size:9.5px;color:var(--muted)}
+/* 瀑布（第四章 UE） */
+.wfbody{position:relative;height:172px;margin:6px 0 2px;font-size:0;white-space:nowrap}
+.wfzero{position:absolute;left:0;right:0;border-top:1px dashed var(--teal-ink)}
+.wfzero i{position:absolute;left:0;top:-14px;font-style:normal;font-size:9px;color:var(--muted)}
+.wfconn{position:absolute;border-top:1px dashed var(--amber-line);width:20%}
+.wfcols,.wfbody{display:block}
+.wfcol{position:relative;display:inline-block;width:19%;height:100%;margin-right:1.25%;vertical-align:top}
+.wfcol:last-child{margin-right:0}
+.wfbar{position:absolute;left:27%;width:46%;border-radius:1px}
+.wfbar.base{background:var(--teal)}
+.wfbar.dec{background:var(--amber)}
+.wfbar.dec.risk{background:var(--amber-ink)}
+.wfbar.total{background:var(--teal-ink)}
+.wflab{position:absolute;left:0;right:0;text-align:center;font-size:9.8px;font-weight:700;color:var(--teal-deep);white-space:nowrap}
+.wfnames{display:flex;margin-top:4px;border-top:1px solid var(--hairline);padding-top:4px}
+.wfnames span{flex:1 1 0%;text-align:center;font-size:9.8px;color:var(--teal-ink)}
+/* mix-shift（第四章） */
+.mbody{position:relative}
+.mline{position:absolute;top:-4px;bottom:0;width:0;border-left:1.5px dashed var(--teal-ink)}
+.mline i{
+  position:absolute;top:0;left:3px;font-style:normal;font-size:9px;
+  color:var(--teal-deep);white-space:nowrap;letter-spacing:.04em;
+}
+.mrow{margin:9px 0 2px}
+.mhead{display:flex;align-items:baseline;margin-bottom:3px}
+.mhead b{font-size:11.5px;color:var(--teal-ink);margin-right:10px}
+.mtag{font-size:10px;font-weight:700;color:var(--amber-ink)}
+.mtag.warn{color:var(--warn)}
+.mtag.pass{color:var(--teal-deep)}
+.mtrack{position:relative;height:16px;background:var(--card-2);border-radius:2px}
+.mbar{position:absolute;left:0;top:0;bottom:0;display:flex;border-radius:2px}
+.mseg{display:block;height:100%}
+.mseg-a{background:var(--amber)}
+.mseg-b{background:var(--teal)}
+.mcap{font-size:9.8px;color:var(--muted);margin-top:3px}
+/* 四抓手卡阵（第五章，flex 两行两列，禁 grid） */
+.gwrap{margin-top:2px}
+.grow-row{display:flex;margin:0 0 9px}
+.gcard{
+  flex:1 1 0%;border:1px solid var(--hairline);border-top:3px solid var(--teal);
+  border-radius:4px;background:var(--card-2);padding:8px 11px;margin-right:9px;
+}
+.gcard:last-child{margin-right:0}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dashed var(--hairline);padding-bottom:4px;margin-bottom:6px}
+.ghead b{font-size:12px;font-weight:700;color:var(--teal-deep)}
+.gpri{font-size:9.5px;font-weight:700;color:var(--card);background:var(--amber);border-radius:999px;padding:1px 8px}
+.grow{display:flex;margin:2px 0}
+.gk{flex:0 0 62px;font-size:9.5px;color:var(--amber-ink);font-weight:700;padding-top:1px}
+.gv{flex:1 1 0%;font-size:10.2px;line-height:1.5;color:var(--teal-ink)}
+/* ---------- 来源披露 ---------- */
+ul.sources{list-style:none;padding-left:0}
+ul.sources > li{
+  border-bottom:1px dashed var(--hairline);padding:6px 0 7px;margin:0;
+  font-size:11px;line-height:1.58;
+}
+ul.sources > li > strong{color:var(--teal-deep)}
+/* ---------- 封底 ---------- */
+.backcover{
+  page:back;width:210mm;height:297mm;background:var(--paper);
+  display:block;padding-top:74mm;page-break-before:always;page-break-inside:avoid;
+}
+.bk-inner{width:150mm;margin:0 auto;text-align:center}
+.bk-label{font-size:10px;letter-spacing:.5em;color:var(--amber-ink);font-weight:700;margin-bottom:14px}
+.bk-quote{
+  font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.85;
+  color:var(--teal-deep);margin-bottom:30px;text-align:left;
+}
+.bk-block{
+  border-top:2.5px solid var(--teal);border-bottom:1px solid var(--hairline);
+  padding:12px 6px;margin:0 0 18px;text-align:left;
+}
+.bkrow{display:flex;margin:4px 0;font-size:10.8px}
+.bkrow .bk{flex:0 0 64px;font-weight:700;color:var(--amber-ink);letter-spacing:.2em}
+.bkrow span + span{color:var(--teal-ink)}
+.bk-disclaim{font-size:9.8px;color:var(--muted);margin-bottom:22px}
+.bk-brand{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--teal)}
+/* ---------- 屏显（左轨 + 浏览器观感） ---------- */
+@media screen{
+  body{background:var(--paper);padding-bottom:60px}
+  .rail{
+    display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;
+    width:212px;background:var(--teal-ink);padding:22px 18px;z-index:10;
+  }
+  .rail-brand{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--paper);letter-spacing:.08em}
+  .rail-sub{font-size:9.5px;color:#bcd0c8;letter-spacing:.2em;margin:4px 0 14px}
+  .rail-stamp{
+    align-self:flex-start;font-size:9px;font-weight:700;color:#f0c9bd;
+    border:1px solid var(--warn);padding:2px 8px;border-radius:2px;letter-spacing:.2em;margin-bottom:16px;
+  }
+  .rail-nav{list-style:none;padding:0;margin:0;flex:1}
+  .rail-nav li{margin:0 0 2px}
+  .rail-nav a{
+    display:block;color:#dce7e1;text-decoration:none;font-size:11.5px;
+    padding:5px 8px;border-radius:3px;border-left:2px solid transparent;
+  }
+  .rail-nav a:hover{background:rgba(255,255,255,.07);border-left-color:var(--amber)}
+  .rail-nav i{font-style:normal;font-size:9px;color:var(--amber);margin-right:8px;font-weight:700}
+  .rail-foot{font-size:9px;color:#9db5ab;letter-spacing:.08em;border-top:1px solid rgba(255,255,255,.14);padding-top:10px}
+  .doc{margin-left:212px;padding:26px 34px 40px;max-width:940px}
+  .cover{width:auto;min-height:calc(100vh - 40px);margin:0 34px 0 212px;border:1px solid var(--hairline);border-radius:8px;box-shadow:0 2px 14px rgba(20,59,49,.08)}
+  .backcover{width:auto;min-height:92vh;border:1px solid var(--hairline);border-radius:8px;margin:22px 34px 0 212px;padding-top:110px}
+  h2.sheet-title{break-before:auto}
+}
+
+</style>
+</head>
+<body>
+
+<nav class="rail" aria-hidden="true">
+  <div class="rail-brand">99wiki</div>
+  <div class="rail-sub">智见点评 · 行业研究</div>
+  <span class="rail-stamp">行内材料 · 勿外发</span>
+  <ol class="rail-nav">
+    <li><a href="#s0"><i>00</i>卷首速览</a></li>
+    <li><a href="#s1"><i>01</i>总论</a></li>
+    <li><a href="#s2"><i>02</i>第一章 单位经济对标</a></li>
+    <li><a href="#s3"><i>03</i>第二章 产品要素对标</a></li>
+    <li><a href="#s4"><i>04</i>第三章 风险生成对标</a></li>
+    <li><a href="#s5"><i>05</i>第四章 客群端破局</a></li>
+    <li><a href="#s6"><i>06</i>第五章 产品端破局</a></li>
+    <li><a href="#s7"><i>07</i>总结</a></li>
+    <li><a href="#s8"><i>08</i>来源披露</a></li>
+  </ol>
+  <div class="rail-foot">完整报告 v1 · 2026-08-30</div>
+</nav>
+
+<section class="cover" id="cover">
+  <div class="cv-top">
+    <span class="brand">99wiki ｜ 智见点评 · 行业研究</span>
+    <span class="stamp">行内材料 · 勿外发</span>
+  </div>
+  <div class="cv-band"></div>
+  <p class="cv-title">江苏银行信用卡业务对标研报</p>
+  <p class="cv-sub">2026 中报季 · 产品对标 × 单位经济 × 风险生成 × 客群/产品破局</p>
+  <p class="cv-ver"><span>完整报告 v1 · 2026-08-30</span></p>
+  <div class="cv-quote">余额的收缩是全行业的，风险成本的收缩才是自己的。</div>
+  <div class="numstrip">
+    <div class="numcell"><div class="num">-2.85%</div><div class="nl">EVA · 综合净收益率</div><div class="nn">2026-06-30 产品 EVA 表（-0.27pct）</div></div>
+    <div class="numcell"><div class="num">-21.09%</div><div class="nl">信用卡余额 · 上半年</div><div class="nn">官方口径 -60.58 亿（约 287.2→226.6 亿）</div></div>
+    <div class="numcell"><div class="num">3.68%</div><div class="nl">不良生成率 · 邮储</div><div class="nn">年化，+0.62pct，个贷各类升幅最大</div></div>
+    <div class="numcell"><div class="num">1.52%</div><div class="nl">无中收过线阈值</div><div class="nn">无中收时风险成本须 ≤1.52pct（<span class="lv lv1">测算</span>）</div></div>
+  </div>
+  <div class="cv-nav">
+    <span>卷首速览</span><span>总论</span><span>第一章 单位经济对标</span><span>第二章 产品要素对标</span><span>第三章 风险生成对标</span><span>第四章 客群端破局</span><span>第五章 产品端破局</span><span>总结</span><span>来源披露</span>
+  </div>
+</section>
+<main class="doc">
+<h2 class="sheet-title" id="s0" data-run="卷首速览" data-full="卷首速览"><span class="ch-no">卷首速览</span></h2>
+<p class="meta-line">主线：产品对标 × 单位经济 × 风险生成三条深钻线｜数据期：2026H1（半年报）+ 2026-08-13（内部周报）｜口径：信用卡及透支（各行披露口径，差异处已注明）</p>
+<table class="ov-table">
+<thead>
+<tr>
+<th>主体</th>
+<th>一句话结论</th>
+<th>关键数字</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>江苏银行信用卡</td>
+<td>综合净收益率 <strong>-2.85%</strong>，个贷产品最差之一；风险成本 <strong>4.37%</strong> 吃掉客户收益率 <strong>4.90%</strong> 的 89%（<span class="lv lv1">测算</span>），亏损在风险端不在收益端</td>
+<td>EVA -2.85%（-0.27pct）</td>
+</tr>
+<tr>
+<td>全行业</td>
+<td>收缩是宏观共振：居民短贷一年净减 <strong>13,801.32 亿</strong>（-6.62%<span class="lv lv1">测算</span>），社零当月同比 2026-05 转负（-0.6%）；三家披露行余额全降，幅度分化</td>
+<td>浦发 -2.77% ＜ 民生 -6.01% ＜ 邮储 -9.55%（<span class="lv lv1">测算</span>）</td>
+</tr>
+<tr>
+<td>邮储银行</td>
+<td>不良率 1.45% 持平 <strong>≠ 风险出清</strong>：不良生成率 3.68%（+0.62pct，年化）为个贷各类升幅最大，存量靠处置泵出</td>
+<td>半年处置约 39 亿 ≈ 期末不良池 1.4 倍（<span class="lv lv1">测算</span>）</td>
+</tr>
+<tr>
+<td>民生银行</td>
+<td>不良率 4.22%（+0.35pct）已成全行不良主因；组织属地化收缩，卡中心 3,597 人分中心并入属地分行</td>
+<td>交易规模 +18.40%，笔均约 447 元（<span class="lv lv1">测算</span>）</td>
+</tr>
+<tr>
+<td>江苏银行（城商行对照）</td>
+<td>官方口径上半年 <strong>-60.58 亿 / -21.09%</strong>（反推 287.2→226.6 亿），五家城商行中收缩最深；上海银行 7 月单月 +4 亿率先转正——先出清者先企稳的参照</td>
+<td>官方 -21.09%；城商行 7/31 口径 YTD -70 亿 vs 上海 +8 亿</td>
+</tr>
+</tbody>
+</table>
+<p><strong>核心判断（3 行）</strong></p>
+<ol><ol class="core-list">
+<li>江苏银行信用卡处于「继续压降出清」阶段、已近出清后期：官方口径上半年 -21.09%，EVA -2.85% 的根在风险成本 4.37% 上行（+0.25pct），而非收益率 4.90% 下行（-0.20pct）——减亏靠降险，不靠放量。</li>
+<li>收缩期唯一被验证的增长点是分期渗透与财政贴息承接：邮储账单分期 +10.93%；江苏卡分期年目标进度 104.3% 达标，但日均余额一个半月 -3.5%（<span class="lv lv1">测算</span>）——收入达标掩盖渗透乏力。</li>
+<li>邮储「以核销换不良率」是前车之鉴：处置依赖度透明化（核销额 ÷ 新生成不良）是三家对标中唯一可直接照抄的治理动作。</li>
+</ol>
+<p class="risk-strip"><strong>风险一览</strong>：① 收缩螺旋——余额降→分母缩→生成率读数被动抬升→再压降（邮储 -9.55% 即样本）；② 处置依赖——账面稳定若靠泵出维持，出清信号失真；③ 宏观——社零 6-7 月仅 0.6%-1.0% 低位徘徊，复苏时点不定。</p>
+<blockquote>
+<p><strong>总纲金句：余额的收缩是全行业的，风险成本的收缩才是自己的。</strong></p>
+</blockquote>
+
+<h2 class="sheet-title" id="s1" data-run="总论" data-full="总论：为什么是现在——行业收缩期的三笔账"><span class="ch-no">总论</span><span class="ch-title">为什么是现在——行业收缩期的三笔账</span></h2>
+<p><strong>第一笔账，宏观账。</strong> 信用卡是居民消费信贷周期最短的科目，先收缩、后修复。社零当月同比（1-2 月为合并口径，Wind EDB M0001428，国家统计局）自 2025-06 的 4.8% 一路下行，2026-05 转负（-0.6%），6-7 月在 1.0%/0.6% 低位徘徊；居民短期贷款余额 2026-07 降至 194,683.31 亿元，一年净减 13,801.32 亿元（-6.62%<span class="lv lv1">测算</span>），2026 年内净减 9,280.67 亿元（-4.55%<span class="lv lv1">测算</span>）（Wind EDB M0251917，人民银行）。消费疲弱是收缩的底色，不是哪家行经营失误。</p>
+<p><strong>第二笔账，行业账。</strong> 三家披露行 2026H1 余额全收缩：浦发 3,785.45 亿（-107.82 亿，-2.77%<span class="lv lv1">测算</span>）、民生 4,064.57 亿（-260.03 亿，-6.01%<span class="lv lv1">测算</span>）、邮储 1,894.15 亿（-200.12 亿，-9.55%<span class="lv lv1">测算</span>）。收缩幅度分化，共同变量是财政贴息/国补承接：浦发国补叠加优惠交易 120 多万笔、覆盖 86 万户；邮储账单分期金额同比 +10.93%，靠财政贴息全流程自动处理带动；民生亦主打「财政贴息+分期优惠」。<strong>贴息是收缩期里唯一被验证的顺风。</strong></p>
+<p><strong>第三笔账，本行账。</strong> 江苏银行信用卡余额官方口径（媒体转引半年报，<span class="lv lv1">测算</span>反推，与 Wind 公告 2026-08-20 同日发布）：2025 末约 287.2 亿 → 2026-06-30 约 226.6 亿，上半年 <strong>-60.58 亿（-21.09%）</strong>；内部口径序列作高频趋势线：快照 2025 末 271.36 亿 → 周报 230.0 亿（6/27）→ 227.3 亿（7/16）→ 220.4 亿（8/13，YTD -66.9 亿），周报起点约 287.3 亿与官方反推互证。两口径并注、不做混拼：内部快照 2025 末 271.36 亿与官方反推 287.2 亿差约 16 亿（快照或剔除部分分期/未使用口径，口径差<span class="lv lv4">待补</span>）。表外未使用信用卡额度同步收缩：534.33 亿（2026-06-30，-29.28 亿/-5.19%<span class="lv lv1">测算</span>，官方披露）——授信端与余额端互证收缩真实。全行背景（媒体转引半年报）：个贷 6,496 亿（-1.65%）vs 对公 1.94 万亿（+16.72%），净息差 1.64%（-0.09pct）——信贷资源向对公倾斜，信用卡收缩嵌在零售整体让位的格局里（<span class="lv lv3">研判推断</span>）；媒体叙事「一年半缩水近 150 亿」（2024 末约 370-380 亿<span class="lv lv2">估算</span>→2026H1 约 226.6 亿，精确起点待半年报原文核验<span class="lv lv4">待补</span>）。五家城商行对照（7/31 口径 YTD）：江苏 -70 亿最深，上海银行 +8 亿（7 月单月 +4 亿转正）、北京 -23 亿、南京 -15 亿、宁波 -31 亿——先出清者先企稳（<span class="lv lv3">研判推断</span>，上海银行为单一样本，参照不等于结论）。</p>
+<p>为什么是这个形状：行业性收缩是宏观共振，幅度分化是各行 2020-2022 扩张期客群质量与风险定价的清算。江苏银行收缩最深，既有主动压降成分，也有高风险客群集中出清成分（<span class="lv lv3">研判推断</span>）。</p>
+<p>本文不囿于战略层，沿三条深钻线展开：<strong>①单位经济（EVA 分解）；②产品要素；③风险生成</strong>，落点为「收什么、保什么、建什么」行动清单。</p>
+<p><strong>数据底座（核心锚点）</strong>：江苏银行 EVA -2.85%（信用卡）、4.37%（还原不良损失率）、4.90%（客户收益率）；官方余额 -60.58 亿/-21.09%（287.2→226.6 亿，周报趋势线 220.4 亿@8-13）；邮储 3.68%（生成率）、1.45%（不良率）；民生 4.22%（不良率）、3,597 人（卡中心）；浦发 2.01%（不良率）、8,088 人（卡中心）；城商行 YTD -70 亿。<strong>观察清单（<span class="lv lv4">待补</span>）</strong>：江苏银行官方信用卡消费金额/卡量/信用卡单独不良率（半年报未单独披露；Wind 公告仅命中附注区段，正文 MD&amp;A 未命中）、不良生成率、核销与催收回收明细、客户级 RFM（分期渗透/活跃率/卡均交易）、浦发/民生卡量（无披露）、内部快照与官方口径差约 16 亿的成因。</p>
+<figure class="chart" id="fig-city"><figcaption class="chart-title">点睛图 · 五家城商行信用卡余额 YTD 变动（7/31 口径，亿元）</figcaption><div class="drow hl"><span class="dlabel">江苏银行</span><span class="dzone dz-neg"><span class="dbar dn hl" style="width:98.85%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-70 亿</span></div><div class="drow"><span class="dlabel">宁波银行</span><span class="dzone dz-neg"><span class="dbar dn" style="width:43.78%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-31 亿</span></div><div class="drow"><span class="dlabel">北京银行</span><span class="dzone dz-neg"><span class="dbar dn" style="width:32.48%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-23 亿</span></div><div class="drow"><span class="dlabel">南京银行</span><span class="dzone dz-neg"><span class="dbar dn" style="width:21.18%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-15 亿</span></div><div class="drow"><span class="dlabel">上海银行</span><span class="dzone dz-neg"></span><span class="dzone dz-pos"><span class="dbar dp" style="width:75.60%"></span></span><span class="dval pos">+8 亿</span></div><figcaption class="chart-cap">江苏 -70 亿最深，上海银行 +8 亿（7 月单月 +4 亿率先转正）——先出清者先企稳（<span class="lv lv3">研判推断</span>，上海银行为单一样本，参照不等于结论）。</figcaption></figure>
+<h2 class="sheet-title" id="s2" data-run="第一章 · 单位经济对标" data-full="第一章 单位经济对标：EVA -2.85%——风险成本吃掉几乎全部收益"><span class="ch-no">第一章</span><span class="ch-title">单位经济对标：EVA -2.85%——风险成本吃掉几乎全部收益</span></h2>
+<blockquote>
+<p><strong>章眼金句：收益率是收入的封面，风险成本才是损益的正文。</strong></p>
+</blockquote>
+<p class="blk-label"><strong>角色对照卡</strong></p>
+<table class="role-table">
+<thead>
+<tr>
+<th>维度</th>
+<th>名义收益视角</th>
+<th>风险调整后视角</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>看什么</td>
+<td>客户收益率 4.90%、净收益率 2.60%，均为正</td>
+<td>扣风险成本 4.37%、资本成本后，综合净收益率 -2.85%</td>
+</tr>
+<tr>
+<td>结论</td>
+<td>信用卡在赚钱</td>
+<td>信用卡在亏钱</td>
+</tr>
+<tr>
+<td>用于</td>
+<td>客群经营、定价沟通</td>
+<td>资源配置、资本约束</td>
+</tr>
+</tbody>
+</table>
+<p class="facts"><strong>事实依据（2026-06-30 计财部分产品 EVA，内部披露）</strong>：信用卡客户收益率 4.90%（-0.20pct）、净收益率 2.60%（-0.06pct）、还原不良损失率 4.37%（+0.25pct）、综合净收益率 <strong>-2.85%</strong>（-0.27pct）；风险成本占客户收益率 89%（<span class="lv lv1">测算</span>）。个贷横向：网贷 +0.91%（最优）、个贷合计 +0.19%、房贷 -0.08%、经营贷 -0.04%、消费贷 -0.60%、<strong>信用卡 -2.85%</strong>、卡部随e贷 -2.93%（最差）。同业无 EVA 披露（<span class="lv lv4">待补</span>），可比项用披露可得的不良率/生成率作风险成本代理：浦发不良率 2.01%、民生 4.22%、邮储 1.45%/生成率 3.68%——口径不同（还原口径含核销出表损失 vs 名义不良率），只做量级对照，不做伪精确排名。</p>
+<p><strong>推论与数据</strong></p>
+<ul><ul class="inferences">
+<li><span class="chip">推论 1</span>：信用卡是零售资产的价值洼地。</strong> EVA -2.85% 为个贷最差之一，仅优于卡部随e贷（-2.93%），低于个贷合计 +0.19% 达 3.04pct（<span class="lv lv1">测算</span>）。每 100 亿余额年化侵蚀综合收益约 2.85 亿（<span class="lv lv1">测算</span>，按官方 6 月末余额约 226.6 亿推算约 6.5 亿/年<span class="lv lv1">测算</span>；周报口径 220.4 亿则约 6.3 亿/年）——这不是边际亏损，是资产级亏损。</li>
+<li><span class="chip">推论 2</span>：亏损的根在风险端，不在收益端。</strong> 收益率 4.90% 虽 -0.20pct 下行，但仍是全行个贷中第二高（仅次于卡部随e贷 8.53%）；风险成本 4.37% 上行 +0.25pct，两者剪刀差一年扩大 0.45pct（<span class="lv lv1">测算</span>）。资金+运营成本合计约 2.30pct（4.90%-2.60%，<span class="lv lv1">测算</span>）相对稳定——变量集中在风险成本。净收益率 2.60%（-0.06pct）即扣资金与运营成本后的毛利，量级可比同业净息差（同业未按产品披露净收益率，<span class="lv lv4">待补</span>）——毛利为正、净利为负，亏损通道完全由风险成本构成，这一结构是「降险可减亏、放量难扭亏」的产品层证据。</li>
+<li><span class="chip">推论 3</span>：同业对应项印证 4.37% 处于高位带。</strong> 民生不良率 4.22%（+0.35pct）已把全行拖到「总部不良主要是信用卡」；邮储名义不良率 1.45% 看着健康，但生成率 3.68% 说明真实流量风险接近 4 个点。江苏 4.37% 是还原口径（含核销出表），与名义不良率不同维度（口径差异，不做直接相减）；若同业按还原口径披露，真实风险成本或普遍高于名义不良率（<span class="lv lv3">研判推断</span>，同业还原口径未披露<span class="lv lv4">待补</span>）。</li>
+<li><span class="chip">推论 4</span>（<span class="lv lv3">研判推断</span>）：减亏与重启有明确的数学门槛。</strong> 按 EVA=净收益率−还原不良损失率−资本成本（资本成本约 1.08pct 倒推<span class="lv lv1">测算</span>）：风险成本降至约 2.5%，EVA 收窄至 -1% 以内（减亏里程碑）；降至约 1.5%，EVA≥0（重启门槛）。较当前 4.37% 回落 2.85pct，出清只能贡献前半程，后半程必须靠结构性降险（客群上移、分期渗透、智能风控）。</li>
+</ul>
+<div class="or-wrap"><span class="or-label">机会与风险：</span><span class="cap cap-opp"><b>机会——</b>降险路径清晰，减亏里程碑（风险成本 2.5%）可量化、可考核</span>；<span class="cap cap-risk"><b>风险——</b>收益率若延续 -0.20pct 趋势继续下行，剪刀差进一步扩大，减亏目标将落空（指向总结·保）。</span></div><figure class="chart" id="fig-ch1"><figcaption class="chart-title">点睛图 · 个贷各产品综合净收益率 EVA（2026-06-30 计财部分产品 EVA，内部披露）</figcaption><div class="dhead"><span class="dlabel"></span><span class="dzone dz-neg dhead-cell">EVA＜0</span><span class="dzone dz-pos dhead-cell">EVA＞0</span><span class="dval"></span></div><div class="drow"><span class="dlabel">网贷</span><span class="dzone dz-neg"></span><span class="dzone dz-pos"><span class="dbar dp" style="width:87.36%"></span></span><span class="dval pos">+0.91%</span></div><div class="drow"><span class="dlabel">个贷合计</span><span class="dzone dz-neg"></span><span class="dzone dz-pos"><span class="dbar dp" style="width:18.24%"></span></span><span class="dval pos">+0.19%</span></div><div class="drow"><span class="dlabel">经营贷</span><span class="dzone dz-neg"><span class="dbar dn" style="width:1.30%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-0.04%</span></div><div class="drow"><span class="dlabel">房贷</span><span class="dzone dz-neg"><span class="dbar dn" style="width:2.59%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-0.08%</span></div><div class="drow"><span class="dlabel">消费贷</span><span class="dzone dz-neg"><span class="dbar dn" style="width:19.46%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-0.60%</span></div><div class="drow hl"><span class="dlabel">信用卡</span><span class="dzone dz-neg"><span class="dbar dn hl" style="width:92.43%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-2.85%</span></div><div class="drow"><span class="dlabel">卡部随e贷</span><span class="dzone dz-neg"><span class="dbar dn" style="width:95.03%"></span></span><span class="dzone dz-pos"></span><span class="dval neg">-2.93%</span></div><figcaption class="chart-cap">EVA -2.85% 为个贷最差之一，仅优于卡部随e贷（-2.93%），低于个贷合计 +0.19% 达 3.04pct（<span class="lv lv1">测算</span>）；深色条为本行信用卡。</figcaption></figure>
+
+<h2 class="sheet-title" id="s3" data-run="第二章 · 产品要素对标" data-full="第二章 产品要素对标：卡在缩、账在分、人在变"><span class="ch-no">第二章</span><span class="ch-title">产品要素对标：卡在缩、账在分、人在变</span></h2>
+<blockquote>
+<p><strong>章眼金句：收缩期里比的是谁的结构还在长。</strong></p>
+</blockquote>
+<p class="blk-label"><strong>角色对照卡</strong></p>
+<table class="role-table">
+<thead>
+<tr>
+<th>维度</th>
+<th>扩张期产品逻辑</th>
+<th>收缩期产品逻辑</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>看什么</td>
+<td>发卡量、余额增速、市场份额</td>
+<td>分期渗透、场景承接、组织效率</td>
+</tr>
+<tr>
+<td>指标</td>
+<td>卡量、余额</td>
+<td>分期日均余额、交易活跃、卡均透支</td>
+</tr>
+</tbody>
+</table>
+<p class="facts"><strong>事实依据</strong>：①余额——浦发 3,785.45 亿（-2.77%<span class="lv lv1">测算</span>）、民生 4,064.57 亿（-6.01%<span class="lv lv1">测算</span>）、邮储 1,894.15 亿（-9.55%<span class="lv lv1">测算</span>）；江苏官方口径约 226.6 亿（2026-06-30，-60.58 亿/-21.09%<span class="lv lv1">测算</span>反推），周报趋势线 220.4 亿（2026-08-13，YTD -66.9 亿），两口径并注不混拼。②卡量/卡均透支——邮储结存卡量 3,784.28 万张（较 2022 年峰值 4,282 万张 -11.6%<span class="lv lv1">测算</span>），卡均透支约 5,006 元（<span class="lv lv1">测算</span>，1,894.15 亿÷3,784.28 万张）；浦发/民生卡量未披露（<span class="lv lv4">待补</span>），江苏卡量（<span class="lv lv4">待补</span>）。③交易——民生电子支付交易 3,691.57 亿（+18.40%）、8.25 亿笔（+10.29%），笔均约 447 元（<span class="lv lv1">测算</span>）；邮储消费金额 4,322.22 亿；江苏消费金额（<span class="lv lv4">待补</span>）。④分期——邮储账单分期金额 +10.93%（财政贴息带动）；江苏卡分期日均余额 193.44 亿（6-25）→ 186.66 亿（8-12），一个半月 -6.8 亿（-3.5%<span class="lv lv1">测算</span>），但年目标进度 104.3%（净收入 2.8 亿、年目标 4.31 亿）；卡循环日均 53.11 亿→52.38 亿，进度 89.3%（净收入 0.5 亿、年目标 0.97 亿）——进度口径统一为「年初至今净收入 ÷ 全年净收入目标」（内部周报 jsbank_income_progress_weekly 口径，2026-08-12 时点）。⑤组织——民生卡中心 3,597 人（总行口径，分中心融合人员计入属地分行）；浦发信用卡中心 8,088 人（2026H1，较 2022 年峰值 11,975 人 -32.5%<span class="lv lv1">测算</span>，2025 年单年减少 1,850 人）。</p>
+<p><strong>推论与数据</strong></p>
+<ul><ul class="inferences">
+<li><span class="chip">推论 1</span>（<span class="lv lv3">研判推断</span>）：收缩幅度与客群质量、组织瘦身同向分化。</strong> 邮储卡量 -11.6% 对应余额 -9.55% 的最深收缩；浦发余额收缩最浅（-2.77%），对应人员 -32.5% 的大幅瘦身——收缩期里「保余额」与「减人员」不互斥，浦发用组织效率换余额稳定。江苏银行官方口径 -21.09% 与城商行 YTD -70 亿互证，收缩幅度为五家城商行之最，存量客群质量拖累大于同业。</li>
+<li><span class="chip">推论 2</span>：分期是收缩期唯一被验证的增长点，但江苏的渗透节奏在掉。</strong> 邮储账单分期 +10.93% 靠财政贴息全流程自动处理；江苏卡分期收入年进度 104.3% 达标，但日均余额一个半月 -3.5%（<span class="lv lv1">测算</span>）——收入达标靠存量日均与定价效应消化，新增渗透乏力（<span class="lv lv3">研判推断</span>；账龄/定价拆解<span class="lv lv4">待补</span>验证）。<strong class="edge">边界句：进度达标 ≠ 渗透提升，104.3% 不可外推为趋势。</strong></li>
+<li><span class="chip">推论 3</span>：交易活跃与信贷规模解耦。</strong> 民生余额 -6.01% 而交易 +18.40%，笔均约 447 元（<span class="lv lv1">测算</span>）——支付场景价值独立于信贷规模，「量缩额增」结构说明活跃客户仍在消费，收缩的是授信敞口而非场景连接。江苏交易数据缺失（<span class="lv lv4">待补</span>），场景健康度无法对标，列为观察项。</li>
+<li><span class="chip">推论 3b</span>：卡均透支与额度使用效率是收缩期的隐形资产。</strong> 邮储卡均透支约 5,006 元（<span class="lv lv1">测算</span>，1,894.15 亿÷3,784.28 万张），对应 3,784 万张结存卡量——卡量大、单卡透支低，是零售客群广覆盖模式；江苏银行卡量未披露（<span class="lv lv4">待补</span>），但表外未使用额度 534.33 亿（2026-06-30，官方披露）约为官方表内余额约 226.6 亿的 2.4 倍（<span class="lv lv1">测算</span>），推得额度使用率约三成（<span class="lv lv1">测算</span>）——存量授信闲置与风险敞口并存，压缩未使用额度（上半年已 -29.28 亿）是低成本降险动作，且不伤活跃客户（<span class="lv lv3">研判推断</span>）。</li>
+<li><span class="chip">推论 4</span>（<span class="lv lv3">研判推断</span>）：组织方向的行业共识是「属地经营+人员瘦身」双轨。</strong> 民生 3,597 人属地化（分中心并入属地分行）与浦发 8,088 人总部集中（峰值 -32.5%）是两种收缩范式：前者把经营责任压给分行、后者总部集约。江苏银行卡中心组织与人员数据未披露（<span class="lv lv4">待补</span>）。</li>
+</ul>
+<div class="or-wrap"><span class="or-label">机会与风险：</span><span class="cap cap-opp"><b>机会——</b>分期与贴息承接有同业验证路径（浦发国补 120 多万笔/86 万户的参照），卡分期 104.3% 进度证明收入端可挖</span>；<span class="cap cap-risk"><b>风险——</b>卡分期日均余额若延续下滑，收入进度将掉头，增长点变成失血点（指向总结·保）。</span></div><figure class="chart" id="fig-ch2"><figcaption class="chart-title">点睛图 · 2026H1 信用卡余额同比变动（%，<span class="lv lv1">测算</span>）</figcaption><div class="drow"><span class="dlabel dlabel-w">浦发</span><span class="dzone dz-full"><span class="dbar dn" style="width:12.32%"></span></span><span class="dval neg">-2.77%</span></div><div class="drow"><span class="dlabel dlabel-w">民生</span><span class="dzone dz-full"><span class="dbar dn" style="width:26.72%"></span></span><span class="dval neg">-6.01%</span></div><div class="drow"><span class="dlabel dlabel-w">邮储</span><span class="dzone dz-full"><span class="dbar dn" style="width:42.47%"></span></span><span class="dval neg">-9.55%</span></div><div class="drow hl"><span class="dlabel dlabel-w">江苏（官方口径）</span><span class="dzone dz-full"><span class="dbar dn rowhl" style="width:93.78%"></span></span><span class="dval neg">-21.09%</span></div><figcaption class="chart-cap">三家披露行 2026H1 余额全收缩、幅度分化；江苏官方口径上半年 -60.58 亿（-21.09%），五家城商行中收缩最深；周报趋势线 220.4 亿（2026-08-13）。</figcaption></figure>
+
+<h2 class="sheet-title" id="s4" data-run="第三章 · 风险生成对标" data-full="第三章 风险生成对标：不良率是后视镜，生成率才是仪表盘"><span class="ch-no">第三章</span><span class="ch-title">风险生成对标：不良率是后视镜，生成率才是仪表盘</span></h2>
+<blockquote>
+<p><strong>章眼金句：同一张报表里，后视镜说没事，仪表盘说在加速。</strong></p>
+</blockquote>
+<p class="blk-label"><strong>角色对照卡</strong></p>
+<table class="role-table">
+<thead>
+<tr>
+<th>维度</th>
+<th>存量视角</th>
+<th>流量视角</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>指标</td>
+<td>不良率（时点存量）</td>
+<td>不良生成率（期间流量，年化）</td>
+</tr>
+<tr>
+<td>局限</td>
+<td>被核销处置压低</td>
+<td>反映真实生成速度</td>
+</tr>
+</tbody>
+</table>
+<p class="facts"><strong>事实依据</strong>：三家不良率——邮储 1.45%（持平）＜ 浦发 2.01%（+0.09pct）＜ 民生 4.22%（+0.35pct）；邮储不良额 27.30 亿（-2.95 亿）；民生不良额 171.64 亿（+4.29 亿），总部不良主要是信用卡，信用贷款不良额较上末 +9.16 亿元主因信用卡；<strong>邮储不良生成率 3.68%（+0.62pct，年化，个贷各类贷款中升幅最大）</strong>；江苏还原不良损失率 4.37%（+0.25pct）。江苏全行不良率 0.81%（Wind=high），信用卡单独不良率官方未披露（<span class="lv lv4">待补</span>）；个贷内部已披露口径——个人经营贷不良率 3.06%（+0.60pct，约为全行均值 3.8 倍<span class="lv lv1">测算</span>）、个人消费及按揭类不良率 1.03%（+0.07pct）——信用卡还原不良损失率 4.37% 高于已披露的个贷两类口径，是零售条线风险最高的品种（<span class="lv lv3">研判推断</span>，口径不同仅量级对照）。</p>
+<p><strong>推论与数据</strong></p>
+<ul><ul class="inferences">
+<li><span class="chip">推论 1</span>（<span class="lv lv1">测算</span>）：邮储存量池 1 元背后约 1.4 元被处置出表。</strong> 年化生成率 3.68% 折半为半年口径约 1.84%，乘平均余额约 1,960 亿（<span class="lv lv1">测算</span>，取值口径：期初 2,094.27 亿与期末 1,894.15 亿之间的校准取值；按算术均值约 1,994 亿计则半年生成约 36.7 亿，量级一致）≈ 半年新生成不良约 36 亿；期末不良额反降 2.95 亿，倒推半年内核销+处置+回收约 39 亿，为期末不良余额 27.30 亿的约 1.4 倍（<span class="lv lv1">测算</span>；核销/回收明细未披露<span class="lv lv4">待补</span>）。<strong class="edge">边界句：生成率高 ≠ 当期损失高，核销后回收率决定真实损失。</strong></li>
+<li><span class="chip">推论 2</span>（<span class="lv lv3">研判推断</span>）：「不良率持平」是泵出维持的账面稳定。</strong> 邮储生成率 +0.62pct 为个贷各类升幅最大，存量靠处置出表维持 1.45%——以核销换不良率的治理动作不可学；收缩螺旋风险（余额 -9.55% 中分母缩小被动抬升生成率读数→读数恶化→进一步压降）需防处置节奏失控。</li>
+<li><span class="chip">推论 3</span>：江苏的 4.37% 是流量风险已在损益表兑现的信号。</strong> 还原不良损失率 4.37% 高于三家名义不良率区间（1.45%-4.22%）；与收益率 4.90% 的剪刀差一年扩大 0.45pct（<span class="lv lv1">测算</span>，见第一章推论 2）——风险生成在加速，且已经过核销还原，无账面粉饰空间。</li>
+<li><span class="chip">推论 4</span>（<span class="lv lv3">研判推断</span>）：江苏处于「民生式高存量」与「邮储式高流量」的叠加风险态。</strong> 民生的今天（4.22% 不良率拖累全行）是存量极端样本，邮储的今天（生成率升幅最大）是流量隐蔽样本；江苏还原口径 4.37% 兼有两者特征——存量高位（相对三家）与流量兑现（已还原）同时成立。<strong class="edge">边界句：三家横向维度不同，不做伪精确排序；出清的正统信号是 Vintage 新户逾期生成与回收率，而非期末不良率。</strong></li>
+</ul>
+<p class="panel signals"><strong>止损/重启信号体系（写入考核）</strong>：S1 生成率连续 2 季回落且年化 &lt;3.5% 并低于 4.37%（当前<span class="lv lv4">待补</span>）；S2 新发放账户 12 个月 M2+ 逾期率连续 3-4 季持平/下降（<span class="lv lv4">待补</span>，风险成熟期 18-24 个月，验证至少 4-6 季<span class="lv lv3">研判推断</span>）；S3 单月余额降幅收窄至 -3 亿内连续 3 个月（官方口径上半年月均约 -10.1 亿<span class="lv lv1">测算</span>，周报口径 8 月中节奏约 -3.6 亿/月<span class="lv lv1">测算</span>、已较 7 月 -9 亿显著收窄）；S4 客户收益率止跌回升、与还原不良损失率剪刀差连续 2 季收窄。任一止损信号（S1 连续 2 季上行、S2 恶化、催收回收率下行<span class="lv lv4">待补</span>）出现即维持压降并回收高风险额度。<strong>重启切换（由压降转重建）= 三条件同时满足：S3 单月余额降幅收窄至 -3 亿内连续 3 个月 + S1 不良生成率连续 2 季回落 + S2 新户 Vintage 连续 3-4 季企稳</strong>——三条件缺一不可，不预设转正时间表。</p>
+<div class="or-wrap"><span class="or-label">机会与风险：</span><span class="cap cap-opp"><b>机会——</b>S3 节奏已收窄（-3.6 亿/月 vs 7 月 -9 亿，<span class="lv lv1">测算</span>），出清接近尾声，先出清者先企稳的窗口在打开</span>；<span class="cap cap-risk"><b>风险——</b>处置依赖度若不透明，「账面稳定」将掩盖真实生成（指向总结·建）。</span></div><figure class="chart" id="fig-ch3"><figcaption class="chart-title">点睛图 · 不良率是后视镜，生成率才是仪表盘（2026H1，%）</figcaption><div class="prow"><span class="dlabel dlabel-w">邮储银行</span><span class="pstack"><span class="pz"><span class="pbar r1" style="width:32.22%"></span><span class="pval" style="left:33.42%">1.45%</span></span><span class="pz"><span class="pbar r2" style="width:81.78%"></span><span class="pval" style="left:82.98%">生成率 3.68%</span></span></span></div><div class="prow"><span class="dlabel dlabel-w">浦发银行</span><span class="pstack"><span class="pz"><span class="pbar r1" style="width:44.67%"></span><span class="pval" style="left:45.87%">2.01%</span></span><span class="pz"><span class="pbar-miss"></span><span class="pmiss">未披露</span></span></span></div><div class="prow"><span class="dlabel dlabel-w">民生银行</span><span class="pstack"><span class="pz"><span class="pbar r1" style="width:93.78%"></span><span class="pval pvin" style="right:6px">4.22%</span></span><span class="pz"><span class="pbar-miss"></span><span class="pmiss">未披露</span></span></span></div><div class="prow"><span class="dlabel dlabel-w">江苏银行</span><span class="pstack"><span class="pz"><span class="pbar-miss"></span><span class="pmiss">未单独披露</span></span><span class="pz"><span class="pbar r2" style="width:97.11%"></span><span class="pval pvin" style="right:6px">还原 4.37%</span></span></span></div><div class="legend"><span><i class="sw r1"></i>名义不良率（时点存量）</span><span><i class="sw r2"></i>不良生成率 / 还原损失率（流量，年化）</span></div><figcaption class="chart-cap">同业不良率=名义口径，江苏 4.37%=还原口径（含核销出表损失），口径不同只做量级对照，不做伪精确排名；邮储生成率 3.68%（+0.62pct）为个贷各类升幅最大。</figcaption></figure>
+
+<h2 class="sheet-title" id="s5" data-run="第四章 · 客群端破局" data-full="第四章 客群端破局：从池子管理到客群结构重构"><span class="ch-no">第四章</span><span class="ch-title">客群端破局：从池子管理到客群结构重构</span></h2>
+<blockquote>
+<p><strong>章眼金句：压降是减法，重构是除法——把高风险口袋从 23% 压到 10%，比把整个池子再缩 10% 有用。</strong></p>
+</blockquote>
+<p class="blk-label"><strong>UE 判定框（每 1 亿余额·年化；本章两杠杆与第五章四抓手全部回到此表判定）</strong></p>
+<table class="ue-table">
+<thead>
+<tr>
+<th>项</th>
+<th>数值</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>恒等式</td>
+<td>EVA = 客户收益率 − 资金成本 − 运营成本 − 风险成本 − 资本成本</td>
+<td>—</td>
+</tr>
+<tr>
+<td>客户收益率</td>
+<td>4.90%</td>
+<td>EVA 表披露</td>
+</tr>
+<tr>
+<td>资金成本 + 运营成本</td>
+<td>合计 2.30pct</td>
+<td><span class="lv lv1">测算</span>：4.90−2.60（净收益率）倒推；拆分未披露（2.29%/0.31% 拆法合计 2.60pct，与倒推差 0.30pct，待核<span class="lv lv4">待补</span>）</td>
+</tr>
+<tr>
+<td>风险成本</td>
+<td>4.37%</td>
+<td>还原不良损失率</td>
+</tr>
+<tr>
+<td>资本成本</td>
+<td>约 1.08pct</td>
+<td><span class="lv lv1">测算</span>倒推</td>
+</tr>
+<tr>
+<td><strong>本行实测 EVA</strong></td>
+<td><strong>-2.85%</strong></td>
+<td>EVA 表披露（验算 4.90−2.30−4.37−1.08=−2.85）</td>
+</tr>
+<tr>
+<td><strong>总门槛（演绎）</strong></td>
+<td>EVA≥0 ⇔ 收益率+中收率 ≥ 风险成本 + 3.38pct（=2.30+1.08<span class="lv lv1">测算</span>）</td>
+<td>无中收时风险成本须 ≤1.52pct，与第一章重启门槛（1.5%）互证</td>
+</tr>
+</tbody>
+</table>
+<p class="blk-label"><strong>角色对照卡</strong></p>
+<table class="role-table">
+<thead>
+<tr>
+<th>维度</th>
+<th>池子管理（现状）</th>
+<th>结构重构（破局）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>看什么</td>
+<td>余额总量、单月降幅</td>
+<td>高风险口袋占比 × 口袋损失率（双杠杆）</td>
+</tr>
+<tr>
+<td>判定基准</td>
+<td>余额、EVA 总量</td>
+<td>UE 恒等式逐项（收益率/成本/风险/资本）</td>
+</tr>
+<tr>
+<td>动作</td>
+<td>整体压降</td>
+<td>口袋精准回收 + 正常客群上移</td>
+</tr>
+</tbody>
+</table>
+<p class="facts"><strong>事实依据</strong>：①<strong>UE 恒等式分解表（每 1 亿余额·年化，全部手段回到此表判定）</strong>：</p>
+<table class="ue-table">
+<thead>
+<tr>
+<th>UE 项</th>
+<th>数值</th>
+<th>口径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>客户收益率</td>
+<td>4.90%</td>
+<td>EVA 表披露（-0.20pct）</td>
+</tr>
+<tr>
+<td>− 资金成本 + 运营成本</td>
+<td>合计 2.30pct</td>
+<td><span class="lv lv1">测算</span>：4.90%−2.60%（净收益率，EVA 表披露）倒推；资金/运营拆分未披露<span class="lv lv4">待补</span></td>
+</tr>
+<tr>
+<td>− 风险成本</td>
+<td>4.37%</td>
+<td>还原不良损失率（+0.25pct）</td>
+</tr>
+<tr>
+<td>− 资本成本</td>
+<td>约 1.08pct</td>
+<td><span class="lv lv1">测算</span>倒推假设</td>
+</tr>
+<tr>
+<td>= 综合净收益率 EVA</td>
+<td>-2.85%</td>
+<td>EVA 表披露（-0.27pct）</td>
+</tr>
+</tbody>
+</table>
+<p>假设显式：资金+运营合计 2.30pct 为自洽口径（验算 4.90−2.30=2.60=净收益率；若按 2.29%/0.31% 拆分则合计 2.60pct，与倒推值差 0.30pct，待核<span class="lv lv4">待补</span>）；资本成本 1.08pct 为倒推假设。②归纳证据——同成本带截面：网贷 8.32%/3.80%→EVA +0.91% vs 卡部随e贷 8.53%/7.61%→-2.93%（EVA 表）；同业收缩期动作：邮储贴息账单分期 +10.93%、浦发场景汽车分期 297.97 亿、民生交易 +18.40%（笔均约 447 元）；中收对比：本行银行卡手续费 0.35 亿 vs 中信信用卡非息净收入 50.12 亿（2026H1）。③组合风险结构反推——4.37% ≈ 高风险口袋 7.61%（卡部随e贷级）× w + 其他客群约 3.4%（<span class="lv lv2">估算</span>）× (1-w)，解出 w≈23%（<span class="lv lv2">估算</span>，验算≈4.37%）；口袋规模约 52 亿（<span class="lv lv1">测算</span>，226.6 亿×23%）。④存量基数——表外未使用额度 534.33 亿 vs 表内 226.6 亿，使用率约三成（<span class="lv lv1">测算</span>）。⑤白名单资产（已有，不新建）——人才贷（全省市占 &gt;70%<span class="lv lv4">待补</span>）、代发/公积金客群、安居贷（全年目标 50 亿+<span class="lv lv4">待补</span>）、融合易贷（房贷审批通过自动获消费额度）；卡e贷尊享/卡e贷重客拓户/智派同业高潜已注册在册（branch_product_metrics）。</p>
+<p><strong>推论与数据</strong></p>
+<ul><ul class="inferences">
+<li><span class="chip">归纳一</span>：同一成本带上，EVA 排序由风险成本决定。</strong> 网贷 8.32% 收益率/3.80% 损失率→+0.91%；卡部随e贷 8.53% 收益率/7.61% 损失率→-2.93%——高定价救不了高风险，8.5% 的收益被 7.6% 的风险吃光。卡产品的问题不是定价不够，是风险成本（4.37%）没有对准客群。</li>
+<li><span class="chip">归纳二</span>：同业收缩期的 UE 改善都押在「不扩敞口的收入 + 真实用途降险」。</strong> 邮储贴息账单分期 +10.93%（存量转化）、浦发场景汽车分期 297.97 亿（真实用途）、民生交易 +18.40%（交易不占信贷敞口）——没有一家靠「扩大高风险敞口」改善 UE。</li>
+<li><span class="chip">归纳三</span>：中收是唯一无代价杠杆。</strong> 中收直接加 EVA 分子、零风险敞口：本行 0.35 亿 vs 中信 50.12 亿（量级差约 143 倍<span class="lv lv1">测算</span>，口径含差异仅方向对照）——卡业务目前几乎纯利息收入结构，中收项近乎空白。</li>
+<li><span class="chip">演绎一</span>（<span class="lv lv1">测算</span>）：总门槛——EVA≥0 ⇔ 客户收益率 + 中收率 ≥ 风险成本 + 3.38pct（= 资金运营 2.30 + 资本 1.08）。</strong> 当前 4.90% &lt; 4.37%+3.38%=7.75%，缺口 2.85pct 即 EVA；无中收时风险成本须 ≤1.52pct 才过线——与第一章重启门槛（1.5%）互证。此后每条破局路径都过这条线判定。</li>
+<li><span class="chip">演绎二</span>（<span class="lv lv1">测算</span>）：客群端应用——mix-shift 双杠杆的过线判定。</strong> 减亏情景（口袋 23%→10%≈29 亿 + 正常客群 3.4%→1.9% → 加权 2.47%）：EVA=4.90−2.30−2.47−1.08≈-0.95%，减亏达成但未过线；重启情景（口袋→3%≈6.8 亿 + 正常客群→1.34% → 加权约 1.53%）：EVA≈-0.01%≈0，过线。<strong>结论：客群重构是降风险成本的正路，但 2.47% 只是减亏，1.53% 才是重启——两者差在正常客群损失率（1.9%→1.34%），即客群上移的彻底程度。</strong> 边界句：情景测算非预测；29 亿压降按官方 226.6 亿基数推演，回收须按 Vintage 分层，防误伤口袋内优质尾部。</li>
+<li><span class="chip">推论 4</span>（<span class="lv lv3">研判推断</span>）：卡缺的是客群分层纪律，不是市场。</strong> 网贷 +0.91% 是本行内部对照组：同样做高收益零售，分层定价+准入纪律下可盈利；卡e贷尊享等产品已在册，工具已备、缺组合级调配。</li>
+<li><span class="chip">推论 5</span>（<span class="lv lv2">估算</span>+<span class="lv lv1">测算</span>）：存量激活的过线条件。</strong> 优质池未使用额度使用率 +5pct（<span class="lv lv2">估算</span>：经营目标假设、非历史均值，限优质客群），弹性约 26.7 亿（534.33×5%），年化收入约 1.3 亿（按 4.90%<span class="lv lv1">测算</span>）；但单笔 UE 判定：风险成本 1.9%（正常客群级）时 EVA≈-0.38% 仍不过线，须只激活风险成本 &lt;1.52% 的白名单客群（人才贷/代发/安居贷/融合易贷）才转正——<strong>激活与降险必须同步，先过线再放量</strong>。RFM 缺失（<span class="lv lv4">待补</span>），以额度使用率×分期渗透×活跃度作代理分层，与「审批联动+预授信」衔接。</li>
+</ul>
+<p class="panel gov"><strong>责任主体与观察指标（写入考核）</strong>：零售信贷部牵头（口袋回收、白名单准入）、信用卡中心（预授信激活）。观察指标：高风险口袋余额占比（季，路径 23%→10%）、正常客群损失率（季）、白名单渗透率（人才贷/代发持卡率）、优质池使用率（+5pct 目标）。<strong>风险边界</strong>：①口袋回收一刀切会误伤 23% 内的优质尾部——按 Vintage 分层执行；②人才贷市占 &gt;70% 是优势也是集中度风险——单一客群敞口需设限额；③上移依赖白名单资产质量，安居贷/融合易贷自身不良需同步监测。</p>
+<div class="or-wrap"><span class="or-label">机会与风险：</span><span class="cap cap-opp"><b>机会——</b>双杠杆数学可达 2.47%（减亏）乃至 1.53%（过线），且全部工具（网贷验证、白名单、已注册产品）在册，无新建成本</span>；<span class="cap cap-risk"><b>风险——</b>结构重构失败形态=「口袋没压下去、正常客群被误伤」，读数上与整体压降无异（指向总结·建）。</span></div><figure class="chart" id="fig-ue"><figcaption class="chart-title">点睛图 · UE 恒等式分解瀑布（每 1 亿余额·年化，%）</figcaption><div class="wfbody"><span class="wfzero" style="bottom:37.78%"><i>0</i></span><span class="wfconn" style="bottom:92.22%;left:9.50%"></span><span class="wfconn" style="bottom:66.67%;left:29.75%"></span><span class="wfconn" style="bottom:18.11%;left:50.00%"></span><span class="wfconn" style="bottom:6.11%;left:70.25%"></span><span class="wfcol"><span class="wfbar base" style="bottom:37.78%;height:54.44%"></span><span class="wflab" style="bottom:94.42%">4.90%</span></span><span class="wfcol"><span class="wfbar dec" style="bottom:66.67%;height:25.56%"></span><span class="wflab" style="bottom:94.42%">-2.30</span></span><span class="wfcol"><span class="wfbar dec risk" style="bottom:18.11%;height:48.56%"></span><span class="wflab" style="bottom:68.87%">-4.37</span></span><span class="wfcol"><span class="wfbar dec" style="bottom:6.11%;height:12.00%"></span><span class="wflab" style="bottom:20.31%">-1.08</span></span><span class="wfcol"><span class="wfbar total" style="bottom:6.11%;height:31.67%"></span><span class="wflab" style="bottom:39.98%">-2.85%</span></span></div><div class="wfnames"><span>客户收益率</span><span>资金+运营成本</span><span>风险成本</span><span>资本成本</span><span>综合净收益率 EVA</span></div><figcaption class="chart-cap">验算 4.90−2.30−4.37−1.08=−2.85（UE 表披露/<span class="lv lv1">测算</span>）；变量集中在风险成本：客户收益率 4.90%（-0.20pct）仍居个贷第二高，风险成本 4.37%（+0.25pct）上行。</figcaption></figure>
+<figure class="chart" id="fig-mix"><figcaption class="chart-title">点睛图 · mix-shift 双杠杆情景对比（风险成本加权，%）</figcaption><div class="legend"><span><i class="sw mseg-a"></i>高风险口袋贡献 w×7.61%（卡部随e贷级）</span><span><i class="sw mseg-b"></i>正常客群贡献</span></div><div class="mbody"><span class="mline" style="left:33.04%"><i>过线 ≤1.52pct（无中收）</i></span><div class="mrow"><div class="mhead"><b>当前</b><span class="mtag">风险成本 4.37%</span></div><div class="mtrack"><span class="mbar" style="width:95.00%"><span class="mseg mseg-a" style="width:40.10%"></span><span class="mseg mseg-b"></span></span></div><div class="mcap">高风险口袋 w=23% × 7.61% ＋ 其他客群 (1−w) × 3.4% → 4.37%</div></div><div class="mrow"><div class="mhead"><b>减亏情景</b><span class="mtag warn">加权 2.47%（未过线）</span></div><div class="mtrack"><span class="mbar" style="width:53.70%"><span class="mseg mseg-a" style="width:30.80%"></span><span class="mseg mseg-b"></span></span></div><div class="mcap">口袋 23%→10%（≈29 亿）× 7.61% ＋ 正常客群 3.4%→1.9% → 2.47%</div></div><div class="mrow"><div class="mhead"><b>重启情景</b><span class="mtag pass">加权约 1.53%（过线）</span></div><div class="mtrack"><span class="mbar" style="width:33.26%"><span class="mseg mseg-a" style="width:14.90%"></span><span class="mseg mseg-b"></span></span></div><div class="mcap">口袋→3%（≈6.8 亿）× 7.61% ＋ 正常客群 →1.34% → 1.53%</div></div></div><figcaption class="chart-cap">图注：情景测算，非预测；29 亿压降按官方 226.6 亿基数推演，回收须按 Vintage 分层，防误伤口袋内优质尾部。</figcaption></figure>
+
+
+<h2 class="sheet-title" id="s6" data-run="第五章 · 产品端破局" data-full="第五章 产品端破局：从现金分期到场景分期+中收"><span class="ch-no">第五章</span><span class="ch-title">产品端破局：从现金分期到场景分期+中收</span></h2>
+<blockquote>
+<p><strong>章眼金句：现金分期赚的是息差，场景分期赚的是确定性——同样的余额，不同的风险成本。</strong></p>
+</blockquote>
+<p class="blk-label"><strong>角色对照卡</strong></p>
+<table class="role-table">
+<thead>
+<tr>
+<th>维度</th>
+<th>现金分期（当前主力）</th>
+<th>场景分期 + 中收（破局方向）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>用途验证</td>
+<td>弱（资金去向不可验）</td>
+<td>强（汽车/账单真实用途+车辆残值缓释）</td>
+</tr>
+<tr>
+<td>风险属性</td>
+<td>组合 4.37% 的主要来源</td>
+<td>结构性更低（<span class="lv lv3">研判推断</span>）</td>
+</tr>
+<tr>
+<td>收入结构</td>
+<td>利息为主</td>
+<td>利息 + 中收（年费/返佣/手续费）</td>
+</tr>
+</tbody>
+</table>
+<p class="facts"><strong>事实依据</strong>：①汽车分期——本行已签吉利（银河/魅族领克贴息 2.0%<span class="lv lv4">待补</span>、中国星 2.3%<span class="lv lv4">待补</span>；返佣两档 2.1%/2.7%<span class="lv lv4">待补</span>）与比亚迪「5免2」协议（<span class="lv lv4">待补</span>：协议条款原文核验）；浦发新能源车分期 297.97 亿（+5.36 亿）占其卡余额 3,785.45 亿的 7.87%（<span class="lv lv1">测算</span>）；上海银行无比亚迪 5免2 产品=差异化抓手；建行返佣 7% 的行业价格战=边界警示。②财政贴息账单分期——邮储账单分期金额 +10.93%（贴息全流程自动化）为验证样本；本行融合易贷已跑通贴息模式（贴息 1%<span class="lv lv4">待补</span>、单笔封顶 3,000 元<span class="lv lv4">待补</span>、政策窗口至 2026 年底<span class="lv lv4">待补</span>），复制到卡账单分期的系统改造量小。③中收年费卡——本行银行卡手续费 0.35 亿（-35.2%，含借记卡口径）vs 中信信用卡非息净收入 50.12 亿（2026H1），量级差约 143 倍（<span class="lv lv1">测算</span>，口径含差异，仅方向性对照）；参照邮储万事达世界卡（中高端）、浦发爱宠/财富年费卡矩阵；本行 AUM 5 万+ 财富客群为现成目标池。④支付活跃与交易经营——民生交易 +18.40%、笔均约 447 元（量缩额增）；邮储场景营销 5,700 万人次带动 500 亿（人均约 877 元<span class="lv lv1">测算</span>）；本行交易数据缺失（<span class="lv lv4">待补</span>）。</p>
+<p><strong>推论与数据</strong>（逐条回到 UE 恒等式判定：过线条件=综合收益 ≥ 风险成本+3.38pct，见第四章演绎一）</p>
+<ul><ul class="inferences">
+<li><span class="chip">演绎三</span>（<span class="lv lv1">测算</span>）：汽车分期——条件过线，定位「获客+结构抓手」。</strong> 吉利贴息后客户实付 2.0%-2.3%，银行综合收益=客户实付+厂商返佣 2.1%/2.7% ≈ 4.1%-4.7%（<span class="lv lv1">测算</span>）；过线条件：风险成本 &lt; 4.1%-4.7%−3.38% = 0.72%-1.32%。机制=场景真实用途+车辆残值缓释+国补承接，风险成本可降至 1% 附近（<span class="lv lv3">研判推断</span>，场景分期损失率<span class="lv lv4">待补</span>）→ 判定：返佣高档档（4.7%）+ 降险至 1% → EVA≈+0.32% 过线；低档（4.1%）→ ≈-0.28% 不过线。<strong>结论：只做返佣高档车型+绑定优质客群，全量铺开即亏损</strong>；规模弹性 11.3/18.1 亿（226.6 亿×5%/8%<span class="lv lv1">测算</span>，浦发占比 7.87% 居中验证）；比亚迪「5免2」为差异化获客（上海银行无此产品）。责任主体：信用卡中心+汽车金融团队。观察指标：汽车分期余额及占卡余额比、返佣档位结构。风险边界：建行返佣 7% 内卷——本行返佣 2.1%-2.7% 须按单车盈亏平衡测算，不做价格战跟随。</li>
+<li><span class="chip">演绎四</span>（<span class="lv lv1">测算</span>，关键反直觉）：贴息账单分期不是独立破局点。</strong> UE&lt;0 时放规模=放大亏损（每 100 亿余额年亏 2.85 亿）；贴息只改「客户成本」、不改「银行 UE」（银行按合同利率入账，补贴由财政/厂商承担），因此贴息放量必须与客群上移捆绑：放量对象风险成本 &lt;1.52% 才正贡献；减亏里程碑（2.5%）下放量仍年亏约 1 亿/100 亿。邮储 +10.93% 是在其生成率 3.68% 未出清下的动作，恰是「以规模摊薄负 UE」的风险样本，不可照抄。<strong>窗口 2026 年底</strong>：先降险、后放量，用融合易贷已验证的贴息模式（1%/单笔 3,000 元封顶，<span class="lv lv4">待补</span>原文核验）做系统复制，改造量小。责任主体：信用卡中心+计财部。观察指标：账单分期渗透率、贴息分期金额占比、放量客群 Vintage。风险边界：政策到期预案（2026 年底后转自有权益承接，避免渗透率断崖）。</li>
+<li><span class="chip">演绎五</span>（<span class="lv lv1">测算</span>）：中收年费卡——数学上最安全的杠杆。</strong> 中收直接加 EVA 分子、不经风险成本：中收率每 +0.5pct → EVA 直接 +0.5pct；0.5pct ≈ 1.13 亿/年（226.6 亿×0.5%），对照现有银行卡手续费净收入 0.35 亿是量级提升。天花板取决于客群质量：中信 50.12 亿（2026H1）需要头部卡产品力，江苏现实目标应设梯度——第一阶段中收率 0.2%-0.5pct（EVA 改善 0.2-0.5pct），对应 AUM 5 万+ 财富客群承接万事达世界卡式产品（邮储/浦发参照）。责任主体：财富与私人银行+信用卡中心。观察指标：银行卡手续费净收入（同比转正）、年费卡发卡量与留存率。风险边界：年费卡不得强制搭售、权益成本与年费精算匹配（合规闸门）。</li>
+<li><span class="chip">演绎六</span>（<span class="lv lv3">研判推断</span>）：交易经营——收入侧对冲，先补数据再谈经营。</strong> 交易中收加 EVA 分子、不占信贷敞口（民生 +18.40%/笔均约 447 元的量缩额增验证）；本行交易数据缺失（<span class="lv lv4">待补</span>）→ 第一步建交易监测仪表盘，第二步参照邮储「周六5折」式品牌活动（5,700 万人次带动 500 亿，人均约 877 元<span class="lv lv1">测算</span>）。责任主体：信用卡中心+科技部。观察指标：交易额/笔均/活跃率。风险边界：活动补贴须测算获客成本与留存，不做纯烧钱补贴。</li>
+<li><strong>四抓手 UE 排序表（<span class="lv lv3">研判推断</span>，供议事排序而非精确打分）</strong>：</li>
+</ul>
+<table class="grip-table">
+<thead>
+<tr>
+<th>抓手</th>
+<th>UE 达标判定（过线=综合收益 ≥ 风险成本+3.38pct）</th>
+<th>规模弹性</th>
+<th>优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①汽车分期</td>
+<td>综合收益 4.1%-4.7%（客户实付+返佣），高档返佣+场景降险至 1% 可达标（EVA≈+0.32%）；低档不过线</td>
+<td>11.3/18.1 亿（226.6 亿×5%/8%）</td>
+<td>1</td>
+</tr>
+<tr>
+<td>②年费卡中收</td>
+<td>零风险敞口、直接加 EVA 分子（中收率+0.5pct=EVA+0.5pct）；规模受客群质量约束</td>
+<td>0.5pct≈1.13 亿/年</td>
+<td>2</td>
+</tr>
+<tr>
+<td>③贴息账单分期</td>
+<td>前置条件：UE&lt;0 时放规模=放大亏损，须先降险（&lt;1.52%）后放量</td>
+<td>渗透率驱动，弹性大</td>
+<td>3</td>
+</tr>
+<tr>
+<td>④交易经营</td>
+<td>不占信贷敞口、只加分子；本行数据缺失，先建仪表盘</td>
+<td>数据基建到位后见效</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p>收口仍为「<strong>先过线，再放量</strong>」——对应「收保建」：收=口袋回收降险（第四章演绎二）；保=收益率 4.90% 止跌+中收率从 0 起步；建=风险成本降至 &lt;1.52% 后按 ①②③④ 顺序放量。</p>
+<div class="or-wrap"><span class="or-label">机会与风险：</span><span class="cap cap-opp"><b>机会——</b>四抓手均在既有资产与系统上叠加（协议已签/模式已跑通/客群现成），无新建基础设施</span>；<span class="cap cap-risk"><b>风险——</b>价格战（汽车分期）、政策窗口（贴息 2026 年底）、合规（年费卡）、数据缺失（交易经营）四重边界（指向总结·建）。</span></div><figure class="chart" id="fig-grips"><figcaption class="chart-title">点睛图 · 四抓手 UE 排序卡阵（<span class="lv lv3">研判推断</span>，供议事排序而非精确打分）</figcaption><div class="grow-row"><div class="gcard"><div class="ghead"><b>①汽车分期</b><span class="gpri">优先级 1</span></div><div class="grow"><span class="gk">UE 达标判定</span><span class="gv">综合收益 4.1%-4.7%（客户实付+返佣），高档返佣+场景降险至 1% 可达标（EVA≈+0.32%）；低档不过线</span></div><div class="grow"><span class="gk">规模弹性</span><span class="gv">11.3/18.1 亿（226.6 亿×5%/8%）</span></div></div><div class="gcard"><div class="ghead"><b>②年费卡中收</b><span class="gpri">优先级 2</span></div><div class="grow"><span class="gk">UE 达标判定</span><span class="gv">零风险敞口、直接加 EVA 分子（中收率+0.5pct=EVA+0.5pct）；规模受客群质量约束</span></div><div class="grow"><span class="gk">规模弹性</span><span class="gv">0.5pct≈1.13 亿/年</span></div></div></div><div class="grow-row"><div class="gcard"><div class="ghead"><b>③贴息账单分期</b><span class="gpri">优先级 3</span></div><div class="grow"><span class="gk">UE 达标判定</span><span class="gv">前置条件：UE&lt;0 时放规模=放大亏损，须先降险（&lt;1.52%）后放量</span></div><div class="grow"><span class="gk">规模弹性</span><span class="gv">渗透率驱动，弹性大</span></div></div><div class="gcard"><div class="ghead"><b>④交易经营</b><span class="gpri">优先级 4</span></div><div class="grow"><span class="gk">UE 达标判定</span><span class="gv">不占信贷敞口、只加分子；本行数据缺失，先建仪表盘</span></div><div class="grow"><span class="gk">规模弹性</span><span class="gv">数据基建到位后见效</span></div></div></div><figcaption class="chart-cap">收口仍为「先过线，再放量」；过线=综合收益 ≥ 风险成本+3.38pct（见第四章演绎一）。</figcaption></figure>
+
+
+<h2 class="sheet-title" id="s7" data-run="总结" data-full="总结：收什么、保什么、建什么"><span class="ch-no">总结</span><span class="ch-title">收什么、保什么、建什么</span></h2>
+<p>回到三笔账收口：宏观账说明收缩不可逆推，行业账说明分化是客群质量的清算，本行账说明江苏银行已近出清后期——下一步不是「要不要做信用卡」，而是「收什么、保什么、建什么」。</p>
+<p><strong>收：收高风险敞口，把出清节奏收成纪律。</strong> 官方口径上半年 -21.09% 的压降强度已执行到位，下一步是节奏管理而非继续加码：高风险客群额度回收、新增投放按风险分层冻结（还原不良损失率季度红线 4.0%<span class="lv lv3">研判推断</span>，超线即冻结新增、回收额度），单月降幅按 S3 收窄至 -3 亿内连续 3 个月。责任主体：零售信贷部牵头、风控部复核。观察指标：还原不良损失率（季）、单月余额降幅（S3）、生成率（S1）。前置条件：生成率与 Vintage 数据可得（当前<span class="lv lv4">待补</span>）。失败信号：S1 连续 2 季上行、催收回收率下行——任一出现即维持压降，不预设转正时间表。<strong class="edge">边界句：已收的量不回补，未收的风险继续收。</strong></p>
+<p><strong>保：保收益基本盘与场景连接，保的是活钱。</strong> 客户收益率 4.90% 止跌（S4 剪刀差连续 2 季收窄）；卡分期年进度 104.3% 的收入能力保住，但要扭转日均余额下滑（193.44→186.66 亿，-3.5%<span class="lv lv1">测算</span>）；承接财政贴息/国补场景（邮储账单分期 +10.93%、浦发国补 120 多万笔的参照路径；<strong>前置条件：贴息放量只对准降险后的客群——UE&lt;0 时放规模=放大亏损，先降险、后放量</strong>）。责任主体：信用卡中心+分行零售条线。观察指标：卡分期日均余额、分期渗透率、净收入进度、交易活跃度（民生 +18.40% 的量缩额增为对照）。前置条件：存量客户 RFM 数据可得（<span class="lv lv4">待补</span>）。失败信号：卡分期日均余额继续下滑、收益率再降、收入进度跌破 100%。</p>
+<p><strong>建：建结构性降险能力，建的是未来三年的重启门票。</strong> 客群上移（新客准入按 Vintage 预测损失分层定价）；智能信贷评估落地（人工审批经验沉淀至模型，高风险自动降额/拒绝并回流人工复核）；生成率仪表盘与处置依赖度透明化（核销额÷新生成不良比值入月度经营分析，杜绝以核销换不良率）；分期权益向低风险客群倾斜提升渗透。责任主体：风控部牵头、科技部支撑、计财部核算。观察指标：S1-S4 全信号、新老客群损失比、模型 KS/PSI 校准（<span class="lv lv4">待补</span>）、卡分期渗透率。前置条件：客户级数据治理与模型校准通过。失败信号：处置依赖度继续上升、新户 Vintage 恶化、高风险客群余额占比不降反升。</p>
+<p class="panel bounds"><strong>边界与前提</strong>：减亏里程碑（风险成本 2.5%、EVA 收窄至 -1% 内）与重启门槛（风险成本 1.5%、EVA≥0）均为<span class="lv lv1">测算</span>，依赖资本成本约 1.08pct 的倒推假设；上海银行转正是单一样本，不构成行业拐点证据；宏观社零若持续低位，S3 收窄可能是需求冰封而非出清完成（<span class="lv lv3">研判推断</span>）。</p>
+<blockquote>
+<p><strong>收束金句：余额的收缩是全行业的，风险成本的收缩才是自己的——把风险成本收到 2.5% 以内是减亏，收到 1.5% 是重启，中间隔着的不是规模，是客群与模型。</strong></p>
+</blockquote>
+
+<h2 class="sheet-title" id="s8" data-run="来源披露" data-full="来源披露"><span class="ch-no">来源披露</span></h2>
+<ul class="sources">
+<li><strong>三家同业半年报原文（已归档核验）</strong>：浦发银行 2026 年半年度报告（600000，2026-08-28 董事会审议，330 页）；民生银行 2026 年半年度报告（600016，285 页，贷款质量表 p39-41）；邮储银行 2026 年半年度报告（601658，295 页，贷款结构 p33、质量指标 p88-89、经营情况 p47）。</li>
+<li><strong>三篇银数观卡拆解（OCR 归档，与原文交叉验证）</strong>：浦发（2026-08-27，含信用卡中心职工数历史序列 2016-2026H1：2022 峰值 11,975 人→2026H1 8,088 人）；民生（2026-08-29）；邮储（2026-08-29，含卡量历史序列 2015-2026H1）。</li>
+<li><strong>江苏银行官方口径（数据底座·官方口径补充，2026-08-30 入库）</strong>：媒体转引半年报（大众财经观察 2026-08-25，原始出处为江苏银行 2026 年半年度报告，发布日 2026-08-20，Wind 公告），置信=medium，对应项与 Wind 结构化交叉验证一致（全行不良率 0.81%=high）：信用卡余额上半年 -60.58 亿/-21.09%（<span class="lv lv1">测算</span>反推 2025 末约 287.2 亿→2026-06-30 约 226.6 亿）、个贷 6,496 亿（-1.65%）vs 对公 1.94 万亿（+16.72%）、净息差 1.64%（-0.09pct）、归母净利润 218.76 亿（+8.09%）、个人经营贷不良率 3.06%（+0.60pct）、个人消费及按揭类不良率 1.03%（+0.07pct）。</li>
+<li><strong>江苏银行内部数据库（bank_analytics.db 等，置信=高）</strong>：jsbank_product_eva_h1（2026-06-30 产品 EVA 表）、jsbank_income_progress_weekly（卡分期/卡循环收入周报）、jsbank_retail_loan_weekly + retail_loan_snapshot（余额序列；<strong>口径警示</strong>：快照 2025 末 271.36 亿与官方反推约 287.2 亿差约 16 亿，引用规则为官方口径为主、周报作趋势线、两口径并注不混拼）、peer_city_product_weekly（城商行 YTD）、jsbank_new_pricing_weekly（网贷新投放定价 13.37%-13.66%）、branch_product_metrics（卡e贷尊享/卡e贷重客拓户/智派同业高潜在册）。</li>
+<li><strong>第四/五章内部与同业信息（任务输入，<span class="lv lv4">待补</span>原文核验项已标注）</strong>：吉利分期协议（银河/魅族领克贴息 2.0%、中国星 2.3%、返佣 2.1%/2.7%）、比亚迪「5免2」；融合易贷贴息方案（贴息 1%、单笔封顶 3,000 元、政策至 2026 年底）；人才贷全省市占 &gt;70%、安居贷全年目标 50 亿+、AUM 5 万+ 财富客群；中信信用卡非息净收入 50.12 亿（2026H1，延伸阅读底座）；邮储场景营销 5,700 万人次带动 500 亿（银数观卡拆解口径）；建行汽车分期返佣 7%（同业信息，边界警示）。</li>
+<li><strong>Wind 金融数据（7 次调用全部成功）</strong>：江苏银行 2026 半年报公告检索（附注区段：表外未使用信用卡额度 534.33 亿、银行卡手续费净额转正、个人贷款利息收入 183.74 亿；正文 MD&amp;A 未命中）；结构化字段（全行不良率 0.81%；信用卡不良率字段 null；信用卡贷款余额返回值量级异常未采用）；EDB 社零当月同比 M0001428、居民短期贷款余额 M0251917。</li>
+<li><strong>口径说明</strong>：同业不良率=名义口径，江苏还原不良损失率=还原口径（含核销出表），两者不同维度，文中仅量级对照、未做直接相减；江苏信用卡余额官方口径为主（-60.58 亿/-21.09%）、内部周报作趋势线（220.4 亿@8-13）、两口径并注不混拼；「银行卡手续费」含借记卡与信用卡，非纯信用卡口径；EVA 资本成本约 1.08pct 为倒推假设（<span class="lv lv1">测算</span>）。<strong>第四章 UE 恒等式口径</strong>：资金+运营合计 2.30pct 为自洽口径（验算 4.90−2.30=2.60=净收益率，EVA 表互证）；EVA 表资本成本列载 0.78pct，与倒推 1.08pct 差 0.30pct（若按 2.29%/0.31% 拆分资金/运营，则资本成本倒推为 0.78pct，恒等式 4.90−2.29−0.31−4.37−0.78=−2.85 亦自洽）——正文恒等式采用自洽倒推口径：资金运营合计 2.30pct、资本成本 1.08pct；过线门槛 3.38pct=资金运营 2.30+资本 1.08（<span class="lv lv1">测算</span>），与第一章重启门槛（风险成本 1.5% 时 EVA≈0）互证。</li>
+<li><strong>标注级约定</strong>：<span class="lv lv1">测算</span>=基于披露值的差值/比率/推演计算；<span class="lv lv2">估算</span>=量级推断；<span class="lv lv3">研判推断</span>=分析性判断；<span class="lv lv4">待补</span>=观察清单项。<strong>待补清单</strong>：江苏银行官方信用卡消费金额/卡量/信用卡单独不良率（半年报未单独披露）、不良生成率、核销与催收回收明细、浦发/民生卡量、客户级 RFM（分期渗透/活跃率/卡均交易）、同业还原口径风险成本、内部快照与官方口径差约 16 亿成因、「一年半缩水近 150 亿」精确起点（2024 末余额）、吉利/比亚迪分期协议与融合易贷贴息方案原文、场景分期（汽车）损失率、本行交易额/笔均/活跃数据、邮储场景营销口径原文、UE 资金/运营成本拆分。文中所有非引用数字均落四级标注之一；行业主体均以披露行名称行文，不构成个例豁免。</li>
+</ul>
+</main>
+
+<section class="backcover" id="backcover">
+  <div class="bk-inner">
+    <p class="bk-label">收束金句</p>
+    <p class="bk-quote">余额的收缩是全行业的，风险成本的收缩才是自己的——把风险成本收到 2.5% 以内是减亏，收到 1.5% 是重启，中间隔着的不是规模，是客群与模型。</p>
+    <div class="bk-block">
+      <div class="bkrow"><span class="bk">版本</span><span>完整报告 v1</span></div>
+      <div class="bkrow"><span class="bk">日期</span><span>2026-08-30</span></div>
+      <div class="bkrow"><span class="bk">数据期</span><span>2026H1（半年报）+ 2026-08-13（内部周报）</span></div>
+      <div class="bkrow"><span class="bk">口径</span><span>信用卡及透支（各行披露口径，差异处已注明）</span></div>
+      <div class="bkrow"><span class="bk">质量门禁</span><span>G1 · G2 Final v2 PASS</span></div>
+    </div>
+    <p class="bk-disclaim">行业研究，不构成投资建议；测算/估算/研判推断非官方统计</p>
+    <p class="bk-brand">99wiki ｜ 智见点评 · 行业研究</p>
+  </div>
+</section>
+</body>
+</html>

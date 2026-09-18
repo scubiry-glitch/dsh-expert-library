@@ -1,11 +1,11 @@
 {
   "id": "e13-02",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "高增银",
-    "publicLabel": "高增银",
-    "initials": "高"
+    "internalName": "息差账房",
+    "publicLabel": "息差账房",
+    "initials": "X"
   },
   "domains": [
     "bank.strategy",

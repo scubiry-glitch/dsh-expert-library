@@ -1,0 +1,19 @@
+{
+  "id": "bank-analytics",
+  "version": "1.1.0",
+  "schemaVersion": 2,
+  "kind": "database",
+  "capabilities": [
+    "search",
+    "read",
+    "cite",
+    "history"
+  ],
+  "freshness": "daily",
+  "scopes": [
+    "99wiki/projects/银行分析数据库"
+  ],
+  "domainKnowledgeIds": [
+    "bank.analytics"
+  ]
+}

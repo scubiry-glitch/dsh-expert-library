@@ -120,7 +120,7 @@ function generalDomainKnowledgeManifest(packVersion: string): DomainKnowledgeMan
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     domain: 'pipeline.general',
-    boundary: `pipeline 特级专家（S-* 40 位：巴菲特/芒格/乔布斯/Karpathy/张一鸣…）与小红书操盘手（XHS-*）Profile 基线（2026-08-23）：实名（公众人物）、领域、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。`,
+    boundary: `pipeline 特级专家（S-* 40 位：复利老爷子/芒格/现实扭曲大师/Karpathy/延迟满足船长…）与小红书操盘手（XHS-*）Profile 基线（2026-08-23）：实名（公众人物）、领域、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。`,
     ontology: {
       entities: [
         { id: 'expert', description: '特级专家（s-*）/小红书操盘手（xhs-*）' },
@@ -188,7 +188,7 @@ export function buildPipelineGeneralDomainPack(options: BuildPipelineGeneralPack
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     name: 'pipeline 特级专家领域包（S-* 40 + XHS-* 1）',
-    description: `${GENERAL_EXPERTS.length} 位 pipeline 特级专家/操盘手基线（s-*/xhs-*，公众人物实名）。V2 投影源为 src/pipeline-general/data/experts.generated.ts；复用 zhijian/bank 的模板/质量/方法构建器（pipeline-general 前缀）。`,
+    description: `${GENERAL_EXPERTS.length} 位 pipeline 特级专家/操盘手基线（s-*/xhs-*，行业花名）。V2 投影源为 src/pipeline-general/data/experts.generated.ts；复用 zhijian/bank 的模板/质量/方法构建器（pipeline-general 前缀）。`,
     dependsOn: ['zhijian-realestate'],
     caliberDeclarations: {
       '线上': 'paper.morning.rocks 专家库口径',

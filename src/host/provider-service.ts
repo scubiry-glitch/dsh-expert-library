@@ -59,6 +59,12 @@ import {
   normalizeBeikeMCPHttpOutput,
 } from '../v2/providers/beike.ts'
 import {
+  buildRongchengManifest,
+  normalizeRongchengHttpOutput,
+  DEFAULT_RONGCHENG_ADAPTER_URL,
+  DEFAULT_RONGCHENG_ENGINE_URL,
+} from '../v2/providers/rongcheng.ts'
+import {
   ProviderTransports,
   TransportError,
   createCredentialResolver,
@@ -80,6 +86,7 @@ export interface ProviderServiceOptions {
   readonly wind?: { readonly cliPath: string }
   readonly zyt?: { readonly baseUrl: string; readonly cliCommand?: string; readonly preferCli?: boolean }
   readonly beike?: { readonly baseUrl: string; readonly cliCommand?: string; readonly preferCli?: boolean }
+  readonly rongcheng?: { readonly adapterBaseUrl: string; readonly engineBaseUrl: string }
   /** `toolExecution` settings overlays, keyed by provider id. */
   readonly overlays?: Readonly<Record<string, ToolExecutionConfig>>
   /** Injectable seams (tests substitute fakes; defaults are the real runners). */
@@ -103,6 +110,7 @@ export interface ProviderConfigInput {
     readonly wind?: { readonly cliPath?: string }
     readonly zyt?: { readonly baseUrl?: string; readonly cliCommand?: string; readonly preferCli?: boolean }
     readonly beike?: { readonly baseUrl?: string; readonly cliCommand?: string; readonly preferCli?: boolean }
+    readonly rongcheng?: { readonly adapterBaseUrl?: string; readonly engineBaseUrl?: string }
   }
   readonly toolExecution?: Readonly<Record<string, ToolExecutionConfig>>
 }
@@ -170,7 +178,16 @@ export function resolveProviderServiceOptions(input: ProviderConfigInput): Provi
     ...(input.providers?.beike?.preferCli !== undefined ? { preferCli: input.providers.beike.preferCli } : {}),
   }
 
-  return { wind, zyt, beike, overlays: input.toolExecution }
+  // 容诚在线估价（housevalue.*）：本机部署的伙伴服务，默认绑定 localhost；
+  // 服务未运行时调用返回 transport error 信封（fail-closed at call time）。
+  const rongcheng: ProviderServiceOptions['rongcheng'] = {
+    adapterBaseUrl:
+      input.providers?.rongcheng?.adapterBaseUrl ?? process.env.RONGCHENG_ADAPTER_URL ?? DEFAULT_RONGCHENG_ADAPTER_URL,
+    engineBaseUrl:
+      input.providers?.rongcheng?.engineBaseUrl ?? process.env.RONGCHENG_ENGINE_URL ?? DEFAULT_RONGCHENG_ENGINE_URL,
+  }
+
+  return { wind, zyt, beike, rongcheng, overlays: input.toolExecution }
 }
 
 /* ------------------------------------------------------------------ *
@@ -415,6 +432,51 @@ function createBeikeInvoker(manifest: ToolProviderManifest, transports: Provider
   }
 }
 
+function createRongchengInvoker(manifest: ToolProviderManifest, transports: ProviderTransports): ProviderInvoker {
+  // operation 命名约定：`rongcheng<path>`（见 buildRongchengManifest）；调用方
+  // 传入 binding.operation，即该操作 id 本身。
+  const paths = new Map<string, { path: string; method: string }>()
+  for (const capability of manifest.capabilities) {
+    if (capability.transportId !== undefined && capability.operation.startsWith('rongcheng')) {
+      paths.set(capability.operation, { path: capability.operation.slice('rongcheng'.length), method: 'POST' })
+    }
+  }
+  return {
+    providerId: 'rongcheng',
+    async invoke(request: InvokeAdapterRequest): Promise<ProviderEnvelope> {
+      const transport = transportOf(manifest, request.transportId)
+      const provenance = provenanceOf('rongcheng', request.operation, transport.id, transportSourceOf(transport))
+      const op = paths.get(request.operation)
+      if (op === undefined) {
+        return failEnvelope({
+          code: 'capability_unknown',
+          retry: 'never',
+          correction: `容诚 provider 未注册操作 ${request.operation}；address.resolve 等智见侧能力不在本 provider 范围`,
+        }, { provider: 'rongcheng', operation: request.operation, transportId: transport.id })
+      }
+      try {
+        const input: Record<string, unknown> = {
+          method: op.method,
+          path: op.path,
+          body: isRequestBody(request.input) ? request.input : {},
+        }
+        const raw = await transports.run(transport, { operation: request.operation, input, signal: request.signal, context: request.context })
+        const envelope = normalizeRongchengHttpOutput(
+          { status: raw.status ?? 0, body: raw.body ?? '' },
+          { provider: 'rongcheng', operation: request.operation, transportId: transport.id, source: provenance.source },
+        )
+        return envelope as unknown as ProviderEnvelope
+      } catch (error) {
+        return transportError(error, provenance)
+      }
+    },
+  }
+}
+
+function isRequestBody(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
 /* ------------------------------------------------------------------ *
  *  Service.
  * ------------------------------------------------------------------ */
@@ -587,6 +649,14 @@ export class ProviderTransportService {
         overlay('beike'),
       )
       register(manifest, createBeikeInvoker(manifest, this.transports, this.credentials))
+    }
+    if (this.options.rongcheng !== undefined) {
+      const opts = this.options.rongcheng
+      const manifest = applyToolExecutionOverlay(
+        buildRongchengManifest({ adapterBaseUrl: opts.adapterBaseUrl, engineBaseUrl: opts.engineBaseUrl }),
+        overlay('rongcheng'),
+      )
+      register(manifest, createRongchengInvoker(manifest, this.transports))
     }
     this.registry_ = registry
     this.resolver_ = resolver

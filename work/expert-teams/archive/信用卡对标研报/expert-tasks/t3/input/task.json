@@ -1,0 +1,10 @@
+{
+  "taskId": "t3",
+  "subject": "主笔研报：江苏银行信用卡对标（产品×单位经济×风险生成）正式稿",
+  "description": "目标：主笔《江苏银行信用卡业务对标研报（2026中报季）》正式稿——领导汇报用，重点信用卡业务，产品级深度，不囿于战略层。\n\n框架（队长确定，可按一一方法论优化但骨架保留）：\n- 主线=「产品对标×单位经济×风险生成」三条深钻线，战略层仅一节带过\n- 单位经济对标（EVA分解：客户收益率-资金成本-运营成本-风险成本-资本成本=综合净收益率）：江苏银行信用卡 EVA -2.85% 全景 vs 同业披露数据可得的对应项\n- 产品要素对标：卡量/余额及降幅/交易额与笔均/分期渗透（账单分期+10.93% vs 江苏卡分期日均余额下滑）/卡均透支/组织与人员（民生3,597人分中心并入分行 vs 浦发8,088人）\n- 风险生成对标：不良率+不良生成率（邮储+0.62pct至3.68%）+江苏还原不良损失率4.37%\n- 落点：江苏银行信用卡「收什么、保什么、建什么」行动建议（带责任主体/观察指标/前置条件/失败信号）\n\n数据：必读 /root/zhijian/dsh-expert-library/work/expert-teams/信用卡对标研报/数据底座_20260830.md + 数据底座_Wind补充.md + 风险校准_风控守门员.md（同目录）。方法论：/root/zhijian/dsh-expert-library/knowledge/skills/bank-retail-finance-analysis/SKILL.md\n\n行文模板（严格遵循）：zhijian-report-craft，先读 /root/zhijian/dsh-expert-library/knowledge/skills/zhijian-report-craft/SKILL.md 与 references/report-template-fivepiece-v1.md。要求：总-分-总+卷首速览（每行带数字）；章节五件套骨架（金句定位→角色对照→条款/事实依据→推论与数据→机会风险）；每条推论带数字锚；每个乐观判断跟边界句；四级标注（测算/估算/研判推断/待补）；正文零过程痕迹；结尾来源披露（三篇银数观卡+三份半年报+江苏银行内部DB+Wind）。\n\n产出：/root/zhijian/dsh-expert-library/work/expert-teams/信用卡对标研报/研报主文_信用卡对标_20260830.md（md 唯一权威源）。字数控制在5000-7000字；「编数字比不回答更严重」。",
+  "dependencies": [
+    "t1",
+    "t2"
+  ],
+  "createdAt": 1788086037009
+}

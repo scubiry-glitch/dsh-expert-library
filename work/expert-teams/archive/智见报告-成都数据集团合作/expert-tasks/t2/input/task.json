@@ -1,0 +1,9 @@
+{
+  "taskId": "t2",
+  "subject": "渲染A：p01–p04（封面/摘要/二上/二中）",
+  "description": "按契约 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md（先通读，纪律部分逐条遵守）与设计系统 .build_html/theme.css，用 md /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md 为唯一内容源，产出 4 个片段文件到 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/：\n- p01.html 封面（.cover 深蓝渐变，主标题/副题/三条核心结论原文首句白卡/4 格关键数字条/章节导览一~八）\n- p02.html 一、报告摘要（摘要全量+三条结论编号强调块+「双方资源互补」四象限定性示意图）\n- p03.html 二(上) 2.1+2.2（含股权穿透链点睛图：63.9%/18%/7家/40亿/20%/44.75%/100%/约170款）\n- p04.html 二(中) 2.3+2.4（含可信空间运行逻辑链图；「待书面材料确认」「据称」「待核实」flag 徽标落位）\n格式与页眉页脚模板严格按 spec 第二节；页码 01–04/共13。完成后自查（无溢出/无遮挡/无横向滚动/零 script），向队长回报 flag 落位清单与自查结论。若 arch_review.md 已有针对你页面的排版建议，先采纳再动工。",
+  "dependencies": [
+    "t1"
+  ],
+  "createdAt": 1788602569532
+}

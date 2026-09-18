@@ -1,0 +1,9 @@
+{
+  "taskId": "t4",
+  "subject": "质量门禁：主文 G1 文字门 + G2 数字锚点核对",
+  "description": "对一一主笔的 /root/zhijian/dsh-expert-library/work/expert-teams/信用卡对标研报/研报主文_信用卡对标_20260830.md 执行 zhijian-report-craft G1/G2 门禁：\n\nG1 文字门（写 grep 循环脚本跑，脚本留存同目录）：禁例检查——正文不得出现版本号/修订记录/评审专家名/轮次等过程痕迹；「约/近/左右」等模糊修饰不得替代精确数字；每个非引用数字必须可回溯到数据底座三件（种子版/Wind补充/风险校准）或半年报原文；应有项检查——卷首速览在位、每章五件套齐全、每章至少一句章眼金句、结尾来源披露在位。\n\nG2 数字门：从主文提取全部关键数字锚点清单（预计28-70项），逐 token 对照数据底座三件与归档 md（/root/.openclaw/workspace/99wiki/wechat/2026-08-*半年报*.md），输出锚点核对表（数字/出现位置/底座出处/一致性）。不一致项列明细：位置/主文值/底座值/建议。\n\n注意：只检查不改稿；产出 /root/zhijian/dsh-expert-library/work/expert-teams/信用卡对标研报/门禁检查_G1G2.md，结论分 PASS/FAIL 逐门给出一一修改建议；FAIL 项必须具体到行。",
+  "dependencies": [
+    "t3"
+  ],
+  "createdAt": 1788086048496
+}

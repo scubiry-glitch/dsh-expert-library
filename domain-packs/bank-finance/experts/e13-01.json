@@ -1,11 +1,11 @@
 {
   "id": "e13-01",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "袁军",
-    "publicLabel": "袁军",
-    "initials": "袁"
+    "internalName": "战略沙盘官",
+    "publicLabel": "战略沙盘官",
+    "initials": "Z"
   },
   "domains": [
     "bank.strategy",

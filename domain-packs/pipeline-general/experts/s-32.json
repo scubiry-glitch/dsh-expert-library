@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "巴菲特",
-    "publicLabel": "巴菲特",
-    "initials": "巴"
+    "internalName": "复利老爷子",
+    "publicLabel": "复利老爷子",
+    "initials": "F"
   },
   "domains": [
     "realestate.general",

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "李白",
-    "publicLabel": "李白",
-    "initials": "李"
+    "internalName": "故事司南",
+    "publicLabel": "故事司南",
+    "initials": "G"
   },
   "domains": [
     "realestate.general",

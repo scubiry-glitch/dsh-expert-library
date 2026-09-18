@@ -10,6 +10,6 @@
   - sha256：bca768609f15a84111caa9b2ac35be9dc41a0479ff201458beded3564623e3d9
 - GATE：`20260822_GATE.md` → Part B PASS（12/12）＋ Part C PASS（14/14）＝ 完整研究包 PASS
 - render_check：`主文_render_check.json`（p01/06/13 截图）、`附件C_render_check.json`（p01/05/11 截图）；验收明细 `*_accept_B.json` / `*_accept_C.json`
-- 来源：智见研报团队（research-report 场景：Researcher ＋ 邢自强 bk-004 ＋ 张明 bk-007 ＋ Docs Coordinator）
+- 来源：智见研报团队（research-report 场景：Researcher ＋ 周期班长 bk-004 ＋ 张明 bk-007 ＋ Docs Coordinator）
 - 页脚：`98wiki ｜ 智见 / 行业研究报告`
 - 验证说明：本条目为 t5「渲染与分型验收」节点首次进入 research-report DAG 的产出；对外投递目录（98wiki/projects/…）由队长按需归档

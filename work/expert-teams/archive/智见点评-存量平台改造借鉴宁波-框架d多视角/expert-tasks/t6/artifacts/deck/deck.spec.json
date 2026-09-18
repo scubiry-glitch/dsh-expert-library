@@ -1,0 +1,30 @@
+{
+  "version": "1",
+  "narrative": "boardroom-report",
+  "theme": "consulting",
+  "filename": "存量平台改造借鉴宁波双平台打法_汇报.pptx",
+  "seed": 20260827,
+  "meta": {
+    "organization": "江苏银行",
+    "date": "2026-08-27",
+    "version": "正式稿",
+    "confidentiality": "internal",
+    "animation": {}
+  },
+  "pages": [
+    { "id": "cover", "type": "cover", "heading": "存量平台改造借鉴宁波双平台打法" },
+    { "id": "verdict", "type": "content", "heading": "核心结论：学逻辑，不学形态", "beat": "anchor" },
+    { "id": "ch1", "type": "chapter", "heading": "形势判断与关键事实：三低时代，差距在经营逻辑" },
+    { "id": "form-data", "type": "content", "heading": "对标差距：负债、中收、财富、对公", "beat": "dense" },
+    { "id": "fact-sample", "type": "content", "heading": "样板就在腹地：逻辑已经跑通", "beat": "breathing" },
+    { "id": "ch2", "type": "chapter", "heading": "学什么与怎么学：一个入口、两条转化链" },
+    { "id": "learn-4", "type": "content", "heading": "四条可迁移逻辑，形态坚决不学", "beat": "dense" },
+    { "id": "how-arch", "type": "content", "heading": "存量改造落地架构：入口、转化链、公私联动", "beat": "anchor" },
+    { "id": "ch3", "type": "chapter", "heading": "试点与验收：90天两场景，试点即止损闸门" },
+    { "id": "pilot-tl", "type": "content", "heading": "90天两场景试点安排", "beat": "breathing" },
+    { "id": "accept", "type": "content", "heading": "验收标准：看业务沉淀，不看注册数", "beat": "anchor" },
+    { "id": "ch4", "type": "chapter", "heading": "不确定性与风险底线" },
+    { "id": "risk", "type": "content", "heading": "不确定性与风险底线（研判推断）", "beat": "dense" },
+    { "id": "ending", "type": "ending", "heading": "三年看体系，五年看格局" }
+  ]
+}

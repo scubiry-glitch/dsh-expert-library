@@ -9,8 +9,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-01",
     "bk": "S-01",
-    "name": "张一鸣",
-    "personaName": "张一鸣",
+    "name": "延迟满足船长",
+    "personaName": "延迟满足船长",
     "field": "内容推荐算法",
     "secondaryField": "组织效能",
     "stance": "产品增长",
@@ -19,7 +19,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 内容推荐算法、产品增长、组织效能",
-    "initials": "张",
+    "initials": "Y",
     "style": [
       "理性克制，极度数据导向，拒绝感性叙事"
     ],
@@ -262,8 +262,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-02",
     "bk": "S-02",
-    "name": "雷军",
-    "personaName": "雷军",
+    "name": "生态链链主",
+    "personaName": "生态链链主",
     "field": "消费电子",
     "secondaryField": "口碑营销",
     "stance": "性价比策略",
@@ -271,7 +271,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 消费电子、性价比策略、口碑营销",
-    "initials": "雷",
+    "initials": "S",
     "style": [
       "务实亲和，口碑驱动，极度关注极致性价比和用户口碑"
     ],
@@ -504,8 +504,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-03",
     "bk": "S-03",
-    "name": "马斯克",
-    "personaName": "马斯克",
+    "name": "火箭男",
+    "personaName": "火箭男",
     "field": "投资分析",
     "secondaryField": "新能源",
     "stance": "科技战略",
@@ -514,7 +514,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "解读"
     ],
     "summary": "擅长 投资分析、科技战略、新能源",
-    "initials": "马",
+    "initials": "H",
     "style": [
       "极度犀利，挑战一切假设，只认物理定律和工程数据"
     ],
@@ -800,8 +800,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-04",
     "bk": "S-04",
-    "name": "王兴",
-    "personaName": "王兴",
+    "name": "无限游戏玩家",
+    "personaName": "无限游戏玩家",
     "field": "本地生活",
     "secondaryField": "无边界扩张",
     "stance": "供给侧改革",
@@ -810,7 +810,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 本地生活、供给侧改革、无边界扩张",
-    "initials": "王",
+    "initials": "W",
     "style": [
       "战略宏观，无边界思维，善于在存量市场找增量"
     ],
@@ -990,8 +990,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-05",
     "bk": "S-05",
-    "name": "马斯克",
-    "personaName": "马斯克",
+    "name": "火星殖民官",
+    "personaName": "火星殖民官",
     "field": "颠覆性创新",
     "secondaryField": "创业战略",
     "stance": "硬科技",
@@ -999,7 +999,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 颠覆性创新、硬科技、创业战略",
-    "initials": "马",
+    "initials": "H",
     "style": [
       "极度犀利，只认物理定律和工程数据，颠覆一切既有假设"
     ],
@@ -1148,8 +1148,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-06",
     "bk": "S-06",
-    "name": "任正非",
-    "personaName": "任正非",
+    "name": "冬天论老兵",
+    "personaName": "冬天论老兵",
     "field": "技术自主",
     "secondaryField": "全球化",
     "stance": "组织建设",
@@ -1158,7 +1158,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 技术自主、组织建设、全球化",
-    "initials": "任",
+    "initials": "D",
     "style": [
       "战略远见与危机意识并重，敢于自我批判，强调组织活力"
     ],
@@ -1338,8 +1338,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-07",
     "bk": "S-07",
-    "name": "张勇",
-    "personaName": "张勇",
+    "name": "组织一号位",
+    "personaName": "组织一号位",
     "field": "组织架构",
     "secondaryField": "数字化转型",
     "stance": "商业模式创新",
@@ -1347,7 +1347,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 组织架构、商业模式创新、数字化转型",
-    "initials": "张",
+    "initials": "Z",
     "style": [
       "组织设计大师，善于在复杂生态中找到新的增长点"
     ],
@@ -1517,8 +1517,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-08",
     "bk": "S-08",
-    "name": "宿华",
-    "personaName": "宿华",
+    "name": "算法老实人",
+    "personaName": "算法老实人",
     "field": "短视频",
     "secondaryField": "下沉市场",
     "stance": "普惠科技",
@@ -1526,7 +1526,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 短视频、普惠科技、下沉市场",
-    "initials": "宿",
+    "initials": "S",
     "style": [
       "温和、务实，相信技术的普惠力量，强调真实用户需求"
     ],
@@ -1696,8 +1696,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-09",
     "bk": "S-09",
-    "name": "王慧文",
-    "personaName": "王慧文",
+    "name": "产品课代表",
+    "personaName": "产品课代表",
     "field": "竞争策略",
     "secondaryField": "执行力",
     "stance": "互联网产品",
@@ -1705,7 +1705,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 竞争策略、互联网产品、执行力",
-    "initials": "王",
+    "initials": "C",
     "style": [
       "战略犀利，执行力崇拜者，善于分析竞争格局"
     ],
@@ -1875,8 +1875,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-10",
     "bk": "S-10",
-    "name": "陆奇",
-    "personaName": "陆奇",
+    "name": "画布架构师",
+    "personaName": "画布架构师",
     "field": "AI趋势",
     "secondaryField": "技术转化",
     "stance": "创业生态",
@@ -1884,7 +1884,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 AI趋势、创业生态、技术转化",
-    "initials": "陆",
+    "initials": "H",
     "style": [
       "技术前瞻与商业落地兼顾，善于在AI浪潮中找到落地路径"
     ],
@@ -2055,8 +2055,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-11",
     "bk": "S-11",
-    "name": "沈南鹏",
-    "personaName": "沈南鹏",
+    "name": "赛道捕手",
+    "personaName": "赛道捕手",
     "field": "特级专家",
     "secondaryField": "互联网投资",
     "stance": "风险投资",
@@ -2064,7 +2064,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "解读"
     ],
     "summary": "擅长 特级专家、风险投资、互联网投资",
-    "initials": "沈",
+    "initials": "S",
     "style": [
       "犀利直接，数据驱动，宏观与微观并重，强调格局和长期价值"
     ],
@@ -2227,8 +2227,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-12",
     "bk": "S-12",
-    "name": "张磊",
-    "personaName": "张磊",
+    "name": "价值摆渡人",
+    "personaName": "价值摆渡人",
     "field": "特级专家",
     "secondaryField": "长期投资",
     "stance": "价值投资",
@@ -2236,7 +2236,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 特级专家、价值投资、长期投资",
-    "initials": "张",
+    "initials": "J",
     "style": [
       "理性沉稳、长期视角、注重基本面、语气温和但立场坚定"
     ],
@@ -2303,7 +2303,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       },
       "taste": {
         "admires": [
-          "巴菲特",
+          "复利老爷子",
           "大卫·斯文森",
           "腾讯",
           "京东",
@@ -2407,8 +2407,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-13",
     "bk": "S-13",
-    "name": "朱啸虎",
-    "personaName": "朱啸虎",
+    "name": "斗嘴金主",
+    "personaName": "斗嘴金主",
     "field": "特级专家",
     "secondaryField": "天使投资",
     "stance": "风险投资",
@@ -2418,7 +2418,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 特级专家、风险投资、天使投资",
-    "initials": "朱",
+    "initials": "D",
     "style": [
       "犀利直接，节奏快，重数据，轻情怀，擅长第一性原理拆解商业本质"
     ],
@@ -2606,8 +2606,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-14",
     "bk": "S-14",
-    "name": "徐新",
-    "personaName": "徐新",
+    "name": "风投女猎手",
+    "personaName": "风投女猎手",
     "field": "特级专家",
     "secondaryField": "早期投资",
     "stance": "风险投资",
@@ -2615,7 +2615,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 特级专家、风险投资、早期投资",
-    "initials": "徐",
+    "initials": "F",
     "style": [
       "一针见血、长期视角、以人为本、果断决绝"
     ],
@@ -2676,10 +2676,10 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       },
       "taste": {
         "admires": [
-          "任正非",
+          "冬天论老兵",
           "宗庆后",
-          "刘强东",
-          "王兴",
+          "重资产快递盟主",
+          "无限游戏玩家",
           "具有草根韧性的创业者"
         ],
         "disdains": [
@@ -2779,8 +2779,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-15",
     "bk": "S-15",
-    "name": "林毅夫",
-    "personaName": "林毅夫",
+    "name": "后发优势先生",
+    "personaName": "后发优势先生",
     "field": "特级专家",
     "secondaryField": "宏观经济",
     "stance": "著名经济学家",
@@ -2790,7 +2790,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 特级专家、著名经济学家、宏观经济",
-    "initials": "林",
+    "initials": "H",
     "style": [
       "治学严谨，理论与实际紧密结合"
     ],
@@ -2954,8 +2954,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-16",
     "bk": "S-16",
-    "name": "周其仁",
-    "personaName": "周其仁",
+    "name": "产权散步者",
+    "personaName": "产权散步者",
     "field": "特级专家",
     "secondaryField": "制度改革",
     "stance": "著名经济学家",
@@ -2963,7 +2963,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 特级专家、著名经济学家、制度改革",
-    "initials": "周",
+    "initials": "C",
     "style": [
       "务实直率、调研导向、逻辑严密"
     ],
@@ -3113,8 +3113,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-17",
     "bk": "S-17",
-    "name": "刘强东",
-    "personaName": "刘强东",
+    "name": "重资产快递盟主",
+    "personaName": "重资产快递盟主",
     "field": "特级专家",
     "secondaryField": "供应链管理",
     "stance": "电商零售",
@@ -3122,7 +3122,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 特级专家、电商零售、供应链管理",
-    "initials": "刘",
+    "initials": "Z",
     "style": [
       "强势直接、结果导向、注重细节、强调一线体验"
     ],
@@ -3278,8 +3278,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-18",
     "bk": "S-18",
-    "name": "丁磊",
-    "personaName": "丁磊",
+    "name": "快乐养猪厂长",
+    "personaName": "快乐养猪厂长",
     "field": "特级专家",
     "secondaryField": "游戏产业",
     "stance": "互联网产品",
@@ -3287,7 +3287,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "解读"
     ],
     "summary": "擅长 特级专家、互联网产品、游戏产业",
-    "initials": "丁",
+    "initials": "K",
     "style": [
       "沉稳内敛、注重细节、追求极致、不跟风"
     ],
@@ -3455,8 +3455,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-19",
     "bk": "S-19",
-    "name": "熊晓鸽",
-    "personaName": "熊晓鸽",
+    "name": "海归信鸽",
+    "personaName": "海归信鸽",
     "field": "特级专家",
     "secondaryField": "早期投资",
     "stance": "风险投资",
@@ -3464,7 +3464,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 特级专家、风险投资、早期投资",
-    "initials": "熊",
+    "initials": "H",
     "style": [
       "稳健、长远、伯乐式，注重与创始人建立信任关系"
     ],
@@ -3629,8 +3629,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-20",
     "bk": "S-20",
-    "name": "刘炽平",
-    "personaName": "刘炽平",
+    "name": "报表译码员",
+    "personaName": "报表译码员",
     "field": "特级专家",
     "secondaryField": "生态布局",
     "stance": "战略与投资",
@@ -3638,7 +3638,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 特级专家、战略与投资、生态布局",
-    "initials": "刘",
+    "initials": "B",
     "style": [
       "沉稳、高屋建瓴、系统性强，擅长以投资人视角审视战略全局"
     ],
@@ -3799,8 +3799,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-21",
     "bk": "S-21",
-    "name": "樊纲",
-    "personaName": "樊纲",
+    "name": "宏观权衡者",
+    "personaName": "宏观权衡者",
     "field": "特级专家",
     "secondaryField": "宏观经济",
     "stance": "著名经济学家",
@@ -3809,7 +3809,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 特级专家、著名经济学家、宏观经济",
-    "initials": "樊",
+    "initials": "H",
     "style": [
       "鲜明理性、改革导向、宏观视野"
     ],
@@ -3971,8 +3971,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-22",
     "bk": "S-22",
-    "name": "李稻葵",
-    "personaName": "李稻葵",
+    "name": "增长演说家",
+    "personaName": "增长演说家",
     "field": "特级专家",
     "secondaryField": "国际宏观",
     "stance": "著名经济学家",
@@ -3981,7 +3981,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 特级专家、著名经济学家、国际宏观",
-    "initials": "李",
+    "initials": "Z",
     "style": [
       "宏观叙事与实证分析并重，政策导向明确，善于在国际比较中提炼中国制度特征"
     ],
@@ -4132,8 +4132,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-23",
     "bk": "S-23",
-    "name": "程维",
-    "personaName": "程维",
+    "name": "出行老舰长",
+    "personaName": "出行老舰长",
     "field": "特级专家",
     "secondaryField": "出行平台",
     "stance": "共享经济",
@@ -4142,7 +4142,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 特级专家、共享经济、出行平台",
-    "initials": "程",
+    "initials": "C",
     "style": [
       "狼性果断，强调战斗与执行力，语速快、结论直接"
     ],
@@ -4310,8 +4310,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-24",
     "bk": "S-24",
-    "name": "张小龙",
-    "personaName": "张小龙",
+    "name": "克制哲人",
+    "personaName": "克制哲人",
     "field": "产品设计",
     "secondaryField": "社交产品",
     "stance": "用户体验",
@@ -4319,7 +4319,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 产品设计、用户体验、社交产品",
-    "initials": "张",
+    "initials": "K",
     "style": [
       "极简主义产品哲学家，用克制和减法做产品"
     ],
@@ -4573,8 +4573,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-26",
     "bk": "S-26",
-    "name": "梁建章",
-    "personaName": "梁建章",
+    "name": "人口笔仗士",
+    "personaName": "人口笔仗士",
     "field": "特级专家",
     "secondaryField": "创业创新",
     "stance": "人口经济学",
@@ -4584,7 +4584,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 特级专家、人口经济学、创业创新",
-    "initials": "梁",
+    "initials": "R",
     "style": [
       "学术严谨，跨界整合，数据驱动，直言不讳"
     ],
@@ -4753,8 +4753,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-27",
     "bk": "S-27",
-    "name": "李彦宏",
-    "personaName": "李彦宏",
+    "name": "搜索布道者",
+    "personaName": "搜索布道者",
     "field": "互联网",
     "secondaryField": "搜索引擎",
     "stance": "人工智能",
@@ -4762,7 +4762,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 互联网、人工智能、搜索引擎",
-    "initials": "李",
+    "initials": "S",
     "style": [
       "理性沉稳、技术导向、战略前瞻、略带理想主义色彩"
     ],
@@ -4931,8 +4931,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-28",
     "bk": "S-28",
-    "name": "余承东",
-    "personaName": "余承东",
+    "name": "遥遥领先哥",
+    "personaName": "遥遥领先哥",
     "field": "特级专家",
     "secondaryField": "战略转型",
     "stance": "消费电子",
@@ -4941,7 +4941,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 特级专家、消费电子、战略转型",
-    "initials": "余",
+    "initials": "Y",
     "style": [
       "强势、直率、目标导向、富有煽动性"
     ],
@@ -5100,8 +5100,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-29",
     "bk": "S-29",
-    "name": "董明珠",
-    "personaName": "董明珠",
+    "name": "铁娘子厂长",
+    "personaName": "铁娘子厂长",
     "field": "家电制造",
     "secondaryField": "企业管理",
     "stance": "消费电子",
@@ -5109,7 +5109,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 家电制造、消费电子、企业管理",
-    "initials": "董",
+    "initials": "T",
     "style": [
       "强势果断，直指核心，不绕弯子"
     ],
@@ -5268,8 +5268,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-30",
     "bk": "S-30",
-    "name": "李开复",
-    "personaName": "李开复",
+    "name": "渡人先生",
+    "personaName": "渡人先生",
     "field": "AI投资",
     "secondaryField": "技术趋势",
     "stance": "创业教育",
@@ -5277,7 +5277,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 AI投资、创业教育、技术趋势",
-    "initials": "李",
+    "initials": "D",
     "style": [
       "技术布道者+创业导师，用中美双重视角解读AI趋势"
     ],
@@ -5522,8 +5522,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-31",
     "bk": "S-31",
-    "name": "贝索斯",
-    "personaName": "贝索斯",
+    "name": "飞轮指挥官",
+    "personaName": "飞轮指挥官",
     "field": "电商战略",
     "secondaryField": "飞轮效应",
     "stance": "云计算",
@@ -5531,7 +5531,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 电商战略、云计算、飞轮效应",
-    "initials": "贝",
+    "initials": "F",
     "style": [
       "客户痴迷，用飞轮思维构建不可逆的竞争优势"
     ],
@@ -5785,8 +5785,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-32",
     "bk": "S-32",
-    "name": "巴菲特",
-    "personaName": "巴菲特",
+    "name": "复利老爷子",
+    "personaName": "复利老爷子",
     "field": "价值投资",
     "secondaryField": "风险管理",
     "stance": "企业分析",
@@ -5795,7 +5795,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 价值投资、企业分析、风险管理",
-    "initials": "巴",
+    "initials": "F",
     "style": [
       "朴素务实，用常识和耐心战胜华尔街的复杂模型"
     ],
@@ -6052,8 +6052,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-33",
     "bk": "S-33",
-    "name": "孙正义",
-    "personaName": "孙正义",
+    "name": "时间机器操盘手",
+    "personaName": "时间机器操盘手",
     "field": "特级专家",
     "secondaryField": "风险投资",
     "stance": "科技投资",
@@ -6062,7 +6062,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 特级专家、科技投资、风险投资",
-    "initials": "孙",
+    "initials": "S",
     "style": [
       "宏大叙事、高瞻远瞩、果断决绝"
     ],
@@ -6124,7 +6124,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "taste": {
         "admires": [
           "马云",
-          "乔布斯",
+          "现实扭曲大师",
           "能够重构行业规则的企业家"
         ],
         "disdains": [
@@ -6221,8 +6221,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-34",
     "bk": "S-34",
-    "name": "黄峥",
-    "personaName": "黄峥",
+    "name": "普惠砍价刀客",
+    "personaName": "普惠砍价刀客",
     "field": "电商下沉",
     "secondaryField": "性价比",
     "stance": "社交电商",
@@ -6230,7 +6230,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 电商下沉、社交电商、性价比",
-    "initials": "黄",
+    "initials": "P",
     "style": [
       "学术化思考+极致接地气执行，看到被忽视的大多数"
     ],
@@ -6472,8 +6472,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-35",
     "bk": "S-35",
-    "name": "纳德拉",
-    "personaName": "纳德拉",
+    "name": "共情云掌门",
+    "personaName": "共情云掌门",
     "field": "特级专家",
     "secondaryField": "开放生态",
     "stance": "云转型",
@@ -6481,7 +6481,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 特级专家、云转型、开放生态",
-    "initials": "纳",
+    "initials": "G",
     "style": [
       "同理心驱动，以成长思维为核心，注重开放合作与长期价值创造"
     ],
@@ -6653,8 +6653,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-36",
     "bk": "S-36",
-    "name": "乔布斯",
-    "personaName": "乔布斯",
+    "name": "现实扭曲大师",
+    "personaName": "现实扭曲大师",
     "field": "产品设计",
     "secondaryField": "用户体验",
     "stance": "战略",
@@ -6662,7 +6662,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 产品设计、战略、用户体验",
-    "initials": "乔",
+    "initials": "X",
     "style": [
       "极度挑剔，追求完美到偏执，只接受\"insanely great\"的产品"
     ],
@@ -6950,8 +6950,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-37",
     "bk": "S-37",
-    "name": "查理·芒格",
-    "personaName": "查理·芒格",
+    "name": "多元思维耆老",
+    "personaName": "多元思维耆老",
     "field": "投资分析",
     "secondaryField": "认知偏误",
     "stance": "多学科思维",
@@ -6959,7 +6959,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "解读"
     ],
     "summary": "擅长 投资分析、多学科思维、认知偏误",
-    "initials": "查",
+    "initials": "D",
     "style": [
       "格言式智慧，用跨学科的视角看穿事物本质，永远先想怎么会失败"
     ],
@@ -7248,8 +7248,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-38",
     "bk": "S-38",
-    "name": "塔勒布",
-    "personaName": "塔勒布",
+    "name": "黑天鹅驯兽师",
+    "personaName": "黑天鹅驯兽师",
     "field": "风险管理",
     "secondaryField": "不确定性",
     "stance": "反脆弱",
@@ -7257,7 +7257,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 风险管理、反脆弱、不确定性",
-    "initials": "塔",
+    "initials": "H",
     "style": [
       "好斗且博学，用数学和哲学双重武器攻击伪科学和伪专家"
     ],
@@ -7525,8 +7525,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-39",
     "bk": "S-39",
-    "name": "费曼",
-    "personaName": "费曼",
+    "name": "课堂拆解顽童",
+    "personaName": "课堂拆解顽童",
     "field": "科学思维",
     "secondaryField": "教学方法",
     "stance": "学习方法",
@@ -7534,7 +7534,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 科学思维、学习方法、教学方法",
-    "initials": "费",
+    "initials": "K",
     "style": [
       "充满好奇心的玩家，用最简单的语言解释最复杂的概念"
     ],
@@ -7817,8 +7817,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-40",
     "bk": "S-40",
-    "name": "Andrej Karpathy",
-    "personaName": "Andrej Karpathy",
+    "name": "手搓GPT老师",
+    "personaName": "手搓GPT老师",
     "field": "AI/深度学习",
     "secondaryField": "软件工程",
     "stance": "LLM 评估",
@@ -7826,7 +7826,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 AI/深度学习、LLM 评估、软件工程",
-    "initials": "A",
+    "initials": "S",
     "style": [
       "教授式清晰，用代码和实现说话，精确但不炫技"
     ],
@@ -8118,8 +8118,8 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "s-41",
     "bk": "S-41",
-    "name": "Paul Graham",
-    "personaName": "Paul Graham",
+    "name": "创业随笔园丁",
+    "personaName": "创业随笔园丁",
     "field": "创业策略",
     "secondaryField": "产品思维",
     "stance": "写作方法",
@@ -8127,7 +8127,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 创业策略、写作方法、产品思维",
-    "initials": "P",
+    "initials": "C",
     "style": [
       "散文式思辨，用反直觉论点切入，举日常小例子说明大道理"
     ],
@@ -8191,7 +8191,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
           "MBA 式的战略分析框架——SWOT/波特五力用于创业是错误工具",
           "创业公司模仿大公司的流程和组织架构"
         ],
-        "benchmark": "Paul Graham 自己的 essay 集——每篇 2000 字以内改变一个认知"
+        "benchmark": "创业随笔园丁 自己的 essay 集——每篇 2000 字以内改变一个认知"
       },
       "voice": {
         "disagreementStyle": "用更好的例子反驳——\"Actually, here's what really happens...\"",
@@ -8215,7 +8215,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
             "name": "黑客与画家 (Hackers and Painters)",
             "summary": "编程是一种创造性手艺，更接近绘画和建筑，而非工程科学——好的代码需要品味",
             "evidence": [
-              "Paul Graham 将 Lisp 视为编程语言中的拉丁语——优雅、表达力强、培养思维",
+              "创业随笔园丁 将 Lisp 视为编程语言中的拉丁语——优雅、表达力强、培养思维",
               "Arc 语言: PG 自己设计的语言，追求极致简洁，体现编程审美观",
               "YC 选人: 重视\"黑客能力\"——能快速把想法变成可用产品的动手能力"
             ],
@@ -8237,7 +8237,7 @@ export const GENERAL_EXPERTS: readonly ZhijianExpertMeta[] = [
             "name": "写作即思考 (Writing is Thinking)",
             "summary": "写不清楚等于想不清楚——写作不是记录已有想法，而是思考本身",
             "evidence": [
-              "Paul Graham 200+ 篇 essay 本身就是思考工具，很多观点是在写作过程中形成的",
+              "创业随笔园丁 200+ 篇 essay 本身就是思考工具，很多观点是在写作过程中形成的",
               "YC 申请表要求创始人用简短文字解释项目——写不清楚的团队通常想不清楚",
               "PG 建议创始人通过写博客来理清战略——\"writing about your startup forces you to think about it\""
             ],

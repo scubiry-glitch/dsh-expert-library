@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "孙正义",
-    "publicLabel": "孙正义",
-    "initials": "孙"
+    "internalName": "时间机器操盘手",
+    "publicLabel": "时间机器操盘手",
+    "initials": "S"
   },
   "domains": [
     "realestate.general",
@@ -86,7 +86,7 @@
     "taste": {
       "admires": [
         "马云",
-        "乔布斯",
+        "现实扭曲大师",
         "能够重构行业规则的企业家"
       ],
       "disdains": [

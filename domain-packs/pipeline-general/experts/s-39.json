@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "费曼",
-    "publicLabel": "费曼",
-    "initials": "费"
+    "internalName": "课堂拆解顽童",
+    "publicLabel": "课堂拆解顽童",
+    "initials": "K"
   },
   "domains": [
     "realestate.general",

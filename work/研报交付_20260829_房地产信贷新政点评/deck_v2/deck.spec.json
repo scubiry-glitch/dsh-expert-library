@@ -1,0 +1,125 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "vermilion",
+  "filename": "信贷新政点评_20260829_v2",
+  "seed": 20260829,
+  "meta": {
+    "organization": "智见 · 行业研究",
+    "authors": [
+      {
+        "name": "智见点评团队",
+        "role": "政策解读 · 完整展开版 v3"
+      }
+    ],
+    "date": "2026-08-29"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "房地产信贷「制度重构」：能拿房、再还贷"
+    },
+    {
+      "id": "position",
+      "type": "content",
+      "heading": "定位：制度性重构，而非需求刺激"
+    },
+    {
+      "id": "clauses-supply",
+      "type": "content",
+      "heading": "六条核心条款（上）：供给端资金链重构",
+      "beat": "dense"
+    },
+    {
+      "id": "clauses-demand",
+      "type": "content",
+      "heading": "六条核心条款（下）：期限、时点与审慎框架",
+      "beat": "dense"
+    },
+    {
+      "id": "expert-gewu",
+      "type": "content",
+      "heading": "格物讲师：九字方针的金融端映射"
+    },
+    {
+      "id": "expert-fanyi",
+      "type": "content",
+      "heading": "政策翻译官：整体判断与观察信号"
+    },
+    {
+      "id": "expert-cunliang",
+      "type": "content",
+      "heading": "存量猎手：修复上半场，下半场待接力"
+    },
+    {
+      "id": "expert-zhouqi",
+      "type": "content",
+      "heading": "周期班长：磨底期测算与传导时滞",
+      "beat": "dense"
+    },
+    {
+      "id": "expert-pipan",
+      "type": "content",
+      "heading": "批判教授：双重误读、三重错配、四问",
+      "beat": "dense"
+    },
+    {
+      "id": "consensus",
+      "type": "content",
+      "heading": "共识：四项研判一致"
+    },
+    {
+      "id": "divergence",
+      "type": "content",
+      "heading": "分歧与边界条件：降级处理"
+    },
+    {
+      "id": "data-base",
+      "type": "content",
+      "heading": "全国数据底座：五组指标",
+      "beat": "dense"
+    },
+    {
+      "id": "balance-chart",
+      "type": "content",
+      "heading": "按揭余额：八个季度，从 37.90 到 36.29"
+    },
+    {
+      "id": "beijing",
+      "type": "content",
+      "heading": "北京深潜：量先起、价收敛",
+      "beat": "dense"
+    },
+    {
+      "id": "nanjing",
+      "type": "content",
+      "heading": "南京深潜：新房修复、二手出清",
+      "beat": "dense"
+    },
+    {
+      "id": "compare-cities",
+      "type": "content",
+      "heading": "两城对照：市场底是分城市、分环节的"
+    },
+    {
+      "id": "outlook-indicators",
+      "type": "content",
+      "heading": "展望与可验证观察指标"
+    },
+    {
+      "id": "risks",
+      "type": "content",
+      "heading": "风险提示与数据来源披露"
+    },
+    {
+      "id": "closing",
+      "type": "ending",
+      "heading": "先立制度、再稳市场"
+    }
+  ]
+}

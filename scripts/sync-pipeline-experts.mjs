@@ -109,7 +109,7 @@ export function emitPipelineRoster(entries) {
   const lines = [
     '# 专家总表（pipeline 命名空间）',
     '',
-    '> 生成：scripts/sync-pipeline-experts.mjs（线上 expert-library 归一化，公众人物实名）',
+    '> 生成：scripts/sync-pipeline-experts.mjs（线上 expert-library 归一化，行业花名）',
     '',
   ]
   let index = 1

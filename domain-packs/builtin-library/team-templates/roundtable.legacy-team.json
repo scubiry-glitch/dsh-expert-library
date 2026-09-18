@@ -45,7 +45,7 @@
       "allowedCapabilities": [],
       "outputSchema": "roundtable.legacy-output",
       "retryPolicy": "never",
-      "subject": "专家发言：邢自强",
+      "subject": "专家发言：周期班长",
       "description": "以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。",
       "legacySource": "v1"
     },
@@ -57,7 +57,7 @@
       "allowedCapabilities": [],
       "outputSchema": "roundtable.legacy-output",
       "retryPolicy": "never",
-      "subject": "专家发言：任泽平",
+      "subject": "专家发言：长牛博士",
       "description": "以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。",
       "legacySource": "v1"
     },
@@ -69,7 +69,7 @@
       "allowedCapabilities": [],
       "outputSchema": "roundtable.legacy-output",
       "retryPolicy": "never",
-      "subject": "专家发言：付鹏",
+      "subject": "专家发言：分化哨兵",
       "description": "以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。",
       "legacySource": "v1"
     },

@@ -206,7 +206,7 @@ export const BUILTIN_SCENARIOS: readonly Scenario[] = [
   {
     id: 'cross-debate',
     name: 'Cross Debate Team',
-    description: '交叉辩论：立场对立的两位专家就同一议题立论-反驳-回应，主持专家裁判总结。默认组合为示例（丁祖昱 vs 付鹏），可替换为任意立场对立组合。',
+    description: '交叉辩论：立场对立的两位专家就同一议题立论-反驳-回应，主持专家裁判总结。默认组合为示例（定力董座 vs 分化哨兵），可替换为任意立场对立组合。',
     experts: ['team-lead', 'bk-024', 'bk-008'],
     tasks: [
       {
@@ -248,17 +248,17 @@ export const BUILTIN_SCENARIOS: readonly Scenario[] = [
     experts: ['bk-004', 'bk-005', 'bk-008', 'docs-coordinator'],
     tasks: [
       {
-        subject: '专家发言：邢自强',
+        subject: '专家发言：周期班长',
         description: '以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。',
         expert: 'bk-004',
       },
       {
-        subject: '专家发言：任泽平',
+        subject: '专家发言：长牛博士',
         description: '以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。',
         expert: 'bk-005',
       },
       {
-        subject: '专家发言：付鹏',
+        subject: '专家发言：分化哨兵',
         description: '以本人立场独立发言：核心判断 → 依据（数据带口径）→ 前瞻。',
         expert: 'bk-008',
       },

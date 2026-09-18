@@ -1,0 +1,207 @@
+{
+  "name": "智见报告·成都数据集团合作",
+  "id": "智见报告-成都数据集团合作",
+  "description": "把《20260905_成都数据集团合作分析报告_贝壳视角_v1.md》（唯一内容源，结构与事实判断不可改）渲染为正式 HTML 报告（视觉稿级，可直接转 PDF 上会）。贝壳蓝 #1F4FA0 设计系统，A4 794×1123 纵向分页，内联 CSS 零外部依赖，页眉密级「内部讨论稿」，页尾页码；每章一点睛图；口径纪律：待书面确认/对方口径等存疑标注原样保留并可视化；产出物写到项目目录下的同名 .html 文件。工艺遵循 zhijian-report-craft（门禁 G1 文字/G2 数字逐 token/G3 无溢出遮挡）。",
+  "captainSessionId": "session-aec3fc2a-285d-4c57-b987-901ac5a3d58b",
+  "createdAt": 1788602309963,
+  "members": [
+    {
+      "id": "dda22c72-441f-4b9e-ad1b-52870076db50",
+      "name": "统筹会长",
+      "role": "内容架构师",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1788602316800,
+      "status": "removed"
+    },
+    {
+      "id": "5669bc7a-7169-4e97-847f-4cd0743bba4c",
+      "name": "渠道灯塔",
+      "role": "渲染执行A",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1788602323944,
+      "status": "removed"
+    },
+    {
+      "id": "92251dc9-1f56-4789-9285-366dde91fafb",
+      "name": "难而正确君",
+      "role": "渲染执行B",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1788602324096,
+      "status": "removed"
+    },
+    {
+      "id": "f084e354-b309-49f0-a51d-a4fb28a82bbe",
+      "name": "制度君",
+      "role": "渲染执行C",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1788602324298,
+      "status": "removed"
+    },
+    {
+      "id": "c14cb6d2-0697-43be-b283-0ba1ad0eb605",
+      "name": "挂牌哨探",
+      "role": "口径校对",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1788602324513,
+      "status": "removed"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "subject": "架构审定：13 页映射与点睛图选型核对",
+      "description": "通读主文档 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md 与渲染契约 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md，做开工前架构审定：\n1) 完整性：md 八章全部小节（2.1–2.7、3.1–3.3、4.1–4.3、5.1–5.3、6.1–6.4、七、八）是否全部落入 spec 三的 13 页映射，无遗漏无越界；\n2) 每页内容量预估：正文 15px/表格 13.5px 下，各页内容是否可能溢出 794×1123（尤其 p06 六来源表+五条限制、p11 矩阵表、p09 三节、p12 两章），必要时给出「移段/压缩建议」（只能建议排版调整，禁止动内容）；\n3) 点睛图选型核对：13 页图表是否遵守「无数字不绘/定性示意标注」，图内数字与 md 一致；\n4) 封面数字条 4 格数字逐一核对 md 在案。\n产出：将审定结论（含必要的排版调整建议清单，逐页列出）写入 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/arch_review.md，并向队长汇报要点。不要修改 spec.md 与 theme.css 本体，如需修订由队长落笔。",
+      "status": "completed",
+      "assignee": "统筹会长",
+      "dependencies": [],
+      "attempt": 1,
+      "createdAt": 1788602542203,
+      "updatedAt": 1788602821562,
+      "project": {
+        "path": "expert-tasks/t1",
+        "inputPath": "expert-tasks/t1/input/task.json",
+        "outputPath": "expert-tasks/t1/output/result.json",
+        "artifactsPath": "expert-tasks/t1/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "qualityScore": null,
+      "repairCount": 0,
+      "output": "架构审定完成，报告：.build_html/arch_review.md。结论：映射完备、数字在案、可开工。①完整性：md 八章全部 18 个内容单元逐项落入 13 页（含六章导语段→p10 总原则条、文末尾行→p13），无遗漏、无越界、无断章。②容量：预算 1013px；p10 高风险（6.1+6.2 ≈995字+图，估 ~1100px，需三卡横排+卡内文 12.5px+解耦图单行化组合压缩至 ~1000px）；p08 中高（~1050-1090px，需四维卡/时间线紧凑化）；p02/p11/p12 中（p02 导语卡与正文首段同句双排、紧贴预算；p11 建议折扣标尺与三步时序合并一图、三步建议块横排三栏；p12 双章头压缩+三卡横排）；p03-p07、p09 低。③点睛图 11 张（p01/p13 无图）全部合规：数字图（p03/p05/p08/p09/p11）图内数字逐 token 与 md 一致；定性图（p02/p04/p06/p07/p10/p12）措辞均取原文；p04/p06/p12 图注建议补\"定性示意\"四字（排版执行动作）。④封面数字条 4 格逐一核对 md 在案：40亿元(2.1)/约20亿元·万卡一期(2.5, 规划限定随格)/1.2亿元·约39倍(4.2)/3.3折口头意向vs3.8折(6.4)，无越界。4 项架构级提示请队长知悉：A1 spec G2 数字锚点清单漏「2026年9月1日」(4.2 挂牌日，spec 三 p08 行已用 2026-09-01 短格式)；A2 p13 使用提示\"以正式材料为准\"为 paraphrase，建议直接引 md 七.6 原句（\"全部会谈数字与人名源自录音转写，引用前须经书面材料复核\"）；A3 p12 短期卡不得新增\"3.8折\"字样（md 八.1 原文为\"硬性门槛为优于现有供应商实付价\"，3.8折仅 6.4 在案）；A4 p02 导语卡与正文首段含同一句（~100字），按 spec 字面=同句双排可容纳但挤，是否授权去重请队长裁决。未修改 spec.md、theme.css 与 md 本体。"
+    },
+    {
+      "id": "t2",
+      "subject": "渲染A：p01–p04（封面/摘要/二上/二中）",
+      "description": "按契约 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md（先通读，纪律部分逐条遵守）与设计系统 .build_html/theme.css，用 md /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md 为唯一内容源，产出 4 个片段文件到 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/：\n- p01.html 封面（.cover 深蓝渐变，主标题/副题/三条核心结论原文首句白卡/4 格关键数字条/章节导览一~八）\n- p02.html 一、报告摘要（摘要全量+三条结论编号强调块+「双方资源互补」四象限定性示意图）\n- p03.html 二(上) 2.1+2.2（含股权穿透链点睛图：63.9%/18%/7家/40亿/20%/44.75%/100%/约170款）\n- p04.html 二(中) 2.3+2.4（含可信空间运行逻辑链图；「待书面材料确认」「据称」「待核实」flag 徽标落位）\n格式与页眉页脚模板严格按 spec 第二节；页码 01–04/共13。完成后自查（无溢出/无遮挡/无横向滚动/零 script），向队长回报 flag 落位清单与自查结论。若 arch_review.md 已有针对你页面的排版建议，先采纳再动工。",
+      "status": "completed",
+      "assignee": "渠道灯塔",
+      "dependencies": [
+        "t1"
+      ],
+      "attempt": 1,
+      "createdAt": 1788602569532,
+      "updatedAt": 1788604677633,
+      "project": {
+        "path": "expert-tasks/t2",
+        "inputPath": "expert-tasks/t2/input/task.json",
+        "outputPath": "expert-tasks/t2/output/result.json",
+        "artifactsPath": "expert-tasks/t2/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "qualityScore": null,
+      "repairCount": 0,
+      "output": "渲染A（p01–p04）已完成并交付 .build_html/pages/p01.html–p04.html，另以全部13页做干跑集成自检（未写最终产物文件）。\n\n【每页点睛图】p01：封面关键数字条4格即点睛（40亿元注册资本／约20亿元·万卡一期(规划)／1.2亿元底价·约39倍市盈率／3.3折口头意向 vs 贝壳现走火山引擎3.8折）；p02：双方资源互补四象限交换图（定性示意，措辞全部取自核心结论①原文）；p03：股权穿透链图（成都产业集团约63.9%·高新投18%等7家市属国企 → 成都数据集团[注册资本40亿元·2023年7月改组揭牌·另持四川数据集团20%股权] → 智慧锦城(持股44.75%) → 房联云码[2020年收购100%股权]），右上配\"约170款数据产品（以SaaS形态交付）\"指标卡；p04：城市可信空间运行逻辑纵向链图（政务公共数据×行业社会化数据→在可信空间内融合加工→形成数据产品→合规对外提供服务＋旁注\"解决的核心问题：数据服务收费的合规身份\"，图注标注定性示意）。\n\n【flag 落位清单】p04 共4枚徽标：①「据会谈介绍」灰flag（2.3投资句内）；②「（上述数字待书面材料确认）」flag-w（2.3 验收句末，句号与徽标同行为一整行不孤行）；③「据称」flag-w（2.4 数据源句）；④「（授权范围与商用边界待核实）」flag-w（2.4 句末）。均为原文短语入徽，未改写；「口头意向」字样出现在 p01 封面第4格（灰字随格，按架构审定 §5 不强制徽标）与 p02 结论②原文句中（非G1锚点页）。p01–p03 无存疑短语需徽标。\n\n【自查结论】四页逐一 playwright 实测：无横向溢出、无元素越界/遮挡（overflow 检测全 OK）；零 <script>、零外链；无表格故无断表风险。13 页临时干跑整册装配后 G1（18锚点短语）＋G2（42数字token）＋G3（13页/逐页越界检测/零JS）全部 PASS。视觉目检（Chromium 截图）：封面四组 space-between 均衡、章头样式与 p07–p10 队友版统一（chno+全题 h1，保证\"一、报告摘要/二、成都数据集团概况\"连续字符串在位）、无豆腐块、箭头/×/↓字形正常。\n\n【两点提请队长知悉】①p02 分工句按 spec 字面在导语卡与摘要正文首段双排呈现（架构审定 A4 建议由队长裁决去重，未收到裁决前按字面执行，容量余量约96px）；②p03 股权穿透图节点注释严格按 md 原文括号位置落位（智慧锦城(持股44.75%)、房联云码[100%股权·2020年收购]），图注注明不新增归因判断。"
+    },
+    {
+      "id": "t3",
+      "subject": "渲染B：p05–p08（二下/2.7/三/四）",
+      "description": "按契约 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md（先通读，纪律部分逐条遵守）与设计系统 .build_html/theme.css，用 md /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md 为唯一内容源，产出 4 个片段文件到 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/：\n- p05.html 二(下) 2.5+2.6（算力中心五要素卡阵；电价对比条形图 0.30—0.35/0.60—0.80/0.10—0.15（情景灰显标\"政策未放开\"）；「均在规划阶段」flag）\n- p06.html 二·2.7（token 成本公式链图；六来源表全量保留、确定性列徽标化含「待书面确认」flag-w；限制条件五条编号全量；结论 .concl 原句强调块）\n- p07.html 三、资源禀赋（中央/地方两卡+3.3 三方互补段全文；三角互补定性示意图）\n- p08.html 四、地方资质价值（四维度卡+银协金服案例全文+时间线点睛图 1987→银政通→2026-09-01挂牌/1.2亿/39倍PE；「资质红利在交割时即告清零」强调块）\n格式与页眉页脚模板严格按 spec 第二节；页码 05–08/共13。完成后自查（无溢出/无遮挡/表格未断/零 script），向队长回报 flag 落位清单与自查结论。若 arch_review.md 已有针对你页面的排版建议，先采纳再动工。",
+      "status": "completed",
+      "assignee": "难而正确君",
+      "dependencies": [
+        "t1"
+      ],
+      "attempt": 1,
+      "createdAt": 1788602569602,
+      "updatedAt": 1788603708581,
+      "project": {
+        "path": "expert-tasks/t3",
+        "inputPath": "expert-tasks/t3/input/task.json",
+        "outputPath": "expert-tasks/t3/output/result.json",
+        "artifactsPath": "expert-tasks/t3/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "qualityScore": null,
+      "repairCount": 0,
+      "output": "渲染B完成：产出 .build_html/pages/p05.html–p08.html 四个片段（严格按 spec 二节模板，页眉四件/页脚逐字，页码 05–08/共13，零 script/零外链/无 xmlns，marker 配对，theme.css 类限定）。\n\n【点睛图】p05 电价水平对比水平条形（内联 SVG：0.30—0.35 元/度｜0.60—0.80 元/度｜0.10—0.15 元/度 灰显条＋红标\"政策未放开\"，图注保留 2.5\"若未来绿电直供政策放开\"语义与 2.7\"低价情景不得纳入测算基线\"）；p06 token 单价公式链（（GPU折旧＋电力＋机房＋运维）÷有效利用率×渠道加价层级，六来源 ①—⑥ 徽标挂注，图注带\"定性示意\"）；p07 三方互补三角图（定性示意，措辞取自 3.3 原文，标签浮板版式）；p08 案例数字时间线（1987年 人民银行→运营\"四川银政通\"平台→2026年9月1日挂牌转让100%股权·底价1.2亿元·约39倍市盈率）＋交割警示条。\n\n【flag 落位清单】p05：规模卡\"目标西部最大（均在规划阶段）\"原句位 flag（G1 锚点）；2.6\"据会谈介绍\"限定语随原句保留（不徽标，按 spec §五）；p06：六来源表\"政府补贴\"行确定性列 flag-w\"待书面确认\"，其余徽标化 较高=蓝 tag×2、中等=灰 tag×3；限制条件五条编号全量（含\"政策未放开\"\"对方\"不依赖此项盈利\"\"POC验证\"等原词）；结论 .concl 原句强调块（未新增\"口头意向\"）；p07/p08：无 G1 徽标锚点（按 spec §四），\"短板\"以原文强调。\n\n【数字纪律】G2 相关锚点逐 token：约20亿元/10万卡/0.30—0.35元/0.60—0.80元/0.10—0.15元/六至七成/15%固投返还/四个候选点/27个城市/300亿元/9月挂牌/1.2亿元/1987年/2025年/1241万元/310万元/约39倍/20个工作日/2026年9月1日（按 arch_review A1 用 md 原句日期）——全部在案无新增。arch_review 建议已采纳：p06 图注补\"定性示意\"、p08 时间线首节点用\"人民银行\"原词（未缩写）、p05 卡阵 3+2、p08 四维卡 small 档。\n\n【自查结论】Playwright 实测四页：无页面/主区溢出、无元素越界裁切、无 SVG 内文字出界、表格（p06 六来源表 6+1 行）完整单页未断、零 JS 报错；底部余量 p05≈226px/p06≈29px/p07≈257px/p08≈123px（均正值）。内容逐句核对：以 md 2.5/2.6/2.7/3.1–3.3/4.1–4.3 逐行切句断言全部原句在位（SPOT PASS），唯一差异为栏目标签/卡片化结构加工（冒号顿号随结构省略，文字本体全量保留）。"
+    },
+    {
+      "id": "t4",
+      "subject": "渲染C：p09–p13（五/六上下/七八/封底）",
+      "description": "按契约 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md（先通读，纪律部分逐条遵守）与设计系统 .build_html/theme.css，用 md /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md 为唯一内容源，产出 5 个片段文件到 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/：\n- p09.html 五、合作层次（三层阶梯点睛图 5000万→4000万；层次二「（对方口径，供参考）」flag；定价纪律段全文）\n- p10.html 六(上) 6.1+6.2（总原则强调条；方案一/二结构-优点-缺点-适用卡；共同要件含认股权条款；方案A标「（对方提议）」、B、E 三卡）\n- p11.html 六(下) 6.3+6.4（四列对比矩阵表 7行×5列全量逐格原文，表格禁跨页断裂；折扣标尺图 3.3/3.8/4.9 折含「口头意向」「情景测算」标注；三步建议三条原文强调块）\n- p12.html 七+八（风险六条编号警示列表 flag-w 落位；下一步三条卡 短期/中期/股权线；三步工作时间轴点睛图）\n- p13.html 封底（.backcover 居中；收束引用 2.7 结论原句；报告信息块：单位/日期/密级/编制依据尾行原句；使用提示措辞仅取自第七章第6条）\n格式与页眉页脚模板严格按 spec 第二节；页码 09–13/共13。完成后自查（无溢出/无遮挡/表格未断/零 script），向队长回报 flag 落位清单与自查结论。若 arch_review.md 已有针对你页面的排版建议，先采纳再动工。",
+      "status": "completed",
+      "assignee": "制度君",
+      "dependencies": [
+        "t1"
+      ],
+      "attempt": 1,
+      "createdAt": 1788602569709,
+      "updatedAt": 1788604005382,
+      "project": {
+        "path": "expert-tasks/t4",
+        "inputPath": "expert-tasks/t4/input/task.json",
+        "outputPath": "expert-tasks/t4/output/result.json",
+        "artifactsPath": "expert-tasks/t4/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "qualityScore": null,
+      "repairCount": 0,
+      "output": "渲染C完成：p09–p13 五片段已交付 .build_html/pages/（严格 spec 页眉页脚格式、marker 配对、零 script 零外链）。\n\n【每页点睛图】p09 合作层次三层阶梯图（5000万元→4000万元 tag 挂层次一，图注含参照口径徽）；p10 两类结构解耦示意（单行横向条，标注\"定性示意\"）；p11 折扣锚点与三步推进时序合并图区（3.3折口头意向/3.8折火山实付/4.9折万界方舟组合口径·情景测算三格 + 三步 chain，arch §2②合并建议采纳）；p12 三步工作时间轴（本月→本季度→股权线，图注\"定性示意\"，按 arch A3 未带出 3.8 折字样）；p13 封底无图（收束引用+报告信息块居中）。\n\n【flag 落位清单】p09×3灰：参照口径(正文+图注各1)、（对方口径，供参考）；p10×1灰：（对方提议）；p11×2：情景测算(灰)、口头意向(flag-w)；p12×6 全 flag-w：口头意向/无书面佐证/待官方渠道确认/对方口述/不构成承诺/源自录音转写。合计 5灰+7红=12 徽，G1 短语全在位（grep 逐条验证 0 MISS）。\n\n【arch 建议采纳】A2：p13 使用提示直接引七.6 原句\"全部会谈数字与人名源自录音转写，引用前须经书面材料复核\"；A3：p12 短期卡按八.1 原文\"硬性门槛为优于现有供应商实付价\"，无 3.8 折字样；§2：p10 组合压缩（两方案卡并栏+三股权卡横排+解耦图单行条）、p11 折扣图与三步时序合并+建议三卡横排、p12 紧凑 h2 免双大章头。\n\n【自查结论】playwright 逐页实测：p09 填充87%/p10 97%/p11 88%/p12 72%/p13 65%（封底居中）——全部无横向溢出、无元素越界裁切、无文字遮挡；p11 矩阵表 8行×5列完整单页（表底距页脚>32px 通过），表头列宽 colgroup 控制、末行\"与当前验证状态的匹配度\"折行在格内；逐句原文核对 50 句 46 全匹配，4 处为 md\"加粗标题：正文\"结构化拆为卡标题+正文（文字全量在位，如\"短期（本月）\"ct+正文原句），属 spec 允许卡化加工；零 script 已核。交付片段不含 style/doctype（自查用临时文件已清理）。"
+    },
+    {
+      "id": "t5",
+      "subject": "口径校对：G1/G2 双门禁逐页核对",
+      "description": "对 13 个片段 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/p01–p13.html 逐页执行双门禁校对（契约=/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md 第四节第五节，内容源=同目录上级的 md 主文档）：\nG1 口径门：① spec 四所列存疑短语逐项在对应页命中且为徽标（class 含 flag）且文字与 md 逐字一致；② 章名/节名与 md 完全一致；③ 无新增事实判断、无结论化改写（对照 md 逐句扫）。\nG2 数字门：spec 五数字锚点逐 token grep 核对（注意全角破折号 — 与千分位写法照抄 md）；同时反向扫描片段中出现的所有数字，凡 md 不在案的数字一律标记（图内坐标刻度/页码/序号除外）。\n结构门：13 页 marker 配对、页眉四件/页脚页码连续、表格行数与 md 一致（六来源表 6 行、6.3 矩阵 7 行）、无 script 标签。\n处置：微瑕（错字/漏徽标/数字写法偏差/漏页眉元素）直接修复片段文件并在报告中注明改动；结构性问题（内容缺失/疑似改写/溢出风险）只报告不动手，交回队长调度。产出 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/proof_report.md（逐页结论表）并向队长汇报。",
+      "status": "completed",
+      "assignee": "挂牌哨探",
+      "dependencies": [
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "attempt": 1,
+      "createdAt": 1788602586654,
+      "updatedAt": 1788604982191,
+      "project": {
+        "path": "expert-tasks/t5",
+        "inputPath": "expert-tasks/t5/input/task.json",
+        "outputPath": "expert-tasks/t5/output/result.json",
+        "artifactsPath": "expert-tasks/t5/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "qualityScore": null,
+      "repairCount": 0,
+      "output": "双门禁校对完成，13 页全部通过文字与结构核对。产物：.build_html/proof_report.md（逐页结论表+修复清单）。\n\n【直接修复 1 处（微瑕）】p05.html：2.6 节「据会谈介绍」漏徽标 → 外套 <span class=\"flag\">，原文文字未动（p04 同短语已徽标，spec 四\"另\"项要求保留并可视化）；修复后全稿徽标 18→19。\n\n【结构性问题 1 项（未动手，请队长裁决）】p02「主体分工」与 spec 三/A4 不符：应为短语标签卡（三栏短语，不重复整句），当前是页顶整句 quote，且与下方全量摘要首段重复同一整句（页内该句出现两遍，也违反\"不拆不重\"）。文字与 md 逐字一致无改写，纯结构偏离。\n\n【观察项 3 条】① p10/p12 章首为裸 h2，p02–p09 章首均 .ch 章头块（版式层级不一致，文字无误）；② p09 图注「5.1—5.3 节题」为节号区间连写（各节号 md 在案，按序号豁免）；③ p05/p06 图注引用片段用「」而 md 通篇 ASCII 引号（内容逐字，仅字符风格）。\n\n【门禁核验结果】结构门全绿：13/13 marker 配对、页眉四件逐字、页脚 01–13 连续、零 script、p06 表 6 行、p11 矩阵 7 行×5 列。G1：19 处徽标全落 md 存疑语（警示性 flag-w），p12 风险六条全量原句、八.1 无 3.8 折字样（A3 遵守）。G2：47 组数字锚点页面命中 100%，反向扫描零新增数字（仅页眉日期/节号/列序号豁免），全角破折号区间（0.30—0.35 等）与 md 逐 token 一致。md 标题命中 100% 逐字。全量 md 句级比对仅 12 句未连续命中，全部可归因于允许的拆排/卡片化，逐句人工复核无改写无新增判断。"
+    },
+    {
+      "id": "t6",
+      "subject": "组装与发布门禁：产出最终 HTML（队长）",
+      "description": "队长执行：抽取 13 个片段的 section 块按序组装为单文件 HTML（内联 theme.css 于 head，无任何 script/外链），写出 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.html；复跑门禁：页数=13、@page 794×1123、密级页眉 13 页齐、页码 01–13 连续、G1/G2 锚点 grep、零 script、片段 marker 清理干净；浏览器逐页视检（截图核验无溢出/遮挡/表格断页）。",
+      "status": "completed",
+      "dependencies": [
+        "t5"
+      ],
+      "attempt": 2,
+      "createdAt": 1788602595761,
+      "updatedAt": 1788605686859,
+      "project": {
+        "path": "expert-tasks/t6",
+        "inputPath": "expert-tasks/t6/input/task.json",
+        "outputPath": "expert-tasks/t6/output/result.json",
+        "artifactsPath": "expert-tasks/t6/artifacts",
+        "version": 1
+      },
+      "assignee": "captain",
+      "reassigning": false,
+      "qualityScore": null,
+      "repairCount": 0,
+      "output": "最终组装与全门禁完成。产出：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.html（65,874 字节，13 页 A4 794×1123，内联 CSS 零 JS 零外链）。门禁终态：①G3（playwright 实测）13/13 页无溢出/无遮挡/无横向滚动、零 JS 报错；②G1 存疑徽标 19 处全落位（含校对补的 p05「据会谈介绍」）、章名节名 100% 逐字、密级页眉 13 页齐、页码 01–13 连续；③G2 数字锚点 100% 命中、反向扫描零新增数字；④p06 六来源表 6 行、p11 矩阵 7×5 全量单页未断；⑤封面/最密页 p10 经独立视觉通道复核无裁切遮挡。视觉终态：章头带 p02–p12 全书同构（p10 以 fig 版式回收 17px 装入紧凑带、末元素距页脚 16px 达标），每章一点睛图齐（封面数字条即点睛、封底无图）。构建留痕：.build_html/{spec.md,theme.css,arch_review.md,proof_report.md,assemble.py,g3_check.py,g1g2_check.sh,pages/,shots/}。"
+    }
+  ],
+  "taskSeq": 6,
+  "completionNotifiedAt": 1788605686863
+}

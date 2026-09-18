@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>算力合作三题汇报｜角色生态 · 价格决策 · 业务路线</title>
+<style>
+:root{--blue:#00a4ff;--deep:#0877bd;--ink:#102a43;--muted:#5f7182;--bg:#f4f9fc;--line:#d9e8f2;--green:#19a887;--gold:#c68b2c;--red:#d95c50}
+*{box-sizing:border-box}html,body{margin:0;background:#dceaf2;color:var(--ink);font-family:"Noto Sans SC","Source Han Sans SC","Microsoft YaHei",sans-serif}
+@page{size:1280px 720px;margin:0}
+.slide{width:1280px;height:720px;position:relative;overflow:hidden;background:var(--bg);margin:0 auto 8px;page-break-after:always;padding:40px 56px 34px}
+.slide:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,164,255,.045) 1px,transparent 1px),linear-gradient(rgba(0,164,255,.035) 1px,transparent 1px);background-size:40px 40px;mask-image:linear-gradient(90deg,black,transparent 75%)}
+.top{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
+.brand{font-size:14px;font-weight:800;color:var(--deep);letter-spacing:.08em}
+.section{font-size:12px;color:var(--muted)}
+h1{font-size:52px;line-height:1.12;margin:14px 0 16px;letter-spacing:-.01em}
+h2{font-size:32px;margin:0 0 10px;line-height:1.15}
+h3{font-size:17px;margin:0 0 6px}
+p{line-height:1.55;margin:6px 0}
+.sub{font-size:18px;color:var(--muted);max-width:860px}
+.eyebrow{color:var(--deep);font-weight:800;font-size:13px;letter-spacing:.14em;margin-bottom:8px}
+.rule{height:3px;width:92px;background:var(--blue);margin:18px 0}
+.content{position:relative;z-index:1;margin-top:18px}
+.panel{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:7px;padding:16px 18px;box-shadow:0 10px 26px rgba(16,42,67,.08)}
+.panel.blue{background:linear-gradient(135deg,#0077bd,#00a4ff);color:#fff;border-color:transparent}
+.panel.red{background:#fff6f4;border:1px solid #f3cfc8}
+.panel.green{background:#f2fbf7;border:1px solid #c9ecdf}
+.kicker{font-size:12px;color:var(--deep);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.metric{font-size:30px;font-weight:900;line-height:1.1;margin:6px 0 4px}
+.metric small{font-size:13px;font-weight:600}
+.tag{display:inline-block;padding:3px 8px;border-radius:3px;background:#e8f6fd;color:var(--deep);font-size:11.5px;font-weight:800;margin:2px 3px 2px 0}
+.tag.green{background:#e3f7f0;color:#087c61}
+.tag.gold{background:#fff5df;color:#90621b}
+.tag.red{background:#fff0ee;color:#a5433b}
+.tag.gray{background:#eef3f6;color:#54626e}
+.small{font-size:12px;color:var(--muted)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.page{position:absolute;right:56px;bottom:12px;font-size:11px;color:#7d94a3;z-index:3}
+.foot{position:absolute;left:56px;bottom:12px;font-size:10px;color:#8fa3b0;z-index:3}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13.5px}
+th{background:#e9f5fc;color:#0b5d8c;font-weight:800;padding:8px 10px;border:1px solid var(--line);text-align:left}
+td{padding:7px 10px;border:1px solid var(--line);vertical-align:middle}
+tr:nth-child(even) td{background:#f7fbfd}
+.num{font-weight:800;color:#0b5d8c}
+.layer{display:flex;gap:10px;margin-bottom:10px;align-items:stretch}
+.lname{writing-mode:vertical-lr;text-align:center;font-size:12px;font-weight:900;color:#fff;background:var(--deep);border-radius:4px;padding:8px 5px;letter-spacing:.2em;flex:0 0 30px}
+.lbody{display:grid;gap:8px;flex:1}
+.node{background:#fff;border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:5px;padding:8px 12px}
+.node b{font-size:14.5px}
+.node .d{font-size:11.5px;color:var(--muted);line-height:1.4;margin-top:2px}
+.node.hl{border-top-color:var(--green)}
+.node.warn{border-top-color:var(--gold)}
+.chain{display:flex;align-items:stretch;gap:6px}
+.chain .step{flex:1;background:#fff;border:1px solid var(--line);border-left:4px solid var(--blue);border-radius:5px;padding:10px 12px}
+.chain .step b{font-size:14px}
+.chain .step .d{font-size:11.5px;color:var(--muted);margin-top:2px;line-height:1.4}
+.chain .arr{display:flex;align-items:center;font-size:18px;color:var(--deep);font-weight:900}
+.big{font-size:16px;font-weight:800}
+.panel.blue .kicker{color:#eaf8ff}
+.s3boost .layer{margin-bottom:16px}
+.s3boost .node{padding:13px 16px}
+.s3boost .node b{font-size:16.5px}
+.s3boost .node .d{font-size:13px;line-height:1.5}
+.s3boost .lname{font-size:13px;flex:0 0 34px}
+</style>
+</head>
+<body>
+
+<!-- S1 封面 -->
+<div class="slide">
+  <div class="top"><div class="brand">算力合作 · 汇报</div><div class="section">2026-09-02</div></div>
+  <div style="position:relative;z-index:1;margin-top:96px">
+    <div class="eyebrow">贝壳大模型算力提效合作</div>
+    <h1>角色生态 · 价格用量决策<br>公共事务线与智见业务模式</h1>
+    <div class="rule"></div>
+    <p class="sub">降本增效 + 数据变现双轮驱动：一条成本链（多模型路由 + 国产算力），一条变现链（不动产数据 PaaS 合资）。</p>
+    <div class="grid g4" style="margin-top:30px;max-width:1050px">
+      <div class="panel"><div class="kicker">当前基数</div><div class="metric">300万<small>/月刊例</small></div><div class="small">Claude 60% · GLM 20% · 其他 20%</div></div>
+      <div class="panel"><div class="kicker">直采现状</div><div class="metric">8折</div><div class="small">年支出约 2,880 万</div></div>
+      <div class="panel"><div class="kicker">合作报价锚点</div><div class="metric" style="color:var(--deep)">≈5.0折</div><div class="small">万界方舟 8 月报价组合口径</div></div>
+      <div class="panel blue"><div class="kicker">决策收益</div><div class="metric">约1,000万<small>/年</small></div><div class="small" style="color:#eaf8ff">按现有用量即可兑现</div></div>
+    </div>
+  </div>
+  <div class="foot">依据：贝壳大模型算力提效合作方案（2026-06）· 万界方舟报价单-贝壳-202608</div>
+  <div class="page">01</div>
+</div>
+
+<!-- S2 三题总览 -->
+<div class="slide">
+  <div class="top"><div class="brand">算力合作 · 汇报</div><div class="section">汇报结构</div></div>
+  <div class="content">
+    <h2>今天汇报的三个问题</h2>
+    <div class="grid g3" style="margin-top:22px">
+      <div class="panel">
+        <div class="kicker">第一题</div>
+        <h3 style="font-size:21px;margin:8px 0">主要角色与生态</h3>
+        <p class="small" style="font-size:13.5px">供应层（模型/硬件）→ 算力资产层 → 运营层 → 应用层，四层七角色；成本链与变现链怎么闭环，各方拿什么换什么。</p>
+        <div><span class="tag">四层架构</span><span class="tag">交换矩阵</span></div>
+      </div>
+      <div class="panel">
+        <div class="kicker">第二题</div>
+        <h3 style="font-size:21px;margin:8px 0">价格与用量决策</h3>
+        <p class="small" style="font-size:13.5px">万界方舟 8 月报价单解析：通道分级与组合折扣；承诺什么用量档位、多少流量可迁国产、要什么价格保护条款。</p>
+        <div><span class="tag">报价锚点 ≈5.0折</span><span class="tag">通道分级</span><span class="tag red">MFN 条款</span></div>
+      </div>
+      <div class="panel">
+        <div class="kicker">第三题</div>
+        <h3 style="font-size:21px;margin:8px 0">公共事务线 × 智见</h3>
+        <p class="small" style="font-size:13.5px">底座（算力 JV）× 内容（智见专家引擎）× 渠道（公共事务线）三层协同；两条商业主线与汇报机制。</p>
+        <div><span class="tag">城投估值框架</span><span class="tag">银行 T0+T+N</span></div>
+      </div>
+    </div>
+    <div class="panel blue" style="margin-top:16px"><p class="big" style="margin:0">一句话结论：成本链有真实报价支撑、当期即可年省约 1,000 万；变现链卡在数据作价与股比，先签算力框架协议，同步谈 JV。</p></div>
+  </div>
+  <div class="page">02</div>
+</div>
+
+<!-- S3 角色与生态 全景 -->
+<div class="slide">
+  <div class="top"><div class="brand">第一题 · 角色与生态</div><div class="section">四层架构 · 七类角色</div></div>
+  <div class="content">
+    <h2>生态全景：谁在哪一层，赚哪一段</h2>
+    <div class="s3boost" style="margin-top:16px">
+      <div class="layer"><div class="lname">供应层</div><div class="lbody g2" style="display:grid">
+        <div class="node"><b>模型厂商</b><div class="d">智谱 / DeepSeek / Kimi（国产 API，4–5 折）· Claude / GPT / Gemini（海外，池化 3.2–5.4 折）</div></div>
+        <div class="node"><b>硬件厂商</b><div class="d">中昊芯英 GPTPU 训推一体芯片 + 服务器，国产自主可控底座</div></div>
+      </div></div>
+      <div class="layer"><div class="lname">资产层</div><div class="lbody"><div class="node"><b>算力业主公司</b><div class="d">持有 GPU + TPU 卡与服务器，以租赁方式向下游供算力（重资产、吃折旧与利用率）</div></div></div></div>
+      <div class="layer"><div class="lname">运营层</div><div class="lbody"><div class="node hl"><b>算力运营公司（万界方舟等）</b><div class="d">多模型智能路由 + 开源模型自建推理 + SLA 管理；低折拿 API（约 2 折）与卡资源，统一下游供应</div></div></div></div>
+      <div class="layer"><div class="lname">应用层</div><div class="lbody g3" style="display:grid">
+        <div class="node"><b>贝壳</b><div class="d">推理买家（月 300 万刊例）+ 数据授权方（脱敏交易/租金/小区画像）</div></div>
+        <div class="node hl"><b>PaaS 合资公司</b><div class="d">股比待定；贝壳数据 + 大模型 → 不动产定价 PaaS（租金定价 / 估值 / 风险评分）</div></div>
+        <div class="node warn"><b>城投 / 银行 / 评估机构</b><div class="d">外部付费客户：保障房定价、资产盘点、抵押物估值、贷后监控</div></div>
+      </div></div>
+    </div>
+    <p class="small" style="margin-top:8px">关键认知：运营层是全链的定价权中枢——上游吃 2 折 API 与国产卡边际成本，下游按 4–5.5 折供应；JV 是变现层的唯一出口，数据与客户都在两端。</p>
+  </div>
+  <div class="page">03</div>
+</div>
+
+<!-- S4 模型厂商生态 -->
+<div class="slide">
+  <div class="top"><div class="brand">第一题 · 角色与生态</div><div class="section">现状与趋势 · 模型厂商</div></div>
+  <div class="content">
+    <h2>模型厂商：从卖 API 转向建生态</h2>
+    <p class="small" style="margin-top:2px">头部玩家都在以"表外主体 + 投资 token 工厂"的方式圈算力生态，三家心态分化明显。</p>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="panel">
+        <div class="kicker">智谱（GLM）：加盟模式</div>
+        <p style="margin-top:6px"><span class="tag">玩法</span> 以表外公司"智谱星连"为核心，投资若干 token 工厂与算力技术厂，头部为趋境科技（清华背景）。</p>
+        <p><span class="tag">心态</span> 出模型 + 技术支持，不独占算力。</p>
+        <p><span class="tag green">判断</span> 加盟模式规模扩张最快，地方算力中心最买账。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">同类玩家</div>
+        <p style="margin-top:6px"><span class="tag">硅基流动</span> 与 <span class="tag">无问芯穹</span> 扮演类似角色：组织 token 工厂与算力中间层，模型厂生态战的"招商代理"。</p>
+        <p class="small">底层逻辑一致：谁组织了算力，谁就拿到推理入口和价格权。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">Kimi：授权借力</div>
+        <p style="margin-top:6px"><span class="tag">心态</span> 顾不上对算力做强把控，以授权合作伙伴主打算力工厂为主。</p>
+        <p><span class="tag gold">动向</span> 已在广东南沙筹建数据中心，开始补课。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">DeepSeek：自建路线</div>
+        <p style="margin-top:6px"><span class="tag">心态</span> 自建 DC、自建推理，全栈自己掌握。</p>
+        <p><span class="tag green">判断</span> 长期效率最高、价格优势最硬；短板是规模扩张慢于加盟模式。</p>
+      </div>
+    </div>
+    <div class="panel blue" style="margin-top:14px">
+      <p class="big" style="margin:4px 0;color:#fff">大判断：长期看 DeepSeek 式自建生态效率占优（价格优势）；中短期 GLM 式加盟扩张更快。算力中心已成"土地财政"向"算力财政"切换的政治意志争夺点——这正是本合作算力业主端的底层动机。</p>
+    </div>
+  </div>
+  <div class="page">04</div>
+</div>
+
+<!-- S5 业主与国产卡 -->
+<div class="slide">
+  <div class="top"><div class="brand">第一题 · 角色与生态</div><div class="section">现状与趋势 · 业主与硬件</div></div>
+  <div class="content">
+    <h2>算力业主"新地租"逻辑 × 国产卡换代窗口</h2>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="panel">
+        <div class="kicker">token 工厂 / 业主的两类玩家</div>
+        <p style="margin-top:8px"><span class="tag">① 国企 / 上市公司</span> 诉求是把旧"地租"换成"新地租"——算力租赁本质是财政行为；上市公司为市值与利润表哪怕亏钱也干。</p>
+        <p><span class="tag">② 特殊背景型</span> 以"趋境科技"为代表，资源与订单能力另成一系。</p>
+        <p class="small" style="margin-top:6px">例证：无锡 token 工厂开业两个月即达 80% 满租率，省领导站台支持——地方对算力中心的重视程度堪比当年土地招商。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">显卡厂商：以摩尔线程为例</div>
+        <p style="margin-top:8px"><span class="tag red">上一代</span> 表现较弱，华为同期产品同样拉不开差距。</p>
+        <p><span class="tag green">这一代</span> S5000 已完成最新测试，正准备大规模采购，预计年底可达生产可用状态。</p>
+        <p class="small" style="margin-top:6px">对本合作的含义：自建推理的规模放量节奏应卡在国产卡换代窗口（年底）之后，此前以 API 路由为主。</p>
+      </div>
+    </div>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="panel">
+        <div class="kicker">国产卡 vs 非国产：两个特点</div>
+        <p style="margin-top:8px"><span class="tag">① 任务定位</span> 擅长承担 PD 分离架构中 P（Prefill）部分等确定性负载——复杂任务的执行分工。</p>
+        <p><span class="tag">② 经济性</span> 效能较差，回本周期普遍比非国产卡长很多。</p>
+      </div>
+      <div class="panel blue">
+        <div class="kicker" style="color:#eaf8ff">对谈判的含义</div>
+        <p class="big" style="margin:6px 0;color:#fff">业主端是财政逻辑不是市场逻辑：要的是长期稳定的租金与叙事，不追求短期回报——算力租赁价格与租期有较大让利空间，这是我方议价筹码；国产卡回本慢则是压租价的另一个支点。</p>
+      </div>
+    </div>
+  </div>
+  <div class="page">05</div>
+</div>
+
+<!-- S6 token工厂三类 -->
+<div class="slide">
+  <div class="top"><div class="brand">第一题 · 角色与生态</div><div class="section">现状与趋势 · Token 工厂三类画像</div></div>
+  <div class="content">
+    <h2>Token 工厂三类玩家：以趋境科技看"创业型"</h2>
+    <div class="grid g3" style="margin-top:10px">
+      <div class="panel">
+        <div class="kicker">① 国企 / 上市公司型</div>
+        <p class="small" style="margin-top:6px">旧地租换"新地租"，算力租赁是财政行为；上市公司为市值哪怕亏钱也干。<b>优势：资源与订单；短板：效能与运营。</b></p>
+      </div>
+      <div class="panel">
+        <div class="kicker">② 特殊背景型</div>
+        <p class="small" style="margin-top:6px">清华系等特殊资源背景（趋境科技的清华+智谱星连基因兼具此属性）。<b>优势：拿卡与政企通道；短板：技术纵深参差。</b></p>
+      </div>
+      <div class="panel" style="border:1px solid var(--blue)">
+        <div class="kicker">③ 创业技术型（趋境科技）</div>
+        <p class="small" style="margin-top:6px">靠推理效能优化立足，技术代差换市场。<b>优势：单位算力产出最高；短板：无资源兜底、靠融资扩张。</b></p>
+      </div>
+    </div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="panel">
+        <div class="kicker">创业型画像：趋境科技（Approaching.AI）</div>
+        <p class="small" style="margin-top:6px">· 定位"AI Token 生产服务商"：ATaaS（Token 即服务），交付生产环境推理效能，不是传统 MaaS 卖调用。</p>
+        <p class="small">· 技术底座：清华高性能计算所（郑纬民院士团队）成果作价入股；"少模型、深优化"，稳定 TTFT + 30–50 TPS 高速输出。</p>
+        <p class="small">· 生态位：KTransformers（17k Star）是 GLM / Kimi / MiniMax / Qwen 首发推荐推理引擎；服务智谱、月之暗面等客户，日均处理 Token 近万亿。</p>
+        <p class="small">· 资本：Pre-A 由星连资本（智谱系）与华控联合领投，A 轮后半年累计融资超 10 亿。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker" style="color:var(--green)">创业型的四个优势（以趋境为例）</div>
+        <p style="margin-top:6px"><span class="tag green">技术代差</span> 推理引擎社区话语权（SGLang/vLLM/Dynamo 深度参与），单位 token 成本低于同行。</p>
+        <p><span class="tag green">生态绑定</span> 智谱系资本领投 + 首发引擎地位，订单随模型厂生态扩张自动增长。</p>
+        <p><span class="tag green">对冲国产卡短板</span> 效能优化直接缓解"国产卡效能差、回本周期长"的痛点——同样的卡产出更多 token。</p>
+        <p><span class="tag green">市场化交付</span> 稳定 TTFT/TPS 承诺对生产环境友好，是三类中唯一能直接服务外部付费客户的运营主体。</p>
+      </div>
+    </div>
+  </div>
+  <div class="page">06</div>
+</div>
+
+<!-- S4 两条链 -->
+<div class="slide">
+  <div class="top"><div class="brand">第一题 · 角色与生态</div><div class="section">价值流</div></div>
+  <div class="content">
+    <h2>两条链闭环：一条省钱，一条赚钱</h2>
+    <div style="margin-top:16px">
+      <div class="kicker">成本链（立竿见影，当期兑现）</div>
+      <div class="chain" style="margin-top:8px">
+        <div class="step"><b>模型厂商 API</b><div class="d">国产 4 折起 · 海外池化 3.2–4.5 折<br>（运营方拿货约 2 折）</div></div><div class="arr">→</div>
+        <div class="step"><b>算力运营公司</b><div class="d">多模型路由 + 自建推理<br>统一 SLA 与用量分析</div></div><div class="arr">→</div>
+        <div class="step" style="border-left-color:var(--green)"><b>贝壳</b><div class="d">组合口径约 5.0 折（vs 直采 8 折）<br><span class="num" style="color:var(--green)">年省约 1,000 万</span></div></div>
+      </div>
+      <div class="kicker" style="margin-top:22px">变现链（中期兑现，依赖 JV 落地）</div>
+      <div class="chain" style="margin-top:8px">
+        <div class="step" style="border-left-color:var(--gold)"><b>贝壳数据授权</b><div class="d">脱敏交易 / 租金 / 小区画像<br>非排他 · 限训练定价模型</div></div><div class="arr">→</div>
+        <div class="step" style="border-left-color:var(--gold)"><b>PaaS 合资公司</b><div class="d">不动产定价模型<br>API / PaaS 产品化</div></div><div class="arr">→</div>
+        <div class="step" style="border-left-color:var(--gold)"><b>城投 / 银行 / 评估</b><div class="d">3 年合同累计 1.1 亿<br><span class="num">净利 6,375 万（测算）</span></div></div>
+      </div>
+      <div class="grid g3" style="margin-top:20px">
+        <div class="panel"><div class="kicker">确定性</div><p class="big" style="color:var(--green);margin:4px 0">成本链先收</p><p class="small">不依赖 JV，框架协议签署即生效；报价单已验证折扣可行性。</p></div>
+        <div class="panel"><div class="kicker">弹性</div><p class="big" style="color:var(--gold);margin:4px 0">变现链后置</p><p class="small">取决于数据作价、股比、客户资质三条待解项。</p></div>
+        <div class="panel"><div class="kicker">风险点</div><p class="big" style="color:var(--red);margin:4px 0">贝壳双重角色</p><p class="small">既是买家又是数据方，两头出钱——对价闭环必须在 JV 条款里体现。</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="page">07</div>
+</div>
+
+<!-- S5 交换矩阵 -->
+<div class="slide">
+  <div class="top"><div class="brand">第一题 · 角色与生态</div><div class="section">对价闭环</div></div>
+  <div class="content">
+    <h2>双方交换矩阵：拿什么、换什么</h2>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="panel">
+        <div class="kicker" style="color:var(--deep)">贝壳</div>
+        <p style="margin-top:8px"><span class="tag">出</span> 脱敏数据非排他授权 · 采购量向合作通道迁移 · JV 股比让渡（待谈）</p>
+        <p><span class="tag green">得</span> 推理成本直降（≈5.0 折组合口径）· JV 按股比分润 · 国产合规底座 · "AI+房产数据"资本市场叙事</p>
+        <p><span class="tag red">软肋</span> 数据授权若无对价＝白送；控股诉求与"非排他"自相矛盾</p>
+      </div>
+      <div class="panel">
+        <div class="kicker" style="color:var(--deep)">合作方（业主 + 运营）</div>
+        <p style="margin-top:8px"><span class="tag">出</span> 算力资本开支（卡/服务器）· 运营与 SLA 承担 · JV 平台建设</p>
+        <p><span class="tag green">得</span> 长期推理收入（阶梯锁定）· JV 股权 · 数据要素变现通道与政企客户故事</p>
+        <p><span class="tag red">软肋</span> 若数据非排他 + 贝壳控股，JV 无护城河，重资产投入无对价</p>
+      </div>
+    </div>
+    <div class="panel red" style="margin-top:16px">
+      <div class="kicker" style="color:var(--red)">待解死结与两条出路</div>
+      <p class="big" style="margin:6px 0">"非排他数据授权" × "贝壳要控股"——合作方法务不会放行，这是全案核心谈判点。</p>
+      <p><span class="tag">出路 A</span> 数据作价入股：评估机构对数据资产估值，折抵贝壳应缴出资，股比据此定。</p>
+      <p><span class="tag">出路 B</span> 排他授权 + 对价：授权改排他（限不动产定价领域），贝壳以现金出资为主，数据换优先分成或 usage credit。</p>
+    </div>
+  </div>
+  <div class="page">08</div>
+</div>
+
+<!-- S6 报价单解析 -->
+<div class="slide">
+  <div class="top"><div class="brand">第二题 · 价格用量决策</div><div class="section">万界方舟报价单 2026-08</div></div>
+  <div class="content">
+    <h2>报价单解析：通道分级决定真实成本</h2>
+    <div class="grid g2" style="margin-top:12px;gap:16px">
+      <div>
+        <table>
+          <tr><th>通道</th><th>覆盖</th><th>折扣</th><th>适用</th></tr>
+          <tr><td>DeepSeek v4 全系</td><td>flash / pro</td><td class="num">4 折</td><td>常规调用</td></tr>
+          <tr><td>GLM-5 / 5.1 / 5.2</td><td>GLM-5.3 除外</td><td class="num">4 折</td><td>常规调用</td></tr>
+          <tr><td>GLM-5.3 / Kimi-k3</td><td>新一代旗舰</td><td class="num">8 / 7 折</td><td>换代即折扣失效</td></tr>
+          <tr><td>Claude 优选通道</td><td>全系含 opus/fable</td><td class="num">4.5 折</td><td>池化 · 成本敏感</td></tr>
+          <tr><td>Claude 稳定通道</td><td>stable 后缀</td><td class="num">7 折</td><td>业务系统集成</td></tr>
+          <tr><td>Claude 极致通道</td><td>plus 系列</td><td class="num" style="color:var(--red)">10.8 折</td><td>官方直连 · 高于直采牌价</td></tr>
+          <tr><td>GPT 优选 / 稳定</td><td>5.5-pool / 全系</td><td class="num">3.2 / 4.5 折</td><td>池化 / 集成</td></tr>
+          <tr><td>Gemini 稳定 / 极致</td><td>3.x 系</td><td class="num">5.4 / 8 折</td><td>集成 / 生产</td></tr>
+        </table>
+      </div>
+      <div>
+        <div class="panel blue">
+          <div class="kicker" style="color:#eaf8ff">组合口径测算（按现有用量结构）</div>
+          <div class="metric" style="color:#fff">≈5.0 折</div>
+          <p class="small" style="color:#eaf8ff">Claude 60%（优选 4.5 + 稳定 7 折混合）× GLM 20%（4 折）× 其他 20%（约 5 折）→ 对比直采 8 折，<b style="color:#fff">年省约 1,000 万</b>，优于方案稿 5.5 折起步价的测算（900 万）。</p>
+        </div>
+        <div class="panel" style="margin-top:12px">
+          <div class="kicker" style="color:var(--red)">三个必须写进合同的口径</div>
+          <p class="small" style="margin-top:6px">① <b>优选＝池化资源</b>：我方 8 月对同类池化端点实测成功率仅 6/11、多次 30 秒超时——生产业务必须 SLA 量化 + 稳定通道兜底路由。</p>
+          <p class="small">② <b>折扣集中在上一代旗舰</b>：GLM-5.3 / Kimi-k3 已是 7–8 折——需约定"新模型发布同等折扣优先适用"。</p>
+          <p class="small">③ <b>极致通道 10.8 折高于直采</b>：只作灾备兜底，不计入组合成本口径。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot">报价单：万界方舟-贝壳 2026-08-26，折扣相对官方定价，月度更新</div>
+  <div class="page">09</div>
+</div>
+
+<!-- S7 决策三要点 -->
+<div class="slide">
+  <div class="top"><div class="brand">第二题 · 价格用量决策</div><div class="section">决策建议</div></div>
+  <div class="content">
+    <h2>三个决策点：承诺什么、保护什么</h2>
+    <div class="grid g3" style="margin-top:14px">
+      <div class="panel">
+        <div class="kicker">① 承诺用量档位</div>
+        <p class="big" style="margin:8px 0">按当前 ~1x 签，不为 4 折预承诺 10 倍</p>
+        <p class="small">阶梯价（500 万 5 折 / 2,000 万 4.5 折 / 1 亿 4 折）本身内含保护：用量真涨自动降档。10–100 倍增长预测需场景清单支撑，否则按 3x 做资金规划。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">② 可迁移流量</div>
+        <p class="big" style="margin:8px 0">综合节省按 20–25% 上报，31% 为上限</p>
+        <p class="small">Claude 占 60%，代码/复杂推理最难迁国产——报价单已解决"价格"但没解决"质量迁移"。建议 2 周 POC：DeepSeek/GLM 跑贝壳真实场景，实测可迁移比例再定口径。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">③ 价格保护</div>
+        <p class="big" style="margin:8px 0">MFN + 年度基准复核 + 退出权</p>
+        <p class="small">直采牌价仍在年降、折扣战在打——两年后直采可能自到 5 折。条款必须：最惠客户价（MFN）＋每年对照厂商牌价复核＋合作价高于直采即触发重议或解约权。</p>
+      </div>
+    </div>
+    <div class="panel blue" style="margin-top:16px">
+      <div class="kicker" style="color:#eaf8ff">建议决策</div>
+      <p class="big" style="margin:6px 0;color:#fff">一期框架协议：以 8 月报价单为锚，起步价从 5.5 折压至 5 折以内（报价已证明可行），签 MFN + 阶梯自动降档 + 年度复核；4 折档留作用量兑现后的议价筹码，不做预承诺。</p>
+    </div>
+  </div>
+  <div class="page">10</div>
+</div>
+
+<!-- S11 价格形成机制 -->
+<div class="slide">
+  <div class="top"><div class="brand">第二题 · 价格用量决策</div><div class="section">价格形成机制 · 关键决策</div></div>
+  <div class="content">
+    <h2>价格形成机制：两个核心变量，四个关键决策</h2>
+    <div class="panel blue" style="margin-top:8px;padding:12px 18px">
+      <p class="big" style="margin:2px 0;color:#fff">核心决策 = 采购价 × 量的预期；市场基准取万界方舟 8 月报价单（实际成交上下浮动）。</p>
+    </div>
+    <div class="grid g2" style="margin-top:12px">
+      <div class="panel">
+        <div class="kicker">决策① 价格：由模型代际组合决定</div>
+        <p class="small" style="margin-top:6px">市场价差的最大变量是代际：<b>GLM-5.2（4 折）vs GLM-5.3（8 折）</b>，悬殊巨大。采购组合按场景选代际——常规场景走 5.2 代，旗舰需求限量走 5.3，避开"全上最新旗舰"的成本陷阱。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">决策② 应用层优化：两道价差必吃</div>
+        <p class="small" style="margin-top:6px">a. <b>海外算力 × 国内算力</b>：同一任务可路由，价差巨大；b. <b>白天 × 夜间算力</b>：错峰调度，谷时算力大幅折让。两道价差在路由层吃掉，是承诺价在代际组合下仍有利差的前提。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">决策③ 预付款规模：撬动杠杆</div>
+        <p class="small" style="margin-top:6px">预付款是谈价的核心筹码：<b>4 亿量级足以撬动一个数据中心的建设</b>（换深度折扣+供给优先权）；1 亿也能摊到较低价格，但杠杆弱。建议预付分档设计、与阶梯折扣和 SLA 强绑定。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">决策④ Token 质量分层采购</div>
+        <p class="small" style="margin-top:6px">趋境科技：稳定但贵、条款强势（高傲）；新转型上市公司（如安博通，已拿数亿资源）：短期稳定性差，但价格可压到<b>市场均值 3.5 折以下</b>。混合采购：关键业务走稳、非关键走低价，压低组合成本。</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <p class="big" style="margin:4px 0">收口：采购价三个杠杆 = 代际组合 × 两道价差路由 × 质量分层，把真实成本压向 3.5–5.0 折带——利差即运营层利润，也是预付款谈判的底气；对外承诺价待代际组合定稿后锁定。</p>
+    </div>
+  </div>
+  <div class="page">11</div>
+</div>
+
+<!-- S8 三层协同 -->
+<div class="slide">
+  <div class="top"><div class="brand">第三题 · 公共事务线 × 智见</div><div class="section">业务模式</div></div>
+  <div class="content">
+    <h2>三层协同：底座 × 内容 × 渠道</h2>
+    <div style="margin-top:14px">
+      <div class="layer"><div class="lname" style="background:var(--deep)">渠道层</div><div class="lbody"><div class="node warn"><b>公共事务线</b><div class="d">toG/toB 通道：城投、住建、金融办、银行的现成客户关系与信任；灯塔客户引入、政策需求回流、30/60/90 汇报机制。PaaS 变现链的客户入口。</div></div></div></div>
+      <div class="layer"><div class="lname" style="background:#0aa0c8">内容层</div><div class="lbody"><div class="node hl"><b>智见（专家引擎 + 可复现决策过程）</b><div class="d">184 位专家（贝壳域 33 位）知识框架 × 当期目标城市 × 事实包数字锚定；两条首期商业主线：城投"不动产估值框架"、银行"T0 估值 + T+N 监测/预警"。JV 产品的方法论壁垒。</div></div></div></div>
+      <div class="layer"><div class="lname">底座层</div><div class="lbody"><div class="node"><b>算力 JV + 运营公司</b><div class="d">国产算力（中昊芯英 GPTPU）+ 多模型路由 + 不动产定价 PaaS——模型与数据产品在这里生产。</div></div></div></div>
+    </div>
+    <div class="panel blue" style="margin-top:14px">
+      <p class="big" style="margin:4px 0;color:#fff">协同逻辑：JV 出产品 → 智见出方法论与内容壁垒（数字锚定、阈值口径、补数路径）→ 公共事务线出客户与信任。没有内容层，PaaS 只是裸模型 API，卖不出溢价；没有渠道层，JV 客户获取要重走三年。</p>
+    </div>
+    <div class="grid g3" style="margin-top:12px">
+      <div class="panel"><div class="kicker">对外口径</div><p class="small">政研通转内为"智见"；对城投/银行统一以智见品牌签约。</p></div>
+      <div class="panel"><div class="kicker">表述纪律</div><p class="small">卖"可复现决策过程"，不卖"省钱"；覆盖内用专家优先，覆盖外通用认知优先并标注。</p></div>
+      <div class="panel"><div class="kicker">验收口径</div><p class="small">指标、口径来源、阈值、验证周期、缺数据补数路径——五要素齐备才算交付。</p></div>
+    </div>
+  </div>
+  <div class="page">12</div>
+</div>
+
+<!-- S9 智见模式与汇报机制 -->
+<div class="slide">
+  <div class="top"><div class="brand">第三题 · 公共事务线 × 智见</div><div class="section">模式与汇报</div></div>
+  <div class="content">
+    <h2>智见业务模式与汇报机制</h2>
+    <div class="grid g2" style="margin-top:14px">
+      <div class="panel">
+        <div class="kicker">商业主线（首期两条）</div>
+        <p style="margin-top:8px"><span class="tag">主线一</span> <b>城投国企 · 不动产估值框架</b>——保障房定价、资产盘点、债务化解中的资产端定价；与 JV 租金定价/估值产品直接重叠。</p>
+        <p><span class="tag">主线二</span> <b>商业银行 · T0 估值 + T+N 监测/预警</b>——抵押物估值入口 + 贷后持续监控；需配合估价资质路径设计。</p>
+        <p class="small" style="margin-top:8px">市场监测、专家通、API、大屏、CLI、ISV 认证均降为底座/交付面，不作为独立卖点。</p>
+      </div>
+      <div class="panel">
+        <div class="kicker">汇报机制（三层节奏）</div>
+        <p style="margin-top:8px"><span class="tag gold">日常</span> 政策监测周报——住房租赁/公共事务口径，客户侧持续在场。</p>
+        <p><span class="tag gold">按需</span> 领导直问通道——专家引擎 + 贝壳蓝 HTML5 页面，问题到答案小时级。</p>
+        <p><span class="tag gold">节点</span> 两灯塔 60 天——各选 1 家城投 + 1 家银行做灯塔，60 天内出可复现决策样板，验证后再复制。</p>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="kicker">与 JV 的分工边界</div>
+      <p class="small" style="margin-top:6px">智见不碰算力、不碰模型权重——那是 JV 的事；JV 不碰专家网络与政企关系——那是智见与公共事务线的事。JV 产品的定价模型用智见方法生产内容、经公共事务线获客，收入按 JV 股比分；智见对 JV 保持独立议价（内容与客户都是稀缺方）。</p>
+    </div>
+  </div>
+  <div class="page">13</div>
+</div>
+
+<!-- S10 推进节奏 -->
+<div class="slide">
+  <div class="top"><div class="brand">推进节奏</div><div class="section">12 个月四期</div></div>
+  <div class="content">
+    <h2>推进计划：先收成本链，再落地变现链</h2>
+    <div class="grid g4" style="margin-top:16px">
+      <div class="panel"><div class="kicker">一期 · 月 1–2</div><h3>算力框架协议</h3><p class="small">以报价单为锚签 5 折内起步 + MFN + 阶梯；迁移 POC（2 周）同步跑。<br><b style="color:var(--green)">成本立降 30%+</b></p></div>
+      <div class="panel"><div class="kicker">二期 · 月 2–4</div><h3>JV 落地</h3><p class="small">数据作价 vs 排他授权二选一定股比；法务/合规审数据协议；GPTPU 实测试跑。<br><b>实体 + 团队到位</b></p></div>
+      <div class="panel"><div class="kicker">三期 · 月 4–8</div><h3>定价 MVP + Pilot</h3><p class="small">租金定价 MVP + 2–3 家 Pilot：<b>城投、评估机构优先</b>（银行总行准入 6–12 个月，并行启动）。<br><b>灯塔样板交付</b></p></div>
+      <div class="panel"><div class="kicker">四期 · 月 8–12</div><h3>规模化</h3><p class="small">10+ 付费客户、PaaS 年收入破千万；银行准入兑现；评估估值流程与退出条款激活条件确认。<br><b>收入兑现</b></p></div>
+    </div>
+    <div class="panel" style="margin-top:16px">
+      <div class="kicker">公共事务线全程动作</div>
+      <p class="small" style="margin-top:6px">一期：灯塔城投摸底与需求清单 → 二期：JV 数据合规访谈与客户预沟通 → 三期：Pilot 客户引入 + 30/60/90 汇报 → 四期：规模化复制与案例包装。周报与直问通道不间断，保证客户在场。</p>
+    </div>
+  </div>
+  <div class="page">14</div>
+</div>
+
+<!-- S11 待决事项 -->
+<div class="slide">
+  <div class="top"><div class="brand">待决事项与风险</div><div class="section">需要拍板的六件事</div></div>
+  <div class="content">
+    <h2>需要拍板的六件事</h2>
+    <table style="margin-top:14px;font-size:14px">
+      <tr><th style="width:34px">#</th><th style="width:230px">事项</th><th>要点</th><th style="width:150px">性质</th></tr>
+      <tr><td>1</td><td><b>数据作价与 JV 股比</b></td><td>出路 A（作价入股）或 B（排他+对价）二选一，全案核心，先于一切 JV 条款</td><td><span class="tag red">决策</span></td></tr>
+      <tr><td>2</td><td><b>框架协议起步价</b></td><td>以 8 月报价为锚压至 5 折内 + MFN + 年度复核 + 退出权</td><td><span class="tag red">决策</span></td></tr>
+      <tr><td>3</td><td><b>迁移 POC（2 周）</b></td><td>DeepSeek/GLM 跑真实场景，定可迁移比例与真实节省口径（20–25% vs 31%）</td><td><span class="tag">执行</span></td></tr>
+      <tr><td>4</td><td><b>估价资质路径</b></td><td>抵押物估值属持牌业务：先 B2B2C（评估机构），或收购持牌机构；影响 8,000 万/年目标可达性</td><td><span class="tag gold">合规</span></td></tr>
+      <tr><td>5</td><td><b>中昊芯英 GPTPU 实测</b></td><td>推理性价比、软件栈迁移成本；单点依赖需备选（昇腾等）</td><td><span class="tag">执行</span></td></tr>
+      <tr><td>6</td><td><b>城投回款条款</b></td><td>3–6 个月账期：预付比例 + 里程碑付款写入合同，JV 预留运营资金</td><td><span class="tag gold">风控</span></td></tr>
+    </table>
+    <div class="panel blue" style="margin-top:14px">
+      <p class="big" style="margin:4px 0;color:#fff">建议今日拍板：事项 1、2 定方向 → 事项 3、5 立即启动（不互相阻塞）→ 事项 4、6 进 JV 条款清单。</p>
+    </div>
+  </div>
+  <div class="page">15</div>
+</div>
+
+</body>
+</html>

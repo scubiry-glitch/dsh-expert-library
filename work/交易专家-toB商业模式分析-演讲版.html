@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交易专家 · toB 商业模式专项分析</title>
+<style>
+  :root{
+    --bg:#0e1420; --card:#161e2e; --card2:#1b2537; --ink:#e8edf6; --muted:#93a1b8;
+    --accent:#4f9cf9; --gold:#e8b64c; --green:#4cc38a; --red:#e06c5f;
+    --line:#2a3650;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;overflow:hidden}
+  .deck{position:relative;height:100vh;width:100vw}
+  .slide{
+    position:absolute;inset:0;display:none;flex-direction:column;
+    padding:56px 84px 72px;overflow:auto;
+  }
+  .slide.active{display:flex;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .kicker{color:var(--accent);font-size:15px;letter-spacing:.25em;font-weight:600;margin-bottom:10px}
+  h1{font-size:46px;line-height:1.25;margin-bottom:14px}
+  h2{font-size:34px;line-height:1.3;margin-bottom:22px;border-left:5px solid var(--accent);padding-left:16px}
+  h3{font-size:20px;color:var(--gold);margin:18px 0 10px}
+  p,li{font-size:17.5px;line-height:1.75;color:var(--ink)}
+  .muted{color:var(--muted)}
+  .lead{font-size:21px;color:var(--muted);margin-bottom:26px}
+  ul{padding-left:22px;margin:8px 0}
+  li{margin:7px 0}
+  strong{color:#fff}
+  .hl-g{color:var(--gold);font-weight:700}
+  .hl-a{color:var(--accent);font-weight:700}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:16px}
+  th{background:var(--card2);color:var(--gold);text-align:left;font-weight:600}
+  th,td{border:1px solid var(--line);padding:9px 13px;vertical-align:top;line-height:1.55}
+  tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dashed rgba(79,156,249,.5)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .card h4{font-size:18px;color:#fff;margin-bottom:8px}
+  .card p,.card li{font-size:15.5px;color:var(--muted);line-height:1.65}
+  .big{font-size:26px;font-weight:700;color:#fff}
+  .flow{display:flex;flex-direction:column;gap:0;align-items:stretch;max-width:980px}
+  .fstep{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 20px}
+  .fnum{flex:0 0 40px;height:40px;border-radius:50%;background:var(--accent);color:#04101f;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+  .fstep .t{font-size:17.5px;font-weight:700}
+  .fstep .d{font-size:14.5px;color:var(--muted)}
+  .farrow{text-align:center;color:var(--accent);font-size:20px;line-height:1.4;margin:2px 0}
+  .callout{background:rgba(232,182,76,.08);border:1px solid rgba(232,182,76,.4);border-radius:12px;padding:14px 20px;margin:14px 0;font-size:16.5px}
+  .callout.red{background:rgba(224,108,95,.08);border-color:rgba(224,108,95,.4)}
+  .callout.green{background:rgba(76,195,138,.08);border-color:rgba(76,195,138,.4)}
+  .pill{display:inline-block;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:3px 14px;font-size:14px;color:var(--muted);margin:2px 4px 2px 0}
+  .footer{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;
+    padding:10px 84px;font-size:13px;color:var(--muted);background:linear-gradient(transparent,rgba(14,20,32,.9) 40%);pointer-events:none;z-index:5}
+  .nav{position:fixed;right:26px;bottom:44px;display:flex;gap:10px;z-index:9}
+  .nav button{background:var(--card2);color:var(--ink);border:1px solid var(--line);border-radius:10px;
+    width:44px;height:44px;font-size:20px;cursor:pointer}
+  .nav button:hover{background:var(--accent);color:#04101f}
+  .progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);width:0;z-index:9;transition:width .3s}
+  .cover-meta{display:flex;gap:26px;margin-top:34px;flex-wrap:wrap}
+  .cover-meta div{font-size:15px;color:var(--muted)}
+  .cover-meta b{display:block;color:#fff;font-size:17px;margin-bottom:2px}
+  .endlink{margin-top:40px;background:var(--card);border:1px solid var(--accent);border-radius:14px;padding:24px 28px}
+  .endlink .big{margin-bottom:6px}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide active">
+  <div style="margin:auto 0">
+    <div class="kicker">TRANSACTION EXPERT · TOB STRATEGY</div>
+    <h1>交易专家<br>toB 商业模式专项分析</h1>
+    <p class="lead">两条产品线：评估与咨询服务 × 营销服务 —— 给银行的房产押品贷款加一条<br>"可交叉验证、可持续复核的市场证据线"，把高意向商机开放给金融机构。</p>
+    <div class="cover-meta">
+      <div><b>依据</b>2026-09-14 商业化对齐会议</div>
+      <div><b>参照材料</b>容诚《估值与监测服务》推广材料</div>
+      <div><b>口径</b>B 端 = toB 双产品线；C 端仅辅助验证</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 模式一句话 -->
+<section class="slide">
+  <div class="kicker">01 · 模式一句话</div>
+  <h2>围绕银行做两类 toB 生意</h2>
+  <div class="grid2">
+    <div class="card">
+      <h4>① 评估与咨询服务</h4>
+      <p style="font-size:17px;color:var(--ink);margin-bottom:8px">给银行的房产押品贷款加一条<strong style="color:var(--gold)">"可交叉验证、可持续复核的市场证据线"</strong></p>
+      <p>估值参考 · 市场监测 · 咨询分析 · 银行场景 Agent</p>
+    </div>
+    <div class="card">
+      <h4>② 营销服务</h4>
+      <p style="font-size:17px;color:var(--ink);margin-bottom:8px">把贝壳交易流量中的<strong style="color:var(--gold)">高意向商机</strong>开放给金融机构</p>
+      <p>商机分发（CPA）· CPT 包段服务 · Agent 开放平台接入 · 通用 token 按量</p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:26px">
+    平台<strong>不碰金融牌照业务</strong>，卖的是三样东西：<span class="hl-g">数据证据、流量、管道</span>。
+    C 端专家服务（按次/会员/成交分成）仅作定价验证，非主收入。
+  </div>
+</section>
+
+<!-- 3 产品线一：定位与场景 -->
+<section class="slide">
+  <div class="kicker">02 · 产品线① 评估与咨询服务</div>
+  <h2>四类银行场景 × 三层市场证据 × 一条可追溯链</h2>
+  <p class="lead">不是替代银行既有评估与审批，而是补充一条高效、透明、可复核的证据线；明确"不构成资产评估报告或房地产估价报告"，规避牌照与责任问题。</p>
+  <table>
+    <tr><th style="width:22%">场景</th><th>服务内容</th></tr>
+    <tr><td><strong>贷前准入</strong></td><td>单套市场价值参考：可比成交与样本边界</td></tr>
+    <tr><td><strong>存量监测</strong></td><td>批量更新与 LTV / 覆盖异常触发复核清单</td></tr>
+    <tr><td><strong>区域预警</strong></td><td>城市—板块—小区量价与流动性分层</td></tr>
+    <tr><td><strong>不良处置</strong></td><td>处置时点与折价空间、租售流动性参考</td></tr>
+  </table>
+  <div class="callout red">
+    <strong>监管背景</strong>：70 城二手住宅较高点累计回调 <span class="hl-g">23.18%</span>；六大行住房贷不良率 0.67%→<span class="hl-g">0.88%</span>、经营类 1.58%→<span class="hl-g">1.92%</span>——高评高贷与押品估值是处罚关注点。
+  </div>
+  <p class="muted">交付形态：咨询报告 + API 服务（结构化区间、证据与版本）+ 银行场景 Agent（组织案件→匹配证据→留版本→识别异常→人工复核）</p>
+</section>
+
+<!-- 4 平台能力底座 -->
+<section class="slide">
+  <div class="kicker">02 · 产品线① 评估与咨询服务</div>
+  <h2>平台能力底座：智见专家 Agent 开放能力</h2>
+  <p class="lead">评估线的生产能力由智见专家 Agent 平台支撑，<a href="https://yy.meizu.life/render/zhijian/partner-devdoc.html#s1" target="_blank">合作伙伴开放能力开发文档</a>定义了完整生产体系：</p>
+  <div class="grid2">
+    <div class="card"><h4>专家 Profile（schemaVersion 2）</h4>
+      <p>persona + 方法 + 约束 + 输出规范 + 评分量规；建队时烘焙成成员，评分反馈闭环让专家越用越准。</p></div>
+    <div class="card"><h4>任务 DAG（Scenario）</h4>
+      <p>"估价报告复核"场景：要件核验 → 比较法 / 收益法复核并行 → 融合复核意见书——梳理先行、多视角并行、融合收口。</p></div>
+    <div class="card"><h4>输出模板 + 质量门禁</h4>
+      <p>五道起步门禁：禁例 token 0 命中、数字逐 token 一致、渲染 0 溢出、排版审计、大纲对照。<strong style="color:var(--ink)">硬门未过的交付物到不了客户手里。</strong></p></div>
+    <div class="card"><h4>数据源通道</h4>
+      <p>Wind / 政研通 zyt / 贝壳三通道统一调用面，返回信封强制携带口径与单位；"编数字比不回答更严重"的四级数据标注纪律。</p></div>
+  </div>
+</section>
+
+<!-- 5 交付样例 -->
+<section class="slide">
+  <div class="kicker">02 · 产品线① 评估与咨询服务</div>
+  <h2>交付样例：已产出的报告谱系</h2>
+  <table>
+    <tr><th style="width:30%">报告（点击可看全文）</th><th style="width:14%">类型</th><th>要点</th><th style="width:22%">对应银行场景</th></tr>
+    <tr><td><a href="https://yy.meizu.life/render/Gz/jiaozi-1hao-townhouse.html" target="_blank">娇子1号联排别墅购买分析</a></td><td>单套资产</td><td>成交水位锚定（挂牌 590–680 万 vs 成交 ~350 万）、出价区间与警戒线、签约核验清单</td><td>贷前准入 · 单套价值参考</td></tr>
+    <tr><td><a href="https://yy.meizu.life/render/Gz/jinchengyuan-phase3.html" target="_blank">锦宸院三期观著购买潜力分析</a></td><td>新房项目</td><td>供给/需求/价格三维研判、竞品压价、政策窗口与风险清单</td><td>贷前准入 · 项目押品</td></tr>
+    <tr><td><a href="https://yy.meizu.life/render/Gz/wanli-plate.html" target="_blank">万柳板块购买潜力分析</a></td><td>板块/小区</td><td>16 盘横向对比、小区 α 溢价分化、租售比排序、选筹＞择时</td><td>区域预警 · 四层联动</td></tr>
+    <tr><td><a href="https://yy.meizu.life/render/98wiki-feishu/20260824-jiangbei-beike-joint-acquisition-v3.html" target="_blank">江北新区「政府+贝壳」合资收储可行性</a></td><td>政企专题</td><td>折扣敏感性模型、ROE 两本账、七件套风险缓释、信号观察体系</td><td>不良处置 · 处置时点与折价</td></tr>
+  </table>
+  <div class="callout green">
+    四份样例覆盖<strong>"单套 → 项目 → 板块 → 政企专题"</strong>完整颗粒度谱系，全部带口径标注（贝壳成交口径 × 政研通指标）与免责边界——"证据链透明可追溯"承诺的实证。
+  </div>
+</section>
+
+<!-- 6 容诚最佳实践 -->
+<section class="slide">
+  <div class="kicker">02 · 产品线① 评估与咨询服务</div>
+  <h2>容诚最佳实践：单套租金测算咨询报告（v2）</h2>
+  <p class="lead">《佳馨苑 1 座 506 单元 · 单套住宅租金测算咨询报告》（容诚，2026-07-01，编号 RCE-FZ-JXY-2026-0701-001；委托方为政府平台公司福州安住发展）——"单套资产"颗粒度的交付标杆。</p>
+  <div class="grid2">
+    <div class="card"><h4>模型测算 + 样本校验双轨</h4><p>模型参考点 2,364 元/月；同小区 5 套可比样本修正校验（加权 2,203 元/月），差异 6.8%–16% 如实披露"不宜表述为强支撑"。</p></div>
+    <div class="card"><h4>逐项差异调整矩阵全披露</h4><p>面积 / 客厅数 / 卫生间数 / 出租时间逐项量化（如 R-04 面积差 −1,031 元/月），每个数字可追问。</p></div>
+    <div class="card"><h4>事后检验</h4><p>另用 2026-06 的 880 条样本回测，平均误差 13.9%——<strong style="color:var(--ink)">模型可信度可量化</strong>。</p></div>
+    <div class="card"><h4>全样本附录 + 证据留存</h4><p>8 条候选样本含 3 条落选样本及落选原因；证据留存入口 <a href="https://dss.ke.com/valuation/index.html" target="_blank">dss.ke.com/valuation</a>，结论可回溯到样本与参数版本。</p></div>
+  </div>
+  <div class="callout" style="margin-top:20px">
+    核心资产不是"AI 写报告"，而是<strong>"测算模型 + 样本调整矩阵 + 事后检验 + 证据留存"的完整证据链工艺</strong>——银行买的正是这条链。
+  </div>
+</section>
+
+<!-- 7 营销服务流程 -->
+<section class="slide">
+  <div class="kicker">03 · 产品线② 营销服务</div>
+  <h2>服务流程：从流量到机构自主转化</h2>
+  <div class="flow">
+    <div class="fstep"><div class="fnum">0</div><div><div class="t">贝壳 APP 交易流量</div><div class="d">找房 / 关注 / IM 咨询 / 金融工具使用</div></div></div>
+    <div class="farrow">▼</div>
+    <div class="fstep"><div class="fnum">1</div><div><div class="t">画像沉淀</div><div class="d">用户画像库：资质、行为、资金意向标签</div></div></div>
+    <div class="farrow">▼</div>
+    <div class="fstep"><div class="fnum">2</div><div><div class="t">商机识别</div><div class="d">金融意向信号：购房资金规划 / 理财咨询 / 按揭意向</div></div></div>
+    <div class="farrow">▼</div>
+    <div class="fstep"><div class="fnum">3</div><div><div class="t">分层分发 <span class="pill">CPA 结算</span></div><div class="d">分类器拆分群体，按机构承接能力与客群匹配度分发；有效线索 = 预约完成 / 留资核验通过</div></div></div>
+    <div class="farrow">▼</div>
+    <div class="fstep"><div class="fnum">4</div><div><div class="t">CPT 包段服务 <span class="pill">按包段时长计费</span></div><div class="d">专家坐席时段、板块/楼盘场景冠名、专场活动——时段内资源独占</div></div></div>
+    <div class="farrow">▼</div>
+    <div class="fstep"><div class="fnum">5</div><div><div class="t">Agent 开放平台 <span class="pill">接入年费 + token 按量</span></div><div class="d">机构插件化接入，自带产品/制度/理财接入专家场景</div></div></div>
+    <div class="farrow">▼</div>
+    <div class="fstep" style="border-color:var(--green)"><div class="fnum" style="background:var(--green)">6</div><div><div class="t">机构自主转化</div><div class="d">银行在其自身商业模式中闭环：理财转化 / 按揭 / 高净值获取</div></div></div>
+  </div>
+</section>
+
+<!-- 8 核心产品分解 -->
+<section class="slide">
+  <div class="kicker">03 · 产品线② 营销服务</div>
+  <h2>核心产品分解与计费方式</h2>
+  <table>
+    <tr><th style="width:5%">#</th><th style="width:20%">核心产品</th><th>内容</th><th style="width:24%">计费方式</th></tr>
+    <tr><td>1</td><td><strong>商机分发</strong></td><td>理财引流、按揭线索开放；"圈出高意向人群 + 分类器分发"；有效线索定义合同锁死，空号/拒接/重复不计费</td><td><span class="hl-a">CPA</span> 按有效线索计费</td></tr>
+    <tr><td>2</td><td><strong>CPT 包段服务</strong></td><td>包断专属资源时段：专家坐席（每周 N 小时专属金融专家）、板块/楼盘场景冠名、专场活动（如宁波银行理财专场周）</td><td><span class="hl-a">CPT</span> 按包段时长/场次，资源独占</td></tr>
+    <tr><td>3</td><td><strong>Agent 开放平台接入</strong></td><td>插件化接入、计费系统、数据围栏、频率限制；机构自带产品"插进来"自主运营</td><td><span class="hl-a">年费分层</span>（基础/专业/旗舰）</td></tr>
+    <tr><td>4</td><td><strong>通用 token 消耗</strong></td><td>机构调用 Agent 能力产生的模型消耗</td><td><span class="hl-a">按量计费</span>（市场化定价，无差价结构）</td></tr>
+  </table>
+  <div class="callout">
+    <strong>口径说明</strong>：不含 CPC（按点击）与 CPS（按成交分成）——转化环节完全归机构自主运营，平台只对"交付给机构的确定性资源"（有效线索、包段时段、接入能力、消耗用量）收费，<span class="hl-g">权责边界清晰</span>。
+  </div>
+  <p class="muted">银行收益闭环：高净值客群获取 · 理财转化 · 按揭转化——接入前必须先对齐每家银行自己的商业模式闭环点。</p>
+</section>
+
+<!-- 9 层级结构 -->
+<section class="slide">
+  <div class="kicker">04 · 商业结构</div>
+  <h2>层级结构：谁提供什么、谁得到什么</h2>
+  <table>
+    <tr><th style="width:20%">层</th><th style="width:24%">主体</th><th>提供什么</th><th style="width:32%">得到什么</th></tr>
+    <tr><td><strong>证据/服务层</strong></td><td>评估咨询服务</td><td>估值参考、监测、归因、Agent</td><td>年费 / 项目费（2000 万级组合的一部分）</td></tr>
+    <tr><td><strong>流量/平台层</strong></td><td>贝壳 Agent 开放平台</td><td>商机、画像、插件化接入</td><td>服务费、分发计费、包段计费</td></tr>
+    <tr><td><strong>机构层</strong></td><td>银行 / 保险 / 券商</td><td>金融产品、风控、转化运营</td><td>客群与转化，闭环自身商业模式</td></tr>
+    <tr><td>（辅助）C 端</td><td>交易专家服务</td><td>按次咨询 / 会员陪伴 / 成交分成</td><td>验证服务价值与定价，非主收入</td></tr>
+  </table>
+  <h3>为什么是这个模式，而非自营</h3>
+  <ul>
+    <li><strong>自营财务陷阱</strong>（美租/自如教训）：收入分期确认、成本一次确认 → 做得越大亏越多；组织人力也扛不住重履约。</li>
+    <li><strong>toB 两线均轻资产</strong>：证据线靠数据+模型，营销线靠流量+管道——<span class="hl-g">跑通一家银行后可复刻</span>。</li>
+    <li><strong>合规姿态干净</strong>：评估线明确"不构成评估报告"；营销线把履约与转化责任交给持牌机构。</li>
+  </ul>
+</section>
+
+<!-- 10 风险与对策 -->
+<section class="slide">
+  <div class="kicker">05 · 风险治理</div>
+  <h2>核心风险与对策</h2>
+  <table>
+    <tr><th style="width:16%">风险</th><th>说明</th><th style="width:44%">对策</th></tr>
+    <tr><td><strong>金融合规</strong></td><td>TOC 直连有主体责任；评估线不能越界成"评估报告"</td><td>先理财后按揭；免责声明与"另行履行程序"条款；合规问题转人工</td></tr>
+    <tr><td><strong>数据安全</strong></td><td>开放接口穿透、超范围调用</td><td>每机构数据权限白名单、并发/频率限制、仪表盘监控</td></tr>
+    <tr><td><strong>边界冲突</strong></td><td>与北京试点专家项目、OSA/云管家链路纠缠</td><td>两项目刻意保持边界；与原项目经理（张强）对齐接口</td></tr>
+    <tr><td><strong>B 端使用能力</strong></td><td>银行"能不能接、会不会用明白"</td><td>自助化装修（类淘宝店铺）+ benchmark 工具；先 1–2 家标杆再复刻</td></tr>
+    <tr><td><strong>商业闭环</strong></td><td>银行付费理由必须落到其自身模式</td><td>接入前逐家定义闭环点（理财 / 按揭 / 高净值）</td></tr>
+  </table>
+</section>
+
+<!-- 11 推进节奏 -->
+<section class="slide">
+  <div class="kicker">06 · 推进节奏</div>
+  <h2>会议共识的推进路径</h2>
+  <div class="grid3" style="margin-top:16px">
+    <div class="card"><h4>① 2 周小验证</h4><p>十一后启动：内部先定清 C 端定价 SKU + toB 两线打包方案。</p></div>
+    <div class="card" style="border-color:var(--gold)"><h4 style="color:var(--gold)">② 标杆客户</h4><p>宁波银行北京分行（总行零售信贷部负责人 + 北分零售一把手出席）——评估线与营销线同场推介。</p></div>
+    <div class="card"><h4>③ 区域扩展</h4><p>北京验证 → 上海 / 苏州（江苏银行等线索）。</p></div>
+    <div class="card"><h4>④ 品类节奏</h4><p>银行先行（理财切入），保险 / 券商后置，不双线齐铺。</p></div>
+    <div class="card"><h4>⑤ 组织</h4><p>立项主体问关恒；3–5 页能力全景 + 商业化框架材料近期出。</p></div>
+    <div class="card" style="border-color:var(--accent)"><h4 style="color:var(--accent)">下一步</h4><p>详见定价方案：<strong style="color:var(--ink)">宁波银行 · 2000 万组合定价方案</strong>（末页链接）。</p></div>
+  </div>
+</section>
+
+<!-- 12 开放问题 -->
+<section class="slide">
+  <div class="kicker">07 · 待回答的开放问题</div>
+  <h2>七个待校准的问题</h2>
+  <ul style="font-size:18px">
+    <li>2000 万级组合中，评估咨询服务与营销服务（引流/分发）各占多少？</li>
+    <li>评估线计价基准：按押品规模、场景模块数还是年费？与行内既有评估供应商如何比价？</li>
+    <li>银行对接部门：授信/押品/风险（评估线）vs 零售/私行（营销线）——是否需要两套话术两拨人？</li>
+    <li>商机分发的转化数据回写口径：CPA 结算之外，回流数据是优化分发模型与 CPT 定价的基础，机构是否开放？</li>
+    <li>CPT 包段的资源边界：专家坐席如何与 C 端自营排期隔离？服务承诺（响应时长、专家等级）如何写入 SLA？</li>
+    <li>通用 token 消耗对客计价：官网价直传还是平台统一价？用量超预期的限流策略？</li>
+    <li>C 端 AI 评测通过标准与放开时间表？</li>
+  </ul>
+</section>
+
+<!-- 13 尾页 -->
+<section class="slide">
+  <div class="kicker">APPENDIX</div>
+  <h2>延伸材料</h2>
+  <div class="endlink">
+    <div class="big">📐 宁波银行 · 2000 万组合定价方案</div>
+    <p class="muted" style="margin-bottom:12px">两档合同结构（北分试点 ~410–630 万 / 总行全量 ~2210 万）、CPA 定价推导、token 消耗测算、谈判结构——本演讲商业落地的完整测算文件。</p>
+    <p><a href="./宁波银行-2000万组合定价方案.md" target="_blank">打开《宁波银行-2000万组合定价方案.md》→</a></p>
+  </div>
+  <div class="grid3" style="margin-top:26px">
+    <div class="card"><h4>推广材料</h4><p>商业银行个人居住房地产估值与监测服务（容诚，2026.08）</p></div>
+    <div class="card"><h4>平台文档</h4><p><a href="https://yy.meizu.life/render/zhijian/partner-devdoc.html#s1" target="_blank">智见专家 Agent 合作伙伴开放能力开发文档</a></p></div>
+    <div class="card"><h4>证据留存</h4><p><a href="https://dss.ke.com/valuation/index.html" target="_blank">dss.ke.com/valuation</a> —— 测算结论可回溯到样本与参数版本</p></div>
+  </div>
+  <p class="muted" style="margin-top:34px">交易专家 · toB 商业模式专项分析 · 2026-09</p>
+</section>
+
+</div>
+
+<div class="footer">
+  <span>交易专家 · toB 商业模式专项分析</span>
+  <span id="pageinfo">1 / 13</span>
+</div>
+<div class="nav">
+  <button onclick="go(-1)">‹</button>
+  <button onclick="go(1)">›</button>
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+let cur=0;
+function show(i){
+  cur=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,idx)=>s.classList.toggle('active',idx===cur));
+  document.getElementById('pageinfo').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+}
+function go(d){show(cur+d)}
+document.addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1)}
+  if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1)}
+  if(e.key==='Home')show(0);
+  if(e.key==='End')show(slides.length-1);
+});
+document.getElementById('deck').addEventListener('click',e=>{
+  if(e.target.closest('a,button'))return;
+  go(e.clientX>innerWidth/2?1:-1);
+});
+show(0);
+</script>
+</body>
+</html>

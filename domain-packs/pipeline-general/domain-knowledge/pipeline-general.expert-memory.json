@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "domain": "pipeline.general",
-  "boundary": "pipeline 特级专家（S-* 40 位：巴菲特/芒格/乔布斯/Karpathy/张一鸣…）与小红书操盘手（XHS-*）Profile 基线（2026-08-23）：实名（公众人物）、领域、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。",
+  "boundary": "pipeline 特级专家（S-* 40 位：复利老爷子/芒格/现实扭曲大师/Karpathy/延迟满足船长…）与小红书操盘手（XHS-*）Profile 基线（2026-08-23）：实名（公众人物）、领域、风格、心智模型、金句、禁区、分析步骤、评估模型与输出 rubric；不含实时业务数据。",
   "ontology": {
     "entities": [
       {
@@ -45,7 +45,7 @@
   "snapshot": {
     "id": "pipeline-general-v1-2026-08-23",
     "takenAt": "2026-08-23T00:00:00Z",
-    "digest": "e5fb8d8d6996cb1a2048387356187d208af85865de3fecbd63a708b939c3cf02",
+    "digest": "629dfbad2dff60a6e467ffb6193d20bc372b5a4b8878df02d669cff05be69e2c",
     "recordCount": 41
   },
   "retrievalProfiles": [

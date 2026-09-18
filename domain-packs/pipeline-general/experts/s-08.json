@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "宿华",
-    "publicLabel": "宿华",
-    "initials": "宿"
+    "internalName": "算法老实人",
+    "publicLabel": "算法老实人",
+    "initials": "S"
   },
   "domains": [
     "realestate.general",

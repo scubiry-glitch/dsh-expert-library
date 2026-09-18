@@ -1,0 +1,7 @@
+{
+  "taskId": "t1",
+  "subject": "Wind 数据补充：江苏银行半年报信用卡官方数据 + 宏观消费背景",
+  "description": "目标：补齐研报数据缺口，产出「数据底座」补充版。已整理的种子底座：/root/zhijian/dsh-expert-library/work/expert-teams/信用卡对标研报/数据底座_20260830.md（必读）。\n\n任务：\n1. 用 Wind CLI 补查江苏银行2026年半年度报告中信用卡官方数据（透支余额/不良率/消费金额或发卡量）。CLI 用法：cd /root/.agents/skills/wind-mcp-skill && node scripts/cli.mjs call financial_docs get_company_announcements '{\"query\":\"江苏银行2026年半年度报告 信用卡\",\"top_k\":5}'（此前一次调用被中断未返回，可重发；若 financial_docs 查不到正文，试 stock_data 域财报工具或换自然语言重查一次）。**纪律：只报告 Wind 返回值，查不到就标注「待补」，绝不编造**。\n2. 用 Wind EDB 查1-2个宏观消费背景指标（如社会消费品零售总额当月同比、居民短期贷款），作趋势性引用，格式：（Wind EDB，发布机构，截至年月）。\n3. 把结果写回数据底座文件（新建 /root/zhijian/dsh-expert-library/work/expert-teams/信用卡对标研报/数据底座_Wind补充.md）：每项带指标/数值/口径/来源/标注级；查不到的进「待补观察清单」。\n4. 完成后 expert_teams_update_task 汇报：拿到哪些、哪些待补。\n\n注意：不要修改种子底座文件；Wind 调用失败三次即停，如实记录错误码。",
+  "dependencies": [],
+  "createdAt": 1788086010965
+}

@@ -1,0 +1,9 @@
+{
+  "taskId": "t6",
+  "status": "completed",
+  "attempt": 2,
+  "output": "最终组装与全门禁完成。产出：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.html（65,874 字节，13 页 A4 794×1123，内联 CSS 零 JS 零外链）。门禁终态：①G3（playwright 实测）13/13 页无溢出/无遮挡/无横向滚动、零 JS 报错；②G1 存疑徽标 19 处全落位（含校对补的 p05「据会谈介绍」）、章名节名 100% 逐字、密级页眉 13 页齐、页码 01–13 连续；③G2 数字锚点 100% 命中、反向扫描零新增数字；④p06 六来源表 6 行、p11 矩阵 7×5 全量单页未断；⑤封面/最密页 p10 经独立视觉通道复核无裁切遮挡。视觉终态：章头带 p02–p12 全书同构（p10 以 fig 版式回收 17px 装入紧凑带、末元素距页脚 16px 达标），每章一点睛图齐（封面数字条即点睛、封底无图）。构建留痕：.build_html/{spec.md,theme.css,arch_review.md,proof_report.md,assemble.py,g3_check.py,g1g2_check.sh,pages/,shots/}。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1788605686859
+}

@@ -1,0 +1,547 @@
+{
+  "schema_version": "1.0",
+  "taxonomy_version": "1.0",
+  "policy_version": "1.0",
+  "source": {
+    "skill": "ppt-polished-deck-collab",
+    "gate": "structure_precheck"
+  },
+  "artifact": {
+    "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/pptx/deck_v54.pptx"
+  },
+  "target_milestone": "final",
+  "decision": {
+    "state": "hard_blocked",
+    "target_milestone": "final",
+    "hard_group_count": 2,
+    "soft_group_count": 1,
+    "advisory_group_count": 7
+  },
+  "summary": {
+    "group_count": 10,
+    "occurrence_count": 153,
+    "evidence_count": 217,
+    "by_action": {
+      "hard_block": 2,
+      "soft_block": 1,
+      "advisory": 7
+    },
+    "by_domain": {
+      "layout": 5,
+      "typography": 5
+    }
+  },
+  "groups": [
+    {
+      "group_id": "group_4b8217dc5c9a",
+      "agent_action": "hard_block",
+      "severity": "error",
+      "status": "detected",
+      "domain": "layout",
+      "family": "overlap",
+      "problem_class": "layout.overlap.object_overlap",
+      "code": "text_occluded_by_shape",
+      "fix_strategy_id": "repair_overlap",
+      "resolution": {
+        "policy_id": "rerun_clear",
+        "conditions": [
+          "rerun_clear"
+        ],
+        "requires_human": false,
+        "continue_when": "修复、重建并重跑 gate 后该 finding 清除。"
+      },
+      "enforcement": {
+        "block_before": "final",
+        "allowed_resolution_actions": [
+          "edit_source",
+          "rebuild",
+          "rerun"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 10,
+      "evidence_count": 10,
+      "actual_value_counts": {},
+      "message": "文本估计边界与更高层对象发生显著重叠，存在相邻对象压字风险。",
+      "suggested_fix": "移动遮挡对象、增加留白，或重排文本框与卡片边界。",
+      "sample_locations": [
+        "slide 6 | shape 12 | shape_text",
+        "slide 6 | shape 13 | shape_text",
+        "slide 6 | shape 14 | shape_text"
+      ],
+      "omitted_location_count": 7,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_c659d129f37c",
+      "agent_action": "hard_block",
+      "severity": "error",
+      "status": "detected",
+      "domain": "layout",
+      "family": "text_fit",
+      "problem_class": "layout.text_fit.bounds_overflow",
+      "code": "textbox_fit_failure",
+      "fix_strategy_id": "repair_text_fit",
+      "resolution": {
+        "policy_id": "rerun_clear",
+        "conditions": [
+          "rerun_clear"
+        ],
+        "requires_human": false,
+        "continue_when": "修复、重建并重跑 gate 后该 finding 清除。"
+      },
+      "enforcement": {
+        "block_before": "final",
+        "allowed_resolution_actions": [
+          "edit_source",
+          "rebuild",
+          "rerun"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 21,
+      "evidence_count": 25,
+      "actual_value_counts": {
+        "9": 1,
+        "10.5": 16,
+        "24": 3,
+        "26": 1
+      },
+      "message": "文本估计边界已经越出可用内容区，存在明确的文本框 fit 失败风险。",
+      "suggested_fix": "增加文本框高度、减少文案密度，或把内容拆到更多卡片 / 更多页。",
+      "sample_locations": [
+        "slide 10 | shape 11 | shape_text",
+        "slide 11 | shape 11 | shape_text",
+        "slide 12 | shape 11 | shape_text"
+      ],
+      "omitted_location_count": 18,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_eac1256dd43b",
+      "agent_action": "soft_block",
+      "severity": "not_checked",
+      "status": "not_checked",
+      "domain": "layout",
+      "family": "overlap",
+      "problem_class": "layout.overlap.chart_label_collision",
+      "code": "structured_chart_label_collision_not_checked",
+      "fix_strategy_id": "complete_chart_label_check",
+      "resolution": {
+        "policy_id": "complete_evidence",
+        "conditions": [
+          "evidence_exists",
+          "exception_recorded"
+        ],
+        "requires_human": true,
+        "continue_when": "补齐检测证据或登记完整例外后继续。"
+      },
+      "enforcement": {
+        "block_before": "final",
+        "allowed_resolution_actions": [
+          "rerun",
+          "manual_review",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 4,
+      "evidence_count": 4,
+      "actual_value_counts": {},
+      "message": "首期 `structure_precheck` 还没有读取原生 chart 内部 label 的真实边界，因此该 chart 的内部标签碰撞未自动检查。",
+      "suggested_fix": "当前先保留逐页预览复核；后续可补 chart title / axis / legend / data label 的结构化检查。",
+      "sample_locations": [
+        "slide 10 | shape 23 | chart",
+        "slide 10 | shape 24 | chart",
+        "slide 9 | shape 8 | chart"
+      ],
+      "omitted_location_count": 1,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_0b00acf9035b",
+      "agent_action": "advisory",
+      "severity": "error",
+      "status": "detected",
+      "domain": "layout",
+      "family": "text_fit",
+      "problem_class": "layout.text_fit.width_pressure",
+      "code": "compact_textbox_width_pressure",
+      "fix_strategy_id": "repair_text_fit",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 3,
+      "evidence_count": 3,
+      "actual_value_counts": {
+        "9": 3
+      },
+      "message": "短标题或标签的有效宽度过窄，已经进入 forced-wrap / width-pressure 区间，即使当前还没完全越界，也很容易出现被迫换行、压边或字形挤压。",
+      "suggested_fix": "增加该标签框宽度，或缩短短标题文案，避免把本应单行的短文本塞进过窄容器。",
+      "sample_locations": [
+        "slide 11 | shape 19 | shape_text"
+      ],
+      "omitted_location_count": 2,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_6c45974395ea",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "layout",
+      "family": "text_fit",
+      "problem_class": "layout.text_fit.width_pressure",
+      "code": "compact_textbox_width_pressure",
+      "fix_strategy_id": "repair_text_fit",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 7,
+      "evidence_count": 7,
+      "actual_value_counts": {
+        "9": 7
+      },
+      "message": "短标题或标签的有效宽度过窄，已经进入 forced-wrap / width-pressure 区间，即使当前还没完全越界，也很容易出现被迫换行、压边或字形挤压。",
+      "suggested_fix": "增加该标签框宽度，或缩短短标题文案，避免把本应单行的短文本塞进过窄容器。",
+      "sample_locations": [
+        "slide 14 | shape 13 | shape_text"
+      ],
+      "omitted_location_count": 6,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_979512b78906",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "typography",
+      "family": "font_size",
+      "problem_class": "typography.font_size.fragmentation",
+      "code": "font_size_fragmentation",
+      "fix_strategy_id": "repair_font_size_system",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 1,
+      "evidence_count": 1,
+      "actual_value_counts": {},
+      "message": "检测到字号系统问题；当前未解析出 active role token，需先确认模板、语言和语义 role。",
+      "suggested_fix": "把相同语义的文字收敛到 hero / section / page title / subtitle / body / label / caption / table token。",
+      "sample_locations": [
+        "ppt"
+      ],
+      "omitted_location_count": 0,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_969678b37dea",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "typography",
+      "family": "font_size",
+      "problem_class": "typography.font_size.outside_scale",
+      "code": "font_size_outside_theme_scale",
+      "fix_strategy_id": "repair_font_size_token",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": "zh",
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 54,
+      "evidence_count": 81,
+      "actual_value_counts": {
+        "9.5": 22,
+        "10": 8,
+        "13": 8,
+        "20": 5,
+        "22": 3,
+        "26": 4,
+        "34": 4
+      },
+      "message": "检测到字号系统问题为 9.5pt×22, 13pt×8, 10pt×8；当前未解析出 active role token，需先确认模板、语言和语义 role。",
+      "suggested_fix": "把该文本绑定到已有 typography token；确需新档位时先更新 theme_tokens 并记录语义用途。",
+      "sample_locations": [
+        "slide 1 | shape 10 | shape_text"
+      ],
+      "omitted_location_count": 53,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_ad0d41a6b4b9",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "typography",
+      "family": "font_size",
+      "problem_class": "typography.font_size.outside_scale",
+      "code": "font_size_outside_theme_scale",
+      "fix_strategy_id": "repair_font_size_token",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "resolved",
+        "source": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/generated/slide_specs.yaml",
+        "token": "theme_tokens.body_font_pt",
+        "value_pt": 12.0,
+        "language": "zh",
+        "role": "body",
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 1,
+      "evidence_count": 1,
+      "actual_value_counts": {
+        "18": 1
+      },
+      "message": "当前中文正文字号为 18pt×1；active `theme_tokens.body_font_pt` 推荐 12pt。",
+      "suggested_fix": "如无模板、品牌或已登记的 profile 例外，直接改为 12pt。",
+      "sample_locations": [
+        "slide 3 | shape 11 | shape_text"
+      ],
+      "omitted_location_count": 0,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_632e4b3e3925",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "typography",
+      "family": "font_size",
+      "problem_class": "typography.font_size.role_drift",
+      "code": "body_text_below_theme_token",
+      "fix_strategy_id": "repair_font_size_token",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "resolved",
+        "source": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/generated/slide_specs.yaml",
+        "token": "theme_tokens.body_font_pt",
+        "value_pt": 12.0,
+        "language": "zh",
+        "role": "body",
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 44,
+      "evidence_count": 61,
+      "actual_value_counts": {
+        "9": 8,
+        "9.5": 3,
+        "10.5": 30,
+        "11": 3
+      },
+      "message": "当前中文正文字号为 10.5pt×30, 9pt×8, 11pt×3；active `theme_tokens.body_font_pt` 推荐 12pt。",
+      "suggested_fix": "如无模板、品牌或已登记的 profile 例外，直接改为 12pt。",
+      "sample_locations": [
+        "slide 32 | shape 10 | shape_text"
+      ],
+      "omitted_location_count": 43,
+      "related_codes": [
+        "font_size_outside_theme_scale"
+      ],
+      "suppressed_finding_count": 8,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_9e1ecb332fae",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "typography",
+      "family": "font_size",
+      "problem_class": "typography.font_size.role_drift",
+      "code": "font_size_below_caption_floor",
+      "fix_strategy_id": "repair_font_size_token",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "resolved",
+        "source": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/generated/slide_specs.yaml",
+        "token": "theme_tokens.caption_font_pt",
+        "value_pt": 9.0,
+        "language": "zh",
+        "role": "caption",
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 8,
+      "evidence_count": 24,
+      "actual_value_counts": {
+        "8.5": 8
+      },
+      "message": "当前中文图注/表注字号为 8.5pt×8；active `theme_tokens.caption_font_pt` 推荐 9pt。",
+      "suggested_fix": "如无模板、品牌或已登记的 profile 例外，直接改为 9pt。",
+      "sample_locations": [
+        "slide 24 | shape 14 | shape_text"
+      ],
+      "omitted_location_count": 7,
+      "related_codes": [
+        "font_size_outside_theme_scale"
+      ],
+      "suppressed_finding_count": 16,
+      "superseded_finding_count": 0
+    }
+  ],
+  "full_report_ref": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/validation/structure_precheck/history/structure_precheck_20260830_132757.json"
+}

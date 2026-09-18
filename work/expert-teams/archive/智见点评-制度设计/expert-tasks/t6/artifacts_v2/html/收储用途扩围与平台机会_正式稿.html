@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>收储用途扩围与平台机会：制度机制的识别与检验 · 智见点评 · 制度设计</title>
+<style>
+/* finesse · register=product · A=warm-paper+peacock-teal+antique-gold · B=serif/sans/mono
+ * C=ledger-spread(hairline) · D=none(zero-JS) · E=audit-ledger-paper-ink
+ * SOUL=6 SPECTACLE=1 DENSITY=8 */
+:root{
+  /* substrate：暖纸底 + 近白卡（审计账本纸墨） */
+  --paper:#F1EEE7; --card:#FDFCF9; --card-2:#F7F5EF; --recess:#EAE6DE;
+  /* ink（暖调中性，全部 ≥4.5:1 于 paper 与 card） */
+  --ink-1:#1A1714; --ink-2:#443E37; --ink-3:#6B6459; --ink-4:#6E675D;
+  /* 发丝线 */
+  --rule:rgba(26,23,20,.15); --rule-soft:rgba(26,23,20,.08); --rule-strong:rgba(26,23,20,.30);
+  /* 主色：孔雀青 */
+  --peacock:#10605A; --peacock-d:#0B4A45; --peacock-soft:#E2EDEA; --on-peacock:#F2F7F5;
+  /* 强调：古金 */
+  --gold:#9A6B22; --gold-ink:#7E5618; --gold-soft:#F0E6D3;
+  /* 语义 */
+  --warn:#8A3A26; --warn-soft:#F2E2DC;
+  --font-serif:"Noto Serif CJK SC","Source Han Serif SC","Songti SC",Georgia,serif;
+  --font-sans:"Noto Sans CJK SC","Source Han Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-mono:"Noto Sans Mono CJK SC",ui-monospace,Menlo,Consolas,monospace;
+  --shadow:0 1px 2px rgba(26,23,20,.05);
+  --r:6px; --r-sm:4px;
+  --nav-h:50px;
+}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink-1);
+  font-family:var(--font-serif);font-size:15px;line-height:1.8;
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
+}
+.sheet{max-width:1120px;margin:0 auto;padding:0 26px 80px}
+
+/* ---------- masthead ---------- */
+.masthead{position:sticky;top:0;z-index:50;background:rgba(241,238,231,.95);
+  border-bottom:1px solid var(--rule);backdrop-filter:blur(6px)}
+.masthead .inner{max-width:1120px;margin:0 auto;padding:0 26px;min-height:var(--nav-h);
+  display:flex;align-items:center;gap:16px;font-family:var(--font-sans);font-size:11.5px;
+  color:var(--ink-3);white-space:nowrap;overflow-x:auto}
+.masthead .mk{color:var(--peacock);font-weight:700;letter-spacing:.06em;flex:0 0 auto}
+.masthead a{color:var(--ink-3);text-decoration:none;flex:0 0 auto}
+.masthead a:hover{color:var(--peacock)}
+
+/* ---------- cover ---------- */
+.cover{padding:30px 0 8px}
+.cover-band{background:var(--peacock);color:var(--on-peacock);padding:26px 30px 28px;border-radius:var(--r)}
+.cover-band .brandline{font-family:var(--font-sans);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:#A9CFC8;font-weight:700}
+.cover-band h1{font-family:var(--font-serif);font-size:clamp(25px,3.6vw,38px);line-height:1.28;
+  letter-spacing:-.015em;font-weight:600;margin:14px 0 0;overflow-wrap:anywhere;min-width:0}
+.cover-band .sub{margin:14px 0 0;font-size:14px;line-height:1.7;color:#C9E1DB;max-width:46em}
+.cover-band .metaline{margin:16px 0 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.22);
+  font-family:var(--font-sans);font-size:11.5px;color:#C9E1DB;display:flex;flex-wrap:wrap;gap:6px 18px}
+.kicker-quote{margin:18px 0 0;border-left:3px solid var(--gold);background:var(--card);
+  padding:14px 20px;border-radius:0 var(--r-sm) var(--r-sm) 0}
+.kicker-quote p{margin:0;font-size:16px;line-height:1.72;color:var(--ink-1)}
+.kicker-quote em{font-style:normal;color:var(--gold-ink);font-weight:700}
+
+/* ---------- numstrip（发丝线分格 + tabular-nums） ---------- */
+.numstrip{display:flex;gap:0;margin:18px 0 0;background:var(--card);
+  border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.numstrip .cell{flex:1 1 0;min-width:0;padding:14px 16px;border-left:1px solid var(--rule)}
+.numstrip .cell:first-child{border-left:0}
+.numstrip .big{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:20px;
+  font-weight:700;color:var(--peacock);letter-spacing:-.01em;line-height:1.15}
+.numstrip .big .u{font-size:12px;font-weight:500;color:var(--ink-2);margin-left:2px}
+.numstrip .lbl{font-family:var(--font-sans);font-size:12px;color:var(--ink-2);margin-top:6px;font-weight:700}
+.numstrip .src{font-family:var(--font-sans);font-size:10.5px;color:var(--ink-4);margin-top:4px;line-height:1.5}
+
+/* ---------- legend（四级标注） ---------- */
+.legend{margin:18px 0 0;background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+  padding:14px 18px}
+.legend .lt{font-family:var(--font-sans);font-size:12px;font-weight:700;color:var(--ink-1);margin-bottom:9px}
+.legend .row{display:flex;flex-wrap:wrap;gap:8px 20px}
+.legend .row span{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-sans);
+  font-size:11.5px;color:var(--ink-3)}
+
+/* ---------- annotation tags（色块，全文一致） ---------- */
+.tag{display:inline-block;font-family:var(--font-sans);font-size:.80em;font-weight:700;line-height:1.5;
+  padding:0 5px;border-radius:3px;white-space:nowrap;vertical-align:1px;font-style:normal}
+.tag i{font-style:normal;font-weight:500;opacity:.86;margin-left:3px}
+.tag-ref{color:var(--peacock);background:var(--peacock-soft)}
+.tag-calc{color:var(--gold-ink);background:var(--gold-soft)}
+.tag-est{color:var(--gold-ink);background:var(--gold-soft);border:1px dashed var(--gold)}
+.tag-jud{color:var(--ink-2);background:var(--recess)}
+.tag-todo{color:var(--warn);background:var(--warn-soft)}
+
+/* ---------- chapter / section ---------- */
+.chapter{margin:46px 0 0;scroll-margin-top:60px}
+.chapter-head{display:flex;align-items:baseline;gap:12px;border-bottom:3px double var(--gold);
+  padding-bottom:9px;margin:0 0 20px;break-after:avoid}
+.chapter-head h2{font-family:var(--font-serif);font-weight:600;font-size:21px;line-height:1.34;
+  letter-spacing:-.01em;margin:0;overflow-wrap:anywhere;min-width:0}
+.chapno{font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;color:var(--gold-ink);
+  margin-right:10px;vertical-align:2px;white-space:nowrap}
+h3{font-family:var(--font-serif);font-size:16.5px;font-weight:600;line-height:1.45;margin:26px 0 10px;
+  color:var(--ink-1);break-after:avoid}
+.secno{font-family:var(--font-mono);font-size:11px;color:var(--gold-ink);margin-right:9px;
+  vertical-align:2px}
+p{margin:0 0 12px}
+strong{font-weight:700;color:var(--ink-1)}
+em{font-style:normal}
+
+/* ---------- exhibit（图号卡片，发丝线） ---------- */
+.exhibit{background:var(--card);border:1px solid var(--rule);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:16px 18px 14px;margin:20px 0;break-inside:avoid}
+.ex-head{display:flex;align-items:baseline;gap:10px;margin:0 0 3px}
+.ex-no{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;color:var(--gold-ink);
+  white-space:nowrap;text-transform:uppercase}
+.ex-title{font-family:var(--font-serif);font-size:15px;font-weight:600;color:var(--ink-1);line-height:1.45}
+.ex-sub{font-family:var(--font-sans);font-size:11px;color:var(--ink-3);margin:5px 0 0;line-height:1.6}
+
+.tblwrap{margin:12px 0 0;overflow-x:auto;border-top:1px solid var(--rule-soft)}
+table{border-collapse:collapse;width:100%;font-family:var(--font-sans);font-size:12.5px;
+  line-height:1.62;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--rule-soft)}
+th{background:var(--peacock-soft);color:var(--peacock-d);font-weight:700;font-size:11.5px;
+  border-bottom:1px solid var(--rule);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td:first-child{font-weight:700;color:var(--ink-1)}
+
+/* ---------- 对开 frame（发丝线账册） ---------- */
+.frame{display:flex;gap:0;margin:12px 0 0;border:1px solid var(--rule);border-radius:var(--r-sm);
+  overflow:hidden}
+.frame .side{flex:1 1 0;min-width:0;padding:14px 16px}
+.frame .side + .side{border-left:1px solid var(--rule)}
+.frame .side.do{background:var(--peacock-soft)}
+.frame .side.dont{background:var(--warn-soft)}
+.frame h4{font-family:var(--font-sans);font-size:12.5px;font-weight:700;margin:0 0 9px}
+.frame .side.do h4{color:var(--peacock-d)}
+.frame .side.dont h4{color:var(--warn)}
+.frame ul{margin:0;padding:0;list-style:none}
+.frame li{font-family:var(--font-sans);font-size:12.5px;line-height:1.6;padding-left:15px;
+  position:relative;margin-bottom:7px;color:var(--ink-2)}
+.frame li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%}
+.frame .side.do li::before{background:var(--peacock)}
+.frame .side.dont li::before{background:var(--warn)}
+.frame li:last-child{margin-bottom:0}
+
+/* ---------- colophon ---------- */
+.colophon{margin:40px 0 0;padding-top:14px;border-top:1px solid var(--rule);
+  display:flex;flex-wrap:wrap;gap:6px 22px;font-family:var(--font-sans);font-size:11px;color:var(--ink-3)}
+.colophon b{color:var(--ink-2);font-weight:700}
+.backcover{margin:34px 0 0;background:var(--peacock-d);color:var(--on-peacock);border-radius:var(--r);
+  padding:28px 30px}
+.backcover .bq{font-size:19px;line-height:1.6;font-weight:600;margin:0 0 18px;color:var(--on-peacock)}
+.backcover .bq em{font-style:normal;color:#EFC98A}
+.backcover .meta{font-family:var(--font-sans);font-size:11.5px;line-height:1.9;color:#BBD5D0}
+.backcover .meta b{color:#DCEAE7}
+.disclaim{margin:14px 0 0;padding-top:12px;border-top:1px solid rgba(255,255,255,.18);
+  font-family:var(--font-sans);font-size:11px;color:#BBD5D0;line-height:1.7}
+
+/* ---------- 窄屏降级（320 → 1280 零溢出） ---------- */
+@media (max-width:900px){
+  .numstrip{flex-wrap:wrap}
+  .numstrip .cell{flex:1 1 50%}
+  .numstrip .cell:nth-child(odd){border-left:0}
+  .numstrip .cell:nth-child(n+3){border-top:1px solid var(--rule)}
+  .frame{flex-direction:column}
+  .frame .side + .side{border-left:0;border-top:1px solid var(--rule)}
+}
+@media (max-width:760px){
+  .sheet{padding:0 14px 56px}
+  .masthead .inner{padding:0 14px}
+  body{font-size:14.5px}
+  .cover-band{padding:20px 18px 22px}
+  /* 表 → 卡行：表头隐藏，逐格带字段名（窄屏不横向溢出） */
+  .tblwrap{overflow-x:visible}
+  .tblwrap table,.tblwrap thead,.tblwrap tbody,.tblwrap tr,.tblwrap th,.tblwrap td{display:block;width:auto}
+  .tblwrap thead{display:none}
+  .tblwrap tr{padding:10px 12px;border-bottom:1px solid var(--rule-soft);
+    border-top:2px solid var(--peacock);margin-bottom:8px;background:var(--card)}
+  .tblwrap tr:last-child{border-bottom:0}
+  .tblwrap td{border:0;padding:2px 0;font-weight:400;color:var(--ink-2)}
+  .tblwrap td:first-child{font-weight:700;color:var(--ink-1);font-size:13.5px;margin-bottom:3px}
+  .tblwrap td[data-label]::before{content:attr(data-label);display:block;font-size:10px;
+    letter-spacing:.03em;color:var(--ink-4);line-height:1.5}
+  .tblwrap td:first-child::before{display:none}
+  .frame .side{padding:12px 13px}
+  .chapter-head h2{font-size:18px}
+}
+@media (max-width:400px){
+  .numstrip .cell{flex:1 1 100%;border-left:0}
+  .numstrip .cell:nth-child(n+2){border-top:1px solid var(--rule)}
+}
+
+/* ---------- print / PDF（A4，页脚品牌+页码） ---------- */
+@media print{
+  body{background:var(--paper)}
+  .masthead{display:none}
+  .sheet{max-width:none;padding:0}
+  .cover{page:cover}
+  .backcover{page:back}
+  .chapter{margin:22px 0 0}
+  /* 表单页/图卡/表行不跨页断裂 */
+  .exhibit,.frame,.numstrip,.numstrip .cell,.legend,.kicker-quote,.cover-band,
+  .tblwrap tr,.colophon{break-inside:avoid}
+  .chapter-head,h3,h4,thead{break-after:avoid}
+  .tblwrap{overflow:visible}
+  table{font-size:9pt;table-layout:fixed}
+  th,td{padding:5px 6px;overflow-wrap:anywhere;word-break:break-word}
+  thead th{white-space:normal}
+  .ex-no{font-size:8pt} .ex-title{font-size:10.5pt}
+  /* 宽表独占横向页，保持可读且不裁切 */
+  .wide-exhibit{page:landscape;break-before:page;break-inside:avoid}
+  .wide-exhibit table{font-size:8.2pt}
+  .wide-exhibit th,.wide-exhibit td{padding:4px 5px}
+}
+@page{
+  size:A4;margin:16mm 14mm 17mm 14mm;
+  @bottom-center{
+    content:"98wiki ｜ 智见 / 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family:"Noto Serif CJK SC",serif;font-size:8pt;color:#6B6459;
+  }
+}
+@page cover{@bottom-center{content:"98wiki ｜ 智见 / 行业研究报告"}}
+@page back{@bottom-center{content:none}}
+@page landscape{size:A4 landscape;margin:12mm 14mm 16mm 14mm;
+  @bottom-center{
+    content:"98wiki ｜ 智见 / 行业研究报告 · 第 " counter(page) " 页 / 共 " counter(pages) " 页";
+    font-family:"Noto Serif CJK SC",serif;font-size:8pt;color:#6B6459;
+  }}
+</style>
+</head>
+<body>
+
+<nav class="masthead"><div class="inner">
+  <span class="mk">98wiki ｜ 智见</span>
+  <a href="#c1">关键性结论</a><a href="#c2">关键事实及其变化</a><a href="#c3">归因分析</a><a href="#c4">红队独立复核：四条预判逐条检验</a><a href="#c5">收尾：洞察、展望与不确定性</a>
+  <a href="#src">来源与口径</a>
+</div></nav>
+
+<div class="sheet">
+
+<header class="cover">
+  <div class="cover-band">
+    <div class="brandline">98wiki ｜ 智见点评 · 制度设计</div>
+    <h1>收储用途扩围与平台机会：制度机制的识别与检验</h1>
+    <p class="sub">审计账本式纸墨设计 · 全篇数字取自融合正式稿原文，未作改写；四级标注全文一致。</p>
+    <div class="metaline"><span>正式稿</span><span>证据窗 2025-09 — 2026-09</span>
+      <span>全国（郑州、上海、杭州、武汉、深圳案例对比）</span></div>
+  </div>
+
+  <div class="kicker-quote">
+    <p>用途扩围扩大的是<em>需求池的口径</em>，没有触动负carry、区位错配、改造合规这三项真实交易成本；退出不通时，收储会从准公共采购退化为<em>准公共持有</em>。</p>
+  </div>
+
+  <div class="numstrip"><div class="cell"><div class="big">约50%<span class="u"></span></div><div class="lbl">保租房占收购用途</div><div class="src">中房网 2026-05-20；公开案例归纳，非统一统计</div></div><div class="cell"><div class="big">551<span class="u">套</span></div><div class="lbl">上海三试点区累计收房</div><div class="src">应作全国上限锚点，不作起步基数</div></div><div class="cell"><div class="big">5.336<span class="u">亿元</span></div><div class="lbl">深圳大学拟购楼作宿舍</div><div class="src">腾讯新闻 2026-09-09；高校自主采购</div></div><div class="cell"><div class="big">4<span class="u">项</span></div><div class="lbl">评分卡一票否决</div><div class="src">区位·现金流·合规产权·退出可及性</div></div></div>
+
+  <div class="legend">
+    <div class="lt">数字四级标注（全文一致，色块角标）</div>
+    <div class="row"><span class="tag tag-ref">引用</span><em>来源明确，以原文口径为准</em><span class="tag tag-calc">测算</span><em>依据在案数据推算</em><span class="tag tag-est">估算</span><em>量级推断，区间口径</em><span class="tag tag-jud">研判推断</span><em>无直接数据支撑的方向判断</em><span class="tag tag-todo">待补</span><em>需官方文件或授权数据核验</em></div>
+  </div>
+</header>
+
+<section class="chapter"><div class="chapter-head"><h2><span class="chapno">第 一 章</span>关键性结论</h2></div><p>主基调由据证据判定：收储正从应急去化工具转向准公共采购，但尚未跨过制度化门槛。用途扩围等于需求池扩容，不等于制度成型。对"年度化准公共采购已形成"这一判断，本稿予以证伪：现状是点状案例加价格型工具，不是采购制度。收储在当前阶段的真实身份是止跌工具，不是回稳引擎——它能压缩挂牌量、托住尾部成交价，创造不出新增有效需求。</p><p>制度判断落在三处机制缺口上。其一，政策边界尚未回答"谁来收、收什么、做什么"三问：授权对象、房源边界、用途决定权都还停在地方探索层面，没有形成可复制的规则。其二，年度化采购与个案化处置之间没有判别标准，缺一套可检验的阈值。其三，退出是最大缺口。退出不通时，收储会从准公共采购退化为准公共持有，资产负债表压力由开发商转到地方国企。</p><p>平台的位置由此确定：不替政府持有资产，只提供可审计的筛选、估值、改造适配与运营数据；需求清单与口径不公开的项目，不出具评分卡与现金流模型。</p></section><section class="chapter"><div class="chapter-head"><h2><span class="chapno">第 二 章</span>关键事实及其变化</h2></div><h3><span class="secno">1</span>1. 制度机制：政策边界里的&quot;谁来收、收什么、做什么&quot;</h3><p><strong>谁来收。</strong> 现行政策边界只明确两类承接主体：地方政府指定的国有企业，以及承接保障性住房再贷款的政策性住房收购主体<span class="tag tag-ref">引用</span>。高校、医院以自有预算采购，属需求端机构购买方，不属政策性收储主体<span class="tag tag-jud">研判推断</span>。授权链的形态是地方授权加中央资金支持，不是全国统一授权；这决定了规则只能逐城形成，也决定了复制成本高。</p><p><strong>收什么。</strong> 房源边界是存量商品房中的现房或准现房，须同时满足区位可用、权属清晰、消防与结构合规、用途变更路径可行四项条件<span class="tag tag-jud">研判推断</span>。实操中普遍遵循先有需求再反向筛选房源的顺序，先定使用对象、再定房源，而不是先收房再找用途<span class="tag tag-jud">研判推断</span>。</p><p><strong>做什么。</strong> 用途由收购主体与使用单位约定，当前覆盖保障性租赁住房、人才房与青年公寓、高校宿舍、医院与养老配套四类<span class="tag tag-ref">引用<i>据公开案例归纳</i></span>。用途落地要过用途变更、消防验收、结构安全三道审批，三者在多数城市尚未形成标准路径，构成本轮新增用途的主要隐性成本<span class="tag tag-jud">研判推断</span>。</p><h3><span class="secno">2</span>2. 用途口径外扩：是案例结构示意，不是统计口径</h3><p>中房网2026-05-20对存量房收购两周年的公开案例归纳显示，保障性租赁住房约占收购用途五成、人才房与青年公寓约两成、学生宿舍等新用途约百分之五<span class="tag tag-ref">引用<i>案例归纳非统一统计</i></span>。三个比例只有分子、没有分母：它们来自公开案例的归纳，不是统一统计口径，既不能加总为全国收购用途结构，也不能用于推算全国年度收储规模<span class="tag tag-jud">研判推断</span>。可用的部分是方向——新用途从无到有。</p><h3><span class="secno">3</span>3. 买方结构变化：高校以机构购买方身份进入存量商品房购买端</h3><p>深圳大学拟以5.336亿元购楼作学生宿舍（腾讯新闻2026-09-09披露金额口径；床位与单套折算待补）<span class="tag tag-ref">引用<i>金额口径；床位待补</i></span>。另一路采购意向口径给出的预算为约5.3亿元、建筑面积不低于2.25万平方米、可满足至少1500人居住、距粤海与丽湖两校区直线距离原则上不超过8公里、须整栋购置<span class="tag tag-ref">引用<i>采购意向披露口径</i></span>。两种口径存在表述差异，以最终公告为准。</p><p>需要把主体说清楚：这是高校自主采购，资金来源是学校基建与教育预算，定价走市场评估，与政府收储的资金来源、定价机制、退出安排完全不同<span class="tag tag-jud">研判推断</span>。它证明的是床位需求真实、需求方从政府部门扩展到事业单位；它不能证明收储的年度化采购制度已经形成<span class="tag tag-jud">研判推断</span>。</p><p>按采购意向口径测算：单床购置成本约35.6万元（5.336亿元 ÷ 1500床）<span class="tag tag-calc">测算</span>；单位面积购置成本约0.24万元／平方米（5.336亿元 ÷ 2.25万平方米）<span class="tag tag-calc">测算</span>。</p><h3><span class="secno">4</span>4. 三条线不同步：资金端先行、用途端扩围、采购制度化最慢</h3><figure class="exhibit"><div class="ex-head"><span class="ex-no">Ex.1</span><span class="ex-title">三条线的推进状态：资金端先行、采购制度化最慢</span></div><div class="tblwrap"><table><thead><tr><th>线索</th><th>当期状态</th><th>证据</th><th>标注</th></tr></thead><tbody><tr><td data-label="线索">资金端</td><td data-label="当期状态">已落地，融资成本一侧明显下移</td><td data-label="证据">中国人民银行2025-01-02优化保障性住房再贷款要求，调整支持比例（具体比例待补）</td><td data-label="标注"><span class="tag tag-ref">引用</span>＋<span class="tag tag-todo">待补</span></td></tr><tr><td data-label="线索">政策端</td><td data-label="当期状态">停留在方向与年度安排</td><td data-label="证据">2026-03-05政府工作报告"盘活存量商品房"方向；2026-04-30深圳市住建局2026住房发展年度计划</td><td data-label="标注"><span class="tag tag-ref">引用</span></td></tr><tr><td data-label="线索">采购端</td><td data-label="当期状态">尚未成型，无需求清单、无准入标准、无预算科目、无退出通道四项前置模块</td><td data-label="证据">一线城市二手房收储案例与政策梳理（新浪财经2026-05-26）</td><td data-label="标注"><span class="tag tag-jud">研判推断</span></td></tr></tbody></table></div></figure><h3><span class="secno">5</span>5. 执行端反证：上海551套应作上限锚点，不是起步基数</h3><p>上海自2026年2月启动收购二手住房用作保障性租赁住房试点，徐汇、浦东、静安三大试点区域累计收房551套<span class="tag tag-ref">引用<i>吴晓波频道／新浪财经2026-08-20及试点报道口径</i></span>。报道同时指出收储存在"两本账"：政策性账与商业性账无法并表<span class="tag tag-ref">引用</span>。上海是全国资金、房源、需求三要素最齐备的城市，一个窗口期551套，说明决定转化效率的不是资格名单长度，而是旧房处置与承接能力<span class="tag tag-jud">研判推断</span>。这个数字应作全国上限锚点使用，不能当作起步基数——用它反推全国总量，等于把最优城市的天花板当平均值<span class="tag tag-jud">研判推断</span>。</p><h3><span class="secno">6</span>6. 补充事实：收储重定义为对&quot;卖旧买新&quot;断裂处的买断式修复</h3><p>资格名单给的是购买权，成交取决于旧房能否处置。收储的真实作用在于给置换链条断裂处做一次买断式修复：国企出钱收旧房，居民完成换新<span class="tag tag-jud">研判推断</span>。这一定性与"替新房去库存"不同，它把考核口径从收购套数拉回循环是否修复。</p><h3><span class="secno">7</span>7. 五城对照的口径</h3><p>上海暴露的是转化瓶颈，观测口径为收房套数；深圳暴露的是买方多元化，观测口径为机构采购；郑州、杭州、武汉的分城市用途构成与收购决算数据暂缺，三城的可比观测口径应统一为清单是否公开、采购数量是否入预算、运营数据是否披露<span class="tag tag-jud">研判推断</span>。</p></section><section class="chapter"><div class="chapter-head"><h2><span class="chapno">第 三 章</span>归因分析</h2></div><p><strong>其一，负carry是结构性的，运营补不上。</strong> 保租房租金锚定市场租金折价，人才房锚定政策可承受价，高校宿舍锚定学校付费能力，三类租金锚都低于改造后的综合资金成本，差额只能由财政或国企承担<span class="tag tag-jud">研判推断</span>。核算口径须统一为：单位年净现金流＝租金×出租率−维护费−改造年摊，与同口径资金成本比较；该值为负即为负carry项目<span class="tag tag-jud">研判推断</span>。补贴不进预算科目时，问题从当期推入运营期。</p><p><strong>其二，区位错配是结构性的，不是操作失误。</strong> 可收购房源集中在供给过剩的外围板块与商办尾盘，真实需求集中在主城就业带与校区周边，两个分布在空间上天然不重合，直接表现为空置率抬升与回收期拉长<span class="tag tag-jud">研判推断</span>。高校那单采购之所以在经济上可能成立，正因为需求方可以自主选址；收储主体没有这个自由度，用宿舍需求去承接远郊库存，等于用需求的名义给区位错配背书<span class="tag tag-jud">研判推断</span>。</p><p><strong>其三，改造合规是确定性成本，且新增用途两端最重。</strong> 学生宿舍涉及床位密度与消防分区，医疗养老涉及结构与合规，两类恰是新增用途中改造强度最高的两端；非标房源越多，规模效应越被摊薄<span class="tag tag-jud">研判推断</span>。消防是否可以通过，是运营侧最大的不确定性成本项<span class="tag tag-jud">研判推断</span>。</p><p><strong>其四，筛选顺序倒置是执行层的通病。</strong> 正确的顺序是预租锁定、改造合规预审、现金流模型、估值、融资；现实顺序往往先把收购量定下来，再补前四项<span class="tag tag-jud">研判推断</span>。顺序一倒置，考核必然落到收购套数，需求真实性、房源适配度、运营能力与退出可行性全部让位。</p><p><strong>其五，退出端缺位决定天花板，且三路径互斥。</strong> REITs退出在低租金、长回收期资产上并非普遍可行<span class="tag tag-jud">研判推断</span>；整售依赖市场景气；划转与长期自持不产生现金回流。三条路径各有成立条件，不能同时承诺<span class="tag tag-jud">研判推断</span>。退出不通，收储就从准公共采购退化为准公共持有，压力由开发商转到地方国企。</p><p><strong>其六，补贴性质要区分。</strong> 制度性补贴是对民生任务的预算化安排，有科目、有额度、可跨年；运营性依赖是项目现金流为负后被动挂账，越滚越大<span class="tag tag-jud">研判推断</span>。判别标准是补贴是否进入预算科目、是否与项目一一对应；两者混同，年度化采购就无从审计。</p><h3><span class="secno">8</span>年度化准公共采购 vs 个案化处置：四项判别阈值</h3><p>四项阈值须同时成立，缺一项即判定为个案化处置<span class="tag tag-jud">研判推断</span>。</p><figure class="exhibit"><div class="ex-head"><span class="ex-no">Ex.2</span><span class="ex-title">年度化准公共采购 vs 个案化处置：四项判别阈值</span></div><p class="ex-sub">四项须同时成立，缺一项即判为个案化处置</p><div class="tblwrap"><table><thead><tr><th>阈值</th><th>年度化采购的判据</th><th>个案化处置的征象</th><th>当期状态</th></tr></thead><tbody><tr><td data-label="阈值">需求清单年度化</td><td data-label="年度化采购的判据">上年末形成经财政与住建联审的年度需求清单，含套数、区位、户型、租金区间</td><td data-label="个案化处置的征象">逐单临时立项、逐单定价</td><td data-label="当期状态">未见公开清单<span class="tag tag-jud">研判推断</span></td></tr><tr><td data-label="阈值">定价用规则不用谈判</td><td data-label="年度化采购的判据">同区位同品质有评估价区间与统一折扣基准</td><td data-label="个案化处置的征象">每单单独过会定价</td><td data-label="当期状态">多数项目仍逐单定价<span class="tag tag-jud">研判推断</span></td></tr><tr><td data-label="阈值">成本可跨年消化</td><td data-label="年度化采购的判据">缺口由租金提升、运营降本或政策性资金成本覆盖</td><td data-label="个案化处置的征象">缺口由财政补贴或国企利润逐年填补</td><td data-label="当期状态">缺口主要靠补贴填补<span class="tag tag-jud">研判推断</span></td></tr><tr><td data-label="阈值">退出有预设通道</td><td data-label="年度化采购的判据">立项即明确退出方式与持有主体</td><td data-label="个案化处置的征象">立项不涉退出安排</td><td data-label="当期状态">退出通道普遍缺位<span class="tag tag-jud">研判推断</span></td></tr></tbody></table></div></figure></section><section class="chapter"><div class="chapter-head"><h2><span class="chapno">第 四 章</span>红队独立复核：四条预判逐条检验</h2></div><p><strong>预判一：50%／20%／5%不能当官方总体——成立，降级为案例结构示意。</strong> 该组数字来自公开案例归纳、非统一统计，只有分子没有分母<span class="tag tag-ref">引用</span>。可用的用法仅限一件事：说明新用途从无到有。任何据此推算全国收储规模的测算，都属于把案例当统计量用；分城市用途构成亦不可由此推导<span class="tag tag-jud">研判推断</span>。</p><p><strong>预判二：深圳大学5.336亿元是高校自主采购，不能作收储制度化证据——成立。</strong> 该采购走教育预算与市场定价，与政策性收储的资金来源、定价机制、退出安排不同<span class="tag tag-jud">研判推断</span>。它能证明的只有床位需求真实、机构购买方进场；把机构采购计入收储制度，会系统性高估制度成熟度<span class="tag tag-jud">研判推断</span>。</p><p><strong>预判三：点状案例不证制度化——成立。</strong> 高校宿舍、医院与养老改造仍属单一标的的自主决策，无法证明年度采购制度已形成<span class="tag tag-jud">研判推断</span>。因此本稿只主张制度要件已可被识别和检验，不主张制度已经建立。</p><p><strong>预判四：REITs退出并非普遍可行——成立。</strong> 低租金、长回收期资产难满足REITs对现金流稳定性的要求；无退出通道的用途只能按长期自持定价，不得以退出溢价折让收购价<span class="tag tag-jud">研判推断</span>。REITs宜作筛选标准使用，不宜作立项承诺<span class="tag tag-jud">研判推断</span>。</p></section><section class="chapter"><div class="chapter-head"><h2><span class="chapno">第 五 章</span>收尾：洞察、展望与不确定性</h2></div><h3><span class="secno">9</span>核心判断：投资驱动与消费驱动的转换</h3><p>这轮扩围的本质是在测试住房供应能否用采购替代新建。新房模式走的是投资驱动，路径是土地出让、开发、销售；收储模式走的是消费驱动，路径是识别需求、采购房源、运营服务<span class="tag tag-jud">研判推断</span>。两者的财政逻辑、考核逻辑与组织能力并不相同：前者考验建设能力，后者考验运营与数据能力。租金是房价的现金流折现反映，租金预期不稳，收储只是把二手房从市场搬进租赁池，账面去化而已<span class="tag tag-jud">研判推断</span>。扩围的边际效益会随清单放宽而递减，清单越宽，负carry项目占比越高<span class="tag tag-jud">研判推断</span>。</p><h3><span class="secno">10</span>三档判断</h3><p><strong>第一档：制度化条件已可识别、可检验。</strong> 成立条件是年度采购清单、统一评估规则、公开的项目与运营数据三样同时出现；届时四项判别阈值可逐项打勾<span class="tag tag-jud">研判推断</span>。</p><p><strong>第二档：个案化处置延续（当前所在档）。</strong> 特征是点状采购加地方年度计划滚动推进，规模取决于地方财政而非需求强度<span class="tag tag-jud">研判推断</span>。这一档下，收储维持止跌功能，不产生回稳动力。</p><p><strong>第三档：退化为准公共持有（最坏路径）。</strong> 触发条件是不设退出安排、补贴不进预算科目、运营数据不披露三者叠加；后果是资产压力从开发商转移到地方国企，问题跨期累积<span class="tag tag-jud">研判推断</span>。</p><h3><span class="secno">11</span>用途—现金流矩阵：用途是资本结构的选择变量</h3><figure class="exhibit wide-exhibit"><div class="ex-head"><span class="ex-no">Ex.3</span><span class="ex-title">用途—现金流矩阵：用途是资本结构的选择变量</span></div><p class="ex-sub">占比口径为案例归纳，非统一统计；分城市数据与绝对量待补</p><div class="tblwrap"><table><thead><tr><th>用途</th><th>需求确定性</th><th>租金锚（收入来源）</th><th>租期与收入稳定性</th><th>改造强度</th><th>适配资本</th><th>退出主线</th><th>主要风险</th><th>数据标注</th></tr></thead><tbody><tr><td data-label="用途">保租房</td><td data-label="需求确定性">高（轮候制、准入线）</td><td data-label="租金锚（收入来源）">市场租金折价，偏低</td><td data-label="租期与收入稳定性">中高，长租为主</td><td data-label="改造强度">中</td><td data-label="适配资本">再贷款、专项债</td><td data-label="退出主线">REITs（个案，非普遍）／长期自持</td><td data-label="主要风险">负carry、财政依赖</td><td data-label="数据标注">占比＝案例归纳；租金折价率待补</td></tr><tr><td data-label="用途">人才房·青年公寓</td><td data-label="需求确定性">中高（产业政策驱动）</td><td data-label="租金锚（收入来源）">政策性可承受价，中</td><td data-label="租期与收入稳定性">中，3—5年租期</td><td data-label="改造强度">低—中</td><td data-label="适配资本">国企＋政策性贷款</td><td data-label="退出主线">整售／自持</td><td data-label="主要风险">产业波动带动需求波动</td><td data-label="数据标注">占比＝案例归纳；分城市数据待补</td></tr><tr><td data-label="用途">安置房</td><td data-label="需求确定性">高（征迁刚性需求）</td><td data-label="租金锚（收入来源）">征迁补偿与安置标准</td><td data-label="租期与收入稳定性">高，计划驱动</td><td data-label="改造强度">低</td><td data-label="适配资本">财政＋城投</td><td data-label="退出主线">划转／自持</td><td data-label="主要风险">与征迁进度绑定、跨期错配</td><td data-label="数据标注">结构＝研判推断；绝对量待补</td></tr><tr><td data-label="用途">高校宿舍</td><td data-label="需求确定性">高（刚性床位）</td><td data-label="租金锚（收入来源）">学校付费，稳但低</td><td data-label="租期与收入稳定性">很高，长期</td><td data-label="改造强度">中高（床位密度、消防）</td><td data-label="适配资本">学校自有资金、教育专项</td><td data-label="退出主线">无二级市场退出</td><td data-label="主要风险">点状、非标、审批周期长</td><td data-label="数据标注">深圳案例金额在案；床位待补</td></tr><tr><td data-label="用途">医疗·养老</td><td data-label="需求确定性">中（专业需求）</td><td data-label="租金锚（收入来源）">专业服务收费，高</td><td data-label="租期与收入稳定性">高，长期服务合约</td><td data-label="改造强度">高（结构与合规）</td><td data-label="适配资本">财政／国企</td><td data-label="退出主线">无标准退出通道</td><td data-label="主要风险">改造合规成本最高、消防不确定性最大</td><td data-label="数据标注">均为点状案例；分项待补</td></tr></tbody></table></div></figure><p>三条使用规则<span class="tag tag-jud">研判推断</span>：租金锚低于资金成本的用途，规模扩张须同步锁定补贴来源，否则等于把风险从收购端搬到运营端；改造强度高的用途只能逐单走审批，不适用年度采购套数式考核；无退出通道的用途不得以退出溢价折让收购价，只能按长期自持的现金流定价。</p><h3><span class="secno">12</span>房源准入评分卡：四项一票否决</h3><figure class="exhibit"><div class="ex-head"><span class="ex-no">Ex.4</span><span class="ex-title">房源准入评分卡：四项一票否决</span></div><p class="ex-sub">一票否决优先于总分排序，评分卡用于筛掉不可行项目</p><div class="tblwrap"><table><thead><tr><th>维度</th><th>观测变量</th><th>判据方向</th><th>一票否决</th></tr></thead><tbody><tr><td data-label="维度">区位与需求匹配</td><td data-label="观测变量">房源落在真实用工与就学半径内的轮候需求覆盖度</td><td data-label="判据方向">越高越好</td><td data-label="一票否决">是（错配即否决）</td></tr><tr><td data-label="维度">现金流</td><td data-label="观测变量">单位年净现金流＝租金×出租率−维护−改造年摊，与同口径资金成本比较</td><td data-label="判据方向">不低于融资成本方可入池</td><td data-label="一票否决">是（低于融资成本即否决）</td></tr><tr><td data-label="维度">合规与产权</td><td data-label="观测变量">消防与结构可否通过、用途变更路径、抵押查封与分割登记状态</td><td data-label="判据方向">全部可清</td><td data-label="一票否决">是（消防结构不合规或产权瑕疵即否决）</td></tr><tr><td data-label="维度">退出可及性</td><td data-label="观测变量">是否存在可执行退出路径或明确长期持有主体</td><td data-label="判据方向">二者至少有其一</td><td data-label="一票否决">是（皆无即否决）</td></tr><tr><td data-label="维度">改造经济性</td><td data-label="观测变量">单套改造造价、工期、非标项占比</td><td data-label="判据方向">越低越好</td><td data-label="一票否决">否（超阈值降级）</td></tr><tr><td data-label="维度">规模效率</td><td data-label="观测变量">单项目套数是否达到运营团队经济性下限</td><td data-label="判据方向">越高越好</td><td data-label="一票否决">否（低于下限降级）</td></tr><tr><td data-label="维度">运营数据可得性</td><td data-label="观测变量">空置率、运营费率、维修更新数据可否采集与审计</td><td data-label="判据方向">可得则加分</td><td data-label="一票否决">否</td></tr></tbody></table></div></figure><p>使用纪律：四项一票否决优先于总分排序，评分卡的功能是筛掉不可行项目，不是在同一批次内排序；每套评分留痕可复核，否则年度化无法审计<span class="tag tag-jud">研判推断</span>。</p><h3><span class="secno">13</span>退出谱系：三条路径的互斥条件</h3><figure class="exhibit"><div class="ex-head"><span class="ex-no">Ex.5</span><span class="ex-title">退出谱系：三条路径的互斥条件</span></div><p class="ex-sub">三条路径各有成立条件，不能同时承诺</p><div class="tblwrap"><table><thead><tr><th>退出路径</th><th>成立条件</th><th>不成立时的后果</th><th>适用边界</th></tr></thead><tbody><tr><td data-label="退出路径">REITs或不动产基金</td><td data-label="成立条件">现金流稳定可预测、资产权属与运营数据可审计、通道对低租金资产开放</td><td data-label="不成立时的后果">无法发行</td><td data-label="适用边界">需先通过筛选标准检验，不可作立项承诺</td></tr><tr><td data-label="退出路径">整售</td><td data-label="成立条件">市场景气与接盘方存在、价格不低于账面</td><td data-label="不成立时的后果">折价出售、损失确认</td><td data-label="适用边界">不宜作为政策项目的默认路径</td></tr><tr><td data-label="退出路径">划转与长期自持</td><td data-label="成立条件">有明确的长期持有主体与预算安排</td><td data-label="不成立时的后果">资产与补贴责任长期挂在国企</td><td data-label="适用边界">需锁定预算科目，否则属隐性挂账</td></tr></tbody></table></div></figure><h3><span class="secno">14</span>全周期模型：五段结构与三项必备输出</h3><figure class="exhibit"><div class="ex-head"><span class="ex-no">Ex.6</span><span class="ex-title">全周期模型：五段结构与口径要求</span></div><p class="ex-sub">购置—改造—运营—持有—退出</p><div class="tblwrap"><table><thead><tr><th>阶段</th><th>变量</th><th>口径要求</th><th>输出用途</th></tr></thead><tbody><tr><td data-label="阶段">① 购置</td><td data-label="变量">收购价、交易税费、尽调与法务费、时间成本</td><td data-label="口径要求">以同板块可比真实成交价为基准，不用挂牌价</td><td data-label="输出用途">资产账起点</td></tr><tr><td data-label="阶段">② 改造</td><td data-label="变量">单套改造造价、工期、合规审批成本、非标附加项</td><td data-label="口径要求">以同类型已完工项目结算价为基准</td><td data-label="输出用途">一次性资本支出</td></tr><tr><td data-label="阶段">③ 运营</td><td data-label="变量">年租金、出租率、运营费率、维护更新率、租金递增假设</td><td data-label="口径要求">出租率与运营费率须来自同一运营主体实测</td><td data-label="输出用途">运营账现金流</td></tr><tr><td data-label="阶段">④ 持有</td><td data-label="变量">资金成本、税费、通胀假设、折旧</td><td data-label="口径要求">资金成本与实际资金结构一致，再贷款、专项债、自筹分列</td><td data-label="输出用途">折现率与年摊</td></tr><tr><td data-label="阶段">⑤ 退出</td><td data-label="变量">退出方式与退出时点</td><td data-label="口径要求">以情景区间表述，不作单点承诺</td><td data-label="输出用途">终值输入</td></tr></tbody></table></div></figure><p>三项必备输出：静态回收期（年）；净现值（按实际资金结构折现）；补贴依赖度＝年度补贴额÷年度总成本<span class="tag tag-jud">研判推断</span>。补贴依赖度是识别真假商业可行性的一眼判据，三项须同时披露，只报回收期不报补贴额视为不完整披露；补贴依赖度难以测算的项目，应判为结构未成立<span class="tag tag-jud">研判推断</span>。</p><h3><span class="secno">15</span>平台可承接／不可承接责任边界</h3><p>可承接：需求清单结构化与轮候匹配、房源准入评分与留痕、可比估值与市场价偏离度测算、改造适配方案与改造单价成本库、运营数据采集与审计留痕、全周期测算与退出情景分析<span class="tag tag-jud">研判推断</span>。</p><p>不可承接：资产持有与资产负债表风险、政策性定价口径、租金或退出兜底承诺、政府预算审批与财力风险、单方面出具合规结论、REITs发行承销<span class="tag tag-jud">研判推断</span>。</p><p>一句话边界：<strong>平台交付可审计的判据，政府与国企承担资产与预算<span class="tag tag-jud">研判推断</span>。</strong></p><p><strong>出具门槛。</strong> 需求清单与现金流口径不公开的项目，不出具评分卡、现金流模型与责任边界清单——无法审计的输入，产出的只能是装饰性评分<span class="tag tag-jud">研判推断</span>。这一条也决定了第三方付费的性质：在制度不成型阶段，付费更可能表现为一次性项目费或数据服务费，而不是年度化的运营服务收入<span class="tag tag-jud">研判推断</span>。</p><h3><span class="secno">16</span>可证伪判据三条与观察指标七项</h3><p>收储具备年度化采购制度基础，须同时满足三条可证伪判据：预租锁定先于收购；审批路径清晰可预期；项目现金流可审计<span class="tag tag-jud">研判推断</span>。任一条不满足，项目就只能靠财政兜底维持。</p><figure class="exhibit"><div class="ex-head"><span class="ex-no">Ex.7</span><span class="ex-title">观察指标七项</span></div><p class="ex-sub">口径不公开项一律不作推测</p><div class="tblwrap"><table><thead><tr><th>序号</th><th>观察指标</th><th>观测口径</th></tr></thead><tbody><tr><td data-label="序号">1</td><td data-label="观察指标">全市年度收购套数与收购金额</td><td data-label="观测口径">官方或决算口径，非报道口径</td></tr><tr><td data-label="序号">2</td><td data-label="观察指标">收购用途结构占比</td><td data-label="观测口径">是否由案例归纳升格为可比统计</td></tr><tr><td data-label="序号">3</td><td data-label="观察指标">单套改造成本与改造周期</td><td data-label="观测口径">同类型已完工项目结算均值</td></tr><tr><td data-label="序号">4</td><td data-label="观察指标">负carry的实际承担方与预算科目</td><td data-label="观测口径">补贴是否进预算、是否与项目一一对应</td></tr><tr><td data-label="序号">5</td><td data-label="观察指标">需求主体签约率与入住率</td><td data-label="观测口径">床位型单列</td></tr><tr><td data-label="序号">6</td><td data-label="观察指标">地方国企自建与委托第三方比例及付费方式</td><td data-label="观测口径">年度化服务费与一次性项目费分别统计</td></tr><tr><td data-label="序号">7</td><td data-label="观察指标">REITs或不动产基金通道的实际发行数量</td><td data-label="观测口径">具体数字待核实</td></tr></tbody></table></div></figure><h3><span class="secno">17</span>未来12个月三情景</h3><figure class="exhibit"><div class="ex-head"><span class="ex-no">Ex.8</span><span class="ex-title">未来12个月三情景</span></div><p class="ex-sub">基准最可能；乐观与风险为条件情景</p><div class="tblwrap"><table><thead><tr><th>情景</th><th>触发条件</th><th>结果特征</th><th>性质</th></tr></thead><tbody><tr><td data-label="情景">基准（最可能）</td><td data-label="触发条件">用途继续扩围，采购仍逐单推进</td><td data-label="结果特征">高校宿舍与医疗养老维持点状，收储对年度销售贡献有限</td><td data-label="性质"><span class="tag tag-jud">研判推断</span></td></tr><tr><td data-label="情景">乐观</td><td data-label="触发条件">出现首个把需求清单与采购合约同时公开的城市</td><td data-label="结果特征">准入标准可复制，收储进入常规年度安排</td><td data-label="性质"><span class="tag tag-jud">研判推断</span></td></tr><tr><td data-label="情景">风险</td><td data-label="触发条件">地方财力约束下补贴难进预算科目</td><td data-label="结果特征">部分项目从收购退回代管，第三方付费空间被压扁</td><td data-label="性质"><span class="tag tag-jud">研判推断</span></td></tr></tbody></table></div></figure><p>先行指标五项：地方年度住房计划中的收储量表述是否由"推动"变为"采购＋套数"；专项债与再贷款投放是否对应具体房源清单；项目空置率是否下降；收储两本账是否公开；改造结算单价与运营费率是否形成可查口径。五项中出现三项以上给出明确口径，第二档判断即应重估<span class="tag tag-jud">研判推断</span>。</p><h3><span class="secno">18</span>不确定性</h3><p>用途比例来源层级不足，据此推导的规模测算只能视为方向性判断。实物规模不透明：2026年实际收购的决算规模与套数是否可查，是判断制度是否成立的硬证据，口径不公开时任何年度化判断都只能停留在推测。付费空间不确定：地方国企有能力自建团队，第三方平台能否获得足够空间，取决于能否提供内部无法形成的审计独立性；若收储退化为纯财政补贴维持的安置行为，平台服务市场会明显小于预期。改造结算单价、运营费率、空置率、租金水平、各城市收储落地套数等绝对值，公开渠道口径不一，具体数字需核实；郑州、杭州、武汉的分城市用途构成与收购决算数据暂缺，本稿不以推测替代证据。</p><p><strong>数据来源</strong>：中房网（2026-05-20）、吴晓波频道/新浪财经（2026-08-20）、腾讯新闻（2026-09-09）、深圳市住建局（2026-04-30）、中国政府网（2026-03-05）、中国人民银行（2025-01-02）、新浪财经（2026-05-26）。</p></section>
+
+<section class="chapter" id="src">
+  <div class="chapter-head"><h2><span class="chapno">附录</span>数据来源与口径</h2></div>
+  <p><strong>数据来源：</strong>中房网（2026-05-20）、吴晓波频道/新浪财经（2026-08-20）、腾讯新闻（2026-09-09）、深圳市住建局（2026-04-30）、中国政府网（2026-03-05）、中国人民银行（2025-01-02）、新浪财经（2026-05-26）。</p>
+  <p><strong>口径提示：</strong>保租房约50%、人才房与青年公寓约20%、学生宿舍等新用途约5%，均为公开案例归纳，非统一统计口径，只有分子没有分母，不可加总为全国结构、不可用于推算全国规模。深圳大学5.336亿元为披露金额口径，床位与单套折算待补；单路采购意向口径约5.3亿元。单床购置成本约35.6万元、单位面积购置成本约0.24万元／平方米均为依据在案数据<span class="tag tag-calc">测算</span>。上海551套为徐汇、浦东、静安三试点区累计收房口径。中国人民银行保障性住房再贷款支持比例调整的具体比例<span class="tag tag-todo">待补</span>。</p>
+  <div class="colophon">
+    <span><b>版本</b> 正式稿 · 制度设计</span>
+    <span><b>证据窗</b> 2025-09 — 2026-09</span>
+    <span><b>区域</b> 全国（五城案例对比）</span>
+    <span><b>标注体系</b> 引用 / 测算 / 估算 / 研判推断 / 待补</span>
+    <span><b>版式</b> 审计账本式纸墨 · 发丝线账册对开</span>
+  </div>
+</section>
+
+<div class="backcover">
+  <p class="bq">用途扩围改变的是<em>需求池的口径</em>，不改变<em>谁付钱、多久回本</em>。<br>
+    平台交付可审计的判据，政府与国企承担资产与预算。</p>
+  <div class="meta">
+    <div><b>版本</b>　正式稿 · 制度设计 ｜ 证据窗 2025-09 — 2026-09</div>
+    <div><b>数据口径</b>　中房网、吴晓波频道／新浪财经、腾讯新闻、中国政府网、深圳市住建局、中国人民银行、新浪财经</div>
+    <div><b>标注体系</b>　引用 · 测算 · 估算 · 研判推断 · 待补</div>
+  </div>
+  <div class="disclaim">行业研究，不构成投资建议；文中测算、估算与研判推断均非官方统计。案例归纳数字不可作为全国总量或官方口径引用。</div>
+</div>
+
+</div>
+</body>
+</html>

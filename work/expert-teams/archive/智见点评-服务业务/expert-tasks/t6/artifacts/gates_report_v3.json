@@ -1,0 +1,121 @@
+{
+ "gates": {
+  "G1_text": {
+   "forbidden_hits": [],
+   "pass": true
+  },
+  "G2_numbers": {
+   "new_in_html": [],
+   "new_in_pptx": [],
+   "pass": true
+  },
+  "G3_design": {
+   "detector_p0": 0,
+   "detector_findings": [],
+   "viewports_failing": [],
+   "viewports_tested": 9,
+   "axis_labels": 2,
+   "pass": true
+  },
+  "G4_ppt": {
+   "summary": {
+    "error": 0,
+    "warning": 0,
+    "not_checked": 1
+   },
+   "slides": 18,
+   "notes_on_all": true,
+   "pass": true
+  },
+  "G5_pdf": {
+   "pages": 14,
+   "content_box_violations": 0,
+   "tables_single_page": {
+    "表1 八段成本树": {
+     "rows_expected": 8,
+     "max_rows_on_one_page": 8,
+     "page": 6,
+     "intact": true
+    },
+    "表2 责任边界矩阵": {
+     "rows_expected": 3,
+     "max_rows_on_one_page": 3,
+     "page": 8,
+     "intact": true
+    },
+    "表3 三类场景": {
+     "rows_expected": 3,
+     "max_rows_on_one_page": 3,
+     "page": 9,
+     "intact": true
+    },
+    "表4 Q1—Q5 预言": {
+     "rows_expected": 3,
+     "max_rows_on_one_page": 3,
+     "page": 10,
+     "intact": true
+    },
+    "表5 观察面板": {
+     "rows_expected": 10,
+     "max_rows_on_one_page": 10,
+     "page": 11,
+     "intact": true
+    }
+   },
+   "tables_intact": true,
+   "footer_on_body_pages": true,
+   "cover_unfooted": true,
+   "back_unfooted": true,
+   "rasterized_pages": 14,
+   "pass": true
+  }
+ },
+ "artifacts": {
+  "AI无佣与人机协同_正式稿_v3.md": {
+   "sha256": "f528f648ff25e021d57db6df6dc0fd10bb382f21d4aa992e7cd3d7441612a67a",
+   "bytes": 19668
+  },
+  "AI无佣与人机协同_正式稿_v3.html": {
+   "sha256": "212d30d8ffe90837cf678525d673bf5f60879c8cfc938b588e5f63a690e5936b",
+   "bytes": 72265
+  },
+  "AI无佣与人机协同_正式稿_v3.pdf": {
+   "sha256": "4e0925070626e7c6dea586ff7747a245b68c5fb3c6491ff083d28153d57b56d2",
+   "bytes": 1212091
+  },
+  "AI无佣与人机协同_汇报版_v3.pptx": {
+   "sha256": "c56a8e0f32442320b714c33b5387b65a4d0d8ec78c952385894a0319b460af85",
+   "bytes": 107105
+  },
+  "build_deck_v3.py": {
+   "sha256": "4c7716388dc5ff73534749e74cbfb74a4902b0d3c3057610c0558cb8c71b15c4",
+   "bytes": 43651
+  },
+  "gates_v3.py": {
+   "sha256": "c4ea095874141527d8670bf6116ff2c53fc3144a3be33b597ed4c79942e342ed",
+   "bytes": 8610
+  }
+ },
+ "design": {
+  "exhibits": {
+   "表1 八段成本树行数": 8,
+   "表2 责任边界矩阵行数": 3,
+   "表3 三类场景行数": 3,
+   "表4 Q1-Q5 预言表行数": 5,
+   "表5 观察面板行数": 10,
+   "责任链条断点数": 13,
+   "三重剥离条数": 3,
+   "编号图卡数": 1,
+   "柱状图轴标签数": 2,
+   "未采用数字留痕条目": 1
+  },
+  "exhibit_gate_pass": true,
+  "ledger_tokens": {
+   "page": "#ECEFF5",
+   "card": "#FBFCFE",
+   "accent_cobalt": "#1B3A6B",
+   "gold": "#A9741F"
+  }
+ },
+ "all_pass": true
+}

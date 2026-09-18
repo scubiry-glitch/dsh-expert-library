@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"metrics\":[{\"code\":\"M0001440\",\"name\":\"中国:社会消费品零售总额:累计同比\",\"unit\":\"%\",\"source\":\"国家统计局\",\"updateDate\":\"20260817\",\"freq\":\"月\"},{\"code\":\"M5405529\",\"name\":\"中国:社会消费品零售总额:名义同比\",\"unit\":\"%\",\"source\":\"国家统计局\",\"updateDate\":\"20260119\",\"freq\":\"年\"}]}"
+    }
+  ],
+  "isError": false,
+  "cli_meta": {
+    "schema_version": "1.0",
+    "server_type": "economic_data",
+    "tool_name": "search_economic_indicator",
+    "completeness": "not_asserted",
+    "tables": [],
+    "warnings": []
+  }
+}

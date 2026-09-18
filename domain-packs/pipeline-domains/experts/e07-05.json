@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "张华",
-    "publicLabel": "张华",
-    "initials": "张"
+    "internalName": "智能参谋",
+    "publicLabel": "智能参谋",
+    "initials": "Z"
   },
   "domains": [
     "realestate.general"

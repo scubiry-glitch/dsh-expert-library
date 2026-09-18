@@ -50,7 +50,7 @@ const ROSTER_HEADER = /^### \d+\. (.+?)（\d+ 位）$|^### \d+\. (.+?)$/
  * Expert id in any supported namespace:
  * - `BK-NNN`    房地产/宏观/政策 roster
  * - `BANK-NNN`  银行金融 roster
- * - `S-NNN`     pipeline 特级专家（巴菲特/乔布斯/Karpathy…）
+ * - `S-NNN`     pipeline 特级专家（复利老爷子/现实扭曲大师/Karpathy…）
  * - `E<域>-<号>` pipeline 行业专家（E08=房地产、E01=宏观经济、E13=江苏银行…）
  * - `XHS-NNN`   pipeline 小红书运营
  * All namespaces share the same meta shape, registry merge point and routing
@@ -58,7 +58,7 @@ const ROSTER_HEADER = /^### \d+\. (.+?)（\d+ 位）$|^### \d+\. (.+?)$/
  */
 const EXPERT_ALT = '(?:BK-\\d+|BANK-\\d+|S-\\d+|E\\d+-[\\w-]+|XHS-\\d+)'
 
-/** Roster data row: `| BK-004 | 邢自强 | 宏观周期派 X 首席 | … |` (any namespace). */
+/** Roster data row: `| BK-004 | 周期班长 | 宏观周期派 X 首席 | … |` (any namespace). */
 const ROSTER_ROW = new RegExp(`^\\| (${EXPERT_ALT}) \\| ([^|]+) \\| ([^|]+) \\| ([^|]*) \\| ([^|]*) \\| ([^|]*) \\| ([^|]*) \\|$`)
 
 /** Flattened Profile file name: `<真实姓名>_专家Profile_BK-NNN.json` (any namespace). */
@@ -487,7 +487,7 @@ function extractMethodDetail(p) {
 
   const reviewLens = method.reviewLens
   if (typeof reviewLens === 'string' && reviewLens !== '') {
-    // 陈杰 BK-034 carries reviewLens as a plain string — keep it verbatim.
+    // 格物讲师 BK-034 carries reviewLens as a plain string — keep it verbatim.
     out.reviewLens = reviewLens
   } else if (isRecord(reviewLens)) {
     const r = {}

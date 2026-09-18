@@ -1,0 +1,81 @@
+{
+  "id": "zhijian-bluegold",
+  "label": "深蓝金 · 智见机会扫描",
+  "style": {
+    "id": "zhijian-bluegold",
+    "colors": {
+      "bg": "#F7F9FC",
+      "surface": "#FFFFFF",
+      "panel": "#EEF3FB",
+      "primary": "#2D5BD8",
+      "accent": "#C98A2E",
+      "text": "#182A4E",
+      "muted": "#5C6A85",
+      "border": "#D9E1F0",
+      "cardStroke": "#C7D4EE",
+      "chartPalette": [
+        "#2D5BD8",
+        "#C98A2E",
+        "#8AA4E4",
+        "#96702A"
+      ],
+      "accentPool": [
+        "#C98A2E",
+        "#2D5BD8",
+        "#96702A",
+        "#8AA4E4"
+      ]
+    },
+    "fonts": {
+      "heading": [
+        "PingFang SC",
+        "Microsoft YaHei",
+        "Noto Sans SC",
+        "sans-serif"
+      ],
+      "body": [
+        "PingFang SC",
+        "Microsoft YaHei",
+        "Noto Sans SC",
+        "sans-serif"
+      ],
+      "mono": [
+        "SF Mono",
+        "Menlo",
+        "monospace"
+      ]
+    },
+    "shape": {
+      "radius": 6,
+      "gapScale": 1.0
+    },
+    "defaultBackgrounds": {
+      "cover": {
+        "kind": "gradient",
+        "from": "#F5F8FD",
+        "to": "#E7EEFA",
+        "direction": "diagonal"
+      },
+      "chapter": {
+        "kind": "color",
+        "value": "#EEF3FB"
+      },
+      "content": {
+        "kind": "color",
+        "value": "#F7F9FC"
+      },
+      "ending": {
+        "kind": "gradient",
+        "from": "#F5F8FD",
+        "to": "#E7EEFA",
+        "direction": "diagonal"
+      }
+    }
+  },
+  "tags": [
+    "deep-blue",
+    "gold",
+    "product",
+    "restrained"
+  ]
+}

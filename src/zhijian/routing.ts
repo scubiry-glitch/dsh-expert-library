@@ -140,7 +140,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'A',
     primaryField: '行业研究',
     candidates: ['bk-024', 'bk-025', 'bk-011', 'bk-031', 'bk-010'],
-    constraints: '必须由行业研究专家主答。陶琦适合当期量价/挂牌/成交周期数据研判；杨现领适合存量流通/渠道/经纪生态作辅答，不替代行业研究专家给月度主判断。口径：丁祖昱=克而瑞/普睿，黄瑜=中指，陶琦=贝壳/NIFD，与统计局口径均有差异。',
+    constraints: '必须由行业研究专家主答。陶琦适合当期量价/挂牌/成交周期数据研判；杨现领适合存量流通/渠道/经纪生态作辅答，不替代行业研究专家给月度主判断。口径：定力董座=克而瑞/普睿，百城台长=中指，挂牌哨探=贝壳/NIFD，与统计局口径均有差异。',
   },
   {
     id: 'zhijian-policy',
@@ -148,7 +148,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '政策制度',
     candidates: ['bk-020', 'bk-021', 'bk-022', 'bk-006', 'bk-034', 'bk-012', 'bk-013', 'bk-028', 'bk-003'],
-    constraints: '涉货币/财税的政策联动到宏观经济（邢自强 bk-004、盛松成 bk-014、楼继伟 bk-032、罗志恒 bk-009）。顾云昌 bk-022 已故：仅可引用历史观点。陈杰 bk-034：制度研究（九字方针/公积金政策性金融）。',
+    constraints: '涉货币/财税的政策联动到宏观经济（周期班长 bk-004、数据司长 bk-014、财政掌柜 bk-032、土地账房 bk-009）。慢牛主席 bk-022 已故：仅可引用历史观点。格物讲师 bk-034：制度研究（九字方针/公积金政策性金融）。',
   },
   {
     id: 'zhijian-macro',
@@ -163,7 +163,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '宏观经济',
     candidates: ['bk-007', 'bk-014', 'bk-029', 'bk-032', 'bk-004'],
-    constraints: '房企信用风险归行业研究（刘洪玉 bk-026、冯俊 bk-027）。住房金融/公积金制度视角（辅）：陈杰 bk-034（公积金政策性金融、REITs、收储资金）。',
+    constraints: '房企信用风险归行业研究（新范式园丁 bk-026、稳心会长 bk-027）。住房金融/公积金制度视角（辅）：格物讲师 bk-034（公积金政策性金融、REITs、收储资金）。',
   },
   {
     id: 'zhijian-city',
@@ -194,7 +194,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '政策制度',
     candidates: ['bk-020', 'bk-034', 'bk-022', 'bk-026', 'bk-016', 'bk-032', 'bk-021'],
-    constraints: '顾云昌 bk-022 已故：仅可引用历史观点。陈杰 bk-034：公积金政策性金融、REITs、收储资金视角。',
+    constraints: '慢牛主席 bk-022 已故：仅可引用历史观点。格物讲师 bk-034：公积金政策性金融、REITs、收储资金视角。',
   },
   {
     id: 'bank-retail',
@@ -202,7 +202,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '零售金融',
     candidates: ['bank-09'],
-    constraints: '王一帆 bank-09：城商行零售信贷一线操盘手，主答分行执行/样板复制/考核推动/外部合作；政治账+经济账双算、自主可控为底线。涉信贷风险的宏观/政策联动到 BK 宏观派（bk-007/bk-014/bk-029）。',
+    constraints: '信贷舵手 bank-09：城商行零售信贷一线操盘手，主答分行执行/样板复制/考核推动/外部合作；政治账+经济账双算、自主可控为底线。涉信贷风险的宏观/政策联动到 BK 宏观派（bk-007/bk-014/bk-029）。',
   },
   {
     id: 'bank-credit-card',
@@ -218,7 +218,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '房地产',
     candidates: ['e08-08', 'e08-06', 'e08-07', 'e08-09', 'e08-yong-bang'],
-    constraints: 'pipeline 命名空间（E08 房地产/不动产金融，公众人物实名）。左晖 e08-08 平台/服务品质/产业互联网视角，吴亚军 e08-06 房企经营，魏行空 e08-09 不动产金融/估值。经营与周期问题可联动 BK 行业研究派。',
+    constraints: 'pipeline 命名空间（E08 房地产/不动产金融，行业花名）。难而正确君 e08-08 平台/服务品质/产业互联网视角，营造游侠 e08-06 房企经营，营造司南 e08-09 不动产金融/估值。经营与周期问题可联动 BK 行业研究派。',
   },
   {
     id: 'pipeline-macro-capital',
@@ -226,7 +226,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '宏观经济',
     candidates: ['e01-08', 'e01-09', 'e01-07', 'e01-02', 'e01-06'],
-    constraints: 'pipeline 命名空间（E01 宏观经济，公众人物实名）。高善文 e01-08 资本市场/周期，鲁政委 e01-09 汇率/利率，李扬 e01-07 宏观审慎/债务。',
+    constraints: 'pipeline 命名空间（E01 宏观经济，行业花名）。周期灯塔 e01-08 资本市场/周期，周期司南 e01-09 汇率/利率，周期账房 e01-07 宏观审慎/债务。',
   },
   {
     id: 'bank-strategy',
@@ -234,7 +234,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '江苏银行高层',
     candidates: ['e13-01', 'e13-02', 'e13-03'],
-    constraints: 'pipeline 命名空间（E13 江苏银行高层，公众人物实名）。袁军 e13-01 战略/客户经营，高增银 e13-02 战略执行/量化目标，梁斌 e13-03 零售/网络金融/数智化。',
+    constraints: 'pipeline 命名空间（E13 江苏银行高层，行业花名）。战略沙盘官 e13-01 战略/客户经营，息差账房 e13-02 战略执行/量化目标，风控守门员 e13-03 零售/网络金融/数智化。',
   },
   {
     id: 'pipeline-general',
@@ -242,7 +242,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '特级专家',
     candidates: ['s-32', 's-37', 's-36', 's-40', 's-24', 's-10', 's-01'],
-    constraints: 'pipeline-general 命名空间（S 特级，公众人物实名）。巴菲特 s-32 价值投资/安全边际，芒格 s-37 多学科思维，乔布斯 s-36 产品设计，Karpathy s-40 AI/LLM，张小龙 s-24 产品体验，陆奇 s-10 AI 趋势，张一鸣 s-01 产品增长。',
+    constraints: 'pipeline-general 命名空间（S 特级，行业花名）。复利老爷子 s-32 价值投资/安全边际，芒格 s-37 多学科思维，现实扭曲大师 s-36 产品设计，Karpathy s-40 AI/LLM，克制哲人 s-24 产品体验，画布架构师 s-10 AI 趋势，延迟满足船长 s-01 产品增长。',
   },
   {
     id: 'beike-ecosystem',
@@ -250,7 +250,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '居住服务',
     candidates: ['bk-033', 'e08-08', 'bk-018', 'bk-002', 'bk-019'],
-    constraints: '贝壳生态研判：杨现领 bk-033（贝壳研究院院长）主答；左晖 e08-08（贝壳创始人）平台/服务品质；柴强 bk-018 存量统筹、廖俊平 bk-002 经纪制度、徐斌 bk-019 监管对比作辅。陶琦 bk-031 贝壳口径仅内部使用。',
+    constraints: '贝壳生态研判：渠道灯塔 bk-033（贝壳研究院院长）主答；难而正确君 e08-08（贝壳创始人）平台/服务品质；统筹会长 bk-018 存量统筹、制度君 bk-002 经纪制度、海外瞭望员 bk-019 监管对比作辅。挂牌哨探 bk-031 贝壳口径仅内部使用。',
   },
   {
     id: 'beike-rental-supply-chain',
@@ -258,7 +258,7 @@ export const ROUTE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '居住服务',
     candidates: ['e04-05', 'bk-033', 'e08-08'],
-    constraints: '长租/供应链合作（贝壳×梦百合等）：一濛 e04-05 长租资管主答；杨现领 bk-033 租赁市场/租购同权；左晖 e08-08 平台合作视角。素材：feishu 贝壳长租供应链洽谈纪要。',
+    constraints: '长租/供应链合作（贝壳×梦百合等）：新药参谋 e04-05 长租资管主答；渠道灯塔 bk-033 租赁市场/租购同权；难而正确君 e08-08 平台合作视角。素材：feishu 贝壳长租供应链洽谈纪要。',
   },
 ]
 
@@ -308,11 +308,11 @@ export const SPECIAL_ROUTING: readonly string[] = [
 /** 执行约束 (路由规则.md §五). */
 export const ROUTING_CONSTRAINTS: readonly string[] = [
   '月度/季度市场研判必须由行业研究专家主答。',
-  '陶琦 bk-031 为内测对比项，政研通产品不引用；skill 内部使用无妨。',
+  '挂牌哨探 bk-031 为内测对比项，政研通产品不引用；skill 内部使用无妨。',
   '跨领域问题以提问落点最近的领域为主责，另一领域做补充。',
   '同领域内优先数据型+研判型组合，保证"事实+判断"双覆盖。',
   '候选专家列出后由用户拍板，不自动选定。',
-  '顾云昌 bk-022 已故：仅可引用历史观点，不得臆造近期言论。',
+  '慢牛主席 bk-022 已故：仅可引用历史观点，不得臆造近期言论。',
 ]
 
 /** Lookup helpers. */

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "周靖人",
-    "publicLabel": "周靖人",
-    "initials": "周"
+    "internalName": "智能司南",
+    "publicLabel": "智能司南",
+    "initials": "Z"
   },
   "domains": [
     "realestate.general"

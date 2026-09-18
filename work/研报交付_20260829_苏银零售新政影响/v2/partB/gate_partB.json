@@ -1,0 +1,482 @@
+{
+  "type": "Part B 主文",
+  "version": "v2",
+  "standard": "wiki-gated-research · 99wiki 分型验收（Part B 验收器，改造自 v1 partB/gate_partB.py）",
+  "generated_at": "2026-08-30T01:35:08",
+  "deliverable": {
+    "html": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/主文.html",
+    "pdf": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/主文.pdf",
+    "gate": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/gate_partB.json",
+    "shots": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/shots"
+  },
+  "page_count_plan": "14 页（在 10-14 页范围内）：P01 封面（4 KPI，封面豁免正文视觉对象）+ P02-P13 正文 12 页（传导总图 v2 权重列 / 双口径底数 / 同业对照 / 战略双引擎 / 客群三主线 / 产品 / 资产层上·收益动量缺口与久期 / 信用卡专项与周度轨迹（V16 轨迹 / V17 EVA 对照 / V18 五要点）/ 风险六闸门 / 区域证据政研通量价 / 行动建议 / 观察指标与补数协议）+ P14 尾页来源披露",
+  "page_count_html": 14,
+  "page_count_pdf": 14,
+  "html_sha256": "c2527e84539df8b89e8f2ff2b27f866a34d4127ee168c188bcf23aff117b77e0",
+  "pdf_sha256": "05a0d53061f45c38b5d2761ac7b64aecb92835933dd7e9e7a3836a122d011fa4",
+  "last_render": {
+    "time": "2026-08-30T01:35:01",
+    "method": "weasyprint 69.0 · A4 portrait · source=主文.html @media print（本次验收重新生成）"
+  },
+  "dom_checks": {
+    "engine": "playwright Chromium, viewport 1440x1200, file:// 加载后 DOM 检查（未用正则判嵌套）",
+    "nested_p_count": 0,
+    "js_errors": [],
+    "console_errors": [],
+    "horizontal_overflow": false,
+    "vertical_overflow_pages": [],
+    "footer_uniform": true,
+    "old_signature_hits": [],
+    "placeholder_hits": [],
+    "duplicate_blocks": []
+  },
+  "visuals_per_page": [
+    {
+      "page": 1,
+      "role": "cover",
+      "visuals": 1,
+      "tables": 0,
+      "svg": 0,
+      "mech": 0,
+      "chart": 0,
+      "hbar": 0,
+      "cover_exempt": true,
+      "pass": true
+    },
+    {
+      "page": 2,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 0,
+      "mech": 1,
+      "chart": 0,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 3,
+      "role": "body",
+      "visuals": 3,
+      "tables": 2,
+      "svg": 0,
+      "mech": 0,
+      "chart": 0,
+      "hbar": 3,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 4,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 0,
+      "mech": 0,
+      "chart": 1,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 5,
+      "role": "body",
+      "visuals": 3,
+      "tables": 1,
+      "svg": 0,
+      "mech": 1,
+      "chart": 1,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 6,
+      "role": "body",
+      "visuals": 1,
+      "tables": 0,
+      "svg": 0,
+      "mech": 3,
+      "chart": 0,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 7,
+      "role": "body",
+      "visuals": 2,
+      "tables": 0,
+      "svg": 0,
+      "mech": 1,
+      "chart": 1,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 8,
+      "role": "body",
+      "visuals": 2,
+      "tables": 0,
+      "svg": 0,
+      "mech": 0,
+      "chart": 1,
+      "hbar": 5,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 9,
+      "role": "body",
+      "visuals": 3,
+      "tables": 1,
+      "svg": 1,
+      "mech": 0,
+      "chart": 1,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 10,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 0,
+      "mech": 0,
+      "chart": 0,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 11,
+      "role": "body",
+      "visuals": 3,
+      "tables": 1,
+      "svg": 1,
+      "mech": 0,
+      "chart": 1,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 12,
+      "role": "body",
+      "visuals": 1,
+      "tables": 0,
+      "svg": 0,
+      "mech": 0,
+      "chart": 0,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 13,
+      "role": "body",
+      "visuals": 2,
+      "tables": 2,
+      "svg": 0,
+      "mech": 0,
+      "chart": 0,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 14,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 0,
+      "mech": 1,
+      "chart": 0,
+      "hbar": 0,
+      "cover_exempt": false,
+      "pass": true
+    }
+  ],
+  "body_cjk_chars": {
+    "total_incl_cover": 14577,
+    "excluding_cover": 13919,
+    "excluding_cover_and_footer(报告口径)": 13815,
+    "threshold": 10000
+  },
+  "screenshots": {
+    "wide": [
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/shots/wide_p01.png",
+        "page": 1,
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无横向/纵向溢出、视觉对象计数通过）"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/shots/wide_p08.png",
+        "page": 8,
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无横向/纵向溢出、视觉对象计数通过）"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/shots/wide_p14.png",
+        "page": 14,
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无横向/纵向溢出、视觉对象计数通过）"
+      }
+    ],
+    "a4": [
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/shots/a4_p01.png",
+        "page": 1,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/shots/a4_p08.png",
+        "page": 8,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/v2/partB/shots/a4_p14.png",
+        "page": 14,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出"
+      }
+    ],
+    "method_note": "本机渲染模型无图像输入通道（read_image 不可用），按纪律以 DOM 几何审计 + 截图存档替代目检并在此注明；截图已生成可供人工复核"
+  },
+  "visual_qa_substitute": {
+    "note": "无图像输入 → DOM 几何深审计替代目检",
+    "element_escape_count": 0,
+    "escapes": [],
+    "barcode_chart_issues": [],
+    "banned_styles": [],
+    "chart_height_ratios": [
+      {
+        "page": 4,
+        "chart": 0,
+        "declared": [
+          100,
+          87.6,
+          63.7,
+          57,
+          49.2
+        ],
+        "rendered": [
+          100,
+          87.6,
+          63.7,
+          57,
+          49.2
+        ],
+        "labels": [
+          "41.9%江苏银行2,330 亿 ·",
+          "36.7%南京银行887 亿",
+          "26.7%北京银行1,809 亿",
+          "23.9%宁波银行922 亿",
+          "20.6%上海银行673 亿"
+        ]
+      },
+      {
+        "page": 5,
+        "chart": 0,
+        "declared": [
+          100,
+          17.5,
+          4.7,
+          4.4
+        ],
+        "rendered": [
+          100,
+          17.5,
+          4.7,
+          4.4
+        ],
+        "labels": [
+          "57.2 亿网贷占比 79.0% ·",
+          "10.0 亿房贷占比 13.8% ·",
+          "2.7 亿自营消费贷占比 3.7%",
+          "2.5 亿卡类 + 经营贷合计占比 "
+        ]
+      },
+      {
+        "page": 7,
+        "chart": 0,
+        "declared": [
+          100,
+          85.1,
+          72,
+          100
+        ],
+        "rendered": [
+          100,
+          85.1,
+          72,
+          100
+        ],
+        "labels": [
+          "4,247 元月供 · 30 年期基",
+          "3,614 元月供 · 40 年期降",
+          "52.9 万总利息 · 30 年期基",
+          "73.5 万总利息 · 40 年期升"
+        ]
+      },
+      {
+        "page": 8,
+        "chart": 0,
+        "declared": [
+          2.2,
+          10.1,
+          46,
+          28.3,
+          4.6
+        ],
+        "rendered": [
+          2.2,
+          10.1,
+          46,
+          28.3,
+          4.6
+        ],
+        "labels": [
+          "+4.66 亿房贷超额 · 安全垫最",
+          "+21.18 亿信用卡超额 · 实为",
+          "-96.36 亿自营消费贷缺口主体",
+          "-59.23 亿网贷缺口主体",
+          "-9.74 亿经营贷缺口"
+        ]
+      },
+      {
+        "page": 9,
+        "chart": 0,
+        "declared": [
+          3,
+          14.3,
+          1.3,
+          44.8,
+          46,
+          9.4,
+          0.6
+        ],
+        "rendered": [
+          3,
+          14.3,
+          1.3,
+          44.8,
+          46,
+          9.4,
+          0.6
+        ],
+        "labels": [
+          "+0.19%个贷合计同比 -0.14",
+          "+0.91%网贷唯一正主力 · 同比",
+          "-0.08%房贷同比 -0.11",
+          "-2.85%信用卡同比再恶化 -0.",
+          "-2.93%卡部随e贷同比改善 +1",
+          "-0.60%自营消费贷同比 +0.0",
+          "-0.04%经营贷同比 -0.55"
+        ]
+      },
+      {
+        "page": 11,
+        "chart": 0,
+        "declared": [
+          100,
+          72.5,
+          26.3,
+          34.3
+        ],
+        "rendered": [
+          100,
+          72.5,
+          26.3,
+          34.3
+        ],
+        "labels": [
+          "+23.6%2026-03小阳春 ·",
+          "+17.1%2026-04同比连续为",
+          "+6.2%2026-05涨幅收窄但仍",
+          "+8.1%2026-06小幅回升"
+        ]
+      }
+    ],
+    "pdf_text_block_overflow": []
+  },
+  "checks": [
+    {
+      "item": "页数计划（10-14 页范围，计划=14 页）",
+      "pass": true,
+      "detail": "HTML .page = 14；PDF 页数 = 14；计划=14 页"
+    },
+    {
+      "item": "nested_p_count == 0（DOM 标准，禁正则判嵌套）",
+      "pass": true,
+      "detail": "0"
+    },
+    {
+      "item": "无 JS 错误",
+      "pass": true,
+      "detail": "pageerror=[]; console.error=[]"
+    },
+    {
+      "item": "除封面每页 ≥1 主题视觉对象（封面豁免并显式记录）",
+      "pass": true,
+      "detail": "P01(cover):visual=1(✓豁免); P02(body):visual=2(); P03(body):visual=3(); P04(body):visual=2(); P05(body):visual=3(); P06(body):visual=1(); P07(body):visual=2(); P08(body):visual=2(); P09(body):visual=3(); P10(body):visual=2(); P11(body):visual=3(); P12(body):visual=1(); P13(body):visual=2(); P14(body):visual=2()"
+    },
+    {
+      "item": "页脚统一署名（每页）",
+      "pass": true,
+      "detail": "署名='98wiki ｜ 智见 / 行业研究报告' 全 14 页"
+    },
+    {
+      "item": "无旧署名（政研通研究院）",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "item": "无占位句/占位符",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "item": "无重复块（>40 字符文本级 DOM 精确重复）",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "item": "页面无横向溢出（DOM）",
+      "pass": true,
+      "detail": "body scrollW=1440 winW=1440"
+    },
+    {
+      "item": "页面无纵向溢出（DOM，宽屏 1754px 页框）",
+      "pass": true,
+      "detail": "全部通过"
+    },
+    {
+      "item": "正文中文字符 ≥10000（不含封面与页脚）",
+      "pass": true,
+      "detail": "13815"
+    },
+    {
+      "item": "PDF 页数与页级骨架一致（14）",
+      "pass": true,
+      "detail": "PDF=14 HTML=14"
+    },
+    {
+      "item": "几何深审计：无越界元素 / 无 barcode 图 / 无禁用样式",
+      "pass": true,
+      "detail": "escapes=0 barcode=[] banned=[]"
+    },
+    {
+      "item": "A4 PDF 无文本块越界",
+      "pass": true,
+      "detail": "[]"
+    }
+  ],
+  "result": "PASS"
+}

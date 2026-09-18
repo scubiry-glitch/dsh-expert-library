@@ -1,0 +1,293 @@
+{
+  "version": "2",
+  "filename": "20260916_贝壳生态与居住服务_融合研判_正式稿",
+  "theme": { "id": "academic", "override": { "primary": "#10605A", "accent": "#9A6B22" } },
+  "meta": {
+    "organization": "智见点评 · 98wiki",
+    "date": "2026-09-16",
+    "version": "正式稿 v1",
+    "confidentiality": "internal",
+    "copyright": "98wiki ｜ 智见 / 行业研究报告"
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "heading": "结构迁移，而非景气反转",
+      "subheading": "贝壳生态与居住服务 ｜ 融合研判（正式稿）",
+      "footnote": "证据窗 2025-09 至 2026-09 · 全国口径 · 4 位专家研判融合"
+    },
+    { "type": "chapter", "heading": "核心结论与口径纪律" },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "一句话立场",
+      "subheading": "两条判断必须同句出现",
+      "blocks": [
+        { "type": "verdict_banner", "tone": "warning", "icon": "target", "text": "卖方上调定价的是结构迁移，不是景气反转。" },
+        { "type": "bullets", "style": "default", "items": [
+          "已发生：相对受益的定价（Alpha 重定价），资本端先行",
+          "未发生：行业总盘的利润扩张（Beta 反转）",
+          "贝壳拿到相对同业的净受益权，不是绝对增长权"
+        ] },
+        { "type": "callout", "variant": "info", "icon": "activity", "text": "证伪线与兑现线是同一条：调整后净利能否在 GTV 下行中仍增长。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "三条口径纪律",
+      "subheading": "未完成前不得升格",
+      "blocks": [
+        { "type": "insight_panel", "title": "口径纪律", "rows": [
+          { "label": "① GTV 口径", "text": "含撮合口径 ≠ 净收入，必须标明 take rate" },
+          { "label": "② 利润率口径", "text": "14.6% / +8.5pct 属媒体转述口径，待复核" },
+          { "label": "③ 受益性质", "text": "净受益是相对概念，份额与利润可同时分化" }
+        ], "footnote": "数据缺口声明：当期全国成交数据不可得，本文仅给框架与方向。" },
+        { "type": "verdict_banner", "tone": "neutral", "icon": "circle-alert", "text": "凡涉绝对利润数值的推论，本文一律不给出。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "三档判断与当前落位",
+      "subheading": "偏第二档上半区",
+      "blocks": [
+        { "type": "numbered_cards", "items": [
+          { "title": "已兑现", "sub": "未达", "text": "存量与服务池扩张快于新房收缩，利润率守 14% 上方两季" },
+          { "title": "仅相对受益", "sub": "当前落位", "text": "改善主要来自摊薄与一次性压缩，行业绝对净利无增量" },
+          { "title": "逻辑证伪", "sub": "未触发", "text": "新房 GTV 收缩快于存量池扩张，变现率续降" }
+        ] },
+        { "type": "callout", "variant": "tip", "icon": "lightbulb", "text": "研判推断：档位切换判据不是单季数字，而是三条监测线同时同向。" }
+      ]
+    },
+    { "type": "chapter", "heading": "关键事实及其变化" },
+    {
+      "type": "content",
+      "variant": "kpi_focus",
+      "heading": "资本端先行，经营端印证",
+      "subheading": "四个已披露且口径明确的关键数值",
+      "blocks": [
+        { "type": "kpi_cards", "items": [
+          { "value": "63 → 66", "unit": "港元", "label": "高盛贝壳 H 股目标价（2026-09-09）", "delta": "up", "icon": "trending-up" },
+          { "value": "14.6", "unit": "%", "label": "Q2 经调整经营利润率，同比 +8.5pct", "delta": "up", "icon": "percent" },
+          { "value": "38.79", "unit": "亿元", "label": "H1 净利润（人民网 / 东方财富口径）", "delta": "flat", "icon": "dollar-sign" },
+          { "value": "66", "unit": "亿元", "label": "Q2 经营性现金净流入", "delta": "up", "icon": "activity" }
+        ] }
+      ],
+      "footnote": "口径：全国 · 贝壳 H 股 / 全国业务口径 ｜ 来源：卖方报告、人民网、东方财富"
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "关键事实的四条线索",
+      "blocks": [
+        { "type": "row_cards", "items": [
+          { "icon": "trending-up", "title": "资本端先行", "text": "高盛 09-09 目标价 63 → 66 港元；大摩 08-20 上调；里昂 09-02 列为行业首选。三家同向为结构受惠" },
+          { "icon": "chart-line", "title": "经营端印证", "text": "Q2 经营利润率 14.6%、同比 +8.5pct；二手单量同比 +25%；H1 净利 38.79 亿元；Q2 现金净流入 66 亿元" },
+          { "icon": "zap", "title": "效率与资本配置", "text": "08-17 服务助手成交效率提升 6 倍；09-11 与 09-14 回购合计 106.64 万股，反方解释并读" },
+          { "icon": "file-text", "title": "政策端", "text": "现房改革推进中、无统一时间表，压渠道脉冲与回款节奏，非交易需求本身" }
+        ] }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "事件序列：估值层信号先被定价",
+      "subheading": "顺序本身就是信息",
+      "blocks": [
+        { "type": "timeline", "layout": "vertical", "milestones": [
+          { "date": "2026-08-17", "title": "服务助手成交效率提升 6 倍", "desc": "费用侧硬变量" },
+          { "date": "2026-08-20", "title": "大摩上调目标价", "desc": "口径是份额而非总量" },
+          { "date": "2026-08-24", "title": "Q2 经营利润率 14.6% 经媒体披露", "desc": "待正式财报复核", "highlight": true },
+          { "date": "2026-09-02", "title": "里昂列为现房改革首选", "desc": "第三家同向" },
+          { "date": "2026-09-09", "title": "高盛目标价 63 → 66 港元", "desc": "估值层信号高点", "highlight": true },
+          { "date": "2026-09-11 / 14", "title": "连续两日回购 106.64 万股", "desc": "反方解释并读" }
+        ] }
+      ]
+    },
+    { "type": "chapter", "heading": "归因分析 · 四层" },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "第一层 · 利润池三池重画",
+      "subheading": "三池串联而非替代，关键不是方向而是速度",
+      "blocks": [
+        { "type": "chart", "chart_type": "bar", "direction": "horizontal",
+          "axes": { "x_title": "方向强弱（非金额）", "show_grid": true },
+          "series": [ { "name": "方向指数", "data": [
+            { "x": "新房分销池", "y": -34 },
+            { "x": "存量流通池", "y": 40 },
+            { "x": "交易后服务池", "y": 27 }
+          ] } ] },
+        { "type": "bullets", "style": "default", "items": [
+          "新房分销池：费率被永久让渡，非周期回摆",
+          "存量流通池：靠二手单量与份额，是新房池的置换源头",
+          "交易后服务池：租赁是稳定器，家装是变现放大器"
+        ] },
+        { "type": "callout", "variant": "info", "icon": "git-branch", "text": "渠道崛起没有倒退，只是换了通道：业主社会的自然结果。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "第二层 · 8.5pct 改善的三段拆解",
+      "subheading": "给检验规则，不给点位拆分",
+      "blocks": [
+        { "type": "steps", "items": [
+          { "title": "路径 A · 固定成本摊薄", "text": "周期性：GTV 下行时反向作用，不是护城河" },
+          { "title": "路径 B · 一次性费用压缩", "text": "不可延续：能做出单季数字，不构成台阶" },
+          { "title": "路径 C · take rate / 结构改善", "text": "唯一可延续：须与人均店均产能互证" }
+        ] },
+        { "type": "callout", "variant": "warn", "icon": "triangle-alert", "text": "14.6% / +8.5pct 在拆解归因完成前不得当作利润率台阶使用。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "估值桥的结构与口径层级",
+      "subheading": "第 ② 步的拆分质量决定全桥",
+      "blocks": [
+        { "type": "architecture", "layers": [
+          { "title": "输入层", "items": ["链路 GTV（含撮合口径）", "须与净收入口径分离标注"] },
+          { "title": "承重层", "items": ["净收入 · 分业务 take rate", "贡献利润"] },
+          { "title": "结果层", "items": ["经调整经营利润（14.6% 出自此层）", "经调整净利", "每股口径 → 目标价"] }
+        ] },
+        { "type": "callout", "variant": "tip", "icon": "gauge", "text": "研判推断：定价传导领先基本面一到两个季度；只给结构，不给绝对数值。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "第三层 · 五环传导链",
+      "subheading": "卖方定价的是第 ⑤ 环",
+      "blocks": [
+        { "type": "numbered_cards", "items": [
+          { "title": "① 制度压缩预售杠杆", "text": "现房制度压掉新房渠道脉冲" },
+          { "title": "② 新房佣金池收缩", "text": "需求向可核验存量迁移" },
+          { "title": "③ 收入结构切换", "text": "二手存量佣金 + 租赁 + 家装" },
+          { "title": "④ 经营杠杆显现", "text": "低增量固定成本摊薄" },
+          { "title": "⑤ 被定价处", "text": "卖方定价的是制度兑现速度，不是 ③④ 环证据" }
+        ] },
+        { "type": "callout", "variant": "info", "icon": "layers", "text": "③④ 环是可被证据检验的经营事实，⑤ 环是对制度节奏的预期。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "制度内核三件套与三条建议",
+      "subheading": "缺此三件则锁在低水平均衡",
+      "blocks": [
+        { "type": "comparison", "columns": ["制度要件", "缺失时的状态", "落地建议"],
+          "rows": [
+            { "label": "房源单一委托", "cells": ["报价不可比，搜寻成本高", "设为接口标准，非倡导"] },
+            { "label": "全量注册与真房源", "cells": ["虚假房源挤出真实供给", "平台做核验方，不做裁判"] },
+            { "label": "可核验数据联合体", "cells": ["数据分散不可交叉验证", "做成半公共品，避开寻租"] }
+          ] },
+        { "type": "insight_panel", "title": "制度的作用边界", "rows": [
+          { "label": "能做的", "text": "降低搜寻成本、提高成交效率、让佣金可持续" },
+          { "label": "不能做的", "text": "消灭交易成本，因此估值第 ⑤ 环被制度上限封顶" }
+        ] },
+        { "type": "callout", "variant": "warn", "icon": "shield", "text": "制度只能降低交易成本、不能消灭成本：第 ⑤ 环存在制度上限封顶。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "第四层 · 利润分配对象决定切换能否延续",
+      "subheading": "最深的护城河是规则，不是流量",
+      "blocks": [
+        { "type": "comparison", "columns": ["投向产业基础 · 可延续", "只体现为压缩 · 先松动"],
+          "rows": [
+            { "label": "投向", "cells": ["服务者固定负担、保障、真房源覆盖", "压分佣、缩编制、减研发"] },
+            { "label": "结果", "cells": ["加固规则护城河，优势可重复", "份额先于利润松动，信任无缓冲"] }
+          ] },
+        { "type": "callout", "variant": "warn", "icon": "triangle-alert", "text": "考核过度集中于 GTV 会诱发虚假房源，反噬估值切换之根。" }
+      ]
+    },
+    { "type": "chapter", "heading": "监测、情景与红队" },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "四季度监测表 · M1–M3",
+      "subheading": "触发式可证伪",
+      "blocks": [
+        { "type": "comparison", "columns": ["编号", "监测项", "频率", "触发信号"],
+          "rows": [
+            { "label": "M1", "cells": ["二手房单量及占比", "月度", "涨且议价收窄＝筑底；议价走阔＝降价换量"] },
+            { "label": "M2", "cells": ["新房 GTV 与变现率", "季度", "是否止跌：变现率止跌属结构改善"] },
+            { "label": "M3", "cells": ["经调整经营利润率", "季度", "连续两季同比为正且环比不退化"] }
+          ] }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "四季度监测表 · M4–M6 与证伪线",
+      "subheading": "三条证伪线任意一条持续成立即降档",
+      "blocks": [
+        { "type": "comparison", "columns": ["编号", "监测项", "频率", "触发信号"],
+          "rows": [
+            { "label": "M4", "cells": ["单均收入 × 人均产能", "季度", "单均升而人均降＝编制收缩"] },
+            { "label": "M5", "cells": ["租赁 + 家装贡献率", "季度", "收入增但贡献率不升＝仍在补贴获客"] },
+            { "label": "M6", "cells": ["现金流 ÷ 经调整净利", "季度", "缺口扩大＝应收虚增或结佣前置"] }
+          ] },
+        { "type": "bullets", "style": "checklist", "items": [
+          "证伪线 A：补偿比连续两季 < 1",
+          "证伪线 B：存量 GTV 增速持续低于总量降幅",
+          "证伪线 C：现房制度节奏反向放松"
+        ] }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "Q4 至明年 Q1 是自证窗口",
+      "subheading": "三条同向＝有基本面支撑",
+      "blocks": [
+        { "type": "numbered_cards", "items": [
+          { "title": "单量与议价空间同步改善", "text": "非降价换量，是需求侧筑底的第一证据" },
+          { "title": "利润率在 GTV 下行中不退化", "text": "排除摊薄解释力的关口" },
+          { "title": "现金流增速不落后于经调整净利", "text": "缺口扩大即利润率可信度被削弱" }
+        ] },
+        { "type": "callout", "variant": "info", "icon": "clock", "text": "研判推断：本轮定价的是渠道职能的再定义。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "红队预判 · 独立一节",
+      "subheading": "三项条件与结论同表跟踪",
+      "blocks": [
+        { "type": "numbered_cards", "items": [
+          { "title": "目标价可同时下修", "text": "同一结构受惠逻辑会反向触发集体下修" },
+          { "title": "净受益仅是同业间 α", "text": "行业总盘收缩时绝对利润仍可下降" },
+          { "title": "回购存在反方解释", "text": "也可能反映缺乏更高回报的资本开支机会" }
+        ] },
+        { "type": "callout", "variant": "warn", "icon": "triangle-alert", "text": "红队条件不降级为脚注：它是本报告可信度的来源。" }
+      ]
+    },
+    {
+      "type": "content",
+      "variant": "single",
+      "heading": "边界条件与来源",
+      "blocks": [
+        { "type": "bullets", "style": "numbered", "items": [
+          "改革无统一时间表，试点收窄则脉冲反抽、切换延后",
+          "渠道费率两套口径混用会把利润池算反，故不落点位测算",
+          "城市分层：一二线成立、三四线未必",
+          "卖方一致预期是滞后指标"
+        ] },
+        { "type": "citation", "sources": [
+          { "label": "高盛、大摩、里昂卖方报告（2026-08 / 09）" },
+          { "label": "人民网（2026-08-24）；东方财富、北京商报（2026-08-22）" },
+          { "label": "未核项：自有率、存量资产规模、渠道分销费率、份额拆分口径" }
+        ] }
+      ]
+    },
+    {
+      "type": "ending",
+      "heading": "结构迁移，而非景气反转",
+      "subheading": "98wiki ｜ 智见 / 行业研究报告 · 仅供研究参考，不构成投资建议"
+    }
+  ]
+}

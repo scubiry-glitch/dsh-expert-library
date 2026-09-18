@@ -1,0 +1,150 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "vermilion",
+  "filename": "角色重写_十二主体_20260829_v5",
+  "seed": 20260829,
+  "meta": {
+    "organization": "智见 · 行业研究",
+    "authors": [
+      {
+        "name": "智见点评团队",
+        "role": "角色重写 · 十二主体完整报告 v5.1（专家评审融合版）"
+      }
+    ],
+    "date": "2026-08-29",
+    "version": "v5.1"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "一场「角色重写」：1+N 新政与十二类主体"
+    },
+    {
+      "id": "keynote",
+      "type": "content",
+      "heading": "主基调：制度底座先行，市场底未确认",
+      "beat": "anchor"
+    },
+    {
+      "id": "overview",
+      "type": "content",
+      "heading": "总论：重新分配的是知情权、控制权、责任",
+      "beat": "dense"
+    },
+    {
+      "id": "why",
+      "type": "content",
+      "heading": "为什么是现在：隐性金融制度显性化与收缩",
+      "beat": "breathing"
+    },
+    {
+      "id": "data",
+      "type": "content",
+      "heading": "数据底座：利率钝化、余额连降、投资探底",
+      "beat": "anchor"
+    },
+    {
+      "id": "c1",
+      "type": "content",
+      "heading": "购房者：影子出资人→风控条款消费者",
+      "beat": "dense"
+    },
+    {
+      "id": "c2",
+      "type": "content",
+      "heading": "主办银行：资金贩子→责任承包商"
+    },
+    {
+      "id": "c3",
+      "type": "content",
+      "heading": "开发商：金融家降维回项目经理",
+      "beat": "breathing"
+    },
+    {
+      "id": "c4",
+      "type": "content",
+      "heading": "上市房企：「基于项目」再上市邀请函"
+    },
+    {
+      "id": "c5",
+      "type": "content",
+      "heading": "建筑央企：方向对、节奏慢、约束硬",
+      "beat": "anchor"
+    },
+    {
+      "id": "c6",
+      "type": "content",
+      "heading": "信托：影子通道被收编为外包资管",
+      "beat": "dense"
+    },
+    {
+      "id": "c7",
+      "type": "content",
+      "heading": "地方政府：有席位，但资金链被掐",
+      "beat": "breathing"
+    },
+    {
+      "id": "c8",
+      "type": "content",
+      "heading": "持有运营端：全生命周期产品菜单",
+      "beat": "dense"
+    },
+    {
+      "id": "c9",
+      "type": "content",
+      "heading": "经纪中介：回归交易信用基础设施",
+      "beat": "dense"
+    },
+    {
+      "id": "c10",
+      "type": "content",
+      "heading": "数据评估：升格国家风控基础设施"
+    },
+    {
+      "id": "c11",
+      "type": "content",
+      "heading": "城投：降维为存量资产运营商"
+    },
+    {
+      "id": "c12",
+      "type": "content",
+      "heading": "沉默角色与三类被看见的代价",
+      "beat": "breathing"
+    },
+    {
+      "id": "c13",
+      "type": "content",
+      "heading": "新入场者：七类主体与「好房子」条款",
+      "beat": "dense"
+    },
+    {
+      "id": "summary",
+      "type": "content",
+      "heading": "总结：科斯式起点与五变量失灵条件",
+      "beat": "anchor"
+    },
+    {
+      "id": "prediction",
+      "type": "content",
+      "heading": "三个可证伪预言：五专家概率聚合",
+      "beat": "dense"
+    },
+    {
+      "id": "source",
+      "type": "content",
+      "heading": "数据与条款来源披露",
+      "beat": "breathing"
+    },
+    {
+      "id": "closing",
+      "type": "ending",
+      "heading": "从赚「预期」到赚「交付」"
+    }
+  ]
+}

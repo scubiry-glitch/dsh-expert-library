@@ -62,22 +62,35 @@ export function ExpertTeamsCard({ node, openSession, currentSessionId }: ExpertT
   const [snapshot, setSnapshot] = useState<ActivityTeam | undefined>()
   useEffect(() => {
     let cancelled = false
+    let inFlight = false
+    // A cycle that fails (host restarting, edge hiccup) backs off instead of
+    // stacking a fresh request on top of every previous attempt: without this
+    // guard a slow snapshot route leaves a growing pile of open requests that
+    // starves the page's other pollers.
+    let backoffUntil = 0
     const tick = async (): Promise<void> => {
-      for (const url of ['/plugins/dsh-expert-library/state', '/plugins/dsh-expert-library/state?archived=1']) {
-        try {
-          const response = await fetch(url, { cache: 'no-store' })
-          if (!response.ok) continue
-          const body = (await response.json()) as { teams?: readonly ActivityTeam[] }
-          const found = Array.isArray(body.teams)
-            ? body.teams.find((team) => team.teamId === data.teamId && (owner === '' || team.captainSessionId === owner))
-            : undefined
-          if (found !== undefined) {
-            if (!cancelled) setSnapshot(found)
-            return
+      if (cancelled || inFlight || Date.now() < backoffUntil) return
+      inFlight = true
+      try {
+        for (const url of ['/plugins/dsh-expert-library/state', '/plugins/dsh-expert-library/state?archived=1']) {
+          try {
+            const response = await fetch(url, { cache: 'no-store' })
+            if (!response.ok) continue
+            const body = (await response.json()) as { teams?: readonly ActivityTeam[] }
+            const found = Array.isArray(body.teams)
+              ? body.teams.find((team) => team.teamId === data.teamId && (owner === '' || team.captainSessionId === owner))
+              : undefined
+            if (found !== undefined) {
+              if (!cancelled) setSnapshot(found)
+              return
+            }
+          } catch {
+            // Host restarting; retry after a short backoff instead of immediately.
+            backoffUntil = Date.now() + 5000
           }
-        } catch {
-          // Host restarting; retry on the next poll.
         }
+      } finally {
+        inFlight = false
       }
     }
     void tick()

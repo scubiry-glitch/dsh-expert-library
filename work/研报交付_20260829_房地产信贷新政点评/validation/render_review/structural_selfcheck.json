@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-08-30 13:42:26",
+  "pptx": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/pptx/deck_v54.pptx",
+  "backend_available": false,
+  "backend_note": "当前环境无 PowerPoint/LibreOffice/pdftoppm 后端，视觉预览导出不可用（export_pptx_previews.py 报 RuntimeError）。按 skill 规范记 not_checked，以本结构自检作为补偿证据。",
+  "stats": {
+    "slides": 33,
+    "native_charts": 4,
+    "native_tables": 21,
+    "notes_len_min": 175,
+    "notes_len_max": 330,
+    "shapes_total": 660,
+    "ea_slots_checked": 764,
+    "ea_slots_missing": 0
+  },
+  "issues": [],
+  "verdict": "PASS"
+}

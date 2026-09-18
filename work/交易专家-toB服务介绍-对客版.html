@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>零售金融专家 · 面向金融机构的估值证据与商机服务</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  /* finesse · deck-v2 · soul=authority-navy+gold · register=brand-deck · dials SOUL6/SPEC4/DENSITY5 */
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root{
+    --bg:#0A0F18;            /* Deep Navy — page base, tinted toward blue */
+    --surface:#101827;       /* Raised plane */
+    --card:#131E30;          /* Card plane */
+    --ink:#EAEEF6;           /* Body text, never pure white */
+    --muted:#8B98AC;         /* Secondary text */
+    --dim:#8593A8;           /* Tertiary — 6.16:1 on bg, 5.36:1 on card (AA) */
+    --gold:#D4A95C;          /* Sovereign Gold — primary accent, locked */
+    --gold-soft:rgba(212,169,92,.14);
+    --blue:#5B8DD9;          /* Structural Blue — links & secondary accent */
+    --line:rgba(150,170,200,.13);
+    --line-strong:rgba(150,170,200,.22);
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:'Noto Sans SC',"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;overflow:hidden}
+
+  /* grain layer */
+  body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.03;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  .skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--gold);color:#1A1206;
+    padding:10px 18px;font-weight:600}
+  .skip:focus{left:12px;top:12px}
+
+  .deck{position:relative;height:100vh;width:100vw;z-index:2}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;
+    padding:64px 96px 96px;overflow:auto;
+    background:
+      radial-gradient(ellipse 80% 60% at 78% -10%, rgba(91,141,217,.07), transparent 60%),
+      var(--bg);}
+  .slide.active{display:flex}
+  .slide.active > *{animation:rise .65s cubic-bezier(.16,1,.3,1) both}
+  .slide.active > *:nth-child(2){animation-delay:.07s}
+  .slide.active > *:nth-child(3){animation-delay:.14s}
+  .slide.active > *:nth-child(4){animation-delay:.21s}
+  .slide.active > *:nth-child(5){animation-delay:.28s}
+  .slide.active > *:nth-child(6){animation-delay:.35s}
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+  .kicker{font-size:12.5px;letter-spacing:.34em;font-weight:600;color:var(--gold);
+    text-transform:uppercase;margin-bottom:14px}
+  h1{font-family:'Noto Serif SC',serif;font-weight:700;font-size:clamp(44px,4.6vw,64px);
+    line-height:1.14;letter-spacing:-.01em;margin-bottom:18px}
+  h2{font-weight:900;font-size:clamp(28px,2.6vw,36px);line-height:1.25;letter-spacing:-.015em;
+    margin-bottom:8px}
+  h2 .no{font-family:'JetBrains Mono',monospace;font-weight:400;font-size:.42em;color:var(--dim);
+    letter-spacing:.1em;display:block;margin-bottom:10px}
+  .sub{font-size:19px;font-weight:300;color:var(--muted);line-height:1.8;margin-bottom:30px;max-width:62em}
+  .rule{height:1px;background:linear-gradient(90deg,var(--gold),transparent 70%);
+    width:220px;margin:18px 0 30px}
+  p,li{font-size:16.5px;font-weight:300;line-height:1.8;color:var(--ink)}
+  strong{font-weight:600;color:#fff}
+  .g{color:var(--gold);font-weight:600}
+  .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+  /* table wrapper for mobile horizontal scroll */
+  .tw{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;position:relative}
+  .swipe{display:none;font-size:12px;color:var(--dim);letter-spacing:.08em;margin:-8px 0 12px}
+  .kpis.five{grid-template-columns:repeat(5,1fr)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:15.5px;min-width:640px}
+  th{font-weight:500;font-size:13px;letter-spacing:.08em;color:var(--muted);text-align:left;
+    padding:11px 16px;border-bottom:1px solid var(--line-strong)}
+  td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.65;font-weight:300}
+  tbody tr{transition:background .25s}
+  tbody tr:hover{background:rgba(212,169,92,.045)}
+  td strong{font-weight:600}
+  td:first-child{font-weight:500}
+
+  a{color:var(--blue);text-decoration:none;border-bottom:1px solid transparent;transition:.25s}
+  a:hover{color:var(--gold);border-bottom-color:var(--gold)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:linear-gradient(160deg,rgba(255,255,255,.028),transparent 55%),var(--card);
+    border:1px solid var(--line);border-radius:16px;padding:24px 26px;
+    box-shadow:0 20px 50px -30px rgba(2,6,14,.9);
+    transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .45s}
+  .card:hover{transform:translateY(-3px);border-color:var(--line-strong)}
+  .card h4{font-weight:700;font-size:17.5px;letter-spacing:-.01em;margin-bottom:9px;color:#fff}
+  .card p{font-size:14.5px;color:var(--muted);line-height:1.72}
+  .card .tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    letter-spacing:.12em;color:var(--gold);margin-bottom:10px}
+  .card.hi{border-color:rgba(212,169,92,.45);
+    background:linear-gradient(160deg,rgba(212,169,92,.09),transparent 60%),var(--card)}
+
+  /* KPI blocks — numbers belong to the eye, not to a sentence */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:26px 0 4px}
+  .kpi{background:linear-gradient(160deg,rgba(255,255,255,.03),transparent 60%),var(--card);
+    border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .kpi .n{font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600;color:var(--gold);
+    letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+  .kpi .n small{font-size:15px;color:var(--muted);font-weight:400;margin-left:4px;letter-spacing:0}
+  .kpi .l{font-size:13.5px;color:var(--muted);margin-top:9px;line-height:1.55;font-weight:300}
+  .kpi.blue .n{color:var(--blue)}
+
+  .callout{margin:18px 0;background:var(--gold-soft);border:1px solid rgba(212,169,92,.35);
+    border-left:3px solid var(--gold);border-radius:12px;padding:16px 22px;font-size:16px;
+    font-weight:300;line-height:1.8}
+  .callout.blue{background:rgba(91,141,217,.09);border-color:rgba(91,141,217,.3);border-left-color:var(--blue)}
+
+  .pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.06em;
+    color:var(--gold);background:rgba(212,169,92,.1);border:1px solid rgba(212,169,92,.3);
+    border-radius:999px;padding:3px 13px;margin-left:8px;vertical-align:middle}
+
+  /* flow */
+  .flow{max-width:1020px}
+  .fstep{display:flex;align-items:center;gap:20px;position:relative;
+    background:linear-gradient(160deg,rgba(255,255,255,.028),transparent 55%),var(--card);
+    border:1px solid var(--line);border-radius:14px;padding:15px 24px;margin-bottom:4px;
+    transition:border-color .3s}
+  .fstep:hover{border-color:var(--line-strong)}
+  .fstep:not(:last-child)::after{content:'';position:absolute;left:44px;bottom:-5px;width:1px;height:5px;
+    background:var(--line-strong)}
+  .fnum{flex:0 0 42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-weight:600;font-size:16px;color:var(--gold);
+    border:1px solid rgba(212,169,92,.5);background:rgba(212,169,92,.08)}
+  .fstep .t{font-size:17px;font-weight:600;color:#fff}
+  .fstep .d{font-size:13.5px;color:var(--muted);margin-top:2px;font-weight:300}
+  .fstep.end{border-color:rgba(212,169,92,.55);
+    background:linear-gradient(160deg,rgba(212,169,92,.12),transparent 60%),var(--card)}
+  .fstep.end .fnum{background:var(--gold);color:#1A1206;border-color:var(--gold)}
+
+  /* case cards */
+  .cases{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+  .case{display:block;background:linear-gradient(160deg,rgba(255,255,255,.03),transparent 60%),var(--card);
+    border:1px solid var(--line);border-radius:14px;padding:20px 22px;color:var(--ink);
+    border-bottom:1px solid var(--line);
+    transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .35s}
+  .case:hover{transform:translateY(-4px);border-color:rgba(212,169,92,.5);color:var(--ink)}
+  .case-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .case-top .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--gold)}
+  .case-top .arw{font-size:15px;color:var(--dim);transition:.3s}
+  .case:hover .arw{color:var(--gold);transform:translate(2px,-2px)}
+  .case h4{font-size:16px;font-weight:600;line-height:1.5;margin-bottom:8px;color:#fff}
+  .case p{font-size:13.5px;color:var(--muted);line-height:1.65;font-weight:300}
+  .case .ft{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--dim);letter-spacing:.03em}
+  .case.static{cursor:default}
+  .case.static:hover{transform:none;border-color:var(--line)}
+
+  /* comparison page */
+  .cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;align-items:start}
+  .cmp .col{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 26px}
+  .cmp .col.us{border-color:rgba(212,169,92,.5);
+    background:linear-gradient(160deg,rgba(212,169,92,.12),transparent 60%),var(--card);
+    box-shadow:0 24px 60px -34px rgba(212,169,92,.45)}
+  .cmp h4{font-size:17px;color:#fff;font-weight:700;margin-bottom:6px}
+  .cmp .role{font-size:12.5px;color:var(--dim);letter-spacing:.1em;margin-bottom:16px;display:block}
+  .cmp ul{margin:0}
+  .cmp li{font-size:14.5px;color:var(--muted);margin:11px 0}
+  .cmp .col.us li{color:var(--ink)}
+  .cmp li::before{background:var(--dim)}
+  .cmp .col.us li::before{background:var(--gold)}
+
+  /* cover */
+  .cover{justify-content:center}
+  .cover .vig{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse 90% 70% at 30% 40%,transparent 40%,rgba(10,15,24,.9) 100%)}
+  .cover .glow{position:absolute;right:-8%;top:-12%;width:52vw;height:52vw;pointer-events:none;
+    background:radial-gradient(circle,rgba(212,169,92,.1),transparent 62%);
+    animation:breathe 9s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+  .brandbar{position:absolute;top:56px;left:96px;display:flex;align-items:center;gap:12px}
+  .brandbar .mk{width:30px;height:30px;border:1px solid rgba(212,169,92,.6);border-radius:9px;
+    display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;
+    font-size:13px;color:var(--gold);background:rgba(212,169,92,.08)}
+  .brandbar .nm{font-size:14px;letter-spacing:.2em;color:var(--muted)}
+  .cover-meta{display:flex;gap:0;margin-top:52px;border-top:1px solid var(--line-strong);position:relative}
+  .cover-meta>div{padding:22px 34px 0 0;margin-right:34px;border-right:1px solid var(--line)}
+  .cover-meta>div:last-child{border-right:none}
+  .cover-meta b{display:block;font-weight:600;font-size:16.5px;margin-bottom:5px;color:#fff}
+  .cover-meta span{font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.6;display:block}
+
+  /* footer & nav */
+  .footer{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;
+    padding:14px 96px;font-size:12.5px;letter-spacing:.1em;color:var(--dim);
+    background:linear-gradient(transparent,rgba(10,15,24,.95) 55%);pointer-events:none;z-index:5}
+  #pageinfo{font-family:'JetBrains Mono',monospace}
+  .nav{position:fixed;right:30px;bottom:52px;display:flex;gap:10px;z-index:9}
+  .nav button{background:rgba(19,30,48,.85);backdrop-filter:blur(8px);color:var(--ink);
+    border:1px solid var(--line-strong);border-radius:12px;width:46px;height:46px;font-size:20px;
+    cursor:pointer;transition:.3s}
+  .nav button:hover{background:var(--gold);color:#1A1206;border-color:var(--gold)}
+  .progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--gold));
+    width:0;z-index:9;transition:width .45s cubic-bezier(.16,1,.3,1)}
+  .hint{position:fixed;left:96px;bottom:52px;font-size:12px;color:var(--dim);letter-spacing:.08em;z-index:5}
+  .dots{position:fixed;left:50%;transform:translateX(-50%);bottom:44px;display:flex;gap:9px;z-index:9}
+  .dots button{width:9px;height:9px;padding:0;border-radius:50%;cursor:pointer;
+    background:rgba(150,170,200,.25);border:1px solid transparent;transition:.3s}
+  .dots button:hover{background:rgba(212,169,92,.6)}
+  .dots button[aria-current="true"]{background:var(--gold);width:22px;border-radius:999px}
+
+  ul{list-style:none;margin:10px 0}
+  ul li{padding-left:24px;position:relative;margin:10px 0}
+  ul li::before{content:'';position:absolute;left:2px;top:.72em;width:7px;height:7px;border-radius:2px;
+    background:var(--gold);opacity:.75;transform:rotate(45deg)}
+
+  .endgrid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:18px;margin-top:24px}
+  .endcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 26px}
+  .endcard.big{border-color:rgba(212,169,92,.5);
+    background:linear-gradient(160deg,rgba(212,169,92,.12),transparent 60%),var(--card)}
+  .endcard h4{font-size:17.5px;font-weight:700;margin-bottom:9px;color:#fff}
+  .endcard p{font-size:14px;color:var(--muted);line-height:1.7;font-weight:300}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media (max-width:1100px){
+    .kpis,.kpis.five{grid-template-columns:repeat(2,1fr)}
+    .cases,.cmp{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:900px){
+    .slide{padding:40px 26px 110px}
+    .grid2,.grid3,.endgrid,.cases,.cmp{grid-template-columns:1fr}
+    .kpis,.kpis.five{grid-template-columns:1fr 1fr}
+    .cover-meta{flex-direction:column;gap:14px}
+    .cover-meta>div{border-right:none;padding:0;margin:0}
+    .brandbar{top:24px;left:26px}
+    .footer,.hint{display:none}
+    .dots{bottom:24px}
+    .swipe{display:block}
+    h1{font-size:34px}
+  }
+  @media (max-width:600px){
+    .kpis,.kpis.five{grid-template-columns:1fr}
+    .fstep{gap:13px;padding:12px 16px}
+  }
+
+  /* ── print / PDF export: one slide per page, light ink ─────────────── */
+  @media print{
+    @page{size:A4 landscape;margin:0}
+    html,body{height:auto;overflow:visible;background:#fff;color:#16202E}
+    body::before{display:none}
+    .deck{height:auto;width:auto}
+    .slide{position:relative!important;display:flex!important;inset:auto;
+      height:auto;min-height:0;page-break-after:always;break-after:page;
+      break-inside:avoid;padding:11mm 12mm;background:#fff!important;overflow:visible}
+    .slide:last-child{page-break-after:auto}
+    .slide > *{animation:none!important;opacity:1!important;transform:none!important}
+    .footer,.nav,.hint,.dots,.progress,.skip,.swipe{display:none!important}
+    .cover .vig,.cover .glow{display:none}
+    :root{--bg:#fff;--ink:#16202E;--muted:#5A6779;--dim:#656F7E;--card:#F5F7FA;
+      --gold:#8A6A1F;--blue:#1B4FA0;--line:rgba(20,40,70,.16);--line-strong:rgba(20,40,70,.3);
+      --gold-soft:rgba(138,106,31,.08)}
+    h1,h2,.card h4,.cmp h4,.case h4,.endcard h4{color:#0E1726!important}
+    h1{font-size:30px;margin-bottom:10px}
+    h2{font-size:21px;margin-bottom:6px}
+    .kicker{font-size:10px;margin-bottom:8px}
+    .sub{font-size:11.5px;margin-bottom:12px}
+    p,li{font-size:11.5px;line-height:1.6}
+    .rule{margin:10px 0 16px}
+    .cover-meta{margin-top:20px}
+    strong{color:#0E1726}
+    .card,.case,.kpi,.cmp .col,.endcard,.fstep,.callout,.kpis,.tw,table,tr,ul{
+      break-inside:avoid;page-break-inside:avoid}
+    .card,.case,.kpi,.cmp .col,.endcard,.fstep,.callout{box-shadow:none!important;
+      background:#F5F7FA!important;border-color:#D6DDE6!important}
+    .cmp .col.us{background:#FBF6E9!important;border-color:#C9A96B!important}
+    table{font-size:11.5px;min-width:0}
+    th,td{padding:6px 9px}
+    .kpi{padding:12px 14px}
+    .kpi .n{font-size:22px;color:#8A6A1F}
+    .fstep{padding:9px 14px}
+    .fnum{flex:0 0 30px;height:30px;font-size:12px}
+    .fstep .t{font-size:12.5px}
+    .fstep .d{font-size:10.5px}
+    .card{padding:14px 16px}
+    .card h4{font-size:13px}
+    .card p,.case p,.endcard p{font-size:10.5px;line-height:1.55}
+    .case{padding:12px 14px}
+    .case h4{font-size:12px}
+    .grid2,.grid3,.cases,.cmp,.kpis,.kpis.five{gap:10px}
+    a{color:#1B4FA0!important;border:none}
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#deck">跳到正文</a>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck" tabindex="-1" role="region" aria-label="演示幻灯片">
+
+<!-- 1 封面 -->
+<section class="slide cover active" aria-label="封面">
+  <div class="vig"></div><div class="glow"></div>
+  <div class="brandbar"><div class="mk">零</div><div class="nm">零售金融专家</div></div>
+  <div>
+    <div class="kicker">RETAIL FINANCE EXPERT · FOR FINANCIAL INSTITUTIONS</div>
+    <h1>零售金融专家<br>面向金融机构的<br>估值证据与商机服务</h1>
+    <div class="rule"></div>
+    <p class="sub" style="margin-bottom:0">为押品贷款补一条「可交叉验证、可持续复核的市场证据线」，<br>为财富与零售条线输送高意向客群。</p>
+    <div class="cover-meta">
+      <div><b>评估与咨询</b><span>贷前 · 存量 · 区域 · 不良四场景</span></div>
+      <div><b>商机服务</b><span>线索分发 · 包段服务 · 平台接入</span></div>
+      <div><b>合规边界</b><span>市场证据参考，不构成资产评估报告</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 服务总览 -->
+<section class="slide" aria-label="服务总览">
+  <div class="kicker">服务总览 · OVERVIEW</div>
+  <h2><span class="no">02</span>两条产品线，一个共同底座</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="n">4<small>类场景</small></div><div class="l">贷前准入 · 存量监测 · 区域预警 · 不良处置</div></div>
+    <div class="kpi"><div class="n">5<small>类交付</small></div><div class="l">单套 / 项目 / 板块 / 政企专题 / 量化测算</div></div>
+    <div class="kpi blue"><div class="n">3<small>层证据</small></div><div class="l">单套资产 · 小区板块 · 城市与区域市场</div></div>
+    <div class="kpi blue"><div class="n">1<small>条链</small></div><div class="l">口径 · 样本 · 版本 · 证据全程可追溯</div></div>
+  </div>
+  <div class="grid2" style="margin-top:26px">
+    <div class="card">
+      <div class="tag">LINE ①</div>
+      <h4>评估与咨询服务</h4>
+      <p style="font-size:16px;color:var(--ink);margin-bottom:10px">围绕房产押品全生命周期的<span class="g">市场证据线</span></p>
+      <p>单套估值参考 · 批量押品监测 · 区域风险预警 · 不良处置咨询 · 银行场景 Agent</p>
+    </div>
+    <div class="card">
+      <div class="tag">LINE ②</div>
+      <h4>商机与平台服务</h4>
+      <p style="font-size:16px;color:var(--ink);margin-bottom:10px">把真实购房场景中的<span class="g">高意向客群</span>开放给金融机构</p>
+      <p>商机分发 · CPT 包段服务 · Agent 开放平台接入 · 数据与模型服务</p>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:24px">
+    我们只做三件事：<span class="g">提供市场证据、开放真实流量、开放接入管道</span>。
+    金融产品、风控与客户转化始终由持牌机构自主完成——<strong>权责边界清晰</strong>。
+  </div>
+</section>
+
+<section class="slide" aria-label="监管背景与风险压力">
+  <div class="kicker">监管背景 · RISK PRESSURE</div>
+  <h2><span class="no">03</span>押品管理，为什么必须升级</h2>
+  <p class="sub">房价回调与不良压力并行，押品管理需要从一次性估值，升级为可持续复核、可解释追踪的证据流程。</p>
+  <div class="kpis">
+    <div class="kpi"><div class="n">23.18<small>%</small></div><div class="l">70 城二手住宅较高点累计回调</div></div>
+    <div class="kpi"><div class="n">0.67<small>%→0.88%</small></div><div class="l">六大行住房贷不良率变化</div></div>
+    <div class="kpi blue"><div class="n">1.58<small>%→1.92%</small></div><div class="l">六大行经营类不良率变化</div></div>
+    <div class="kpi blue"><div class="n">15<small>%</small></div><div class="l">最低首付政策底线</div></div>
+  </div>
+  <div class="callout blue" style="margin-top:24px">
+    <strong>来源与口径</strong>：以上数据来自容诚《商业银行个人居住房地产估值与监测服务》2026.08 推广材料；“较高点累计回调”按该材料所列 70 城二手住宅口径，“不良率”按该材料所列六大行相关贷款口径，“最低首付政策底线”按该材料引用的政策口径。
+    <br><br>
+    监管处罚关注点集中于<strong>高评高贷、二手房按揭估值、抵押经营贷的贷前贷后管理</strong>。对银行而言，持续复核能力需要补进押品流程。
+  </div>
+</section>
+
+<section class="slide" aria-label="四类场景">
+  <div class="kicker">评估与咨询服务 · LINE ①</div>
+  <h2><span class="no">04</span>四类场景 × 三层市场证据 × 一条可追溯链</h2>
+  <p class="sub">不替代贵行既有评估与审批，而是补充一条高效、透明、可持续复核的证据线。本服务提供市场价值参考测算、市场监测与咨询分析，不构成资产评估报告或房地产估价报告。</p>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:20%">场景</th><th>服务内容</th></tr></thead>
+      <tbody>
+        <tr><td><strong>贷前准入</strong></td><td>单套市场价值参考：可比成交与样本边界清晰披露</td></tr>
+        <tr><td><strong>存量监测</strong></td><td>批量更新，价格 / LTV / 覆盖异常自动形成复核清单</td></tr>
+        <tr><td><strong>区域预警</strong></td><td>城市—板块—小区量价与流动性分层监测</td></tr>
+        <tr><td><strong>不良处置</strong></td><td>处置时点与折价空间参考、租售流动性分析</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="swipe" aria-hidden="true">← 横向滑动查看完整表格 →</div>
+  <div class="callout blue">
+    <strong>为什么是现在</strong>：房价回调周期中，时点评估难以支撑高频批量复核，高评高贷与押品估值管理是监管关注重点——持续、可解释、可追溯的证据线成为押品流程的刚需补位。
+  </div>
+</section>
+
+<section class="slide" aria-label="交付形态">
+  <div class="kicker">评估与咨询服务 · LINE ①</div>
+  <h2><span class="no">05</span>交付形态与质量保障</h2>
+  <div class="grid3" style="margin-top:22px">
+    <div class="card"><div class="tag">REPORT</div><h4>咨询报告</h4><p>单套测算 / 批量复核 / 区域监测 / 不良处置咨询；结论、口径、样本边界、版本全披露。</p></div>
+    <div class="card"><div class="tag">API</div><h4>API 服务</h4><p>单套 / 批量 / 异步批次，返回结构化区间、证据与版本，可直接接入授信、押品监测与不良处置流程。</p></div>
+    <div class="card"><div class="tag">AGENT</div><h4>银行场景 Agent</h4><p>组织案件 → 匹配市场证据 → 留存数据与模型版本 → 识别异常 → 衔接人工复核，嵌入贵行工作台。</p></div>
+  </div>
+  <h3 style="font-size:15px;letter-spacing:.2em;color:var(--gold);margin:34px 0 6px;font-weight:600">四项直接价值</h3>
+  <ul>
+    <li>帮助识别<strong>高评高贷</strong>与 LTV 安全垫压力</li>
+    <li>提升<strong>批量押品复核与更新</strong>效率</li>
+    <li>持续跟踪<strong>单套资产与区域市场</strong>变化</li>
+    <li>为<strong>不良处置时点与价格区间</strong>提供市场证据</li>
+  </ul>
+  <p class="sub" style="font-size:14.5px;margin:16px 0 0">每个非引用数字落到四级标注（测算 / 估算 / 研判推断 / 待补）；多数据源交叉验证，口径冲突显式说明，不静默择优。</p>
+</section>
+
+<section class="slide" aria-label="服务能力与交付指标">
+  <div class="kicker">服务能力 · DELIVERY STANDARD</div>
+  <h2><span class="no">06</span>从市场层级到交付留痕，能力覆盖可落地</h2>
+  <p class="sub">围绕贵行的押品管理、授信支持与存量监测流程，提供分层市场证据、可比样本披露与结构化交付。</p>
+  <div class="grid3" style="margin-top:22px">
+    <div class="card">
+      <div class="tag">MARKET LEVEL</div>
+      <h4>四层市场层级</h4>
+      <p><strong>城市—板块—小区—单套</strong>逐层下钻，支持从区域趋势到具体押品的证据衔接；具体覆盖范围以试点确认为准。</p>
+    </div>
+    <div class="card">
+      <div class="tag">EVIDENCE</div>
+      <h4>样本与口径披露</h4>
+      <p>展示可比案例、样本期、筛选边界、修正逻辑与异常说明；样本数量、更新频率与字段范围以试点确认为准。</p>
+    </div>
+    <div class="card hi">
+      <div class="tag">API DELIVERY</div>
+      <h4>多形态接口交付</h4>
+      <p>支持单套、批量、异步批次等调用方式，返回结构化结论、证据与版本信息；具体接口字段与并发限制以试点确认为准。</p>
+    </div>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:22%">交付环节</th><th>交付内容</th><th style="width:25%">复核入口</th></tr></thead>
+      <tbody>
+        <tr><td><strong>报告与结果</strong></td><td>结论、口径、样本边界、修正参数与异常说明同步留存</td><td>报告版本留存</td></tr>
+        <tr><td><strong>接口调用</strong></td><td>单套 / 批量 / 异步批次，按约定返回结构化结果</td><td>调用记录与版本信息</td></tr>
+        <tr><td><strong>证据留存</strong></td><td>结果可回溯至样本与参数版本</td><td><a href="https://dss.ke.com/valuation/index.html" target="_blank" rel="noopener">dss.ke.com/valuation</a></td></tr>
+        <tr><td><strong>异常管理</strong></td><td>异常清单触发人工复核，不以自动结果替代必要的专业判断</td><td>人工复核记录</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="swipe" aria-hidden="true">← 横向滑动查看完整表格 →</div>
+  <div class="callout" style="margin-top:18px">
+    交付指标以<strong>可复核、可留痕、可衔接</strong>为核心；具体服务范围、接口字段、更新频率与试点指标，均以试点确认为准。
+  </div>
+</section>
+
+<section class="slide" aria-label="交付样例">
+  <div class="kicker">评估与咨询服务 · LINE ①</div>
+  <h2><span class="no">07</span>交付样例：从单套到政企专题的完整谱系</h2>
+  <div class="cases">
+    <a class="case" href="https://yy.meizu.life/render/Gz/jiaozi-1hao-townhouse.html" target="_blank" rel="noopener">
+      <div class="case-top"><span class="tag">单套资产</span><span class="arw" aria-hidden="true">↗</span></div>
+      <h4>娇子1号联排别墅购买分析</h4>
+      <p>成交水位锚定、出价区间与警戒线、签约核验清单</p>
+      <div class="ft">贷前准入 · 单套价值参考</div>
+    </a>
+    <a class="case" href="https://yy.meizu.life/render/Gz/jinchengyuan-phase3.html" target="_blank" rel="noopener">
+      <div class="case-top"><span class="tag">新房项目</span><span class="arw" aria-hidden="true">↗</span></div>
+      <h4>锦宸院三期观著购买潜力分析</h4>
+      <p>供给 / 需求 / 价格三维研判、竞品与政策窗口、风险清单</p>
+      <div class="ft">贷前准入 · 项目押品</div>
+    </a>
+    <a class="case" href="https://yy.meizu.life/render/Gz/wanli-plate.html" target="_blank" rel="noopener">
+      <div class="case-top"><span class="tag">板块/小区</span><span class="arw" aria-hidden="true">↗</span></div>
+      <h4>万柳板块购买潜力分析</h4>
+      <p>16 盘横向对比、小区溢价分化、租售比排序</p>
+      <div class="ft">区域预警 · 四层联动</div>
+    </a>
+    <a class="case" href="https://yy.meizu.life/render/98wiki-feishu/20260824-jiangbei-beike-joint-acquisition-v3.html" target="_blank" rel="noopener">
+      <div class="case-top"><span class="tag">政企专题</span><span class="arw" aria-hidden="true">↗</span></div>
+      <h4>江北新区合资收储可行性研判</h4>
+      <p>折扣敏感性模型、ROE 分情景披露、风险缓释与信号体系</p>
+      <div class="ft">不良处置 · 处置时点与折价</div>
+    </a>
+    <div class="case static">
+      <div class="case-top"><span class="tag">量化测算</span><span class="pill" style="margin:0">现场提供</span></div>
+      <h4>南京收储敏感性分析（正式文稿版）</h4>
+      <p>盈亏平衡折扣判定式、敏感性矩阵、ROE 三杠杆、决策红线、附录复算表全披露</p>
+      <div class="ft">不良处置 · 折价空间量化</div>
+    </div>
+    <div class="case static" style="border-style:dashed;display:flex;flex-direction:column;justify-content:center">
+      <div class="case-top"><span class="tag">EVIDENCE</span></div>
+      <h4>证据链留存</h4>
+      <p>每个测算结论可回溯到样本与参数版本。<br><a href="https://dss.ke.com/valuation/index.html" target="_blank" rel="noopener">dss.ke.com/valuation ↗</a></p>
+      <div class="ft">口径 · 样本 · 版本全程可追溯</div>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:22px">
+    全部样例带<strong>口径标注</strong>（贝壳成交口径 × 政研通指标）与免责边界——与贵行「数据口径透明、证据可复核」的要求互为印证。
+  </div>
+</section>
+
+<section class="slide" aria-label="交付标杆方法论">
+  <div class="kicker">评估与咨询服务 · LINE ①</div>
+  <h2><span class="no">08</span>单套租金测算：交付标杆的方法论</h2>
+  <p class="sub">《佳馨苑 1 座 506 单元 · 单套住宅租金测算咨询报告》（容诚企业咨询，2026-07）——「单套资产」颗粒度的标准工艺：</p>
+  <div class="grid2">
+    <div class="card"><h4>模型测算 + 样本校验双轨</h4><p>模型参考点与同小区可比样本修正校验并行，差异如实披露并给出支撑强度判断。</p></div>
+    <div class="card"><h4>差异调整矩阵全披露</h4><p>面积、户型、楼层、出租时间逐项量化到月租金影响，每个数字可追问、可复核。</p></div>
+    <div class="card"><h4>事后检验</h4><p>以次月独立样本回测模型误差——<strong>可信度不是承诺出来的，是检验出来的</strong>。</p></div>
+    <div class="card"><h4>全样本附录</h4><p>入选与未入选样本连同落选原因一并披露，建议区间附「中上部 / 中下部」使用条件。</p></div>
+  </div>
+  <div class="callout" style="margin-top:22px">
+    贵行买到的不是一份报告，而是<strong>「测算模型 + 样本调整矩阵 + 事后检验 + 证据留存」的完整证据链</strong>——与同一标的的交易价格测算自然衔接（租金收益率等衍生指标一键可得）。
+  </div>
+</section>
+
+<section class="slide" aria-label="案例量化成效">
+  <div class="kicker">案例量化成效 · REPRODUCIBLE EVIDENCE</div>
+  <h2><span class="no">09</span>一套住宅，如何把结论做成可复算证据链</h2>
+  <p class="sub">案例来源：容诚《佳馨苑 1 座 506 单元 · 单套住宅租金测算咨询报告》（2026-07）；报告编号 <span class="mono">RCE-FZ-JXY-2026-0701-001</span>；委托方：福州安住发展。</p>
+  <div class="kpis">
+    <div class="kpi"><div class="n">2,364<small>元/月</small></div><div class="l">模型测算参考点；对应 25.64 元/㎡·月</div></div>
+    <div class="kpi"><div class="n">2,203<small>元/月</small></div><div class="l">同小区 5 套可比样本修正后加权结果</div></div>
+    <div class="kpi blue"><div class="n">2,300<small>元/月</small></div><div class="l">建议参考点</div></div>
+    <div class="kpi blue"><div class="n">2,000–2,600<small>元/月</small></div><div class="l">建议区间</div></div>
+  </div>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:25%">复算环节</th><th>报告数字</th><th>口径与说明</th></tr></thead>
+      <tbody>
+        <tr><td><strong>模型测算</strong></td><td>2,364 元/月；25.64 元/㎡·月</td><td>本案模型测算参考点，金额按月租金口径；单价按建筑面积月租金口径</td></tr>
+        <tr><td><strong>样本校验</strong></td><td>2,203 元/月</td><td>同小区 5 套可比样本，经差异修正后的加权结果</td></tr>
+        <tr><td><strong>最终建议</strong></td><td>2,300 元/月；2,000–2,600 元/月</td><td>建议参考点与建议区间，均为咨询测算口径，不构成交易或租赁承诺</td></tr>
+        <tr><td><strong>事后检验</strong></td><td>13.9% 平均误差</td><td>以 2026-06 独立样本回测口径，共 880 条样本</td></tr>
+        <tr><td><strong>候选样本复核</strong></td><td>8 条候选样本；3 条落选</td><td>落选原因：样本期超出优先窗口（12–24 个月）、出租时点租金处于低位、或户型弱于标的</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="swipe" aria-hidden="true">← 横向滑动查看完整表格 →</div>
+  <div class="callout blue" style="margin-top:18px">
+    以上数字均来自该报告的特定标的、特定样本与特定报告时点，强调的是<strong>“可复算”</strong>，不是对未来价格、租金或误差水平的承诺。可信度来自模型、样本、修正、检验与版本留存组成的证据链。
+  </div>
+</section>
+
+<section class="slide" aria-label="商机服务流程">
+  <div class="kicker">商机与平台服务 · LINE ②</div>
+  <h2><span class="no">10</span>从真实购房流量，到贵行的自主转化</h2>
+  <div class="flow" style="margin-top:20px">
+    <div class="fstep"><div class="fnum">1</div><div><div class="t">真实场景流量</div><div class="d">找房、关注、IM 咨询、金融工具使用中的高意向用户</div></div></div>
+    <div class="fstep"><div class="fnum">2</div><div><div class="t">画像与商机识别 <span class="pill">数据与模型服务</span></div><div class="d">贝壳政研通 CLI 权威数据（政策/指标/行情）+ 多类画像模型（区域/人群/客群），识别理财咨询 / 按揭意向等金融信号</div></div></div>
+    <div class="fstep"><div class="fnum">3</div><div><div class="t">分层分发 <span class="pill">按有效线索结算</span></div><div class="d">按贵行承接能力与客群匹配度分发；有效线索 = 预约完成 / 留资核验通过，合同锁死定义</div></div></div>
+    <div class="fstep"><div class="fnum">4</div><div><div class="t">CPT 包段服务 <span class="pill">按包段时长计费</span></div><div class="d">专属专家坐席时段、板块/楼盘场景冠名、专场活动——时段内资源独占</div></div></div>
+    <div class="fstep"><div class="fnum">5</div><div><div class="t">Agent 开放平台 <span class="pill">接入年费 + 用量按量</span></div><div class="d">贵行自带产品与制度插件化接入专家场景，自主装修、自主运营</div></div></div>
+    <div class="fstep end"><div class="fnum">6</div><div><div class="t">贵行自主转化</div><div class="d">财富获客、理财转化、按揭业务——闭环在贵行自身商业模式中</div></div></div>
+  </div>
+</section>
+
+<section class="slide" aria-label="核心产品与计费">
+  <div class="kicker">商机与平台服务 · LINE ②</div>
+  <h2><span class="no">11</span>核心产品与计费方式</h2>
+  <div class="kpis five" style="margin:24px 0 2px">
+    <div class="kpi"><div class="n" style="font-size:22px">CPA</div><div class="l">商机分发 · 按有效线索</div></div>
+    <div class="kpi"><div class="n" style="font-size:22px">CPT</div><div class="l">包段服务 · 按时长/场次</div></div>
+    <div class="kpi"><div class="n" style="font-size:22px">年费</div><div class="l">平台接入 · 分基础/专业/旗舰</div></div>
+    <div class="kpi blue"><div class="n" style="font-size:22px">按量</div><div class="l">模型用量 · 定价透明</div></div>
+    <div class="kpi blue"><div class="n" style="font-size:22px">订阅</div><div class="l">数据与模型服务</div></div>
+  </div>
+  <div class="tw">
+    <table style="margin-top:12px">
+      <thead><tr><th style="width:4%">#</th><th style="width:18%">产品</th><th>内容</th><th style="width:24%">计费方式</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td><strong>商机分发</strong></td><td>理财引流、按揭线索；真实购房场景圈出高意向人群，分类器匹配分发</td><td><span class="g">CPA</span> 按有效线索，空号/拒接/重复不计费</td></tr>
+        <tr><td class="mono">2</td><td><strong>CPT 包段服务</strong></td><td>专家坐席时段、场景冠名、专场活动（如贵行财富管理专场周）</td><td><span class="g">CPT</span> 按包段时长/场次，资源独占</td></tr>
+        <tr><td class="mono">3</td><td><strong>Agent 开放平台</strong></td><td>插件化接入、数据围栏、频率控制、专属仪表盘</td><td><span class="g">年费分层</span>（基础/专业/旗舰）</td></tr>
+        <tr><td class="mono">4</td><td><strong>模型用量</strong></td><td>调用 Agent 能力产生的模型消耗</td><td><span class="g">按量计费</span>，定价透明，无隐性加价</td></tr>
+        <tr><td class="mono">5</td><td><strong>数据和模型服务</strong></td><td>贝壳政研通 CLI 权威数据接口（政策/指标/行情，口径溯源）；多类画像模型（区域/人群/客群），依托可信数据空间与隐私计算能力</td><td><span class="g">订阅 + 调用</span>：接口按订阅/调用量，画像按场景订阅</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="swipe" aria-hidden="true">← 横向滑动查看完整表格 →</div>
+  <div class="callout">
+    <strong>边界声明</strong>：我们不按点击收费、不参与成交分成——客户转化完全由贵行自主完成。平台只对<strong>交付给贵行的确定性资源</strong>（有效线索、包段时段、接入能力、模型用量）收费。
+  </div>
+</section>
+
+<section class="slide" aria-label="数据安全与合规">
+  <div class="kicker">安全与合规 · GOVERNANCE</div>
+  <h2><span class="no">12</span>数据安全与合规承诺</h2>
+  <div class="grid2" style="margin-top:22px">
+    <div class="card"><div class="tag">COMPLIANCE</div><h4>合规边界前置</h4><p>评估线明确「市场价值参考测算、市场监测与咨询分析，不构成资产评估报告或房地产估价报告」；依法应履行的评估、审计、审批程序由贵行另行开展。</p></div>
+    <div class="card"><div class="tag">ACCESS</div><h4>数据权限分域</h4><p>每家机构独立数据权限白名单：可见数据范围、应用边界与敏感字段逐一约定；接口只读优先。</p></div>
+    <div class="card"><div class="tag">SECURITY</div><h4>技术围栏</h4><p>调用频率与并发限制、全量调用审计日志、专属监控仪表盘——防穿透、防超范围使用。</p></div>
+    <div class="card"><div class="tag">LEADS</div><h4>线索合规</h4><p>线索来源为用户在真实购房场景中的主动行为与授权留资；核验通过才计为有效线索，杜绝流量污染。</p></div>
+  </div>
+  <div class="callout" style="margin-top:22px">
+    证据链纪律：口径、单位、版本强制溯源；<strong>多源交叉验证</strong>；宁标「待补」，不编数字——这是我们对每份交付物的底线承诺。
+  </div>
+</section>
+
+<section class="slide" aria-label="为什么选择我们">
+  <div class="kicker">差异化 · WHY US</div>
+  <h2><span class="no">13</span>为什么是我们</h2>
+  <p class="sub">同样是「给押品一个价格」，三种做法的差别在证据链的完整度上。</p>
+  <div class="cmp">
+    <div class="col">
+      <h4>传统时点评估</h4>
+      <span class="role">POINT-IN-TIME APPRAISAL</span>
+      <ul>
+        <li>时点快照，难以支撑高频批量复核</li>
+        <li>数据口径与披露颗粒度不透明</li>
+        <li>区域分化难传导到单套押品</li>
+        <li>价格差难以定量归因</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h4>通用 AI 问答</h4>
+      <span class="role">GENERIC LLM</span>
+      <ul>
+        <li>数字无口径来源，无法复算</li>
+        <li>无样本边界，结论不可追问</li>
+        <li>无版本留存，历史结论不可回溯</li>
+        <li>责任边界不清，难以入行内流程</li>
+      </ul>
+    </div>
+    <div class="col us">
+      <h4>我们的证据线</h4>
+      <span class="role">EVIDENCE CHAIN</span>
+      <ul>
+        <li><strong>持续</strong>：单套与批量统一更新，异常自动触发复核清单</li>
+        <li><strong>透明</strong>：可比案例、样本期、空间边界、版本全程披露</li>
+        <li><strong>可解释</strong>：区位/户型/楼层/房龄/流动性逐项定量归因</li>
+        <li><strong>可追溯</strong>：四级数据标注 + 证据留存，每个数字可追问</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide" aria-label="常见问题 FAQ">
+  <div class="kicker">常见问题 · FAQ</div>
+  <h2><span class="no">14</span>先把银行最关心的五个问题说清楚</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th style="width:29%">问题</th><th>回答</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>不构成评估报告，如何嵌入我行授信 / 押品流程？</strong></td>
+          <td>定位为市场价值参考测算、市场监测与咨询分析，作为贷前筛查、存量复核、异常识别与人工评估触发的辅助证据；依法应履行的评估、审计、审批程序仍由贵行另行开展。</td>
+        </tr>
+        <tr>
+          <td><strong>数据来源与口径如何保证可复核？</strong></td>
+          <td>交付中披露数据来源、样本期、筛选边界、修正参数、异常处理与版本信息；必要时可通过证据留存入口回溯样本与参数，具体字段范围以试点确认为准。</td>
+        </tr>
+        <tr>
+          <td><strong>交付与更新频率如何安排？</strong></td>
+          <td>可按单套、批量或异步批次组织交付，并根据押品场景设置复核与更新机制；具体交付节奏、更新频率与服务响应以试点约定为准。</td>
+        </tr>
+        <tr>
+          <td><strong>数据权限与敏感字段如何隔离？</strong></td>
+          <td>按机构配置数据权限白名单与应用边界，敏感字段遵循最小必要原则，接口优先采用受控、可审计的只读方式；字段清单、留存周期与脱敏规则以试点确认为准。</td>
+        </tr>
+        <tr>
+          <td><strong>试点最小投入与验收指标如何设定？</strong></td>
+          <td>建议先选定一组真实押品样本，围绕覆盖率、可复核性、异常识别、人工复核衔接与接口可用性共同设定指标；样本规模、试点周期、验收阈值与商务条款以试点确认为准。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="swipe" aria-hidden="true">← 横向滑动查看完整表格 →</div>
+</section>
+
+<section class="slide" aria-label="合作路径">
+  <div class="kicker">合作路径 · HOW WE START</div>
+  <h2><span class="no">15</span>三步走：对齐 → 试点 → 规模化</h2>
+  <div class="grid3" style="margin-top:24px">
+    <div class="card"><div class="tag">STEP 1 · 1–2 周</div><h4>需求对齐</h4><p>明确贵行闭环目标（财富获客 / 押品风控 / 不良处置），确认数据范围、合规口径与验收标准。</p></div>
+    <div class="card hi"><div class="tag">STEP 2 · 1–3 个月</div><h4>分行试点</h4><p>小范围跑通：押品监测或线索分发先行，用真实数据校准模型与线索质量，双方共建验收指标。</p></div>
+    <div class="card"><div class="tag">STEP 3</div><h4>规模化复制</h4><p>试点验收后扩展至全行押品池与全渠道商机，产品模块按需叠加，效果数据驱动加码。</p></div>
+  </div>
+  <h3 style="font-size:15px;letter-spacing:.2em;color:var(--gold);margin:34px 0 6px;font-weight:600">试点期间贵行获得</h3>
+  <ul>
+    <li>专属对接团队：行业咨询 + 数据建模 + 接入支持</li>
+    <li>完整的交付样例库与 API 沙箱环境</li>
+    <li>季度联合复盘：效果数据、口径校准、下一步建议</li>
+  </ul>
+</section>
+
+<section class="slide" aria-label="下一步行动">
+  <div class="kicker">下一步行动 · NEXT STEP</div>
+  <h2><span class="no">16</span>门槛很低，先用一轮回测验证价值</h2>
+  <p class="sub">不改变贵行现有授信与押品制度，先从小范围样本开始，验证口径、证据链与流程衔接。</p>
+  <div class="grid3" style="margin-top:24px">
+    <div class="card">
+      <div class="tag">STEP 1</div>
+      <h4>提供押品样本</h4>
+      <p>贵行提供 20 笔押品样本，用于免费回测；样本范围、脱敏方式与必要字段以双方确认口径为准。</p>
+    </div>
+    <div class="card hi">
+      <div class="tag">STEP 2</div>
+      <h4>一次口径对齐会</h4>
+      <p>安排 60 分钟工作会议，围绕数据范围、合规口径与验收标准完成一次对齐；会议参与方与材料清单以双方约定为准。</p>
+    </div>
+    <div class="card">
+      <div class="tag">STEP 3</div>
+      <h4>确定试点方案</h4>
+      <p>明确试点押品范围、交付形态、复核机制与验收指标，形成可执行的试点清单；试点规模、周期与商务条款以双方约定为准。</p>
+    </div>
+  </div>
+  <div class="callout blue" style="margin-top:24px">
+    <strong>建议从“回测—对齐—试点”开始</strong>：先验证贵行关心的可复核性与流程适配度，再决定是否扩大覆盖范围。以上 20 笔样本与 60 分钟会议为建议起点，试点规模、周期与商务条款以双方约定为准。
+  </div>
+</section>
+
+<!-- 17 尾页 -->
+<section class="slide cover" aria-label="结尾">
+  <div class="vig"></div>
+  <div class="brandbar"><div class="mk">零</div><div class="nm">零售金融专家</div></div>
+  <div>
+    <div class="kicker">THANK YOU</div>
+    <h1 style="font-size:clamp(36px,3.6vw,52px)">期待与贵行共建<br>押品证据线与获客新通路</h1>
+    <div class="rule"></div>
+    <div class="endgrid">
+      <div class="endcard big"><h4>现场可提供材料</h4><p>交付样例全文（单套 / 项目 / 板块 / 政企专题 / 量化测算五类）、单套租金测算标杆报告、API 接入说明。</p></div>
+      <div class="endcard"><h4>服务介绍材料</h4><p>《商业银行个人居住房地产估值与监测服务》（2026.08）</p></div>
+      <div class="endcard"><h4>开放平台文档</h4><p><a href="https://yy.meizu.life/render/zhijian/partner-devdoc.html#s1" target="_blank" rel="noopener">合作伙伴开放能力开发文档</a></p></div>
+      <div class="endcard"><h4>证据留存</h4><p><a href="https://dss.ke.com/valuation/index.html" target="_blank" rel="noopener">dss.ke.com/valuation</a><br>结论可回溯到样本与参数版本</p></div>
+    </div>
+    <p style="margin-top:40px;font-size:13.5px;color:var(--dim);letter-spacing:.1em">零售金融专家 · 面向金融机构的估值证据与商机服务</p>
+  </div>
+</section>
+
+</div>
+
+<div class="footer"><span>零售金融专家 · 金融机构服务介绍</span><span id="pageinfo">01 / 17</span></div>
+<div class="hint">← → 翻页 · 点击左右边缘 · ⌘/Ctrl+P 导出 PDF</div>
+<nav class="dots" id="dots" aria-label="幻灯片导航"></nav>
+<div class="nav"><button onclick="go(-1)" aria-label="上一页" type="button"><span aria-hidden="true">‹</span></button><button onclick="go(1)" aria-label="下一页" type="button"><span aria-hidden="true">›</span></button></div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const dots=document.getElementById('dots');
+let cur=0;
+
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.type='button';
+  b.setAttribute('aria-label','第 '+(i+1)+' 页');
+  b.addEventListener('click',()=>show(i,{focus:true}));
+  dots.appendChild(b);
+});
+const dotEls=[...dots.children];
+
+// slide semantics + focus targets
+slides.forEach((s,i)=>{
+  s.setAttribute('role','group');
+  s.setAttribute('aria-roledescription','幻灯片');
+  s.setAttribute('tabindex','-1');
+  s.dataset.name=s.getAttribute('aria-label')||('幻灯片 '+(i+1));
+});
+
+function show(i,opts){
+  const next=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,idx)=>{
+    const on=idx===next;
+    s.classList.toggle('active',on);
+    if(on){s.removeAttribute('aria-hidden')}else{s.setAttribute('aria-hidden','true')}
+    s.setAttribute('aria-label',s.dataset.name+'（第 '+(idx+1)+' 页，共 '+slides.length+' 页）');
+  });
+  cur=next;
+  dotEls.forEach((d,idx)=>d.setAttribute('aria-current',String(idx===cur)));
+  document.getElementById('pageinfo').textContent=
+    String(cur+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  slides[cur].scrollTop=0;
+  // move focus into the new slide so screen readers follow the deck
+  if(opts&&opts.focus){slides[cur].focus({preventScroll:true})}
+}
+function go(d){show(cur+d,{focus:true})}
+
+function typingIn(el){
+  if(!el) return false;
+  const t=(el.tagName||'').toLowerCase();
+  return t==='input'||t==='textarea'||t==='select'||el.isContentEditable;
+}
+document.addEventListener('keydown',e=>{
+  if(typingIn(e.target))return;
+  const onControl=e.target.closest&&e.target.closest('a,button,[role="button"],[tabindex]:not([tabindex="-1"])');
+  if(onControl)return;   // controls keep their own keys; dots/links move focus into the slide
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1)}
+  else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1)}
+  else if(e.key==='Home'){e.preventDefault();show(0,{focus:true})}
+  else if(e.key==='End'){e.preventDefault();show(slides.length-1,{focus:true})}
+});
+
+// click-to-advance only in the outer edge bands, so text selection & cards behave
+document.getElementById('deck').addEventListener('click',e=>{
+  if(e.target.closest('a,button,input,select,textarea,[role="button"]'))return;
+  if(window.getSelection&&String(window.getSelection()).length)return;
+  const band=Math.max(90,innerWidth*0.12);
+  if(e.clientX<band)show(cur-1,{focus:true});
+  else if(e.clientX>innerWidth-band)show(cur+1,{focus:true});
+});
+show(0);
+</script>
+</body>
+</html>

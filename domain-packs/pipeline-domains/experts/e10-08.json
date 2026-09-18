@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "高德康",
-    "publicLabel": "高德康",
-    "initials": "高"
+    "internalName": "效率灯塔",
+    "publicLabel": "效率灯塔",
+    "initials": "X"
   },
   "domains": [
     "realestate.general"

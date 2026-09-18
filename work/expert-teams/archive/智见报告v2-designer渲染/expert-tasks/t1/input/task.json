@@ -1,0 +1,7 @@
+{
+  "taskId": "t1",
+  "subject": "Designer v2 渲染：finesse-ui 模板重做视觉层（13 页，不覆盖 v1）",
+  "description": "用你的内置 finesse-ui 模板重渲染《成都数据集团合作分析报告》v2（视觉层整体重做，内容契约与 v1 完全一致）。\n\n【内容契约（硬约束，与 v1 相同）】\n- 唯一内容源 md：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md\n- 渲染契约（13 页映射/存疑口径锚点/数字锚点/纪律）：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md —— 逐条遵守\n- 内容取材可参考 v1 已校对片段（文字与 19 处 flag 徽标落位已过双门禁，直接沿用其文字内容；但视觉/CSS 不得照抄 v1 贝壳蓝 theme）：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/p01–p13.html\n- 结构不可改：八章节名节名逐字；正文表述只能原句摘录；存疑语原文入徽（flag 效果自定样式，语义等同）；每章一点睛图（无数字不绘/定性示意标注）；表格全量（六来源表 6 行、6.3 矩阵 7×5）且单页不断。\n\n【版式硬约束】794×1123px A4 纵向（@page margin:0），每页 .page 固定尺寸 overflow:hidden；每页页眉含「内部讨论稿」密级标识＋报告名；页脚含页码「第 N 页 / 共 13 页」（N=01–13）；正文≥15px；单文件内联 CSS、零 JS、零外链字体/图片。\n\n【你的模板】finesse-ui：/root/zhijian/dsh-expert-library/knowledge/skills/finesse-ui/SKILL.md（先通读 SKILL.md，再按需读 references/：document.md、product-ui.md、product-palettes.md、dataviz.md、chart-crafting.md、anti-cheap.md、theming.md）。用 product/document register 完整重做视觉系统：色板、字重层级、hairline 边框、图表语汇、封面封底范式。贝壳蓝主题不保留，以你的 register 为准（如需保留「内部讨论稿/页码」等语义位，用你的语汇重绘）。\n\n【交付】\n1) 写出 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v2.html（新文件，严禁改动同名 v1 文件）；\n2) 按你的角色规范做渲染检查：playwright 截图 13 页全检（无遮挡/无溢出/页脚可见），逐页截图存 .build_html/shots_v2/，记录 sha256；\n3) 向队长回报：设计决策摘要（register/色板/图表语汇选择与理由）、自检结论、sha256。\n队长将复跑 G1（存疑短语+结构）/G2（数字逐 token）/G3（溢出实测）三门禁后验收。",
+  "dependencies": [],
+  "createdAt": 1788618255703
+}

@@ -22,6 +22,28 @@ export function apply(ctx: Context, config: Config): void {
   // entry deliberately registers only the model-facing tools in the isolated
   // agent realm; mounting the full host entry here would duplicate its web
   // routes for every new session.
+  // `disabledTools` filters THIS preset's tool catalog at registration time:
+  // a listed tool id is never registered, so it costs no context window and
+  // cannot be routed to. Tools registered by the host entry (web routes,
+  // provider transport, `render_publish`) are untouched.
+  const disabled = new Set(config.disabledTools ?? [])
+  const scopedRegister: typeof ctx.tools.register = ((definition: Parameters<typeof ctx.tools.register>[0]) => {
+    if (disabled.has(definition.name)) return
+    return ctx.tools.register(definition)
+  }) as typeof ctx.tools.register
+  const scopedCtx = new Proxy(ctx, {
+    get(target, prop, receiver) {
+      if (prop === 'tools') {
+        return new Proxy(target.tools, {
+          get(toolTarget, toolProp, toolReceiver) {
+            if (toolProp === 'register') return scopedRegister
+            return Reflect.get(toolTarget, toolProp, toolReceiver)
+          },
+        })
+      }
+      return Reflect.get(target, prop, receiver)
+    },
+  })
   const runtimeConfig: ToolsConfig = {
     stateDir: config.stateDir ?? 'expert-teams',
     memberProvider: config.memberProvider ?? 'spawn',
@@ -32,7 +54,7 @@ export function apply(ctx: Context, config: Config): void {
     packsDir: config.packsDir ?? 'domain-packs',
     toolExecution: config.toolExecution,
   }
-  const core = registerExpertTeamsTools(ctx, runtimeConfig)
-  registerZhijianTools(ctx, runtimeConfig, core)
-  registerCollabTools(ctx, runtimeConfig, core)
+  const core = registerExpertTeamsTools(scopedCtx, runtimeConfig)
+  registerZhijianTools(scopedCtx, runtimeConfig, core)
+  registerCollabTools(scopedCtx, runtimeConfig, core)
 }

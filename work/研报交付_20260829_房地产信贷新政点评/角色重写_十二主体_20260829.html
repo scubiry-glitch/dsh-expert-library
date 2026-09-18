@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一场「角色重写」：房地产金融 1+N 新政对十二类参与主体的影响 · 智见</title>
+<style>
+/* finesse · register=product · A=ink-teal+amber · B=700/400 · C=report-rail
+ * D=CSS-only · E=policy-print · SOUL=6 SPECTACLE=2 DENSITY=7 · 角色重写十二主体 v1 */
+:root{
+  /* substrate — warm paper tinted toward ink-teal */
+  --page:#eef1ed;  --bg:#fcfdfb;  --panel-2:#f3f6f2;  --panel-3:#eaf0ea;
+  --border:rgba(20,35,29,.09);  --border-2:rgba(20,35,29,.16);
+  /* ink — green-black, tinted, no pure black/white */
+  --ink-1:#15241e;  --ink-2:#35473e;  --ink-3:#5e7066;
+  /* brand: ink-teal + amber */
+  --accent:#0e6a55;  --accent-2:#a9741f;  --accent-soft:rgba(14,106,85,.10);
+  --amber-soft:rgba(169,116,31,.13);  --on-accent:#f4faf7;  --on-amber:#4a3a10;
+  /* semantic — functional, not identity */
+  --up:#1e7a46;  --down:#c0453c;  --warn:#a9741f;
+  --down-deep:#a03a32;  --amber-deep:#7a5417;  --accent-deep:#0a5142;
+  --up-soft:rgba(30,122,70,.10);  --down-soft:rgba(192,69,60,.10);
+  /* elevation — tinted toward ink */
+  --shadow:0 1px 3px rgba(21,36,30,.06);
+  --shadow-lg:0 40px 90px -50px rgba(21,36,30,.38);
+  --r:18px;  --r-sm:12px;  --r-lg:30px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+html,body{overflow-x:clip}
+body{
+  background:var(--page);
+  color:var(--ink-2);
+  font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+/* ============ floating report shell ============ */
+.shell{
+  max-width:1120px; margin:26px auto 40px;
+  background:var(--bg);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+  overflow:hidden;
+  position:relative;
+}
+.shell::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(420px 240px at 92% -8%, rgba(14,106,85,.09), transparent 62%);
+}
+.pad{padding:34px 44px 30px}
+/* ============ type ============ */
+h1,h2,h3,h4{color:var(--ink-1); font-weight:700; text-wrap:balance; overflow-wrap:anywhere; min-width:0}
+h1{font-family:"Noto Serif CJK SC","Songti SC",serif; font-size:29px; line-height:1.4; letter-spacing:.01em}
+h2{font-size:19px; line-height:1.4; letter-spacing:.005em; display:flex; align-items:baseline; gap:10px}
+h2 .sec-no{font-size:13px; color:var(--accent); font-weight:700; letter-spacing:.04em}
+h3{font-size:14.5px; line-height:1.5}
+p{text-wrap:pretty}
+.lede{font-size:15px; line-height:1.9}
+.tnum{font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+.small{font-size:12px; color:var(--ink-3)}
+.micro{font-size:11px; letter-spacing:.06em; color:var(--ink-3); font-weight:600}
+.hl{color:var(--ink-1); font-weight:700}
+/* ============ header ============ */
+.masthead{border-bottom:1px solid var(--border); padding:36px 44px 26px; position:relative}
+.masthead::after{
+  content:""; position:absolute; left:44px; right:44px; bottom:-1px; height:2px;
+  background:linear-gradient(90deg, var(--accent) 0%, var(--accent) 34%, var(--accent-2) 100%);
+  opacity:.85; border-radius:2px;
+}
+.brand-row{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+.brand-mark{
+  width:34px; height:34px; border-radius:10px; background:var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--on-accent); font-weight:800; font-size:16px; letter-spacing:.02em;
+  box-shadow:var(--shadow);
+}
+.brand-name{font-size:12.5px; font-weight:700; color:var(--ink-1); letter-spacing:.08em}
+.brand-sub{font-size:11px; color:var(--ink-3); letter-spacing:.04em}
+.kicker{margin-bottom:10px}
+.masthead h1{margin-bottom:14px}
+.masthead .meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:16px; color:var(--ink-3); font-size:12px}
+.meta b{color:var(--ink-2); font-weight:600}
+/* ============ toc chips ============ */
+.toc-strip{display:flex; flex-wrap:wrap; gap:8px; padding:18px 44px 2px}
+.toc-strip a{
+  font-size:12px; color:var(--ink-2); text-decoration:none;
+  background:var(--panel-2); border:1px solid var(--border-2);
+  border-radius:20px; padding:4px 13px; white-space:nowrap;
+}
+.toc-strip a:hover{border-color:var(--accent); color:var(--accent)}
+.toc-strip a b{color:var(--accent); font-weight:700}
+/* ============ sections ============ */
+section{padding:30px 0 6px; border-bottom:1px solid var(--border)}
+section:last-of-type{border-bottom:none}
+section h2{margin-bottom:16px}
+/* ============ verdict（总论框架） ============ */
+.verdict{
+  border:1px solid rgba(14,106,85,.22); background:var(--accent-soft);
+  border-radius:var(--r); padding:18px 22px; margin-bottom:14px;
+}
+.verdict .vt{font-size:12px; font-weight:700; color:var(--accent); letter-spacing:.08em; margin-bottom:8px}
+.verdict p{font-size:14px; line-height:1.85; color:var(--ink-2)}
+.verdict p b{color:var(--ink-1)}
+/* ============ 三要素卡 ============ */
+.trio{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px; margin-bottom:14px}
+.trio .t{
+  background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:16px 18px;
+}
+.trio .t .k{font-size:15px; font-weight:800; color:var(--accent); margin-bottom:4px}
+.trio .t.gold .k{color:var(--on-amber)}
+.trio .t .q{font-size:12px; color:var(--ink-3); margin-bottom:6px}
+.trio .t .m{font-size:12.8px; line-height:1.7; color:var(--ink-2)}
+.trio .t .m b{color:var(--ink-1)}
+/* ============ 矩阵热力示意 ============ */
+.matrix-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin-bottom:8px}
+.matrix{border:1px solid var(--border-2); border-radius:var(--r-sm); overflow:hidden; min-width:600px}
+.matrix table{width:100%; border-collapse:collapse; font-size:11.5px}
+.matrix thead th{
+  background:var(--panel-3); color:var(--ink-1); font-weight:700; text-align:left;
+  padding:9px 10px; border-bottom:1px solid var(--border-2); white-space:nowrap; font-size:11.5px;
+}
+.matrix tbody td{padding:7px 10px; border-bottom:1px solid var(--border); line-height:1.5; vertical-align:top}
+.matrix tbody tr:last-child td{border-bottom:none}
+.matrix td.subj{font-weight:700; color:var(--ink-1); white-space:nowrap; background:var(--panel-2)}
+.matrix td .lv{display:inline-block; font-size:10px; font-weight:800; border-radius:5px; padding:0 5px; margin-right:5px; letter-spacing:.05em; vertical-align:1px}
+.matrix td.gain{background:var(--accent-soft)} .matrix td.gain .lv{background:rgba(14,106,85,.16); color:var(--accent-deep)}
+.matrix td.loss{background:var(--down-soft)} .matrix td.loss .lv{background:rgba(192,69,60,.13); color:var(--down-deep)}
+.matrix td.mixed{background:var(--amber-soft)} .matrix td.mixed .lv{background:rgba(169,116,31,.18); color:var(--on-amber)}
+.matrix td.hold{background:var(--bg)} .matrix td.hold .lv{background:var(--panel-3); color:var(--ink-3)}
+.matrix td span{color:var(--ink-2)}
+.chart-cap{font-size:11.5px; color:var(--ink-3); margin:6px 0 0; line-height:1.6}
+.chart-cap b{color:var(--ink-2)}
+/* ============ 旧身份 → 新身份对照 ============ */
+.mapflow{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin-bottom:8px}
+.mf{
+  display:grid; grid-template-columns:minmax(0,1fr) 20px minmax(0,1fr); gap:6px; align-items:center;
+  background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r-sm); padding:10px 12px;
+}
+.mf .old{font-size:11.5px; color:var(--ink-3); line-height:1.55}
+.mf .old b{display:block; font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--ink-3)}
+.mf .arr{color:var(--accent); font-weight:800; text-align:center; font-size:13px}
+.mf .new{font-size:12.3px; font-weight:700; color:var(--accent); line-height:1.55}
+.mf .new b{display:block; font-size:11px; font-weight:700; letter-spacing:.06em; color:var(--accent)}
+.mf.gold{background:var(--amber-soft); border-color:rgba(169,116,31,.22)}
+.mf.gold .new, .mf.gold .new b, .mf.gold .arr{color:var(--on-amber)}
+/* ============ 章节块 ============ */
+.chapter{
+  border:1px solid var(--border); border-radius:var(--r); background:var(--bg);
+  padding:20px 22px 16px; margin-bottom:16px; position:relative; overflow:hidden;
+}
+.chapter::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent); opacity:.8}
+.chapter.gold::before{background:var(--accent-2)}
+.chapter .chead{display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 12px; margin-bottom:10px}
+.chapter .chead h3{font-size:16px}
+.chapter .cno{
+  flex:none; width:30px; height:30px; border-radius:9px; background:var(--accent-soft);
+  color:var(--accent); font-weight:800; font-size:14px;
+  display:flex; align-items:center; justify-content:center; align-self:center;
+}
+.chapter.gold .cno{background:var(--amber-soft); color:var(--on-amber)}
+.chapter .cband{
+  font-size:11px; font-weight:700; border-radius:20px; padding:2px 10px; letter-spacing:.04em;
+  color:var(--accent); background:var(--accent-soft); white-space:nowrap;
+}
+.chapter.gold .cband{color:var(--on-amber); background:var(--amber-soft)}
+.chapter .old-truth{
+  font-size:12.8px; line-height:1.78; color:var(--ink-2);
+  background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:10px 14px; margin-bottom:10px;
+}
+.chapter .old-truth b{color:var(--ink-1)}
+.chapter .old-truth .otl{font-size:10.5px; font-weight:700; letter-spacing:.08em; color:var(--amber-deep); display:block; margin-bottom:2px}
+.claw{margin-bottom:10px}
+.claw .clt{font-size:10.5px; font-weight:700; letter-spacing:.08em; color:var(--amber-deep); display:block; margin-bottom:5px}
+.claw p{font-size:12.8px; line-height:1.8; color:var(--ink-2)}
+.claw p b, .ded li b{color:var(--ink-1)}
+.ded{margin-bottom:4px}
+.ded .dt{font-size:10.5px; font-weight:700; letter-spacing:.08em; color:var(--accent); display:block; margin-bottom:5px}
+.ded ol{list-style:none; counter-reset:d}
+.ded ol li{
+  counter-increment:d; position:relative; padding:7px 0 7px 26px;
+  font-size:12.8px; line-height:1.76; border-bottom:1px dashed var(--border); color:var(--ink-2);
+}
+.ded ol li:last-child{border-bottom:none}
+.ded ol li::before{
+  content:counter(d); position:absolute; left:0; top:9px;
+  width:17px; height:17px; border-radius:5px; background:var(--accent-soft);
+  color:var(--accent); font-weight:800; font-size:11px;
+  display:flex; align-items:center; justify-content:center;
+}
+.chapter.gold .ded ol li::before{background:var(--amber-soft); color:var(--on-amber)}
+/* ============ 红线示意 ============ */
+.redline{border:1px solid var(--border); border-radius:var(--r-sm); padding:14px 16px; background:var(--panel-2); margin:10px 0 8px}
+.redline h4{font-size:13px; margin-bottom:2px}
+.redline .cap{font-size:11.5px; color:var(--ink-3); margin-bottom:10px}
+.rl-row{display:grid; grid-template-columns:150px minmax(0,1fr) 88px; gap:12px; align-items:center; padding:7px 0; border-bottom:1px dashed var(--border)}
+.rl-row:last-child{border-bottom:none}
+.rl-row .k{font-size:12px; color:var(--ink-2); line-height:1.45}
+.rl-row .k b{color:var(--ink-1)}
+.rl-track{background:var(--panel-3); border-radius:6px; height:14px; position:relative; overflow:hidden}
+.rl-fill{position:absolute; inset:0 auto 0 0; border-radius:6px}
+.rl-fill.teal{background:var(--accent); opacity:.85}
+.rl-fill.gold{background:var(--accent-2); opacity:.85}
+.rl-fill.line{background:repeating-linear-gradient(135deg, rgba(192,69,60,.75) 0 6px, rgba(192,69,60,.35) 6px 12px)}
+.rl-row .v{font-size:13px; font-weight:800; color:var(--ink-1); text-align:right; line-height:1.35}
+.rl-row .v .s{display:block; font-size:10.5px; font-weight:600; color:var(--ink-3)}
+/* ============ 产品菜单表 ============ */
+.chart-card{border:1px solid var(--border); border-radius:var(--r-sm); background:var(--bg); padding:14px 16px 10px}
+.chart-card h4{font-size:13px; margin-bottom:2px}
+.chart-card .cap{font-size:11.5px; color:var(--ink-3); margin-bottom:8px; line-height:1.6}
+.chart-card svg{width:100%; height:auto; display:block}
+.chart-legend{display:flex; flex-wrap:wrap; gap:6px 16px; font-size:11.5px; color:var(--ink-3); margin-top:4px}
+.chart-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px}
+.vs-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px; margin:8px 0 6px}
+.vs-card{border:1px solid var(--border-2); border-radius:var(--r-sm); padding:12px 14px; background:var(--panel-2)}
+.vs-card.us{border-top:3px solid var(--accent)}
+.vs-card.cn{border-top:3px solid var(--accent-2); background:var(--amber-soft)}
+.vs-card .vt2{font-size:12.5px; font-weight:800; color:var(--ink-1); margin-bottom:6px}
+.vs-card p{font-size:12.3px; line-height:1.72; color:var(--ink-2)}
+.vs-card p b{color:var(--ink-1)}
+.vs-card .flow{font-size:11.5px; font-weight:700; margin-top:7px; line-height:1.65; color:var(--accent)}
+.vs-card.cn .flow{color:var(--on-amber)}
+.tbl-wrap{border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:8px}
+.tbl-wrap.scroll{overflow-x:auto; -webkit-overflow-scrolling:touch}
+table{width:100%; border-collapse:collapse; font-size:12.8px}
+thead th{
+  background:var(--panel-3); color:var(--ink-1); font-weight:700; text-align:left;
+  padding:11px 14px; border-bottom:1px solid var(--border-2); white-space:nowrap;
+}
+tbody td{padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.65}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:var(--panel-2)}
+td .num{font-weight:700; color:var(--ink-1)}
+/* ============ 数据卡 ============ */
+.databand{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin:10px 0 8px}
+.db{
+  background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:12px 14px; position:relative; overflow:hidden;
+}
+.db::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent); opacity:.75; border-radius:0 2px 2px 0}
+.db.gold::before{background:var(--accent-2)}
+.db .v{font-size:19px; font-weight:800; color:var(--ink-1); line-height:1.25}
+.db .v .unit{font-size:12px; font-weight:600; color:var(--ink-3); margin-left:2px}
+.db .l{font-size:11px; color:var(--ink-3); margin-top:3px; line-height:1.55}
+/* ============ 跑道卡 ============ */
+.lanes{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px; margin:10px 0 8px}
+.lane{border:1px solid rgba(14,106,85,.22); background:var(--accent-soft); border-radius:var(--r-sm); padding:12px 14px}
+.lane .lk{font-size:12.5px; font-weight:800; color:var(--accent); margin-bottom:4px}
+.lane p{font-size:12.3px; line-height:1.68; color:var(--ink-2)}
+.lane p b{color:var(--ink-1)}
+/* ============ 沉默角色四联 ============ */
+.quad{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px; margin-bottom:4px}
+.qd{border:1px solid var(--border); border-radius:var(--r-sm); padding:12px 14px; background:var(--panel-2)}
+.qd .qk{font-size:12.5px; font-weight:800; color:var(--ink-1); margin-bottom:4px}
+.qd .qk i{font-style:normal; font-size:10.5px; color:var(--accent); background:var(--accent-soft); border-radius:5px; padding:0 6px; margin-right:6px; font-weight:800}
+.qd p{font-size:12.3px; line-height:1.7; color:var(--ink-2)}
+.qd p b{color:var(--ink-1)}
+/* ============ 结语表 ============ */
+.close-quote{
+  border:1px solid rgba(169,116,31,.24); background:var(--amber-soft);
+  border-radius:var(--r); padding:16px 20px; margin-bottom:14px;
+}
+.close-quote .qt{font-size:12px; font-weight:700; color:var(--on-amber); letter-spacing:.08em; margin-bottom:6px}
+.close-quote p{font-size:14px; line-height:1.85; color:var(--ink-2)}
+.close-quote p b{color:var(--ink-1)}
+td .neg{color:var(--down-deep); font-weight:700}
+td .pos{color:var(--up); font-weight:700}
+/* ============ note / footer ============ */
+.note{font-size:12px; color:var(--ink-3); background:var(--panel-2); border:1px solid var(--border); padding:12px 16px; margin:14px 0}
+.note b{color:var(--ink-2)}
+.disclosure{font-size:12px; color:var(--ink-3); line-height:1.85}
+.shell-footer{border-top:1px solid var(--border); padding:14px 44px; background:var(--panel-2); font-size:11.5px; color:var(--ink-3); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.shell-footer .fz{color:var(--ink-2)}
+/* ============ responsive collapse ============ */
+@media (max-width: 900px){
+  .trio{grid-template-columns:minmax(0,1fr)}
+  .mapflow{grid-template-columns:minmax(0,1fr)}
+  .databand{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .lanes{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .pad{padding:24px 20px 20px}
+  .masthead{padding:26px 20px 20px}
+  .masthead::after{left:20px; right:20px}
+  .masthead h1{font-size:23px}
+  .toc-strip{padding:14px 20px 2px}
+  .quad{grid-template-columns:minmax(0,1fr)}
+  .databand{grid-template-columns:minmax(0,1fr)}
+  .chapter{padding:16px 16px 12px}
+  .rl-row{grid-template-columns:104px minmax(0,1fr) 76px; gap:8px}
+  .tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  table{min-width:560px}
+  .shell-footer{padding:12px 20px}
+}
+/* ============ print ============ */
+@media print{
+  @page{
+    size:A4; margin:15mm 13mm 17mm;
+    @bottom-center{ content:"98wiki ｜ 智见 / 行业研究报告"; font-size:8.5pt; color:#65766d; font-family:"Noto Sans CJK SC",sans-serif; }
+    @bottom-right{ content:counter(page) " / " counter(pages); font-size:8.5pt; color:#65766d; }
+  }
+  body{background:#fcfdfb; font-size:10px; line-height:1.62}
+  h1{font-size:22px} h2{font-size:15px} h3{font-size:12.5px}
+  .lede{font-size:12px; line-height:1.7}
+  .shell{max-width:none; margin:0; border:none; box-shadow:none; border-radius:0}
+  .pad{padding:0}
+  .masthead{padding:0 0 10px}
+  .masthead::after{left:0; right:0}
+  .toc-strip{display:none}
+  section{padding:10px 0 2px; break-inside:auto}
+  section h2{margin-bottom:10px}
+  .verdict{padding:11px 14px; margin-bottom:9px} .verdict p{font-size:11.5px}
+  .trio{gap:7px; margin-bottom:9px}
+  .trio .t{padding:9px 11px}
+  .trio .t .k{font-size:12.5px} .trio .t .m{font-size:10.5px} .trio .t .q{font-size:10px}
+  .matrix{min-width:0}
+  .matrix table{font-size:8.8px; min-width:0}
+  .matrix thead th{padding:5px 6px; font-size:8.8px}
+  .matrix tbody td{padding:4px 6px}
+  .mapflow{gap:7px; margin-bottom:7px}
+  .mf{padding:7px 9px} .mf .old{font-size:9.3px} .mf .new{font-size:9.8px} .mf .old b,.mf .new b{font-size:8.6px}
+  .chart-cap{font-size:9.5px}
+  .chapter{padding:11px 13px 9px; margin-bottom:9px}
+  .chapter .chead h3{font-size:12.8px}
+  .chapter .cno{width:22px; height:22px; font-size:11px; border-radius:7px}
+  .chapter .old-truth{padding:7px 10px; margin-bottom:7px; font-size:10.4px}
+  .claw p{font-size:10.5px; margin-bottom:4px}
+  .ded ol li{font-size:10.4px; padding:3px 0 3px 22px}
+  .ded ol li::before{top:5px; width:14px; height:14px; font-size:9px}
+  .redline{padding:8px 10px; margin:7px 0 6px}
+  .chart-card{padding:8px 10px 6px; margin:7px 0 6px}
+  .chart-card h4{font-size:10.5px}
+  .chart-card .cap{font-size:9px; margin-bottom:4px}
+  .chart-legend{font-size:9px; gap:4px 12px}
+  .vs-grid{gap:7px; margin:6px 0 4px}
+  .vs-card{padding:8px 10px} .vs-card p{font-size:9.8px} .vs-card .vt2{font-size:10.5px} .vs-card .flow{font-size:9.3px}
+  .lanes{break-inside:avoid}
+  .rl-row{grid-template-columns:118px minmax(0,1fr) 70px; gap:8px; padding:4px 0}
+  .databand{gap:7px; margin:7px 0 6px} .db{padding:7px 9px} .db .v{font-size:14px} .db .l{font-size:9px}
+  .lanes{gap:7px; margin:7px 0 6px} .lane{padding:8px 10px} .lane p{font-size:10px}
+  .quad{gap:7px; margin-bottom:4px} .qd{padding:8px 10px} .qd p{font-size:10px}
+  .tbl-wrap{margin-bottom:8px}
+  thead th{padding:7px 9px} tbody td{padding:6px 9px; font-size:10.5px}
+  .close-quote{padding:11px 14px; margin-bottom:9px} .close-quote p{font-size:11.5px}
+  .tag-row{gap:5px; margin:5px 0}
+  .obs-tag{font-size:9.5px; padding:2px 8px; line-height:1.6}
+  .note{padding:8px 11px; margin:9px 0; font-size:10.3px}
+  .disclosure{font-size:10.3px; line-height:1.7}
+  .shell-footer{border-top:1px solid var(--border); padding:6px 0; font-size:9.5px}
+  .trio,.mapflow,.databand,.lanes,.quad{break-inside:auto}
+  .verdict,.trio .t,.chapter,.redline,.tbl-wrap,.close-quote,.lane,.qd,.db,.mf,.avoid-break{break-inside:avoid; box-shadow:none}
+  *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
+/* ============ motion (screen only, feedback-grade) ============ */
+@media screen and (prefers-reduced-motion: no-preference){
+  .rl-fill,.db{animation:none}
+  .rl-fill{transform-origin:left; animation:growx .9s cubic-bezier(.16,1,.3,1) both}
+  @keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms!important; transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ============ masthead ============ -->
+  <header class="masthead">
+    <div class="brand-row">
+      <div class="brand-mark">智</div>
+      <div>
+        <div class="brand-name">智见 · 行业研究</div>
+        <div class="brand-sub">ZHIJIAN INDUSTRY RESEARCH · 政策解读</div>
+      </div>
+    </div>
+    <div class="kicker micro" style="color:var(--accent)">角色重写 · 十二主体完整报告 · v4</div>
+    <h1>一场「角色重写」：<br>房地产金融 1+N 新政对十二类参与主体的影响（完整报告）</h1>
+    <p class="lede" style="margin-top:12px"><b>分析对象</b>：《关于改革完善房地产信贷管理 推动加快构建房地产发展新模式的意见》（央行、金监总局，2026-08-27 印发）及配套试行办法全集——《商品住房开发贷款管理办法》《个人住房贷款管理办法》《商业地产贷款管理办法》《城市更新项目贷款管理办法》（金监总局、住建部）《信托公司开展房地产领域信托业务管理办法》（2027-03-01 施行），及证监会《改革完善房地产融资制度…意见》（2025-12-27）；九项 2003-2016 年央行旧通知同步废止、1998 年《个人住房贷款管理办法》废止。</p>
+    <p class="lede" style="margin-top:10px"><b>分析框架</b>：这套文件体系重新分配的不是钱，而是三样更根本的东西——<b>知情权（谁能看见项目）、控制权（谁摸得着资金）、责任（谁为风险签字）</b>。每个主体按「旧身份 → 新身份 → 条款咬合 → 反直觉推论」展开。</p>
+    <div class="meta">
+      <span><b>框架</b> 知情权 · 控制权 · 责任</span>
+      <span><b>结构</b> 总论 + 十二章 + 结语表 + 来源披露</span>
+      <span><b>日期</b> 2026-08-29</span>
+    </div>
+  </header>
+
+  <!-- ============ toc ============ -->
+  <nav class="toc-strip" aria-label="章节导航">
+    <a href="#s0"><b>总</b> 总论三要素</a>
+    <a href="#s0a"><b>〇</b> 为什么是现在</a>
+    <a href="#s0b"><b>表</b> 1+N 结构总览</a>
+    <a href="#s0c"><b>据</b> 数据底座</a>
+    <a href="#c1"><b>一</b> 购房者</a>
+    <a href="#c2"><b>二</b> 主办银行</a>
+    <a href="#c3"><b>三</b> 开发商</a>
+    <a href="#c4"><b>四</b> 上市房企</a>
+    <a href="#c5"><b>五</b> 建筑央企</a>
+    <a href="#c6"><b>六</b> 信托</a>
+    <a href="#c7"><b>七</b> 地方政府</a>
+    <a href="#c8"><b>八</b> 持有与运营端</a>
+    <a href="#c9"><b>九</b> 经纪中介</a>
+    <a href="#c10"><b>十</b> 数据与评估</a>
+    <a href="#c11"><b>十一</b> 城投</a>
+    <a href="#c12"><b>十二</b> 沉默角色</a>
+    <a href="#zh"><b>合</b> 总结·三重再分配</a>
+    <a href="#send"><b>结</b> 结语表</a>
+    <a href="#src"><b>附</b> 来源披露</a>
+  </nav>
+
+  <!-- ============ 〇、总论 ============ -->
+  <section class="pad" id="s0">
+    <h2><span class="sec-no">〇</span>总论：重新分配的是三样更根本的东西</h2>
+    <div class="trio">
+      <div class="t"><div class="k">知情权</div><div class="q">谁能看见项目</div><div class="m">从开发者、银行的两方知情，扩展为<b>主办银行垄断项目全部资金可见性</b>、监管与第三方核验机构接入的分层可见结构。</div></div>
+      <div class="t gold"><div class="k">控制权</div><div class="q">谁摸得着资金</div><div class="m">资金封闭管理：<b>一个项目一个封闭水池</b>，用款审核与划拨收敛到主办银行，房企集团与信托的调度权被没收。</div></div>
+      <div class="t"><div class="k">责任</div><div class="q">谁为风险签字</div><div class="m">责任落到可追索的主体上：<b>主办行、评估、审计、管理人</b>签字背书，购房者第一次有风控条款替其把关。</div></div>
+    </div>
+    <div class="verdict">
+      <div class="vt">展开方式</div>
+      <p>每个主体按「<b>旧身份 → 新身份 → 条款咬合 → 反直觉推论</b>」展开。旧模式里赚「预期」钱的角色，在新模式里被逐一点名重写——以下矩阵为十二主体在三要素上的定性示意。</p>
+    </div>
+
+    <!-- 图① 三要素 × 十二主体矩阵热力示意 -->
+    <h3 style="margin-bottom:8px">图① 三要素 × 十二主体：谁增、谁减（定性示意）</h3>
+    <div class="matrix-wrap">
+      <div class="matrix">
+        <table>
+          <thead><tr><th style="width:16%">主体</th><th>知情权（谁能看见项目）</th><th>控制权（谁摸得着资金）</th><th>责任（谁为风险签字）</th></tr></thead>
+          <tbody>
+            <tr><td class="subj">一 购房者</td><td class="gain"><span class="lv">增</span><span>受托支付进监管账户、带押过户入办法</span></td><td class="loss"><span class="lv">弱</span><span>无抵押权、清偿排所有债主之后</span></td><td class="mixed"><span class="lv">变</span><span>交付风险趋零，留下选择风险与时机风险</span></td></tr>
+            <tr><td class="subj">二 主办银行</td><td class="gain"><span class="lv">增</span><span>数据垄断者：比地方政府、房企更早知道真实去化</span></td><td class="gain"><span class="lv">增</span><span>信托用款审核与划拨由主办行执行</span></td><td class="gain"><span class="lv">增</span><span>异常处置＋问责＋代管信托资金，违规点名处罚</span></td></tr>
+            <tr><td class="subj">三 开发商</td><td class="hold"><span class="lv">守</span><span>项目单独建账、账户透明化</span></td><td class="loss"><span class="lv">失</span><span>资金不得混同、不得划拨至集团/关联方</span></td><td class="gain"><span class="lv">增</span><span>资本金先到位、还本等竣工、回款先还贷</span></td></tr>
+            <tr><td class="subj">四 上市房企</td><td class="gain"><span class="lv">增</span><span>每项目一份实时、真实、第三方托管的项目报表</span></td><td class="gain"><span class="lv">增</span><span>定增/并购/公司债/ABS/REITs 全通道重开</span></td><td class="gain"><span class="lv">增</span><span>募集资金穿透式专户监管、财务造假零容忍</span></td></tr>
+            <tr><td class="subj">五 建筑央企</td><td class="hold"><span class="lv">守</span><span>工程进度天然可见（交付能力即信用）</span></td><td class="gain"><span class="lv">增</span><span>「参照涉房」拿到并购融资通道</span></td><td class="gain"><span class="lv">增</span><span>交付确定性背书，F+EPC+O 闭环</span></td></tr>
+            <tr><td class="subj">六 信托</td><td class="loss"><span class="lv">失</span><span>不得仅以外部机构信息作为论证依据</span></td><td class="loss"><span class="lv">失</span><span>资金出口被银行接管：专户＋同一法人托管＋主办行划拨</span></td><td class="gain"><span class="lv">增</span><span>一项目一管理人、薪酬递延＋追索扣回</span></td></tr>
+            <tr><td class="subj">七 地方政府</td><td class="gain"><span class="lv">增</span><span>白名单守门、融资协调机制直报</span></td><td class="loss"><span class="lv">失</span><span>缴地价贷款没了、一二级开发财政垫资没了</span></td><td class="gain"><span class="lv">增</span><span>风险联防联控、违约处置合伙人</span></td></tr>
+            <tr><td class="subj">八 持有运营端</td><td class="gain"><span class="lv">增</span><span>REITs/经营性物业贷现金流须可核验</span></td><td class="gain"><span class="lv">增</span><span>全生命周期产品菜单：开发贷→团购房贷→经营贷→退出</span></td><td class="hold"><span class="lv">守</span><span>按产品条款各自担险</span></td></tr>
+            <tr><td class="subj">九 经纪中介</td><td class="gain"><span class="lv">增</span><span>真房源/真成交/真带看成为银行风控外采对象</span></td><td class="loss"><span class="lv">失</span><span>三刀切掉金融化收入：赎楼、期房代办、返点</span></td><td class="gain"><span class="lv">增</span><span>验真责任上移：房源真实性、成交价披露</span></td></tr>
+            <tr><td class="subj">十 数据评估</td><td class="gain"><span class="lv">增</span><span>升格为国家风控基础设施（存量重估、现金流数据）</span></td><td class="loss"><span class="lv">失</span><span>评估不再创造额度，只验证价值</span></td><td class="gain"><span class="lv">增</span><span>孰低认定、每年重估、违规通报主管部门</span></td></tr>
+            <tr><td class="subj">十一 城投</td><td class="hold"><span class="lv">守</span><span>项目入库、城市体检、经营性收入测算公开</span></td><td class="loss"><span class="lv">失</span><span>两条旧现金管道（一级垫资、托底拿地）被拔掉</span></td><td class="gain"><span class="lv">增</span><span>「市场化运营主体」资格＝生死线</span></td></tr>
+            <tr><td class="subj">十二 沉默角色</td><td class="mixed"><span class="lv">分</span><span>AMC 获编制化处置通道；灰色助贷失去生存空间</span></td><td class="mixed"><span class="lv">分</span><span>散户被请出非标餐桌（只卖非自然人）</span></td><td class="mixed"><span class="lv">分</span><span>处置制度化、灰色清零、金融化机构化</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="chart-cap"><b>读法</b>：<span style="color:var(--accent)">绿＝该要素扩权/加责</span>、<span style="color:var(--down-deep)">红＝被收走/弱化</span>、<span style="color:var(--on-amber)">金＝结构性换轨</span>、灰＝基本持平。<b>定性示意，非定量评分</b>，依据各章「条款咬合」与「反直觉推论」归纳。</p>
+
+    <!-- 图② 旧身份 → 新身份对照 -->
+    <h3 style="margin:16px 0 8px">图② 十二主体「旧身份 → 新身份」对照</h3>
+    <div class="mapflow">
+      <div class="mf"><div class="old"><b>一 购房者</b>体系的影子出资人</div><div class="arr">→</div><div class="new"><b>新身份</b>被写进风控条款的消费者</div></div>
+      <div class="mf"><div class="old"><b>二 主办银行</b>资金贩子</div><div class="arr">→</div><div class="new"><b>新身份</b>责任承包商（主办行身份第一次是负债而非资产）</div></div>
+      <div class="mf"><div class="old"><b>三 开发商</b>资金腾挪的金融家</div><div class="arr">→</div><div class="new"><b>新身份</b>降维回项目经理（制造业化）</div></div>
+      <div class="mf gold"><div class="old"><b>四 上市房企</b>再融资通道收紧方</div><div class="arr">→</div><div class="new"><b>新身份</b>收到「基于项目」再上市邀请函的发行人</div></div>
+      <div class="mf gold"><div class="old"><b>五 建筑央企</b>全文最容易被忽略的角色</div><div class="arr">→</div><div class="new"><b>新身份</b>「参照涉房」的准房企</div></div>
+      <div class="mf"><div class="old"><b>六 信托</b>影子银行通道</div><div class="arr">→</div><div class="new"><b>新身份</b>被收编：主办银行体系的外包资管</div></div>
+      <div class="mf"><div class="old"><b>七 地方政府</b>场外操盘手</div><div class="arr">→</div><div class="new"><b>新身份</b>有席位的合伙人</div></div>
+      <div class="mf"><div class="old"><b>八 持有运营端</b>金融菜单缺席者</div><div class="arr">→</div><div class="new"><b>新身份</b>全生命周期产品菜单持有者</div></div>
+      <div class="mf"><div class="old"><b>九 经纪中介</b>信贷分销商</div><div class="arr">→</div><div class="new"><b>新身份</b>交易信用基础设施</div></div>
+      <div class="mf"><div class="old"><b>十 数据评估</b>额度的化妆师</div><div class="arr">→</div><div class="new"><b>新身份</b>国家风控基础设施</div></div>
+      <div class="mf"><div class="old"><b>十一 城投</b>土地财政的杠杆放大器</div><div class="arr">→</div><div class="new"><b>新身份</b>存量资产运营商</div></div>
+      <div class="mf gold"><div class="old"><b>十二 沉默角色</b>沉默接盘者、灰色地带、散户</div><div class="arr">→</div><div class="new"><b>新身份</b>AMC 在编 / 助贷出局 / 散户退场</div></div>
+    </div>
+    <p class="chart-cap">对照取自各章标题与结语表的「新身份」栏。</p>
+  </section>
+
+  <!-- ============ 总论·〇 ============ -->
+  <section class="pad" id="s0a">
+    <h2><span class="sec-no">〇</span>总论·〇：为什么是现在，为什么是这个形状</h2>
+    <div class="verdict">
+      <div class="vt">先说破一层窗户纸</div>
+      <p>预售制从来不是一种「销售方式」，而是一项<b>隐性金融制度</b>。全世界主要经济体中，让终端消费者（购房者）在房屋建成前向开发企业提供无抵押、无知情权、最后受偿的开发融资，是几乎独一份的安排——代价是把金融风险伪装成消费行为：<b>烂尾不是消费纠纷，是一场没有认领的信用危机</b>。1+N 体系的总钥匙由此而来：把这项隐性金融制度<b>显性化</b>——承认购房款是开发融资，所以必须进监管账户、受托支付、专款专用（个贷办法 20-22 条）；再<b>拆除</b>——把融资功能还给专业机构（开发贷、REITs、并购重组、不动产私募基金），把消费功能还给购房者（「能拿房、再还贷」）。读懂了这条主线，全部条文不再是碎条散点，而是同一次「制度还原手术」的缝合线。</p>
+    </div>
+    <h3 style="margin-bottom:8px">旧模式之所以必须拆：三重错位</h3>
+    <div class="trio">
+      <div class="t"><div class="k">融资主体错位</div><div class="m">风险承受能力最弱的人（购房者）承担了链条最前端的风险（开发融资）；风控能力最强的机构（银行）躲在抵押物后面做第二顺位。</div></div>
+      <div class="t gold"><div class="k">信息结构错位</div><div class="m">项目最真实的资金与进度信息被混合在集团资金池里，外部无人可见——尽调靠关系，定价靠信仰。</div></div>
+      <div class="t"><div class="k">激励错位</div><div class="m">所有人都在赚「预期」的钱——房企赚地价上涨、银行赚抵押物升值、中介赚成交频次、地方赚土地财政，<b>唯独「交付」这个环节最不被定价</b>。烂尾的损失无人认领，最后只能是中央与全社会兜底。</div></div>
+    </div>
+    <div class="claw"><span class="clt">形状与时间坐标</span>
+      <p><b>为什么是 1+N 文件群而不是一部大法</b>：预售制的金融化是全链条的——开发、销售、持有、影子、股权，环环相扣，只改一环必然被其他环套利（只管银行，资金改走信托；只管信贷，融资改走资本市场；只管增量，存量风险无人接）。1+N 是<b>全口径堵截＋分工具适配</b>：央行出总纲定原则，金监总局按条线出四个办法，住建部联署管存量盘活，证监会打开权益通道并共用同一把尺子——「基于项目」。七个文件在监管口径上第一次完全对齐，这在分业监管的格局里本身就是罕见的制度成果。</p>
+      <p style="margin-top:6px"><b>最后看时间坐标：为什么是现在</b>。销售面积累计同比 <span class="hl tnum">-11.8%</span>、开发投资 <span class="hl tnum">-19.2%</span>、按揭余额较峰值净减 <span class="hl tnum">1.61</span> 万亿（Wind EDB，央行/统计局，2026-07/2026Q2）——旧模式的总需求引擎已经熄火，刺激旧引擎的边际收益趋零；同时九个 2003-2016 年周期性通知与 1998 年个贷办法集中废止，宣告过去二十年「热了收紧、冷了放松」的补丁式监管正式谢幕。<b>政策的函数变了：从 f(市场热度) 的周期调节，变成 g(制度架构) 的恒定约束</b>——这不是又一轮调控，是给行业换了一部「宪法」。</p>
+    </div>
+  </section>
+
+  <!-- ============ 总论·一 + 二 ============ -->
+  <section class="pad" id="s0b">
+    <h2><span class="sec-no">一</span>总论·一：1+N 体系结构总览（谁在管什么）</h2>
+    <div class="tbl-wrap scroll avoid-break">
+      <table>
+        <thead><tr><th>文件</th><th>发文主体</th><th>管什么</th><th>在体系中的角色</th></tr></thead>
+        <tbody>
+          <tr><td>《关于改革完善房地产信贷管理…的意见》</td><td>央行＋金监总局</td><td>贷款品种总纲、主办银行制、放款时点、宏观审慎</td><td><span class="num">信贷总纲（内核）</span></td></tr>
+          <tr><td>《商品住房开发贷款管理办法（试行）》</td><td>金监总局</td><td>项目融资：四证/资本金/封闭账户/主办行/期限</td><td>供给端主战场</td></tr>
+          <tr><td>《个人住房贷款管理办法（试行）》</td><td>金监总局＋央行</td><td>需求端：首付、50%/60% 收入红线、40 年、放款时点、带押过户</td><td>需求端总规则</td></tr>
+          <tr><td>《商业地产贷款管理办法（试行）》</td><td>金监总局</td><td>开发/购买/运营三段贷款、经营性物业贷</td><td>持有运营端</td></tr>
+          <tr><td>《城市更新项目贷款管理办法（试行）》</td><td>金监总局＋住建部</td><td>项目库、市场化实施主体、禁隐性增信</td><td>存量盘活通道</td></tr>
+          <tr><td>《信托公司开展房地产领域信托业务管理办法（试行）》</td><td>金监总局（2027-03-01 施行）</td><td>非标准入、资金入主办行专户、集中度、适当性</td><td>影子端收编</td></tr>
+          <tr><td>证监会资本市场支持文件</td><td>中国证监会（2025-12-27）</td><td>再融资/并购/公司债/ABS/REITs/私募基金+监管</td><td>权益与退出通道</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="chart-cap">九项 2003-2016 年央行通知与 1998 年《个人住房贷款管理办法》同步废止——<b>「补丁版」时代结束，「版本号」时代开始</b>。银行管过程、资本市场管结构、信托被收编、宏观审慎管总量：这是一次金融分工的「操作系统升级」，以下十二章，就是升级后每个进程的新岗位说明书。</p>
+    <h3 style="margin:14px 0 8px">总论·二：阅读框架</h3>
+    <p style="font-size:13px; line-height:1.8">每章统一四段式：<b>旧身份</b>（旧模式里它实际在干什么）→ <b>新身份</b>（文件把它钉在哪个座位）→ <b>条款咬合</b>（引用具体条文）→ <b>反直觉推论</b>（俗套分析不会告诉你的二阶后果）。十二章之后，「总结」章回到总论的三要素，检验这场再分配是否闭环。</p>
+  </section>
+
+  <!-- ============ 总论·三 数据底座 ============ -->
+  <section class="pad" id="s0c">
+    <h2><span class="sec-no">三</span>总论·三：数据底座——制度重构的基本盘</h2>
+    <p class="small" style="margin-bottom:8px">全国五组数据（口径：全国；Wind EDB，中国人民银行/国家统计局；月度截至 2026-07、季度截至 2026Q2）</p>
+    <div class="tbl-wrap scroll avoid-break">
+      <table>
+        <thead><tr><th>指标</th><th>最新值</th><th>关键变化</th></tr></thead>
+        <tbody>
+          <tr><td>个人住房贷款余额</td><td><span class="num tnum">36.29 万亿元（2026-06）</span></td><td>自 2025-03 峰值 37.90 万亿连续净减少，累计 -1.61 万亿（约 -4.2%）；季度序列 37.56→37.68→<span class="num tnum">37.90</span>→37.74→37.44→37.01→36.72→36.29 万亿</td></tr>
+          <tr><td>按揭加权平均利率</td><td><span class="num tnum">存量 3.05% / 新发放 3.06%（2026Q2）</span></td><td>新发放序列 3.33→3.10→3.11→3.09→3.07→3.06→3.06→3.06，历史低位平台、弹性钝化</td></tr>
+          <tr><td>商品房销售面积累计同比</td><td><span class="num tnum">-11.8%（2026-07）</span></td><td>2025-07 为 -4.0%，2026-02 曾探 -13.5%</td></tr>
+          <tr><td>70 城新宅价格当月同比</td><td><span class="num tnum">-3.4%（2026-07）</span></td><td>2025-10 最窄 -2.6%，再度走阔</td></tr>
+          <tr><td>开发投资累计同比</td><td><span class="num tnum">-19.2%（2026-07）</span></td><td>2025-12 -17.2% → 2026-06 -18.0% → -19.2%，持续探底</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="chart-cap">五组数据的共同指向：价格工具用到极限、信贷资产收缩、量价双弱且跌幅二次走阔——这正是 1+N 放弃总量刺激、转向<b>期限、时点、结构</b>三类工具的现实背景。总论·〇所谓「政策函数从周期调节变为制度约束」，数据上是可验证的：利率走平五个季度而余额仍降，说明周期性工具已经失效，只剩制度变量可用。</p>
+      <div class="chart-card avoid-break" style="margin:10px 0 8px">
+        <h4>图A·个人住房贷款余额季度序列：八个季度，从 37.90 到 36.29（万亿元）</h4>
+        <div class="cap">Wind EDB · 央行（W1409719）· 季度 · 2024Q3→2026Q2 · 金点为峰值（2025-03）</div>
+        <svg viewBox="0 0 480 210" role="img" aria-label="个人住房贷款余额季度序列：37.56、37.68、37.90 峰值、37.74、37.44、37.01、36.72、36.29 万亿">
+          <line x1="46" y1="127" x2="460" y2="127" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="40" y="130" text-anchor="end" font-size="9" fill="#65766d">36.5</text><line x1="46" y1="96" x2="460" y2="96" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="40" y="99" text-anchor="end" font-size="9" fill="#65766d">37.0</text><line x1="46" y1="65" x2="460" y2="65" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="40" y="68" text-anchor="end" font-size="9" fill="#65766d">37.5</text><line x1="46" y1="34" x2="460" y2="34" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="40" y="37" text-anchor="end" font-size="9" fill="#65766d">38.0</text><line x1="164" y1="41" x2="164" y2="158" stroke="rgba(169,116,31,.3)" stroke-width="1" stroke-dasharray="2 3"/>
+          <path d="M46,62 105,54 164,41 223,50 283,69 342,96 401,113 460,140" fill="none" stroke="#0e6a55" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="46" cy="62" r="3.4" fill="#0e6a55"/><circle cx="105" cy="54" r="3.4" fill="#0e6a55"/><circle cx="164" cy="41" r="3.4" fill="#a9741f"/><circle cx="223" cy="50" r="3.4" fill="#0e6a55"/><circle cx="283" cy="69" r="3.4" fill="#0e6a55"/><circle cx="342" cy="96" r="3.4" fill="#0e6a55"/><circle cx="401" cy="113" r="3.4" fill="#0e6a55"/><circle cx="460" cy="140" r="3.4" fill="#0e6a55"/><text x="50" y="53" text-anchor="start" font-size="10.5" fill="#0e6a55" font-weight="700">37.56</text><text x="164" y="32" text-anchor="middle" font-size="10.5" fill="#a9741f" font-weight="700">37.90（峰值 25-03）</text><text x="460" y="131" text-anchor="end" font-size="10.5" fill="#0e6a55" font-weight="700">36.29（26-06）</text><text x="46" y="182" text-anchor="middle" font-size="9" fill="#65766d">24Q3</text><text x="105" y="182" text-anchor="middle" font-size="9" fill="#65766d">24Q4</text><text x="164" y="182" text-anchor="middle" font-size="9" fill="#65766d">25Q1</text><text x="223" y="182" text-anchor="middle" font-size="9" fill="#65766d">25Q2</text><text x="283" y="182" text-anchor="middle" font-size="9" fill="#65766d">25Q3</text><text x="342" y="182" text-anchor="middle" font-size="9" fill="#65766d">25Q4</text><text x="401" y="182" text-anchor="middle" font-size="9" fill="#65766d">26Q1</text><text x="460" y="182" text-anchor="middle" font-size="9" fill="#65766d">26Q2</text>
+        </svg>
+        <div class="chart-legend"><span><i style="background:#0e6a55"></i>按揭余额（万亿元）</span><span><i style="background:#a9741f"></i>峰值 37.90（2025-03）</span><span>累计净减 1.61 万亿（约 -4.2%）</span></div>
+      </div>
+    <h3 style="margin:14px 0 8px">分城市快照：制度重构下的「市场底」不是同一个底</h3>
+    <div class="tbl-wrap scroll avoid-break">
+      <table>
+        <thead><tr><th>维度</th><th>北京（2026-07）</th><th>南京（2026-07）</th></tr></thead>
+        <tbody>
+          <tr><td>商品房销售面积累计同比</td><td><span class="pos tnum">+1.4%（5 月起转正：+0.6→+2.0→+1.4）</span></td><td><span class="neg tnum">-13.5%</span>（2026-02，市统计局口径更新滞后，如实标注）</td></tr>
+          <tr><td>二手住宅价格同比</td><td><span class="num tnum">-4.5%</span>（2026-01 探底 -8.7 后连续 6 个月收窄）</td><td><span class="num tnum">-5.4%</span>（2026-01 探底 -8.6 后收窄，深度仍显著大于北京）</td></tr>
+          <tr><td>新建商品住宅价格同比</td><td><span class="num tnum">-2.3%</span>（窄幅波动）</td><td><span class="num tnum">-1.8%</span>（2026-03 探底 -4.1 后修复弹性两城最大）</td></tr>
+          <tr><td>开发投资累计同比</td><td><span class="num tnum">-11.6%</span>（浅于全国 -19.2%）</td><td>—（市统计局口径受限）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="chart-cap">（口径：国家统计局 70 城分城市指数、地方统计局，Wind EDB。详细月度序列见第九、十章及结语表。）</p>
+      <div class="chart-card avoid-break" style="margin:10px 0 6px">
+        <h4>图B·京宁对比（2026-07，%）：市场底不是同一个底</h4>
+        <div class="cap">口径：国家统计局 70 城分城市指数、地方统计局，Wind EDB · 零轴发散条 · 北京（青）vs 南京（金）</div>
+        <svg viewBox="0 0 480 224" role="img" aria-label="北京与南京四维对比：销售面积北京 +1.4、南京 -13.5；二手价格北京 -4.5、南京 -5.4；新房价格北京 -2.3、南京 -1.8；开发投资北京 -11.6、南京无数据">
+          <line x1="300" y1="16" x2="300" y2="138" stroke="rgba(20,35,29,.35)" stroke-width="1"/><text x="300" y="12" text-anchor="middle" font-size="9" fill="#65766d">0%</text><text x="6" y="35" font-size="10" fill="#35473e" font-weight="600">销售面积累计同比</text><rect x="300" y="26" width="21" height="11" rx="2" fill="#0e6a55" opacity=".85"/><rect x="98" y="41" width="202" height="11" rx="2" fill="#a9741f" opacity=".85"/><text x="92" y="50" text-anchor="end" font-size="9.5" fill="#a9741f" font-weight="700">-13.5%（26-02）</text><text x="326" y="35" text-anchor="start" font-size="9.5" fill="#0e6a55" font-weight="700">+1.4%</text><text x="6" y="64" font-size="10" fill="#35473e" font-weight="600">二手住宅价格同比</text><rect x="232" y="55" width="68" height="11" rx="2" fill="#0e6a55" opacity=".85"/><rect x="219" y="70" width="81" height="11" rx="2" fill="#a9741f" opacity=".85"/><text x="214" y="79" text-anchor="end" font-size="9.5" fill="#a9741f" font-weight="700">-5.4%</text><text x="228" y="64" text-anchor="end" font-size="9.5" fill="#0e6a55" font-weight="700">-4.5%</text><text x="6" y="93" font-size="10" fill="#35473e" font-weight="600">新建商品住宅价格同比</text><rect x="266" y="84" width="34" height="11" rx="2" fill="#0e6a55" opacity=".85"/><rect x="273" y="99" width="27" height="11" rx="2" fill="#a9741f" opacity=".85"/><text x="268" y="108" text-anchor="end" font-size="9.5" fill="#a9741f" font-weight="700">-1.8%</text><text x="260" y="93" text-anchor="end" font-size="9.5" fill="#0e6a55" font-weight="700">-2.3%</text><text x="6" y="122" font-size="10" fill="#35473e" font-weight="600">开发投资累计同比</text><rect x="126" y="113" width="174" height="11" rx="2" fill="#0e6a55" opacity=".85"/><text x="304" y="137" font-size="9" fill="#65766d">南京：—（口径受限）</text><text x="121" y="122" text-anchor="end" font-size="9.5" fill="#0e6a55" font-weight="700">-11.6%</text>
+        </svg>
+        <div class="chart-legend"><span><i style="background:#0e6a55"></i>北京</span><span><i style="background:#a9741f"></i>南京</span><span>南京销售为市统计局口径（最新 2026-02），如实标注</span></div>
+      </div>
+  </section>
+
+  <!-- ============ 一、购房者 ============ -->
+  <section class="pad" id="c1">
+    <div class="chapter">
+      <div class="chead"><div class="cno">一</div><h3>购房者：从「体系的影子出资人」到「被写进风控条款的消费者」</h3><span class="cband">个贷办法 · 第10/13/20/22/24/26条</span></div>
+      <div class="old-truth"><span class="otl">旧身份真相</span>预售制下，购房者预付款+按揭是房企最重要的「融资来源」，但购房者是整个体系里唯一<b>没有风控部门的出资人</b>——没有抵押权、没有知情权、清偿排在所有债主之后。</div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>《个贷办法》为购房者补上风控部门——放款时点后置（第22条：现房销售备案后、预售竣工备案后）；受托支付进监管账户；带押过户入办法（第20条）；存量利率与新发放利率偏离可协商变更或置换（第24条）；阶段性失收入可协商延后还款/展期/延迟还本（第26条）；<b>月房贷收入比 ≤50%、全债务支出比 ≤60% 硬红线</b>（第10条）；期限最长 40 年（第13条）。</p>
+      </div>
+
+      <!-- 图④ 个贷红线示意（只用 md 内数字） -->
+      <div class="redline avoid-break">
+        <h4>图④ 个贷风控红线与期限结构示意</h4>
+        <div class="cap">第10条/第13条/第26条 · 条形按占比/期限规则等比绘制</div>
+        <div class="rl-row"><div class="k"><b>月房贷收入比</b>硬红线</div><div class="rl-track"><div class="rl-fill teal" style="width:50%"></div><div class="rl-fill line" style="left:50%; width:2px; opacity:1"></div></div><div class="v tnum">≤50%<span class="s">第10条</span></div></div>
+        <div class="rl-row"><div class="k"><b>全债务支出比</b>硬红线</div><div class="rl-track"><div class="rl-fill gold" style="width:60%"></div><div class="rl-fill line" style="left:60%; width:2px; opacity:1"></div></div><div class="v tnum">≤60%<span class="s">第10条</span></div></div>
+        <div class="rl-row"><div class="k"><b>按揭期限</b>上限</div><div class="rl-track"><div class="rl-fill teal" style="width:75%"></div><div class="rl-fill line" style="left:75%; width:2px; opacity:1"></div></div><div class="v tnum">最长 40 年<span class="s">第13条</span></div></div>
+        <div class="rl-row"><div class="k"><b>展期后合计期限</b>上限</div><div class="rl-track"><div class="rl-fill gold" style="width:75%"></div><div class="rl-fill line" style="left:75%; width:2px; opacity:1"></div></div><div class="v tnum">合计 ≤40 年<span class="s">第26条</span></div></div>
+        <div class="rl-row"><div class="k"><b>展期累计</b>上限</div><div class="rl-track"><div class="rl-fill teal" style="width:37.5%"></div><div class="rl-fill line" style="left:37.5%; width:2px; opacity:1"></div></div><div class="v tnum">≤原期限一半<span class="s">第26条</span></div></div>
+      </div>
+
+      <div class="redline avoid-break">
+        <h4>图④b 30 vs 40 年：月供与总利息对比（测算）</h4>
+        <div class="cap">测算口径：100 万元贷款 · 年利率 3.06% · 等额本息 · 条形按数值等比绘制</div>
+        <div class="rl-row"><div class="k"><b>30 年期月供</b>（基准）</div><div class="rl-track"><div class="rl-fill teal" style="width:100%"></div></div><div class="v tnum">4247 元<span class="s">总利息约 52.9 万</span></div></div>
+        <div class="rl-row"><div class="k"><b>40 年期月供</b></div><div class="rl-track"><div class="rl-fill gold" style="width:85.1%"></div></div><div class="v tnum">3614 元<span class="s">总利息约 73.5 万</span></div></div>
+        <div class="rl-row"><div class="k"><b>总利息 · 30 年期</b></div><div class="rl-track"><div class="rl-fill teal" style="width:72%"></div></div><div class="v tnum">约 52.9 万<span class="s">月供降约 15%</span></div></div>
+        <div class="rl-row"><div class="k"><b>总利息 · 40 年期</b></div><div class="rl-track"><div class="rl-fill gold" style="width:100%"></div></div><div class="v tnum">约 73.5 万<span class="s">总利息升约 39%（+20.6 万）</span></div></div>
+      </div>
+
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <ol>
+          <li>40 年期限不是福利，是<b>让更多人能过 50% 红线的技术手段</b>——真正约束是收入认定而非月供；银行将第一次依法「保护性拒贷」。</li>
+          <li>风险没有消失，只是改了形状：交付风险趋零后，留下「选择风险」（选错城市/项目）与「时机风险」（期房阶段无按揭杠杆，购期房＝自有资金赌交付）。<b>期房将迅速「准现房化」</b>——期房市场只剩全款雄厚买家与拿团购房贷的机构，散户期房市场被制度性劝退。</li>
+          <li>展期上限（累计不超原期限一半、合计不超 40 年，第26条）给「收入中断」留了制度化出口——按揭从刚性合同变成可协商的长期服务关系。</li>
+          <li><b>测算</b>（假设：100 万元、年利率 3.06%、等额本息）：30 年期月供约 4247 元、总利息约 52.9 万；40 年期月供约 3614 元、总利息约 73.5 万——<b>月供降约 15%，总利息升约 39%（+20.6 万）</b>。40 年期限降低的是「月供门槛」，抬高的是「终身利息成本」——与 50%/60% 收入红线组合阅读，才知道银行真正审核的是收入，不是月供。</li>
+          <li><b>存量利率救济的量级</b>：若存量按揭利率经第 24 条偏离调整机制下调 50bp，按 36.29 万亿元余额（Wind EDB，央行）测算年减负约 <b>1814 亿元</b>（测算口径）——房贷从刚性合同变成可协商的长期服务关系的经济含义就在这里。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 二、主办银行 ============ -->
+  <section class="pad" id="c2">
+    <div class="chapter gold">
+      <div class="chead"><div class="cno">二</div><h3>主办银行：从「资金贩子」到「责任承包商」——主办行身份第一次是负债而非资产</h3><span class="cband">开发贷办法 · 第7-8/15/16/21条 · 信托办法第21-22/57条</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>一项目一行、账户与主办行在贷款结清前原则上不得变更（开发贷办法第7-8条）；放款进度与<b>实物建设进度</b>匹配（第15条）；销售回款优先偿还本项目贷款（第16条）；项目公司对外负债、投资等重大事项事先告知主办银行（《意见》第12条）；信托办法更狠——信托资金的用款审核与划拨由<b>主办银行</b>执行，托管行须与主办行同一法人（信托办法第21-22条），主办行违规点名处罚（第57条）。</p>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <ol>
+          <li>银行内部将诞生「工程监理岗」：审的不是财报是工程进度。第三方工程核验/评估机构成为银行标配外采（第21条预留接口）——<b>一个新的 to-B 行业被文件凭空创造</b>。</li>
+          <li>主办行垄断项目全部资金可见性，成为<b>数据垄断者</b>：比地方政府、比房企集团更早知道真实去化；「项目实时数据」成为信贷定价新坐标。</li>
+          <li>会出现「银行不敢抢的项目」：责任无限（异常处置+问责+代管信托资金）、收益只有利差——中小银行可能主动让出主办行资格，主办行向具备工程风控能力的头部行集中；银行间第一次出现「项目资质分层」而非「客户资质分层」。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 三、开发商 ============ -->
+  <section class="pad" id="c3">
+    <div class="chapter">
+      <div class="chead"><div class="cno">三</div><h3>房地产开发企业：集团信用被「没收」，从资金腾挪的金融家降维回项目经理</h3><span class="cband">开发贷办法第4/13条 · 意见第5条 · 证监会同口径</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>项目单独建账、资金不得混同、不得划拨至集团/关联方、不得用于缴地价/分红/其他投资（开发贷办法第13条）、不得抽回资本金；房企集团风险与单一项目风险分开评估（第4条）；证监会文件同口径——「基于项目」融资。全链条禁缴土地出让金贷款（《意见》第5条）。</p>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <ol>
+          <li>过去房企的核心竞争力是资金调度能力（八个瓶七个盖），新政没收了瓶盖：每个项目一个封闭水池。ROE 公式里杠杆项被拆掉，只剩周转率与利润率——<b>行业第一次被迫变得像制造业</b>。</li>
+          <li>开发商从「垫资的甲方」变成「<b>被垫资的乙方</b>」：资本金先到位、贷款按进度放、还本等竣工、回款先还贷——现金流表从融资驱动切换为经营驱动。</li>
+          <li>土地市场被釜底抽薪：缴地价贷款全链条禁止（银行/信托/债券募集资金/城市更新前期），拿地资金只剩真资本金——土地买家骤然集中于国资、城市更新基金与「先有产业故事」的主体。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 四、上市房企 ============ -->
+  <section class="pad" id="c4">
+    <div class="chapter gold">
+      <div class="chead"><div class="cno">四</div><h3>上市房企与资本市场：一封印着「基于项目」四个字的再上市邀请函</h3><span class="cband">证监会文件 2025-12-27 · 第6/8/9/11条</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>证监会文件（2025-12-27）全通道重开——定增再融资、并购重组（股份/定向可转债/现金收购涉房资产+配套融资）、公司债（存量滚动续发）、ABS/CMBS、REITs（租赁住房/城市更新可发可扩募）、不动产私募基金试点；发行准入突出「基于项目」（第6条）、募集资金穿透式专户监管（第8条）、财务造假零容忍（第9条）、严格执行退市（第11条）。</p>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <ol>
+          <li>真正的主角不是再融资，是<b>并购重组</b>：出险项目退出通道从「法拍折价」升级为「上市公司收购+配套融资」——行业出清终局不是倒闭清算，而是<b>项目级资产被好公司批量接走</b>；A股将出现「项目整合型房企」。</li>
+          <li>每个项目的资金账户躺着一份实时、真实、第三方托管的项目报表——并购尽调成本骤降、信息不对称骤减，比任何鼓励政策都更能催生并购市场。</li>
+          <li>保荐/审计/承销从通道费生意变成<b>无限连带看门人</b>（第9条打击第三方配合造假）；房企年审审计风险溢价飙升，出现「会计所分层拒单」。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 五、建筑央企 ============ -->
+  <section class="pad" id="c5">
+    <div class="chapter">
+      <div class="chead"><div class="cno">五</div><h3>建筑央企：全文最容易被忽略的一颗雷——「参照涉房」四个字</h3><span class="cband">证监会文件（二）</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>证监会文件（二）：「建筑等与房地产密切相关行业的上市公司，<b>参照上市房地产开发企业政策执行</b>」——可综合运用股份、定向可转债、现金收购涉房资产并募集配套资金。</p>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <p>出险项目最顺位的接盘者可能不是同行房企，而是<b>建筑央企</b>——有融资通道（参照涉房）、有交付能力（交付确定性即信用）、有 REITs 出口（持有运营）。「F+EPC+O」（融资+总承包+运营）闭环第一次拿到合规弹药；代建从「乙方生意」升格为「资产整合生意」。行业洗牌终局图景里，真正的新玩家是穿工装的那批。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 六、信托 ============ -->
+  <section class="pad" id="c6">
+    <div class="chapter gold">
+      <div class="chead"><div class="cno">六</div><h3>信托公司：被「收编」——从影子银行通道到主办银行体系的外包资管</h3><span class="cband">信托办法 · 第11/14/16/21-22/24/30/33/34/45/46/59-60/70条</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>非标准入三道杠（监管评级 2 级以上＋净资产不低于 10 亿＋近两年非连续亏损，第16条）；信托资金必须进<b>主办银行</b>专户、托管行与主办行同一法人、三方合同、主办行审核并划拨资金（第21-22条）；集中度：房地产信托余额≤信托实收规模 5%、单一企业≤房地产信托余额 20%（第45条）；未上市股权原则禁止、已建成项目例外且单一项目≤信托净资产 25%（第24条）；存量到期结清；非标占比≥50% 的产品投资者全部为非自然人（第30条）；48 小时投资冷静期（第34条）；不得设预期收益率、业绩比较基准不得以绝对数值展示（第33条）；薪酬递延+追索扣回（第46条）；「一个项目对应一个管理人」（第14条）；2027-03-01 施行、三项 2008-2010 年信托旧规废止（第70条）。</p>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <ol>
+          <li>信托的「资金出口」被银行接管——从「第二银行」变成「主办银行体系的外包资金方」。但文件留了三个新物种身份：①<b>风险处置合作方</b>（第29条：与金融 AMC/地方 AMC 联手处置存量风险）；②<b>持有型物业的「私有 REITs 前置仓」</b>（25% 条款实为已建成资产股权/物权投资开的小门）；③资产服务信托（财富管理/行政管理服务）。</li>
+          <li>「一项目一管理人」+异地项目驻点（第44条）说明监管要的是<b>小而精的地产专业户</b>，不是规模通道——两万亿级地产非标通道行业将萎缩重生成两条专业赛道：特殊机会投资+不动产服务信托。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 七、地方政府 ============ -->
+  <section class="pad" id="c7">
+    <div class="chapter">
+      <div class="chead"><div class="cno">七</div><h3>地方政府：从场外操盘手变成有席位的合伙人——但资金链也被掐了</h3><span class="cband">开发贷第26条 · 证监会第11/12条 · 城市更新贷款办法</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>白名单项目直报「城市房地产融资协调机制」（开发贷第26条）；债券违约处置「配合注册地城市政府」（证监会第11条）；与地方政府「风险联防联控机制」（第12条）；《城市更新贷款办法》由金监总局+住建部联合印发——项目须入库+城市体检+经营性收入足额覆盖本息、不得用于净地供应前征收补偿、不得接受任何政府隐性增信、不得以政府应付款项/无收益公益性资产抵质押。</p>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <p>地方政府第一次在金融监管文件里有了正式职能席位（白名单守门、联防联控、违约处置合伙人），同时资金链被掐：缴地价贷款没了、一二级开发财政垫资没了——必须从「卖地给开发商」转向「<b>卖项目给资本</b>」，城市更新项目库实质是地方政府的新「招商产品手册」，产品力＝经营性现金流测算书。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 八、持有与运营端 ============ -->
+  <section class="pad" id="c8">
+    <div class="chapter gold">
+      <div class="chead"><div class="cno">八</div><h3>持有与运营端（租赁企业/REITs 投资人/物业运营方）：第一次拿到「全生命周期产品菜单」</h3><span class="cband">意见四-五章 · 商业地产办法 · 证监会</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>《意见》四-五章+商业地产办法给出成体系菜单（下表）。保障房开发贷保本微利、利率一般低于商品住房开发贷。证监会：研究优化租赁住房原始权益人监管与净现金流分派率要求、稳慎推进商业不动产 REITs。</p>
+      </div>
+      <div class="tbl-wrap scroll avoid-break">
+        <table>
+          <thead><tr><th>产品（按生命周期排序）</th><th>期限</th><th>成数/上限</th><th>要点</th></tr></thead>
+          <tbody>
+            <tr><td>住房租赁开发建设贷</td><td><span class="num tnum">一般3年/最长5年</span></td><td>—</td><td>对象含工业园区、农村集体经济组织、企事业单位</td></tr>
+            <tr><td>住房租赁团体购房贷</td><td><span class="num tnum">≤30 年</span></td><td><span class="num tnum">评估值 80%</span></td><td>批量收存量闲置房</td></tr>
+            <tr><td>住房租赁经营性贷（自有产权）</td><td><span class="num tnum">≤20 年</span></td><td><span class="num tnum">80%</span></td><td>—</td></tr>
+            <tr><td>住房租赁经营性贷（非自有产权改造）</td><td><span class="num tnum">≤5 年</span></td><td><span class="num tnum">应收租金 70%</span></td><td>—</td></tr>
+            <tr><td>经营性物业贷</td><td><span class="num tnum">≤15 年</span></td><td><span class="num tnum">评估值 70%</span></td><td>到期日早于产权证到期至少 5 年</td></tr>
+            <tr><td>商业地产购买贷</td><td><span class="num tnum">一般10年/最长15年</span></td><td>—</td><td>企业自有资金付首付</td></tr>
+            <tr><td>RMBS/CMBS/REITs/扩募</td><td>—</td><td>—</td><td>退出通道；分派率要求研究优化中</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <p>运营阶段第一次拥有与开发阶段平起平坐的金融产品线——这是「把不动产变成可持有资产」的金融基建。「开发商」与「持有商」物种分化：开发-持有-退出（REITs/CMBS）闭环第一次在制度上跑通，<b>中国版不动产资管产业链的开工许可证发下来了</b>。分派率要求若下调，更多资产够得着退出通道，反过来抬高今天的收购定价——团租机构与建筑央企是定价权转移的先受益者。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 九、经纪中介 ============ -->
+  <section class="pad" id="c9">
+    <div class="chapter">
+      <div class="chead"><div class="cno">九</div><h3>经纪中介（贝壳式经纪业务）：从「信贷分销商」回归「交易信用基础设施」</h3><span class="cband">个贷第10/17/20/22/23/24条 · 开发贷第13/14条</span></div>
+      <div class="old-truth"><span class="otl">旧身份真相</span>贝壳式平台吃两层钱——经纪佣金（二手 ACN 分佣+新房渠道分销）与衍生金融（赎楼过桥、按揭代办返点、首付包装、装修贷导流）。期房时代的新房分销本质是「信贷获客渠道」：签约即放款即佣金。</div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>带押过户入办法（个贷第20条：登记、贷款、放款、还款、尾款结算有效衔接）；放款时点后置（第22条——期房阶段无贷可办）；合作机构名单制+违规终止合作并<b>追偿损失</b>+风控核心事项银行独立开展（第23条）；面谈制度（第17条）+收入比红线（第10条）让「包装」失去空间；存量利率置换（第24条）降低卖旧一端摩擦；开发贷优先支持「好房子」项目（开发贷第13/14条）抬升品质供给；REITs/经营性物业贷的现金流核验需要真实成交与租金数据。</p>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <ol>
+          <li><b>三刀切掉金融化收入</b>：赎楼生意被带押过户终结（过桥资金是中介金融化利润大头）；预售阶段按揭代办消失（签约时无贷可办）；返点渠道模式终结（收入核实银行独立做）。中介的「金融收入表」被整体划掉。</li>
+          <li><b>验真即护城河</b>：银行独立面谈+硬性收入红线+名单制，「包装」清零——真房源、真成交、真带看的数据平台成为银行风控的数据外采对象；平台从「渠道」升格为「<b>交易信用基础设施</b>」，数据变现第一次名正言顺（成交价基准、押品重估参考、REITs 现金流对标）。</li>
+          <li><b>改善链加速器</b>：带押过户+存量利率置换+再交易住房放款衔接（第22条）让「卖旧+买新+两笔贷款」一揽子撮合深度翻倍，二手经纪单客价值上升。<b>Wind 分城市与全国序列验证「量的修复先于价」</b>：全国 70 城二手住宅价格当月同比自 2026 年初 -6.3 筑底后连续 5 个月收窄至 -5.4（2026-07，国家统计局/Wind EDB，指标 S2707425）；北京收窄更早更深（2026-01 探底 -8.7 → -4.5，领先全国约 0.9 个百分点）、销售面积累计同比 2026-05 起转正；南京新房 -1.8% 修复弹性最大、二手 -5.4% 仍在出清——对经纪业务而言，这意味着<b>流通性（带看、换手、一二手联动）的拐点先于价格拐点出现</b>，撮合类收入先于资产价格修复。</li>
+          <li><b>现房分销的账期重写</b>：渠道价值后移至竣工备案后的现房去化——现房比期房难卖，开发商渠道依赖度上升，但佣金在放款后才能结算，「高费率+长账期」取代「低费率+快回款」，中小代理现金流断裂，新房分销向绑定现房与「好房子」项目的头部平台集中。</li>
+          <li><b>租赁与家装第二/第三曲线顺风</b>：团体购房贷（≤30年/80%）推动机构化收房放量→租赁托管盘子变大；保租房 REITs 扩募需要可审计现金流→平台数据再变现；「好房子」供给卷起来后，存量翻新与改善装修是长尾受益——经纪入口+家装转化飞轮与政策同向。</li>
+          <li><b>约束仍在</b>：验真责任上移（房源真实性、成交价披露）、佣金率受口碑与指导约束、交易频次最终取决于基本面（全国商品房销售面积累计同比仍 -11.8%、全国二手住宅价格同比仍 -5.4%，2026-07，国家统计局/Wind EDB）——政策决定「谁能活下来吃增量」，不创造增量本身。</li>
+        </ol>
+      </div>
+      <div class="databand avoid-break">
+        <div class="db"><div class="v tnum">-8.7<span class="unit">→ -4.5</span></div><div class="l">北京二手价格同比：2026-01 探底 -8.7，连续 6 个月收窄至 -4.5，领先全国约 0.9 个百分点（Wind 分城市）</div></div>
+        <div class="db gold"><div class="v tnum">+1.4<span class="unit">%</span></div><div class="l">北京销售面积累计同比 2026-05 起转正（+0.6→+2.0→+1.4）；流通性修复先于价格</div></div>
+        <div class="db"><div class="v tnum">-6.3<span class="unit">→ -5.4</span></div><div class="l">全国 70 城二手价格同比：2026 年初 -6.3 筑底后连续 5 个月收窄至 -5.4（2026-07，指标 S2707425）；销售面积仍 -11.8%——约束仍在</div></div>
+      </div>
+      <div class="chart-card avoid-break" style="margin:10px 0 8px">
+        <h4>图C·二手价格同比收窄路径：量的修复先于价（全国 vs 北京，%）</h4>
+        <div class="cap">仅连接披露点位，中间月份未披露 · 全国（S2707425）：2026 年初 -6.3 筑底→2026-07 收窄至 -5.4；北京：2026-01 探底 -8.7→连续 6 个月收窄至 -4.5，领先全国约 0.9 个百分点</div>
+        <svg viewBox="0 0 480 190" role="img" aria-label="全国二手价格同比从 -6.3 收窄至 -5.4；北京从 -8.7 探底收窄至 -4.5，领先全国约 0.9 个百分点">
+          <line x1="46" y1="140" x2="452" y2="140" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="143" text-anchor="end" font-size="9" fill="#65766d">-9</text><line x1="46" y1="120" x2="452" y2="120" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="124" text-anchor="end" font-size="9" fill="#65766d">-8</text><line x1="46" y1="101" x2="452" y2="101" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="104" text-anchor="end" font-size="9" fill="#65766d">-7</text><line x1="46" y1="81" x2="452" y2="81" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="84" text-anchor="end" font-size="9" fill="#65766d">-6</text><line x1="46" y1="62" x2="452" y2="62" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="64" text-anchor="end" font-size="9" fill="#65766d">-5</text><line x1="46" y1="42" x2="452" y2="42" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/><text x="42" y="45" text-anchor="end" font-size="9" fill="#65766d">-4</text>
+          <path d="M120,87 L400,69" fill="none" stroke="#0e6a55" stroke-width="2" stroke-dasharray="5 4" opacity=".85"/>
+          <path d="M120,134 L400,52" fill="none" stroke="#a9741f" stroke-width="2" stroke-dasharray="5 4" opacity=".9"/>
+          <circle cx="120" cy="87" r="3.4" fill="#0e6a55"/><circle cx="400" cy="69" r="3.4" fill="#0e6a55"/>
+          <circle cx="120" cy="134" r="3.4" fill="#a9741f"/><circle cx="400" cy="52" r="3.4" fill="#a9741f"/>
+          <text x="120" y="78" text-anchor="middle" font-size="10.5" fill="#0e6a55" font-weight="700">-6.3 筑底（2026 年初）</text>
+          <text x="400" y="60" text-anchor="end" font-size="10.5" fill="#0e6a55" font-weight="700">-5.4（26-07）</text>
+          <text x="120" y="150" text-anchor="middle" font-size="10.5" fill="#a9741f" font-weight="700">-8.7 探底（26-01）</text>
+          <text x="400" y="43" text-anchor="end" font-size="10.5" fill="#a9741f" font-weight="700">-4.5（26-07）</text>
+          <text x="120" y="170" text-anchor="middle" font-size="9" fill="#65766d">期初（2026 年初 / 26-01）</text>
+          <text x="400" y="170" text-anchor="middle" font-size="9" fill="#65766d">2026-07</text>
+        </svg>
+        <div class="chart-legend"><span><i style="background:#0e6a55"></i>全国 70 城二手同比（S2707425）</span><span><i style="background:#a9741f"></i>北京二手同比（Wind 分城市）</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 十、数据与评估机构 ============ -->
+  <section class="pad" id="c10">
+    <div class="chapter gold">
+      <div class="chead"><div class="cno">十</div><h3>数据与评估机构：从「额度的化妆师」到「国家风控基础设施」</h3><span class="cband">个贷第19/25条 · 商地第13/36条 · 信托第11/48/59-60条 · 证监会第9条 · 意见第34条</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>抵押物价值按<b>成交价与评估价孰低</b>认定（个贷第19条）；押品<b>每年重估</b>、不得以再评估净值追加贷款（第25条）；商业地产「不得高估项目价值过度融资」（商地第13条）、经营性物业贷封顶评估值 70%（第36条）；信托「不得仅以外部机构信息作为论证依据」（第11条）、专业服务机构近两年无不良记录+违规通报主管部门（第59-60条）、独立会计师事务所专项审计（第48条）；证监会「打击第三方配合造假」（第9条）；《意见》第34条改革完善<b>全口径房地产金融统计指标体系</b>、严防数据造假。</p>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <ol>
+          <li>「孰低原则」哲学意义大于技术意义：评估从此<b>不再创造额度，只验证价值</b>——按单流水线逻辑终结，责任定价开始；评估费因责任溢价上涨，小评估所出局，行业向「头部+可担责」集中。</li>
+          <li>增量市场在<b>存量重估</b>：36 万亿级存量按揭每年重估+经营性物业贷/CMBS/REITs 持续估值+城市更新收益测算——一个常年滚动的全国不动产定价基础设施被文件顺手建成。</li>
+          <li>第二新生态位：<b>工程量核验</b>。「放款进度与实物建设进度匹配」+「竣工备案」成为全体系关键节点——造价咨询、工程监理机构切入金融核验市场。</li>
+          <li>第三生态位：<b>不动产现金流数据服务</b>——REITs 分派率、经营性物业贷租金流水验证、团购房贷资产合规核验都需要「可审计的现金流数据」；掌握真实成交与经营数据者（经纪平台、租金数据服务商）从「咨询商品」升格为「监管与定价基础设施」——数据不撒谎者获得定价权。</li>
+        </ol>
+      </div>
+
+      <div class="claw avoid-break" style="margin-top:12px"><span class="clt">对标样本：Cotality 的数据底座是怎么建成的（口径：公司公开口径的对标研究，2026-08-28）</span>
+        <p>要看清中国不动产数据基建的终局形状，最好的参照系是全球最深的那个数据底座——Cotality（原 CoreLogic）：约 30 年渐进建设，将全美房产数据加工成 <b>157M+ 统一房产标识（CLIP，匹配率 99.2%）</b>、<b>22,000+ 数据源</b>、<b>550 亿+ 条记录</b>（50+ 年纵深），以<b>年 1,100 亿次 API 调用</b>服务按揭、保险、MLS、资本市场、政府五大客群。经济门槛：数据建设+运营+模型全成本约 <b>5-6 亿美元/年（约 35-42 亿元人民币），占其年营收（约 115 亿 RMB）的 35-40%</b>。</p>
+      </div>
+      <div class="tag-row" style="margin:4px 0 10px">
+        <span class="obs-tag"><b>① 承继</b> 县级公共记录：契据/税册/留置</span>
+        <span class="obs-tag"><b>② 并购拼图</b> 2011-2021 补齐交易/指数/灾害/估值链（已披露对价约 11 亿美元，私有化估值约 59 亿美元）</span>
+        <span class="obs-tag"><b>③ CLIP</b> 投入 2.5 年将跨县异构记录归并为单一主键，先于模型层建设</span>
+        <span class="obs-tag"><b>④ 数据工厂</b> 22,000 源持续灌入＋人在回路＋审计线索</span>
+        <span class="obs-tag"><b>⑤ 保鲜</b> 事件驱动 ingestion、AVM 每日重算＋夜间盲测、客户贡献回灌</span>
+      </div>
+      <div class="ded"><span class="dt">中国的「数据基建时刻」：需求被制度创造，路径与美国不同</span>
+        <ol>
+          <li><b>需求侧不需要培育，制度已经开票</b>：年度押品重估（36 万亿按揭+经营性物业贷+CMBS/REITs 持续估值）、成交价/评估价孰低、竣工备案与工程进度核验、REITs 现金流披露、全口径统计指标体系（《意见》第34条）、白名单报送（开发贷第26条）——每一项条款都是一份数据采购的法律授权书。Cotality 花三十年说服市场「数据值钱」，中国的 1+N 直接规定了「数据必填」。</li>
+          <li><b>供给侧禀赋不同：缺的是统一标识，富的是交易流水</b>：中国版 CLIP 的候选主键（不动产权单元号/网签合同编号）谁来跨省归并，谁就占据中国数据底座的 backbone 位置；中国还有 Cotality 不具备的一层——<b>主办银行封闭账户的交易级流水+预售资金监管+白名单报送</b>（第二、七章）。中美分野：美国「市场并购拼图+许可制」，中国「制度强制报送+平台数据专有」。</li>
+          <li><b>经济门槛决定格局：这是国家级基础设施生意，不是创业生意</b>：对标 35-42 亿元/年的底座运维成本（约占营收 35-40%），可推演中国玩家的三强格局——<b>监管驱动的国家队</b>（全口径统计+登记/网签数据归集）、<b>平台型数据商</b>（贝壳式成交/带看/房源数据，第九章）、<b>转型 AVM 运营商的头部评估所</b>（评估师从「出报告」转向「训练与校准模型+复核边缘案例」，收费从按单转向订阅）。中小评估所的出路：被整合进估值链，或退守司法鉴定等 niche。</li>
+          <li><b>给评估行业的一句话</b>：Cotality 用三十年证明数据底座的护城河是「标识符统一×来源直采×持续保鲜」三件事的乘积；中国的 1+N 把其中「来源」一环用制度解决了（报送+专户流水），剩下「标识统一」与「保鲜」两环，就是未来五年不动产数据行业全部的竞争。</li>
+        </ol>
+      </div>
+
+      <div class="avoid-break" style="margin-top:12px">
+        <h3 style="margin-bottom:2px">图D·中美数据基建路径对照</h3>
+        <div class="chart-card cap" style="border:none; padding:0 0 6px; margin:0">对标口径：公司公开口径研究（Cotality V1，2026-08-28）＋文件条款推演</div>
+        <div class="vs-grid">
+          <div class="vs-card us">
+            <div class="vt2">美国路径：市场并购拼图＋许可制</div>
+            <p>县级碎片化公共记录（契据/税册/留置）催生<b>CLIP 整合生意</b>——约 30 年渐进并购与自建，把全美房产数据归并到单一主键，再以许可/API 变现。</p>
+            <div class="flow">承继（县级公共记录）→ 并购拼图（2011-2021，已披露对价约 11 亿美元、私有化估值约 59 亿美元）→ CLIP 统一标识（2.5 年）→ 数据工厂（22,000+ 源）→ 保鲜（事件驱动＋夜间盲测）</div>
+          </div>
+          <div class="vs-card cn">
+            <div class="vt2">中国路径：制度强制报送＋平台数据专有</div>
+            <p>对应痛点是<b>网签备案、不动产登记系统的省市异构</b>——中国版 CLIP 候选主键（不动产权单元号/网签合同编号）的跨省归并者占据 backbone；中国独有一层：主办银行封闭账户<b>交易级流水＋预售资金监管＋白名单报送</b>，颗粒度到账户动线，任何市场化数据商买不到。</p>
+            <div class="flow">制度报送（全口径统计第34条·白名单第26条）＋ 封闭账户流水（第二、七章）＋ 平台数据（第九章）→ 中国版 CLIP 主键归并 → 国家风控基础设施</div>
+          </div>
+        </div>
+        <p class="chart-cap">分野：美国「市场并购拼图＋许可制」，中国「制度强制报送＋平台数据专有」；Cotality 花三十年说服市场「数据值钱」，中国的 1+N 直接规定了「数据必填」。</p>
+      </div>
+
+      <div class="avoid-break" style="margin-top:10px">
+        <h3 style="margin-bottom:2px">图E·中国玩家的三强格局（研判推断）</h3>
+        <div class="lanes" style="margin-top:8px">
+          <div class="lane"><div class="lk">① 监管驱动的国家队</div><p>全口径统计指标体系（《意见》第34条）＋登记/网签数据归集——制度报送通道的天然主人。</p></div>
+          <div class="lane"><div class="lk">② 平台型数据商</div><p>贝壳式成交/带看/房源数据（第九章）——交易信用基础设施的数据变现一翼。</p></div>
+          <div class="lane"><div class="lk">③ AVM 运营商（头部评估所转型）</div><p>评估师从「出报告」转向「训练与校准模型＋复核边缘案例」，收费从按单转向订阅。</p></div>
+        </div>
+        <p class="chart-cap">经济门槛参照：底座全成本约 35-42 亿元/年（占营收 35-40%）——国家级基础设施生意，不是创业生意；中小评估所出路：被整合进估值链，或退守司法鉴定等 niche。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 十一、城投 ============ -->
+  <section class="pad" id="c11">
+    <div class="chapter">
+      <div class="chead"><div class="cno">十一</div><h3>城投：从「土地财政的杠杆放大器」降维（或升级）为「存量资产运营商」</h3><span class="cband">城市更新贷款办法第7/8/9/11/13条</span></div>
+      <div class="claw"><span class="clt">条款咬合</span>
+        <p>《城市更新贷款办法》几乎是为城投量身写的「负面清单+入场券」：不得新增地方政府隐性债务、不得接受任何形式政府隐性增信、不得以政府应付款项/无收益公益性资产/无合法产权经营性资产抵质押（第13条）、不得用于净地供应前征收拆迁补偿（第8条）、借款人必须是「市场化运营主体」且经营性收入足额覆盖本息（第7、11条）；大额项目银团（第9条）；叠加全链条禁缴地价贷款——城投两条旧现金管道（一级开发垫资、托底拿地）被同时拔掉。</p>
+      </div>
+      <div class="lanes avoid-break">
+        <div class="lane"><div class="lk">跑道① 保租房闭环</div><p>保障房开发贷（保本微利）→ 团购房贷批量收存量房 → 租赁经营性贷 → REITs/扩募退出。</p></div>
+        <div class="lane"><div class="lk">跑道② 城市更新市场化实施主体</div><p>入库＋经营性收入覆盖＋银团＋经营权收费权质押。</p></div>
+        <div class="lane"><div class="lk">跑道③ 持有型商业/产业园</div><p>经营性物业贷/CMBS/商业 REITs——外加信托第29条「信托+AMC」风险资产合作处置通道。</p></div>
+      </div>
+      <div class="ded"><span class="dt">反直觉推论</span>
+        <ol>
+          <li>城投资产负债表将被强制「资产分类大扫除」：政府应付款与无收益公益资产骤然「不可质押」，能进市场的只剩真经营性现金流——大量城投会发现自己「很大但很空」。</li>
+          <li>「托底拿地」角色的死亡比房企暴雷更深刻：土地市场失去最后护盘资金，价格发现彻底真实化——地方土地财政的最后一块遮羞布被揭开。</li>
+          <li>「市场化运营主体」资格是城投分化生死线：够格者估值逻辑从「政府信用」切换为「资产收益率」，不够格者退出房地产金融视野——城投被拆成两个物种：<b>城市运营商 vs 平台清退户</b>。</li>
+          <li>保租房闭环是城投二十年来第一个「投入有退出、退出有倍数」的盈利模型——第一次有机会以「资产收益率」而非「信用利差」为自己定价。</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 十二、沉默角色 ============ -->
+  <section class="pad" id="c12">
+    <div class="chapter gold">
+      <div class="chead"><div class="cno">十二</div><h3>沉默角色：AMC、灰色助贷、散户投资人、1998-2016 旧规则</h3><span class="cband">信托第29/30/34条 · 个贷第23条 · 废止条款</span></div>
+      <div class="quad">
+        <div class="qd"><div class="qk"><i>AMC</i>金融资产管理公司/地方 AMC</div><p>信托第29条官方盖章「共同处置、化解房地产项目存量风险」——从沉默接盘者变成<b>有编制的风险处置合作方</b>，特殊机会投资赛道制度化。</p></div>
+        <div class="qd"><div class="qk"><i>灰色助贷</i>包装生意的终点</div><p>名单制+「不得与非法贷款中介合作」+风控核心银行独立开展（个贷第23条）——包装首付、包装收入的生意被<b>定点清除</b>。</p></div>
+        <div class="qd"><div class="qk"><i>散户</i>投资人</div><p>非标地产信托只卖非自然人（占比≥50% 即全部机构）+48 小时冷静期+不得承诺收益——<b>散户被请出地产金融化餐桌</b>，地产金融成为机构游戏。</p></div>
+        <div class="qd"><div class="qk"><i>旧规则</i>1998-2016 旧规体系</div><p>一个《个贷办法》废止 1998 年银发 190 号文，一个《意见》废止央行 2003-2016 年九个通知，信托三项 2008-2010 旧规废止——<b>中国房地产金融的「补丁版」时代结束，「版本号」时代开始</b>。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 总结：三重再分配的完成时 ============ -->
+  <section class="pad" id="zh">
+    <h2><span class="sec-no">合</span>总结：三重再分配的完成时</h2>
+    <p class="sec-intro" style="font-size:13.5px; color:var(--ink-3); margin-bottom:14px">回到总论的三要素——把十二章横向连起来看，会发现这不是十二个孤立的变化，而是<b style="color:var(--ink-2)">同一件事在三个维度上的系统性完成</b>。</p>
+    <div class="trio">
+      <div class="t"><div class="k">一 · 知情权的再分配</div><div class="q">信息从「集团内部人」流向「项目托管人」</div><div class="m">过去最懂项目的是房企集团与地方政府；现在主办银行通过封闭账户成为项目信息的<b>第一知情人</b>（第二章），并购市场降低尽调成本（第四章），评估与数据机构被要求「可审计地知情」（第十章），贝壳式平台的真实成交数据从商业资产升格为交易信用基础设施（第九章）。知情权从关系网络中剥离，交给了制度位置。</div></div>
+      <div class="t gold"><div class="k">二 · 控制权的再分配</div><div class="q">资金控制权逐级上收至「项目」这一层</div><div class="m">集团资金池（第三章被拆掉）→ 项目封闭账户（第二章托管）→ 支付环节受托制（银行按进度拨付、信托由主办行代管——第六章）→ 终端购房资金进监管账户（第一章）。控制权的终点不是监管机构，而是<b>项目本身</b>：钱从此跟项目走，不跟老板走。</div></div>
+      <div class="t"><div class="k">三 · 责任的再分配</div><div class="q">从「事后救火」到「事前签字」</div><div class="m">保交楼是事后应急；新体系让每个角色事前签字——主办行签工程进度与资金流向、保荐/审计签信息披露、信托签项目管理人、评估签价值结论、平台签房源与成交真伪、地方政府签白名单与联防联控。签字者薪酬递延、追索扣回、通报主管机关——<b>责任第一次被写进岗位，而不是写进应急预案</b>。</div></div>
+    </div>
+    <div class="verdict">
+      <div class="vt">四 · 更深一层：这是一次「风险产权」的界定（行业的科斯时刻）</div>
+      <p>旧模式真正的病根是<b>风险产权不清</b>：烂尾了谁承担？银行说购房人还贷、房企说资本金灭失、地方说保交楼维稳——每个主体都持有风险却不为风险付费，最后风险归零于全社会。新体系给每一类风险第一次明确了产权归属与定价机制：<b>交付风险</b>归房企——工程能力成为融资资格本身（开发贷优先支持「好房子」与现售项目）、<b>项目信用风险</b>归主办银行（以利差与拨备定价，银团可分散不可转嫁）、<b>市场风险（价格与时机）</b>归购房人与投资者（交付确定性换走之后，剩下的选择自负）、<b>流动性风险</b>归资本市场（证监会通道：RMBS/CMBS/REITs 的折价就是它的价格）。风险有了产权、产权有了价格，金融深化才算在这一个行业里真正完成。<b>此为研判推断</b>，检验信号可观察：高风险项目将被要求更高利差或被拒贷，而非被平均定价。</p>
+    </div>
+    <h3 style="margin:4px 0 8px">五 · 付费者的三层结构：谁在为这场再分配买单</h3>
+    <div class="ded"><ol>
+      <li><b>显性付费者</b>：高杠杆房企（杠杆红利清零）、通道型信托（准入与集中度三道杠）、灰色助贷与包装链条（名单制+银行独立核验）、小评估所（孰低原则+责任通报）——它们的旧利润＝制度租金，租金随制度一并取消。</li>
+      <li><b>隐性付费者</b>：地方政府（土地金融杠杆被拔掉，转向「卖项目」，第七章）；银行体系（责任成本上升，但以数据垄断与主办行地位获得对价，第二章）——付费被补偿部分对冲，属于「以短期成本换长期牌照价值」。</li>
+      <li><b>延期付费者</b>：购房者以「选择风险」替换「交付风险」——制度替其对冲了结构性风险，但对冲的对价是自担市场波动。这是消费者主权的取得成本，且以 50%/60% 收入红线的形式被强制「预算约束」（第一章）。</li>
+    </ol></div>
+    <h3 style="margin:10px 0 8px">六 · 三个可证伪的预言（研判推断，各附验证锚）</h3>
+    <div class="ded"><ol>
+      <li><b>三年内期房销售占比降至三成以下，「准现房销售」成为主流</b>——放款后置抽干期房杠杆购买力，开发商将主动提前至封顶/竣工阶段开卖。验证锚：新增预售证中「封顶后/竣工后销售」占比、期房网签 vs 现房网签结构。</li>
+      <li><b>主办银行制将催生「项目信贷二级市场」</b>——责任与资本占用集中在主办行一家，必然产生再分配需求，银团份额转让、开发贷资产流转将成为新市场。验证锚：银团份额转让平台成交量、开发贷 ABS 发行规模。</li>
+      <li><b>出现 3-5 家「F+EPC+O」模式的千亿级涉房建筑/城投运营商</b>——参照涉房融资（第五章）+保租房与城市更新闭环（第八、十一章）给足了弹药。验证锚：建筑央企年报涉房资产占比、REITs 发行规模、城投「经营性收入/总债务」比率中位数变化。三个预言若全数落空（期房占比仍高、二级市场无交易、建筑央企资产负债表不动），则说明改革在执行层失速——见失灵条件。</li>
+    </ol></div>
+    <h3 style="margin:10px 0 8px">七 · 体系的失灵条件：成败不在条文，在四个执行变量</h3>
+    <div class="quad">
+      <div class="qd"><div class="qk"><i>一</i>银行惜贷</div><p>责任压实但无资本与拨备对价，主办行理性选择是少做——「先断粮、后补粮」变成「只断粮」；投资 -19.2% 下斜率能否在 2027 年收窄至 -10% 以内，是第一检验。</p></div>
+      <div class="qd"><div class="qk"><i>二</i>并购通道容量不足</div><p>若再融资与并购审批节奏跟不上出清速度，项目级接管无从谈起，第四章的剧本演不动。</p></div>
+      <div class="qd"><div class="qk"><i>三</i>项目现金流注水</div><p>城市更新与保租房的「经营性收入覆盖本息」若被包装穿透（财政性收入化妆成经营性收入），城更办法就成了新的隐性债务入口（第十一章）。</p></div>
+      <div class="qd"><div class="qk"><i>四</i>评估与核验被俘获</div><p>若第三方核验机构重新被渠道利益俘获，「孰低原则」形同虚设，第十章的基础设施空转。四个变量都不取决于文件，而取决于未来 12 个月各主体的选择。</p></div>
+    </div>
+    <div class="claw" style="margin-top:10px"><span class="clt">八 · 传导时序（研判推断）</span>
+      <p>新办法印发即适用于新签合同；《个贷办法》第37条新老划断——施行前已取得预售许可证的项目仍按原规定放款，切换期风险被制度性缓冲；信托办法 2027-03-01 施行、存量到期结清，影子端有一年过渡。观察节奏：<b>2026Q4</b> 看白名单覆盖率与主办行投放（检验「惜贷」），<b>2027H1</b> 看按揭余额能否止跌（格物讲师判断），<b>2027-03</b> 看信托新旧切换（第六章）。</p>
+    </div>
+    <h3 style="margin:10px 0 8px">九 · 与宏观与分城市数据的互证</h3>
+    <div class="databand">
+      <div class="db"><div class="v tnum">-11.8%<span class="unit">· -19.2%</span></div><div class="l">全国销售面积累计同比 · 开发投资累计同比（2026-07，国家统计局/Wind EDB）——全国口径政策底 ≠ 市场底，制度底座先行于市场出清完成</div></div>
+      <div class="db gold"><div class="v tnum">+1.4<span class="unit">%</span></div><div class="l">北京：销售转正、二手价格连续 6 个月收窄（-8.7→-4.5）——市场底先行抵达的样本</div></div>
+      <div class="db"><div class="v tnum">-1.8<span class="unit">% · -5.4%</span></div><div class="l">南京：新房 -1.8% 快速修复、二手 -5.4% 仍深——分化说明市场底分城市、分环节到来</div></div>
+    </div>
+    <p style="font-size:13px; line-height:1.8; margin-bottom:12px">这份 1+N 体系不承诺统一的市场底，<b>它承诺的是无论哪里先见底，每个角色都已在正确的位置上</b>。</p>
+    <div class="close-quote">
+      <div class="qt">收束全篇</div>
+      <p>总论说，这场改革是一次「隐性金融制度的显性化与拆除」，重新分配的是知情权、控制权与责任；十二章证明，每个角色的岗位说明书已经发放；本章把结论推到底——<b>这是一次风险产权的界定（行业的科斯时刻）：交付风险归房企、信用风险归主办行、市场风险归购房者与投资者、流动性风险归资本市场，每一类风险第一次有了主人，也就第一次有了价格。</b>付费者已经排队（显性的出清租金、隐性的换牌照、延期的交对价），预言已经立下可被证伪的验证锚，失灵条件也已写明——成败不在条文，在未来 12 个月每个签字者的选择。旧模式里所有人都在赚「预期」的钱，新模式里所有人只能赚「交付」的钱——这份 1+N 文件体系，就是<b>交付的定价说明书</b>。</p>
+    </div>
+  </section>
+
+  <!-- ============ 结语：谁获益、谁付费 ============ -->
+  <section class="pad" id="send">
+    <h2><span class="sec-no">结</span>结语：谁获益、谁付费</h2>
+    <div class="close-quote">
+      <div class="qt">总收束</div>
+      <p>旧模式里所有人都在赚「预期」的钱，新模式里所有人只能赚「交付」的钱——这份 1+N 文件体系，就是<b>交付的定价说明书</b>。</p>
+    </div>
+    <div class="tbl-wrap scroll avoid-break">
+      <table>
+        <thead><tr><th style="width:7%">章节</th><th style="width:15%">主体</th><th style="width:26%">新身份</th><th>一句话净效应</th></tr></thead>
+        <tbody>
+          <tr><td class="tnum">一</td><td>购房者</td><td>有风控保护的消费者</td><td>交付风险<span class="neg">↓</span>、选择风险<span class="neg">↑</span>；获得制度化利率救济</td></tr>
+          <tr><td class="tnum">二</td><td>主办银行</td><td>项目监理+资金托管人</td><td>责任<span class="neg">↑↑</span>、数据垄断<span class="neg">↑</span>、行业集中度<span class="neg">↑</span></td></tr>
+          <tr><td class="tnum">三</td><td>开发商</td><td>制造业化的项目经理</td><td>杠杆红利清零，产品力定价时代</td></tr>
+          <tr><td class="tnum">四</td><td>上市房企</td><td>重新获邀的发行人</td><td>并购重组是真主角</td></tr>
+          <tr><td class="tnum">五</td><td>建筑央企</td><td>参照涉房的准房企</td><td>最被低估的赢家</td></tr>
+          <tr><td class="tnum">六</td><td>信托</td><td>被收编的外包资管</td><td>通道终结；特殊机会+服务信托重生</td></tr>
+          <tr><td class="tnum">七</td><td>地方政府</td><td>有席位的合伙人</td><td>权力<span class="neg">↑</span>、资金链<span class="neg">↓</span>；转向「卖项目」</td></tr>
+          <tr><td class="tnum">八</td><td>租赁/运营端</td><td>全周期产品菜单持有者</td><td>资管产业链开闸</td></tr>
+          <tr><td class="tnum">九</td><td>贝壳式经纪</td><td>交易信用基础设施</td><td>金融收入剥离；验真、撮合与数据价值回归</td></tr>
+          <tr><td class="tnum">十</td><td>数据/评估</td><td>国家风控基础设施</td><td>责任定价；存量重估是最大增量</td></tr>
+          <tr><td class="tnum">十一</td><td>城投</td><td>存量资产运营商</td><td>信用定价切换为资产定价；拆成两个物种</td></tr>
+          <tr><td class="tnum">十二</td><td>沉默角色</td><td>AMC 在编/助贷出局/散户退场</td><td>处置制度化、灰色清零、金融化机构化</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 来源披露 ============ -->
+  <section class="pad" id="src">
+    <h2><span class="sec-no">附</span>数据与条款来源</h2>
+    <p class="disclosure">条款均引自上述文件原文（本报告所含条号以文件正文为准）；宏观数据取自 Wind CLI（Wind EDB：中国人民银行、国家统计局），月度截至 2026-07、季度截至 2026Q2，指标代码级可溯源（按揭余额 W1409719、按揭利率 M0058005/X1390479、全国新宅价格 S2707411、全国二手价格 S2707425、开发投资 S0029657、销售面积 S0073300、北京 S0147146/S0030589/S0073345/M0004504、南京 S0147156/S0030649 等）；分城市数据（北京/南京）取自国家统计局 70 城房价指数与地方统计局序列；南京销售面积市统计局口径更新滞后（最新 2026-02），已如实标注。贝壳政研通（zyt）通道在本轮分析全程调用（多轮真实调用：指标目录/城市时序/多城对比），通道返回成功但本部署未透出数值明细，故定量以 Wind 分城市指标交付、政研通城市明细列为后续观察项，全程未编造数字。第十章 Cotality 部分引自对标研究《Cotality 数据基建深度分析 V1》（公司公开口径，2026-08-28），仅作能力参照。标注「测算」者为模型测算口径（100 万元/3.06%/等额本息；存量降 50bp×36.29 万亿），标注「研判推断」者为分析性判断。政策条款以《意见》及各办法原文为准。</p>
+  </section>
+
+  <!-- ============ footer ============ -->
+  <footer class="shell-footer">
+    <div>
+      <span class="fz">智见 · 角色重写十二主体完整报告</span> ｜ 框架：知情权 · 控制权 · 责任 ｜ 成稿 2026-08-29 · v4
+    </div>
+    <div style="white-space:nowrap">98wiki ｜ 智见 / 行业研究报告</div>
+  </footer>
+
+</div>
+</body>
+</html>

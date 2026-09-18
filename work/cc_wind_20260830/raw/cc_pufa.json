@@ -1,0 +1,22 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"data\":{\"data\":[{\"columns\":[{\"name\":\"Wind代码\",\"type\":\"string\"},{\"name\":\"证券简称\",\"type\":\"string\"},{\"name\":\"日期\",\"type\":\"string\"},{\"name\":\"2019年至2026年6月各报告期信用卡贷款余额\",\"type\":\"number\",\"unit\":\"万亿元\"},{\"name\":\"记账本位币\",\"type\":\"string\"},{\"name\":\"2019年至2026年6月各报告期信用卡不良贷款率\",\"type\":\"string\",\"unit\":\"%\"}],\"rows\":[[\"600000.SH\",\"浦发银行\",\"Q2 FY2019\",1.5303,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q4 FY2019\",1.6216,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q2 FY2020\",1.6245,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q4 FY2020\",1.8183,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q2 FY2021\",1.9221,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q4 FY2021\",2.0121,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q2 FY2022\",2.0904,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q4 FY2022\",2.0572,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q2 FY2023\",2.0234,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q4 FY2023\",1.9676,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q2 FY2024\",2.0611,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q4 FY2024\",2.0344,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q2 FY2025\",2.0702,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q4 FY2025\",2.1604,\"CNY\",null],[\"600000.SH\",\"浦发银行\",\"Q2 FY2026\",2.2147,\"CNY\",null]]}]},\"error\":null}"
+    }
+  ],
+  "isError": false,
+  "cli_meta": {
+    "schema_version": "1.0",
+    "server_type": "stock_data",
+    "tool_name": "get_stock_fundamentals",
+    "completeness": "not_asserted",
+    "tables": [
+      {
+        "path": "$.data.data[0]",
+        "actual_row_count": 15
+      }
+    ],
+    "warnings": []
+  }
+}

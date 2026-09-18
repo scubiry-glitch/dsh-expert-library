@@ -1,6 +1,6 @@
 {
   "id": "bank.quality",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "gates": [
     {
@@ -96,6 +96,43 @@
           "手机号",
           "余额",
           "客户姓名"
+        ]
+      }
+    },
+    {
+      "id": "quote-verbatim",
+      "kind": "deterministic",
+      "appliesTo": [
+        "deliverable"
+      ],
+      "severity": "hard",
+      "phase": "data",
+      "config": {
+        "quoteMarkers": [
+          "「」"
+        ],
+        "rules": [
+          "直引句须逐字匹配材料原文对应页/幻灯片单元",
+          "允许空白与换行差异，不允许改词",
+          "省略号切段逐段匹配",
+          "OCR 讹字照录并标注「原文如此」，不得纠错后比对"
+        ]
+      }
+    },
+    {
+      "id": "historical-timestamp",
+      "kind": "deterministic",
+      "appliesTo": [
+        "deliverable"
+      ],
+      "severity": "hard",
+      "phase": "data",
+      "config": {
+        "rules": [
+          "历史样本数字必须保留原时点",
+          "不得把历史数据当现行事实引用",
+          "日期不明材料须标注「推断时点+依据」",
+          "四类来源（行方/券商/历史分享/平台经营分析）不得混层归因"
         ]
       }
     }

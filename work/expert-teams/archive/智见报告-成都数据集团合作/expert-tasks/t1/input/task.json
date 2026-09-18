@@ -1,0 +1,7 @@
+{
+  "taskId": "t1",
+  "subject": "架构审定：13 页映射与点睛图选型核对",
+  "description": "通读主文档 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md 与渲染契约 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md，做开工前架构审定：\n1) 完整性：md 八章全部小节（2.1–2.7、3.1–3.3、4.1–4.3、5.1–5.3、6.1–6.4、七、八）是否全部落入 spec 三的 13 页映射，无遗漏无越界；\n2) 每页内容量预估：正文 15px/表格 13.5px 下，各页内容是否可能溢出 794×1123（尤其 p06 六来源表+五条限制、p11 矩阵表、p09 三节、p12 两章），必要时给出「移段/压缩建议」（只能建议排版调整，禁止动内容）；\n3) 点睛图选型核对：13 页图表是否遵守「无数字不绘/定性示意标注」，图内数字与 md 一致；\n4) 封面数字条 4 格数字逐一核对 md 在案。\n产出：将审定结论（含必要的排版调整建议清单，逐页列出）写入 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/arch_review.md，并向队长汇报要点。不要修改 spec.md 与 theme.css 本体，如需修订由队长落笔。",
+  "dependencies": [],
+  "createdAt": 1788602542203
+}

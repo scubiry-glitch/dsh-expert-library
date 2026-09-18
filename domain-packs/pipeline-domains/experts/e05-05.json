@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "王建国",
-    "publicLabel": "王建国",
-    "initials": "王"
+    "internalName": "品牌参谋",
+    "publicLabel": "品牌参谋",
+    "initials": "P"
   },
   "domains": [
     "realestate.general"

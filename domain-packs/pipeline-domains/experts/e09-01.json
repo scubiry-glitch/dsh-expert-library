@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "张晓明",
-    "publicLabel": "张晓明",
-    "initials": "张"
+    "internalName": "故事掌门",
+    "publicLabel": "故事掌门",
+    "initials": "G"
   },
   "domains": [
     "realestate.general"

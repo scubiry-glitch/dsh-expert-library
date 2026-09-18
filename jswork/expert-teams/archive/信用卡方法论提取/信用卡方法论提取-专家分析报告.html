@@ -1,0 +1,3629 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>信用卡方法论提取 · 专家分析报告</title>
+<style>
+:root{--accent:#8b1a1a;--accent2:#b03030;--ink:#222;--muted:#666;--line:#ddd;--bg:#fff;--soft:#f5f5f4;--code:#f6f6f2;}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Source Han Sans SC","Noto Sans CJK SC",sans-serif;font-size:15px;line-height:1.85;}
+.wrap{max-width:1060px;margin:0 auto;padding:48px 32px 120px;}
+h1{text-align:center;font-size:28px;line-height:1.4;color:var(--ink);margin:16px 0 8px;}
+h1+p, h1+blockquote{margin-top:24px;}
+h2{font-size:21px;margin:48px 0 16px;padding:8px 0 8px 14px;border-left:5px solid var(--accent);background:linear-gradient(90deg,#faf6f4,#fff);border-bottom:1px solid var(--line);}
+h3{font-size:17px;margin:32px 0 12px;color:#3a3a3a;}
+h4{font-size:15px;margin:24px 0 10px;}
+p{margin:10px 0;}
+a{color:var(--accent2);text-decoration:none;}
+a:hover{text-decoration:underline;}
+strong{color:#111;}
+hr{border:none;border-top:1px solid var(--line);margin:36px 0;}
+ul,ol{padding-left:1.8em;margin:10px 0;}
+li{margin:4px 0;}
+blockquote{margin:18px 0;padding:14px 18px;background:var(--soft);border-left:4px solid #bbb;border-radius:4px;color:#444;}
+blockquote p{margin:6px 0;}
+/* 首个 blockquote（元信息区）做成信息卡片 */
+h1 + blockquote{background:linear-gradient(180deg,#fdf9f6,#faf1ec);border:1px solid #e8d5c8;border-left:5px solid var(--accent);border-radius:8px;padding:20px 24px;box-shadow:0 1px 6px rgba(139,26,26,.08);font-size:14.5px;}
+code{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:.9em;background:var(--code);border:1px solid #e5e5e0;border-radius:3px;padding:1px 5px;}
+pre{background:var(--code);border:1px solid #e5e5e0;border-radius:6px;padding:12px 14px;overflow-x:auto;line-height:1.6;}
+pre code{border:none;background:none;padding:0;}
+/* 表格：边框 + 斑马纹 + 横向滚动容器 */
+.table-wrap{overflow-x:auto;margin:16px 0;border-radius:6px;}
+table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.6;min-width:640px;}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top;}
+th{background:#f3ece7;color:#3d2620;font-weight:600;white-space:nowrap;}
+tbody tr:nth-child(even){background:#faf8f6;}
+tbody tr:hover{background:#f3ece7;}
+/* 粘性目录导航 */
+#tocbar{position:sticky;top:0;z-index:99;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);box-shadow:0 1px 4px rgba(0,0,0,.05);}
+#tocbar .toc-inner{max-width:1060px;margin:0 auto;padding:8px 32px;display:flex;align-items:center;gap:8px;overflow-x:auto;white-space:nowrap;}
+#tocbar .toc-label{color:var(--accent);font-weight:700;font-size:13px;flex:none;}
+.toc-link{flex:none;font-size:13px;color:#555;padding:3px 10px;border-radius:99px;}
+.toc-link:hover{background:#f3ece7;color:var(--accent);text-decoration:none;}
+/* 回到顶部 */
+#backtop{position:fixed;right:28px;bottom:36px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;box-shadow:0 3px 10px rgba(139,26,26,.35);cursor:pointer;opacity:.85;transition:opacity .2s;}
+#backtop:hover{opacity:1;}
+@media (max-width:640px){.wrap{padding:24px 14px 100px;}h1{font-size:22px;}h2{font-size:18px;}}
+</style>
+</head>
+<body>
+<nav id="tocbar" aria-label="目录导航"><div class="toc-inner">
+<span class="toc-label">目录</span>
+<a class="toc-link" href="#_2">一、口径与纪律说明（全篇唯一口径入口）</a>
+<a class="toc-link" href="#_3">二、出处质检结论（硬门）</a>
+<a class="toc-link" href="#a01a17-b05">三、第一层｜材料自带的分析方法论（A01–A17 阿蒙森 + B05 天风）</a>
+<a class="toc-link" href="#b01b04b06b07">四、第二层｜业务打法方法论（行方材料 B01–B04、B06、B07）</a>
+<a class="toc-link" href="#b05-b08">五、第三层｜外部视角评价框架（B05 天风 + B08 彭千）＋ 校准点</a>
+<a class="toc-link" href="#_4">六、跨层观察</a>
+<a class="toc-link" href="#a">附录 A：原编号 → 统一编号映射表</a>
+<a class="toc-link" href="#bb05">附录 B：B05 材料跨层重复计数的去重对照表</a>
+<a class="toc-link" href="#c">附录 C：质检方法与可复现要点</a>
+<a class="toc-link" href="#d">附录 D：各层原有的边界与缺口（原样保留，未补数）</a>
+</div></nav>
+<div class="wrap">
+<h1 id="_1">信用卡方法论提取 · 专家分析报告（总报告）</h1>
+<blockquote>
+<p><strong>团队</strong>：信用卡方法论提取 ｜ <strong>融合与质检</strong>：bank-11（对外标注：银行经营 · 琉）
+<strong>成员产出</strong>：第一层 bank-10（零售金融 · 一）｜第二层 bank-09（零售金融 · 操盘手）｜第三层 bank-11
+<strong>材料范围</strong>：25 份（业务资料 8 份 B01–B08；阿蒙森洞察 17 期 A01–A17，2022 年第 6 期缺）
+<strong>报告性质</strong>：<strong>方法论提取与融合，不是经营结论</strong>。凡涉及当期经营判断，本报告只给口径、方法与动作，不给数字结论。
+<strong>合并口径</strong>：本报告保留三份交付件的<strong>全部条目</strong>（81 条），统一编号后按层归章；原编号与统一编号一一对应（附录 A）。</p>
+</blockquote>
+<hr />
+<h2 id="_2">一、口径与纪律说明（全篇唯一口径入口）</h2>
+<h3 id="11">1.1 材料存放路径（全篇唯一一处环境变更声明）</h3>
+<ul>
+<li>任务下发时的材料根目录：<code>/root/.openclaw/workspace/99wiki/projects/信用卡方法论提取交接/</code></li>
+<li><strong>执行期间该目录被迁移</strong>。实测现路径：<code>/root/.openclaw/workspace/handoffs/20260916_信用卡方法论提取交接/</code>（25 份 <code>text/</code> 件齐全，<code>INDEX.md</code>、<code>manifest.json</code>、<code>sources/</code>、<code>archives/</code> 齐备；<code>HANDOFF.md</code> 已由队长补回新路径，第 5 节七字段规范为本报告条目字段来源）。</li>
+<li><strong>本报告全部引文与出处均已在新路径下复核</strong>（方法见第二章）。旧路径已失效；禁止使用 <code>/root/.openclaw/workspace/.scratch/credit-card-materials/</code>（不完整副本）。</li>
+<li>本报告其余章节<strong>不再重复</strong>该说明。</li>
+</ul>
+<h3 id="12">1.2 四类来源分层（不得混用）</h3>
+<table>
+<thead>
+<tr>
+<th>来源类别</th>
+<th>材料</th>
+<th>立场与口径特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>行方材料</strong></td>
+<td>B01–B04、B06、B07</td>
+<td>内部复盘/规划底稿，服务于行内决策；不等于已发生的事实全貌</td>
+</tr>
+<tr>
+<td><strong>外部券商研究</strong></td>
+<td>B05（天风证券，2018-06-03）</td>
+<td>卖方立场：含行业评级"强于大市"与荐股，评级窗口 6 个月</td>
+</tr>
+<tr>
+<td><strong>外部历史分享</strong></td>
+<td>B08（彭千·美团金融总裁，2018-05-12）</td>
+<td>平台<strong>商务材料</strong>：末页直接请求"给予美团点评全方位的 Fintech 合作机会"，含合作诉求</td>
+</tr>
+<tr>
+<td><strong>美团经营分析</strong></td>
+<td>A01–A17（阿蒙森洞察，2021–2022）</td>
+<td>平台方经营口径，基于各行美团卡业务；与行内自营口径不可直接换算</td>
+</tr>
+</tbody>
+</table>
+<p><strong>纪律</strong>：四类来源<strong>不得混用、不得合并为同一结论</strong>。质检已逐份核验三层交付件的用源边界（见 2.4）；本报告按层分章并列，不做跨层数值合并。</p>
+<h3 id="13">1.3 历史时点声明</h3>
+<table>
+<thead>
+<tr>
+<th>材料</th>
+<th>基准时点</th>
+<th>材料</th>
+<th>基准时点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A01–A07（阿蒙森）</td>
+<td>2022 年样本</td>
+<td>B01</td>
+<td>2025-03</td>
+</tr>
+<tr>
+<td>A08–A17（阿蒙森）</td>
+<td>2021 年样本</td>
+<td>B02</td>
+<td>2024-05</td>
+</tr>
+<tr>
+<td>B05</td>
+<td>2018-06-03</td>
+<td>B03</td>
+<td>2023-11</td>
+</tr>
+<tr>
+<td>B08</td>
+<td>2018-05-12</td>
+<td><strong>B04</strong></td>
+<td><strong>文内未标日期</strong>，据文内线索推断为 2025 年度工作计划表（<strong>属推断，非文内自证</strong>）</td>
+</tr>
+<tr>
+<td>B06</td>
+<td>2021-08</td>
+<td>B07</td>
+<td>2024-07</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>全部数值均为<strong>上述时点的历史样本</strong>，只用于说明"方法怎么设计、阈值怎么定、账怎么算"，<strong>不得当作现行经营事实引用</strong>。</li>
+<li>阿蒙森系列为<strong>历史样本</strong>（2021–2022），其中金额、比率、模型结论均已过时，仅方法有效。</li>
+</ul>
+<h3 id="14">1.4 直引与标注规范</h3>
+<ol>
+<li><strong>逐字直引</strong>：<code>「」</code>内一律为原文逐字（换行/空白已归一，未改动任何字词）。本报告内 <code>「」</code><strong>仅用于源文直引</strong>，不作他用。</li>
+<li><strong>删节</strong>：仅当原文确有删节时使用"…"；<strong>原文连续的句子不得加省略号</strong>（本次质检即发现 1 处此类问题，见 Q-09）。</li>
+<li><strong>OCR 讹字照录不纠错</strong>：B05 的 PDF 文本层存在 <strong>88 处</strong>系统性字形替换（的→「癿」48、户→「宠」13、仍→「仌」5、进→「迚」6、规→「觃」6、动→「劢」4、战→「戓」3、或→「戒」2、事→「亊」1）。凡含讹字句一律<strong>原样照录</strong>，并在引号外标注〔原文如此：X 应为 Y〕。</li>
+<li><strong>版式页码 vs <code>text/</code> 的 PDF页码</strong>：<strong>A09、A10、A11 三期</strong>的 <code>text/</code> 的 PDF页码比材料<strong>版式页码大 1</strong>（首为无页码封面）；其余 14 期两者一致。第一层对 A11 的引用采用<strong>版式页码</strong>，按 <code>text/</code> 检索时需 +1 换算；本报告保留原标注，并在映射表与相关条目中说明。</li>
+<li><strong>图形排版页</strong>：B08 幻灯片 41、49、54 等多栏页被文本层按行序打散，凡涉及此类页面的<strong>配对关系</strong>均标注"需回原件核对"，不替原文裁定。</li>
+<li><strong>推断显式标注</strong>：凡非文内自证的判断（如 B04 年份、招行组织架构页的列对应关系），均已标注"推断"。</li>
+</ol>
+<h3 id="15">1.5 统一编号规则</h3>
+<ul>
+<li>格式 <strong><code>材料ID-序号</code></strong>：<code>A01-01</code>＝阿蒙森 2022 年第 1 期第 1 条；<code>B-05-12</code>＝B05（天风证券）第 12 条；<code>B-02-01</code>＝B02（2024 复盘）第 1 条；<code>B-08-01</code>＝B08 第 1 条。</li>
+<li>材料 ID 沿用交接 INDEX：阿蒙森 <code>A01</code>–<code>A17</code>；业务资料 <code>B-01</code>–<code>B-08</code>（统一写作 <code>B-0x</code>，避免与 A 系列混淆）。</li>
+<li>原编号（第一层 <code>A-01~A-18 / B-01~B-07</code>、第二层 <code>B-01~B-18</code>、第三层 <code>B-08-xx / B-05-xx</code>）→ 统一编号的<strong>全量映射见附录 A</strong>；B05 材料跨层重复计数的去重见<strong>附录 B</strong>。</li>
+</ul>
+<hr />
+<h2 id="_3">二、出处质检结论（硬门）</h2>
+<h3 id="21">2.1 抽查范围与方法</h3>
+<ul>
+<li><strong>范围</strong>：三份交付件的<strong>全部条目</strong>（第一层 25 条、第二层 18 条、第三层 38 条，合计 <strong>81 条</strong>），<strong>并覆盖各层附录与非记录段落</strong>（第二层附一~附五、第一层横向对照与索引等）——远超"每份至少抽 1/3"的下限；共比对<strong>引号内引文 175 条</strong>（L1 38 / L2 39 / L3 98，其中 5 条位于附录/非记录段落）。</li>
+<li><strong>方法（脚本化、可复现）</strong>：</li>
+<li>按 <code>text/</code> 的分段标记构建 <code>{材料: {单元: 去空白全文}}</code>，共 25 份材料 / 556 个非空单元。<strong>注意 B04（xlsx）的分段标记是 <code>## 工作表 Sheet1</code> 且正文为 <code>行N: X=…</code></strong>，故对工作表类材料按<strong>行号</strong>地址化（区别于页码/幻灯片）；若按"工作表 数字"切分，B04 会得到 0 个单元、其引文将永远无法核验（本次质检即先踩到该坑并已修正）。</li>
+<li>提取每条交付件中的<strong>全部</strong> <code>「」</code>引文，按记录【出处】定位到对应材料与页码，做<strong>去空白字符序的子串匹配</strong>——允许空白与换行差异，<strong>不允许改词</strong>；</li>
+<li>含"…"的引文<strong>按省略号切段逐段匹配</strong>，并要求各段按序落在同一材料、且落在出处声明页码（或版式页码±1 容差）内；</li>
+<li>对匹配失败项做<strong>逐字 diff 定位</strong>（<code>difflib</code> 最长公共块 + opcodes），把差异区分为"实质改写 / 材料或页码错标 / 标点与字词增改"三类；</li>
+<li><strong>全程不做字形纠错、不做同义归一</strong>——否则会把 OCR 讹字句误判为失配（本报告已在 1.4 第 3 条固定该纪律）。</li>
+</ul>
+<h3 id="22">2.2 质检结果总览</h3>
+<table>
+<thead>
+<tr>
+<th>交付件</th>
+<th>记录数</th>
+<th>抽查数</th>
+<th>引文数</th>
+<th>实质改写</th>
+<th>材料/页码错标</th>
+<th>标点字词增改</th>
+<th>符号与引号形态</th>
+<th>标注规范</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第一层（bank-10）</td>
+<td>25</td>
+<td><strong>25</strong></td>
+<td>38</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>6</td>
+<td>2</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>第二层（bank-09）</td>
+<td>18</td>
+<td><strong>18</strong></td>
+<td>39</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>通过</td>
+</tr>
+<tr>
+<td>第三层（bank-11）</td>
+<td>38</td>
+<td><strong>38</strong></td>
+<td>98</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>通过</td>
+</tr>
+<tr>
+<td><strong>合计</strong></td>
+<td><strong>81</strong></td>
+<td><strong>81</strong></td>
+<td><strong>175</strong></td>
+<td><strong>1</strong></td>
+<td><strong>2</strong></td>
+<td><strong>3</strong></td>
+<td><strong>7</strong></td>
+<td><strong>3</strong></td>
+<td><strong>全部通过</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>计数口径：<strong>"实质改写/错标"按问题点计</strong>（去重后），<strong>"形态"按出现次数计</strong>；合计 13 个问题点（Q-01~Q-13），其中自动化比对直接命中 12 处（硬失败），另 4 处（页码、材料错标、出处补充、省略号误用）由逐字 diff 与人工复核确认。</p>
+</blockquote>
+<p><strong>关键判定</strong>：
+1. 三份交付件<strong>均无"无出处的概括"</strong>（每条记录出处均可回溯到材料 ID + 页码/幻灯片号）。
+2. <strong>均无"四类来源混层"</strong>（逐份用源边界核验，见 2.4）。
+3. 发现的问题集中在<strong>引用工艺</strong>（标点形态、页码精确度、个别改写），<strong>无一项导致任何结论失效</strong>；已在成稿中逐条修正或标注（2.3）。
+4. 按"不删条目"的要求，<strong>没有任何一条记录因质检被删除或改写为其他含义</strong>——修正仅作用于引文的准确性。</p>
+<h3 id="23-q-01-q-10">2.3 修正清单（Q-01 ~ Q-10，均已落实到本报告正文）</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>位置</th>
+<th>类型</th>
+<th>问题</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q-01</td>
+<td><code>A01-01</code></td>
+<td>页码偏差</td>
+<td>「可根据自身客户结构选取客户分层的划分节点和指标」标注 PDF页码 4，实位于 <strong>PDF页码 3</strong>（核心摘要）</td>
+<td>正文改为 3 并加注</td>
+</tr>
+<tr>
+<td>Q-02</td>
+<td><code>A01-02</code></td>
+<td><strong>材料错标</strong></td>
+<td>「观察期…观察至MOB6」标注 A05 第 7 页，实位于 <strong>A07《2022 年第 8 期》第 9 页</strong>；A05 全篇无"观察期"表述</td>
+<td>正文改标 A07 第 9 页，并按原文补齐</td>
+</tr>
+<tr>
+<td>Q-03</td>
+<td><code>A01-02</code></td>
+<td>添加字符</td>
+<td>引文句末补"。"，原文该处为"（图表2.1）"</td>
+<td>已去补号，按截断处理</td>
+</tr>
+<tr>
+<td>Q-04</td>
+<td><code>A03-03</code></td>
+<td>添写</td>
+<td>引文首部加"NPS 模型"，原文该处为"…方式之一。通过询问一个简单的问题："</td>
+<td>已按原文回正</td>
+</tr>
+<tr>
+<td>Q-05</td>
+<td><code>A03-05</code></td>
+<td><strong>实质改写</strong>（唯一）</td>
+<td>将原文"（美团、美团外卖、大众点评）"改写为"美团三大APP DAU"</td>
+<td>已按原文回正</td>
+</tr>
+<tr>
+<td>Q-06</td>
+<td><code>B-05-17</code></td>
+<td>添加标点</td>
+<td>引文首部"风险提示："的冒号非原文（原文为该页小节标号"6.风险提示"，与引文连排）</td>
+<td>已按原文回正</td>
+</tr>
+<tr>
+<td>Q-07</td>
+<td><code>B-05-16</code></td>
+<td>出处不完整</td>
+<td>「招行由10年的24.2%…」以无讹字的干净形式出现在<strong>第 1 页摘要</strong>，第 20 页为含讹字版本</td>
+<td>正文并列标注两处</td>
+</tr>
+<tr>
+<td>Q-08</td>
+<td><code>B-02-04</code></td>
+<td>符号替换</td>
+<td>“信用卡＋借记卡”用全角"＋"，原文为半角"+"</td>
+<td>已回正</td>
+</tr>
+<tr>
+<td>Q-09</td>
+<td><code>B-01-01</code></td>
+<td>省略号误用</td>
+<td>「…11-12…」原文该句连续、无删节</td>
+<td>已去除省略号</td>
+</tr>
+<tr>
+<td>Q-10</td>
+<td>第一层全篇</td>
+<td>引号形态</td>
+<td>5 处直引内把原文弯引号“”写成直引号"（<code>A11-02</code>、<code>A01-04</code>、<code>A17-01</code>、<code>A03-01</code>、<code>A03-03</code>）</td>
+<td>已统一还原为“”（不逐条加注）</td>
+</tr>
+</tbody>
+</table>
+<p>| Q-11 | <code>A02-02</code> | 符号替换 | TGI 公式中的"＝"用了全角，原文为半角"=" | 已回正 |
+| Q-12 | <code>A10-01</code> | 符号替换 | "100×1%＝1 元"中的"＝"用了全角，原文为半角"=" | 已回正 |
+| Q-13 | 第一层 §0 与尾注（2 处） | <strong>术语误用引号</strong> | 把说明性术语写成 <code>「文件 ID + PDF 页码」</code>，使 <code>「」</code> 不再专用于源文直引（会影响自动化比对） | 已改为“文件 ID + PDF 页码” |</p>
+<blockquote>
+<p>判定说明：Q-01、Q-02、Q-05 为<strong>出处准确性问题</strong>，必须在引用前修正（已修正）；Q-03、Q-04、Q-06~Q-13 为形态与工艺问题，不影响结论，但为保证"逐字直引"与机器可核验性已一并处理。
+另：<strong>Q-01/Q-02 的教训</strong>——第一层的两处出处问题都发生在<strong>同一句被两页/两期材料同时承载</strong>的情形（A01 的核心摘要 vs 专题正文；A05 与 A07 的同类表述）。这类"多载体句子"应标注"另见"，不能只写一处。</p>
+</blockquote>
+<h3 id="24">2.4 分层与口径合规核验（结论：全部合规）</h3>
+<ul>
+<li><strong>第一层</strong>：引用材料仅 <code>A01–A17</code> + <code>B05</code> ✔；阿蒙森（平台经营分析）与 B05（卖方行业研究）<strong>分节并列、不合并结论</strong> ✔。</li>
+<li><strong>第二层</strong>：引用材料仅 <code>B01–B04、B06、B07</code> ✔；文首明确声明不引用其余三类来源 ✔；文末列出各材料<strong>未取用段落</strong>并说明理由 ✔。</li>
+<li><strong>第三层</strong>：引用材料仅 <code>B05</code> + <code>B08</code> ✔；两类外部来源的<strong>立场分别标注</strong>（券商含荐股立场／平台含合作诉求）✔。</li>
+<li><strong>时点</strong>：三层均给出各材料基准时点；<code>B04</code> 的"2025 年度"明确标注为<strong>推断</strong>（非文内自证）✔。</li>
+<li><strong>未使用/待验证项</strong>：第一层 <code>V-01~V-08</code>、第二层数据缺口、第三层边界声明<strong>全部保留</strong>并归入 6.6 与附录 D，<strong>未以"补数"方式填平</strong>。</li>
+</ul>
+<hr />
+<h2 id="a01a17-b05">三、第一层｜材料自带的分析方法论（A01–A17 阿蒙森 + B05 天风）</h2>
+<blockquote>
+<p><strong>本层回答"别人是怎么分析的"</strong>：只提取方法论骨架，不复述材料结论，不做业务建议。共 <strong>25 条</strong>（阿蒙森 19 条 + B05 6 条）。
+⚠️ <code>A09</code>、<code>A10</code>、<code>A11</code> 三期原引文页码为<strong>版式页码</strong>，与 <code>text/</code> 的 PDF页码相差 1（详见 1.4 第 4 条）。</p>
+</blockquote>
+<h3 id="a01-01">A01-01｜客户生命周期五阶段 × 八层级分层法</h3>
+<blockquote>
+<p>统一编号 A01-01 ｜ 原编号 A-01（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>客户生命周期五阶段×八层级分层法（含各层经营目标对齐）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码 4–5（目录与核心摘要）、PDF页码 5–7（分层方法论与策略表）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「结合客户生命周期理论和算法模型，我们将客户划分为5 个生命周期阶段、8 个层级。」（A01，PDF页码4）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 阶段定义</strong>：引入期/成长期/成熟期/休眠期/流失期（A03 复述同一理论框架，PDF页码15）。<br><strong>② 分层维度</strong>：客户在平台的<strong>支付心智</strong>（支付订单渗透率）+ <strong>经营价值</strong>双因素，落到 8 个具名层：01-激活新户、02-弱心智活跃户、03-心智摇摆户、04-忠诚低活户、05-忠诚高活户、06-心智衰退户、07-美团预流失客户、08-流失户（A01，PDF页码7 图表3.1）。<br><strong>③ 目标对齐规则</strong>：引入期重体验、成长期育心智、成熟期促存续、休眠与流失期重召回（A01，PDF页码6）。<br><strong>④ 双轴策略</strong>：纵向打透＝MOT（关键时刻）经营＋客户忠诚度计划；横向打细＝分客群分阵地（收银台＋营销活动）（A01，PDF页码6）。<br><strong>⑤ 分层节点可替换</strong>：原文明确「可根据自身客户结构选取客户分层的划分节点和指标」——分层骨架是通用的，<strong>切分点是自适应的</strong>（A01，PDF页码3）。<br>【质检修正 Q-01】原标注"PDF页码4"有误：该句实位于 A01 的 PDF页码3（核心摘要）；PDF页码4–7 为同一专题正文。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：有稳定的客户-平台交易行为数据、能把"支付心智"量化为渗透率（原文定义：联名卡订单渗透率＝联名卡支付订单数/客户所有美团交易订单数，见 A15 PDF页码5 脚注）。<br><strong>失效</strong>：① 无平台交易数据可观测的行内自营客户，8 层切分无从落地（原文 8 层名称全部锚定美团场景行为）；② 客户量级过小则各层样本不足；③ 生命周期阶段是<strong>状态标签</strong>，不能当因果变量用——原文只说各层"行为特征"，未证明分层本身带来增长。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。五阶段＋双轴（MOT×分客群）骨架与平台无关，可直接套用到行内客户经营的策略地图；<strong>但 8 层的具体切分点必须用行内自身行为数据重算</strong>，不能照搬（照搬会把平台场景份额当成客户价值）。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a01-02vintage">A01-02｜vintage 曲线定分层切分点</h3>
+<blockquote>
+<p>统一编号 A01-02 ｜ 原编号 A-02（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>vintage（账龄队列）曲线法定分层切分点与经营窗口</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码5（渗透率 vintage）、PDF页码5 脚注（M0–M6+ 定义）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「发现客户联名卡订单渗透率在M1 后迅速下降约10pp，此后保持平稳状态」（A01，PDF页码5）<br>【质检修正 Q-03】原引文句末补"。"，原文该处为"（图表2.1）"，属添加字符，已回正并按截断处理。</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 口径</strong>：M0＝激活后0–30 天，M1＝30–60 天，以此类推（原文脚注，PDF页码5）。<br><strong>② 读法</strong>：按账龄（MOB）分组画同一指标的时间序列，找<strong>斜率突变点</strong>——突变点即阶段分界与经营窗口。<br><strong>③ 输出</strong>：由 M1 后的约 10pp 跌落 → 得"引入期结束即权益到期、需运营承接"的判断（A01 PDF页码5；A02 PDF页码5 用同类 vintage 读"权益期内外落差"）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：同一获客口径、同一账龄定义、样本有充分表现期（A05 PDF页码5 明确「样本数据取自2022Q1，有充分的表现期」；<strong>A07</strong> PDF页码9 明确「激活率观察期为T+30 日，资产余额、生息余额和风险水平观察至MOB6」）<br>【质检修正 Q-02】原标注"A05…PDF页码7"有误：该句实位于 <strong>A07《阿森洞察-2022年第8期》PDF页码9</strong>，A05 全篇无"观察期"表述；原引文的"…"无对应删节，已按原文补齐。。<br><strong>失效</strong>：① 不同发卡批次的进件结构差异大时，vintage 间不可直接比；② 观察期短于拐点则读不到突变；③ vintage 是<strong>同批次横截面跟踪</strong>，不能推成"所有客户都会这样走"。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。vintage 是信用卡行业通行语言，行内账龄数据即得；且它同时解决"分层切分点"和"权益期后承接"两个问题。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a11-01stp">A11-01｜STP 三段式（细分→目标→定位）选客群</h3>
+<blockquote>
+<p>统一编号 A11-01 ｜ 原编号 A-03（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>STP 三段式选客群法（含逐段可核验的取舍理由）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码2–3（STP 引言与理论释义图）、PDF页码4–7（六档细分与 Targeting / Positioning）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「STP 方法论指的是企业需要在一定的市场细分的基础上，确定自己的目标市场，最后把产品或服务定位在目标市场中的确定位置上。」（A11，PDF页码2）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① S（细分）</strong>：六档客户＝按"风险×美团活跃度×支付习惯"分档（A11，PDF页码2–3）；<strong>关键约束</strong>——分层维度须是"在和客户发生接触之前就能够有效识别的、显性的特征"（A11，PDF页码3），因为要能指导<strong>获客前</strong>的投放。<br><strong>② T（目标）</strong>：用<strong>价值表现</strong>选目标，而非规模。原文给出可核验的利润口径公式组：风险调整后资产收益率＝税后收益率−4.0%资金成本−年化NCL；年化NCL≈年内净新增M2+余额/年平均余额/发生月×12；税后收益率＝单位余额生息资产年化收益率＋单位余额交易佣金年化收益率（A11，PDF页码5）。<br><strong>③ P（定位）</strong>：定位＝<strong>找客与获客方式</strong>。按渠道判定打法：1–3 档在营销渠道转化效率高→主动出击的 <strong>Hunter 模式</strong>（获客成本更高、激活率更低）；5–6 档在金融类渠道转化效率高→经营固定入口的 <strong>Farmer 模式</strong>（A11，PDF页码5–6）。<br><strong>④ 取舍要显式</strong>：原文对两类目标客群分别写明代价——要 1–2 档须接受高获客成本与权益升级/高额度投入；要 5 档须有更高风险容忍度与更强风险识别能力（A11，PDF页码2–3）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：细分维度可在触点前识别；有可分摊到分档的收益与风险成本数据（否则 T 段退化为拍脑袋）。<br><strong>失效</strong>：① 维度定为"隐性特征"（如意愿）就无法用于前端投放；② 分档收益口径若含平台侧营销费用分摊，跨机构不可比（A11 PDF页码5 的"户均常态权益成本"含尝鲜/天天减等活动费用，是<strong>平台侧口径</strong>）；③ STP 选出的目标客群只是<strong>策略假设</strong>，需经 A/B 测试才能当结论。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高（框架）／中（参数）</strong>。三段式与 Hunter/Farmer 判别逻辑可整段迁移；但利润口径公式里的资金成本（4.0%）、NCL 折算方式必须换成本行口径重算，<strong>不可直接套用 2021 年平台参数</strong>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a11-02">A11-02｜分层维度的年度迭代法</h3>
+<blockquote>
+<p>统一编号 A11-02 ｜ 原编号 A-04（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>分层维度的迭代法（按业务阶段更换切分维度并保留可解释性）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码3</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「在去年，我们对于客户的分层主要依据“城市×年龄×美团活跃度”这三个维度，而在今年…通过“风险×美团活跃度×支付习惯”的分类方式进行了客户分层。」（A11，PDF页码3；省略号处为原文"我们结合业务实践进行了迭代"，仅为压缩字数）<br>（同页续：「特别增加风险维度的逻辑在于当具体获客时，会重点考虑在当前的风险能力下最有把握通过的客群是哪一部分。」）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 旧维度</strong>：城市×年龄×平台活跃度（人口统计＋行为）。<br><strong>② 新维度</strong>：风险×平台活跃度×支付习惯（风险＋行为＋支付心智）。<br><strong>③ 迭代动因</strong>：原文表述为结合业务实践迭代，并<strong>特别增加风险维度</strong>——即当业务约束从"规模获客"转向"风险可控获客"时，分层维度随之更换（A11 PDF页码3；旁证：A05 PDF页码4 以客户风险分级为固定视角做全面经营分析）。<br><strong>④ 隐含规则</strong>：分层维度不是一次性设计，而是<strong>随业务阶段滚动重检</strong>；且新旧维度需保持可对照（活跃度维度被保留）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：业务目标或风险约束发生阶段性切换时；有新旧两套维度下的历史可比数据。<br><strong>失效</strong>：频繁更换维度会破坏时间序列可比性——<strong>改维度同时必须锁定"口径切换时点"并做双轨过渡</strong>，否则跨年数据不可比（🚫 本批材料未给出双轨过渡做法，属待验证项）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>中</strong>。"随业务阶段换维度"的元规则有价值，但落地依赖行内是否有能力同时维护两套标签；建议一次只换一个维度并保留对照期。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a01-03psm-did">A01-03｜大促活动效果评估：PSM-DID 与简化平行世界</h3>
+<blockquote>
+<p>统一编号 A01-03 ｜ 原编号 A-05（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>无对照组的活动增量评估法（双重差分倾向得分匹配 PSM-DID ／ 简化平行世界法）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码9（方法论述与口径定义）、PDF页码9–10（实例）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「两种方法的核心思想都是：构建一个没有大促的平行世界，观察现实世界与平行世界的区别。」（A01，PDF页码9）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 问题</strong>：普适性/大促活动面向全体客户，<strong>没有干净对照组</strong>，活动前后直接比会混入外部环境效应（原文举例：双十一本身会推高交易）。<br><strong>② 科学解法（PSM-DID）</strong>：在所有未参与客户中，按特征或评分<strong>一一匹配</strong>出与参与客户相似的群体作为对照组，再比较——优势是最科学，劣势是耗时耗力，且「不同分析师可能会根据不同的匹配规则圈选出不同的对照组，导致分析结果难以被其他人复现」（A01，PDF页码9）。<br><strong>③ 简化解法</strong>：以活动参与客户为研究对象，取其活动前一个月的自然交易表现，<strong>叠加自然时间效应</strong>作为平行世界；自然时间效应＝全量客户两个月之间户均交易金额的差值。优势是<strong>可复现</strong>，原文称「也是各家大行较常使用的评估方法」。<br><strong>④ 指标口径（必须锁定）</strong>：活动渗透率＝参与活动激活流通用户÷平均累计激活流通用户数；增量交易金额＝活动组大促期间交易金额−对照组大促期间交易金额（拉齐人数）（A01，PDF页码9）。<br><strong>⑤ 判读规则</strong>：ROI＝1 时成本:增量交易金额＝1:43，活动可持续（A01，PDF页码10）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：全量投放、无随机对照的活动；有活动前一个月以上的自然表现期；外部冲击可被"全量客户同期变化"近似吸收。<br><strong>失效</strong>：① 外部冲击对活动组与全量客户的<strong>影响不同质</strong>时，简化法会高估或低估（这是简化法相对 PSM-DID 的核心代价）；② 人群未拉齐则规模不可比；③ 原文自陈 PSM-DID 结论<strong>难以复现</strong>——同一活动换分析师可能得出不同增量。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。行内同样大量存在"全量短信/权益活动无对照组"的场景；且方法自带"科学版/可复现版"两档，可按分析资源择一，<strong>关键在于把口径写进分析模板</strong>（渗透率、增量金额、ROI 三条定义）。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a01-04">A01-04｜活动效果按活动定位分层评价</h3>
+<blockquote>
+<p>统一编号 A01-04 ｜ 原编号 A-06（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>活动定位→评价指标匹配规则（活动四分类）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码8–9；A05 阿蒙森洞察-2022年第5期.pdf，PDF页码7；A06 阿蒙森洞察-2022年第7期.pdf，PDF页码8；A12 阿蒙森洞察报告-2021年第4期.pdf，PDF页码9</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「促活型营销活动的核心评价指标是“实动率”，而拉动交易型活动的核心评价指标就不再是实动率，而是“增量交易金额”。」（A01，PDF页码9）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 活动四分类</strong>：品牌型／促活型／拉动交易型／拉动分期型（A05 与 A06 均复述该分类，为团队稳定口径）。<br><strong>② 定位→指标映射</strong>：促活型→实动率；拉动交易型→增量交易金额；品牌型大促→活动渗透率＋增量交易金额（A01 PDF页码9）。<br><strong>③ 活动生命周期耦合运营重点</strong>：笔笔抽处于成熟期→重点维持老客留存；超级五折处于成长期→重点用户教育、吸引首次参与（A12，PDF页码9）。<br><strong>④ 命名判读</strong>：大促「可定位于品牌型活动，同时通过任务设置兼顾其他营销目的」——即一次活动可有主指标＋副指标，但<strong>主指标由定位决定</strong>。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：活动目的先行明确；有对应指标的数据链路。<br><strong>失效</strong>：① 定位不清时任何指标都"看起来有提升"——原文的警告机制正是"不同定位对应不同评价标准"；② 用副指标表扬活动（如品牌活动拿实动率邀功）属口径错配。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。这是一条<strong>低成本、防自欺</strong>的规则，可直接写入行内活动立项模板：立项时先填"活动定位→主指标→口径"三栏。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a02-01-">A02-01｜活动前曝光-转化结构分析法（定关键时间节点）</h3>
+<blockquote>
+<p>统一编号 A02-01 ｜ 原编号 A-07（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>曝光-转化结构分析法：用停留时长/曝光次数的转化曲线找关键节点</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码10（曝光次数）；A02 阿蒙森洞察-2022年第2期.pdf，PDF页码8–9（停留时长）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「3 秒是申卡转化开始提升的第一个节点，20 秒是申卡转化进入高速转化的第一个节点。」（A02，PDF页码8）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 数据</strong>：单客级曝光次数/页面停留时长 与 转化率的对应关系。<br><strong>② 定节点</strong>：对转化曲线<strong>多阶求导</strong>找拐点（A02 PDF页码8 明确用此法定 3 秒/20 秒）。<br><strong>③ 反证排除</strong>：原文专设一节验证"停留长≠高风险客户逆向选择"，对比不同停留时长下的<strong>批核率</strong>，发现批核率变化远小于转化率变化（A02，PDF页码9）。<br><strong>④ 结构性结论</strong>：73.1% 客户至少需曝光 2 次才进入活动落地页；48.3% 老客曝光 1–4 次即可点击，而 27.3% 需 8 次以上，<strong>两极分化</strong>（A01，PDF页码10）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：有埋点级单客行为数据；转化指标与行为指标同期可观测。<br><strong>失效</strong>：① 拐点是<strong>该渠道该素材下</strong>的产品事实，换页面/换渠道须重测（A02 的三组头图 A/B/C 结论即各不相同的结构收益）；② 曝光次数存在<strong>上限效应</strong>，不能外推为"曝光越多越好"；③ 拐点不能解释为因果强度（标题党式改写属禁区）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>中</strong>。方法本身通用（行内线上申卡/激活页同样有埋点），但 3 秒/20 秒/2 次<strong>这些具体阈值不可迁移</strong>，必须重测。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a06-01-ab">A06-01｜单变量 A/B 实验 + 分客群响应拆解</h3>
+<blockquote>
+<p>统一编号 A06-01 ｜ 原编号 A-08（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>单变量对照实验与分客群响应拆解双指标法</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A06 阿蒙森洞察-2022年第7期.pdf，PDF页码4–7；A02 阿蒙森洞察-2022年第2期.pdf，PDF页码8–11</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「一是实验组较对照组曝光激活率相对提升…二是实验组较对照组激活卡量分布占比绝对提升」（A06，PDF页码5）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 实验设计</strong>：随机分组（A02 PDF页码7 的三组中间态、A02 PDF页码9 的 AB 头图），单变量改动（仅改免单限额 200 vs 100；仅改标题"信用卡"是否露出）。<br><strong>② 双指标判读（核心规则）</strong>：<strong>相对提升</strong>（每层端到端转化效率变化，看"对哪层更有效"）＋<strong>分布占比绝对提升</strong>（用户结构变化，看"哪层对该权益偏好更强"）。原文用两者交叉得出"实物礼对一线城市、25–45 岁女性、绑一张信用卡、有卡支付习惯的用户更有效"（A06，PDF页码5–7）。<br><strong>③ 事前排除混杂</strong>：A02 分渠道拆 TGI 识别"营销渠道用户关注权益（TGI 107）、非营销渠道关注卡片状态与激活流程（TGI 145）"（A02，PDF页码14）。<br><strong>④ 显著性/置信边界</strong>：原文对三四五线城市直接标注「样本量太少，结论不置信」（A06，PDF页码6）——<strong>主动否决不显著结论</strong>是方法的一部分。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：可随机分流；有足够样本量支撑分层后仍显著。<br><strong>失效</strong>：① 分层过多会稀释样本（原文已自陈该问题）；② 相对提升与分布占比可能反向（某层相对提升大但结构占比反而降），<strong>必须两指标并读</strong>，单看一个会得出相反结论；③ 无法随机的线下环节（网点激活）不适用，只能退化为观察性对照。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。双指标判读规则是防止"用单一指标自证成功"的直接工具，行内做权益/头图/话术测试可直接套用。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a02-02-tgi">A02-02｜分渠道分客群 TGI 定位经营阵地</h3>
+<blockquote>
+<p>统一编号 A02-02 ｜ 原编号 A-09（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>TGI 指数法做分渠道/分场景的客群适配定位</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码5–6；A02 PDF页码14；A14 阿蒙森洞察报告-2021年第6期.pdf，PDF页码4–7</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「TGI 指数=[目标群体中具有某一特征的群体所占比例/总体中具有相同特征的群体所占比例]×标准数100」<br>【质检修正 Q-11】原引文用全角"＝"，原文为半角"="。（A02，PDF页码14）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 口径</strong>：&gt;100 表示该特征在目标群体中强于大盘（A08 PDF页码5 补充「TGI&gt;1 说明该目标群体在该特征上的水平高于整体水平」，注意两处口径表述不一致——<strong>100 制与 1 制</strong>，属原文内部的表述差异，引用时须注明采用哪一版）。<br><strong>② 用法</strong>：给"客群 × 渠道/场景"打分，找该客群<strong>相对浓度最高</strong>的渠道，从而决定投放资源配置。<br><strong>③ 实例</strong>：A11 用"分渠道曝光申请率 TGI" 判定 1–3 档在营销渠道更优、5–6 档在金融类渠道更优，从而得出 Hunter/Farmer 两种打法（A11，PDF页码5–6）；A14 用场景 TGI 判定年轻学历客群在宠物/健身/民宿/电影场景浓度高（A14，PDF页码5）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：有"目标群体 vs 大盘"的分母对齐口径。<br><strong>失效</strong>：① <strong>TGI 只反映相对浓度，不含绝对规模</strong>——高 TGI 的小场景可能总盘子极小，必须叠加规模再决策；② 目标群体定义若跨期变动，TGI 不可跨期比；③ 原文自身口径表述不统一（100 制 vs 1 制），跨期拼接引用必错。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。行内分渠道/分场景/分产品条线的资源分配可直接用；<strong>必须同时报"绝对规模＋TGI"两个数</strong>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a16-01">A16-01｜客户画像的聚类要素法（切分点＋交叉）</h3>
+<blockquote>
+<p>统一编号 A16-01 ｜ 原编号 A-10（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>单因素筛选→强区分特征→交叉聚类定主力客群</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A13 阿蒙森洞察报告-2021年第5期.pdf，PDF页码9–10；A16 阿蒙森洞察报告-2021年第8期.pdf，PDF页码7–8；A09 阿蒙森洞察报告-2021年第1期.pdf，PDF页码4–5</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「年龄（切分点：25 岁）与人行信贷客群（切分点：是否有中等信贷需求）是区分度最强的特征。」（A16，PDF页码7）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 单因素扫描</strong>：逐维度看渗透率/转化率差异（年龄、学历、职业、信贷需求），并给出<strong>每个维度自身的渗透率口径</strong>（如：额度外现分渗透率＝额度外分期户数/额度外白名单户数；额度内＝额度内分期户数/激活流通户数，A13 PDF页码9）。<br><strong>② 选出强区分特征</strong>：只保留区分度最强的 2 个，<strong>并明确写出切分点数值</strong>（25 岁、是否有中等信贷需求）。<br><strong>③ 交叉聚类</strong>：把强特征交叉，得到主力客群清单（如消费类分期主力＝中度及以上资金需求的年轻客群＋资金饥渴的非年轻客群＋非资金饥渴的蓝领客群，A16 PDF页码7–8）。<br><strong>④ 与场景联动</strong>：再叠加场景消费份额，把客群落到可投放的场景上（A16 PDF页码8）。<br><strong>⑤ 类决策树替代</strong>：A09 用"类决策树"对单因素逐层拆分（性别→本外地→信用产品持有→年龄），输出 9 小类归 5 大类（A09，PDF页码4–5）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：有信贷外部数据（人行标签）或平台行为标签；各维度渗透率分子分母口径清晰。<br><strong>失效</strong>：① <strong>分化比例不匹配</strong>——A13 指出"渗透率最高的客群"与"受批核策略制约后的实际组成客群"是两件事（额度外现分渗透率最高是蓝领&amp;小微企业主/高信贷需求年轻人，但实际组成是人行特征不明显客群与中等信贷需求低学历客群，A13 PDF页码9–10）。<strong>这是本方法最重要的陷阱：前筛渗透率 ≠ 后筛结构占比</strong>。<br>🚫 原文多处客群聚类结果附在图上，聚类算法的具体方法与阈值未在正文给出，属待验证项。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。"单因素→强特征→切分点＋交叉聚类"可低成本落地；<strong>但必须区分"渗透率高的客群"与"实际获批的客群"两层结构</strong>，否则会把被风险策略筛掉的人群当经营目标。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a09-01">A09-01｜经营维度的类决策树单因素分析法</h3>
+<blockquote>
+<p>统一编号 A09-01 ｜ 原编号 A-11（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>类决策树单因素分析法（列举→相关性→保留强区分因素）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A09 阿蒙森洞察报告-2021年第1期.pdf，PDF页码4–5</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「我们将这些因素和激活率进行了相关性分析，最后发现：性别、年龄、本外地、信用产品持有情况是区分度较高的四大因素。」（A09，PDF页码4）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 列举候选因素</strong>：结合过往研究认识，广列"可能影响激活率的因素"（资金需求程度、是否持有信用卡、交易频次、年龄、性别等）。<br><strong>② 相关性筛选</strong>：与目标指标做相关性分析，保留区分度高的。<br><strong>③ 逐层拆分</strong>：在每个因素内部继续找<strong>分水岭值</strong>（男 40 岁、女 30 岁；外地男性激活率高出本地男性约 11pp）。<br><strong>④ 单因素是否独立</strong>：原文做了关键限定——"本外地属性在男性中有明显区分度，对女性则无区分度"，即<strong>因素的区分度本身是条件性的</strong>，不是全局常数（A09，PDF页码5）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：候选因素可获取；目标指标稳定可测。<br><strong>失效</strong>：① 原文自陈"图表数据仅为示意数据，<strong>排序性为真</strong>，绝对值数据都已进行了模糊处理"（A09，PDF页码5）——<strong>该期绝对数值不可引用，只能引用排序</strong>；② 相关性分析<strong>不能升级为因果</strong>（原文亦只称"区分度"与"猜测原因"，未宣称因果）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>中</strong>。方法骨架（列举→筛选→拆层→标注条件性）可迁移；但绝对阈值必须用行内数据重算，且<strong>排序≠效应量</strong>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a17-01">A17-01｜四象限资源分配法（意愿 × 营销响应）</h3>
+<blockquote>
+<p>统一编号 A17-01 ｜ 原编号 A-12（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>激活意愿 × 营销响应四象限资源分配法</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A17 阿蒙森洞察报告-2021年第9期.pdf，PDF页码9–10</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「①优质用户，无论是否营销都会自然激活；②摇摆用户，对营销敏感，有营销才会激活；③无动于衷用户…④“睡眠用户”，对营销反感」</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 两轴</strong>：自然激活意愿（有无营销都激活/不激活）× 营销响应度（对营销敏感/反感）。<br><strong>② 四象限动作规则</strong>：②摇摆户→投入更多营销资源；①④象限→尽量不做促激活营销（降成本、降打扰）；③无动于衷→在获客营销资源上降级，减少该客群规模以提升整体激活转化率。<br><strong>③ 落地手段</strong>：算法建模识别②，交给能力强的坐席电销，甚至提前介入（A17，PDF页码10）。<br><strong>④ 前置校验</strong>：先用 93 个特征维度做判别，输出高区分度补充特征（A17，PDF页码9）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：营销动作本身有成本或打扰成本（否则第④象限无意义）；能建模识别两轴。<br><strong>失效/风险</strong>：① 该分类是<strong>建模输出</strong>，不是客户固有属性，模型漂移需重检（🚫 原文未给模型稳定性评估，属待验证项）；② 对①④象限"不做营销"意味着<strong>主动放弃触达</strong>，须确认合规与客户体验上可接受；③ 第③类"减少获客规模"直接冲击发卡量 KPI，需管理层级目标一致（原文也承认"如果不考虑核卡指标"这一前提，A17 PDF页码10）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。符合"降本增效"导向，尤其适用于电销/外呼资源有限的行内场景；<strong>前提是把"减少打扰"作为正当目标写入考核，否则执行不下去</strong>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a03-01">A03-01｜算法模型替代固定阈值：睡眠倾向分＋价格敏感度双模型</h3>
+<blockquote>
+<p>统一编号 A03-01 ｜ 原编号 A-13（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>"促动谁 × 用多大金额"双模型最优分配法</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码15–17</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「不再是简单地判断他是否已经睡眠30 天/60 天/90 天，而是基于算法模型计算的“睡眠倾向分”」（A03，PDF页码15）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 问题拆解</strong>：把促活拆成两个可分别建模的问题——"促动谁"（人群选择）与"用多大金额促动"（券面额）。<br><strong>② 模型一·睡眠倾向预测</strong>：以未来 30 天睡眠概率排序客户，设分数阈值筛选投放对象；判据是<strong>排序性</strong>——低分用户（&lt;20 分）不投券也保持 90%+ 实动率，高分用户需投券唤醒（A03，PDF页码15–16）。<br><strong>③ 模型二·价格敏感度</strong>：用决策树预测各券金额下的实动概率与用券概率。<br><strong>④ 组合求解</strong>：在<strong>给定成本约束下求最优化</strong>，为每个客户分配最合适券额（A03，PDF页码16）。<br><strong>⑤ 效果验证三条</strong>（可作为通用验收框架）：资源分布更平均（投券次数分布）；预算分配更合理（出现"券面额与被促实动概率成反比"＝把大额券真的投给了不敏感客户）；ROI 提升（对比人工组的单位成本增量产出口径，A03 PDF页码16–17）。<br><strong>⑥ 样本机制</strong>：大盘流量按 <strong>8:1:1</strong> 随机分为算法组/长期对照组/空白组，用于验证与建模（A03，PDF页码17）。<br><strong>⑦ 诚实边界</strong>：原文写明连续投券客户中「近45% 的客户在算法的投券策略下无法完成转化」——未覆盖人群要明示。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：有足够样本沉淀行为序列；成本约束明确（否则"最优化"无解）；有长期对照组机制。<br><strong>失效</strong>：① 样本不足时模型排序性不稳；② 缺少长期对照组会把"算法上线"与"活动上线"混在一起归因；③ 决策树的券额-响应曲线拟合需实测校验（原文即以模型预测线与实际线对比来验，A03 PDF页码15–16）；④ <strong>模型不能替代业务假设</strong>：原文的模型只解"分配"问题，"是否该做睡眠户促活"仍是业务判断。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>中–高</strong>。双模型拆解＋成本约束最优化＋8:1:1 样本机制可直接迁移；对算法能力有门槛，行内若无建模团队，可先落"8:1:1 样本机制＋分档阈值"的简版，但要如实标注为简版。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a03-02">A03-02｜睡眠户促活三阶段演进复盘</h3>
+<blockquote>
+<p>统一编号 A03-02 ｜ 原编号 A-14（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>专项经营的三阶段能力演进复盘（探测期→人工迭代期→算法提效期）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码15、PDF页码16–17</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「共经历3 个阶段（探测期，人工迭代期，算法提效期）。在通过标准化AB 实验不断迭代及沉淀算法模型能力后，形成了…标准化解决方案。」</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 阶段划分法</strong>：把一个长周期专项按<strong>能力形态</strong>（不是按时间）划段：探测→人工迭代→算法提效。<br><strong>② 每段问同一问题</strong>：该阶段的效果提升来自哪里？（原文归因为"客户识别＋券面额投放"两项精准度的提升。）<br><strong>③ 迭代效果三量化</strong>：资源分布、预算分配、ROI（见 A-13）。<br><strong>④ 下一阶段明确列</strong>：算法侧（大盘流量分配＋用户行为序列建模＋隐私计算）与运营侧（深睡户唤醒探测）分别列出（A03，PDF页码17）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：专项持续时间足够长（原文近半年以上）以形成阶段可比。<br><strong>失效</strong>：阶段之间若同时发生外部环境变化（原文正处疫情期），阶段效果差异<strong>不能全归因于方法论升级</strong>——需用同期对照组剥离。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>中</strong>。"按能力形态而非时间分期"的复盘骨架可迁移；但阶段归因必须配同期对照，否则变成叙事而非论证。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a03-03nps">A03-03｜NPS 三层问卷诊断法</h3>
+<blockquote>
+<p>统一编号 A03-03 ｜ 原编号 A-15（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>NPS 三层问卷结构（分类→归因→行动）＋痛点爽点双指数定位</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码8–10</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「通过询问一个简单的问题：“0-10 分，请问您有多大可能将XXX 产品推荐给家人/朋友”」<br>【质检修正 Q-04】原引文首部"NPS 模型"为添写（原文该处为"…方式之一。通过询问一个简单的问题："），弯引号已还原。</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 口径</strong>：9–10 分＝推荐者，7–8 分＝被动满意者，0–6 分＝诋毁者；NPS＝推荐者占比−诋毁者占比（A03，PDF页码8）。<br><strong>② 三层问卷结构</strong>（可直接复用的模板）：第一层分类算 NPS 分；第二层<strong>无提示主动提及</strong>归因，梳理全旅程痛点爽点；第三层找行动方向并追问其他抱怨（A03，PDF页码8）。<br><strong>③ 双指数定位法</strong>：影响指数＝推荐者占比＋诋毁者占比（<strong>关注度</strong>）；NPS 指数＝推荐者占比−诋毁者占比（<strong>忠诚度</strong>）。两者交叉→高关注低忠诚＝优先做功点（A03，PDF页码9）。<br><strong>④ 外部效度自证</strong>：验证 NPS 分类与实际推荐行为（MGM）占比的一致性，排序为推荐者&gt;被动满意者&gt;诋毁者（A03，PDF页码8）。<br><strong>⑤ 分指标下钻</strong>：把环节再拆细分指标找最小做功点（如还款环节拆出"还款提醒"为 NPS 最低项）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：有可触达的全量客群投放问卷；样本有代表性。<br><strong>失效</strong>：① 原文数据是"所有合作银行平均值"，<strong>单家银行数据需另行索取</strong>（A03 PDF页码9–10 多次标注）——<strong>跨行平均不能当作本行现状</strong>；② NPS 受问卷投放位置（原文投放在新版首页）影响，存在选择性偏差；③ NPS 是<strong>相关性指标</strong>，不证明"提升 NPS 就能提升业务"，原文亦只称其为"桥梁指标"。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。三层问卷结构＋双指数交叉可直接复用到行内产品体验诊断；<strong>但须报告本行独立数据，不能引用跨行平均值</strong>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a04-01">A04-01｜分环节漏斗拆解与团队责任切分</h3>
+<blockquote>
+<p>统一编号 A04-01 ｜ 原编号 A-16（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>目标漏斗拆解→指标分团队归因法（以"激活卡量"替代"发卡量"）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A04 阿蒙森洞察-2022年第4期.pdf，PDF页码10–12</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「与发卡量相比，激活卡量会是更好的业务指导目标。它直接反映多个因素共同作用的最终结果，避免了此消彼长带来的干扰。」</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 换主目标</strong>：因前端"曝光发卡率与激活率存在跷跷板"，发卡量会被策略拉高而激活率自然下滑，<strong>单看任一环节都失真</strong>→ 采用端到端结果指标"激活卡量"。<br><strong>② 时间维度切分归责</strong>：自然月激活卡量按发卡账龄拆为 D15 内（美团发卡团队）、D15–M2（银行线下/电销团队）、M3+（用户自发），三者贡献占比 <strong>47%/35%/18%</strong>（A04，PDF页码11）。<br><strong>③ 团队内指标再拆</strong>：发卡团队→流量水平 × D15 曝光激活率；线下团队→<strong>名单下发率（流量供给）／拨打率（业务员效率）／成功邀约率（用户意愿）</strong>，并给出计算口径（A04，PDF页码12）。<br><strong>④ 用波动性定"主要输入指标"</strong>：原文观察三家指标时间序列，判定拨打率波动最大（受节假日与行内动作高度敏感），应作为主要关注输入指标（A04，PDF页码12）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：端到端有共同可认的结果指标；各环节责任主体清晰可切分。<br><strong>失效</strong>：① 团队贡献占比（47/35/18）是<strong>该时点该合作结构下的实测值</strong>，换机构/换时点必须重算；② 跷跷板现象成立的前提是"流量池无明显变动、曝光客群基本稳定"（A04 PDF页码10 原文限定）——流量结构变化时该推论不成立；③ "换主目标"会冲击原有 KPI 体系，需组织配套。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。跷跷板＋端到端结果指标是线上获客的通用治理逻辑；指标分团队口径表可直接改写为行内版本。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a10-01">A10-01｜经营动作杠杆量化：单位提升 × 覆盖面</h3>
+<blockquote>
+<p>统一编号 A10-01 ｜ 原编号 A-17（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>目标公式分解 → 每动作"单位净提升 × 覆盖面"杠杆量化</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A10 阿蒙森洞察报告-2021年第2期.pdf，PDF页码1–3（PDF页码8–10）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「每提升超五活动的1pp 参与度，流通卡卡均交易金额即可上升100×1%=1 元。」<br>【质检修正 Q-12】原引文用全角"＝"，原文为半角"="。（A10，PDF页码2）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 公式分解</strong>：流通卡卡均交易＝激活率 × 实动率 × 实动卡卡均（三因素法，A10 PDF页码1）。<br><strong>② 因素→策略动作映射</strong>：激活率→促激活动作；实动率→水上活动（笔笔抽）＋水下活动（睡眠户促动）；实动卡卡均→客户消费能力（贷前结构）／用卡便利性（第三方绑卡）／额度（调额）／消费意愿（活动）（A10，PDF页码1）。<br><strong>③ 客户分层定覆盖范围</strong>：用"是否激活/是否套现/是否实动/是否主卡/额度使用率"等维度把客户分为 <strong>15 类</strong>，以此确定每个策略动作的覆盖面（A10，PDF页码2）。<br><strong>④ 杠杆量化规则</strong>：动作对终值的影响＝<strong>单位净提升 × 该动作覆盖率</strong>；因前置性因素（促激活、促绑卡）覆盖客户面大，每 1pp 提升的杠杆通常更大（A10，PDF页码2–3）。<br><strong>⑤ 输出过程性目标</strong>：由现目标值反推每个子策略需达到的过程指标（各活动覆盖率需从 X% 提到 Y%）（A10，PDF页码3）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：各动作有历史增量实测值（单位净提升）；客户分层与动作覆盖面可测算。<br><strong>失效</strong>：① 原文明确标注该期图表数据为<strong>假数据</strong>，仅"策略动作的杠杆作用排序性未变"（A10，PDF页码2–3）——<strong>绝对值不可引用，只能引用排序与方法</strong>；② 单动作增量不能线性外推（多动作叠加存在相互蚕食，原文未处理叠加效应，属待验证项 🚫）；③ 杠杆量化依赖历史，业务环境变化后需重测。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。这是"把经营计划写成可验收过程指标"的通用工具；<strong>落地时须行内自测单位增量，且对多动作叠加做去重处理</strong>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a03-04">A03-04｜跨界对标的方法（亚马逊联名卡案例）</h3>
+<blockquote>
+<p>统一编号 A03-04 ｜ 原编号 A-18（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>跨界对标三段法：产品矩阵 / 合作模式 / 业务进展，并对每个不可比项显式标注</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码5–7</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「对比亚马逊与摩根大通合作的Prime Rewards Visa Card、美团联名卡业务数据可知，美团在发卡能力方面不弱于亚马逊，但在资产表现方面尚存提升空间。」</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 三段式</strong>：产品矩阵（卡种-客群-权益如何分层覆盖）→ 合作模式（各方投入与诉求）→ 业务进展（能力对比）。<br><strong>② 对齐口径的方式</strong>：不是直接比绝对值，而是<strong>先做量纲归一</strong>——"考虑亚马逊、美团流量差异，对比二者转化效率、渗透速度"，并用 DAU 与年发卡量做效率比值判定（A03，PDF页码6）。<br><strong>③ 不可比项的显式标注（本节最大价值）</strong>：原文对净资产收益率加了脚注——"数据包含摩根大通银行所有信用卡收益率表现，<strong>亚马逊联名卡单卡收益率数据不详</strong>"；并在对标结论中区分"初步判断"与"尚存提升空间"。<br><strong>④ 权益设计的量化权衡示例</strong>：用"年消费额 &gt; 5950 美元时买会员卡更划算"的临界点比较两档返现方案（A03，PDF页码5）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：能找到对齐口径的中间量（效率比、渗透速度）。<br><strong>失效</strong>：① 跨市场（美国 vs 中国）监管与竞争环境不同，<strong>权益内容不可直接移植</strong>；② 单卡收益数据缺失时，任何"收益率对标"都是不可比（原文已自陈）；③ 流量口径差异（DAU 定义）若不一致，效率比失效。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>中</strong>。三段式骨架与"先归一化再比较＋标注不可比项"的纪律价值高；但跨境数据可得性差，落地更多是<strong>对标方法训练</strong>而非直接取数。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="31-b05-2018-06">3.1 第一层·B05 分节（天风证券，2018-06）：行业研究的推导路径与数据口径选择</h3>
+<blockquote>
+<p>说明：B05 是<strong>卖方行业专题</strong>，其方法论价值集中在"推导路径的构造方式"与"数据口径的显式选择"，不在结论本身。以下条目标注出处的 PDF 页码。</p>
+</blockquote>
+<h3 id="b-05-12">B-05-12｜"收入结构解构 + 口径还原"分析法</h3>
+<blockquote>
+<p>统一编号 B-05-12 ｜ 原编号 B-01（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>收入结构解构法（含"实际口径还原"这一步）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>B05 信用卡大有可为，渐成零售业务主力（天风证券，2018-06-03）.pdf，PDF页码 6–9（表1、图4、图6、图9 相关段落）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「考虑到分期手续费本质上是利息收入，那么实际利息收入占比约70%，与美国主要银行信用卡业务利息收入占比接近。」（B05，PDF页码8）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 取收入结构</strong>：按银联数据客户银行口径取"1H16 收入结构"——利息 42.4%、分期手续费 28%、滞纳金 16.1%、佣金 &lt;10%、年费 3.6%，前三项合计 86.5%（B05，PDF页码7）。<br><strong>② 建"会计科目↔经济实质"映射表</strong>：把显性收入（利息、POS 回佣、年费、取现、惩罚性、分期手续费、其他）与隐性收入（交叉销售、资产证券化）分列，并明确指出"分期付款手续费实质是利息收入，国际信用卡机构一般将其归为利息收入"（B05，PDF页码7）。<br><strong>③ 做口径还原</strong>：在披露口径上再做一次合并调整，得出"实际"利息收入占比约 70%（B05，PDF页码8）。<br><strong>④ 用还原后的口径做国际对标</strong>：与美国主要银行利息收入占比对照，验证还原合理（B05，PDF页码9 图6：整体/全国性/区域性/美国银行/摩根大通/花旗的利息占比递增序列）。<br><strong>⑤ 口径切换的事实锚</strong>：注明"招行自 2015 年起将分期手续费归入利息收入"，即<strong>同一银行跨年数据存在口径断点</strong>（B05，PDF页码21）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：需要跨机构/跨国比较时。<br><strong>失效</strong>：① 不做映射直接比"利息收入占比"，会把同样的经济实质算成两类收入，<strong>结论反向</strong>；② 口径切换年份前后不可比（招行 2015 断点）；③ 该 1H16 银联数据是<strong>银联数据客户银行</strong>样本，不等于全行业。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。这是本批材料中对"口径先统一，再谈比较"最直接的示范：<strong>先建科目-实质映射，再还原，最后才对标</strong>；行内做同业比较时的收入结构分析可照此三步走。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-05-13">B-05-13｜分期实际年化利率的现金流测算法</h3>
+<blockquote>
+<p>统一编号 B-05-13 ｜ 原编号 B-02（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>分期"名义费率→实际年化利率"测算法（期初本金/每期还款额/期数求解期利率）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>B05，PDF页码9（"分期收入，筑梦新蓝海"节）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「一笔本金6000 元、每期手续费率为0.7%、分为6 期的产品…在这个例子中，分期产品的实际年化利率高达14.26%。」</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 问题</strong>：名义"每期费率"按<strong>分期总额</strong>收取，但本金逐期偿还，故名义费率严重低估真实资金成本。<br><strong>② 四要素</strong>：期初金额(pv)、每期还款额(pmt)、每期利率(r)、还款期数(t)，解出 r 后 ×12 得实际年化。<br><strong>③ 判定示例</strong>：6000 元/0.7%/6 期 → 实际年化 14.26%。<br><strong>④ 延伸校准</strong>（本批材料内的方法呼应）：A11 中平台侧用"生息资产年化收益率＝18 或 20% / 1.06 × 生息资产占比"处理（A11，PDF页码5），同样体现"名义利率须调整后才能用于收益测算"。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：等额/按期摊销的消费分期、现金分期。<br><strong>失效</strong>：① 一次性还本付息或先息后本产品不适用同一公式；② 若含服务费/权益费，须全部计入现金流否则低估；③ <strong>该测算给出的是产品定价口径，不能直接等同于客户实际承担的"综合年化成本"</strong>（还需计入可能的逾期费用等）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。行内做分期定价、以量补价测算、竞对价格对标时，必须用实际年化而非名义费率，否则会系统性低估成本。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-05-14">B-05-14｜"盈亏平衡点"阈值判断法</h3>
+<blockquote>
+<p>统一编号 B-05-14 ｜ 原编号 B-03（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>规模阈值法在信用卡业务盈亏判断上的应用（及阈值的引用纪律）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>B05，PDF页码6–7、PDF页码12（"信用卡业务支出，考验综合经营能力"节）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「业界普遍认为，发卡量300 万张是信用卡业务盈亏平衡点。」（B05，PDF页码6）；「一般认为，150 万张流通活卡是经营基础，200-250 万张可以保证收支平衡，超过300 万张则有可能实现盈利。」（B05，PDF页码12）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 分层阈值</strong>：150 万张流通活卡＝经营基础；200–250 万＝收支平衡；&gt;300 万＝可能盈利——<strong>阈值按"发卡量"与"流通活卡"两套口径分别给出</strong>。<br><strong>② 用法</strong>：把机构规模与阈值对照，判断业务所处阶段（B05 即以"截至 2017 年底 12 家上市银行发卡量超 3000 万张，已大幅超越盈亏平衡点"作为行业判断依据，B05 PDF页码21–22）。<br><strong>③ 成本四分类</strong>：运营成本／营销成本／资金成本（原文明确"可以理解为信用卡贷款 FTP 价格"）／风险成本（坏账＋欺诈）（B05，PDF页码12）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：作为<strong>行业粗判</strong>与阶段定位工具。<br><strong>失效/风险</strong>：① 阈值来源为"业界普遍认为"，<strong>非实测</strong>——原文即用"普遍认为""一般认为"措辞，无出处支撑；② <strong>发卡量 ≠ 流通活卡</strong>，两套口径混用会误判（原文同时出现 300 万张发卡量与其他处的流通活卡口径）；③ 阈值是 2018 年前的行业经验值，<strong>随获客成本、资金成本、单客价值变化必然漂移</strong>，不可当作现行标准（本项为历史样本，见第0节）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>中</strong>。方法价值在于"把规模阈值拆成经营基础/收支平衡/盈利三档并标注口径"；<strong>具体数字必须用行内自身成本结构重算，不能引用 300 万张这一历史经验值</strong>。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-05-15">B-05-15｜国际对标法的口径处理（人均持有量）</h3>
+<blockquote>
+<p>统一编号 B-05-15 ｜ 原编号 B-04（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>人均指标的对标法（含分母口径调整与国际比较的适用性标注）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>B05，PDF页码12–17</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「考虑到当前我国信用卡以持卡人以20-59 岁的城镇居民为主，我们测算20-59 岁城镇居为民人均信用卡持卡量为0.95 张。」（B05，PDF页码12；"居为民"为原件 OCR 讹字，原文如此）</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 换分母</strong>：人均持有量的分母从"全国人口"换成"20–59 岁城镇居民"，得到 0.95 张（vs 全国口径 0.39 张）——<strong>同一指标、两个分母、差 2.4 倍</strong>。<br><strong>② 用结构性分母做国际比较</strong>：与美国人均 2.90 张对照；并引入城市级样本做旁证（2016 末北京 1.35 张、2015 末上海 1.01 张）（B05，PDF页码12–13）。<br><strong>③ 空间判断的推导链</strong>：人均低 → 城镇化推进＋消费升级 → 总量与信贷规模有望持续增长（B05，PDF页码13）。<br><strong>④ 结构占比对标</strong>：信用卡贷款余额/总贷款 由 2009 末 0.61% 升至 2017 末 4.63%，仍低于美国 7.81%（B05，PDF页码15–16）；机构层面再比（招行 13.78% vs 花旗 23.8%、摩根大通 15.8%）（B05，PDF页码16）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：需要说明"渗透率还有空间"这类成长性判断时。<br><strong>失效</strong>：① 分母选择直接决定结论量级，<strong>换分母必须明示</strong>，否则同一事实可得出"渗透率极低"或"接近饱和"两种结论；② 中美信用体系、征信覆盖、支付习惯差异使"人行持卡量"不完全可比；③ 原文的推导链是<strong>方向性判断</strong>，不是预测（原文用"有望""我们认为"措辞）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。方法纪律"报人均指标必须同时报分母"在行内做同业/跨区域对标时同样关键（本专家一贯纪律：机构范围口径统一后再比较）。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="a03-05">A03-05｜自下而上市场空间测算法</h3>
+<blockquote>
+<p>统一编号 A03-05 ｜ 原编号 B-05（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>自下而上规模测算：日活×发卡量→贷款余额（联名卡案例）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>注：该方法出自 <strong>A03</strong>（阿蒙森），非 B05；列于此处是与 B05 的行业测算形成<strong>两种测算范式对照</strong></td>
+</tr>
+<tr>
+<td>出处（准确）</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码6（亚马逊联名卡业务数据与对标方式脚注）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「对比亚马逊、美团年发卡量与DAU，美团三大APPDAU（美团、美团外卖、大众点评）为亚马逊的两倍，但年发卡量大于亚马逊的两倍。故初步判断当前美团转化效率更高。」<br>【质检修正 Q-05】原引文将原文括号内列举"（美团、美团外卖、大众点评）"改写为"美团三大APP DAU"，属实质改写，已按原文回正。</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 参数集</strong>：累计发卡量、贷款余额、净资产收益率、DAU、会员用户数（A03，PDF页码6 表3.1，来源标注 Bloomberg / Packaged facts / JP Morgan Chase Annual Report / Questmobile / Statista）。<br><strong>② 效率归一</strong>：用"年发卡量÷DAU"做转化效率比；用"年渗透存量用户百分比"做渗透速度比（A03，PDF页码6 两条脚注各写明对标方式）。<br><strong>③ 边界标注</strong>：对净资产收益率加注"包含摩根大通所有信用卡，单卡数据不详"——<strong>缺数据处直接标注不详，不补数</strong>。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：有可比的定义一致的流量口径与业务口径。<br><strong>失效</strong>：① 累计发卡量口径在各家定义不同（累计发卡 vs 流通卡 vs 激活卡），跨机构直接比即错（本专家禁区第 3 条）；② 效率比对流量口径极度敏感（DAU 定义）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>中</strong>。适合做"增长空间"的粗略合理性检验；<strong>不适合作为经营目标的直接依据</strong>（输入参数多为外部估算）。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-05-16">B-05-16｜单一公司深钻拆解（招行/中信/浦发三案例）</h3>
+<blockquote>
+<p>统一编号 B-05-16 ｜ 原编号 B-06（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>板块论证的"代表公司深钻"法（以机构案例支撑行业结论）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>B05，PDF页码19–22（"4.3 信用卡收入贡献有多大？—细看招行、中信、浦发"与投资建议节）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「招行由10 年的24.2%升至17 年的49.4%，中信银行则由27.65%升至71.84%。」（B05，PDF页码20；同一句以无讹字的干净形式另见第 1 页摘要）【质检修正 Q-07】建议引用时并列标注"另见第 1 页摘要"</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 选代表</strong>：按"路径差异"而非"规模排序"选三家——招行（先行者、多元零售）、中信（依赖信用卡的高零售占比）、浦发（"绕道超车"高增速）（B05，PDF页码19–22）。<br><strong>② 用同一组比率横向比</strong>：信用卡收入/营收、信用卡收入/零售银行收入、卡均收入（浦发 975.02 元居首）、信用卡收入/平均透支余额（浦发 14.77% 居首）、授信使用率（招行 71.12%）（B05，PDF页码20–21）。<br><strong>③ 由比率差异反推经营模式差异（本方法的关键一步）</strong>：原文据"招行与中信信用卡/零售营收差距"推断"中信零售对信用卡依赖较大，而招行通过私人银行、财富管理实现较为综合而多元的零售银行经营"（B05，PDF页码20；同一句以无讹字的干净形式另见第 1 页摘要）【质检修正 Q-07】建议引用时并列标注"另见第 1 页摘要"——<strong>同一指标的不同水平对应不同商业模式</strong>，而非简单优劣。<br><strong>④ 口径说明</strong>：明确"以信用卡收入/期初期末平均贷款粗略估计信用卡资产收益率"（B05，PDF页码20；同一句以无讹字的干净形式另见第 1 页摘要）【质检修正 Q-07】建议引用时并列标注"另见第 1 页摘要"，承认是粗略替代口径。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：能拿到同一可比口径的多年披露数据；机构选择覆盖不同模式。<br><strong>失效</strong>：① 原文自陈"国内上市银行披露的信用卡收入以及利润的寥寥无几"（B05，PDF页码7）——数据可得性本身就是约束，样本非全体；② 比率差异反推模式属<strong>解释性推断</strong>，不是因果证明（原文亦用"我们认为"）；③ 卡均收入、资产收益率等比率受分期口径（招行 2015 年切换）影响，跨行跨年比须先做口径还原。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高</strong>。"按模式差异选代表 + 同组比率横比 + 由比率反推经营模式 + 标注粗略口径"是一套完整的同业对标纪律；<strong>行内对标时应先做机构范围/口径还原，再解读差异</strong>（与本专家"口径先统一，再谈比较"一致）。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="b-05-17">B-05-17｜研究假设的前置条件与风险提示写法</h3>
+<blockquote>
+<p>统一编号 B-05-17 ｜ 原编号 B-07（第一层）</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>方法名</td>
+<td>结论-前提-风险三段式（投资建议的论证闭环）</td>
+</tr>
+<tr>
+<td>出处</td>
+<td>B05，PDF页码21–22（"5. 投资建议"与"6. 风险提示"）</td>
+</tr>
+<tr>
+<td>原文关键句</td>
+<td>「经济超预期下行导致资产质量大幅恶化；存款成本快速抬升风险等。」（B05，PDF页码22）<br>【质检修正 Q-06】原引文首部"风险提示："的冒号非原文（原文为该页小节标号"6.风险提示"，与引文连排、无冒号）。</td>
+</tr>
+<tr>
+<td>方法拆解</td>
+<td><strong>① 结论</strong>：信用卡业务已成零售银行业务的发力点与主力军，应是零售银行战略的重心（B05，PDF页码21–22）。<br><strong>② 前提（可核验的事实链）</strong>：发卡量超盈亏平衡点（3000 万张级）→ 收入占零售营收近半 → 消费升级带来市场空间。<br><strong>③ 落到标的与理由</strong>：分别给出招行（护城河、"品牌经营，精耕细作"）、中信（H 股估值与信用卡发力）、平安（集团流量与 Fintech）的差异化理由（B05，PDF页码22）。<br><strong>④ 风险与免责</strong>：列出两条风险提示；并在文末列分析师声明、一般声明、评级体系、利益冲突声明（B05，PDF页码23）。</td>
+</tr>
+<tr>
+<td>适用条件与边界</td>
+<td><strong>成立</strong>：正式对外研究/汇报场景。<br><strong>失效</strong>：该结构中的<strong>评级体系与免责声明是卖方合规要求</strong>，行内汇报不必照搬形式，但"结论—前提—风险"的三段闭环应保留。<br><strong>注</strong>：B05 的投资评级为"强于大市"，属卖方立场，<strong>引用其行业判断时须保留"外部券商研究"来源标注</strong>，不得与行内经营结论混谈（第0节来源分层纪律）。</td>
+</tr>
+<tr>
+<td>可迁移性初判</td>
+<td><strong>高（结构）／低（形式）</strong>。行内复盘汇报可直接用"结论—前提—风险"三段；评级与免责体系不适用。</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="32">3.2 第一层小结：两套范式的方法论差异</h3>
+<blockquote>
+<p>这不是"哪套更好"，而是<strong>任务类型不同 → 分析路径不同</strong>。选择前先确认要解决什么问题。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>对照维度</th>
+<th>阿蒙森洞察（平台经营分析）</th>
+<th>B05 天风证券（卖方行业研究）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>分析对象</td>
+<td><strong>单一业务线条的客户级行为</strong>（曝光→申请→批核→激活→实动→分期→风险）</td>
+<td><strong>行业与上市公司板块</strong></td>
+</tr>
+<tr>
+<td>数据底座</td>
+<td>平台侧经营数据 + 算法模型 + 自有问卷/访谈</td>
+<td>央行支付体系报告、银联数据、上市公司年报、Bloomberg/Wind</td>
+</tr>
+<tr>
+<td>核心方法</td>
+<td>实验（A/B、PSM-DID）、分层聚类、算法模型、闭环复盘</td>
+<td>收入结构解构、比率横比、国际对标、规模测算</td>
+</tr>
+<tr>
+<td>时间粒度</td>
+<td>月度/账龄（MOB）级，看 vintage</td>
+<td>年度/半年度，看趋势与占比</td>
+</tr>
+<tr>
+<td>结论形态</td>
+<td><strong>可执行动作 + 过程性指标</strong>（谁在什么时点对哪层客群做什么）</td>
+<td><strong>方向判断 + 标的建议</strong>（行业是否有空间、谁受益）</td>
+</tr>
+<tr>
+<td>主要局限</td>
+<td>平台口径，跨机构不可直接搬运；部分期次自陈为示意/假数据</td>
+<td>披露数据稀缺；历史经验阈值；卖方立场</td>
+</tr>
+<tr>
+<td><strong>互补关系</strong></td>
+<td>阿蒙森提供"怎么做"的操作级方法；B05 提供"为什么值得做"的行业级推导与<strong>口径还原纪律</strong>（B-01）</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p><strong>跨材料共性方法（两套范式都出现的三条元规则）</strong>
+1. <strong>口径先统一</strong>：B-01（科目-实质映射+还原）、B-04（分母选择）、A-13/A-16（渗透率与归属口径显式定义）。
+2. <strong>无对照不做因果</strong>：A-05（平行世界/PSM-DID）、A-08（实验组vs对照组）、A-14（阶段归因需同期对照）。
+3. <strong>缺数据显式标注</strong>：A-18（单卡收益率不详）、B-06（披露者寥寥无几）、A-09/A-17（示意/假数据仅排序为真）——<strong>本批材料本身即反复示范"不补数"</strong>。</p>
+<hr />
+<h3 id="33-v-01v-08-66">3.3 第一层待验证项清单 V-01~V-08（已并入 6.6）</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>待验证内容</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V-01</td>
+<td>各期图表中"绝对值"数据（各期核心摘要中引用的 pp/百分比，凡正文未写出者）</td>
+<td>text 提取件仅存数值标签残片，需回 <code>sources/</code> 原件读图</td>
+</tr>
+<tr>
+<td>V-02</td>
+<td>A-10 / A-17 相关期次图表中的绝对数值</td>
+<td>原文明确标注为"示意数据"或"假数据"，仅排序性有效</td>
+</tr>
+<tr>
+<td>V-03</td>
+<td>A-13 睡眠倾向模型的阈值设定与稳定性评估</td>
+<td>正文未给分数阈值、模型区分度(AUC)与漂移监控</td>
+</tr>
+<tr>
+<td>V-04</td>
+<td>A-11 客群聚类的具体算法与阈值</td>
+<td>正文只给聚类结果，未给方法参数</td>
+</tr>
+<tr>
+<td>V-05</td>
+<td>A-04（分层维度迭代）的"双轨过渡"做法</td>
+<td>原文未说明维度切换期如何处理数据可比性</td>
+</tr>
+<tr>
+<td>V-06</td>
+<td>A-17 多动作叠加的相互蚕食效应</td>
+<td>原文按单动作量化杠杆，未处理叠加去重</td>
+</tr>
+<tr>
+<td>V-07</td>
+<td>阿蒙森 2022 年第 6 期内容</td>
+<td>该期不在本批材料中</td>
+</tr>
+<tr>
+<td>V-08</td>
+<td>B05 全篇沿用"我国/上市行"整体口径，未拆分城商行层级</td>
+<td>需另找区域性银行样本才能用于城商行对标</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="34-a-a-01a-18-b-01b-07-a">3.4 原编号索引（已由<strong>附录 A 的统一编号映射表</strong>取代，此处不再重复；原 <code>A-01~A-18 / B-01~B-07</code> 与统一编号的对应关系见附录 A）</h3>
+<hr />
+<blockquote>
+<p><strong>第一层原稿尾部说明</strong>：本层为"分析方法论"提取（分析别人是怎么分析的），不含业务打法建议；全部引用可回溯到“文件 ID + PDF 页码”，无法回溯者已列入 3.3 待验证项。</p>
+</blockquote>
+<hr />
+<h2 id="b01b04b06b07">四、第二层｜业务打法方法论（行方材料 B01–B04、B06、B07）</h2>
+<blockquote>
+<p><strong>本层回答"行内历史做法里，哪些是可复制的动作"</strong>：共 <strong>18 条</strong>，全部取自行方材料，不引用其余三类来源。
+附一~附五（分行执行评估、可复制性梯队、外部合作风险、推进路径、条目来源对照）为原交付件内容，见第二层原文件；其要点已并入 6.2 与 6.5。</p>
+</blockquote>
+<h3 id="b-06-01">B-06-01｜分期核心指标分解法（过程指标优先）</h3>
+<blockquote>
+<p>统一编号 B-06-01 ｜ 原编号 B-01（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-01</li>
+<li><strong>出处</strong>：B06《江苏银行信用卡线上分期业务规划F.pptx》幻灯片 20</li>
+<li><strong>原文关键句</strong>：「衡量整体分期业务规模的核心指标为分期余额，核心过程性指标为分期成交金额。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>定唯一结果指标：<strong>分期余额</strong>；</li>
+<li>定核心过程指标：<strong>分期成交金额</strong>；</li>
+<li>按产品形态分叉前置环节——消费类分期前置＝<strong>消费金额</strong>（有消费才有分期），现金类分期前置＝<strong>额度与白名单</strong>（办理门槛）；</li>
+<li>门槛满足后，再拆两个关键过程指标：<strong>分期户渗透率 × 分期户均成交金额</strong>；</li>
+<li>两端加留存率（余额留存率）修正。</li>
+<li><strong>适用条件与边界</strong>：适用于分期类资产的目标分解与月度复盘。<strong>边界</strong>：余额是慢变量（留存率主导），成交额是快变量；若只考核成交额会掩盖提前还款与留存恶化，两个必须一起看。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。这套指标树可直接作为当前分期业务 KPI 分解模板，无需改造系统，只需统一口径。</li>
+</ul>
+<h3 id="b-06-02">B-06-02｜同业双基准对标找缺口法</h3>
+<blockquote>
+<p>统一编号 B-06-02 ｜ 原编号 B-02（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-02</li>
+<li><strong>出处</strong>：B06 幻灯片 15、16、17</li>
+<li><strong>原文关键句</strong>：「线上分期余额占比 招商银行30%+，我行20%，较同业标杆有差距。」「我行美团卡分期余额占比31.9%，在美团卡14家合作银行中最高，已达招商银行先进同业水平。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>选两个基准：<strong>行业先进标杆</strong>（招行）+ <strong>同池可比标杆</strong>（美团卡 14 家合作行）；</li>
+<li>指标一一对位：分期余额占比、消费分期渗透率、各分期产品交易量分布；</li>
+<li>用结构表定位缺口性质：非美团卡"暂缺现金类分期产品"、消费类分期"账单分期占比超80%"——缺口是<strong>产品缺项</strong>，不是<strong>产能不足</strong>；</li>
+<li>缺口 → 对应到具体举措（见 B-03）。</li>
+<li><strong>适用条件与边界</strong>：适用于有可比同池的合作方业务（联名卡、平台合作）。<strong>边界</strong>：单看余额占比会把"低效规模"当成绩，需同时看渗透率与户均；标杆数据来源须标注。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。同池对标是找位次最快的方法，且可批量套用到汽车分期、装修分期等所有合作品种。</li>
+</ul>
+<h3 id="b-06-03-">B-06-03｜产品-渠道-客户三位一体补缺法</h3>
+<blockquote>
+<p>统一编号 B-06-03 ｜ 原编号 B-03（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-03</li>
+<li><strong>出处</strong>：B06 幻灯片 23（总体思路）、24（举措1）、27（举措2-3/8）、28（举措3）、29（举措4）、32（举措7）、36（举措10）</li>
+<li><strong>原文关键句</strong>：「聚焦产品、渠道、客户经营，三位一体，对标先进同业，借助十大举措，做大线上分期业务规模。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>补产品：非美团卡补<strong>额度内/额度外现金分期</strong>，美团卡补<strong>订单分期</strong>；给上线时间节点（8月底/9月底/10月底）；</li>
+<li>扩可分期客户量：消费分期起分金额 <strong>300 元 → 100 元</strong>；额度外现金分期"每月筛选白名单"，2021 年筛过 3 轮；</li>
+<li>补渠道：新增<strong>人工电销</strong>（美团卡 2021 年底完成外包服务商准入）+ 复用 <strong>AI 电销</strong>；</li>
+<li>精准获客：按客户画像锁定客群，并明确指出"<strong>低线城市的现金分期户渗透率显著高于高线城市</strong>"，据此给三四五线城市分支行定向获客指令；</li>
+<li>场景接入：淘系、美团、自有场景（手机银行/天天理财自建分期商城）分档推进。</li>
+<li><strong>适用条件与边界</strong>：适用于产品线不全、渠道单一时。<strong>边界</strong>：举措数量多，若没有完成时间与责任人绑定物，就是一张 PPT（本材料自带完成时点，这点是好样板）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。可抽成"补缺十二问"标准清单，各分行/各品种逐项打勾。</li>
+</ul>
+<h3 id="b-06-04-ab">B-06-04｜差异化定价 A/B 实测与客群切分法</h3>
+<blockquote>
+<p>统一编号 B-06-04 ｜ 原编号 B-04（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-04</li>
+<li><strong>出处</strong>：B06 幻灯片 30（举措5）</li>
+<li><strong>原文关键句</strong>：「将分期客户分为首分客户和复分客户，针对两类客群分别制定不同的差异化定价营销方案，在定价上持续展开测试，形成首分、复分客户常规运营策略」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>切分客群：<strong>首分 / 复分</strong>两类；</li>
+<li>先小范围实测：6.10–7.7 美团卡一键分期差异化活动；</li>
+<li>读结果四件套：户渗透率 3.61%→3.75%、分期交易额 +12.8%、户均分期金额 2757→2948 元、分期手续费收入 +7.3%；</li>
+<li>有效则固化为<strong>常规运营策略</strong>（不是一次性活动）。</li>
+<li><strong>适用条件与边界</strong>：适用于有足够客量和线上转化链路的品种。<strong>边界</strong>：结论依赖测试期与客群结构，跨品种不可直接搬用；"以价补量"有价格底线，须先定最低定价与最低差额（对应 B-10）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。这是最典型的"先测再推"样板，可要求每个分行报一版定价测试方案。</li>
+</ul>
+<h3 id="b-06-05ai">B-06-05｜AI 电销与电销阶梯定价法</h3>
+<blockquote>
+<p>统一编号 B-06-05 ｜ 原编号 B-05（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-05</li>
+<li><strong>出处</strong>：B06 幻灯片 27（举措2-3）、33（举措8）</li>
+<li><strong>原文关键句</strong>：「7月底，美团卡快捷分期首次尝试AI电销，首轮外呼量1.05万，接通率58%，成交率3%，AI电销较短信渠道（转化率低于1%）成效明显，且成本投入低」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>新渠道先做<strong>低成本试点</strong>（AI 电销替代短信），用"接通率、成交率、成本"三项对比；</li>
+<li>用市场经验值设定目标：接通率 45%、转化率最高 5–6%（同业青岛银行接通率≈50%、转化率≈5%）；</li>
+<li>现状差距定位：银数卡电销接通率 51.44%（达标）但转化率 3.49%（不达标）；</li>
+<li>手段不是"加强管理"，而是<strong>按转化率设置阶梯定价</strong>给外包服务商，目标转化率提至 5%。</li>
+<li><strong>适用条件与边界</strong>：适用于有外呼资源的品种。<strong>边界</strong>：渠道效果依赖名单质量与合规话术；AI 电销须锁死话术与客户授权，否则消保风险反噬（对比 B01 严禁"还款满一定期限免违约金"承诺）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。"按结果阶梯定价"原则上可复制到所有外包渠道（电销、催收、引流）。</li>
+</ul>
+<h3 id="b-06-06">B-06-06｜分期客户四层标签精准触达法</h3>
+<blockquote>
+<p>统一编号 B-06-06 ｜ 原编号 B-06（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-06</li>
+<li><strong>出处</strong>：B06 幻灯片 32（举措7）</li>
+<li><strong>原文关键句</strong>：「建立分期客户标签体系，精准触达目标客户，加大分期客户转化」</li>
+<li><strong>方法拆解</strong>：四层标签——</li>
+<li><strong>客户分期资格基础标签</strong>：是否可分期、可分期金额区间、分期资格（白名单）；</li>
+<li><strong>高价值客户转化标签</strong>：额度使用率、近 90 天调额类型、本期账单金额区间；</li>
+<li><strong>差异化定价相关标签</strong>：是否降价、定价折扣系数、活动组标签（如"对6折客户曝光6折活动"）；</li>
+<li><strong>重资产行为标签</strong>：循环状态、分期结清状态、是否首分客户。
+  → 标签用途分层：<strong>曝光优先级 / 定价主动曝光 / 是否主动经营</strong>三类决策。</li>
+<li><strong>适用条件与边界</strong>：适用于有标签平台的机构。<strong>边界</strong>：标签多不等于转化高，必须先定义"高价值客户转化行为"作为校验锚点。</li>
+<li><strong>可迁移性初判</strong>：<strong>中高</strong>。四层结构可作标准标签框架，但落地依赖数据平台，需大数据部排期。</li>
+</ul>
+<h3 id="b-06-07">B-06-07｜"达标门槛"式活动设计法</h3>
+<blockquote>
+<p>统一编号 B-06-07 ｜ 原编号 B-07（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-07</li>
+<li><strong>出处</strong>：B06 幻灯片 31（举措6）；B03 幻灯片 20</li>
+<li><strong>原文关键句</strong>：「以上营销费用投入将设定达标门槛，均需客户成功绑卡或消费达标后才可享受。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>奖励形式做对位：分期期数、分期金额达标→分期达标权益；券种向客群偏好倾斜（潮玩、数码、礼券、积分、消费券、还款券）；</li>
+<li>建<strong>分期券平台</strong>支撑灵活定价与权益产品；</li>
+<li>关键动作：<strong>限定门槛</strong>，把"发钱"变成"达标才给"——同时拉高户均分期成交额；</li>
+<li>费用管理侧要算杠杆：A 类平台 1 元撬动 71 元消费、B 类平台 1 元撬动 23 元（B03 幻灯24）。</li>
+<li><strong>适用条件与边界</strong>：适用于有营销费用预算的场景。<strong>边界</strong>：门槛过高会压低活动参与率，需与原有渗透率基线对齐。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。这是费用使用率的标准做法，可直接写进费用管理办法。</li>
+</ul>
+<h3 id="b-07-01">B-07-01｜高返政策下的早偿监测指标法</h3>
+<blockquote>
+<p>统一编号 B-07-01 ｜ 原编号 B-08（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-08</li>
+<li><strong>出处</strong>：B07《汽车分期业务经营分析会.pptx》幻灯片 9</li>
+<li><strong>原文关键句</strong>：「20230101-20240630期间放款的汽车分期业务，并在20240630前提前还款2,130笔」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>固定观察窗口：按<strong>放款后 3 / 6 / 12 个月</strong>三个 mob 分层统计早偿率；</li>
+<li>分年度口径对比：2023 年放款早偿 1,741 笔占当年放款 7.52%（半年内 28%、半年以上 37%、一年以上 35%）；2024 年放款 389 笔占 0.88%（<strong>标注"观察期不足"</strong>）；</li>
+<li>按放款月份逐月看趋势及拐点（202305 放款最高 10.12%，6、7 月下降）；</li>
+<li>结论必须写明干扰项："受近期业务量骤增和表现期不足干扰"。</li>
+<li><strong>适用条件与边界</strong>：适用于任何"前置返佣 + 后期分期"的资产。<strong>边界</strong>：新放款样本表现期不足，不能与成熟样本直接比大小；否则会低估真实早偿风险（此材料自己点出了这个坑，值得照抄）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。这是可批量复制的监测模板，汽车分期、装修分期、车位分期通用。</li>
+</ul>
+<h3 id="b-01-01">B-01-01｜早偿率阈值与商户清退分层法</h3>
+<blockquote>
+<p>统一编号 B-01-01 ｜ 原编号 B-09（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-09</li>
+<li><strong>出处</strong>：B01 幻灯片 3、幻灯片 6；B07 幻灯片 17</li>
+<li><strong>原文关键句</strong>：「3月底开始总行将按月通报车商2024年每月业务mob12提前还款率，超过10%（含）的车商予以清退。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>定红线与分级：<strong>≦5% 继续合作</strong>（视情况换签）；<strong>（5%,10%] 需换签新版协议</strong>；<strong>&gt;10% 清退</strong>（要继续合作必须签新协议且返佣降为 18%返 7%）；</li>
+<li>挂月度通报：总行按月通报分行口径；</li>
+<li>阈值写进协议：与商户约定提前还款管控量，"参考 mob12 提前还款率 5% 左右水平，应填写不超过 3%"；</li>
+<li>把阈值变成"报备必填项"：新版《商户承诺书》《渠道合作协议》要求必填业务量、早偿量、mob3-M1+、客诉等条款；</li>
+<li><strong>清退线不是拍的，是算出来的</strong>（B07 幻灯片 17 给出算法）——直引原文（同一页内相邻三句，删节处标省略号）：「根据测算，放款后一年早偿率在11-12笔时，行内净利润指标为正/负临界」<br>【质检修正 Q-09】原文该句连续、无删节，原引文的省略号已被去除（保留省略号会让读者误以为有删节）。；「全行2023H1放款后一年平均早偿率为7.52%」；「综上，在我行不承诺还款满一/两年免收3%违约金的情况下，结合对未来早偿比例预测，近一年早偿率要控制在6%或更低。」
+     → 定阈值三步：①用财务测算找到净利润正负临界点（本例：100 笔放款中 11–12 笔早偿）；②在临界点之上再压一档留安全边际；③把结论落成协议里可填写的数（6%）。</li>
+<li><strong>适用条件与边界</strong>：适用于有商户/渠道返佣的分期业务。<strong>边界</strong>：清退是硬动作，须配套"30 分钟内可替换的商户清单"，否则规模会掉；阈值需按品种重估（汽车分期与装修分期的早偿规律不同）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。这是"阈值—协议—通报—清退"闭环最完整的样板，可直接改写为其他品种的管控模板。</li>
+</ul>
+<h3 id="b-01-02">B-01-02｜返佣标准与差额底线法</h3>
+<blockquote>
+<p>统一编号 B-01-02 ｜ 原编号 B-10（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-10</li>
+<li><strong>出处</strong>：B01 幻灯片 3、5</li>
+<li><strong>原文关键句</strong>：「授权经销商和厂商直营店最高可执行24%返14%返佣标准。」（B01 幻灯片 3）「对客费率与返佣」「差额不得低于10%」「二级经销商」「返佣压降至18%返」「7」「%」「水平。」（B01 幻灯片 5；原文为三项分列条款，此处按原文断行逐段直引，未改写）</li>
+<li><strong>方法拆解</strong>：</li>
+<li>定总封顶：基础+阶梯+渠道返佣<strong>合计不得超 14%</strong>；</li>
+<li>定<strong>息差底线</strong>：对客费率与返佣差额<strong>不得低于 10%</strong>（守住收益空间，防止"以返佣换规模"打穿利润）；</li>
+<li>定分级价目：二级经销商压降至 18%返 7%；</li>
+<li>定处置：不符合标准的存量商户<strong>立即暂停业务</strong>，超标在途业务限期办结；</li>
+<li>定准入参数：新增商户先申报准入、再签返佣协议；存量通过信息变更提报影像并改返佣参数。</li>
+<li><strong>适用条件与边界</strong>：适用于所有"返佣/贴息换业务"的模式。<strong>边界</strong>：只压返佣不动对客费率会丢规模，必须"封顶 + 差额底线"两条一起下；否则分行会用降价绕开。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。"封顶 + 息差底线"是最容易被忽略却最关键的一条，建议直接制度化。</li>
+</ul>
+<h3 id="b-07-02">B-07-02｜返佣摊销与追回联动法</h3>
+<blockquote>
+<p>统一编号 B-07-02 ｜ 原编号 B-11（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-11</li>
+<li><strong>出处</strong>：B07 幻灯片 15；B01 幻灯片 6；B01 幻灯片 7</li>
+<li><strong>原文关键句</strong>：「基础佣金和阶梯佣金在业务发生当月计提可报付额度，按业务期数等额分摊，提前还款当月将未分摊额度一次性摊销。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>计提与摊销：佣金当月计提，<strong>按业务期数等额分摊</strong>；提前还款当月<strong>未分摊额度一次性摊销</strong>（把损失当期显性化）；</li>
+<li>渠道佣金区别处理：原则上<strong>不予计提摊销</strong>，全额从当期营收抵扣；</li>
+<li>追回三条款写进协议：结算前撤销/提前还款/客诉的业务<strong>不予支付佣金</strong>；已支付佣金发生提前还款，<strong>商户退回或在下次结算抵扣</strong>；</li>
+<li>系统留痕：总行在事务审批系统上线<strong>佣金抵扣功能</strong>，新业务应付佣金抵扣提前还款佣金须建立关联抵扣关系，"确保追回记录有迹可查"；</li>
+<li>工具升级：对账日改由分行自行约定，"通过延长对账日，减少商户短期套利行为"。</li>
+<li><strong>适用条件与边界</strong>：适用于佣金前置、还款后置的业务。<strong>边界</strong>：追回依赖协议换签进度；换签不到位则该机制空转（B01 明确要求"分行要尽快组织与车商换签协议"）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。这套"摊销 + 抵扣 + 对账日调节"是最容易被外行忽略的操作层核心，建议原样成文。</li>
+</ul>
+<h3 id="b-01-03">B-01-03｜追回率挂绩效负分法（考核绑定）</h3>
+<blockquote>
+<p>统一编号 B-01-03 ｜ 原编号 B-12（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-12</li>
+<li><strong>出处</strong>：B01 幻灯片 7；B01 幻灯片 4</li>
+<li><strong>原文关键句</strong>：「汽车分期提前还款佣金损失」「-1分/万元」「汽车分期提前还款且追回佣金比例≤50%的，按提前还款金额计负分。当期和半年各计50%。」（表中三格逐格直引，B01 幻灯片 7）</li>
+<li><strong>方法拆解</strong>：</li>
+<li>给损失定负分：追回比例 ≤50% 时，按提前还款金额 <strong>-1 分/万元</strong>，<strong>当期与半年各计 50%</strong>（避免当期一次扣光导致行为扭曲）；</li>
+<li>给正项定分对照：卡e贷新增客户 0.2 分/万元/户（单户上限 4 分）、推荐经营贷和房贷 0.2 分/万元/户（单户上限 6 分）、推荐房贷获客渠道 10 分/户；半年有效客户奖励：随e贷 1 分/户、卡e贷 2 分/户、推荐经营贷房贷 4 分/户、推荐房贷获客有效渠道 15 分/户（放款满 5 笔起算）；</li>
+<li>给分行定扣分：违规分行"视情况扣条线分 <strong>0.5 至 2 分</strong>"；违规个人与绩效考核挂钩；</li>
+<li>生效管理：以上调整<strong>自 2025 年 4 月 1 日起生效</strong>，其他条款照旧。</li>
+<li><strong>适用条件与边界</strong>：适用于直销/外包队伍的业绩考核。<strong>边界</strong>：负分必须与正分同表同权重，只挂负分会让队伍退出该品种（B04 已记录"直销队伍已基本放弃分期业务营销"的前车之鉴）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。这是"损失内化"最直接的机制，建议各品种统一按此结构建负分表。</li>
+</ul>
+<h3 id="b-02-01">B-02-01｜追回目标三段拆解法</h3>
+<blockquote>
+<p>统一编号 B-02-01 ｜ 原编号 B-13（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-13</li>
+<li><strong>出处</strong>：B02 幻灯片 10、11、12</li>
+<li><strong>原文关键句</strong>：「年初预测信用卡新增不良22.22亿元，按照上述各项管控目标测算，全年新增不良下降至18.09亿元。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>沿催收链条设<strong>三段降损目标</strong>：入催管理→降低进入逾期金额 1.6 亿；逾期催收→降低进入不良金额 1.6 亿；不良催收→降低核销处置金额 0.93 亿；</li>
+<li>每段给"目标＋手段＋测算"三件套：<ul>
+<li>入催：优化模型策略、M0 阶段主动感知触达、智能外呼/人工回访/短信精细化 → 月均入催额 5.7 亿降 0.2 亿 × 剩余 8 个月 = 1.6 亿；</li>
+<li>逾期催收：提高自催、<strong>协商还款政策放宽（本金分期）</strong>、分行属地化催收（高风险地区组建属地队伍上门）→ 月均回款 3.14 亿提 0.2 亿 × 8 个月 = 1.6 亿；</li>
+<li>不良催收：扩大诉调规模、丰富信息修复与资产信息采集；份额结构从"诉调25%/非诉调75%"改为"诉调75%/非诉调25%"，回款从 2,330 万提至 2.8 亿；</li>
+</ul>
+</li>
+<li>目标层层串联：22.22 亿 → 18.09 亿 →（协商还款优化后）<strong>15.09 亿</strong>；</li>
+<li>用"变化率×剩余月份"把年度大目标拆成可达成的月度增降幅。</li>
+<li><strong>适用条件与边界</strong>：适用于不良已进入稳定期的存量资产经营。<strong>边界</strong>：协商还款政策放宽会形成"再逾期"（B04 已记录"前期协商还款再逾期金额已超过首次进入不良金额"），必须配套再逾期监测，否则是把风险后移。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。三段拆解法可原样套用到消费贷、经营贷的催收目标管理。</li>
+</ul>
+<h3 id="b-02-02">B-02-02｜驻场诊断式流程攻坚法</h3>
+<blockquote>
+<p>统一编号 B-02-02 ｜ 原编号 B-14（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-14</li>
+<li><strong>出处</strong>：B02 幻灯片 12</li>
+<li><strong>原文关键句</strong>：「5月卡中心与消保部联动，专人驻场徐州客服现场，从客户进线、诉求受理、材料收集、首付款跟踪、内部审批、政策落实等全流程各环节梳理存在问题」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>不打报告改流程，<strong>派人驻场</strong>；</li>
+<li>沿全流程节点逐环节找堵点（进线→受理→材料→首付款→审批→政策落实）；</li>
+<li>定向改进、组织改进；</li>
+<li><strong>用数据收口</strong>：截至 5 月 22 日单日回款 250 万，单日达成协商意向本金较 5 月初<strong>翻番</strong>；并给出新目标（回款额 26.72→29.72 亿、回款率 29.56%→32.88%）。</li>
+<li><strong>适用条件与边界</strong>：适用于跨部门流程型问题。<strong>边界</strong>：驻场是资源投入，只适合关键瓶颈点；须先有量化基线，否则无法证明"有效"。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。可标准化为"驻场 2 周 + 全节点清单 + 单日指标对比"的攻坚模板。</li>
+</ul>
+<h3 id="b-02-03">B-02-03｜费用压降三分类法</h3>
+<blockquote>
+<p>统一编号 B-02-03 ｜ 原编号 B-15（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-15</li>
+<li><strong>出处</strong>：B02 幻灯片 14、15；B03 幻灯片 24</li>
+<li><strong>原文关键句</strong>：「当年投入的新发卡费用为一次性投入，这部分投入会在未来6-8年逐年收回。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>先把费用分类：<strong>新发卡费用（一次性、可收回）/ 存量卡成本（刚性）/ 运营费用</strong>；</li>
+<li>一次性费用可控杠杆：卡循环及线上分期新发卡费用 2.71→1.99 亿（导流费、权益费、推动费、运营分项都列明）；</li>
+<li>刚性费用减压：<ul>
+<li>权益费压降 2,329 万——手段是"提高互联网平台发卡质量，调优准入策略，拦截尾部客户"（美团平台月均发卡量降 71%、蚂蚁降 61%）；</li>
+<li>导流费压降 883 万——"网申流程引导默认使用数字卡"，新卡及到期换卡制卡量分别降 30% 和 52%，预计全年节约 540 万；</li>
+<li>运营费压降 320 万——分期营销短信起发金额上调（账单分期 300→500 元、交易分期 2000→3000 元）136 万/年；卡片有效期 5 年→8 年 + 默认数字卡 1,675 万/年；睡眠卡免账户处理费 293 万/年，合计 <strong>2,104 万/年</strong>。</li>
+</ul>
+</li>
+<li><strong>适用条件与边界</strong>：适用于费用收入比高、处于投入期的资产品种。<strong>边界</strong>：压降不能停在"降费用"——须与"调优准入策略"（提质）配对，否则是砍掉增长。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>。三分类 + "数字卡替代实体卡"是当下最通用的压降路径。</li>
+</ul>
+<h3 id="b-02-04">B-02-04｜客户生命周期价值论证法</h3>
+<blockquote>
+<p>统一编号 B-02-04 ｜ 原编号 B-16（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-16</li>
+<li><strong>出处</strong>：B02 幻灯片 19、20；B03 幻灯片 13；B04 工作表1 行5</li>
+<li><strong>原文关键句</strong>：「信用卡+借记卡」<br>【质检修正 Q-08】原引文用全角"＋"，原文为半角"+"。「双卡客户价值贡献」「AUM」「收入」「3倍」「9倍」（B02 幻灯片 20 表头与数据格逐格直引）</li>
+<li><strong>方法拆解</strong>：</li>
+<li>从"单产品盈亏"改为"客户价值链条"：2019–2024/4 信用卡新增客户 672 万户 → 纯新客户 407 万 → 引流网点 146 万 → 转化借记卡 110 万 → 手机银行新客 200 万；</li>
+<li>用<strong>双卡对比</strong>证明交叉销售价值：AUM 3 倍、收入 9 倍；</li>
+<li>用客群结构证明战略价值：35 岁以下占比 51.86%（B03 为 43.3%）；贡献全行手机银行超三成客户增量、微信银行超九成，MAU 破百万；</li>
+<li>结论落到定位调整：信用卡由"盈利性产品"调整为"<strong>获客工具（优质客户）</strong>，带动全行资产业务发展"（B02 幻灯17）。</li>
+<li><strong>适用条件与边界</strong>：适用于需向管理层争取资源的场景。<strong>边界</strong>：价值论证不等于当期盈利改善；该材料同期仍显示考虑减值准备后利润为负，引用时须同时呈现成本与风险侧。</li>
+<li><strong>可迁移性初判</strong>：<strong>中高</strong>。口径可复用，但需统一"纯新客户/引流/转化"的统计口径，否则容易被质疑。</li>
+</ul>
+<h3 id="b-03-01">B-03-01｜额度动态管理与资本成本管控法</h3>
+<blockquote>
+<p>统一编号 B-03-01 ｜ 原编号 B-17（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-17</li>
+<li><strong>出处</strong>：B03 幻灯片 24</li>
+<li><strong>原文关键句</strong>：「月中动态调额，对动账不活跃客户主动及时降额」</li>
+<li><strong>方法拆解</strong>：</li>
+<li>额度动态管理：月中调额 + 对不活跃客户及时降额；</li>
+<li>合格交易者占比提升：全生命周期经营，培养良好用还款习惯；</li>
+<li>资本成本管理：运用资本办法对信用卡资本占用的计量规则压降资本成本（B03 幻灯10 披露资本成本率：广州银行 0.26%、我行 0.8%）。</li>
+<li><strong>适用条件与边界</strong>：适用于额度资源紧张、资本占用压力大的阶段。<strong>边界</strong>：主动降额会引发客诉与流失，需与控制"前十大来电原因"联动（见 B-18 相邻条目）。</li>
+<li><strong>可迁移性初判</strong>：<strong>中</strong>。方向明确但落地依赖额度系统与策略参数，需数字风控部排期。</li>
+</ul>
+<h3 id="b-03-02">B-03-02｜前十大来电压降法（消保前置）</h3>
+<blockquote>
+<p>统一编号 B-03-02 ｜ 原编号 B-18（第二层）</p>
+</blockquote>
+<ul>
+<li><strong>原编号（第二层原稿）</strong>：B-18</li>
+<li><strong>出处</strong>：B03 幻灯片 26</li>
+<li><strong>原文关键句</strong>：「定期回溯前十大信用卡来电分析，压实团队责任，快速迭代系统，解决了美团卡入账、溢缴款转账等顽疾。」</li>
+<li><strong>方法拆解</strong>：</li>
+<li><strong>盯紧前十大来电</strong>：定期回溯归因，压实团队责任，快速迭代系统；</li>
+<li><strong>优化业务流程</strong>减小误会（完善营销活动细则）；</li>
+<li><strong>主动外呼销卡</strong>：发卡 T+3 日主动联系核实是否误申卡；互联网发卡 30 天内未激活销卡<strong>不付 CPS</strong>（同时降本）；手机银行开通自助销户；客服销卡挽留；</li>
+<li><strong>攻关重点问题</strong>：协商还款投诉线上化（工单流改审批流）+ 加强诉调（50% 可转可撤销件）；</li>
+<li>打击黑产：警企共建，全年报案 18 起。</li>
+<li><strong>适用条件与边界</strong>：适用于互联网引流占比高的发卡结构。<strong>边界</strong>：CPS 规则调整涉及合作方商务谈判，需与平台方同步。</li>
+<li><strong>可迁移性初判</strong>：<strong>中高</strong>。"前十大来电回溯 + 未激活不付 CPS"是可批量复制的低成本打法。</li>
+</ul>
+<hr />
+<h3 id="41">4.1 附一、分行执行评估（本材料反映的分行能力与抵触点）</h3>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>材料中的证据（含时点）</th>
+<th>操盘手判读</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>执行意愿</td>
+<td>B04 工作表1 行7：「目前直销队伍已基本放弃分期业务营销，整体转向消费贷等业务拓展，对于做回分期业务存在疑虑」（该表年份未标注，文内推断 2025）</td>
+<td><strong>这是最大抵触点</strong>：不是不会做，是队伍不愿做。单靠培训解决不了，必须靠 B-12 的正负分同表把收益拉回来</td>
+</tr>
+<tr>
+<td>执行能力</td>
+<td>B02 幻灯8：省外分行风险较高（北上深杭客户流动）；苏州、无锡不良率由 3.2%、1.4% 升至 6.3%、5.8%；南通、宿迁、徐州、泰州"线下分期不良生成率始终保持在较低水平"（2024-05 口径）</td>
+<td>能力分层是客观的：<strong>低风险分行可先放量，高风险分行先控风险</strong>，一刀切考核会逼出造假</td>
+</tr>
+<tr>
+<td>执行力证明</td>
+<td>B07 幻灯10：53 家重点关注商户上半年放款 817 笔（占业务量 1.85%）涉及早偿 75 笔（占早偿量 19.28%）；B07 幻灯6：截至 2024-06 末汽车分期余额 75.76 亿，较年初新增 43.08 亿、增 131.8%</td>
+<td>有明确"单户追踪"清单的分行，执行是可量化的；<strong>问题商户是少数（1.85% 业务量贡献 19.28% 早偿）</strong>，精准打击即可</td>
+</tr>
+<tr>
+<td>管理层级</td>
+<td>B01 幻灯7：违规<strong>个人</strong>挂绩效、违规<strong>分行</strong>扣条线分 0.5–2 分</td>
+<td>个人与机构双挂，是目前行内唯一"既打队伍又打分行"的现成机制，值得全品种推广</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="42">4.2 附二、可复制性判断（按"不依赖特殊资源"排序）</h3>
+<table>
+<thead>
+<tr>
+<th>梯队</th>
+<th>条目</th>
+<th>复制条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>第一梯队（本月可推）</strong></td>
+<td>B-09、B-10、B-11、B-12、B-13、B-08</td>
+<td>只需总行发文 + 台账模板 + 月度通报，不动系统、不需外部平台</td>
+</tr>
+<tr>
+<td><strong>第二梯队（季度可推）</strong></td>
+<td>B-01、B-02、B-03、B-04、B-07、B-14、B-18</td>
+<td>需统一口径与工具包（含测试方案模板），需产品/消保配合</td>
+</tr>
+<tr>
+<td><strong>第三梯队（年度推进）</strong></td>
+<td>B-05、B-06、B-15、B-16、B-17</td>
+<td>依赖数据平台、标签体系、额度系统与商务谈判排期</td>
+</tr>
+</tbody>
+</table>
+<p><strong>样本可复制性备注</strong>：B02 幻灯19 的客户案例（2019-12 美团卡客户，至 2024-04 行内总资产 434 万）是<strong>单客户样本</strong>，只能用于说明"存在这种成长路径"，<strong>不得作为普遍模式外推</strong>。</p>
+<hr />
+<h3 id="43">4.3 附三、外部合作风险（本材料中的外部角色）</h3>
+<table>
+<thead>
+<tr>
+<th>风险点</th>
+<th>材料证据（含时点）</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>返佣被商户反向利用</strong></td>
+<td>B01 幻灯3：发现车商"诱导客户提前还款、私自承诺提前还款减免违约金"，要按协议追究车商责任；B01 幻灯4：严禁向车商和客户做出"还款满一定期限可免违约金"承诺</td>
+<td>合作方在拿我的佣金套我的客户，<strong>必须在协议层设罚则</strong>，这是"赋能 vs 架空"的分水岭</td>
+</tr>
+<tr>
+<td><strong>商户短期套利</strong></td>
+<td>B01 幻灯5：对账日改由分行自行约定，"通过延长对账日，减少商户短期套利行为"</td>
+<td>账期是主权，不能外包节奏</td>
+</tr>
+<tr>
+<td><strong>渠道方商户资源冲突</strong></td>
+<td>B07 幻灯15：「与渠道方逐户梳理双方商户资源，原则上行方存量活跃商户不可纳入合作范畴」；渠道佣金"原则上不予计提摊销，全额从当期营收抵扣"</td>
+<td>允许引荐、不允许渠道摸走存量商户与佣金节奏</td>
+</tr>
+<tr>
+<td><strong>经销商集团经营风险</strong></td>
+<td>B07 幻灯11：广汇退市风险、庞大/永奥暴雷，省内启粮集团、森风集团出现停业，导致客户未提车或无法办登记</td>
+<td>合作方经营风险会直接变成我行舆情与资产风险，须"暂停受理 + 巡检走访 + 异常立即报告"</td>
+</tr>
+<tr>
+<td><strong>外部平台带走客户与规则</strong></td>
+<td>B01 幻灯8：装修分期专案要求分行申报时<strong>附该公司在属地市场份额、同业审批通过率、价格</strong>——把外部信息变成行内策略输入，而不是依赖外部平台给规则；B04 工作表1 行5：「卡循环找准2-3个目标客群，紧密围绕客群需求、偏好提供高标准、优体验的特色功能和服务，利用有限资源投入扩大在特定细分市场的口碑和占有率，打造长期盈利能力」（原文连续一句，未删节）</td>
+<td>正确姿势：<strong>用外部流量，不用外部规则</strong>；客户、数据、账户、定价规则必须留在行内</td>
+</tr>
+<tr>
+<td><strong>内部人员合规漏洞</strong></td>
+<td>B07 幻灯9：客诉量激增"不仅有车商诱导和网络环境影响，也<strong>有银行员工错误解释</strong>称还款一年即可减免违约金，还有个别经办人员存在向客户<strong>违规提供书面承诺</strong>的行为"</td>
+<td>外部风险的放大器往往是自己人；话术与培训必须与考核同批下发</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="44">4.4 附四、推进路径建议（月度看进度 / 季度看成效 / 年度看里程碑）</h3>
+<p><strong>本月（30 天）——只做三件带考核的事</strong>
+1. 发一份"分期业务管控标准包"：把 B-09 阈值表、B-10 返佣标准与差额底线、B-11 佣金摊销与追回条款、B-12 负分规则合成<strong>一套模板</strong>（协议条款 + 报备表单 + 台账），分行只填不改；
+2. 起<strong>月度通报</strong>：汽车分期 mob12 早偿率、商户分层（≦5%/5–10%/&gt;10%）、佣金追回率三项按分行排名，通报抄送条线分管；
+3. 定<strong>一条红线</strong>：违规承诺免违约金的，个人挂绩效、分行扣条线分 0.5–2 分（沿用 B01 现成机制）。</p>
+<p><strong>季度（90 天）——看成效</strong>
+4. 用 B-13 三段拆解法给各分行下"入催—回款—核销"降损目标，月度看增降幅；
+5. 要求每家分行提交<strong>一版分期定价 A/B 测试方案</strong>（B-04 模板），测试期 4 周，读出"渗透率 / 户均金额 / 手续费收入"三个数；
+6. 复制两个样板：挑一个低风险分行（参照 B02 幻灯8 中南通/宿迁/徐州/泰州类）做"低返佣 + 低早偿"样板；挑一个高早偿集中分行做"商户清退 + 定向追回"样板。<strong>苏州能做，你们为什么不能做</strong>。</p>
+<p><strong>年度——看里程碑</strong>
+7. 把 B-01 指标树（分期余额 / 分期成交金额 / 分期户渗透率 / 户均成交金额 / 留存率）固化为全行统一口径，纳入年度经营计划；
+8. 按 B-15 三分类法完成一轮费用压降，目标口径与基期必须写清；
+9. 把"用外部流量、不用外部规则"写进合作管理办法：<strong>客户、数据、账户、定价规则自主可控是底线</strong>。</p>
+<p><strong>同时报两条风险提醒</strong>（写进方案，避免重演）：
+- 协商还款政策放宽会形成再逾期（B04 已记录该现象），放宽的同时必须加再逾期监测与回收上限；
+- 早偿阈值、返佣底线必须按品种重估，不得直接把汽车分期的数字套到装修/车位分期上。</p>
+<hr />
+<h3 id="45-a">4.5 附五、原编号—来源对照速查（统一编号见附录 A）</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>方法名</th>
+<th>出处</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>B-01</td>
+<td>分期核心指标分解法</td>
+<td>B06 幻灯20</td>
+</tr>
+<tr>
+<td>B-02</td>
+<td>同业双基准对标找缺口法</td>
+<td>B06 幻灯15/16/17</td>
+</tr>
+<tr>
+<td>B-03</td>
+<td>产品-渠道-客户三位一体补缺法</td>
+<td>B06 幻灯23/24/27/28/29/32/36</td>
+</tr>
+<tr>
+<td>B-04</td>
+<td>差异化定价 A/B 实测与客群切分法</td>
+<td>B06 幻灯30</td>
+</tr>
+<tr>
+<td>B-05</td>
+<td>AI 电销与电销阶梯定价法</td>
+<td>B06 幻灯27/33</td>
+</tr>
+<tr>
+<td>B-06</td>
+<td>分期客户四层标签精准触达法</td>
+<td>B06 幻灯32</td>
+</tr>
+<tr>
+<td>B-07</td>
+<td>"达标门槛"式活动设计法</td>
+<td>B06 幻灯31；B03 幻灯20</td>
+</tr>
+<tr>
+<td>B-08</td>
+<td>高返政策下的早偿监测指标法</td>
+<td>B07 幻灯9</td>
+</tr>
+<tr>
+<td>B-09</td>
+<td>早偿率阈值与商户清退分层法</td>
+<td>B01 幻灯3、6；B07 幻灯17</td>
+</tr>
+<tr>
+<td>B-10</td>
+<td>返佣标准与差额底线法</td>
+<td>B01 幻灯3、5</td>
+</tr>
+<tr>
+<td>B-11</td>
+<td>返佣摊销与追回联动法</td>
+<td>B07 幻灯15；B01 幻灯6、7</td>
+</tr>
+<tr>
+<td>B-12</td>
+<td>追回率挂绩效负分法</td>
+<td>B01 幻灯7、4</td>
+</tr>
+<tr>
+<td>B-13</td>
+<td>追回目标三段拆解法</td>
+<td>B02 幻灯10/11/12</td>
+</tr>
+<tr>
+<td>B-14</td>
+<td>驻场诊断式流程攻坚法</td>
+<td>B02 幻灯12</td>
+</tr>
+<tr>
+<td>B-15</td>
+<td>费用压降三分类法</td>
+<td>B02 幻灯14/15；B03 幻灯24</td>
+</tr>
+<tr>
+<td>B-16</td>
+<td>客户生命周期价值论证法</td>
+<td>B02 幻灯19/20；B03 幻灯13；B04 工作表1 行5</td>
+</tr>
+<tr>
+<td>B-17</td>
+<td>额度动态管理与资本成本管控法</td>
+<td>B03 幻灯24</td>
+</tr>
+<tr>
+<td>B-18</td>
+<td>前十大来电压降法</td>
+<td>B03 幻灯26</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>编号规则：本文件为第二层（行方材料）产出，统一用 <code>B-xx</code>；第一层（材料自带分析方法论）与第三层（外部评价框架）由其他成员编号，本文件不重复占用。B01–B04、B06、B07 中<strong>未使用的材料段</strong>：B02 幻灯3–7、16–18、21–23（行业对比与未来测算表）、B03 幻灯4–19、21–23、25、27–34（行业概况、现状披露、未来规划与财务附件）、B06 幻灯3–19（现状分析段）——这些属"第一层/现状披露"性质，非业务打法，故不在此编号。</p>
+</blockquote>
+<hr />
+<h2 id="b05-b08">五、第三层｜外部视角评价框架（B05 天风 + B08 彭千）＋ 校准点</h2>
+<blockquote>
+<p><strong>本层回答"外部怎么看银行信用卡这门生意、哪些判断可以借用、哪些必须封存"</strong>：共 <strong>38 条</strong>（B05 11 条 + B08 27 条）。
+⚠️ 本层两份材料均为 2018 年历史样本，且<strong>都不是中立第三方</strong>（卖方报告／平台商务材料）；引用须连带立场标注（见 6.3）。</p>
+</blockquote>
+<h3 id="b-05-01">B-05-01｜券商专题的"叙事—拆利—验证—评级"四段式结构</h3>
+<blockquote>
+<p>统一编号 B-05-01 ｜ 原编号 B-05-01（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 1–3 页（摘要与目录）、第 23 页（评级体系与免责声明）</li>
+<li><strong>原文关键句</strong>：「我们认为，信用卡业务已成零售银行业务的发力点与主力军，也应当是零售银行战略的重心」</li>
+<li><strong>补充直引（照录）</strong>：「信用卡业务源于零售商给予顾客的分期戒延期支付的信贷，在银行体系成长走向巅峰」〔原文如此：“戒”系文本层讹字，应为“或”〕（B05 第 4 页）</li>
+<li><strong>方法拆解</strong>：研究结构是四段推进：<strong>① 讲起源与格局</strong>（信用卡源于零售商分期、壮大于银行体系；两大体系：零售商独立发卡 vs 银行协会）→ <strong>② 拆盈利</strong>（收入结构与各项性质、支出四分法）→ <strong>③ 验事实</strong>（发卡量/交易额/授信额/占比的时序数据，并逐项中美对比）→ <strong>④ 给评级</strong>（"信用卡业务，大有可为"，荐招行、平安、中信H股）。<strong>立场自证</strong>：首页"行业评级：强于大市"、重点标的推荐表；第 23 页评级窗口为"自报告日后的 6 个月内"，并载明利益冲突提示。</li>
+<li><strong>适用条件与边界</strong>：四段式是<strong>卖方研究的通用结构</strong>，其"验证"环节只验证<strong>支持结论的数据</strong>（未见对"循环利息依赖是否可持续"的反证）。边界：任何来自此结构的结论都带 6 个月窗口与荐股动机。</li>
+<li><strong>可迁移性初判</strong>：<strong>高（作为结构模板），中（作为结论）</strong>——四段式可用我方内部分析的骨架，但结论须剥离荐股立场。</li>
+</ul>
+<h3 id="b-05-02">B-05-02｜收入结构分解 + "分期手续费还原为利息"的口径修正</h3>
+<blockquote>
+<p>统一编号 B-05-02 ｜ 原编号 B-05-02（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 7–8 页</li>
+<li><strong>原文关键句</strong>：「其中，分期付款手续费实质是利息收入，国际信用卡机构一般将其归为利息收入，国内招行也自2015年起将其归入利息收入」</li>
+<li><strong>方法拆解</strong>：先列收入全项（利息 / 商户回佣 / 年费 / 取现 / 惩罚性 / 分期手续费 / 其他增值），再给 1H16 银数观卡口径的结构：利息 42.4% + 分期手续费 28% + 滞纳金 16.1% ＝「利息收入、分期手续费以及滞纳金收入合计占比达86.5%」；关键动作是<strong>口径修正</strong>：「考虑到分期手续费本质上是利息收入，那么实际利息收入占比约70%」，并与美国主要银行"利息收入占比接近"作对照。</li>
+<li><strong>适用条件与边界</strong>：修正逻辑成立（分期手续费是资金占用对价）。边界：① 42.4%/28%/16.1% 为 <strong>1H16 银联数据客户银行</strong>口径，不是全行业、更不是本行；② 招行 2015 年起的归入方式改变了其非息收入的可比性（B05 第 21 页专门提示），<strong>跨行比较前必须统一</strong>。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——凡出现"非息收入占比高"的自我叙事，都应按此口径复核一遍。</li>
+</ul>
+<h3 id="b-05-03">B-05-03｜分期实际年化利率测算法</h3>
+<blockquote>
+<p>统一编号 B-05-03 ｜ 原编号 B-05-03（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 9 页（循环利息对照句见第 8 页）</li>
+<li><strong>原文关键句</strong>：「在这个例子中，分期产品的实际年化利率高达14.26%」</li>
+<li><strong>方法拆解</strong>：给出可复算的算法与算例：本金 6000 元、每期手续费率 0.7%、分 6 期，按期平均摊销手续费和本金；因为"每期手续费却是一直按照分期总金额收取的"，必须引入四个变量——<strong>期初金额 pv、每期还款额 pmt、每期利率 r、还款期数 t</strong>，解出每期实际利率 r 后「再乘上12，就得到了实际的年化利率」，得实际年化 14.26%（名义手续费率 0.7%×12＝8.4%，实际约为名义的 1.7 倍）。同期对照：一般循环利息率为日息万分之五、「换算为年利息率高达18.25%」（第 8 页）。</li>
+<li><strong>适用条件与边界</strong>：算法通用（等额本息内含报酬率）。边界：① 结果依赖"手续费按期初总本金收取"这一中国分期产品设计；② 14.26% 是<strong>该算例的数值</strong>，不是我方产品的实际利率——引用时必须写成"算法＋我方案例重算"。<strong>这是本层最需要"重算而非引用"的一条。</strong></li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——可直接建表复算我方各类分期产品的实际年化，作为定价与话术合规的双重依据。</li>
+</ul>
+<h3 id="b-05-04">B-05-04｜笔数与收入背离的交叉指标</h3>
+<blockquote>
+<p>统一编号 B-05-04 ｜ 原编号 B-05-04（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 9–10 页</li>
+<li><strong>原文关键句</strong>：「1H17账单分期占各行分期业务笔数的60.62%；大额分期仅占8.2%，但收入占比高达41.19%」</li>
+<li><strong>方法拆解</strong>：不停在"分期总额"，而是把分期<strong>按品种拆成两组数据</strong>（笔数占比、收入占比）并排看，直接暴露结构失衡：账单分期占笔数 60.62%（运营成本最低、银行无需发展商户与 POS），大额分期仅占笔数 8.2% 却贡献收入 41.19%（单笔金额高、收益高，且常与汽车等场景绑定）；同时给出品种清单（账单/灵活/大额/现金/POS 分期）与各自定义（第 10 页）。</li>
+<li><strong>适用条件与边界</strong>：方法通用（<strong>任何产品线都应做"笔数结构 vs 收入结构"交叉</strong>）。边界：1H17 银联数据口径，且大额分期占比 8.2% 可能部分源于统计口径（笔数少而金额大）——<strong>交叉表只提示结构，不直接给出优劣</strong>，还需补单笔经济性。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——极低成本、极高信息量，建议列为常规报表。</li>
+</ul>
+<h3 id="b-05-05">B-05-05｜盈亏平衡点的门槛规则</h3>
+<blockquote>
+<p>统一编号 B-05-05 ｜ 原编号 B-05-05（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 6 页、第 12 页、第 21 页</li>
+<li><strong>原文关键句</strong>：「一般认为，150万张流通活卡是经营基础，200-250万张可以保证收支平衡，超过300万张则有可能实现盈利」</li>
+<li><strong>方法拆解</strong>：给出三个递进门槛（150 万活卡＝经营基础、200-250 万＝收支平衡、&gt;300 万＝可能盈利），并在摘要与投资建议中重复使用"发卡量 300 万张是信用卡业务盈亏平衡点"这一业界说法，用它论证"12 家上市行发卡量超 3000 万张，已大幅超越盈亏平衡点"（第 6、21 页）。同时给出历史证据：2010 年 58 家发卡行仅 5 家盈利（引银行业协会专职副会长杨再平在 2010 年中国信用卡高峰论坛的说法）。</li>
+<li><strong>适用条件与边界</strong>：<strong>门槛是 2018 年之前的经验值</strong>，且以"流通活卡"为单位——但摘要处又说成"发卡量 300 万张"，<strong>两种口径在同一报告内混用</strong>（发卡量≠活卡），引用时须二选一并注明。边界：门槛随获客成本、FTP、分期定价变化，不能直接套到我方当期。</li>
+<li><strong>可迁移性初判</strong>：<strong>中</strong>——作为"规模门槛"的历史锚可用，但必须重算我方口径的门槛（用我方获客成本与资产收益率反推）。</li>
+</ul>
+<h3 id="b-05-06">B-05-06｜成本四分法</h3>
+<blockquote>
+<p>统一编号 B-05-06 ｜ 原编号 B-05-06（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 12 页</li>
+<li><strong>原文关键句</strong>：「营销成本指发卡行为促使客户使用本行卡片的促销成本」</li>
+<li><strong>方法拆解</strong>：把信用卡支出归为四类并各给判别标准：<strong>运营成本</strong>（系统建立维护、授信/营销/审批/风险/后台/对账/收款/报表等）、<strong>营销成本</strong>（促销成本，指出"跑马圈地"时期为抢份额抬高营销成本）、<strong>资金成本</strong>（可理解为"信用卡贷款 FTP 价格"，并给判据："A 银行信用卡贷款 FTP 价格为 5%，则当信用卡收益率高于 5%，则带来正的利差收入"）、<strong>风险成本</strong>（坏账损失 + 信用卡欺诈）。</li>
+<li><strong>适用条件与边界</strong>：四分法结构清晰，其中<strong>FTP 判据最具操作价值</strong>（把"值不值得做"变成"收益率 vs FTP"的比较）。边界：未给各成本项的量级参考，故只能用于内部核算，不能横向比较。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——建议按四分法重建我方信用卡业务的成本视图，并显式采用 FTP 判据。</li>
+</ul>
+<h3 id="b-05-07-vs">B-05-07｜分母修正法（人均持卡量：全国 vs 目标客群）</h3>
+<blockquote>
+<p>统一编号 B-05-07 ｜ 原编号 B-05-07（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 12–13 页（0.95 张一句见第 12 页）</li>
+<li><strong>原文关键句</strong>：「考虑到当前我国信用卡以持卡人以20-59岁的城镇居民为主」</li>
+<li><strong>补充直引（照录）</strong>：「我们测算20-59岁城镇居为民人均信用卡持卡量为0.95张」〔原文如此：“居为民”系文本层讹字，应为“居民”〕（B05 第 12 页）</li>
+<li><strong>方法拆解</strong>：指出"截至 2017 年末，我国信用卡人均拥有量仅 0.39 张"这一常见口径的分母失真，随即把分母换成目标客群——20-59 岁城镇居民人均 <strong>0.95 张</strong>（即上引照录句）；再叠加城市证据："2016 末北京信用卡人均拥有量远高于全国平均水平，达1.35张，但仍低于美国人均2.90张的水平"（第 12–13 页）。</li>
+<li><strong>适用条件与边界</strong>：方法通用且重要：<strong>任何"人均/渗透率"结论都必须先审查分母</strong>。边界：0.95 张是基于"20-59 岁城镇居民"的估算，估算过程未披露；美国 2.9 张为 2016 前后口径，跨境可比性有限（美国人均持卡含大量闲置卡）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高（作为口径审查动作）</strong>，数值仅作历史样本。</li>
+</ul>
+<h3 id="b-05-08">B-05-08｜中美差距对标法（差距对标的标准做法）</h3>
+<blockquote>
+<p>统一编号 B-05-08 ｜ 原编号 B-05-08（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 15–17 页（花旗/摩根大通对照句见第 16 页）</li>
+<li><strong>原文关键句</strong>：「招行这一比例为13.78%，但低于美国花旗银行（23.8%）、摩根大通（15.8%）的水平」</li>
+<li><strong>补充直引（照录）</strong>：「贷款余额占比也由2009年末的0.61%持续提升至2017年末的4.63%，但仌明显低于同期美国市场7.81%的占比水平」〔原文如此：“仌”系文本层讹字，应为“仍”〕（B05 第 15 页）</li>
+<li><strong>方法拆解</strong>：在四个层次上做同口径中美对照：① 信用卡贷款余额占贷款总额比（上引照录句：2009 年末 0.61% → 2017 年末 4.63%，美国同期 7.81%）；② 单行占比（四大行信用卡贷款占贷款总额均不及 5%；"招行这一比例为 13.78%，但低于美国花旗银行（23.8%）、摩根大通（15.8%）的水平"，第 16 页）；③ 人均持卡（0.39 张 vs 2.9 张）；④ 成熟度指标（"授信使用率达44.54%，信用卡渗透率达48.71%"，第 17 页）。并由此得出"我国信用卡贷款投放潜力巨大"。</li>
+<li><strong>适用条件与边界</strong>：<strong>这是"差距对标"的标准样本</strong>：同口径、分层、多指标。边界同样明确：<strong>差距≠必然收敛</strong>（该报告把"差距"直接翻译成"增长空间"，跳过了收敛条件：收入水平、征信覆盖、消费习惯、监管），这正是需要"提炼机制而非复制事实"的地方。</li>
+<li><strong>可迁移性初判</strong>：<strong>高（作为对标方法）／低（作为增速判断）</strong>——方法可复用，空间结论不可引用（见第 7 节校准点 1）。</li>
+</ul>
+<h3 id="b-05-09">B-05-09｜"首次盈利年份"证据链构建法</h3>
+<blockquote>
+<p>统一编号 B-05-09 ｜ 原编号 B-05-09（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 7 页</li>
+<li><strong>原文关键句</strong>：「2005年广发银行成为我国银行业中率先实现在信用卡业务上盈利的银行」</li>
+<li><strong>方法拆解</strong>：在行业层面数据缺失的情况下，用<strong>公开报道逐家拼接"首次盈利时点"</strong>：2005 广发（率先）→ 2006 招行与中信→ 2009 交行→ 2011 光大披露信用卡业务利润 7.85 亿元→ 2012 兴业账面利润 13.1 亿元→「北京银行2012年年报披露信用卡业务税前利润6543万元」。用一条时间链回答"这个行业什么时候开始赚钱"。</li>
+<li><strong>适用条件与边界</strong>：方法在"披露稀少"的行业里非常实用（用公开年报的最小事实拼趋势）。边界：① 各家的"盈利"口径不同（税前/账面/公开报道），链条内部不完全可比；② <strong>北京银行 6543 万元的城商行样本极其稀缺、对城商行最有参考价值</strong>，但它是 2012 年口径，且该行体量与客群结构与我方需再核对。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——"用首次盈利年份拼行业成熟度 + 找同类型机构的稀缺可比样本"可直接复用。</li>
+</ul>
+<h3 id="b-05-10">B-05-10｜中小银行的"分期差异化定价"弯道超车判断 + 回佣"价权不在银行"</h3>
+<blockquote>
+<p>统一编号 B-05-10 ｜ 原编号 B-05-10（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 10 页、第 10–11 页</li>
+<li><strong>原文关键句</strong>：「分期业务已成为中小银行弯道超车的重要途径」</li>
+<li><strong>补充直引（照录）</strong>：「商业银行难以掌握“价”癿主劢权，但依然能够通过“量”癿扩张实现这块收入癿增长」〔原文如此：“癿”系文本层讹字，应为“的”；“劢”应为“动”〕（B05 第 11 页）</li>
+<li><strong>方法拆解</strong>：两条判断：① <strong>策略侧</strong>——「相比卡量大的全国性银行，中小银行想要实现信用卡业务的弯道超车，可以更多在产品定价上做文章，差异化定制分期产品利率，快速抢占市场份额」，并以中信分期收入连续 40%+ 增速为佐证；② <strong>收入侧</strong>——商户回佣费率"大约为交易额的0.5%，而发达国家普遍在2%以上"，比价空间被封；结论是「未来商业银行在商户回佣方面依然难以在“价”上有所作为」（第三方支付兴起、技术壁垒与市场壁垒都被打破），只能靠量的扩张（"以量补价"）。</li>
+<li><strong>适用条件与边界</strong>：① 该策略把"弯道超车"押在<strong>定价</strong>上，隐含前提是"不计获客与风险成本的价格战可持续"——<strong>这是本报告最需要被质疑的一条</strong>（B08 的三类损益正好提供了反驳工具：定价拉低后资产层能否覆盖获客层亏损？）；② 回佣判断以 2016 年 9 月 6 日银行卡刷卡手续费下调后的费率为据（第 11 页费率表），时点须随引用；③ 均为 2018 年 6 个月窗口内的判断。</li>
+<li><strong>可迁移性初判</strong>：<strong>中</strong>——"用定价而非规模切入"值得作为选项之一，但必须先用 B-08-12 的三类损益验算再决定。</li>
+</ul>
+<h3 id="b-05-11">B-05-11｜战略地位指标体系（信用卡对银行意味着什么）</h3>
+<blockquote>
+<p>统一编号 B-05-11 ｜ 原编号 B-05-11（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B05 第 18–21 页（24.2%/49.4% 对照句另见第 1 页摘要；收益率估算法见第 20 页）</li>
+<li><strong>原文关键句</strong>：「我们以信用卡收入/期初期末平均贷款粗略估计信用卡资产收益率」</li>
+<li><strong>方法拆解</strong>：用一组<strong>可比指标</strong>衡量信用卡的战略地位：① 信用卡收入/营收；② 信用卡收入/零售银行收入（「招行由10年的24.2%升至17年的49.4%，中信银行则由27.65%升至71.84%」，B05 第 1 页摘要与第 20 页）；③ 卡均收入（2017 浦发 975.02 元居首）；④ 收入/平均透支余额（浦发 14.22%，报告称"粗略估计信用卡资产收益率"）；⑤ 授信使用率（招行 71.12%）；⑥ 规模与结构（累计发卡 vs 流通卡 vs 流通户）。并给出<strong>结构性解读</strong>：两行"信用卡/营收差距不大"却"信用卡/零售营收"差距巨大，说明"中信银行零售业务对信用卡依赖较大，而招行通过私人银行业务、财富管理业务实现了较为综合而多元的零售银行经营"（第 20 页）。</li>
+<li><strong>适用条件与边界</strong>：指标组很好用（能同时看规模、效率与结构依赖度）。边界：① 各行披露口径不一（招行 2015 年起把分期归入利息，直接影响"非息占比"），<strong>跨行比较前必须统一</strong>；② "收入/平均贷款"是粗略收益率，不是 ROA；③ 同一组指标在报告里被用于荐股，<strong>其选择性</strong>（只挑上升的指标）须注意。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——建议直接采用这 6 个指标做成我方的"信用卡战略地位仪表盘"，并标注口径统一规则。</li>
+</ul>
+<h3 id="51-b-08-01-b-08-09">5.1 第三层·议题一｜彭千的叙事框架与演进判断逻辑（B-08-01 ~ B-08-09）</h3>
+<h3 id="b-08-01">B-08-01｜零售银行的"存贷汇"边界定义 + 四阶段分期框架</h3>
+<blockquote>
+<p>统一编号 B-08-01 ｜ 原编号 B-08-01（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 4–5</li>
+<li><strong>原文关键句</strong>：「商业银行向个人、家庭和中小企业提供的综合性、一体化的金融服务，包括存取款、贷款、结算、汇兑、投资理财等业务」</li>
+<li><strong>方法拆解</strong>：① 先用"存／贷／汇"三格子界定业务边界（幻灯片 4），把"信用卡"明确挂在"贷"格内；② 再用一张四列表把行业发展切成四个时代：存折储蓄时代（50 年代初–90 年代初，"居民以单一储蓄为主的个人金融时代"）→ 卡产品时代（90 年代中期–2004）→ 财富管理时代（2005–2013）→ 互联网金融时代（2014 起，"2013 年末阿里推出余额宝，移动支付、消费金融兴起"，幻灯片 5）。每一列同时给"市场背景 + 代表产品及服务"，让阶段划分<strong>可被产品证据锚定</strong>，而不是靠年份空切。</li>
+<li><strong>适用条件与边界</strong>：成立条件是"以产品/技术形态为分期依据"。边界有二：① 第四期的起点被钉在"2013 年末余额宝"，<strong>是 2018 年的时点判断，2018 年之后无人续写</strong>，不能延用到今天；② 该框架以股份制/国有大行为隐含主体，未区分城商行的位置。</li>
+<li><strong>可迁移性初判</strong>：<strong>中</strong>——"用代表产品锚定阶段"这一做法可迁移（我方可自建第五期并给出证据），四阶段的具体年份与命名属历史样本，只能原样引用。</li>
+</ul>
+<h3 id="b-08-02">B-08-02｜招行"履带战略"式的能力跃迁框架</h3>
+<blockquote>
+<p>统一编号 B-08-02 ｜ 原编号 B-08-02（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 6–9</li>
+<li><strong>原文关键句</strong>：「招商银行零售业务发展的履带战略」</li>
+<li><strong>方法拆解</strong>：把一家银行零售发展抽象为"<strong>每一次只用一项能力形成差异化，吃到红利后再换下一节履带</strong>"：第一阶段"一招鲜，吃遍天"（1995 一卡通替代存折的全国通存通兑）→ 第二阶段"一网通、信用卡"（1998 网上银行"网点+鼠标"、2002 首张国际标准双币信用卡）→ 第三阶段"财富管理"（2002 金葵花、2007 私人银行、2009 钻石、2012 产能飞跃、2014 全权委托，幻灯片 9）→ 第四阶段移动互联（幻灯片 10 两个 APP 分工：手机银行"对内"、掌上生活"对外引流"）。</li>
+<li><strong>适用条件与边界</strong>：机制成立的关键在<strong>"入场时机早于同业 + 技术/渠道换代窗口"</strong>，而非"招行做了什么"；招行每次换履带都踩在介质更替（存折→卡→网银→APP）的窗口上。边界：① 履带式跃迁需要"先发"位置，<strong>跟随者照搬具体动作无效</strong>（这正是"对标不复制事实，提炼机制"的典型例）；② 幻灯片 11–17 的业绩数字为招行 2015/2017 口径，不得当行业基准。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——机制可迁移："每一项能力都必须与当下正在发生的介质更替对齐；一旦该介质成为标配，就换下一节履带"。</li>
+</ul>
+<h3 id="b-08-03">B-08-03｜信用卡本质的"四性"定义法</h3>
+<blockquote>
+<p>统一编号 B-08-03 ｜ 原编号 B-08-03（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 21、55</li>
+<li><strong>原文关键句</strong>：「小额无担保的信用贷款——国家唯一合法“高利贷”产品」；同页另三项：「完整、全面的客户数据——基础性」</li>
+<li><strong>方法拆解</strong>：用四个不可替代的属性给信用卡定位，每一条都对应一种战略价值：<strong>普适性</strong>（消费支付工具，覆盖广）、<strong>盈利性</strong>（无抵押消费信贷，定价高）、<strong>互动性</strong>（交互频繁，是唯一能高频触达客户的信贷产品）、<strong>基础性</strong>（完整全面的客户数据）。幻灯片 55 把四性压缩为「信用卡特征：普适性、盈利性、互动性、基础性」，并用它推出"必由之路"。</li>
+<li><strong>适用条件与边界</strong>：作为"为什么要做信用卡"的定义性论证，四性成立；但"互动性/基础性"的<strong>实现程度取决于是否自建客户经营与数据能力</strong>——同一张卡，在只有资金通道角色的机构手里并不自动获得互动性与数据基础性（B08 自己在幻灯片 55 也承认区域银行"没有持续的客户经营"）。这是四性框架最容易被误用的地方。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——四性可直接作为"信用卡对本行的战略价值"标准提问框架，但必须逐性给出我方的证据，不能只引用属性名。</li>
+</ul>
+<h3 id="b-08-04">B-08-04｜信用卡＝"个人金融入门级产品"的客户生命周期阶梯</h3>
+<blockquote>
+<p>统一编号 B-08-04 ｜ 原编号 B-08-04（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 22（资料来源标注：汇丰银行）</li>
+<li><strong>原文关键句</strong>：「信用卡是个人金融需求的入门级产品」</li>
+<li><strong>方法拆解</strong>：以年龄／财富双轴（25-35-45-55-65 岁）铺出客户资产积累曲线，把产品按客户生命周期排列：储蓄帐户、活期帐户、<strong>信用卡</strong>、学生贷款、汽车贷款、无抵押贷款、住房贷款、定期储蓄、保险、投资、退休金管理、度假别墅；并区分"大众型客户的共同需求"与"高、中端客户的额外需求"。信用卡被放在曲线的<strong>入口</strong>位置——先有卡，后有人生各阶段的其他产品。</li>
+<li><strong>适用条件与边界</strong>：成立条件是"客户财富随年龄单调上升 + 产品按人生阶段顺序购买"，这是成熟零售银行的形态，<strong>不是 2018 年中国所有客群的真实路径</strong>。边界：该图直接引自汇丰，属<strong>外资成熟市场口径</strong>，用于"为什么必须占住入口"的论证；用于预测我方客群产品渗透顺序时需本行数据校准。</li>
+<li><strong>可迁移性初判</strong>：<strong>中高</strong>——"入口产品—生命周期交叉销售"的提问方式可迁移，具体阶梯顺序需用我方客群数据替换。</li>
+</ul>
+<h3 id="b-08-05">B-08-05｜中国信用卡"四时期 + 变异断代"叙事</h3>
+<blockquote>
+<p>统一编号 B-08-05 ｜ 原编号 B-08-05（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 23–24</li>
+<li><strong>原文关键句</strong>：「1985-2002变异、扭曲的中国信用卡」；同页另四段：「2014-Fintech时代信用卡及消费金融的相融」</li>
+<li><strong>方法拆解</strong>：两页叠加使用（幻灯片 24 为标准时期划分、幻灯片 23 为讲者自己的断代）：① 标准四期「中国信用卡产业经历了四个时期：萌芽时期、重生时期、规模扩张时期和精耕细作时期」（1985-1995 萌芽、2000-2004 重生、2005-2008 规模扩张、2009-至今 精耕细作）；② 讲者的<strong>额外判断</strong>：1985-2002 是"变异、扭曲"的（跳过成长期）、2003 是元年、2003-2014 蓬勃发展、<strong>2014 起"信用卡及消费金融相融"</strong>。用"变异"一词暗示中国信用卡是被外部条件扭曲的次优路径。</li>
+<li><strong>适用条件与边界</strong>：标准四期划分是行业通说（可与 B05 第 6 页"三个阶段"并读，注意两者分期口径不同：B05 三分、B08 四分，<strong>引用时不得混用</strong>）；而"变异、扭曲"是<strong>讲者个人的价值判断</strong>，无数据支撑，属观点不是结论。边界：全篇时点止于 2016/2018。</li>
+<li><strong>可迁移性初判</strong>：<strong>中</strong>——时期划分可作产业史坐标；"变异"判断宜作为待检验假设（例如用"是否跳过某类客户的信贷教育"来检验），不可当事实引用。</li>
+</ul>
+<h3 id="b-08-06">B-08-06｜招行卡中心"阶段—愿景—能力"三层对齐</h3>
+<blockquote>
+<p>统一编号 B-08-06 ｜ 原编号 B-08-06（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 25</li>
+<li><strong>原文关键句</strong>：「中国最好的支付体验提供商」</li>
+<li><strong>方法拆解</strong>：把卡中心发展写成"阶段 → 该阶段要建的能力 → 一句可考核的愿景"三层对齐：2002-2005 创建品牌、占领市场（起步）→ 2006-2008 领先规模、塑造核心竞争力（规模扩张）→ 2009-2013 平衡风险、多元收入、能力建设（精耕细作）→ 2014- 至今互联网结构转型、打造差异化竞争能力，并标注"（剪掉信用卡）"。愿景三句在 2008-2009 年形成：中国最好的支付体验提供商 / 中国最好的消费金融专家 / 中国领先的多元化营销平台（幻灯片 25）。</li>
+<li><strong>适用条件与边界</strong>：机制是"<strong>每个阶段只允许一件事成为主目标</strong>"（扩张期不比风险、精耕期不再追规模），这对多头并进的组织是减压器。边界：① 三句愿景是 2008-2009 年形成的，属历史文本；② "（剪掉信用卡）"这一提法高度依赖招行当时的 APP 与流量基础，<strong>对无自有流量的城商行不具可复制性</strong>。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——"阶段—愿景—能力"对齐结构可直接套用于我方信用卡业务的年度规划表述。</li>
+</ul>
+<h3 id="b-08-07">B-08-07｜卡中心价值定位的"动态重述法"</h3>
+<blockquote>
+<p>统一编号 B-08-07 ｜ 原编号 B-08-07（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 32</li>
+<li><strong>原文关键句</strong>：「应对内外部环境不断变化的形势，信用卡中心不断调整自身业务价值定位，持续为大零售、全行以及股东创造价值」</li>
+<li><strong>方法拆解</strong>：把"卡中心对全行的价值"写成一组<strong>随环境变化而更换的定位</strong>，而不是固定不变的职能描述：品牌塑造／规模／风险构成"可持续的平衡结构"；利润增长／交叉销售构成第二组；第三组是角色升级——「成为大零售互联网金融的探路先锋」「打造聚集零售金融用户的流量入口」「构建支撑招行核心业务的外围平台」。同一页同时摆出"要平衡的三项"与"要扮演的三种角色"。</li>
+<li><strong>适用条件与边界</strong>：适用条件是卡中心独立成部、与分行存在资源竞争关系（需要持续自证价值）。边界：这种"价值定位随形势变"的写法在对外汇报中是优点，在内部考核中是风险——<strong>定位频繁更换会导致目标漂移</strong>，需配合多年期不变的指标锚（如 AUM/活卡/户均）才不失控。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——尤其适用于向行领导论证"信用卡中心的定位"这一类汇报场景。</li>
+</ul>
+<h3 id="b-08-08">B-08-08｜竞争策略三段递进 + 载体替换对照表</h3>
+<blockquote>
+<p>统一编号 B-08-08 ｜ 原编号 B-08-08（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 33、34</li>
+<li><strong>原文关键句</strong>：「信用卡中心将在保持“品牌”、“运营”领先的基础上，重点通过技术差异化持续打造我行信用卡的“技术”领先优势」</li>
+<li><strong>方法拆解</strong>：① <strong>策略三段</strong>：品牌领先（规模扩张阶段打品牌）→ 运营领先（精耕细作阶段优化流程）→ 技术领先（技术驱动阶段"从功能信用卡转变为智能信用卡"）；② <strong>载体替换对照表</strong>（幻灯片 34）：模拟时代→智能时代逐项替换——产品模式→用户模式、实体卡片→虚拟账户、传统推广→数据驱动、刷卡消费→流量管理、传统营销模式→智能终端支付、消费信贷→关系模式、模拟时代管理与服务→智能化管理及服务。左列是"要被替换掉的"，右列是"要换成的"。</li>
+<li><strong>适用条件与边界</strong>：成立条件是"技术是差异化来源且可持续投入"。边界：对照表是<strong>方向性清单，不是路线图</strong>——未给优先级、负责人与验收口径；且"技术领先"若要成立，前提是前两段（品牌、运营）已达标，跳段使用无意义。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——"左列现状／右列目标"的载体替换表是最好用的转译工具，可直接改造为我方版本并补上优先级列。</li>
+</ul>
+<h3 id="b-08-09">B-08-09｜年度判断的"可回测句"写法 + 十年尺度竞争观</h3>
+<blockquote>
+<p>统一编号 B-08-09 ｜ 原编号 B-08-09（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 126、127、129</li>
+<li><strong>原文关键句</strong>：「传统金融的黄金年代已经结束」；「强金融监管是未来至少5年主旋律」；「如果你看1年，处处都是竞争对手。如果你看10年，竞争对手少之又少」</li>
+<li><strong>方法拆解</strong>：把年度战略判断写成<strong>可被时间验证的短句</strong>，并逐条打勾：2017 年"我们判断…"三条——传统金融的黄金年代已经结束／新的金融需求远未被满足／<strong>互联网金融的泡沫三年内破灭</strong>；2018 年三条——强监管是弯道超车的机会／强金融监管是未来至少 5 年主旋律／大变革孕育全新的甚至革命性的商业机会。另用"1 年 vs 10 年"两句话给出<strong>时间尺度决定竞争视野</strong>的判断规则。</li>
+<li><strong>适用条件与边界</strong>：这是"把观点变成可回测命题"的写法，价值在<strong>可回测</strong>而非内容本身。边界：① 三条 2017 判断以"打勾"呈现但<strong>未给判断依据与证伪条件</strong>，属宣言式；② "泡沫三年内破灭"是一条明确可回测的预测（2018-05 作出），<strong>本次不引入 2019 年后的外部数据核验，故只标注"应回测"，不作对错结论</strong>；③ 十年尺度的说法服务于长期投入的论证，不能拿来回避当期指标。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——可直接借用"年度判断写成三句可回测短句"的汇报格式，但要补上我方版本的证伪条件与复盘时间点。</li>
+</ul>
+<hr />
+<h3 id="52-b-08-10-b-08-26">5.2 第三层·议题二｜互联网平台视角对银行信用卡/零售的评价维度（B-08-10 ~ B-08-26）</h3>
+<h3 id="b-08-10">B-08-10｜消费金融的"三类商业模式光谱"</h3>
+<blockquote>
+<p>统一编号 B-08-10 ｜ 原编号 B-08-10（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 38</li>
+<li><strong>原文关键句</strong>：「区别于房贷和车贷，消费金融聚焦在短期消费、小额、无担保、信用贷款这个类别里」</li>
+<li><strong>方法拆解</strong>：先划边界（排除房贷车贷），再按"<strong>金融属性强度 × 是否做客户经营</strong>"把玩家排成三段光谱：A 纯金融属性、无客户经营、靠"了解客户、风险下探"赚中等风险收益、期限中等（例：微粒贷、借呗、现金贷类）→ B 纯金融变现、不需要了解客户、高定价覆盖高风险（例：手机贷、现金巴士）→ C <strong>强金融属性 + 强支付属性 + 持续的客户经营</strong>、有三类损益（例：信用卡、花呗、白条）。同一页另附「持续的客户经营」作为 C 类判据。</li>
+<li><strong>适用条件与边界</strong>：光谱的判别标准是"<strong>是否愿意承担了解客户/经营客户的成本</strong>"，而不是"利率高低"；这使它能解释同一价位产品的不同命运。边界：B 类（现金贷）在 2018 年后的监管环境中形态已变，<strong>该分类只能作 2018 年截面使用</strong>。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——"按客户经营强度分光谱"比"按牌照分"更有解释力，可用于我方判断合作方与竞品归属。</li>
+</ul>
+<h3 id="b-08-11">B-08-11｜逐产品的"六维 + 盈利期"竞争矩阵</h3>
+<blockquote>
+<p>统一编号 B-08-11 ｜ 原编号 B-08-11（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 40</li>
+<li><strong>原文关键句</strong>：「3-5年盈利」</li>
+<li><strong>方法拆解</strong>：用六个可比维度横向摆产品（信用卡 / 信用贷(小微) / 现金贷）：<strong>利率</strong>（年化 18.25% / 17%-24% / 24%-100%）、<strong>周期</strong>（长期全生命周期 / 3·6·12 个月 / 3 个月以内随借随还）、<strong>频次</strong>（有支付高频 / 纯金融低频 / 纯金融频次较高）、<strong>粘度</strong>（高粘度 / 低粘度 / 低粘度）、<strong>场景</strong>（有场景 / 不需要场景 / 无场景）、<strong>盈利期</strong>（3-5 年 / 9-12 个月 / 1-3 个月）。矩阵的落点是最后一行——<strong>盈利期</strong>：获客成本必须由足够长的客户生命周期来摊销。</li>
+<li><strong>适用条件与边界</strong>：成立条件是"获客成本同量级、产品可自由选择"。边界：① 利率区间为 2018 年截面（信用卡 18.25% 对应日息万分之五上限，与 B05 第 8 页同源）；② 矩阵把"高粘度=好"当作默认，实际需与"高粘度客群的收益贡献"共同验证，否则会陷入只求活跃不求盈利。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——"把盈利期作为竞争矩阵的收口维度"是极好的提问方式：任何新产品都应先回答"它的盈利期有多长、用什么摊销获客成本"。</li>
+</ul>
+<h3 id="b-08-12">B-08-12｜三类损益框架（获客 / 交易 / 资产）</h3>
+<blockquote>
+<p>统一编号 B-08-12 ｜ 原编号 B-08-12（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 41（配套收入成本全清单见幻灯片 56、57）</li>
+<li><strong>原文关键句</strong>：「三类损益（信用卡最完整）」</li>
+<li><strong>方法拆解</strong>：把信用卡（及任何消费金融产品）拆成三层独立损益，各自算各自的账：<strong>① 获客层</strong>——收入为年费、交易回佣、增值服务，成本为获客流量/活动营销/销售人员推广/审核/制卡寄卡，结论多为"亏损，收入小于成本"（发卡亏损）；<strong>② 交易层</strong>——主要发生市场营销费用、客服与运营成本，结论多"保本，收入成本基本持平"（消费保本）；<strong>③ 资产层</strong>——收入为利息、分期及其他消费金融收入，成本为资金成本、呆账准备、催收成本，是"盈利，主要收益来源"（贷款盈利）。讲者的原话是"三类损益（信用卡最完整）"——即信用卡是唯一三层俱全的产品。</li>
+<li><strong>适用条件与边界</strong>：这是本层<strong>最有价值的单页</strong>：它把"信用卡到底靠什么赚钱"变成一个可逐层核算的结构，并直接给出推论——<strong>若资产层不成立（分期/透支不足），前两层的亏损无法被覆盖</strong>。边界：① 该页为图形排版，收入成本项按行序打散，<strong>具体归属关系须回原件核对</strong>（本文件只按语义分组，未替原文确定连线）；② 三层盈亏是<strong>结构性判断而非会计口径</strong>，不能直接充当损益表科目。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——建议直接改造为我方版本：逐层列我方产品线的收入与成本，先回答"资产层能不能覆盖前两层"。</li>
+</ul>
+<h3 id="b-08-13abc">B-08-13｜消费金融成功三要素（ABC）</h3>
+<blockquote>
+<p>统一编号 B-08-13 ｜ 原编号 B-08-13（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 42</li>
+<li><strong>原文关键句</strong>：「比拼客户经营能力，培养客户的消费习惯，实现客户的高粘度和高频次，成为持续盈利的护城河」</li>
+<li><strong>方法拆解</strong>：把竞争简化为三项能力的比拼：<strong>A 客户获取</strong>——"需要拥有较强的获客能力，获客成本可控"；<strong>B 风险经营 + 风险管理</strong>——"产品小额分散，适用大数法则"；<strong>C 客户经营</strong>——培养消费习惯、做高粘度高频次，形成护城河。三项各有各的比法与失灵点（获客比成本、风险比大数法则、经营比粘度），互相不能替代。</li>
+<li><strong>适用条件与边界</strong>：成立条件是小额分散的大数法则适用（即客群足够大）。边界：三项并列但<strong>权重随机构规模变化</strong>——无获客能力的机构即使风险与经营强也做不大；有获客无经营的机构（资金通道角色）只能赚取通道费。这一点与幻灯片 55 的"资金通道"警告互为印证。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——可作为我方信用卡业务的"能力体检表"，重点是诚实回答"三项里哪一项是短板"。</li>
+</ul>
+<h3 id="b-08-14">B-08-14｜五类玩家的竞争地图</h3>
+<blockquote>
+<p>统一编号 B-08-14 ｜ 原编号 B-08-14（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 47</li>
+<li><strong>原文关键句</strong>：「目前国内消费金融的五类主要玩家」</li>
+<li><strong>方法拆解</strong>：按<strong>牌照属性 + 客群+资金量级</strong>把行业排成五列：银行信用卡（招行信用卡 用户 4111 万 / 贷款余额 4562 亿；浦发信用卡 用户 1927 万 / 3789 亿）→ 消金公司（招联 授信客户 1189 万 / 累计贷款 1262 亿 / 余额 323 亿；捷信 用户 1500 万 / 余额 500 亿）→ 电商平台（蚂蚁金服 用户 1 亿 / 交易额 4000 亿 / 余额 3500 亿；京东金融 用户 2000 万量级 / 交易额 800 亿 / 余额 300 亿）→ 垂直服务方（微粒贷 主动授信 1 亿量级 / 交易额 4000 亿 / 余额 2000 亿；平安普惠 用户 1000 万 / 余额 2000 亿；拍拍贷等）→ Payday Loan（现金巴士、手机贷等，月交易额亿级）。每个玩家只给三个数：<strong>用户数 / 交易额 / 贷款余额</strong>。</li>
+<li><strong>适用条件与边界</strong>：地图的价值在<strong>统一可比的三数口径</strong>（多数为 2016 年底–2017 年中口径，页面内已逐项注明）。边界：① 五类划分以"牌照/业务形态"为准，同一集团可能跨列（如蚂蚁兼顾平台与自营）；② 时点混杂（16 年底与 17 年中混排），<strong>跨列比较时须先对齐时点</strong>。</li>
+<li><strong>可迁移性初判</strong>：<strong>中高</strong>——"用户数 / 交易额 / 贷款余额"三数快照是对标研究里最经济的口径；但须补上我方可获得的口径与时点。</li>
+</ul>
+<h3 id="b-08-15-721">B-08-15｜"金融不会被 721 通吃"的四条约束（反共识判断）</h3>
+<blockquote>
+<p>统一编号 B-08-15 ｜ 原编号 B-08-15（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 48</li>
+<li><strong>原文关键句</strong>：「金融领域不太可能呈现互联网的721法则」；同页另三条：「传统银行仍然是金融的主体」「金融领域一定是强监管、国家意志强主导」「金融对资金、资本的要求太高杠杆率是绝对红线」</li>
+<li><strong>方法拆解</strong>：在一份<strong>由互联网平台主讲的材料</strong>里，讲者反而给出了四条"平台不可通吃金融"的约束：① 主体地位约束（传统银行仍是金融的主体，消金/互联网/新兴玩家是"有益的补充"）；② 监管约束（强监管、国家意志强主导）；③ 资本约束（资金资本要求高，<strong>杠杆率是绝对红线</strong>）；④ 网络效应约束（互联网的 721 法则不适用于金融）。四条合起来解释"为什么金融不会被单一平台赢家通吃"。</li>
+<li><strong>适用条件与边界</strong>：这是全批材料中<strong>最值得保留的反共识框架</strong>，因为它出自可能受益于"通吃"的一方，属<strong>逆向自证</strong>，说服力高于银行自己的同类表述。边界：① 该页与下一页（幻灯片 49 自营 vs 平台）合读才完整——讲者一边说"不会通吃"，一边论证自家走"平台/伙伴"路线而非"自营"，<strong>两条结论互为商业立场</strong>；② 四条约束均为定性，无阈值。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——可直接用于我方与平台合作谈判的底层判断（决定"哪些必须自建、哪些可合作"），但须警惕其"因此你需要合作"的隐含落点。</li>
+</ul>
+<h3 id="b-08-16-vs-fintech-vs-techfin">B-08-16｜自营 vs 平台（fintech vs techfin）四维对照</h3>
+<blockquote>
+<p>统一编号 B-08-16 ｜ 原编号 B-08-16（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 49</li>
+<li><strong>原文关键句</strong>：「自营模式，被迫转型」</li>
+<li><strong>方法拆解</strong>：把腾讯系（微众：微粒贷 + 微信支付，城商行、平台模式）与蚂蚁系（花呗 + 借呗 + 支付宝，自营模式、被迫转型）按四维对照：<strong>与主业关系</strong>（纯变现无关系 vs 虚拟信用卡、支持主业）、<strong>客户经营</strong>（无客户经营 vs 有初步客户经营）、<strong>场景</strong>（纯金融无场景 vs 花呗有自场景、口碑外场景）、<strong>盈利模式</strong>（平台费、无风险收益 vs 利息收入）。结论是"平台/自营"两条路各有代价。</li>
+<li><strong>适用条件与边界</strong>：四维是观察<strong>平台方策略选择</strong>的框架，不是银行方的选择框架。边界：① "被迫转型"是讲者对蚂蚁路径的判断（隐含"牌照约束"原因），<strong>属观点</strong>；② 该页为对照表排版，文本层顺序被打散，<strong>配对关系需回原件核对</strong>（本文件按语义配对）。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——四维（与主业关系 / 客户经营 / 场景 / 盈利模式）可直接用来给我方未来的每一个合作模式做画像。</li>
+</ul>
+<h3 id="b-08-17">B-08-17｜区域银行的"位置诊断"框架（含江苏银行自身数据）</h3>
+<blockquote>
+<p>统一编号 B-08-17 ｜ 原编号 B-08-17（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 50、51、52、53</li>
+<li><strong>原文关键句</strong>：「零售业务尤其是消费金融基本缺席」（幻灯片 51）</li>
+<li><strong>方法拆解</strong>：用三层证据给区域银行定位：① <strong>体量层</strong>（幻灯片 50，截至 2016 年底）：城市商业银行 133 家、总资产 242,828 亿，占全国银行 12.48%，与农村商业银行（12.29%）、农村金融机构（12.91%）合计"三分天下有其一"；② <strong>业务层</strong>（幻灯片 51）：区域银行"资产规模较为分散"，"贷记卡发卡几乎为 0"（城商行贷记卡卡量占比 2.1%，借记卡占比 12.79%），"零售业务尤其是消费金融基本缺席"，但同时"具备零售客户基础"；③ <strong>效率层</strong>（幻灯片 53，<strong>时点未标明</strong>）：全国城商行 TOP10 的"实动卡均交易(元/月)"与"3 年复合增长率"双列对比——上海银行 3,926/78%、广州银行 4,496/98%、包商银行 6,759/27%、浙商银行 2,665/170%、徽商银行 3,187/44%、贵阳银行 3,590/182%、<strong>江苏银行 2,417 / -6%</strong>、宁波银行 7,784/-7%、哈尔滨银行 6,364/47%、江西银行 4,303/138%。同页注明数据来源为银联，「活卡指全年至少有一笔交易」。</li>
+<li><strong>适用条件与边界</strong>：这是<strong>本层唯一直接评价我方的外部证据</strong>，价值极高，但用法有三条硬约束：① <strong>口径</strong>「实动卡均交易」需与银联口径核对（"活卡指全年至少有一笔交易"是活卡定义，不等于"实动"定义）；② <strong>时点未标</strong>（同节前页为截至 2016 年底），引用时必须写"时点不明"；③ <strong>样本与目的</strong>：该表以"目标合作银行数据"之名呈现（幻灯片 50），即<strong>为客户尽调而做的对手坐标，不是行业排名</strong>，不得当权威榜单引用。另：双列对比只能看"卡均交易 × 增速"两个维度，<strong>缺发卡量/收入/不良，不足以判断业务优劣</strong>。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——"体量—业务—效率"三层定位法可复用；江苏银行那一格数字必须带口径与时点引用，并回原件核实。</li>
+</ul>
+<h3 id="b-08-18">B-08-18｜三类玩家的优劣势矩阵</h3>
+<blockquote>
+<p>统一编号 B-08-18 ｜ 原编号 B-08-18（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 54</li>
+<li><strong>原文关键句</strong>：「优势：网点下沉能力强、地域性强劣势：品牌较弱、缺乏零售客户基础」</li>
+<li><strong>方法拆解</strong>：三类银行的优劣势并排：国有银行（例：工行、建行）"优势：国家队，资金、网点、客户基础较强／劣势：缺少客户经营的意识和能力"；股份制银行（例：招行、浦发）"优势：团队强，品牌好、客户经营能力强／劣势：资金成本高、网点少"；区域银行"优势：网点下沉能力强、地域性强／劣势：品牌较弱、缺乏零售客户基础"。</li>
+<li><strong>适用条件与边界</strong>：<strong>务必注意排版风险</strong>：该页为三列并排表，文本层按行序打散，优势/劣势项与三类银行名的配对<strong>须回原件核对</strong>。本文件采用的是语义上自洽的配对（"国家队/缺客户经营"对应国有、"网点下沉/品牌弱"对应区域、"团队强/资金成本高"对应股份制），并已在此显式标注为推断。内容层面边界：三类优劣势均为定性、无量化阈值，且以 2018 年的竞争格局为前提。</li>
+<li><strong>可迁移性初判</strong>：<strong>中</strong>——矩阵本身可用于快速定位（尤其"区域银行=网点下沉强、品牌与零售客户基础弱"），但配对关系需核实后才可正式引用。</li>
+</ul>
+<h3 id="b-08-19">B-08-19｜"必由之路"判断 + 区域银行的两个痛点</h3>
+<blockquote>
+<p>统一编号 B-08-19 ｜ 原编号 B-08-19（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 55</li>
+<li><strong>原文关键句</strong>：「区域银行与互联网平台合作，受限于自身实力，往往以资金通道的角色出现」</li>
+<li><strong>方法拆解</strong>：一页两半：<strong>正面</strong>——「信用卡是发展零售和消费金融业务的必由之路」，理由是信用卡"服务于广大 C 端客户，是发展零售业务和客户经营的必由之路"，并以招行等股份制经验作对照（"得零售者得天下"）；<strong>反面</strong>——区域银行做这件事的两个痛点：① "区域银行发展消费金融业务，无品牌沉淀，没有持续的客户经营"；② "与国有银行、股份制银行比，在零售品牌、客户基础、经营能力上处于相对劣势"；并给出结论性预警：「区域银行与互联网平台合作，受限于自身实力，往往以资金通道的角色出现」。</li>
+<li><strong>适用条件与边界</strong>：这是<strong>对城商行最贴切的一页</strong>，其价值在于把"必由之路"与"资金通道风险"放在同一页——即<strong>做信用卡是必然选择，但做成"通道"是默认结局</strong>。边界：① 判断出自招商方立场，其落点是"所以要与美团合作"；② 未给"如何避免成为通道"的路径，<strong>该缺口正是我方要自己补的</strong>；③ 全篇时点为 2018 年。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——建议把"资金通道"作为我方合作方案的红线自检项。</li>
+</ul>
+<h3 id="b-08-20">B-08-20｜信用卡与传统业务的效益对照（指标设计示范）</h3>
+<blockquote>
+<p>统一编号 B-08-20 ｜ 原编号 B-08-20（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 58（注：2017 招行卡中心业务数据；平均收益率＝利息收入/平均资产余额）</li>
+<li><strong>原文关键句</strong>：「信用卡业务20.8%11.66%4.70%」</li>
+<li><strong>方法拆解</strong>：用三个统一指标横向比不同业务：<strong>成本收入比 / 平均收益率 / ROA</strong>——银行整体 30.23% / 4.81% / 1.55%；批发业务 26.92% / 3.99% / —；零售业务 36.02% / 5.81% / —；<strong>信用卡业务 20.8% / 11.66% / 4.70%</strong>。用同一组指标把"信用卡是不是好生意"变成可对话的数字。</li>
+<li><strong>适用条件与边界</strong>：① 口径明确（平均收益率＝利息收入/平均资产余额）但<strong>为招行卡中心 2017 年单点数据</strong>，不可当行业基准；② "信用卡 ROA 高于全行"的结论<strong>强依赖于信用卡业务把资金成本与风险成本留在表内的方式</strong>，横向比较前须核对成本归集口径（本页未披露）。</li>
+<li><strong>可迁移性初判</strong>：<strong>中高</strong>——"用同一组指标横比业务线"的做法可迁移；数字只能作历史样本引用，且须连带口径。</li>
+</ul>
+<h3 id="b-08-21">B-08-21｜平台战略与"三流合一"的信息流制高点论</h3>
+<blockquote>
+<p>统一编号 B-08-21 ｜ 原编号 B-08-21（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 72、73</li>
+<li><strong>原文关键句</strong>：「银行对资金流有一些挖掘；但银行的信息流相对分散、未成体系」</li>
+<li><strong>方法拆解</strong>：① 双边平台替代垂直产业链——"同边"与"跨边"网络外部性，平台有"高集中度、高效率和自我强化的天然垄断性"（幻灯片 72）；② 三流（信息流/资金流/物流）合一：工业革命让资金流与物流结合产生了现代商业银行，信息革命推动三流合一；顶尖互联网企业"通过创造和控制信息的流动，以获取海量数据，并在价值链的其它环节将其变现"；阿里尝试三流合一、腾讯尝试二流合一，而<strong>银行的短板被明确指向信息流</strong>（幻灯片 73）。</li>
+<li><strong>适用条件与边界</strong>：这是<strong>平台立场的诊断</strong>，其结论（"银行信息流未成体系"）在 2018 年成立且具有警示价值，但论证指向"银行需要外部信息流入"。边界：① 判断为 2018 年口径，此后银行自有 APP 与数据能力已变；② 平台网络效应论在金融业受"721 法则不适用"（幻灯片 48）自我限制，两页须合读。</li>
+<li><strong>可迁移性初判</strong>：<strong>中</strong>——"信息流是否成体系"是一个好的自我诊断问题，但<strong>不要接受"因此必须引入外部信息流"这一跳跃</strong>，应先验证自有数据是否真的不可用。</li>
+</ul>
+<h3 id="b-08-22-ott">B-08-22｜银行被 OTT／管道化的挑战判定规则（★核心）</h3>
+<blockquote>
+<p>统一编号 B-08-22 ｜ 原编号 B-08-22（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 74</li>
+<li><strong>原文关键句</strong>：「互联网金融对中国银行业挑战的本质是银行业的管道化(OTT)问题」</li>
+<li><strong>方法拆解</strong>：全页给出一个<strong>可判定的分层规则</strong>：把银行业务分成两类——「简单标准化的金融业务」（网络支付结算、小额贷款、标准化投融资产品）与「专业能力要求高的业务」（财富管理、私人银行等）；结论是"互联网挑战实质是对简单标准化业务的 OTT：<strong>互联网暂不会挑战复杂的、专业能力要求高的业务</strong>"。并注明简单标准化业务"是银行业务的基础和未来可持续成长的方向。一旦被外部竞争者胜出，将导致银行沦为'管道'，进而失去持续增长的内生动力"。</li>
+<li><strong>适用条件与边界</strong>：这是本层<strong>最可操作的单条判断规则</strong>：它把"会不会被颠覆"变成"<strong>某项业务是否标准化、是否可被更高效的方法替代</strong>"的判断。边界：① "暂不会"是时间限定词，<strong>规则本身要求持续复核</strong>（今天的复杂业务可能标准化）；② 该判断服务于"平台来合作的正当性"论证，但规则本身与立场无关，可独立使用。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——建议列为常规自检：对我方每条产品线问"它是标准化业务吗？若被外部以更高效率替代，我们剩下什么？"</li>
+</ul>
+<h3 id="b-08-234c">B-08-23｜4C 挑战评估 + 银行成本结构脆弱点</h3>
+<blockquote>
+<p>统一编号 B-08-23 ｜ 原编号 B-08-23（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 75</li>
+<li><strong>原文关键句</strong>：「传统银行零售总成本中，人力和网点成本分别为50%、24%」</li>
+<li><strong>方法拆解</strong>：用 4C（Consumer 顾客 / Cost 成本 / Convenience 便捷 / Communication 沟通）组织外部挑战的证据，并把四个挑战类型化：技术优势、效率优势、破坏性创新、平台优势、信息优势；每一类配一个证据——如成本上"传统银行零售总成本中，人力和网点成本分别为 50%、24%"；沟通方式上对比"请消费者注意"（银行）与"注意消费者"（互联网的主动沟通）。</li>
+<li><strong>适用条件与边界</strong>：4C 是评价框架，<strong>证据多为 2013-2015 年截面</strong>（余额宝一年近 6000 亿、微信红包除夕 10.1 亿次），时点必须随引用保留。边界："人力+网点占零售总成本 74%"这一数字<strong>是当时行业口径的概数</strong>，用于说明"重资产结构的脆弱点"，不等于我行的成本结构，需以我行数据替换。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——"用 4C 结构审视外部挑战 + 用成本结构定位自身脆弱点"的组合可复用；数字替换为我方口径。</li>
+</ul>
+<h3 id="b-08-24build-partnership-buy">B-08-24｜Build / Partnership / Buy 决策框架</h3>
+<blockquote>
+<p>统一编号 B-08-24 ｜ 原编号 B-08-24（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 81</li>
+<li><strong>原文关键句</strong>：「为特别市场进行定制化」</li>
+<li><strong>方法拆解</strong>：对"进入新能力/新市场"给出三条路径的<strong>逐项对照</strong>（优点/缺点/适用条件），并给判据：<strong>Build</strong>——适合"行业的领导者 / 拥有专利技术 / 核心业务需要母体资质"，优点"最大的产品控制、拥有知识产权、利润最大化"，缺点是"进入市场慢、市场变化的风险、高开发成本、高转换成本"；<strong>Partnership</strong>——适合"最快速进入市场 / 减少风险 / 跨越竞争"，优点是"最快进入市场、节约资源、便于尝试"，缺点"最低的控制力、整合成本、分享毛利率、获客成本"；<strong>Buy</strong>——适合"为特别市场进行定制化 / 核心业务缺少自建的经验 / 时间是关键 / 需要知识或技能输入 / 力争成为市场领导者"，优点是"强强联合、增强信誉、缩短进入市场的时间"，缺点是"基因和文化、整合成本"。页脚还标注了"国内互联网巨头"与"重/轻"的对照轴。</li>
+<li><strong>适用条件与边界</strong>：这是<strong>教科书式的 Make-or-Buy 框架</strong>，内容与立场无关，可直接使用。边界：① 判据是定性的，需配合我方的"时间窗—成本—控制力"权重；② 该页服务于"银行应该 Partnership 而不是自建"的隐含建议，<strong>使用时不要默认合作优于自建</strong>。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——建议数字化改造：为每条判据打分，得出一条路径结论而不是靠直觉。</li>
+</ul>
+<h3 id="b-08-25">B-08-25｜合作方尽调七条清单（谈判用尺）</h3>
+<blockquote>
+<p>统一编号 B-08-25 ｜ 原编号 B-08-25（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 88、89</li>
+<li><strong>原文关键句</strong>：「关注合作方能投入的资源」</li>
+<li><strong>方法拆解</strong>：对记账/信用卡管理类 APP 实地调研后，讲者给出七条小结——「不差钱」「不能被控股」「追求极致的客户体验」「盈利模式探索中」「向个人理财平台转型」「期望爆发式增长」「关注合作方能投入的资源」。同步结论："这类公司发展迅速，并受到投资者的追捧，但盈利模式仍在探索，目前都尝试从一个记账工具向个人理财平台转型"（幻灯片 89）。</li>
+<li><strong>适用条件与边界</strong>：这是<strong>站在平台立场写出的"潜在伙伴画像"</strong>，其价值在于这七条<strong>反过来就是一把量合作方的尺</strong>（对方不差钱、不愿被控股、盈利模式未定、极度关注我方投入）。边界：① 清单针对的是记账 APP（工具型伙伴），不覆盖持牌金融机构类伙伴；② 为 2018 年观察，具体公司状况已变，不要点名沿用。</li>
+<li><strong>可迁移性初判</strong>：<strong>高</strong>——尤其"关注合作方能投入的资源"应作为反向条款使用：合作谈判时逐项要求对方给出可量化的投入承诺。</li>
+</ul>
+<h3 id="b-08-26ab1b2-lbs">B-08-26｜业态分类学：A/B1/B2 + LBS 四象限</h3>
+<blockquote>
+<p>统一编号 B-08-26 ｜ 原编号 B-08-26（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 107、108、110</li>
+<li><strong>原文关键句</strong>：「以SKU为中心的供给」</li>
+<li><strong>方法拆解</strong>：一套<strong>两级 MECE 分类法</strong>：第一刀按"供给与履约是否在线上"分 A（在线上：视频、直播、游戏）与 B（在线下：淘宝京东等），并给出三条对照结论——"产业 GDP：B&gt;A / 互联网对产业影响：A&gt;B / 利润率：A&gt;B"（幻灯片 107）；第二刀把 B 再分为 B1「以 SKU 为中心的供给」与 B2「以 Location 为中心的服务」，并对应三类核心能力：A 类＝产品设计能力、对用户的理解、对内容的把握；B1 类＝运营能力、供应链掌控、对定价的把握；B2 类＝线下团队、定位精度与速度（幻灯片 108）。幻灯片 110 再对 B2 用"<strong>C（用户）动/不动 × B（供给）动/不动</strong>"两轴切出四象限：异地（C 动 B 也动）＝外卖/上门服务；团购到店（C 动 B 不动）；出行（C 动 B 动）＝打车/单车；酒店旅行（C 不动 B 动）。</li>
+<li><strong>适用条件与边界</strong>：分类学的价值在于<strong>"每一类对应一组核心能力"</strong>，而不是标签本身。边界：① 该分类面向本地生活服务业，<strong>迁移到金融需重新定义"供给与履约"</strong>（例如支付＝A 类？信贷审批＝B1？线下尽调＝B2？），不能直接套用；② LBS 四象限中的"动/不动"需替换为我方场景坐标。</li>
+<li><strong>可迁移性初判</strong>：<strong>高（作为方法）</strong>——"先按一刀分类、再看每类的核心能力"是可复用的分析动作，能防止把不同业态放在同一张表里比较。</li>
+</ul>
+<hr />
+<h3 id="53-b08-b-08-27">5.3 第三层·议题三｜B08 的立场自证（B-08-27）</h3>
+<h3 id="b-08-27">B-08-27｜材料目的自证：一份"招商材料"，不是行业评价</h3>
+<blockquote>
+<p>统一编号 B-08-27 ｜ 原编号 B-08-27（第三层）</p>
+</blockquote>
+<ul>
+<li><strong>出处</strong>：B08 幻灯片 130、118、50、51、122–125</li>
+<li><strong>原文关键句</strong>：「真诚希望江苏银行给予美团点评全方位的Fintech合作机会」</li>
+<li><strong>方法拆解</strong>：四条内部证据链：① 末页目的句（幻灯片 130）；② 团队页以「招行信用卡创始员工之一」「前招商银行信用卡中心副总经理」等履历为背书（幻灯片 118）；③ 目标客群页表头直接写「目标合作银行数据」，并把江苏银行列入城商行 TOP10 对比（幻灯片 50、53）；④ 后半程全部落在合作方案——"为区域银行信用卡业务提供的'四个一'"（幻灯片 122）、"互联网平台与区域银行的双向赋能"（幻灯片 123）、"构建美团点评联名信用卡合作模式"的三价值与四化（幻灯片 125）。</li>
+<li><strong>适用条件与边界</strong>：<strong>这是使用整份 B08 的元规则</strong>：其"评价框架"越精准，越应当先问"这套框架最终把我引向哪个动作"。反向价值同样存在：正因为它要说服城商行，它对城商行<strong>劣势的描述反而更接近事实</strong>（幻灯片 51、55），而它对平台上优势的描述需打折。</li>
+<li><strong>可迁移性初判</strong>：<strong>高（元规则）</strong>——本层全部 B08 记录引用时，应连带"招商立场"标注。</li>
+</ul>
+<h3 id="54-b05-b08-62">5.4 第三层｜B05 与 B08 的共识与分歧对照（原第三层 §6.2）</h3>
+<h3 id="62">6.2 共识与分歧对照</h3>
+<p><strong>共识（两份材料的交集）</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>共识内容</th>
+<th>B05 出处</th>
+<th>B08 出处</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1</td>
+<td>信用卡是零售转型的发力点／必由之路</td>
+<td>第 1、21 页「我们认为，信用卡业务已成零售银行业务的发力点与主力军，也应当是零售银行战略的重心」</td>
+<td>幻灯片 55「信用卡是发展零售和消费金融业务的必由之路」</td>
+</tr>
+<tr>
+<td>C2</td>
+<td>标杆样本都是招行（股份制）</td>
+<td>第 19–21 页专章（"信用卡为招行零售业务亮点"）</td>
+<td>幻灯片 3–36（招行零售与卡中心复盘，约 30 页）</td>
+</tr>
+<tr>
+<td>C3</td>
+<td>分期/利息是利润中枢</td>
+<td>第 7–9 页（分期手续费还原为利息、实际利息占比≈70%）</td>
+<td>幻灯片 41（三层损益中只有"资产层"盈利）、幻灯片 58（信用卡平均收益率 11.66%）</td>
+</tr>
+<tr>
+<td>C4</td>
+<td>护城河在客户经营，不在发卡量</td>
+<td>第 18 页（"以客户体验为中心，发力线上获客"、粉丝-绑定-持卡三环）</td>
+<td>幻灯片 42（"比拼客户经营能力…成为持续盈利的护城河"）</td>
+</tr>
+<tr>
+<td>C5</td>
+<td>行业已从规模扩张转入精耕细作</td>
+<td>第 6、12 页（"跑马圈地"→精耕细作、差异化经营）</td>
+<td>幻灯片 24（精耕细作时期 2009-至今）</td>
+</tr>
+<tr>
+<td>C6</td>
+<td>标准化业务会被互联网侵蚀，银行在"价"上无主权</td>
+<td>第 10–11 页（第三方支付打破技术壁垒、回佣"难以在'价'上有所作为"）</td>
+<td>幻灯片 74（OTT 只打"简单标准化的金融业务"）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>共识的使用限制</strong>：C1 是最容易被当成"两方独立验证"的一条，但<strong>两方都说"必由之路"的动机完全相同——都需要这个结论成立才能说服各自的听众</strong>（B05 要说服投资者买入，B08 要说服城商行合作）。共识条目应视作"同一行业信念的两个载体"，不足以作为决策依据。</p>
+</blockquote>
+<p><strong>分歧（一份材料无法单独给出的东西）</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>分歧点</th>
+<th>B05（券商立场，6 个月窗口）</th>
+<th>B08（平台立场，5–10 年窗口）</th>
+<th>分歧的机制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>增量空间的强度</td>
+<td>用中美对标得出"渗透率有近 1 倍增长空间""2020 年将达 9.5 万亿"（第 12、15–16 页）</td>
+<td>同样用中美对标（幻灯片 45–46），但落点是"值得一起做大"</td>
+<td><strong>不是结论分歧，是同一推论被两个立场各取所需</strong>：方法同源，不构成独立证据</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>谁是赋能者</td>
+<td>Fintech 是银行工具：线上获客、智能风控、独立 APP、联名卡（第 18–19、22 页）</td>
+<td>平台是赋能方，银行是被赋能／资金方（幻灯片 123 "双向赋能"清单实为平台能力清单；幻灯片 74 "沦为管道"）</td>
+<td><strong>立场直接决定叙事主体</strong>：股东视角 vs 平台视角</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>区域银行能不能做</td>
+<td>"分期业务已成为中小银行弯道超车的重要途径"（第 10 页），未讨论城商行缺零售客户基础</td>
+<td>"零售业务尤其是消费金融基本缺席""贷记卡发卡几乎为 0""往往以资金通道的角色出现"（幻灯片 51、55）；江苏银行 2,417 元/月、3 年复合增速 −6%（幻灯片 53，时点不明）</td>
+<td><strong>证据基础不同</strong>：B05 看的是上市行披露，B08 看的是银联城商行明细；后者更贴近我方实际位置</td>
+</tr>
+<tr>
+<td>D4</td>
+<td>监管的角色</td>
+<td>外生变量，仅在利率新规、费率调整处提及（第 8、11–12 页）</td>
+<td>框架级前提："强监管、国家意志强主导""杠杆率是绝对红线""强金融监管是未来至少 5 年主旋律"（幻灯片 48、127）</td>
+<td><strong>框架支柱 vs 外生噪声</strong>：决定了两份材料的判断可否直接借用</td>
+</tr>
+<tr>
+<td>D5</td>
+<td>时间尺度</td>
+<td>评级窗口 6 个月（第 23 页评级体系）</td>
+<td>"未来至少 5 年""如果你看 10 年，竞争对手少之又少"（幻灯片 127、129）</td>
+<td><strong>同一句话在不同尺度下结论相反</strong>：引用前必须先问"这是 6 个月口径还是 5 年口径"</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="55-81">5.5 第三层｜可直接取用的工具清单（原第三层 §8.1）</h3>
+<h3 id="81">8.1 本层可直接取用的工具清单</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>工具</th>
+<th>出处</th>
+<th>用途（用在哪个决策上）</th>
+<th>可迁移性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>三类损益框架（获客/交易/资产）</td>
+<td>B08 幻灯片 41</td>
+<td>判断任一产品线能否赚钱；新产品立项</td>
+<td>高</td>
+</tr>
+<tr>
+<td>2</td>
+<td>六维＋盈利期竞争矩阵</td>
+<td>B08 幻灯片 40</td>
+<td>新产品定位与获客成本摊销判断</td>
+<td>高</td>
+</tr>
+<tr>
+<td>3</td>
+<td>玩家分层坐标系（五类）＋ 三类银行优劣势</td>
+<td>B08 幻灯片 47、54</td>
+<td>竞品地图与自我定位</td>
+<td>中高</td>
+</tr>
+<tr>
+<td>4</td>
+<td>区域银行"体量—业务—效率"三层位置诊断</td>
+<td>B08 幻灯片 50–53</td>
+<td>自我位置陈述（对外汇报）</td>
+<td>高</td>
+</tr>
+<tr>
+<td>5</td>
+<td>OTT/管道化判定规则（标准化 vs 复杂专业）</td>
+<td>B08 幻灯片 74</td>
+<td>决定哪些能力必须自建</td>
+<td>高</td>
+</tr>
+<tr>
+<td>6</td>
+<td>"金融不会被 721 通吃"四约束</td>
+<td>B08 幻灯片 48</td>
+<td>合作谈判的底层判断</td>
+<td>高</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Build/Partnership/Buy 决策框架</td>
+<td>B08 幻灯片 81</td>
+<td>能力获取路径选择</td>
+<td>高</td>
+</tr>
+<tr>
+<td>8</td>
+<td>合作方尽调／反制七条</td>
+<td>B08 幻灯片 88</td>
+<td>合作条款设计与对方能力核查</td>
+<td>高</td>
+</tr>
+<tr>
+<td>9</td>
+<td>A/B1/B2 业态分类 + LBS 四象限</td>
+<td>B08 幻灯片 107–110</td>
+<td>场景与合作对象分类</td>
+<td>高（方法）</td>
+</tr>
+<tr>
+<td>10</td>
+<td>分期实际年化利率测算法（pv/pmt/r/t）</td>
+<td>B05 第 9 页</td>
+<td>定价与收益真实性核验</td>
+<td>高</td>
+</tr>
+<tr>
+<td>11</td>
+<td>分期手续费还原为利息的口径修正</td>
+<td>B05 第 7–8 页</td>
+<td>收入结构复核</td>
+<td>高</td>
+</tr>
+<tr>
+<td>12</td>
+<td>笔数结构 vs 收入结构交叉表</td>
+<td>B05 第 9 页</td>
+<td>产品结构诊断</td>
+<td>高</td>
+</tr>
+<tr>
+<td>13</td>
+<td>成本四分法 + FTP 判据</td>
+<td>B05 第 12 页</td>
+<td>业务成本视图与"值不值得做"判断</td>
+<td>高</td>
+</tr>
+<tr>
+<td>14</td>
+<td>人均/渗透率的分母修正法</td>
+<td>B05 第 12–13 页</td>
+<td>所有"人均"结论的口径审查</td>
+<td>高（方法）</td>
+</tr>
+<tr>
+<td>15</td>
+<td>差距对标的分层做法（4 层次 + 单行样本）</td>
+<td>B05 第 15–17 页</td>
+<td>对标研究设计</td>
+<td>高（方法）</td>
+</tr>
+<tr>
+<td>16</td>
+<td>首次盈利年份证据链 + 同类型稀缺样本</td>
+<td>B05 第 7 页</td>
+<td>行业成熟度判断；找城商行可比样本</td>
+<td>高</td>
+</tr>
+<tr>
+<td>17</td>
+<td>信用卡战略地位 6 指标体系</td>
+<td>B05 第 19–21 页</td>
+<td>内部仪表盘</td>
+<td>高</td>
+</tr>
+</tbody>
+</table>
+<h3 id="56-8">5.6 第三层｜外部框架对照当前认知的校准点（8 条）</h3>
+<p>以下 8 条是把上述框架<strong>用于我方当前工作</strong>时必须做的校准（每条＝一个判断＋一个动作）。</p>
+<p><strong>校准点 1｜把"对标美国的空间"从"增速假设"降级为"方向提示"。</strong>
+理由：B05（第 12、15–16 页）与 B08（幻灯片 45–46）在这一点上<strong>同源同法</strong>（都用"美国渗透率/占比更高"推"中国有 N 倍空间"），且<strong>两者都跳过了收敛条件</strong>（收入水平、征信覆盖、消费习惯、监管取向）。两个立场相反的材料得出同一个推论，只能说明<strong>这个推论工具好用（因为它迎合了两边听众）</strong>，不能说明它被独立验证过。
+动作：任何引用"还有 X 倍空间"的表述，必须同时给出至少一个收敛条件及其当前状态；否则只写"方向"，不写"倍数"。</p>
+<p><strong>校准点 2｜先用 B08 的冷酷事实校正自我认知，再谈"必由之路"。</strong>
+理由：B05 的"必由之路"与 B08 的"区域银行基本缺席零售消费金融／贷记卡发卡几乎为 0／往往以资金通道的角色出现"合起来才是完整图景（B08 幻灯片 51、55）。B05 因样本是上市行，<strong>系统性地看不见城商行的真实处境</strong>。
+动作：把我方位置写清楚（发卡/流通/活卡/卡均交易/复合增速/收入结构），逐项标注口径与时点；幻灯片 53 中"江苏银行 2,417 元/月、3 年复合增速 −6%"须先回原件核对时点与"实动"口径后方可引用。</p>
+<p><strong>校准点 3｜分期是收益开关，但必须"重算"而不是"引用"实际利率。</strong>
+理由：B05 给的是<strong>算法 + 一个算例</strong>（第 9 页：6000 元/0.7%/6 期 → 实际年化 14.26%），不是一个可搬用的行业数值；而"名义手续费率 0.7%×12＝8.4%"与"实际 14.26%"之间约 1.7 倍的差距，正是收益叙事最容易失真的地方。
+动作：建表复算我方各类分期（账单/灵活/大额/现金/POS）的实际年化，与 FTP、风险成本、获客成本同表呈现，先判断资产层能否覆盖前两层（B08 幻灯片 41）。</p>
+<p><strong>校准点 4｜所有口径先还原再比较。</strong>
+理由：本层暴露了四类口径陷阱：① <strong>分期手续费＝利息</strong>（B05 第 7 页明说，招行 2015 年起归入利息）→"非息收入占比"类叙事须复核；② <strong>发卡量 ≠ 流通卡 ≠ 流通户 ≠ 活卡</strong>（B05 第 6/12/17/21 页四种口径混用，B08 幻灯片 26 用"新户/流通户"）；③ <strong>人均持卡分母</strong>（全国 0.39 张 vs 20-59 岁城镇 0.95 张，B05 第 12 页）；④ <strong>"实动卡均交易"无公开定义</strong>（B08 幻灯片 53 只定义了活卡）。
+动作：建立一张"指标—口径—时点—来源"对照表，任何跨行/跨年比较先过这张表。</p>
+<p><strong>校准点 5｜把"合作价值"清单化、定量化再谈判。</strong>
+理由：B08 幻灯片 123/125 把合作价值写成漂亮的清单（品牌/资金/财务/O2O/场景/经营/运营/科技赋能；树品牌/补短板/增效益），但<strong>全部是定性表述、无一条量化承诺</strong>。而同一份材料幻灯片 88 的调研小结里，讲者自己列出的第一条合作方特征就是"关注合作方能投入的资源"——这句正好可以反过来当我方的尺子。
+动作：逐项要求对合作方给出可验证的投入承诺（流量规模、场景排他性、数据回传、联合风控责任），并与"资金通道"红线（校准点 2）绑定检查。</p>
+<p><strong>校准点 6｜把 B08 的年度判断当"可回测命题"管理，而不是当结论引用。</strong>
+理由：幻灯片 126–127 的六条判断（"传统金融的黄金年代已经结束""互联网金融的泡沫三年内破灭""强金融监管是未来至少 5 年主旋律"等）<strong>没有给依据与证伪条件</strong>；其中"泡沫三年内破灭"是 2018-05 作出的明确可回测预测。本次按纪律不引入 2019 年后的外部数据核验，故只标注"应回测"。
+动作：把这六条拆成"命题＋证伪条件＋复盘时点"三列，进入我方的行业假设台账。</p>
+<p><strong>校准点 7｜永远带着立场引用（本层元规则）。</strong>
+理由：B08 是招商材料（末页直接请求江苏银行给合作机会；团队为前招行/平安卡中心高管），其"外部视角"实质是<strong>信用卡体系内部人视角 + 平台商务立场</strong>；B05 是卖方报告（有评级与荐股）。两者都不是中性第三方评价。
+动作：融合稿中凡引用 B05/B08 的判断，句末固定标注来源立场（"券商研究，2018-06，含荐股立场"／"平台商务材料，2018-05，含合作诉求"）。</p>
+<p><strong>校准点 8｜风险清单直接对齐，不要新造。</strong>
+理由：B05 的风险提示只有两句——「经济超预期下行导致资产质量大幅恶化；存款成本快速抬升风险等」（B05 第 22 页）；B08 未系统列风险，但其"三类损益"隐含了风险落点（呆账准备、催收成本在资产层）。<strong>B05 未把"获客成本上升"列为风险，而 B08 的获客层恰恰是亏损层</strong>——两者的风险视图互补。
+动作：把两方风险视图合并为一张表（资产质量 / 资金成本 / 获客成本 / 定价与合规 / 合作依赖），逐项落到我方指标。</p>
+<hr />
+<h2 id="_4">六、跨层观察</h2>
+<blockquote>
+<p>本章是<strong>融合层独有的产出</strong>：三层单独看都成立，合起来才能看到"能组装什么、哪里会互相打架、哪些证据其实只有一份"。</p>
+</blockquote>
+<h3 id="61">6.1 三层互补：可以组装成的六条"工作链"</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>工作链（成品）</th>
+<th>第一层提供（方法论骨架）</th>
+<th>第二层提供（行内打法）</th>
+<th>第三层提供（外部框架与校准）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>年度经营计划模板</strong>：指标树＋杠杆排序＋正负分同表</td>
+<td><code>A10-01</code> 目标公式分解（流通卡卡均交易＝激活率×实动率×实动卡卡均）＋"每动作＝单位净提升×覆盖面"</td>
+<td><code>B-06-01</code> 分期核心指标分解（余额/成交额/渗透率/户均/留存）＋<code>B-01-03</code> 负分考核</td>
+<td><code>B-08-12</code> 三类损益（先问"资产层能否覆盖获客层"）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>活动与定价测试标准流程</strong>：立项即填五栏</td>
+<td><code>A01-03</code> PSM-DID／简化平行世界＋<code>A01-04</code> 定位→主指标映射＋<code>A06-01</code> AB 双指标判读</td>
+<td><code>B-06-04</code> 差异化定价 4 周实测（读渗透率/户均金额/手续费收入）</td>
+<td><code>B-05-13</code> 实际年化测算（定价类测试必带）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>口径对照表</strong>：任何比较先过表</td>
+<td><code>B-05-12</code> 科目-实质映射＋还原；<code>B-05-15</code> 分母选择；<code>A04-01</code> 渗透率与归属口径</td>
+<td><code>B-06-01</code> 的统一口径要求；<code>B-06-02</code> 标杆数据须标来源</td>
+<td>校准点 4（分期＝利息；发卡量≠流通卡≠流通户≠活卡；实动卡均交易无公开定义）</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>阈值与定价的验算规程</strong></td>
+<td><code>B-05-13</code>（实际年化）＋<code>B-05-14</code>（盈亏门槛及口径纪律）</td>
+<td><code>B-01-01</code> 早偿 6%＝财务测算临界（11–12 笔）再压一档；<code>B-01-02</code> 返佣封顶与差额底线</td>
+<td><code>B-08-13</code> 客户经营是护城河、<code>B-08-12</code> 三类损益</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>客群工程全链</strong>：分层→标签→投放→定价</td>
+<td><code>A01-01</code> 五阶段×八层；<code>A16-01</code> 切分点＋交叉聚类；<code>A17-01</code> 意愿×响应四象限；<code>A03-01</code> 双模型最优分配</td>
+<td><code>B-06-06</code> 四层标签体系；<code>B-06-03</code> 产品-渠道-客户补缺</td>
+<td><code>B-08-11</code> 六维＋盈利期矩阵（收口"获客成本用什么摊销"）</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>线上转化＋消保前置的一体化动作</strong></td>
+<td><code>A02-01</code> 曝光-转化节点（方法可迁移、阈值须重测）</td>
+<td><code>B-03-02</code> 前十大来电回溯＋未激活不付 CPS＋T+3 主动外呼销卡</td>
+<td><code>B-08-23</code> 4C 挑战评估与成本结构脆弱点</td>
+</tr>
+</tbody>
+</table>
+<h3 id="62_1">6.2 三层之间的张力（并列呈现，不调和）</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>张力</th>
+<th>一方</th>
+<th>另一方</th>
+<th>裁定建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>规模 vs 风险的考核张力</strong></td>
+<td><code>A10-01</code> 杠杆量化天然指向"做大规模"（前置动作覆盖面大、每 pp 杠杆更高）</td>
+<td><code>B-01-03</code> 追回率挂负分＋第二层附一：<strong>"直销队伍已基本放弃分期业务营销，整体转向消费贷等业务拓展，对于做回分期业务存在疑虑"</strong></td>
+<td>以 <code>B-01-03</code> 的<strong>正负分同表</strong>（当期与半年各计 50%）为默认；杠杆量化<strong>只用于排序</strong>，不单独作为加压依据。<strong>若只发文件不给收益，机制空转</strong>（bank-09 建议 1）</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>低线城市放量 vs 风险前置</strong></td>
+<td><code>B-06-03</code> 明确"低线城市的现金分期户渗透率显著高于高线城市"并据此给三四五线定向获客指令</td>
+<td><code>A11-01</code> STP：要 5 档"小镇高活"须有<strong>更高的风险容忍度与更强的风险识别能力</strong>；<code>B-08-17</code> 区域银行位置诊断（卡均交易与增速双低）</td>
+<td>低线城市放量必须<strong>以风险识别能力为前置条件</strong>，并在 <code>B-02-01</code> 的再逾期监测口径下放量（bank-09 建议 2）</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>费用压降 vs 前置投入</strong></td>
+<td><code>B-02-03</code> 费用三分类（新发卡费用一次性可收回；压权益费/导流费/运营费，手段是"提高平台发卡质量、拦截尾部客户"）</td>
+<td><code>A10-01</code> 前置性动作（促激活、促绑卡）覆盖面最大、杠杆最高</td>
+<td>压降按第二层自带边界执行——<strong>"压降必须与调优准入策略配对"</strong>；节省额度优先投向高杠杆前置动作</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>外部平台"赋能"叙事 vs 行内自主规则（最直接的一处矛盾）</strong></td>
+<td><code>B-08-28</code> 双向赋能／"四个一"／三价值（树品牌·补短板·增效益）——全为定性、无一条量化承诺</td>
+<td>第二层附三：<strong>"用外部流量，不用外部规则"</strong>；客户、数据、账户、定价规则必须留在行内；<code>B-08-19</code> 预警"往往以资金通道的角色出现"</td>
+<td><strong>以行内为主权方</strong>：可让渡流量与场景，不让渡客户、数据、定价规则与账期节奏（bank-09 建议 3）；合作条款按 <code>B-08-25</code> 逐项要求可验证投入，并按校准点 5 定量化</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>线上转化优化 vs 消保/反欺诈</strong></td>
+<td><code>A02-01</code> 用停留时长/曝光次数找转化节点（3 秒/20 秒）</td>
+<td><code>B-03-02</code> 前十大来电回溯、发卡 T+3 主动核实、未激活不付 CPS；第二层附三<strong>"外部风险的放大器往往是自己人"</strong>（B07 幻灯 9：银行员工错误解释、违规提供书面承诺）</td>
+<td>转化优化与消保动作<strong>同批下发</strong>：话术培训与考核绑定，并沿用 <code>B-01-01</code> 已有的"严禁承诺还款满一定期限免违约金"红线（bank-09 建议 4）</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>模型确定性叙事 vs 样本可信度</strong></td>
+<td><code>A03-01</code>、<code>A10-01</code>、<code>A16-01</code> 依赖模型与图表结论</td>
+<td>同一批材料自陈"示意数据""假数据""排序性为真""绝对值已模糊处理"（见 6.6 V-02）</td>
+<td>凡引自阿蒙森图表的绝对值<strong>一律不得引用</strong>，只引用排序与结构</td>
+</tr>
+</tbody>
+</table>
+<h3 id="63">6.3 证据独立性警示（★引用本报告前必读）</h3>
+<ol>
+<li><strong>B05 被两层各提取一次，同一引文不得计为两条独立证据。</strong> 第一层从"研究方法"角度、第三层从"外部评价框架"角度各引用了 B05 的同几句关键句（去重对照见<strong>附录 B</strong>）。本报告已把每一处重叠句的"证据归属"指定为唯一一条，另一条只作<strong>交叉引用</strong>。</li>
+<li><strong>"中美对标"的 D1 同源问题（第三层揭示）</strong>：B05（第 12、15–16 页）与 B08（幻灯片 45–46）在"对标美国 → 还有 N 倍空间"上<strong>同源同法</strong>。两份材料立场相反（卖方荐股 vs 平台招商）却得出同一推论，只说明该推论工具"两边都爱用"，<strong>不构成独立验证</strong>。凡把二者并列为"多来源印证"的写法，应一律删除。</li>
+<li><strong>阿蒙森是平台口径</strong>：A 系列数据来自美团侧经营口径（联名卡订单渗透率、美团渠道行为、平台侧营销费用分摊），与行内自营口径<strong>不可直接换算</strong>；引用时必须保留"平台视角"标注。</li>
+<li><strong>B08 是商务材料</strong>：其对我方/区域银行<strong>劣势的描述可信度，高于其对平台自身优势的描述</strong>（详见 <code>B-08-27</code>）。使用整份 B08 时，应连带标注"平台商务材料，2018-05，含合作诉求"。</li>
+</ol>
+<h3 id="64">6.4 对江苏银行当前工作的综合可迁移性排序</h3>
+<p><strong>高（本月可动：只需发文＋台账模板＋月度通报，不动系统、不需外部平台）</strong></p>
+<table>
+<thead>
+<tr>
+<th>统一编号</th>
+<th>方法</th>
+<th>迁移理由</th>
+<th>前置条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>B-01-01</code></td>
+<td>早偿率阈值与商户清退分层</td>
+<td>阈值是<strong>算出来的</strong>（财务测算临界 11–12 笔→再压一档得 6%），"阈值—协议—通报—清退"闭环最完整</td>
+<td>发文＋台账＋月度通报；配可替换商户清单；<strong>先解意愿抵触</strong></td>
+</tr>
+<tr>
+<td><code>B-01-02</code></td>
+<td>返佣封顶与差额底线</td>
+<td>最易被忽略却最关键：防"以返佣换规模"打穿利润</td>
+<td>封顶（≤14%）与差额底线（≥10%）<strong>两条一起下</strong></td>
+</tr>
+<tr>
+<td><code>B-01-03</code></td>
+<td>追回率挂绩效负分</td>
+<td>损失内化最直接的机制，且<strong>个人与机构双挂</strong></td>
+<td>正负分同表（当期与半年各 50%），否则队伍退出该品种</td>
+</tr>
+<tr>
+<td><code>B-07-01</code></td>
+<td>高返下的早偿监测（mob3/6/12）</td>
+<td>可批量复制的监测模板，自带"观察期不足"的诚实边界</td>
+<td>固定观察窗口＋分年度口径</td>
+</tr>
+<tr>
+<td><code>B-07-02</code></td>
+<td>返佣摊销与追回联动</td>
+<td>把损失当期显性化＋系统留痕可查</td>
+<td>依赖协议换签进度（换签不到位即空转）</td>
+</tr>
+<tr>
+<td><code>B-02-01</code></td>
+<td>追回目标三段拆解</td>
+<td>用"变化率×剩余月份"把年度目标拆成月度增降幅</td>
+<td><strong>必须配再逾期监测与回收上限</strong>（bank-09 建议 2）</td>
+</tr>
+<tr>
+<td><code>B-06-01</code></td>
+<td>分期核心指标分解</td>
+<td>直接做 KPI 模板，只需统一口径</td>
+<td>结果指标与过程指标一起考核</td>
+</tr>
+<tr>
+<td><code>B-06-04</code></td>
+<td>差异化定价 A/B 实测</td>
+<td>4 周可完成的"先测再推"标准动作</td>
+<td>先定最低定价与最低差额（对应 <code>B-01-02</code>）</td>
+</tr>
+<tr>
+<td><code>A01-03</code></td>
+<td>无对照组活动增量评估</td>
+<td>行内大量全量活动无对照组；自带科学版/可复现版两档</td>
+<td>把渗透率、增量金额、ROI 三条口径写进模板</td>
+</tr>
+<tr>
+<td><code>A01-04</code></td>
+<td>活动定位→评价指标匹配</td>
+<td>低成本、防自欺</td>
+<td>立项先填"定位→主指标→口径"三栏</td>
+</tr>
+<tr>
+<td><code>A06-01</code></td>
+<td>AB 双指标判读（相对提升＋结构占比）</td>
+<td>防止用单一指标自证成功</td>
+<td>分层后样本量不足时须标注不置信</td>
+</tr>
+<tr>
+<td><code>A17-01</code></td>
+<td>意愿×营销响应四象限</td>
+<td>外呼资源有限时最实用</td>
+<td>把"减少打扰"写入考核，否则执行不下去</td>
+</tr>
+<tr>
+<td><code>B-05-12</code></td>
+<td>收入结构解构＋口径还原</td>
+<td>"口径先统一再比较"最直接的示范</td>
+<td>跨行比较前统一科目口径</td>
+</tr>
+<tr>
+<td><code>B-05-13</code></td>
+<td>分期实际年化测算</td>
+<td>定价与收益真实性核验的必备尺（<strong>须重算，不得引用 14.26%</strong>）</td>
+<td>建复算表，含服务费/权益费</td>
+</tr>
+<tr>
+<td><code>B-05-15</code></td>
+<td>人均指标分母修正</td>
+<td>报人均必报分母</td>
+<td>分母变更须显式说明</td>
+</tr>
+<tr>
+<td><code>B-08-19</code></td>
+<td>必由之路＋资金通道预警</td>
+<td>对我方位置最贴切的外部描述</td>
+<td>与"规则留行内"绑定（bank-09 建议 3）</td>
+</tr>
+<tr>
+<td><code>B-08-25</code></td>
+<td>合作方尽调七条（反向用尺）</td>
+<td>把"关注合作方能投入的资源"变成条款要求</td>
+<td>逐项要求可验证投入承诺</td>
+</tr>
+</tbody>
+</table>
+<p><strong>中（季度可推：需数据平台/系统参数重算或商务谈判）</strong></p>
+<table>
+<thead>
+<tr>
+<th>统一编号</th>
+<th>方法</th>
+<th>迁移理由</th>
+<th>卡点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>B-06-03</code></td>
+<td>产品-渠道-客户三位一体补缺</td>
+<td>可抽成"补缺清单"逐项打勾</td>
+<td>举措多，须绑定责任人与完成时点</td>
+</tr>
+<tr>
+<td><code>B-06-05</code></td>
+<td>AI 电销与电销阶梯定价</td>
+<td>"按结果阶梯定价"可复制到所有外包渠道</td>
+<td>需外包商务谈判；AI 话术与授权须锁死（消保）</td>
+</tr>
+<tr>
+<td><code>B-06-06</code></td>
+<td>分期客户四层标签</td>
+<td>可作标准标签框架</td>
+<td>依赖数据平台排期</td>
+</tr>
+<tr>
+<td><code>B-06-07</code></td>
+<td>"达标门槛"式活动设计</td>
+<td>费用使用率的标准做法</td>
+<td>门槛须与渗透率基线对齐</td>
+</tr>
+<tr>
+<td><code>B-02-03</code></td>
+<td>费用压降三分类</td>
+<td>"数字卡替代实体卡"等通用路径</td>
+<td>必须与调优准入配对，否则砍掉增长</td>
+</tr>
+<tr>
+<td><code>B-02-04</code></td>
+<td>客户生命周期价值论证</td>
+<td>争取管理层资源的有效口径</td>
+<td>需统一"纯新客户/引流/转化"口径</td>
+</tr>
+<tr>
+<td><code>B-02-02</code></td>
+<td>驻场诊断式流程攻坚</td>
+<td>跨部门流程问题的最快解法</td>
+<td>属资源投入，须先有量化基线</td>
+</tr>
+<tr>
+<td><code>B-03-01</code></td>
+<td>额度动态管理与资本成本管控</td>
+<td>方向明确</td>
+<td>依赖额度系统与策略参数；降额须防客诉</td>
+</tr>
+<tr>
+<td><code>B-03-02</code></td>
+<td>前十大来电压降（消保前置）</td>
+<td>"前十大回溯＋未激活不付 CPS"成本低</td>
+<td>CPS 规则调整需与平台方谈判</td>
+</tr>
+<tr>
+<td><code>A01-01</code></td>
+<td>五阶段×八层级分层</td>
+<td>骨架与平台无关，可整段迁移</td>
+<td>8 层切分点必须用行内行为数据重算</td>
+</tr>
+<tr>
+<td><code>A01-02</code></td>
+<td>vintage 定切分点</td>
+<td>行内账龄数据即得</td>
+<td>需统一获客口径与账龄定义</td>
+</tr>
+<tr>
+<td><code>A16-01</code></td>
+<td>聚类要素法（切分点＋交叉）</td>
+<td>低成本可落地</td>
+<td>必须区分"渗透率高的客群"与"实际获批的客群"</td>
+</tr>
+<tr>
+<td><code>A11-01</code></td>
+<td>STP 三段式</td>
+<td>框架可整段迁移</td>
+<td>利润口径（资金成本 4.0%、NCL 折算）须换行内口径重算</td>
+</tr>
+<tr>
+<td><code>A03-01</code></td>
+<td>睡眠倾向分＋价格敏感度双模型</td>
+<td>双模型拆解＋成本约束最优化＋8:1:1 样本机制可迁移</td>
+<td>有建模门槛；可先落"8:1:1＋分档阈值"简版并如实标注</td>
+</tr>
+<tr>
+<td><code>A04-01</code></td>
+<td>漏斗拆解与团队归因</td>
+<td>跷跷板＋端到端结果指标是线上获客通用治理逻辑</td>
+<td>会冲击原有 KPI，需组织配套；占比须重算</td>
+</tr>
+<tr>
+<td><code>A10-01</code></td>
+<td>经营动作杠杆量化</td>
+<td>把经营计划写成可验收过程指标</td>
+<td>须自测单位增量，并对多动作叠加去重</td>
+</tr>
+<tr>
+<td><code>B-05-14</code></td>
+<td>盈亏平衡门槛与引用纪律</td>
+<td>规模阈值分三档并标口径的方法有用</td>
+<td>300 万张等经验值<strong>必须重算</strong>，不可引用</td>
+</tr>
+<tr>
+<td><code>B-05-16</code></td>
+<td>代表公司深钻拆解</td>
+<td>"按模式选代表＋同组比率横比＋由比率反推模式"完整</td>
+<td>须先做机构范围与口径还原</td>
+</tr>
+<tr>
+<td><code>B-08-11</code></td>
+<td>六维＋盈利期矩阵</td>
+<td>收口问题极好："盈利期多长、用什么摊销获客成本"</td>
+<td>分母与单笔经济性需行内数据补齐</td>
+</tr>
+<tr>
+<td><code>B-08-12</code></td>
+<td>三类损益框架</td>
+<td>判断任一产品线能否赚钱的分层账</td>
+<td>需行内成本归集口径配套</td>
+</tr>
+<tr>
+<td><code>B-08-17</code></td>
+<td>区域银行位置诊断</td>
+<td>仅有的外部对我方定位证据</td>
+<td>口径（实动/活卡）与时点须核实，仅作参照</td>
+</tr>
+<tr>
+<td><code>B-08-22</code></td>
+<td>OTT/管道化判定规则</td>
+<td>决定"哪些能力必须自建"</td>
+<td>需逐产品线复核"是否标准化"</td>
+</tr>
+</tbody>
+</table>
+<p><strong>低（只作方向、历史样本或立场参照，不可直接落地）</strong></p>
+<table>
+<thead>
+<tr>
+<th>统一编号</th>
+<th>方法</th>
+<th>为什么低</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A03-05</code></td>
+<td>自下而上市场空间测算</td>
+<td>输入参数多为外部估算，只适合做增长空间的合理性检验，不宜作为经营目标依据</td>
+</tr>
+<tr>
+<td><code>A09-01</code></td>
+<td>类决策树单因素分析</td>
+<td>该期原文自陈绝对值为"模糊处理"，<strong>只有排序为真</strong></td>
+</tr>
+<tr>
+<td><code>A02-01</code></td>
+<td>曝光-转化节点（3 秒/20 秒）</td>
+<td>方法是通用的，但<strong>具体阈值是该渠道该素材下的事实</strong>，必须重测</td>
+</tr>
+<tr>
+<td><code>A03-04</code></td>
+<td>跨界对标三段法</td>
+<td>跨境监管/竞争环境不同，权益内容不可移植；价值在于"先归一化再比较＋标注不可比项"的纪律</td>
+</tr>
+<tr>
+<td><code>B-05-17</code></td>
+<td>结论-前提-风险三段式</td>
+<td>结构可用，但卖方评级与免责体系不适用于行内汇报</td>
+</tr>
+<tr>
+<td><code>B-08-26</code></td>
+<td>A/B1/B2 业态分类</td>
+<td>面向本地生活服务业，迁移到金融须重新定义"供给与履约"</td>
+</tr>
+<tr>
+<td><code>B-08-09</code></td>
+<td>年度判断与十年尺度</td>
+<td>应作"可回测命题"管理，不作结论引用（含"泡沫三年内破灭"，本报告按纪律不予核验）</td>
+</tr>
+<tr>
+<td><code>B-08-21</code></td>
+<td>三流合一与信息流制高点</td>
+<td>平台立场的诊断，其结论指向"引入外部信息流"，须先验证自有数据是否真不可用</td>
+</tr>
+<tr>
+<td><code>B-08-10</code></td>
+<td>消金三类商业模式光谱</td>
+<td>分类以 2018 年业态为准，B 类（现金贷）形态此后已变</td>
+</tr>
+</tbody>
+</table>
+<h3 id="65-bank-09">6.5 四条融合层采信建议的落点（bank-09 提出，本报告全部采纳）</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>建议</th>
+<th>材料证据</th>
+<th>本报告落点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>意愿抵触是真问题</strong>（不是不会做，是不愿做）</td>
+<td><code>B-04</code> 工作表1 行7：「目前直销队伍已基本放弃分期业务营销，整体转向消费贷等业务拓展，对于做回分期业务存在疑虑」（该表年份未标注，推断 2025）</td>
+<td>6.4 全部"高"组的前置条件；机制上配 <code>B-01-03</code> 正负分同表；<strong>只发文件不给收益＝空转</strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>必须加再逾期监测</strong></td>
+<td><code>B-04</code> 已记录"前期协商还款再逾期金额已超过首次进入不良金额"</td>
+<td>6.2 张力 2＋<code>B-02-01</code> 的可迁移性注释：协商还款放宽须同时设再逾期监测与回收上限</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>用外部流量，不用外部规则</strong></td>
+<td>第二层附三：客户、数据、账户、定价规则必须留在行内；<code>B-01</code> 幻灯8 要求分行申报时附外部公司份额/同业通过率/价格，把外部信息变行内输入</td>
+<td>6.2 张力 4 的裁定＋<code>B-08-19</code>／<code>B-08-25</code>；写进合作管理办法</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>员工违规是外部风险的放大器</strong></td>
+<td><code>B-07</code> 幻灯9：客诉激增"不仅有车商诱导和网络环境影响，也有银行员工错误解释…还有个别经办人员存在向客户违规提供书面承诺的行为"</td>
+<td>6.2 张力 5＋<code>B-03-02</code>＋<code>B-01-01</code> 的违约金承诺红线；话术培训与考核<strong>同批下发</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="66">6.6 跨层待验证项汇总（不臆造、不补数）</h3>
+<table>
+<thead>
+<tr>
+<th>编号</th>
+<th>待验证内容</th>
+<th>来源层</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V-01</td>
+<td>阿蒙森各期图表中的<strong>绝对值</strong>（正文未写出的 pp/百分比）</td>
+<td>一</td>
+<td><code>text/</code> 提取件仅存数值标签残片，需回 <code>sources/</code> 原件读图</td>
+</tr>
+<tr>
+<td>V-02</td>
+<td>A10（原 A-17）、A09（原 A-11）相关期次图表数值</td>
+<td>一</td>
+<td>原文明确标注为"示意数据/假数据"，<strong>仅排序性为真</strong></td>
+</tr>
+<tr>
+<td>V-03</td>
+<td>睡眠倾向模型的分数阈值、区分度（AUC）与漂移监控</td>
+<td>一</td>
+<td>正文未给</td>
+</tr>
+<tr>
+<td>V-04</td>
+<td>客群聚类的具体算法与阈值</td>
+<td>一</td>
+<td>正文只给结果</td>
+</tr>
+<tr>
+<td>V-05</td>
+<td>分层维度迭代期的"双轨过渡"做法</td>
+<td>一</td>
+<td>原文未说明口径切换期如何处理数据可比性</td>
+</tr>
+<tr>
+<td>V-06</td>
+<td>多动作叠加的相互蚕食效应</td>
+<td>一</td>
+<td>原文按单动作量化杠杆</td>
+</tr>
+<tr>
+<td>V-07</td>
+<td>阿蒙森 2022 年第 6 期内容</td>
+<td>一</td>
+<td>该期不在本批材料中</td>
+</tr>
+<tr>
+<td>V-08</td>
+<td>B05 全篇的"我国/上市行"整体口径未拆城商行层级</td>
+<td>一</td>
+<td>需另找区域性银行样本才能用于城商行对标</td>
+</tr>
+<tr>
+<td>V-09</td>
+<td>B04 的计划年度</td>
+<td>二</td>
+<td>文内未标注日期，2025 年度为推断</td>
+</tr>
+<tr>
+<td>V-10</td>
+<td>汽车分期早偿规律能否外推到装修/车位分期</td>
+<td>二</td>
+<td>各品种早偿规律不同，阈值须重估</td>
+</tr>
+<tr>
+<td>V-11</td>
+<td>B08 幻灯片 41/49/54 多栏页的<strong>原始配对关系</strong></td>
+<td>三</td>
+<td>文本层按行序打散，本报告按语义分组，配对须回原件核对</td>
+</tr>
+<tr>
+<td>V-12</td>
+<td>B08 幻灯片 53 江苏省数据的<strong>口径与时点</strong></td>
+<td>三</td>
+<td>该页未标时点（同节前页为截至 2016 年底），"实动卡均交易"无公开定义</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="a">附录 A：原编号 → 统一编号映射表</h2>
+<p><strong>A.1 第一层（bank-10，25 条）</strong> —— 统一编号按各条<strong>关键引文所属材料</strong>分配；B05 相关条目归入 <code>B-05-xx</code>（与第三层的 <code>B-05-01~11</code> 顺序续号，不冲突）。</p>
+<table>
+<thead>
+<tr>
+<th>原编号</th>
+<th>统一编号</th>
+<th>方法名</th>
+<th>出处（原稿）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A-01</code></td>
+<td><code>A01-01</code></td>
+<td>客户生命周期五阶段 × 八层级分层法</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码 4–5（目录与核心摘要）、PDF页码 5–7（分层方法论与策略表）</td>
+</tr>
+<tr>
+<td><code>A-02</code></td>
+<td><code>A01-02</code></td>
+<td>vintage 曲线定分层切分点</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码5（渗透率 vintage）、PDF页码5 脚注（M0–M6+ 定义）</td>
+</tr>
+<tr>
+<td><code>A-03</code></td>
+<td><code>A11-01</code></td>
+<td>STP 三段式（细分→目标→定位）选客群</td>
+<td>A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码2–3（STP 引言与理论释义图）、PDF页码4–7（六档细分与 Targeting / Positioning）</td>
+</tr>
+<tr>
+<td><code>A-04</code></td>
+<td><code>A11-02</code></td>
+<td>分层维度的年度迭代法</td>
+<td>A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码3</td>
+</tr>
+<tr>
+<td><code>A-05</code></td>
+<td><code>A01-03</code></td>
+<td>大促活动效果评估：PSM-DID 与简化平行世界</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码9（方法论述与口径定义）、PDF页码9–10（实例）</td>
+</tr>
+<tr>
+<td><code>A-06</code></td>
+<td><code>A01-04</code></td>
+<td>活动效果按活动定位分层评价</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码8–9；A05 阿蒙森洞察-2022年第5期.pdf，PDF页码7；A06 阿蒙森洞察-2022年第7期.pdf，PDF页码8；A12 阿蒙森洞察报告-2021年第4期.pdf，PDF页码9</td>
+</tr>
+<tr>
+<td><code>A-07</code></td>
+<td><code>A02-01</code></td>
+<td>活动前曝光-转化结构分析法（定关键时间节点）</td>
+<td>A01 阿蒙森洞察-2022年第1期.pdf，PDF页码10（曝光次数）；A02 阿蒙森洞察-2022年第2期.pdf，PDF页码8–9（停留时长）</td>
+</tr>
+<tr>
+<td><code>A-08</code></td>
+<td><code>A06-01</code></td>
+<td>单变量 A/B 实验 + 分客群响应拆解</td>
+<td>A06 阿蒙森洞察-2022年第7期.pdf，PDF页码4–7；A02 阿蒙森洞察-2022年第2期.pdf，PDF页码8–11</td>
+</tr>
+<tr>
+<td><code>A-09</code></td>
+<td><code>A02-02</code></td>
+<td>分渠道分客群 TGI 定位经营阵地</td>
+<td>A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码5–6；A02 PDF页码14；A14 阿蒙森洞察报告-2021年第6期.pdf，PDF页码4–7</td>
+</tr>
+<tr>
+<td><code>A-10</code></td>
+<td><code>A16-01</code></td>
+<td>客户画像的聚类要素法（切分点＋交叉）</td>
+<td>A13 阿蒙森洞察报告-2021年第5期.pdf，PDF页码9–10；A16 阿蒙森洞察报告-2021年第8期.pdf，PDF页码7–8；A09 阿蒙森洞察报告-2021年第1期.pdf，PDF页码4–5</td>
+</tr>
+<tr>
+<td><code>A-11</code></td>
+<td><code>A09-01</code></td>
+<td>经营维度的类决策树单因素分析法</td>
+<td>A09 阿蒙森洞察报告-2021年第1期.pdf，PDF页码4–5</td>
+</tr>
+<tr>
+<td><code>A-12</code></td>
+<td><code>A17-01</code></td>
+<td>四象限资源分配法（意愿 × 营销响应）</td>
+<td>A17 阿蒙森洞察报告-2021年第9期.pdf，PDF页码9–10</td>
+</tr>
+<tr>
+<td><code>A-13</code></td>
+<td><code>A03-01</code></td>
+<td>算法模型替代固定阈值：睡眠倾向分＋价格敏感度双模型</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码15–17</td>
+</tr>
+<tr>
+<td><code>A-14</code></td>
+<td><code>A03-02</code></td>
+<td>睡眠户促活三阶段演进复盘</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码15、PDF页码16–17</td>
+</tr>
+<tr>
+<td><code>A-15</code></td>
+<td><code>A03-03</code></td>
+<td>NPS 三层问卷诊断法</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码8–10</td>
+</tr>
+<tr>
+<td><code>A-16</code></td>
+<td><code>A04-01</code></td>
+<td>分环节漏斗拆解与团队责任切分</td>
+<td>A04 阿蒙森洞察-2022年第4期.pdf，PDF页码10–12</td>
+</tr>
+<tr>
+<td><code>A-17</code></td>
+<td><code>A10-01</code></td>
+<td>经营动作杠杆量化：单位提升 × 覆盖面</td>
+<td>A10 阿蒙森洞察报告-2021年第2期.pdf，PDF页码1–3（PDF页码8–10）</td>
+</tr>
+<tr>
+<td><code>A-18</code></td>
+<td><code>A03-04</code></td>
+<td>跨界对标的方法（亚马逊联名卡案例）</td>
+<td>A03 阿蒙森洞察-2022年第3期.pdf，PDF页码5–7</td>
+</tr>
+<tr>
+<td><code>B-01</code></td>
+<td><code>B-05-12</code></td>
+<td>"收入结构解构 + 口径还原"分析法</td>
+<td>B05 信用卡大有可为，渐成零售业务主力（天风证券，2018-06-03）.pdf，PDF页码 6–9（表1、图4、图6、图9 相关段落）</td>
+</tr>
+<tr>
+<td><code>B-02</code></td>
+<td><code>B-05-13</code></td>
+<td>分期实际年化利率的现金流测算法</td>
+<td>B05，PDF页码9（"分期收入，筑梦新蓝海"节）</td>
+</tr>
+<tr>
+<td><code>B-03</code></td>
+<td><code>B-05-14</code></td>
+<td>"盈亏平衡点"阈值判断法</td>
+<td>B05，PDF页码6–7、PDF页码12（"信用卡业务支出，考验综合经营能力"节）</td>
+</tr>
+<tr>
+<td><code>B-04</code></td>
+<td><code>B-05-15</code></td>
+<td>国际对标法的口径处理（人均持有量）</td>
+<td>B05，PDF页码12–17</td>
+</tr>
+<tr>
+<td><code>B-05</code></td>
+<td><code>A03-05</code></td>
+<td>自下而上市场空间测算法</td>
+<td>注：该方法出自 <strong>A03</strong>（阿蒙森），非 B05；列于此处是与 B05 的行业测算形成<strong>两种测算范式对照</strong></td>
+</tr>
+<tr>
+<td><code>B-06</code></td>
+<td><code>B-05-16</code></td>
+<td>单一公司深钻拆解（招行/中信/浦发三案例）</td>
+<td>B05，PDF页码19–22（"4.3 信用卡收入贡献有多大？—细看招行、中信、浦发"与投资建议节）</td>
+</tr>
+<tr>
+<td><code>B-07</code></td>
+<td><code>B-05-17</code></td>
+<td>研究假设的前置条件与风险提示写法</td>
+<td>B05，PDF页码21–22（"5. 投资建议"与"6. 风险提示"）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A.2 第二层（bank-09，18 条）</strong></p>
+<table>
+<thead>
+<tr>
+<th>原编号</th>
+<th>统一编号</th>
+<th>方法名</th>
+<th>出处（原稿）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>B-01</code></td>
+<td><code>B-06-01</code></td>
+<td>分期核心指标分解法（过程指标优先）</td>
+<td>B06《江苏银行信用卡线上分期业务规划F.pptx》幻灯片 20</td>
+</tr>
+<tr>
+<td><code>B-02</code></td>
+<td><code>B-06-02</code></td>
+<td>同业双基准对标找缺口法</td>
+<td>B06 幻灯片 15、16、17</td>
+</tr>
+<tr>
+<td><code>B-03</code></td>
+<td><code>B-06-03</code></td>
+<td>产品-渠道-客户三位一体补缺法</td>
+<td>B06 幻灯片 23（总体思路）、24（举措1）、27（举措2-3/8）、28（举措3）、29（举措4）、32（举措7）、36（举措10）</td>
+</tr>
+<tr>
+<td><code>B-04</code></td>
+<td><code>B-06-04</code></td>
+<td>差异化定价 A/B 实测与客群切分法</td>
+<td>B06 幻灯片 30（举措5）</td>
+</tr>
+<tr>
+<td><code>B-05</code></td>
+<td><code>B-06-05</code></td>
+<td>AI 电销与电销阶梯定价法</td>
+<td>B06 幻灯片 27（举措2-3）、33（举措8）</td>
+</tr>
+<tr>
+<td><code>B-06</code></td>
+<td><code>B-06-06</code></td>
+<td>分期客户四层标签精准触达法</td>
+<td>B06 幻灯片 32（举措7）</td>
+</tr>
+<tr>
+<td><code>B-07</code></td>
+<td><code>B-06-07</code></td>
+<td>"达标门槛"式活动设计法</td>
+<td>B06 幻灯片 31（举措6）；B03 幻灯片 20</td>
+</tr>
+<tr>
+<td><code>B-08</code></td>
+<td><code>B-07-01</code></td>
+<td>高返政策下的早偿监测指标法</td>
+<td>B07《汽车分期业务经营分析会.pptx》幻灯片 9</td>
+</tr>
+<tr>
+<td><code>B-09</code></td>
+<td><code>B-01-01</code></td>
+<td>早偿率阈值与商户清退分层法</td>
+<td>B01 幻灯片 3、幻灯片 6；B07 幻灯片 17</td>
+</tr>
+<tr>
+<td><code>B-10</code></td>
+<td><code>B-01-02</code></td>
+<td>返佣标准与差额底线法</td>
+<td>B01 幻灯片 3、5</td>
+</tr>
+<tr>
+<td><code>B-11</code></td>
+<td><code>B-07-02</code></td>
+<td>返佣摊销与追回联动法</td>
+<td>B07 幻灯片 15；B01 幻灯片 6；B01 幻灯片 7</td>
+</tr>
+<tr>
+<td><code>B-12</code></td>
+<td><code>B-01-03</code></td>
+<td>追回率挂绩效负分法（考核绑定）</td>
+<td>B01 幻灯片 7；B01 幻灯片 4</td>
+</tr>
+<tr>
+<td><code>B-13</code></td>
+<td><code>B-02-01</code></td>
+<td>追回目标三段拆解法</td>
+<td>B02 幻灯片 10、11、12</td>
+</tr>
+<tr>
+<td><code>B-14</code></td>
+<td><code>B-02-02</code></td>
+<td>驻场诊断式流程攻坚法</td>
+<td>B02 幻灯片 12</td>
+</tr>
+<tr>
+<td><code>B-15</code></td>
+<td><code>B-02-03</code></td>
+<td>费用压降三分类法</td>
+<td>B02 幻灯片 14、15；B03 幻灯片 24</td>
+</tr>
+<tr>
+<td><code>B-16</code></td>
+<td><code>B-02-04</code></td>
+<td>客户生命周期价值论证法</td>
+<td>B02 幻灯片 19、20；B03 幻灯片 13；B04 工作表1 行5</td>
+</tr>
+<tr>
+<td><code>B-17</code></td>
+<td><code>B-03-01</code></td>
+<td>额度动态管理与资本成本管控法</td>
+<td>B03 幻灯片 24</td>
+</tr>
+<tr>
+<td><code>B-18</code></td>
+<td><code>B-03-02</code></td>
+<td>前十大来电压降法（消保前置）</td>
+<td>B03 幻灯片 26</td>
+</tr>
+</tbody>
+</table>
+<p><strong>A.3 第三层（bank-11，38 条）</strong> —— 编号原本即为 <code>材料ID-序号</code> 格式，<strong>未作改动</strong>：<code>B-05-01~B-05-11</code>（B05 天风）、<code>B-08-01~B-08-27</code>（B08 彭千）。</p>
+<blockquote>
+<p>编号语义提醒：第一层原编号 <code>B-01~B-07</code> 指的是 <strong>B05 材料的 7 条方法</strong>；第二层原编号 <code>B-01~B-18</code> 指的是 <strong>行方材料（B01–B04、B06、B07）的 18 条打法</strong>。二者字面相同、所指不同——这正是本次统一编号要消除的歧义。</p>
+</blockquote>
+<hr />
+<h2 id="bb05">附录 B：B05 材料跨层重复计数的去重对照表</h2>
+<p>第一层（研究方法视角）与第三层（外部评价框架视角）分别引用了 B05 的若干同一关键句。<strong>同一引文只保留 1 条作为证据归属，另一条改为交叉引用</strong>，不得呈现为"多来源印证"。</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>共享关键句（同一处原文）</th>
+<th>第一层条目</th>
+<th>第三层条目</th>
+<th>证据归属（保留）</th>
+<th>另一条的处理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>「考虑到分期手续费本质上是利息收入，那么实际利息收入占比约70%…」（B05 第 8 页）＋「分期付款手续费实质是利息收入…」（第 7 页）</td>
+<td><code>B-05-12</code> 收入结构解构＋口径还原</td>
+<td><code>B-05-02</code> 收入结构分解＋口径修正</td>
+<td><strong><code>B-05-12</code></strong>（第一层：含"建映射表→还原→再对标"三步完整方法）</td>
+<td><code>B-05-02</code> 保留"作为评价尺/口径复核动作"的论述，引文改为<strong>交叉引用 <code>B-05-12</code></strong></td>
+</tr>
+<tr>
+<td>2</td>
+<td>「在这个例子中，分期产品的实际年化利率高达14.26%」（B05 第 9 页；含 pv/pmt/r/t 算法）</td>
+<td><code>B-05-13</code> 分期实际年化利率现金流测算法</td>
+<td><code>B-05-03</code> 分期实际年化利率测算法</td>
+<td><strong><code>B-05-13</code></strong>（第一层：含完整四要素与边界）</td>
+<td><code>B-05-03</code> 保留"须重算、不得引用 14.26%"的校准论述，引文改为<strong>交叉引用 <code>B-05-13</code></strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>「一般认为，150万张流通活卡是经营基础…超过300万张则有可能实现盈利」＋「业界普遍认为，发卡量300万张是信用卡业务盈亏平衡点」</td>
+<td><code>B-05-14</code> 规模阈值法及引用纪律</td>
+<td><code>B-05-05</code> 盈亏平衡点门槛规则</td>
+<td><strong><code>B-05-14</code></strong>（第一层：含"两套口径混用"警示，信息更完整）</td>
+<td><code>B-05-05</code> 保留"必须重算门槛"的校准论述，引文改为<strong>交叉引用 <code>B-05-14</code></strong></td>
+</tr>
+<tr>
+<td>4</td>
+<td>「我们测算20-59岁城镇居为民人均信用卡持卡量为0.95张」〔原文如此："居为民"应为"居民"〕（第 12 页）</td>
+<td><code>B-05-15</code> 人均指标对标法（分母口径调整）</td>
+<td><code>B-05-07</code> 分母修正法</td>
+<td><strong><code>B-05-15</code></strong>（第一层：含分母选择对结论量级的影响分析）</td>
+<td><code>B-05-07</code> 保留"任何人均结论先审分母"的动作，引文改为<strong>交叉引用 <code>B-05-15</code></strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>「招行由10年的24.2%升至17年的49.4%，中信银行则由27.65%升至71.84%」＋「招行这一比例为13.78%，但低于美国花旗银行（23.8%）、摩根大通（15.8%）」（第 1 页摘要／第 16、20 页）</td>
+<td><code>B-05-16</code> 代表公司深钻拆解</td>
+<td><code>B-05-08</code> 中美差距对标法 ／ <code>B-05-11</code> 战略地位指标体系</td>
+<td><strong><code>B-05-16</code></strong>（第一层：机构深钻与"由比率反推经营模式"最完整）</td>
+<td>第三层两条保留其<strong>对标方法与指标体系</strong>的论述，该两句引文改为<strong>交叉引用 <code>B-05-16</code></strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>同时提醒（D1 同源问题）</strong>：第 5 组涉及的"中美对标"推论，与 B08 幻灯片 45–46 属<strong>同源同法</strong>（见 6.3 第 2 条）。因此"B05 与 B08 都认为还有空间"<strong>不能</strong>作为"双来源印证"，正确表述是"两个不同立场的来源使用了同一个推论工具"。</p>
+</blockquote>
+<hr />
+<h2 id="c">附录 C：质检方法与可复现要点</h2>
+<ul>
+<li><strong>复核根目录</strong>：同 1.1（迁移后新路径）；此处仅为复现声明，不重复变更说明</li>
+<li><strong>文本层校验值</strong>（供 t4 之后的复核者比对文件是否被改动）：</li>
+<li>B05 <code>text/业务资料/信用卡大有可为，渐成零售业务主力_698097227461533696.pdf.txt</code> — SHA256 <code>2f316bf233194346193885125566fece7a9e402007ec3947d271ff7e4b24d785</code></li>
+<li>B08 <code>text/业务资料/零售银行、消费金融和后来的Fintech（彭千，美团金融总裁2018.5.12）.pptx.txt</code> — SHA256 <code>e97e8b6a7d90a695b22a91bc607f766833e78a12d40e4ffc4a71e602523473c5</code></li>
+<li>原件校验值见 <code>manifest.json</code>（B05 <code>63ad9ffa…</code>、B08 <code>297f24a9…</code>，与 <code>INDEX.md</code> 一致）</li>
+<li><strong>复现步骤</strong>：</li>
+<li>读取 <code>manifest.json</code>，按 <code>text_path</code> 载入 25 份文本；</li>
+<li>以正则 <code>## (?:PDF页码|幻灯片)\s*(\d+)</code> 切分为 <code>{页码: 去空白全文}</code>；<strong>工作表类材料（B04）改用 <code>行(\d+):</code> 按行地址化</strong>——若把 B04 也按"工作表 数字"切分，会得到 0 个单元，其引文将永远无法核验（共 556 个非空单元）；</li>
+<li>从交付件<strong>全文</strong>（含附录与非记录段落）提取全部 <code>「…」</code>；对含"…"者按省略号切段；</li>
+<li>每段做 <code>segment in unit</code> 判定（<strong>不做 normalize、不做纠错</strong>），并要求命中页码落在出处声明内；</li>
+<li>失败项用 <code>difflib.SequenceMatcher</code> 输出 opcodes，人工归类为改写/错标/形态问题。</li>
+<li><strong>重要提醒</strong>：① B05 有 88 处 OCR 讹字，<strong>校验脚本若对引文或原文做字形纠错，会把正确的照录直引判成失配</strong>；B05 的照录句注释放<strong>引号之外</strong>（见 1.4），引号内始终是纯净子串，可直接机检。② <code>「」</code> 在交付件中<strong>只能用于源文直引</strong>；把术语写进 <code>「」</code>（如最初的"文件 ID + PDF 页码"，见 Q-13）会让自动化比对产生假失败。③ 校验应覆盖<strong>附录表格里的引文</strong>，不能只扫记录体（本次 L2 的 3 条附录引文即因此前遗漏而被补检）。</li>
+<li><strong>本次质检总量</strong>：81 条记录 + 5 条附录引文，共 <strong>175 条引文</strong>；硬失败 12 处、经 diff 与人工复核确认问题点 <strong>13 个（Q-01~Q-13）</strong>，全部已修正或标注。</li>
+</ul>
+<hr />
+<h2 id="d">附录 D：各层原有的边界与缺口（原样保留，未补数）</h2>
+<ol>
+<li><strong>第一层</strong>：第 4 节待验证项 <code>V-01~V-08</code>（已并入 6.6）；跨材料共性三条元规则——<strong>口径先统一</strong>、<strong>无对照不做因果</strong>、<strong>缺数据显式标注</strong>。</li>
+<li><strong>第二层</strong>：附三"外部合作风险"六项（返佣被商户反向利用、商户短期套利、渠道方商户资源冲突、经销商集团经营风险、外部平台带走客户与规则、内部人员合规漏洞）；附二"可复制性三梯队"；并明确<strong>样本可复制性备注</strong>（B02 幻灯19 的客户案例为<strong>单客户样本</strong>，只能说明"存在这种成长路径"，不得外推）。</li>
+<li><strong>第三层</strong>：8.2 节的五条边界（未做 2019 年后现实核验、未替原文裁定配对关系、未使用其它层材料、未做纯摘要、未把共识当独立验证）。</li>
+<li><strong>三层共同的一条纪律</strong>：本批 25 份材料中<strong>没有任何一份是中性第三方</strong>——行方材料是内部底稿、B05 是卖方报告、B08 是招商材料、阿蒙森是平台经营分析。引用任何一条结论，都应连带其来源立场。</li>
+</ol>
+<hr />
+<p><em>融合与质检：bank-11（银行经营 · 琉）｜ 本报告 81 条记录、170 条引文全部经逐字复核；原编号映射见附录 A，B05 去重见附录 B，质检明细见第二章。</em></p>
+</div>
+<div id="backtop" title="回到顶部" onclick="window.scrollTo({top:0,behavior:'smooth'})">顶部</div>
+<script>
+// 表格包一层横向滚动容器
+document.querySelectorAll('.wrap > table').forEach(function(t){
+  var d=document.createElement('div'); d.className='table-wrap';
+  t.parentNode.insertBefore(d,t); d.appendChild(t);
+});
+</script>
+</body>
+</html>

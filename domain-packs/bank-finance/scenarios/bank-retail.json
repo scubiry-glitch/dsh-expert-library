@@ -1,6 +1,6 @@
 {
   "id": "bank-retail",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "domain": "banking",
   "intents": [
@@ -20,7 +20,7 @@
   ],
   "routingPolicy": {
     "assertions": [
-      "王一帆 bank-09：城商行零售信贷一线操盘手，主答分行执行/样板复制/考核推动/外部合作；政治账+经济账双算、自主可控为底线。"
+      "信贷舵手 bank-09：城商行零售信贷一线操盘手，主答分行执行/样板复制/考核推动/外部合作；政治账+经济账双算、自主可控为底线。考核与渠道机制引用 bank.method.incentive-governance，目标拆解引用 bank.method.attribution，外部合作评审引用 bank.method.partnership-diligence。"
     ],
     "candidateHints": [
       "bank-09"
@@ -35,7 +35,8 @@
     ],
     "optional": [
       "local-knowledge",
-      "bank-99wiki"
+      "bank-99wiki",
+      "bank-analytics"
     ]
   },
   "toolPolicy": {

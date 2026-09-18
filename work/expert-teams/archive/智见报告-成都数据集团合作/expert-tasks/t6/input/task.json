@@ -1,0 +1,9 @@
+{
+  "taskId": "t6",
+  "subject": "组装与发布门禁：产出最终 HTML（队长）",
+  "description": "队长执行：抽取 13 个片段的 section 块按序组装为单文件 HTML（内联 theme.css 于 head，无任何 script/外链），写出 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.html；复跑门禁：页数=13、@page 794×1123、密级页眉 13 页齐、页码 01–13 连续、G1/G2 锚点 grep、零 script、片段 marker 清理干净；浏览器逐页视检（截图核验无溢出/遮挡/表格断页）。",
+  "dependencies": [
+    "t5"
+  ],
+  "createdAt": 1788602595761
+}

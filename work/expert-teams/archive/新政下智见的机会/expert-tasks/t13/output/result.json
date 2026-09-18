@@ -1,0 +1,9 @@
+{
+  "taskId": "t13",
+  "status": "completed",
+  "attempt": 2,
+  "output": "【t13 交付·工艺版 HTML/PDF 已发布，PPTX 后台生成中】研报交付_20260829_新政下智见的机会/：\n① 新政下智见的机会_v4_工艺版.html（79.7KB）：深青墨 #0e6a55＋琥珀金 #a9741f register、report-rail 语汇（金句引言块 4px accent 条/条款琥珀 tag/虚线胶囊）、衬线大标题、封面四格白卡数字条（flex，数字全 md 在案）、封底免责行；11 张 SVG 点睛图按九类选型逐一对号（循环图×2/零轴发散条/倒计时条/链条×2/水位图/天平图/漏斗/区间标尺/阶梯图）\n② 新政下智见的机会_v4_工艺版.pdf：22 页 A4（模板 20-25 页档 ✓），页脚品牌+页码逐页，封面封底 @page 命名页\n③ PDF 同域链：https://yy.meizu.life/render/新政下智见的机会/新政下智见的机会_v4_工艺版.pdf（curl -I 200 ✓）\n④ HTML 外链：https://yy.meizu.life/render/新政下智见的机会/jihui-craft-v4.html（新 slug，历史链接未覆盖）\n⑤ sha256sums_机会_v4.txt：html a211d98db7af2b1f / pdf 6d3df346c68e350e\nG1-G5：G1 过程痕迹 0 命中（版本号/评审名 grep=0）；G2 锚点抽检 12 组全命中（36.29 万亿×12/W1409719×8/2800 万×3/analytics-v1.1×2/55-60%×5/白名单×23/三分归因×3/三不×4/研判推断×15/测算×22）；G3 finesse P0=0（P1×3 为模板强制的 accent 引言块条纹，已记录）＋1280/375 双视口页面级 0 溢出（直查法，表格容器内滚排除）＋锚点直查零死链；G5 pypdf 22 页/页脚 23 处/章节标记全中；G4 PPTX 由专项代理生成中（深青墨主题 deck，产出后补哈希闭环）。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1788066377734
+}

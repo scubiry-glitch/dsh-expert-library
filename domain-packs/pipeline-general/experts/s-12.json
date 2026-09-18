@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "张磊",
-    "publicLabel": "张磊",
-    "initials": "张"
+    "internalName": "价值摆渡人",
+    "publicLabel": "价值摆渡人",
+    "initials": "J"
   },
   "domains": [
     "realestate.general",
@@ -81,7 +81,7 @@
     },
     "taste": {
       "admires": [
-        "巴菲特",
+        "复利老爷子",
         "大卫·斯文森",
         "腾讯",
         "京东",

@@ -42,7 +42,7 @@ dsh plugin --profile web add .
 - 路由规则原生化为结构化路由表：话题 → 框架（A 五维/B 四段/C 用户视角五层/D 多分类融合/E 顾问式）→ 主责领域 → 候选专家 + 立场对照 + 执行约束；**零售金融/银行经营** 话题已并入同一路由表（共享注册表：bk+bank 双命名空间）
 - P1 增强：三维能力索引匹配（领域×标签×立场，候选 ≤5 带理由）、立场对照自动配对（debate 可省略 pro/con）、心智模型注册表反查（`债务-通缩循环 → bk-007`）、专家版本/来源 provenance
 - 流程：`expert_review_route` 判题 → 用户拍板选人（匿名呈现「BK · 领域 · 首字母」）→ `expert_review_apply` 建队执行（并行专家研判 → 基调融合 → 讨论稿/正式稿渲染）；框架 E 不建队，队长直接顾问式作答
-- 约束内建：**先归型、再路由**（`expert_review_clarify` 澄清层：按领域包提问确认用途/数据来源/城市/时段/敏感脱敏等口径后再进 route/apply；协议 usageSectionText 第 0 步强制，工具随插件自动注册、`announceToAgent` 默认注入）、口径缺失先问用户、数字必须核实、已故专家（顾云昌 bk-022）只引历史观点、匿名化、文风禁区、**银行 PII 脱敏硬门（pii-redaction：手机号/身份证/银行卡号/账号）**
+- 约束内建：**先归型、再路由**（`expert_review_clarify` 澄清层：按领域包提问确认用途/数据来源/城市/时段/敏感脱敏等口径后再进 route/apply；协议 usageSectionText 第 0 步强制，工具随插件自动注册、`announceToAgent` 默认注入）、口径缺失先问用户、数字必须核实、已故专家（慢牛主席 bk-022）只引历史观点、匿名化、文风禁区、**银行 PII 脱敏硬门（pii-redaction：手机号/身份证/银行卡号/账号）**
 - **捆绑技能（bank-finance 包）**：`bank-retail-finance-analysis`（银行零售金融五层分析/交叉销售）、`strategy-consulting`（萌翻咨询：假设驱动/金字塔表达）——内容随包分发（`domain-packs/bank-finance/skills/` + `knowledge/skills/`），声明见 `skill-packages/`
 - **知识库 = 本地 99wiki**：`bank-99wiki` provider + `bank.99wiki` 知识库声明（projects/银行业研究助手、江苏银行高端信用卡/算力金融/信用卡提质增效、银保渠道、干翻宁波、贝壳合作、feishu 素材等 10 个集合），每位银行专家 knowledgeBindings 绑定 `99wiki` 作用域
 
@@ -164,7 +164,7 @@ src/
 ├── skills.ts                 # ★ 外部 skill 绑定：仅本地解析/降级（场景可挂 skill，运行时不联网）
 ├── expert-library/           # 通用专家库：类型/内置专家/内置场景/注册表
 ├── bank/                     # ★ BANK 命名空间原生数据（build-bank-data.mjs 生成）
-│   └── data/experts.generated.ts   # bank-09 王一帆（零售金融/银行经营）
+│   └── data/experts.generated.ts   # bank-09 信贷舵手（零售金融/银行经营）
 ├── pipeline/                  # ★ pipeline 命名空间原生数据（build-pipeline-data.mjs 生成）
 │   └── data/experts.generated.ts   # e01-* 宏观 / e08-* 房地产 / e13-* 江苏银行
 ├── zhijian/                  # ★ 智见点评领域子系统（原生数据）

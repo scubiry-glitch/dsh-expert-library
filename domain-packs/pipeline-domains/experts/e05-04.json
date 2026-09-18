@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "李艳",
-    "publicLabel": "李艳",
-    "initials": "李"
+    "internalName": "品牌捕手",
+    "publicLabel": "品牌捕手",
+    "initials": "P"
   },
   "domains": [
     "realestate.general"

@@ -230,7 +230,7 @@ interface ScenarioV2 {
 }
 ```
 
-固定专家名单只作 routing hints；口径提示（丁祖昱=克而瑞、黄瑜=中指、陶琦=贝壳/NIFD）进 policy assertions。
+固定专家名单只作 routing hints；口径提示（定力董座=克而瑞、百城台长=中指、挂牌哨探=贝壳/NIFD）进 policy assertions。
 
 ### 3.5 TeamTemplate —— 统一三套 DAG 构建器
 
@@ -559,7 +559,7 @@ mcp  …                  # stdio / HTTP server 模式
 | `emm`（factor_hierarchy 加权 + veto_rules 一票否决） | QualityGate 策略输入（veto → hard fail） |
 | `output_schema.rubrics`（1–5 分制） | 语义 Gate 评分维度 |
 | 月度基线 + 近期动态增量 + 观点变化提示（不改写历史 Profile） | zhijian-expert-memory KnowledgeProvider（baseline/monthlyDelta/viewpointDrift） |
-| 匿名化、已故专家（bk-022 顾云昌）仅历史引用、陶琦内测不外发 | compliance 字段 + ComplianceGate 确定性测试 |
+| 匿名化、已故专家（bk-022 慢牛主席）仅历史引用、陶琦内测不外发 | compliance 字段 + ComplianceGate 确定性测试 |
 | 主基调为锚、偏离观点降级为边界条件 | TeamTemplate fusion 任务的方法论约束 |
 | 框架 A–E 规范 + discussion/final 双形态 | OutputTemplate（renderModes） |
 | 路由规则/同题对比/框架 D 组队规则 | RoutingPolicy + RoleSlot.diversity 声明化 |

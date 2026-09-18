@@ -1,0 +1,221 @@
+{
+  "version": "4",
+  "filename": "我的暑假生活_英弘毅",
+  "theme": {
+    "id": "bloom",
+    "style": {
+      "colors": {
+        "bg": "#F0F7FA",
+        "surface": "#FFFFFF",
+        "panel": "#E3F0F6",
+        "primary": "#14729E",
+        "accent": "#F7B733",
+        "text": "#17324D",
+        "muted": "#35576D",
+        "border": "#D5E4EC",
+        "cardStroke": "#DCEAF1",
+        "chartPalette": [
+          "#14729E",
+          "#F7B733",
+          "#E86A5E",
+          "#4FB3A6",
+          "#8AC6E8"
+        ],
+        "accentPool": [
+          "#F7B733",
+          "#E86A5E",
+          "#4FB3A6",
+          "#8AC6E8",
+          "#A98BD4"
+        ]
+      },
+      "fonts": {
+        "heading": [
+          "Microsoft YaHei",
+          "PingFang SC",
+          "Helvetica Neue",
+          "system-ui"
+        ],
+        "body": [
+          "Microsoft YaHei",
+          "PingFang SC",
+          "Helvetica Neue",
+          "system-ui"
+        ]
+      }
+    }
+  },
+  "meta": {
+    "organization": "三年级演讲",
+    "authors": [
+      {
+        "name": "英弘毅"
+      }
+    ],
+    "confidentiality": "public",
+    "animation": {
+      "transition": "fade",
+      "elements": "auto"
+    }
+  },
+  "assets": {
+    "images": {}
+  },
+  "slides": [
+    {
+      "type": "cover",
+      "id": "cover",
+      "heading": "我的暑假生活",
+      "subheading": "演讲者：英弘毅 · 三年级",
+      "background": {
+        "kind": "gradient",
+        "from": "#FFE9C0",
+        "to": "#A8D8EE",
+        "direction": "diagonal"
+      },
+      "notes": "（约 10 秒）大家好，我是英弘毅。今天我演讲的主题是《我的暑假生活》。"
+    },
+    {
+      "type": "content",
+      "id": "depart",
+      "heading": "出发！去青岛海边",
+      "beat": "anchor",
+      "background": {
+        "kind": "color",
+        "value": "#F2F9FC"
+      },
+      "components": [
+        {
+          "type": "bullets",
+          "items": [
+            "暑假天气太热了",
+            "妈妈带我和三个表姐",
+            "一起去青岛的海边玩",
+            "捉螃蟹是我觉得最有趣的事"
+          ]
+        }
+      ],
+      "notes": "（约 10 秒）因为暑假里天气炎热，所以妈妈带我和三个表姐一起到青岛海边去玩。捉螃蟹是我觉得最有趣的事。"
+    },
+    {
+      "type": "content",
+      "id": "gear",
+      "heading": "捉蟹装备大集合",
+      "beat": "breathing",
+      "background": {
+        "kind": "color",
+        "value": "#F2F9FC"
+      },
+      "components": [
+        {
+          "type": "tag_row",
+          "title": "我的装备",
+          "items": [
+            "探照灯",
+            "连体防水服",
+            "手套",
+            "小水桶",
+            "大钳子"
+          ]
+        },
+        {
+          "type": "callout",
+          "variant": "tip",
+          "icon": "map-pin",
+          "text": "全副武装，向礁石群出发！"
+        }
+      ],
+      "notes": "（约 8 秒）我们戴上探照灯，穿上连体防水服，套好手套，拿着一个桶和一个钳子，就向礁石群出发了！"
+    },
+    {
+      "type": "content",
+      "id": "method",
+      "heading": "我的捉蟹妙招",
+      "beat": "dense",
+      "background": {
+        "kind": "color",
+        "value": "#F2F9FC"
+      },
+      "components": [
+        {
+          "type": "steps",
+          "items": [
+            {
+              "title": "碰运气",
+              "text": "一开始什么也没抓到"
+            },
+            {
+              "title": "守株待兔",
+              "text": "坐在礁石上等海水退潮"
+            },
+            {
+              "title": "搬石头",
+              "text": "石头缝里有水就立刻搬开"
+            },
+            {
+              "title": "照水面",
+              "text": "探照灯下有波纹就马上夹住"
+            }
+          ]
+        }
+      ],
+      "notes": "（约 15 秒）一开始我只是凭运气，却一无所获。后来我们决定用守株待兔的方法：先坐在礁石上等海水退潮，只要看到石头缝里有水，就立刻搬起石头捉住螃蟹；后来我打开探照灯照向水面，看见水上有波纹，就马上搬起石头夹住螃蟹。"
+    },
+    {
+      "type": "content",
+      "id": "harvest",
+      "heading": "收获满满！",
+      "beat": "anchor",
+      "background": {
+        "kind": "color",
+        "value": "#F2F9FC"
+      },
+      "components": [
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "约100",
+              "unit": "只",
+              "label": "捉到的螃蟹",
+              "icon": "shell"
+            },
+            {
+              "value": "1～2",
+              "unit": "小时",
+              "label": "只用这么短时间",
+              "icon": "timer"
+            },
+            {
+              "value": "超开心",
+              "unit": "",
+              "label": "虽然很疲惫",
+              "icon": "party-popper"
+            }
+          ]
+        },
+        {
+          "type": "verdict_banner",
+          "tone": "positive",
+          "icon": "sparkles",
+          "text": "捉螃蟹真是一件令人开心的事情！"
+        }
+      ],
+      "notes": "（约 12 秒）我们总共捉了一百只左右，只花了一两个小时。虽然我很疲惫，可我也很开心。"
+    },
+    {
+      "type": "ending",
+      "id": "thanks",
+      "heading": "谢谢大家！",
+      "subheading": "我的暑假生活 · 英弘毅",
+      "background": {
+        "kind": "gradient",
+        "from": "#A8D8EE",
+        "to": "#FFE9C0",
+        "direction": "diagonal"
+      },
+      "notes": "（约 5 秒）我的暑假故事讲完了，谢谢大家！",
+      "layout": "poster-ending"
+    }
+  ]
+}

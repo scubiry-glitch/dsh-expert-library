@@ -1,0 +1,57 @@
+{
+  "id": "bank.output.method-record",
+  "version": "1.1.0",
+  "schemaVersion": 2,
+  "media": [
+    "markdown"
+  ],
+  "sections": [
+    {
+      "id": "编号",
+      "required": true,
+      "requires": []
+    },
+    {
+      "id": "方法名",
+      "required": true,
+      "requires": []
+    },
+    {
+      "id": "出处",
+      "required": true,
+      "requires": [
+        "source"
+      ]
+    },
+    {
+      "id": "原文关键句",
+      "required": true,
+      "requires": [
+        "source"
+      ]
+    },
+    {
+      "id": "方法拆解",
+      "required": true,
+      "requires": []
+    },
+    {
+      "id": "适用条件与边界",
+      "required": true,
+      "requires": []
+    },
+    {
+      "id": "可迁移性初判",
+      "required": true,
+      "requires": []
+    }
+  ],
+  "renderModes": {
+    "discussion": {
+      "anonymize": true
+    },
+    "final": {
+      "anonymize": false
+    }
+  }
+}

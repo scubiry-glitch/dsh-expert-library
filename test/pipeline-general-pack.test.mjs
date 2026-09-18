@@ -27,7 +27,7 @@ test('pipeline-general pack validates clean with 41 experts (S 40 + XHS 1)', () 
 
 test('general experts merge into the single registry with per-id namespaces', () => {
   assert.equal(GENERAL_EXPERTS.length, 41)
-  assert.equal(zhijianMetaById('s-32')?.name, '巴菲特')
+  assert.equal(zhijianMetaById('s-32')?.name, '复利老爷子')
   assert.equal(zhijianMetaById('s-32')?.namespace, 's')
   assert.equal(zhijianMetaById('s-40')?.namespace, 's')
   assert.equal(zhijianMetaById('xhs-01')?.namespace, 'xhs')

@@ -1,0 +1,14 @@
+{
+  "subheading": "试点前提是度量先行：漏斗埋点与北极星指标先定义，否则无法回答「转化率」",
+  "components": [
+    { "type": "timeline", "layout": "horizontal", "milestones": [
+      { "date": "DAY 0", "title": "度量先行", "desc": "漏斗埋点 + 北极星指标", "highlight": false },
+      { "date": "试点A · 90天", "title": "社保/公积金高频任务", "desc": "核心测转化率：任务→账户/卡/分期/财富漏斗", "highlight": true },
+      { "date": "试点B · 90天", "title": "代发客户轻模块", "desc": "工资单+五险一金+福利购，测留存、沉淀、渗透", "highlight": true },
+      { "date": "执行机制", "title": "标准化工具包", "desc": "任务模板+话术+考核表，先跑样板，月度通报、季度排名", "highlight": false },
+      { "date": "DAY 90", "title": "闸门决策", "desc": "达标放量，不达标回调打法", "highlight": true }
+    ]},
+    { "type": "callout", "variant": "warn", "icon": "triangle-alert", "text": "90 天试点只能验证转化率信号，不能验证全年中收增量：任务链转化到中收沉淀通常需 2-3 个季度（研判推断）。" }
+  ],
+  "notes": "试点页：两场景并行90天。试点A测转化率，试点B测留存沉淀渗透。试点即止损闸门——不达标回调打法，避免全面铺开。"
+}

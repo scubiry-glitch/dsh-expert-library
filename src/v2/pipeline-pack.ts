@@ -60,7 +60,7 @@ const PIPELINE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '房地产',
     candidates: ['e08-08', 'e08-06', 'e08-07', 'e08-09', 'e08-yong-bang'],
-    constraints: 'pipeline 命名空间（E08，公众人物实名）。左晖 e08-08 平台/服务品质/产业互联网，吴亚军 e08-06 房企经营，魏行空 e08-09 不动产金融/估值。',
+    constraints: 'pipeline 命名空间（E08，行业花名）。难而正确君 e08-08 平台/服务品质/产业互联网，营造游侠 e08-06 房企经营，营造司南 e08-09 不动产金融/估值。',
   },
   {
     id: 'pipeline-macro-capital',
@@ -68,7 +68,7 @@ const PIPELINE_SCENARIOS: readonly ZhijianRouteScenario[] = [
     framework: 'B',
     primaryField: '宏观经济',
     candidates: ['e01-08', 'e01-09', 'e01-07', 'e01-02', 'e01-06'],
-    constraints: 'pipeline 命名空间（E01，公众人物实名）。高善文 e01-08 资本市场/周期，鲁政委 e01-09 汇率/利率，李扬 e01-07 宏观审慎/债务。',
+    constraints: 'pipeline 命名空间（E01，行业花名）。周期灯塔 e01-08 资本市场/周期，周期司南 e01-09 汇率/利率，周期账房 e01-07 宏观审慎/债务。',
   },
 ]
 
@@ -218,7 +218,7 @@ export function buildPipelineDomainPack(options: BuildPipelinePackOptions = {}):
     version: packVersion,
     schemaVersion: SCHEMA_VERSION,
     name: 'pipeline 领域包（E01 宏观 / E08 房地产 / E13 江苏银行）',
-    description: `${PIPELINE_EXPERTS.length} 位 pipeline 专家库归一化专家基线（e01-* 宏观 / e08-* 房地产，公众人物实名；e13-* 江苏银行高层已并入 bank-finance 包）。V2 投影源为 src/pipeline/data/experts.generated.ts + routing 表；复用 zhijian/bank 的模板/质量/方法构建器（pipeline 前缀）。`,
+    description: `${PIPELINE_EXPERTS.length} 位 pipeline 专家库归一化专家基线（e01-* 宏观 / e08-* 房地产，行业花名；e13-* 江苏银行高层已并入 bank-finance 包）。V2 投影源为 src/pipeline/data/experts.generated.ts + routing 表；复用 zhijian/bank 的模板/质量/方法构建器（pipeline 前缀）。`,
     dependsOn: ['zhijian-realestate', 'bank-finance'],
     caliberDeclarations: {
       '线上': 'paper.morning.rocks 专家库口径',

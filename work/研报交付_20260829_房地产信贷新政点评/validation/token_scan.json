@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-08-30 13:43:46",
+  "forbidden_scan": {
+    "tokens": 22,
+    "hits": [],
+    "verdict": "PASS (0 hits)"
+  },
+  "anchor_scan": {
+    "checked": 85,
+    "missing": [],
+    "verdict": "PASS (all present)"
+  },
+  "reverse_scan": {
+    "unknown_tokens": {},
+    "count": 0,
+    "verdict": "PASS"
+  }
+}

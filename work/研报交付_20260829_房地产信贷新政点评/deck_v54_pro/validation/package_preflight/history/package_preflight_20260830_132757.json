@@ -1,0 +1,37 @@
+{
+  "pptx": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/pptx/deck_v54.pptx",
+  "generated_at": "20260830_132757",
+  "summary": {
+    "error": 0,
+    "warning": 1,
+    "not_checked": 0
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "issue_type": "mobile_compatibility_embedded_object",
+      "message": "deck 中存在嵌入对象，这类对象在微信预览与移动端 WPS 中兼容性更脆弱。",
+      "slide_number": null,
+      "shape_id": null,
+      "source_kind": null,
+      "details": {
+        "embedded_objects": [
+          "ppt/embeddings/Microsoft_Excel_Sheet1.xlsx",
+          "ppt/embeddings/Microsoft_Excel_Sheet2.xlsx",
+          "ppt/embeddings/Microsoft_Excel_Sheet3.xlsx",
+          "ppt/embeddings/Microsoft_Excel_Sheet4.xlsx"
+        ]
+      },
+      "suggested_fix": "如果外发目标包含微信或移动端 WPS，优先改为图片化 chart 或移除 workbook embedding。"
+    }
+  ],
+  "checks": {
+    "actual_slide_count": 33,
+    "presentation_slide_count": 33,
+    "docprops_slide_count": 33,
+    "section_slide_id_count": 0,
+    "slide_relationship_count": 33,
+    "slide_xml_count": 33,
+    "embedded_object_count": 4
+  }
+}

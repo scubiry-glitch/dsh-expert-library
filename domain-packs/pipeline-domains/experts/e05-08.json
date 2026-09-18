@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "江南春",
-    "publicLabel": "江南春",
-    "initials": "江"
+    "internalName": "品牌灯塔",
+    "publicLabel": "品牌灯塔",
+    "initials": "P"
   },
   "domains": [
     "realestate.general"

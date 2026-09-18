@@ -1,0 +1,57 @@
+{
+ "id": "consulting-fixed",
+ "label": "Business Consulting (fixed contrast)",
+ "style": {
+  "colors": {
+   "bg": "#F7F7F2",
+   "surface": "#FFFFFF",
+   "panel": "#F4F4F6",
+   "primary": "#051C2C",
+   "accent": "#7A5A0E",
+   "text": "#051C2C",
+   "muted": "#6B6B6B",
+   "border": "#D5D5CB",
+   "chartPalette": [
+    "#051C2C",
+    "#7A5A0E",
+    "#00A9E0",
+    "#6C6C6C"
+   ]
+  },
+  "fonts": {
+   "heading": [
+    "Noto Sans CJK SC",
+    "Microsoft YaHei",
+    "sans-serif"
+   ],
+   "body": [
+    "Noto Sans CJK SC",
+    "Microsoft YaHei",
+    "sans-serif"
+   ],
+   "mono": [
+    "Consolas",
+    "monospace"
+   ]
+  },
+  "defaultBackgrounds": {
+   "content": {
+    "kind": "color",
+    "value": "#F7F7F2"
+   },
+   "cover": {
+    "kind": "color",
+    "value": "#F7F7F2"
+   },
+   "chapter": {
+    "kind": "color",
+    "value": "#F7F7F2"
+   },
+   "ending": {
+    "kind": "color",
+    "value": "#F7F7F2"
+   }
+  },
+  "id": "consulting-fixed"
+ }
+}

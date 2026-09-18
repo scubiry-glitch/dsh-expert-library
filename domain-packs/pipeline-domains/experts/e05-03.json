@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "张明",
-    "publicLabel": "张明",
-    "initials": "张"
+    "internalName": "品牌匠人",
+    "publicLabel": "品牌匠人",
+    "initials": "P"
   },
   "domains": [
     "realestate.general"

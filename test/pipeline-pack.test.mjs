@@ -47,7 +47,7 @@ test('pipeline experts are merged into the native registry with per-id namespace
   assert.equal(ZHIJIAN_EXPERT_BY_ID.has('e08-08'), true)
   assert.equal(isZhijianExpertId('e08-08'), true)
   const left = ZHIJIAN_EXPERT_BY_ID.get('e08-08')
-  assert.ok(left?.name === '左晖')
+  assert.ok(left?.name === '难而正确君')
   assert.ok((left?.suitedFor ?? []).length > 0, '房地产 field maps to review scenarios')
 })
 

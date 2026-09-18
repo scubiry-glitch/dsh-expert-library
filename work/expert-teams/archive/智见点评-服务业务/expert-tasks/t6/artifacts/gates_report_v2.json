@@ -1,0 +1,88 @@
+{
+ "gates": {
+  "G1_text": {
+   "forbidden_hits": [],
+   "pass": true
+  },
+  "G2_numbers": {
+   "new_in_html": [],
+   "new_in_pptx": [],
+   "pass": true
+  },
+  "G3_design": {
+   "detector_p0": 0,
+   "detector_findings": [],
+   "viewports_failing": [],
+   "viewports_tested": 9,
+   "axis_labels": 2,
+   "pass": true
+  },
+  "G4_ppt": {
+   "summary": {
+    "error": 0,
+    "warning": 0,
+    "not_checked": 1
+   },
+   "slides": 13,
+   "notes_on_all": true,
+   "pass": true
+  },
+  "G5_pdf": {
+   "pages": 12,
+   "content_box_violations": 0,
+   "footer_on_body_pages": true,
+   "cover_unfooted": true,
+   "back_unfooted": true,
+   "rasterized_pages": 12,
+   "pass": true
+  }
+ },
+ "artifacts": {
+  "AI无佣与人机协同_正式稿_v1.md": {
+   "sha256": "03271f0e126655981dfc5b86cce6802b97767ac8c0c24c6452f53e3cbd828736",
+   "bytes": 13238
+  },
+  "AI无佣与人机协同_正式稿_v2.html": {
+   "sha256": "743637950561aa22bc91510917942aef0086bdbeef34e1e99be2e3f07c0361cb",
+   "bytes": 62761
+  },
+  "AI无佣与人机协同_正式稿_v2.pdf": {
+   "sha256": "5748db6dc86cc0894a6048a74e19fdc6f8fe153783fa2145d084ee24b0f8c000",
+   "bytes": 1205056
+  },
+  "AI无佣与人机协同_汇报版_v2.pptx": {
+   "sha256": "0f414e4e094279989817caf4fb17bca466b01edb299e9ad1799e9564d0daa7d5",
+   "bytes": 88578
+  },
+  "build_deck_v2.py": {
+   "sha256": "8fd4b1021780d43ebe827810b0e7d339b453459e9bb2c827ee2bf8449d134fe5",
+   "bytes": 37297
+  },
+  "gates_v2.py": {
+   "sha256": "5d0f2ee797edaffc3b6626fd008859cea399bf052003edf72d59d0f4d99f1806",
+   "bytes": 6188
+  }
+ },
+ "design": {
+  "exhibits": {
+   "成本树八段表行数": 8,
+   "成本树环节数": 8,
+   "观察面板行数": 5,
+   "责任矩阵格数": 4,
+   "责任矩阵护城河格数": 2,
+   "三类场景卡数": 3,
+   "三重剥离条数": 4,
+   "编号图卡数": 3,
+   "柱状图轴标签数": 2,
+   "三条洞察行数": 6
+  },
+  "exhibit_gate_pass": true,
+  "ledger_tokens": {
+   "page": "#F1EEE7",
+   "card": "#FDFCF9",
+   "accent": "#10605A",
+   "gold": "#9A6B22"
+  }
+ },
+ "all_pass": true
+}

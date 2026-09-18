@@ -1,0 +1,184 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "vermilion",
+  "filename": "角色重写_十二主体_20260829_v54",
+  "seed": 20260829,
+  "meta": {
+    "organization": "智见 · 行业研究",
+    "authors": [
+      {
+        "name": "智见点评团队",
+        "role": "完整报告 v5.4"
+      }
+    ],
+    "date": "2026-08-29"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "一场「角色重写」",
+      "summary": "房地产金融新政对行业参与主体的影响 ｜「旧模式赚预期的钱，新模式赚交付的钱。」"
+    },
+    {
+      "id": "zonglun",
+      "type": "content",
+      "heading": "总论：为什么是现在，为什么是这个形状",
+      "beat": "anchor"
+    },
+    {
+      "id": "structure",
+      "type": "content",
+      "heading": "表① 体系地图：谁在管什么",
+      "beat": "dense"
+    },
+    {
+      "id": "database",
+      "type": "content",
+      "heading": "数据底座：周期性工具已经失效",
+      "beat": "dense"
+    },
+    {
+      "id": "balance",
+      "type": "content",
+      "heading": "按揭余额：连降 8 个季度，从 37.90 到 36.29"
+    },
+    {
+      "id": "jingning",
+      "type": "content",
+      "heading": "分城市快照：市场底不是一个底，是很多个"
+    },
+    {
+      "id": "supplement",
+      "type": "content",
+      "heading": "几组关键补充数据"
+    },
+    {
+      "id": "c1",
+      "type": "content",
+      "heading": "第一章 购房者：从「影子出资人」到「受保护的消费者」",
+      "beat": "dense"
+    },
+    {
+      "id": "c2",
+      "type": "content",
+      "heading": "第二章 主办银行：从「资金贩子」到「责任承包商」"
+    },
+    {
+      "id": "c3",
+      "type": "content",
+      "heading": "第三章 房地产开发企业：集团信用被「没收」"
+    },
+    {
+      "id": "c4",
+      "type": "content",
+      "heading": "第四章 上市房企与资本市场：「基于项目」的再上市邀请函"
+    },
+    {
+      "id": "c5",
+      "type": "content",
+      "heading": "第五章 建筑央企：「参照涉房」是准入，不是激励"
+    },
+    {
+      "id": "c6",
+      "type": "content",
+      "heading": "第六章 信托公司：被「收编」的外包资管"
+    },
+    {
+      "id": "c7",
+      "type": "content",
+      "heading": "第七章 地方政府：有了席位，也被掐了资金链"
+    },
+    {
+      "id": "c8",
+      "type": "content",
+      "heading": "第八章 持有与运营端：全生命周期产品菜单"
+    },
+    {
+      "id": "c9",
+      "type": "content",
+      "heading": "第九章 经纪行业：从「信贷分销商」到「交易信用基础设施」"
+    },
+    {
+      "id": "c10",
+      "type": "content",
+      "heading": "第十章 数据与评估机构：从「额度的化妆师」到「风控基础设施」",
+      "beat": "dense"
+    },
+    {
+      "id": "c11",
+      "type": "content",
+      "heading": "第十一章 城投：到「存量资产运营商」"
+    },
+    {
+      "id": "c12",
+      "type": "content",
+      "heading": "第十二章 沉默角色：谁在进场，谁在出局，谁被忽略"
+    },
+    {
+      "id": "c13",
+      "type": "content",
+      "heading": "第十三章 补上的七类主体"
+    },
+    {
+      "id": "cotality",
+      "type": "content",
+      "heading": "对标：Cotality 的数据底座（公司公开口径研究）"
+    },
+    {
+      "id": "zh1",
+      "type": "content",
+      "heading": "总结·一：三重再分配与风险产权（科斯式起点）",
+      "beat": "dense"
+    },
+    {
+      "id": "zh2",
+      "type": "content",
+      "heading": "总结·二：三层付费者与三个可证伪的预言（图⑦）",
+      "beat": "dense"
+    },
+    {
+      "id": "zh2b",
+      "type": "content",
+      "heading": "总结·二b：三个可证伪的预言（图⑦·概率区间表）",
+      "beat": "dense"
+    },
+    {
+      "id": "zh3",
+      "type": "content",
+      "heading": "总结·三：体系的五个失灵变量（图⑧）"
+    },
+    {
+      "id": "zh4",
+      "type": "content",
+      "heading": "总结·四：传导时序、数据互证与最大不确定性"
+    },
+    {
+      "id": "conclusion1",
+      "type": "content",
+      "heading": "结语：谁获益、谁付费（上）"
+    },
+    {
+      "id": "conclusion2",
+      "type": "content",
+      "heading": "结语：谁获益、谁付费（下）"
+    },
+    {
+      "id": "source",
+      "type": "content",
+      "heading": "数据与条款来源",
+      "beat": "breathing"
+    },
+    {
+      "id": "backcover",
+      "type": "ending",
+      "heading": "这份 1+N 文件体系，就是交付的定价说明书。",
+      "summary": "完整报告 v5.4 · 2026-08-29 · 不构成投资建议"
+    }
+  ]
+}

@@ -1,0 +1,520 @@
+{
+  "version": "4",
+  "filename": "存量平台改造借鉴宁波双平台打法_汇报.pptx",
+  "narrative": "boardroom-report",
+  "theme": {
+    "id": "consulting"
+  },
+  "meta": {
+    "organization": "江苏银行",
+    "date": "2026-08-27",
+    "version": "正式稿",
+    "confidentiality": "internal",
+    "animation": {}
+  },
+  "assets": {
+    "images": {}
+  },
+  "seed": 20260827,
+  "slides": [
+    {
+      "type": "cover",
+      "id": "cover",
+      "heading": "存量平台改造借鉴宁波双平台打法",
+      "components": [],
+      "notes": "开场：向行领导汇报存量平台改造方案。一句话定调——宁波银行从0到1新建双平台，我行从1到N改造存量，学逻辑不学形态。数据口径：苏银研究院第17期（2026H1半年报）、量子教育会议纪要（2026-08-26）、宁波银行官方公开资料。",
+      "layout": "banner-title"
+    },
+    {
+      "type": "content",
+      "id": "verdict",
+      "beat": "anchor",
+      "heading": "核心结论：学逻辑，不学形态",
+      "components": [
+        {
+          "type": "verdict_banner",
+          "text": "学宁波，学逻辑不学形态：90天两场景试点定取舍，验收看活期、代发留存、卡渗透、中收，不看注册数。",
+          "tone": "positive",
+          "icon": "landmark"
+        },
+        {
+          "type": "kpi_cards",
+          "items": [
+            {
+              "value": "800",
+              "unit": "万",
+              "label": "苏银生活月活",
+              "delta": "flat",
+              "icon": "users-round"
+            },
+            {
+              "value": "35.57",
+              "unit": "%",
+              "label": "宁波活期占比",
+              "delta": "up",
+              "icon": "piggy-bank"
+            },
+            {
+              "value": "10.42",
+              "unit": "%",
+              "label": "宁波中收占比",
+              "delta": "up",
+              "icon": "chart-pie"
+            },
+            {
+              "value": "85",
+              "unit": "%",
+              "label": "代理类占中收",
+              "delta": "up",
+              "icon": "percent"
+            },
+            {
+              "value": "17.6",
+              "unit": "万",
+              "label": "波波知了企业用户",
+              "delta": "up",
+              "icon": "building-2"
+            }
+          ]
+        },
+        {
+          "type": "callout",
+          "variant": "info",
+          "text": "苏银生活年底月活目标 1000 万；宁波手续费净收入 +53.9%。这是三低时代支撑双提升的战略路径，须以长期主义与正确政绩观推进。",
+          "icon": "target"
+        }
+      ],
+      "notes": "核心结论页：先给结论再讲论据。800万月活是现成底座，宁波用17.6万企业用户撬动2000亿对公理财与85%代理类中收，本质差距是转化率。",
+      "layout": "rail-numbered"
+    },
+    {
+      "type": "chapter",
+      "id": "ch1",
+      "layout": "masthead-chapter",
+      "heading": "形势判断与关键事实：三低时代，差距在经营逻辑",
+      "components": []
+    },
+    {
+      "type": "content",
+      "id": "form-data",
+      "beat": "dense",
+      "arrangement": "two_column",
+      "heading": "对标差距：负债、中收、财富、对公",
+      "components": [
+        {
+          "type": "chart",
+          "chart_type": "bar",
+          "direction": "vertical",
+          "axes": {
+            "x_title": "指标",
+            "y_title": "数值",
+            "show_grid": true
+          },
+          "series": [
+            {
+              "name": "宁波银行",
+              "data": [
+                {
+                  "x": "两项收入增速%",
+                  "y": 18.2
+                },
+                {
+                  "x": "代理类收入(亿)",
+                  "y": 49.9
+                },
+                {
+                  "x": "私行AUM占比%",
+                  "y": 29.4
+                },
+                {
+                  "x": "对公理财(百亿)",
+                  "y": 20
+                }
+              ]
+            },
+            {
+              "name": "我行",
+              "data": [
+                {
+                  "x": "两项收入增速%",
+                  "y": 11
+                },
+                {
+                  "x": "代理类收入(亿)",
+                  "y": 29.1
+                },
+                {
+                  "x": "私行AUM占比%",
+                  "y": 13.9
+                },
+                {
+                  "x": "对公理财(百亿)",
+                  "y": 6.58
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "负债端：宁波存款成本率 1.32%（降 39bp）、活期占比 35.57%",
+            "中收端：代理类收入 49.9 亿（高我行 29.1 亿）占中收 85%",
+            "财富/对公：私行 AUM 4206 亿占 29.4% vs 2552 亿/13.9%；对公理财 2000 亿+ vs 658 亿"
+          ],
+          "style": "plain"
+        }
+      ],
+      "notes": "数据页：四项对比必须讲清量纲。营收+11.54%、净利+12.12%、两项收入增速18.2% vs 我行11%。代理类49.9亿高我行29.1亿。私行4206亿占29.4% vs 2552亿/13.9%。对公理财2000亿+ vs 658亿。",
+      "layout": "rail-numbered"
+    },
+    {
+      "type": "content",
+      "id": "fact-sample",
+      "beat": "breathing",
+      "heading": "样板就在腹地：逻辑已经跑通",
+      "components": [
+        {
+          "type": "icon_cards",
+          "items": [
+            {
+              "icon": "building-2",
+              "title": "波波知了 · 经营侧",
+              "text": "企业外部经营综合企服：出海对接、节能规划、AI 赋能，聚焦江浙沪制造/科技/外贸"
+            },
+            {
+              "icon": "users-round",
+              "title": "数字人力 · 组织侧",
+              "text": "企业内部组织运营与人薪税费：只撮合不交付、不收服务费，2026 年底上线"
+            },
+            {
+              "icon": "handshake",
+              "title": "政银协同获客",
+              "text": "政府园区招商联动，把政策资源变成获客入口；南京约 2 万家企业已跑通"
+            },
+            {
+              "icon": "banknote",
+              "title": "先服务后转化",
+              "text": "免费服务换数据与信任，先撮合后交付；同一企业可同时使用双平台"
+            }
+          ]
+        },
+        {
+          "type": "verdict_banner",
+          "text": "按定稿口径，双平台按企业任务链分工（经营侧 / 组织侧），严禁「高端/中低端客户分层」表述。",
+          "tone": "neutral",
+          "icon": "map-pin"
+        },
+        {
+          "type": "callout",
+          "variant": "info",
+          "text": "待核实：数字人力 2026 年底上线的实际形态与服务细节未经访谈核实，仅作对标逻辑引用。",
+          "icon": "badge-info"
+        }
+      ],
+      "notes": "样板页：宁波=从0到1新建双平台，直接面向对公/代发客户；江苏本地已跑通，南京能做各分行就能做。双平台团队阿里/字节社招、单岗年薪百万级——成本结构不照抄。",
+      "layout": "split-band"
+    },
+    {
+      "type": "chapter",
+      "id": "ch2",
+      "heading": "学什么与怎么学：一个入口、两条转化链",
+      "components": [],
+      "layout": "banner-chapter"
+    },
+    {
+      "type": "content",
+      "id": "learn-4",
+      "beat": "dense",
+      "heading": "四条可迁移逻辑，形态坚决不学",
+      "components": [
+        {
+          "type": "numbered_cards",
+          "items": [
+            {
+              "title": "任务链逻辑",
+              "text": "从客户「要办成什么事」出发组织服务，而非从产品出发",
+              "sub": "任务选择决定客户为什么打开"
+            },
+            {
+              "title": "独立运营逻辑",
+              "text": "专业团队配置，把平台当事业而非附属品",
+              "sub": "专业团队，平台是事业而非附属品"
+            },
+            {
+              "title": "政银协同获客",
+              "text": "政府园区招商联动，把政策资源变成获客入口",
+              "sub": "波波知了获客高度依赖政企资源"
+            },
+            {
+              "title": "先服务后转化",
+              "text": "免费服务换数据与信任，先撮合后交付",
+              "sub": "数字人力：只撮合不交付、不收服务费"
+            }
+          ]
+        },
+        {
+          "type": "callout",
+          "variant": "warn",
+          "text": "形态上坚决不学：不新建 App、不重复建设、不烧钱获客。再造两个 App 重投入且与零售个人流量错配；平安信用卡仅作旁证，不入主框架。",
+          "icon": "ban"
+        }
+      ],
+      "notes": "学什么页：四条逻辑逐条展开。强调独立运营的人才机制成本高，但我们用存量团队+能力采购，底座必须是自己的。",
+      "layout": "side-highlight"
+    },
+    {
+      "type": "content",
+      "id": "how-arch",
+      "beat": "anchor",
+      "heading": "存量改造落地架构：入口、转化链、公私联动",
+      "components": [
+        {
+          "type": "flowchart",
+          "nodes": [
+            {
+              "id": "hub",
+              "label": "苏银生活·任务型入口",
+              "kind": "rect"
+            },
+            {
+              "id": "p1",
+              "label": "高频任务",
+              "kind": "rect"
+            },
+            {
+              "id": "p2",
+              "label": "个人任务链",
+              "kind": "rect"
+            },
+            {
+              "id": "p3",
+              "label": "账户/卡/财富",
+              "kind": "rect"
+            },
+            {
+              "id": "b1",
+              "label": "代发增值",
+              "kind": "rect"
+            },
+            {
+              "id": "b2",
+              "label": "企业任务链",
+              "kind": "rect"
+            },
+            {
+              "id": "b3",
+              "label": "代发/授信",
+              "kind": "rect"
+            },
+            {
+              "id": "l1",
+              "label": "公私联动：零售线索反哺对公",
+              "kind": "rect"
+            }
+          ],
+          "edges": [
+            {
+              "from": "hub",
+              "to": "p1"
+            },
+            {
+              "from": "p1",
+              "to": "p2"
+            },
+            {
+              "from": "p2",
+              "to": "p3"
+            },
+            {
+              "from": "hub",
+              "to": "b1"
+            },
+            {
+              "from": "b1",
+              "to": "b2"
+            },
+            {
+              "from": "b2",
+              "to": "b3"
+            },
+            {
+              "from": "p3",
+              "to": "l1"
+            },
+            {
+              "from": "b3",
+              "to": "l1"
+            }
+          ],
+          "direction": "TD"
+        },
+        {
+          "type": "callout",
+          "variant": "info",
+          "text": "代发增值是「任务链＋金融转化」最短路径；渠道「一重两轻」，复杂需求引导网点/私行中心。",
+          "icon": "smartphone"
+        }
+      ],
+      "notes": "架构页：一个入口、两条转化链、公私联动。私行客户走重渠道，任务入口只做触达与预约。",
+      "layout": "bento-panel"
+    },
+    {
+      "type": "chapter",
+      "id": "ch3",
+      "heading": "试点与验收：90天两场景，试点即止损闸门",
+      "components": [],
+      "layout": "masthead-chapter"
+    },
+    {
+      "type": "content",
+      "id": "pilot-tl",
+      "beat": "breathing",
+      "heading": "90天两场景试点安排",
+      "components": [
+        {
+          "type": "timeline",
+          "layout": "horizontal",
+          "milestones": [
+            {
+              "date": "DAY 0",
+              "title": "度量先行",
+              "desc": "漏斗埋点 + 北极星指标",
+              "highlight": false
+            },
+            {
+              "date": "试点A · 90天",
+              "title": "社保/公积金高频任务",
+              "desc": "核心测转化率：任务→账户/卡/分期/财富漏斗",
+              "highlight": true
+            },
+            {
+              "date": "试点B · 90天",
+              "title": "代发客户轻模块",
+              "desc": "工资单+五险一金+福利购，测留存、沉淀、渗透",
+              "highlight": true
+            },
+            {
+              "date": "执行机制",
+              "title": "标准化工具包",
+              "desc": "任务模板+话术+考核表，先跑样板，月度通报、季度排名",
+              "highlight": false
+            },
+            {
+              "date": "DAY 90",
+              "title": "闸门决策",
+              "desc": "达标放量，不达标回调打法",
+              "highlight": true
+            }
+          ]
+        },
+        {
+          "type": "callout",
+          "variant": "warn",
+          "text": "90 天试点只能验证转化率信号，不能验证全年中收增量：任务链转化到中收沉淀通常需 2-3 个季度（研判推断）。",
+          "icon": "triangle-alert"
+        }
+      ],
+      "notes": "试点页：两场景并行90天。试点A测转化率，试点B测留存沉淀渗透。试点即止损闸门——不达标回调打法，避免全面铺开。",
+      "layout": "image-lead-split"
+    },
+    {
+      "type": "content",
+      "id": "accept",
+      "beat": "anchor",
+      "heading": "验收标准：看业务沉淀，不看注册数",
+      "components": [
+        {
+          "type": "comparison",
+          "columns": [
+            "验收看什么",
+            "不验收什么"
+          ],
+          "rows": [
+            {
+              "label": "指标",
+              "cells": [
+                "活期沉淀（对标宁波 35.57%）",
+                "注册数"
+              ]
+            },
+            {
+              "label": "留存",
+              "cells": [
+                "代发留存",
+                "纯功能使用量"
+              ]
+            },
+            {
+              "label": "渗透",
+              "cells": [
+                "卡渗透",
+                "表面客户升级（实际仍停留在资金中介）"
+              ]
+            },
+            {
+              "label": "中收",
+              "cells": [
+                "中收贡献（对标代理类占中收 85% 结构）",
+                "—"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "verdict_banner",
+          "text": "考核导向体现经营与管理双提质：三年看体系、五年看格局，不争一时之短长。",
+          "tone": "positive",
+          "icon": "circle-check-big"
+        }
+      ],
+      "notes": "验收页：核心是业务沉淀而非注册数。对标宁波活期占比35.57%、代理类占中收85%的结构校准路径。",
+      "layout": "side-highlight"
+    },
+    {
+      "type": "chapter",
+      "id": "ch4",
+      "heading": "不确定性与风险底线",
+      "components": [],
+      "layout": "roman-chapter"
+    },
+    {
+      "type": "content",
+      "id": "risk",
+      "beat": "dense",
+      "heading": "不确定性与风险底线（研判推断）",
+      "components": [
+        {
+          "type": "bullets",
+          "items": [
+            "个人信息与征信红线：社保/公积金数据用于授信评估须客户单独明确授权，符合个保法最小必要原则",
+            "数据来源合法：政务/第三方接口签数据合作协议；反洗钱监测套利刷单",
+            "适当性管理不因任务入口放松；不突破风险底线换取一时业绩",
+            "合作守底线：客户、数据、账户、核心规则必须在我行手里"
+          ],
+          "style": "checklist"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "数字人力 2026 年底上线形态未核实，对标结论待修正（待核实）",
+            "中收兑现存在时滞（2-3 个季度），90 天试点只验证转化率信号",
+            "政企资源不可复刻则转化率预期打折；月活目标节奏存不确定性",
+            "同业亦在任务化，须立足江苏本省政务与本地生活资源差异化"
+          ],
+          "style": "numbered"
+        }
+      ],
+      "notes": "风险页：第一组为合规与底线（checklist），第二组为不确定性与趋势（numbered）。所有预测性表述均为研判推断。",
+      "layout": "bento-panel"
+    },
+    {
+      "type": "ending",
+      "id": "ending",
+      "heading": "三年看体系，五年看格局",
+      "components": [],
+      "notes": "结语：存量平台改造不是短期冲规模，而是以长期主义重构客户经营体系——把苏银生活从生活服务平台升级为资源整合与转化平台，实现资金中介向资源中介升级，支撑双提升。数据来源：苏银研究院第17期（宁波银行2026H1半年报口径）、量子教育会议纪要（2026-08-26）、宁波银行官方公开资料；行内商密仅聚合口径。",
+      "layout": "rail-ending"
+    }
+  ]
+}

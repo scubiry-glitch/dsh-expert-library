@@ -18,7 +18,7 @@
     },
     {
       "id": "9de8bde0-4daf-4301-a7d7-cc93d36ccd2d",
-      "name": "邢自强",
+      "name": "周期班长",
       "role": "宏观经济·宏观周期派",
       "provider": "deepseek-official",
       "model": "deepseek-v4-flash",
@@ -77,7 +77,7 @@
       "subject": "宏观研判",
       "description": "从宏观经济视角研判：周期定位、政策路径、量化测算（数据带口径）。",
       "status": "completed",
-      "assignee": "邢自强",
+      "assignee": "周期班长",
       "dependencies": [
         "t1"
       ],

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>UE 视角分析：江苏银行信用卡（2026 中报季）</title>
+<style>
+/* ============================================================
+   江苏银行信用卡业务对标研报 · policy-print register
+   finesse-ui 五轴：ink-teal #0e6a55 + amber #a9741f / 700·400 /
+   report-rail / CSS-only charts / SOUL 6 · SPECTACLE 2 · DENSITY 7
+   基础层 = print（weasyprint）；@media screen 叠加左轨与屏显。
+   ============================================================ */
+:root{
+  --paper:#f6f1e6; --paper-deep:#ece4d0; --card:#fdfaf2; --card-2:#f7f2e4;
+  --teal:#0e6a55; --teal-deep:#0a4a3b; --teal-ink:#143b31;
+  --teal-wash:#e4ede7; --amber:#a9741f; --amber-ink:#7a5312;
+  --amber-wash:#f4e8cf; --amber-line:#d9c193;
+  --warn:#9c3a22; --warn-wash:#f3e2da;
+  --hairline:#d8cdb4; --muted:#5c6a60;
+  --serif:"Noto Serif CJK SC",serif;
+  --sans:"Noto Sans CJK SC",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-weasy-hyphens:none}
+body{
+  font-family:var(--sans);font-weight:400;color:var(--teal-ink);
+  font-size:12.5px;line-height:1.62;background:var(--card);
+  overflow-wrap:anywhere;
+}
+b,strong{font-weight:700}
+p{margin:0 0 8px}
+/* ---------- 页面（A4 / 命名页） ---------- */
+@page{
+  size:A4;margin:19mm 15mm 17mm 15mm;
+  @top-right{content:string(chap);font-family:var(--sans);font-size:8px;color:var(--muted);letter-spacing:.12em}
+  @bottom-center{content:"99wiki ｜ 智见点评 · 行业研究 — " counter(page) " / " counter(pages);
+    font-family:var(--sans);font-size:8.5px;color:var(--muted);letter-spacing:.08em}
+}
+@page cover{margin:0;@top-right{content:none}@bottom-center{content:none}}
+@page back{margin:0;@top-right{content:none}@bottom-center{content:none}}
+/* ---------- 左轨（仅屏显） ---------- */
+.rail{display:none}
+/* ---------- 主文档流 ---------- */
+.doc{max-width:680px;margin:0 auto}
+section{page-break-inside:auto}
+hr{border:none;border-top:1px solid var(--hairline);margin:14px 0}
+/* ---------- 封面 ---------- */
+.cover{
+  page:cover;width:210mm;height:297mm;padding:14mm 13mm 12mm;
+  background:var(--paper);display:flex;flex-direction:column;
+  page-break-after:always;page-break-inside:avoid;
+}
+.cv-top{display:flex;justify-content:space-between;align-items:baseline}
+.brand{font-size:11px;font-weight:700;color:var(--teal);letter-spacing:.22em}
+.stamp{
+  font-size:9.5px;font-weight:700;color:var(--warn);letter-spacing:.24em;
+  border:1.5px solid var(--warn);padding:2px 9px 2px 11px;border-radius:2px;
+}
+.cv-band{height:9mm;background:var(--teal);margin:12px 0 0;border-bottom:2.5px solid var(--amber)}
+.cv-title{
+  font-family:var(--serif);font-weight:700;font-size:39px;line-height:1.28;
+  color:var(--teal-deep);letter-spacing:.02em;margin:26px 0 10px;
+}
+.cv-sub{font-size:14.5px;font-weight:700;color:var(--amber-ink);letter-spacing:.06em;margin-bottom:8px}
+.cv-ver{font-size:10.5px;color:var(--muted);letter-spacing:.1em}
+.cv-ver span{border-bottom:1px solid var(--hairline);padding-bottom:3px}
+.cv-quote{
+  margin:16px 0 0;padding:9px 14px;background:var(--amber-wash);
+  border-left:4px solid var(--amber);font-family:var(--serif);font-weight:700;
+  font-size:14.5px;color:var(--teal-ink);
+}
+.numstrip{
+  display:flex;margin-top:18px;background:var(--card);
+  border:1px solid var(--hairline);border-radius:6px;
+  box-shadow:0 1px 0 rgba(20,59,49,.06);
+  page-break-inside:avoid;
+}
+.numcell{flex:1 1 0;padding:13px 12px 11px}
+.numcell + .numcell{border-left:1px solid var(--hairline)}
+.numcell .num{font-family:var(--serif);font-weight:700;font-size:25px;color:var(--teal-deep);letter-spacing:.01em}
+.numcell .nl{font-size:10.5px;font-weight:700;color:var(--amber-ink);margin-top:3px;letter-spacing:.04em}
+.numcell .nn{font-size:9px;color:var(--muted);margin-top:4px;line-height:1.5}
+.cv-nav{
+  margin-top:auto;padding-top:10px;border-top:1px dashed var(--amber-line);
+  display:flex;flex-wrap:wrap;
+}
+.cv-nav span{font-size:9.5px;color:var(--muted);letter-spacing:.06em;margin-right:4px}
+.cv-nav span::after{content:"·";margin-left:4px;color:var(--amber-line)}
+.cv-nav span:last-child::after{content:""}
+/* ---------- 章节标题（report-rail 章头） ---------- */
+h2.sheet-title{
+  string-set:chap attr(data-run);
+  bookmark-level:1;bookmark-label:attr(data-full);
+  break-before:page;margin:2px 0 12px;padding:10px 0 9px;
+  border-top:3px solid var(--teal);border-bottom:1px solid var(--hairline);
+}
+.ch-no{
+  display:inline-block;font-family:var(--serif);font-weight:700;font-size:11px;
+  color:var(--card);background:var(--teal);padding:2px 8px;border-radius:2px;
+  letter-spacing:.18em;margin-right:10px;vertical-align:3px;
+}
+.ch-title{font-family:var(--serif);font-weight:700;font-size:20px;color:var(--teal-deep);letter-spacing:.01em}
+/* ---------- 引言块 / 金句 ---------- */
+blockquote{
+  border-left:4px solid var(--amber);background:var(--amber-wash);
+  padding:9px 14px;margin:10px 0 12px;page-break-inside:avoid;
+}
+blockquote p{margin:0;font-family:var(--serif);font-weight:700;font-size:14px;color:var(--teal-ink)}
+blockquote.grand{
+  border-left:none;background:var(--teal-wash);border-top:1px solid var(--teal);
+  border-bottom:1px solid var(--teal);text-align:center;padding:13px 16px;
+}
+blockquote.grand p{font-size:15.5px;color:var(--teal-deep)}
+.meta-line{
+  font-size:10px;color:var(--muted);border:1px dashed var(--hairline);
+  border-radius:4px;padding:6px 10px;margin:0 0 10px;
+}
+/* ---------- 表格 ---------- */
+table{width:100%;border-collapse:collapse;margin:8px 0 12px;font-size:11px;line-height:1.5;page-break-inside:avoid}
+th{
+  background:var(--teal);color:var(--card);font-weight:700;text-align:left;
+  padding:5px 8px;border:1px solid var(--teal-deep);font-size:10.5px;letter-spacing:.05em;
+}
+td{padding:5px 8px;border:1px solid var(--hairline);vertical-align:top}
+tbody tr:nth-child(even) td{background:var(--card-2)}
+table strong{color:inherit}
+.ov-table col,.ov-table th:first-child{width:15%}
+.role-table th:first-child{width:14%}
+.ue-table th:first-child{width:24%}
+.ue-table th:nth-child(2){width:20%}
+.grip-table th:first-child{width:11%}
+.grip-table th:nth-child(2){width:52%}
+.grip-table th:nth-child(3){width:26%}
+/* ---------- 结构组件 ---------- */
+.blk-label{margin:10px 0 0;font-size:10.5px;letter-spacing:.14em;color:var(--amber-ink)}
+.blk-label strong{font-weight:700}
+p.facts{border-left:3px solid var(--teal);padding-left:11px;margin:10px 0 10px}
+p.facts > strong{color:var(--teal-deep)}
+p > strong:first-child{color:var(--teal-deep)}
+ul,ol{margin:4px 0 10px;padding-left:20px}
+li{margin:0 0 6px}
+ul.inferences{list-style:none;padding-left:0;margin-top:8px}
+ul.inferences > li{
+  border-left:1px solid var(--hairline);padding:2px 0 4px 12px;margin:0 0 9px;
+}
+.chip{
+  display:inline-block;background:var(--teal-deep);color:var(--card);
+  font-weight:700;font-size:10.5px;padding:1px 8px;border-radius:2px;
+  letter-spacing:.08em;margin-right:6px;vertical-align:1px;
+}
+strong.edge{color:var(--amber-ink)}
+ol.core-list li{margin-bottom:8px}
+.risk-strip{
+  background:var(--warn-wash);border-left:4px solid var(--warn);
+  padding:9px 13px;margin:10px 0;page-break-inside:avoid;
+}
+.risk-strip strong:first-child{color:var(--warn)}
+p.panel{
+  border:1px solid var(--hairline);border-left:4px solid var(--teal);
+  background:var(--card-2);padding:9px 13px;margin:10px 0;page-break-inside:avoid;
+}
+p.panel strong:first-child{color:var(--teal-deep)}
+p.panel.signals{border-left-color:var(--amber)}
+p.panel.signals strong:first-child{color:var(--amber-ink)}
+p.panel.bounds{border-left-color:var(--amber-line)}
+/* ---------- 四级标注 tag ---------- */
+.lv{
+  display:inline-block;font-size:8.5px;font-weight:700;color:var(--amber-ink);
+  background:var(--amber-wash);border:1px solid var(--amber-line);border-radius:2px;
+  padding:0 4px;margin:0 2px;vertical-align:1.5px;line-height:1.45;letter-spacing:.06em;
+  white-space:nowrap;
+}
+/* ---------- 机会/风险 虚线胶囊 ---------- */
+.or-wrap{margin:12px 0 4px;page-break-inside:avoid}
+.or-label{font-weight:700;color:var(--teal-deep);font-size:11px;letter-spacing:.08em;margin-right:6px}
+.cap{
+  display:inline-block;border:1px dashed var(--teal);border-radius:999px;
+  padding:2px 11px;margin:3px 6px 3px 0;font-size:10.8px;background:var(--teal-wash);
+}
+.cap b{font-weight:700;color:var(--teal-deep)}
+.cap-risk{border-color:var(--warn);background:var(--warn-wash)}
+.cap-risk b{color:var(--warn)}
+/* ---------- 点睛图通用 ---------- */
+figure.chart{
+  background:var(--card);border:1px solid var(--hairline);border-radius:6px;
+  padding:12px 15px 10px;margin:14px 0;page-break-inside:avoid;
+  box-shadow:0 1px 0 rgba(20,59,49,.05);
+}
+.chart-title{
+  font-family:var(--serif);font-weight:700;font-size:12.5px;color:var(--teal-deep);
+  margin-bottom:9px;letter-spacing:.02em;
+}
+.chart-cap{font-size:9.8px;color:var(--muted);margin-top:8px;border-top:1px dashed var(--hairline);padding-top:6px}
+.legend{display:flex;margin:2px 0 8px}
+.legend span{font-size:9.8px;color:var(--muted);margin-right:16px}
+.legend .sw{display:inline-block;width:9px;height:9px;border-radius:1px;margin-right:4px;vertical-align:-1px}
+.sw.r1{background:var(--teal-wash);border:1px solid var(--teal)}
+.sw.r2{background:var(--amber)}
+.sw.mseg-a{background:var(--amber)}
+.sw.mseg-b{background:var(--teal)}
+/* 零轴发散条（第一章/总论） */
+.drow{display:flex;align-items:center;margin:3px 0}
+.drow.hl .dlabel{font-weight:700;color:var(--teal-deep)}
+.dlabel{flex:0 0 122px;text-align:right;font-size:10.8px;padding-right:8px;color:var(--teal-ink)}
+.dlabel-w{flex-basis:128px}
+.dzone{position:relative;height:14px}
+.dz-neg{flex:74 1 0%}
+.dz-pos{flex:25 1 0%;border-left:1.5px solid var(--teal-ink)}
+.dz-full{flex:1 1 0%;border-left:none;border-right:1.5px solid var(--teal-ink)}
+.dz-full .dbar{left:auto;right:0}
+.dbar{position:absolute;top:1px;height:12px;border-radius:1px}
+.dbar.dn{background:var(--amber);right:0}
+.dbar.dp{background:var(--teal);left:0}
+.dbar.hl,.dbar.rowhl{background:var(--teal-ink)}
+.dval{flex:0 0 62px;font-size:10.8px;font-weight:700;padding-left:7px;font-variant-numeric:tabular-nums}
+.dval.pos{color:var(--teal-deep)}
+.dval.neg{color:var(--amber-ink)}
+.dhead{display:flex;margin-bottom:2px}
+.dhead-cell{font-size:9px;color:var(--muted);letter-spacing:.1em}
+/* 成对条（第三章） */
+.prow{display:flex;align-items:center;margin:4px 0}
+.pstack{flex:1 1 0%}
+.pz{position:relative;display:block;height:13px;margin:1px 0}
+.pbar{position:absolute;left:0;top:1px;height:11px;border-radius:1px}
+.pbar.r1{background:var(--teal-wash);border:1px solid var(--teal)}
+.pbar.r2{background:var(--amber)}
+.pval{position:absolute;top:-2px;font-size:9.5px;font-weight:700;color:var(--teal-deep);white-space:nowrap}
+.pval.pvin{color:var(--card)}
+.pbar-miss{position:absolute;left:0;top:2px;height:9px;width:5%;border:1px dashed var(--hairline);border-radius:1px}
+.pmiss{position:absolute;left:6%;top:-2px;font-size:9.5px;color:var(--muted)}
+/* 瀑布（第四章 UE） */
+.wfbody{position:relative;height:172px;margin:6px 0 2px;font-size:0;white-space:nowrap}
+.wfzero{position:absolute;left:0;right:0;border-top:1px dashed var(--teal-ink)}
+.wfzero i{position:absolute;left:0;top:-14px;font-style:normal;font-size:9px;color:var(--muted)}
+.wfconn{position:absolute;border-top:1px dashed var(--amber-line);width:20%}
+.wfcols,.wfbody{display:block}
+.wfcol{position:relative;display:inline-block;width:19%;height:100%;margin-right:1.25%;vertical-align:top}
+.wfcol:last-child{margin-right:0}
+.wfbar{position:absolute;left:27%;width:46%;border-radius:1px}
+.wfbar.base{background:var(--teal)}
+.wfbar.dec{background:var(--amber)}
+.wfbar.dec.risk{background:var(--amber-ink)}
+.wfbar.total{background:var(--teal-ink)}
+.wflab{position:absolute;left:0;right:0;text-align:center;font-size:9.8px;font-weight:700;color:var(--teal-deep);white-space:nowrap}
+.wfnames{display:flex;margin-top:4px;border-top:1px solid var(--hairline);padding-top:4px}
+.wfnames span{flex:1 1 0%;text-align:center;font-size:9.8px;color:var(--teal-ink)}
+/* mix-shift（第四章） */
+.mbody{position:relative}
+.mline{position:absolute;top:-4px;bottom:0;width:0;border-left:1.5px dashed var(--teal-ink)}
+.mline i{
+  position:absolute;top:0;left:3px;font-style:normal;font-size:9px;
+  color:var(--teal-deep);white-space:nowrap;letter-spacing:.04em;
+}
+.mrow{margin:9px 0 2px}
+.mhead{display:flex;align-items:baseline;margin-bottom:3px}
+.mhead b{font-size:11.5px;color:var(--teal-ink);margin-right:10px}
+.mtag{font-size:10px;font-weight:700;color:var(--amber-ink)}
+.mtag.warn{color:var(--warn)}
+.mtag.pass{color:var(--teal-deep)}
+.mtrack{position:relative;height:16px;background:var(--card-2);border-radius:2px}
+.mbar{position:absolute;left:0;top:0;bottom:0;display:flex;border-radius:2px}
+.mseg{display:block;height:100%}
+.mseg-a{background:var(--amber)}
+.mseg-b{background:var(--teal)}
+.mcap{font-size:9.8px;color:var(--muted);margin-top:3px}
+/* 四抓手卡阵（第五章，flex 两行两列，禁 grid） */
+.gwrap{margin-top:2px}
+.grow-row{display:flex;margin:0 0 9px}
+.gcard{
+  flex:1 1 0%;border:1px solid var(--hairline);border-top:3px solid var(--teal);
+  border-radius:4px;background:var(--card-2);padding:8px 11px;margin-right:9px;
+}
+.gcard:last-child{margin-right:0}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px dashed var(--hairline);padding-bottom:4px;margin-bottom:6px}
+.ghead b{font-size:12px;font-weight:700;color:var(--teal-deep)}
+.gpri{font-size:9.5px;font-weight:700;color:var(--card);background:var(--amber);border-radius:999px;padding:1px 8px}
+.grow{display:flex;margin:2px 0}
+.gk{flex:0 0 62px;font-size:9.5px;color:var(--amber-ink);font-weight:700;padding-top:1px}
+.gv{flex:1 1 0%;font-size:10.2px;line-height:1.5;color:var(--teal-ink)}
+/* ---------- 来源披露 ---------- */
+ul.sources{list-style:none;padding-left:0}
+ul.sources > li{
+  border-bottom:1px dashed var(--hairline);padding:6px 0 7px;margin:0;
+  font-size:11px;line-height:1.58;
+}
+ul.sources > li > strong{color:var(--teal-deep)}
+/* ---------- 封底 ---------- */
+.backcover{
+  page:back;width:210mm;height:297mm;background:var(--paper);
+  display:block;padding-top:74mm;page-break-before:always;page-break-inside:avoid;
+}
+.bk-inner{width:150mm;margin:0 auto;text-align:center}
+.bk-label{font-size:10px;letter-spacing:.5em;color:var(--amber-ink);font-weight:700;margin-bottom:14px}
+.bk-quote{
+  font-family:var(--serif);font-weight:700;font-size:19px;line-height:1.85;
+  color:var(--teal-deep);margin-bottom:30px;text-align:left;
+}
+.bk-block{
+  border-top:2.5px solid var(--teal);border-bottom:1px solid var(--hairline);
+  padding:12px 6px;margin:0 0 18px;text-align:left;
+}
+.bkrow{display:flex;margin:4px 0;font-size:10.8px}
+.bkrow .bk{flex:0 0 64px;font-weight:700;color:var(--amber-ink);letter-spacing:.2em}
+.bkrow span + span{color:var(--teal-ink)}
+.bk-disclaim{font-size:9.8px;color:var(--muted);margin-bottom:22px}
+.bk-brand{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--teal)}
+/* ---------- 屏显（左轨 + 浏览器观感） ---------- */
+@media screen{
+  body{background:var(--paper);padding-bottom:60px}
+  .rail{
+    display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;
+    width:212px;background:var(--teal-ink);padding:22px 18px;z-index:10;
+  }
+  .rail-brand{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--paper);letter-spacing:.08em}
+  .rail-sub{font-size:9.5px;color:#bcd0c8;letter-spacing:.2em;margin:4px 0 14px}
+  .rail-stamp{
+    align-self:flex-start;font-size:9px;font-weight:700;color:#f0c9bd;
+    border:1px solid var(--warn);padding:2px 8px;border-radius:2px;letter-spacing:.2em;margin-bottom:16px;
+  }
+  .rail-nav{list-style:none;padding:0;margin:0;flex:1}
+  .rail-nav li{margin:0 0 2px}
+  .rail-nav a{
+    display:block;color:#dce7e1;text-decoration:none;font-size:11.5px;
+    padding:5px 8px;border-radius:3px;border-left:2px solid transparent;
+  }
+  .rail-nav a:hover{background:rgba(255,255,255,.07);border-left-color:var(--amber)}
+  .rail-nav i{font-style:normal;font-size:9px;color:var(--amber);margin-right:8px;font-weight:700}
+  .rail-foot{font-size:9px;color:#9db5ab;letter-spacing:.08em;border-top:1px solid rgba(255,255,255,.14);padding-top:10px}
+  .doc{margin-left:212px;padding:26px 34px 40px;max-width:940px}
+  .cover{width:auto;min-height:calc(100vh - 40px);margin:0 34px 0 212px;border:1px solid var(--hairline);border-radius:8px;box-shadow:0 2px 14px rgba(20,59,49,.08)}
+  .backcover{width:auto;min-height:92vh;border:1px solid var(--hairline);border-radius:8px;margin:22px 34px 0 212px;padding-top:110px}
+  h2.sheet-title{break-before:auto}
+}
+
+/* ============================================================
+   UE 专题增量（沿用 policy-print register，适配 4 节表格型结构）
+   ============================================================ */
+/* 表格：数字列右对齐 + 列宽 */
+.eva-table th:nth-child(n+2),.eva-table td:nth-child(n+2),
+.cross-table th:nth-child(n+2),.cross-table td:nth-child(n+2),
+.elas-table th:nth-child(n+2),.elas-table td:nth-child(n+2),
+.cmp-table th:nth-child(n+2),.cmp-table td:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
+.eva-table th:first-child{width:17%}
+.ue-decomp th:first-child{width:20%}.ue-decomp th:nth-child(2){width:12%}
+.ue-decomp td:nth-child(2){text-align:right;font-variant-numeric:tabular-nums}
+.cmp-table th:first-child{width:19%}
+.peer-table th:first-child{width:10%}
+.peer-table th:nth-child(2){width:15%;text-align:right}
+.peer-table th:nth-child(3){width:47%}
+.peer-table th:nth-child(4){width:28%}
+.peer-table td:nth-child(2){text-align:right;font-variant-numeric:tabular-nums}
+/* 六行同业清单条目（v2 并六行）：行名左、数字右，块级逐行；文本零改动 */
+.bentry{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:10.5px;line-height:1.6;padding:1.5px 0}
+.bentry b{flex:0 0 auto;font-weight:700;color:var(--teal-deep);white-space:nowrap}
+.bentry span{font-variant-numeric:tabular-nums;text-align:right;min-width:0}
+.cross-table th:first-child{width:13%}
+/* 局限与待补（琥珀左条 panel） */
+p.panel.limits{border-left-color:var(--amber)}
+p.panel.limits strong:first-child{color:var(--amber-ink)}
+/* 弹性对比条（flex 多列数字条） */
+.erow{display:flex;align-items:center;margin:6px 0}
+.elab{flex:0 0 150px;text-align:right;padding-right:10px;font-size:11.5px;font-weight:700;color:var(--teal-ink)}
+.elab i{display:block;font-style:normal;font-weight:400;font-size:9.5px;color:var(--muted);margin-top:1px}
+.ezone{flex:1 1 0%;position:relative;height:20px;background:var(--card-2);border-radius:2px}
+.ebar{position:absolute;left:0;top:0;bottom:0;background:var(--teal);border-radius:2px}
+.ebar.top{background:var(--amber)}
+.eval{flex:0 0 96px;font-size:11.5px;font-weight:700;color:var(--teal-deep);padding-left:9px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ebadge{flex:0 0 52px;font-size:9.5px;font-weight:700;color:var(--card);background:var(--amber);border-radius:999px;padding:1.5px 0;text-align:center;white-space:nowrap}
+.ebadge.flat{background:var(--hairline);color:var(--teal-ink)}
+
+/* ============================================================
+   UE 专题 v2 增量：点睛图 4「六行名义不良率 × 变动」零轴发散条
+   量程：负区 [-0.06,0] 宽 13% / 正区 [0,+0.40] 宽 87%（与 flex 比例一致）
+   ============================================================ */
+.fig-peer .dlabel{flex:0 0 150px}
+.fig-peer .dlabel-w{flex-basis:156px}
+.fig-peer .dz-neg{flex:13 1 0%}
+.fig-peer .dz-pos{flex:87 1 0%}
+.fig-peer .drow{margin:4px 0}
+.fig-peer .dzone{height:15px}
+.dbar.up{background:var(--amber);left:0}
+.dbar.down{background:var(--teal);right:0}
+.dbar.flat{width:3px;left:-2px;background:var(--muted);opacity:.55}
+
+/* ============================================================
+   UE 专题 v3 增量（客群×产品框架）：结论表 / 发散条 / mix / 卡阵 / 阶梯
+   ============================================================ */
+/* 封面：客群×产品框架 · UE 方法论内嵌 */
+.cv-frame{
+  display:inline-block;margin:2px 0 6px;padding:3px 12px;
+  border:1.5px solid var(--amber);border-radius:999px;
+  font-size:12px;font-weight:700;color:var(--amber-ink);letter-spacing:.14em;
+  background:var(--amber-wash);
+}
+/* 全文结论表（卷首） */
+.concl-table th:first-child{width:11%}
+.concl-table th:nth-child(2){width:45%}
+.concl-table th:nth-child(3){width:25%}
+.concl-table th:nth-child(4){width:19%}
+.concl-table td:first-child{font-weight:700;color:var(--teal-deep);white-space:nowrap}
+.concl-table td{font-size:10.5px}
+/* 第三章 四抓手排序表（v3 四列） */
+.grip-table th:first-child{width:13%}
+.grip-table th:nth-child(2){width:50%}
+.grip-table th:nth-child(3){width:25%}
+.grip-table th:nth-child(4){width:12%}
+.grip-table td:first-child{font-weight:700;white-space:nowrap}
+.grip-table td:nth-child(4){text-align:center;font-weight:700;color:var(--amber-ink)}
+/* 第四章 四杠杆阶梯表（md 原表） */
+.ladder-table th:first-child{width:8%;text-align:center}
+.ladder-table th:nth-child(2){width:12%}
+.ladder-table th:nth-child(3){width:40%}
+.ladder-table th:nth-child(4){width:40%}
+.ladder-table td:first-child{text-align:center;font-weight:700;color:var(--amber-ink)}
+.ladder-table td:nth-child(2){font-weight:700;color:var(--teal-deep);white-space:nowrap}
+/* 点睛图② 六行不良率×余额降幅发散条：零轴在右，条向左伸（压缩更深=更长） */
+.fig-div .fdiv-head{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);letter-spacing:.06em;margin-bottom:4px}
+.fdiv-row{display:flex;align-items:center;margin:5px 0}
+.fdiv-row.hl .fdiv-label{font-weight:700;color:var(--warn)}
+.fdiv-label{flex:0 0 172px;text-align:right;padding-right:10px;font-size:10.8px;color:var(--teal-ink)}
+.fdiv-zone{flex:1 1 0%;position:relative;height:15px;background:var(--card-2);border-right:1.5px solid var(--teal-ink);border-radius:2px 0 0 2px}
+.fdiv-bar,.fbar{position:absolute;right:0;top:1px;height:13px;border-radius:1px;background:var(--teal)}
+.fbar.miss{width:2.5%;border:1px dashed var(--hairline);background:transparent}
+.fbar.jr{background:var(--warn)}
+.fdiv-val{flex:0 0 92px;padding-left:9px;font-size:10.8px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fdiv-val.neg{color:var(--amber-ink)}
+.fdiv-val.own{color:var(--warn)}
+.fdiv-val.na{color:var(--muted);font-weight:400}
+/* 点睛图④ 四抓手卡阵 + 弹性对比条 */
+.fig-grip .grow-row{margin:0 0 9px}
+.fig-grip .gcard{page-break-inside:avoid}
+.fig-grip .gv b{color:var(--teal-deep)}
+.esub{font-size:10.5px;font-weight:700;color:var(--amber-ink);letter-spacing:.06em;margin:12px 0 2px;border-top:1px dashed var(--hairline);padding-top:8px}
+/* 点睛图⑤ 四杠杆优先级阶梯（四级阶梯，自上而下；高度按价值比例视觉化） */
+.stairs{display:flex;align-items:flex-end;height:212px;margin:10px 0 0;border-bottom:2.5px solid var(--teal);page-break-inside:avoid}
+.stepcol{flex:1 1 0%;display:flex;flex-direction:column;justify-content:flex-end;padding:0 8px;position:relative}
+.stepblk{position:relative;border-radius:3px 3px 0 0;display:flex;align-items:flex-start;justify-content:center;padding-top:8px}
+.stepblk.s1{background:var(--amber)}
+.stepblk.s2,.stepblk.s3{background:var(--teal)}
+.stepblk.s4{
+  background:var(--paper-deep);
+  border:1.5px dashed var(--muted);border-bottom:none;border-radius:3px 3px 0 0;padding-top:0;
+}
+.sval{color:#fdfaf2;font-weight:700;font-size:10.8px;white-space:nowrap;letter-spacing:.02em}
+.sfrozen{
+  position:absolute;left:-6px;right:-6px;bottom:24px;text-align:center;
+  font-weight:700;font-size:10.2px;line-height:1.4;color:var(--warn);
+}
+.stair-foot{display:flex;padding:0}
+.sfcol{flex:1 1 0%;padding:8px 8px 0;text-align:center}
+.sno{
+  display:inline-block;background:var(--teal-deep);color:var(--card);
+  font-weight:700;font-size:9px;border-radius:999px;padding:1px 8px;letter-spacing:.1em;
+}
+.sname{font-family:var(--serif);font-weight:700;font-size:13px;color:var(--teal-deep);margin-top:3px}
+.sobs{font-size:9.3px;color:var(--muted);line-height:1.5;margin-top:2px}
+/* 屏显下阶梯/卡阵与正文同宽微调 */
+@media screen{
+  .fig-stairs .stairs{height:230px}
+  .fig-grip .gcard{min-height:150px}
+}
+
+</style>
+</head>
+<body>
+
+<nav class="rail" aria-hidden="true">
+  <div class="rail-brand">99wiki</div>
+  <div class="rail-sub">智见点评 · 行业研究</div>
+  <span class="rail-stamp">行内材料 · 勿外发</span>
+  <ol class="rail-nav">
+    <li><a href="#s0"><i>00</i>卷首</a></li>
+    <li><a href="#s1"><i>01</i>一 现状诊断</a></li>
+    <li><a href="#s2"><i>02</i>二 客群端</a></li>
+    <li><a href="#s3"><i>03</i>三 产品端</a></li>
+    <li><a href="#s4"><i>04</i>四 行动</a></li>
+    <li><a href="#s5"><i>05</i>局限与待补</a></li>
+    <li><a href="#s6"><i>06</i>来源披露</a></li>
+  </ol>
+  <div class="rail-foot">UE 专题 v3 · 客群×产品框架 · 2026-08-30</div>
+</nav>
+
+<section class="cover" id="cover">
+  <div class="cv-top">
+    <span class="brand">99wiki ｜ 智见点评 · 行业研究</span>
+    <span class="stamp">行内材料 · 勿外发</span>
+  </div>
+  <div class="cv-band"></div>
+  <p class="cv-title">UE 视角分析：江苏银行信用卡</p>
+  <p class="cv-sub">钱亏在哪一项，哪个杠杆最值钱（2026 中报季）</p>
+  <p class="cv-frame">客群×产品框架 · UE 方法论内嵌</p>
+  <p class="cv-ver"><span>UE 专题 v3 · 客群×产品框架 · 2026-08-30</span></p>
+  <div class="cv-quote">客群端与产品端的全部动作，都围绕「把风险成本压下来」这一件事。</div>
+  <div class="numstrip">
+    <div class="numcell"><div class="num">-2.85%</div><div class="nl">EVA · 每 1 亿余额·年化</div><div class="nn">EVA = 4.90 - 2.30 - 4.37 - 1.08（<span class="lv lv1">测算</span>）</div></div>
+    <div class="numcell"><div class="num">4.37%</div><div class="nl">风险成本 · 还原口径</div><div class="nn">吃掉毛利 2.60pct 的 168%（<span class="lv lv1">测算</span>）</div></div>
+    <div class="numcell"><div class="num">1.52pct</div><div class="nl">转线门槛 · 风险成本</div><div class="nn">降至 1.52% 则 EVA≈0（重启门槛；1.9% 时 EVA -0.38%）</div></div>
+    <div class="numcell"><div class="num">2 倍</div><div class="nl">降险杠杆价值</div><div class="nn">降险 -1pct≈2.27 亿 vs 提价/中收 +0.5pct≈1.13 亿（年化）</div></div>
+  </div>
+  <div class="cv-nav">
+    <span>卷首</span><span>一 现状诊断</span><span>二 客群端</span><span>三 产品端</span><span>四 行动</span><span>局限与待补</span><span>来源披露</span>
+  </div>
+</section>
+<main class="doc">
+<h2 class="sheet-title" id="s0" data-run="卷首" data-full="卷首"><span class="ch-title">卷首</span></h2>
+<p class="meta-line"><strong>UE 专题 v3 · 客群×产品框架 · 2026-08-30</strong>｜数据期：2026-06-30（EVA 表）/ 2026H1（半年报）/ 2026-08-13（内部周报）｜UE 恒等式在本文件中只作为<strong>每处论证的度量衡</strong>：骨架按客群端/产品端组织，每章金句结论先行 → 编号证据链 → 点睛图。</p>
+<blockquote class="grand"><p><strong>一句话总判断：信用卡每 1 亿余额年亏 285 万（<span class="lv lv1">测算</span>，全组合按官方口径 226.6 亿约年亏 6.5 亿），亏损 100% 来自风险成本项——毛利 2.60pct 是正的，被 4.37pct 吃穿；转正只需把风险成本降到 1.52pct（EVA≈0），而降险杠杆的价值是提价/中收杠杆的 2 倍——所以客群端与产品端的全部动作，都围绕「把风险成本压下来」这一件事。</strong></p></blockquote>
+<p class="blk-label"><strong>UE 恒等式总表（每 1 亿余额·年化；EVA = 客户收益率 - 资金运营 - 风险成本 - 资本成本）</strong></p>
+<table class="eva-table">
+<thead>
+<tr>
+<th>产品</th>
+<th>客户收益率</th>
+<th>资金+运营</th>
+<th>风险成本</th>
+<th>资本成本</th>
+<th>EVA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>信用卡</strong></td>
+<td>4.90%</td>
+<td>2.30%</td>
+<td><strong>4.37%</strong></td>
+<td>1.08%</td>
+<td><strong>-2.85%</strong></td>
+</tr>
+<tr>
+<td>卡部随e贷</td>
+<td>8.53%</td>
+<td>2.96%</td>
+<td>7.61%</td>
+<td>0.89%</td>
+<td>-2.93%</td>
+</tr>
+<tr>
+<td>网贷</td>
+<td>8.32%</td>
+<td>1.86%</td>
+<td>3.80%</td>
+<td>1.75%</td>
+<td>+0.91%</td>
+</tr>
+<tr>
+<td>消费贷</td>
+<td>3.52%</td>
+<td>1.89%</td>
+<td>1.34%</td>
+<td>0.89%</td>
+<td>-0.60%</td>
+</tr>
+<tr>
+<td>房贷</td>
+<td>2.95%</td>
+<td>1.92%</td>
+<td>0.56%</td>
+<td>0.55%</td>
+<td>-0.08%</td>
+</tr>
+<tr>
+<td>经营贷</td>
+<td>2.56%</td>
+<td>1.41%</td>
+<td>0.69%</td>
+<td>0.50%</td>
+<td>-0.04%</td>
+</tr>
+<tr>
+<td>个贷合计</td>
+<td>5.35%</td>
+<td>1.91%</td>
+<td>2.13%</td>
+<td>1.12%</td>
+<td>+0.19%</td>
+</tr>
+</tbody>
+</table>
+<p>口径：收益率/风险/EVA 为 EVA 表披露（2026-06-30 计财部）；资金+运营、资本成本为披露值推导（<span class="lv lv1">测算</span>：资金运营=收益率-净收益率，资本=净收益率-风险-EVA，7 行验算全部自洽）；并六行后仅本行有完整 UE 分解，其余五家均为风险成本单列代理（<span class="lv lv4">待补</span>：同业收益率/成本项）。</p>
+<p class="facts"><strong>怎么读这张表（三行）</strong>：①七行产品共用同一恒等式，EVA 排序只看两列——毛利（收益率-资金运营）与风险成本，其他项各行近似；②风险成本 3.80%（网贷）与 7.61%（随e贷）之间隔着 +0.91% 与 -2.93% 两个极端——<strong>风险成本是 EVA 的唯一决定项</strong>；③信用卡 4.90% 的收益率并不低（个贷第二），但它带着 4.37% 的风险成本，落在「高毛利、更高风险」的亏损区——与随e贷同病不同源：随e贷是风险 7.61% 失控，信用卡是风险 4.37% 压过毛利 2.60%（<span class="lv lv1">测算</span>：4.37÷2.60≈168%）。</p>
+<p class="blk-label"><strong>全文结论表</strong></p>
+<table class="concl-table">
+<thead>
+<tr>
+<th>章</th>
+<th>一句话结论</th>
+<th>关键数字</th>
+<th>点睛图</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>一 现状诊断</td>
+<td>亏在风险端：毛利 2.60 被 4.37 吃穿（168%）</td>
+<td>4.37；w≈23%；差距 2.1-2.5pct</td>
+<td>恒等式瀑布+六行发散条</td>
+</tr>
+<tr>
+<td>二 客群端</td>
+<td>客群结构是风险成本的配方：口袋 23%→10% 即减亏</td>
+<td>2.47%（减亏档）；1.53%（重启档）</td>
+<td>mix-shift 情景对比</td>
+</tr>
+<tr>
+<td>三 产品端</td>
+<td>先过线，再放量：四抓手只有两个能过 UE 门槛</td>
+<td>门槛 3.38pct；中收 1.13 亿/年</td>
+<td>四抓手卡阵+弹性对比条</td>
+</tr>
+<tr>
+<td>四 行动</td>
+<td>降险→中收→提价→规模，先过线再放量</td>
+<td>红线 4.0%；重启三条件</td>
+<td>四杠杆阶梯图</td>
+</tr>
+</tbody>
+</table>
+
+<h2 class="sheet-title" id="s1" data-run="第一章 · 现状诊断" data-full="第一章 现状诊断：亏在风险端"><span class="ch-no">第一章</span><span class="ch-title">现状诊断：亏在风险端</span></h2>
+<blockquote>
+<p><strong>金句：收益率是收入的封面，风险成本才是损益的正文。</strong></p>
+</blockquote>
+<p class="blk-label"><strong>论证链（证据编号，全部数字带口径）</strong></p>
+<ul>
+<li><strong>① 恒等式分解：毛利是正的，风险把它吃穿。</strong> 信用卡 UE 分解：4.90%（客户收益率）- 2.30%（资金+运营，<span class="lv lv1">测算</span>：4.90-2.60 净收益率倒推）- 4.37%（风险成本）- 1.08%（资本成本，<span class="lv lv1">测算</span>倒推）= <strong>-2.85%</strong>（EVA 表披露）。其中毛利（净收益率）+2.60% 为正——利息生意本身赚钱；风险成本 4.37% = 毛利的 168%（<span class="lv lv1">测算</span>：4.37÷2.60），吃穿全部毛利。每 1 亿余额年亏 285 万，按官方口径 226.6 亿约年亏 6.5 亿（<span class="lv lv1">测算</span>）。<strong>逐项拆解（每 1 亿余额·年化）</strong>：</li>
+</ul>
+<table class="ue-decomp">
+<thead>
+<tr>
+<th>UE 项</th>
+<th>数值</th>
+<th>判断</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>客户收益率</td>
+<td>+4.90%</td>
+<td>个贷第二高（仅低于卡部随e贷 8.53%），定价不弱</td>
+</tr>
+<tr>
+<td>资金+运营</td>
+<td>-2.30%</td>
+<td><span class="lv lv1">测算</span>（4.90-2.60 倒推），与同业量级相当（<span class="lv lv4">待补</span>）</td>
+</tr>
+<tr>
+<td><strong>毛利（净收益率）</strong></td>
+<td><strong>+2.60%</strong></td>
+<td><strong>正的——利息生意本身赚钱</strong></td>
+</tr>
+<tr>
+<td>风险成本</td>
+<td>-4.37%</td>
+<td>毛利 2.60 的 168%（<span class="lv lv1">测算</span>），<strong>吃穿全部毛利</strong></td>
+</tr>
+<tr>
+<td>资本成本</td>
+<td>-1.08%</td>
+<td><span class="lv lv1">测算</span>倒推</td>
+</tr>
+<tr>
+<td><strong>EVA</strong></td>
+<td><strong>-2.85%</strong></td>
+<td>每亿余额年亏 285 万（<span class="lv lv1">测算</span>）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>同表对照（个贷横向，只看「毛利 vs 风险」两列）</strong>：网贷毛利 +6.46%、风险 3.80% → EVA <strong>+0.91%</strong>（个贷最优）；信用卡毛利 +2.60%、风险 4.37% → <strong>-2.85%</strong>；卡部随e贷毛利 +5.57%、风险 7.61% → <strong>-2.93%</strong>（最差）——<strong>高毛利救不了高风险，低毛利+低风险也能接近转正（消费贷 -0.60%、房贷 -0.08%）</strong>。管理含义：信用卡的问题不在「赚得少」，在「风险吃得多」；提价救不了，降险才行。
+- <strong>② 组合反推：风险成本集中在约 23% 的高风险口袋。</strong> 4.37% ≈ 高风险口袋 7.61%（卡部随e贷级，EVA 表披露）× 占比 w + 其他客群约 3.4%（<span class="lv lv2">估算</span>）× (1-w)，解出 w≈23%（验算 7.61%×23%+3.4%×77%≈4.37%），对应约 52 亿余额（<span class="lv lv1">测算</span>：226.6 亿×23%）——<strong>问题不在全池，在一个口袋。</strong>
+- <strong>③ 六行风险带定位：本行处高位带，差距=客群质量差距。</strong> 六行名义不良率区间 1.45%-4.22%（邮储 1.45 ＜ 招行 1.90 ＜ 浦发 2.01 ＜ 农行 2.05 ＜ 平安 2.23 ＜ 民生 4.22）；本行还原口径 4.37% 高于除民生外全部行，与民生同处高位带。头部零售行风险成本带 1.90%-2.23% 与本行差距约 2.1-2.5pct（<span class="lv lv1">测算</span>：4.37-1.90 至 4.37-2.23）——<strong>这是客群质量的差距，不是行业环境的差距</strong>（<span class="lv lv3">研判推断</span>）。体量口径提示：招行 8,909.08 亿/农行 8,158.49 亿/平安 4,025.90 亿 vs 本行 226.6 亿，体量差 1-2 个数量级（约 17-39 倍<span class="lv lv1">测算</span>），<strong>只比结构比率不比绝对额</strong>；收益率方向参照：招行卡均交易约 1.96 万元（<span class="lv lv1">测算</span>：19,111.84 亿÷9,770.73 万张）、平安消费 9,485.47 亿、农行消费超 1 万亿元——同业定价力方向性看强于本行（<span class="lv lv3">研判推断</span>），但收益率未按产品披露（<span class="lv lv4">待补</span>）。
+- <strong>④ 名义口径失真是六行普遍现象。</strong> 招行名义 1.90% 六行第二低，但新生成不良 236.98 亿、+39.29 亿；邮储名义 1.45% 最低，但生成率 3.68%（+0.62pct）最高，且半年处置约 39 亿≈期末不良池 1.4 倍（<span class="lv lv1">测算</span>）——账面靠泵出维持。本行 4.37% 是含核销出表的还原口径，<strong>是把同业藏起来的风险摆上桌</strong>（<span class="lv lv3">研判推断</span>）。</p>
+<p class="facts"><strong>诊断收口：为什么不动资金运营项（<span class="lv lv1">测算</span>横向对比）</strong>：信用卡资金+运营 2.30pct，高于个贷合计推导值 1.91pct（5.35-3.44）约 0.39pct——但对比风险成本项的差距（4.37% vs 个贷合计 2.13%，差 2.24pct），资金运营只是次量级；且资金成本由全行 FTP 决定、运营成本由渠道结构决定，短期不可控（<span class="lv lv3">研判推断</span>）。弹性表同样证明：资金运营哪怕压降 0.5pct，EVA 仅 +0.5pct，与提价/中收同价、只有降险的一半——<strong>先动风险，再谈成本。</strong></p>
+<p><strong>点睛图建议</strong>：①恒等式瀑布条（4.90 → -2.85 五段：收益率/资金运营/风险/资本）；②六行不良率×余额降幅发散条（x=降幅、y=不良率，本行还原口径标注口径差异），数字全部 md 在案。</p>
+<figure class="chart" id="fig-ue"><figcaption class="chart-title">点睛图① · UE 恒等式分解瀑布（每 1 亿余额·年化，%）</figcaption><div class="wfbody"><span class="wfzero" style="bottom:37.78%"><i>0</i></span><span class="wfconn" style="bottom:92.22%;left:9.50%"></span><span class="wfconn" style="bottom:66.67%;left:29.75%"></span><span class="wfconn" style="bottom:18.11%;left:50.00%"></span><span class="wfconn" style="bottom:6.11%;left:70.25%"></span><span class="wfcol"><span class="wfbar base" style="bottom:37.78%;height:54.44%"></span><span class="wflab" style="bottom:94.42%">4.90%</span></span><span class="wfcol"><span class="wfbar dec" style="bottom:66.67%;height:25.56%"></span><span class="wflab" style="bottom:94.42%">-2.30</span></span><span class="wfcol"><span class="wfbar dec risk" style="bottom:18.11%;height:48.56%"></span><span class="wflab" style="bottom:68.87%">-4.37</span></span><span class="wfcol"><span class="wfbar dec" style="bottom:6.11%;height:12.00%"></span><span class="wflab" style="bottom:20.31%">-1.08</span></span><span class="wfcol"><span class="wfbar total" style="bottom:6.11%;height:31.67%"></span><span class="wflab" style="bottom:39.98%">-2.85%</span></span></div><div class="wfnames"><span>客户收益率</span><span>资金+运营</span><span>风险成本</span><span>资本成本</span><span>EVA</span></div><figcaption class="chart-cap">7 行验算全部自洽（<span class="lv lv1">测算</span>）：毛利 +2.60% 为正，被风险成本 4.37% 吃穿（吃掉毛利的 168%）——信用卡的亏损 100% 来自风险成本项，每 1 亿余额年亏 285 万。</figcaption></figure><figure class="chart fig-div" id="fig-div"><figcaption class="chart-title">点睛图② · 六行不良率 × 余额降幅发散条（2026H1，零轴 = 持平）</figcaption><div class="fdiv-head"><span>y：名义不良率（自上而下升序）</span><span>← x：余额降幅（压缩更深）</span><span>0 ＝ 持平</span></div><div class="fdiv-row"><span class="fdiv-label">邮储 · 1.45%</span><span class="fdiv-zone"><span class="fbar miss"></span></span><span class="fdiv-val na"><span class="lv lv4">待补</span></span></div><div class="fdiv-row"><span class="fdiv-label">招行 · 1.90%</span><span class="fdiv-zone"><span class="fbar" style="width:24.32%"></span></span><span class="fdiv-val neg">-5.13%</span></div><div class="fdiv-row"><span class="fdiv-label">浦发 · 2.01%</span><span class="fdiv-zone"><span class="fbar miss"></span></span><span class="fdiv-val na"><span class="lv lv4">待补</span></span></div><div class="fdiv-row"><span class="fdiv-label">农行 · 2.05%</span><span class="fdiv-zone"><span class="fbar" style="width:19.11%"></span></span><span class="fdiv-val neg">-4.03%</span></div><div class="fdiv-row"><span class="fdiv-label">平安 · 2.23%</span><span class="fdiv-zone"><span class="fbar" style="width:3.32%"></span></span><span class="fdiv-val neg">-0.70%</span></div><div class="fdiv-row"><span class="fdiv-label">民生 · 4.22%</span><span class="fdiv-zone"><span class="fbar" style="width:28.50%"></span></span><span class="fdiv-val neg">-6.01%</span></div><div class="fdiv-row hl"><span class="fdiv-label">本行（还原口径） · 4.37%</span><span class="fdiv-zone"><span class="fbar jr" style="width:100.00%"></span></span><span class="fdiv-val own">-21.09%</span></div><figcaption class="chart-cap">条长 = 余额降幅：招行 -5.13%、农行 -4.03%、民生 -6.01%、平安 -0.70%（微缩），本行官方口径 -60.58 亿（-21.09%）压缩最深；行序按名义不良率升序（1.45%→4.22%），头部带 1.90%-2.23% 以浅缩守住低位不良（<span class="lv lv3">研判推断</span>）；本行为还原口径 4.37%（含核销出表），与六行名义口径不同维，不作直接对比；邮储、浦发余额降幅未在案（<span class="lv lv4">待补</span>）。</figcaption></figure>
+<h2 class="sheet-title" id="s2" data-run="第二章 · 客群端" data-full="第二章 客群端：客群结构是风险成本的配方"><span class="ch-no">第二章</span><span class="ch-title">客群端：客群结构是风险成本的配方</span></h2>
+<blockquote>
+<p><strong>金句：客群结构不是余额的分布，是风险成本的配方——把高风险口袋从 23% 压到 10%，比把整个池子再缩 10% 有用。</strong></p>
+</blockquote>
+<p class="blk-label"><strong>论证链（证据编号）</strong></p>
+<ul>
+<li><strong>① mix-shift 分解：4.37% 是两段客群的加权平均。</strong> 4.37% ≈ 7.61%（口袋，<span class="lv lv2">估算</span>占比 23%）+ 3.4%（正常客群，<span class="lv lv2">估算</span>占比 77%），验算≈4.37%；w 为组合级反推，客户级分层待 RFM 数据（<span class="lv lv4">待补</span>）。</li>
+<li><strong>② 双杠杆情景（<span class="lv lv1">测算</span>）：减亏与重启各有明确的配方。</strong> 减亏档=口袋 23%→10%（压降约 13pct ≈ 29 亿：52.1→22.7 亿）+ 正常客群损失率 3.4%→1.9% → 加权 7.61%×10%+1.9%×90%≈<strong>2.47%</strong>（EVA≈-0.95%，减亏达成未过线）；重启档=口袋→3%（约 6.8 亿）+ 正常客群→1.34%（消费贷级）→ 加权约<strong>1.53%</strong>（EVA≈-0.01%≈0，过线）——<strong>两档之差在客群上移的彻底程度（1.9%→1.34%），不在压降力度。</strong> 边界句：情景测算非预测，29 亿压降按官方 226.6 亿基数推演，回收须按 Vintage 分层，防误伤口袋内优质尾部。</li>
+<li><strong>③ 每亿亏 285 万的三个观察（<span class="lv lv1">测算</span>）。</strong> ①组合年亏约 6.5 亿，约占归母净利润 218.76 亿的 3%——不致命，但持续；②每压降 10 亿高风险余额，年减亏约 2,850 万（10 亿×2.85%）——压降本身在买回亏损；③同样 10 亿从高风险客群换到风险成本 1.9% 客群，年减亏约 2,470 万（10 亿×(4.37%-1.9%)）——<strong>结构调整与总量压降同样值钱。</strong></li>
+<li><strong>④ 存量激活（<span class="lv lv2">估算</span>+<span class="lv lv1">测算</span>）：优质池是现金牛，但要过线才放。</strong> 表外未使用额度 534.33 亿 vs 表内 226.6 亿，使用率约三成（<span class="lv lv1">测算</span>）；优质池使用率 +5pct（<span class="lv lv2">估算</span>：经营目标假设非历史均值）→ 弹性约 26.7 亿（534.33×5%）、年化收入约 1.3 亿（按 4.90%）；但单笔 UE 判定：风险成本 1.9% 时 EVA≈-0.38% 仍不过线——<strong>只激活风险成本 &lt;1.52% 的白名单客群，先过线再放量</strong>。白名单资产均为既有存量（不新建）：人才贷（全省市占 &gt;70%<span class="lv lv4">待补</span>）、代发/公积金客群、安居贷（全年目标 50 亿+<span class="lv lv4">待补</span>）、融合易贷（房贷审批通过自动获消费额度）——以「审批联动+预授信」承接，卡e贷尊享/卡e贷重客拓户/智派同业高潜已注册在册（branch_product_metrics）；RFM 客户级数据缺失（<span class="lv lv4">待补</span>），以额度使用率×分期渗透×活跃度作代理分层。</li>
+<li><strong>⑤ 收窄路径的六行证据（<span class="lv lv3">研判推断</span>）：该带有人活着，且路径可达。</strong> 招行 1.90%、平安 2.23%（-0.01pct 微降、余额收缩最浅 -0.70%）——头部带 1.90%-2.23% 是六行中的现实存在，不是理论值；本行客群上移（mix-shift）即向该带靠拢，<strong>收窄路径存在</strong>。</li>
+</ul>
+<p class="facts"><strong>责任主体与观察指标（写入考核）</strong>：零售信贷部牵头（口袋回收、白名单准入）、信用卡中心（预授信激活）。观察指标：高风险口袋余额占比（季，路径 23%→10%）、正常客群损失率（季）、白名单渗透率（人才贷/代发持卡率）、优质池使用率（+5pct 目标）。风险边界：①口袋回收一刀切会误伤 23% 内的优质尾部——按 Vintage 分层执行；②人才贷市占 &gt;70% 是优势也是集中度风险——单一客群敞口需设限额；③上移依赖白名单资产质量，安居贷/融合易贷自身不良需同步监测。</p>
+<p><strong>点睛图建议</strong>：mix-shift 情景对比条（当前 4.37% → 减亏 2.47% → 重启 1.53%，1.52% 过线虚线，每段标注口袋/正常客群构成），图注「情景测算」，数字全部 md 在案。</p>
+<figure class="chart" id="fig-mix"><figcaption class="chart-title">点睛图③ · mix-shift 情景对比：风险成本加权（每 1 亿余额·年化，%）</figcaption><div class="legend"><span><i class="sw mseg-a"></i>高风险口袋 7.61%（卡部随e贷级）</span><span><i class="sw mseg-b"></i>正常客群</span></div><div class="mbody"><span class="mline" style="left:33.04%"><i>过线 1.52%（EVA≈0）</i></span><div class="mrow"><div class="mhead"><b>当前</b><span class="mtag warn">加权 ≈4.37%｜EVA -2.85%</span></div><div class="mtrack"><span class="mbar" style="width:94.96%"><span class="mseg mseg-a" style="width:40.07%"></span><span class="mseg mseg-b" style="width:59.93%"></span></span></div><div class="mcap">构成：口袋 7.61%×23% ＋ 正常客群 3.4%×77%</div></div><div class="mrow"><div class="mhead"><b>减亏档（口袋 23%→10%）</b><span class="mtag warn">加权 ≈2.47%｜EVA ≈-0.95%</span></div><div class="mtrack"><span class="mbar" style="width:53.72%"><span class="mseg mseg-a" style="width:30.80%"></span><span class="mseg mseg-b" style="width:69.20%"></span></span></div><div class="mcap">构成：口袋 7.61%×10% ＋ 正常客群 1.9%×90%</div></div><div class="mrow"><div class="mhead"><b>重启档（口袋→3%）</b><span class="mtag pass">加权 ≈1.53%｜EVA ≈-0.01%≈0 · 过线</span></div><div class="mtrack"><span class="mbar" style="width:33.22%"><span class="mseg mseg-a" style="width:14.94%"></span><span class="mseg mseg-b" style="width:85.06%"></span></span></div><div class="mcap">构成：口袋 7.61%×3% ＋ 正常客群 1.34%</div></div></div><figcaption class="chart-cap">图注「情景测算」（<span class="lv lv1">测算</span>）：减亏档减亏达成未过线，重启档过线——两档之差在客群上移的彻底程度（1.9%→1.34%），不在压降力度；情景测算非预测，29 亿压降按官方 226.6 亿基数推演，回收须按 Vintage 分层，防误伤口袋内优质尾部。</figcaption></figure>
+<h2 class="sheet-title" id="s3" data-run="第三章 · 产品端" data-full="第三章 产品端：先过线，再放量"><span class="ch-no">第三章</span><span class="ch-title">产品端：先过线，再放量</span></h2>
+<blockquote>
+<p><strong>金句：现金分期赚的是息差，场景分期赚的是确定性——同样的余额，不同的风险成本。先过线，再放量。</strong></p>
+</blockquote>
+<p class="blk-label"><strong>论证链（证据编号，逐条回到 UE 门槛判定）</strong></p>
+<ul>
+<li><strong>① UE 门槛总判定（<span class="lv lv1">测算</span>）：EVA≥0 ⇔ 收益率+中收率 ≥ 风险成本 + 3.38pct（= 资金运营 2.30 + 资本 1.08）。</strong> 当前 4.90% &lt; 4.37%+3.38%=7.75%，缺口 2.85pct 即 EVA；无中收时风险成本须 ≤1.52pct 才过线（与第一章研报重启门槛 1.5% 互证）。<strong>此后每个产品动作都过这条线判定。</strong></li>
+<li><strong>② 汽车分期（<span class="lv lv1">测算</span>）：条件过线——只做高档返佣+优质客群。</strong> 综合收益 4.1%-4.7%（客户实付 2.0%-2.3% + 厂商返佣 2.1%/2.7%，<span class="lv lv4">待补</span>协议原文核验）；过线条件：风险成本 &lt; 4.1%-4.7%-3.38% = 0.72%-1.32%——场景真实用途+车辆残值缓释下可降至 1% 附近（<span class="lv lv3">研判推断</span>，场景损失率<span class="lv lv4">待补</span>）→ 判定：高档返佣（4.7%）+降险至 1% → EVA≈+0.32% 过线；低档（4.1%）→ ≈-0.28% 不过线。<strong>全量铺开即亏损，只做能过线的组合</strong>；规模弹性 11.3/18.1 亿（226.6 亿×5%/8%<span class="lv lv1">测算</span>），浦发新能源车分期 297.97 亿=其卡余额 7.87%（<span class="lv lv1">测算</span>）居中验证；比亚迪「5免2」为差异化获客（上海银行无此产品），建行返佣 7% 的行业价格战是边界警示。责任主体：信用卡中心+汽车金融团队；观察指标：汽车分期余额及占卡余额比、返佣档位结构；风险边界：本行返佣 2.1%-2.7% 须按单车盈亏平衡测算，不做价格战跟随。</li>
+<li><strong>③ 贴息账单分期（<span class="lv lv1">测算</span>，关键反直觉）：不是独立破局点。</strong> UE&lt;0 时放规模=放大亏损（每 100 亿余额年亏 2.85 亿）；贴息只改「客户成本」、不改「银行 UE」——放量必须与客群上移捆绑：放量对象风险成本 &lt;1.52% 才正贡献。邮储账单分期 +10.93% 是在其生成率 3.68% 未出清下的动作，恰是「以规模摊薄负 UE」的风险样本，不可照抄；本行融合易贷已跑通贴息模式（贴息 1%、单笔封顶 3,000 元，<span class="lv lv4">待补</span>），复制到卡账单分期系统改造量小，<strong>窗口至 2026 年底：先降险、后放量</strong>。责任主体：信用卡中心+计财部（贴息承接核算）；观察指标：账单分期渗透率、贴息分期金额占比、放量客群 Vintage；风险边界：政策到期预案（2026 年底后转自有权益承接，避免渗透率断崖）。</li>
+<li><strong>④ 中收年费卡（<span class="lv lv1">测算</span>）：数学上最安全的杠杆。</strong> 中收直接加 EVA 分子、不经风险成本：中收率每 +0.5pct → EVA 直接 +0.5pct，约 1.13 亿/年（226.6 亿×0.5%）；对照本行银行卡手续费 0.35 亿（-35.2%）vs 中信信用卡非息净收入 50.12 亿（2026H1，方向性参照，口径含差异）——量级差距即空间；AUM 5 万+ 财富客群为现成目标池，第一阶段中收率梯度 0.2%-0.5pct（对标中信 50.12 亿需头部产品力，不设远期目标）。责任主体：财富与私人银行+信用卡中心；观察指标：银行卡手续费净收入同比转正、年费卡发卡量与留存率；风险边界：年费卡不得强制搭售、权益成本与年费精算匹配（合规闸门）。</li>
+<li><strong>⑤ 交易经营（<span class="lv lv3">研判推断</span>）：收入侧对冲，先补数据再谈经营。</strong> 交易中收加 EVA 分子、不占信贷敞口——民生交易 +18.40%、笔均约 447 元（量缩额增：余额 -6.01% 而交易正增长，交易活跃与信贷规模解耦）；邮储场景营销 5,700 万人次带动 500 亿、人均约 877 元（<span class="lv lv1">测算</span>：500 亿÷5,700 万人次）——贴息之外的场景经营同样能带来确定性收入；本行交易数据缺失（<span class="lv lv4">待补</span>）→ 第一步建交易监测仪表盘，第二步参照「周六5折」式品牌活动。责任主体：信用卡中心+科技部（仪表盘）；观察指标：交易额/笔均/活跃率；风险边界：活动补贴须测算获客成本与留存，不做纯烧钱补贴。</li>
+</ul>
+<p class="blk-label"><strong>收口：四抓手 UE 排序表（<span class="lv lv3">研判推断</span>，供议事排序而非精确打分）</strong></p>
+<table class="grip-table">
+<thead>
+<tr>
+<th>抓手</th>
+<th>UE 达标判定（过线=综合收益 ≥ 风险成本+3.38pct）</th>
+<th>规模弹性</th>
+<th>优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①汽车分期</td>
+<td>高档返佣+场景降险至 1% 可达标（+0.32%）；低档不过线</td>
+<td>11.3/18.1 亿（226.6 亿×5%/8%）</td>
+<td>1</td>
+</tr>
+<tr>
+<td>②年费卡中收</td>
+<td>零风险敞口直接加 EVA 分子（+0.5pct≈1.13 亿/年）；受客群质量约束</td>
+<td>0.5pct≈1.13 亿/年</td>
+<td>2</td>
+</tr>
+<tr>
+<td>③贴息账单分期</td>
+<td>前置：UE&lt;0 放量=放大亏损，须先降险（&lt;1.52%）后放量</td>
+<td>渗透率驱动，弹性大</td>
+<td>3</td>
+</tr>
+<tr>
+<td>④交易经营</td>
+<td>不占信贷敞口只加分子；本行数据缺失，先建仪表盘</td>
+<td>数据基建到位后见效</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<p><strong>点睛图建议</strong>：①四抓手卡阵（2×4：抓手×达标判定/规模弹性/同业验证/风险边界）；②弹性对比条（降险 -1pct≈2.27 亿 vs 提价/中收 +0.5pct≈1.13 亿，2 倍徽章），数字全部 md 在案。</p>
+<figure class="chart fig-grip" id="fig-grip"><figcaption class="chart-title">点睛图④ · 四抓手卡阵 ＋ 弹性对比条（2 倍徽章）</figcaption><div class="gwrap"><div class="grow-row"><div class="gcard"><div class="ghead"><b>① 汽车分期</b><span class="gpri">优先级 1</span></div><div class="grow"><span class="gk">达标判定</span><span class="gv">高档返佣+场景降险至 1% 可达标（+0.32%）；低档不过线</span></div><div class="grow"><span class="gk">规模弹性</span><span class="gv">11.3/18.1 亿（226.6 亿×5%/8%）</span></div><div class="grow"><span class="gk">同业验证</span><span class="gv">浦发新能源车分期 297.97 亿=其卡余额 7.87% 居中验证；比亚迪「5免2」差异化获客；建行返佣 7% 价格战边界警示</span></div><div class="grow"><span class="gk">风险边界</span><span class="gv">返佣 2.1%-2.7% 须按单车盈亏平衡测算，不做价格战跟随</span></div></div><div class="gcard"><div class="ghead"><b>② 年费卡中收</b><span class="gpri">优先级 2</span></div><div class="grow"><span class="gk">达标判定</span><span class="gv">零风险敞口直接加 EVA 分子（+0.5pct≈1.13 亿/年）</span></div><div class="grow"><span class="gk">规模弹性</span><span class="gv">0.5pct≈1.13 亿/年</span></div><div class="grow"><span class="gk">同业验证</span><span class="gv">本行手续费 0.35 亿（-35.2%）vs 中信信用卡非息净收入 50.12 亿——量级差距即空间</span></div><div class="grow"><span class="gk">风险边界</span><span class="gv">年费卡不得强制搭售；权益成本与年费精算匹配（合规闸门）</span></div></div></div><div class="grow-row"><div class="gcard"><div class="ghead"><b>③ 贴息账单分期</b><span class="gpri">优先级 3</span></div><div class="grow"><span class="gk">达标判定</span><span class="gv">UE&lt;0 放量=放大亏损（每 100 亿余额年亏 2.85 亿）；先降险（&lt;1.52%）后放量</span></div><div class="grow"><span class="gk">规模弹性</span><span class="gv">渗透率驱动，弹性大</span></div><div class="grow"><span class="gk">同业验证</span><span class="gv">邮储账单分期 +10.93% 为「以规模摊薄负 UE」风险样本，不可照抄；本行融合易贷贴息 1%（单笔封顶 3,000 元）已跑通，复制改造量小</span></div><div class="grow"><span class="gk">风险边界</span><span class="gv">窗口至 2026 年底：先降险、后放量；到期预案转自有权益承接，防渗透率断崖</span></div></div><div class="gcard"><div class="ghead"><b>④ 交易经营</b><span class="gpri">优先级 4</span></div><div class="grow"><span class="gk">达标判定</span><span class="gv">不占信贷敞口只加分子；本行数据缺失，先建交易监测仪表盘</span></div><div class="grow"><span class="gk">规模弹性</span><span class="gv">数据基建到位后见效</span></div><div class="grow"><span class="gk">同业验证</span><span class="gv">民生交易 +18.40%、笔均约 447 元；邮储场景营销 5,700 万人次带动 500 亿、人均约 877 元</span></div><div class="grow"><span class="gk">风险边界</span><span class="gv">活动补贴须测算获客成本与留存，不做纯烧钱补贴</span></div></div></div></div><div class="esub">弹性对比条（年化价值，余额按官方口径 226.6 亿）</div><div class="erow"><span class="elab">降险<i>风险成本 -1pct</i></span><span class="ezone"><span class="ebar top" style="width:72.00%"></span></span><span class="eval">约 2.27 亿</span><span class="ebadge">2 倍</span></div><div class="erow"><span class="elab">提价<i>收益率 +0.5pct</i></span><span class="ezone"><span class="ebar" style="width:35.84%"></span></span><span class="eval">约 1.13 亿</span><span class="ebadge flat">1 倍</span></div><div class="erow"><span class="elab">中收<i>中收率 +0.5pct</i></span><span class="ezone"><span class="ebar" style="width:35.84%"></span></span><span class="eval">约 1.13 亿</span><span class="ebadge flat">1 倍</span></div><figcaption class="chart-cap">四抓手 UE 排序同第三章收口表（<span class="lv lv3">研判推断</span>，供议事排序而非精确打分）；降险 -1pct≈2.27 亿 = 提价/中收 +0.5pct≈1.13 亿的 2 倍（<span class="lv lv1">测算</span>：1.0pct/0.5pct）——先过线，再放量：全量铺开即亏损，只做能过线的组合。</figcaption></figure>
+<h2 class="sheet-title" id="s4" data-run="第四章 · 行动" data-full="第四章 行动：四杠杆节奏"><span class="ch-no">第四章</span><span class="ch-title">行动：四杠杆节奏</span></h2>
+<blockquote>
+<p><strong>金句：先过线，再放量——降险开路，中收跟进，提价守成，规模殿后。</strong></p>
+</blockquote>
+<p><strong>① 降险杠杆（主攻）</strong>：口袋 mix-shift（23%→10%≈29 亿）+ Vintage 分层准入与回收。<strong>观察：还原不良损失率季度红线 4.0%（<span class="lv lv3">研判推断</span>）、口袋余额占比季报、新户 12 个月 Vintage 逾期率。</strong>
+<strong>② 中收杠杆（补攻）</strong>：年费卡+权益，AUM 5 万+ 客群首发。<strong>观察：银行卡手续费净收入同比转正。</strong>
+<strong>③ 提价杠杆（守）</strong>：贴息承接守 4.90% 收益率不降，放量只对准降险后客群。<strong>观察：S4 剪刀差连续 2 季收窄。</strong>
+<strong>④ 规模杠杆（冻结）</strong>：UE&lt;0 时放量=放大亏损，转正前冻结规模类考核；解锁=重启三条件同时满足（单月降幅收窄至 -3 亿内连续 3 个月 + 生成率连续 2 季回落 + 新户 Vintage 连续 3-4 季企稳）。<strong>观察：S1/S2/S3。</strong></p>
+<p><strong>四杠杆协同（<span class="lv lv1">测算</span>）</strong>：降险开路（风险成本 -1pct）+ 中收跟进（中收率 +0.5pct）+ 提价守成（4.90% 不降）≈ EVA -1.35%（-2.85+1.0+0.5），进入减亏走廊；规模杠杆在 EVA 转正前保持冻结。边界句：弹性为单变量静态测算，执行中收益率与风险成本会联动（客群上移后高定价客群减少），组合测算按季回算，不做线性外推。</p>
+<p><strong>落地节奏（<span class="lv lv3">研判推断</span>，按观察指标挂靠）</strong>：2026Q3——红线 4.0% 生效、口袋占比季报上线、Vintage 分层准入试运行；2026Q4——中收试点与贴息承接方案定稿（政策窗口 2026 年底）；2027——重启三条件满足后解锁规模杠杆，按「降险→中收→提价→规模」放量；任一止损信号（生成率连续 2 季上行、Vintage 恶化、催收回收率下行）出现即维持压降。</p>
+<p><strong>优先级一句话：降险（价值 2 倍）→ 中收（零风险）→ 提价（守成）→ 规模（冻结）——先过线，再放量；四杠杆的次序，就是资源配置的次序。</strong></p>
+<p><strong>点睛图建议：四杠杆优先级阶梯图</strong>（四级阶梯，自上而下）：</p>
+<table class="ladder-table">
+<thead>
+<tr>
+<th>级</th>
+<th>杠杆</th>
+<th>价值</th>
+<th>观察指标</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>降险</td>
+<td>2 倍（-1pct≈2.27 亿）</td>
+<td>红线 4.0%</td>
+</tr>
+<tr>
+<td>2</td>
+<td>中收</td>
+<td>1 倍零敞口（+0.5pct≈1.13 亿）</td>
+<td>手续费同比转正</td>
+</tr>
+<tr>
+<td>3</td>
+<td>提价</td>
+<td>1 倍守成</td>
+<td>守 4.90%/S4 剪刀差</td>
+</tr>
+<tr>
+<td>4</td>
+<td>规模</td>
+<td>冻结（UE&lt;0 放量=放大亏损）</td>
+<td>三条件解锁（S1+S2+S3）</td>
+</tr>
+</tbody>
+</table>
+<p>图注「优先级为<span class="lv lv3">研判推断</span>」；全部数字 md 在案（本章各杠杆条）。</p>
+<figure class="chart fig-stairs" id="fig-stairs"><figcaption class="chart-title">点睛图⑤ · 四杠杆优先级阶梯（自上而下）</figcaption><div class="stairs"><div class="stepcol"><div class="stepblk s1" style="height:158px"><span class="sval">2 倍 ≈2.27 亿</span></div></div><div class="stepcol"><div class="stepblk s2" style="height:79px"><span class="sval">1 倍 ≈1.13 亿</span></div></div><div class="stepcol"><div class="stepblk s3" style="height:79px"><span class="sval">1 倍 守成</span></div></div><div class="stepcol"><div class="stepblk s4" style="height:14px"><span class="sfrozen">冻结 · UE&lt;0 放量=放大亏损</span></div></div></div><div class="stair-foot"><div class="sfcol"><span class="sno">1</span><div class="sname">降险</div><div class="sobs">红线 4.0%</div></div><div class="sfcol"><span class="sno">2</span><div class="sname">中收</div><div class="sobs">手续费同比转正</div></div><div class="sfcol"><span class="sno">3</span><div class="sname">提价</div><div class="sobs">守 4.90%/S4 剪刀差</div></div><div class="sfcol"><span class="sno">4</span><div class="sname">规模</div><div class="sobs">三条件解锁（S1+S2+S3）</div></div></div><figcaption class="chart-cap">图注：优先级为<span class="lv lv3">研判推断</span>；阶梯高度按四杠杆价值比例视觉化（降险 -1pct≈2.27 亿、中收 +0.5pct≈1.13 亿、提价 1 倍守成、规模冻结）——先过线，再放量；四杠杆的次序，就是资源配置的次序。</figcaption></figure>
+<h2 class="sheet-title" id="s5" data-run="局限与待补" data-full="局限与待补"><span class="ch-title">局限与待补</span></h2>
+<p class="panel limits">①同业收益率/资金运营/资本成本三项均不可得（<span class="lv lv4">待补</span>）——同业对标只能回答风险项，无法拼成完整 UE 排名；②w≈23% 为组合级反推（<span class="lv lv2">估算</span>），客户级分层待 RFM 数据（<span class="lv lv4">待补</span>）；③弹性为单变量静态测算，降险常伴随收益率下行（客群上移后高定价客群减少），组合测算需按季回算，不做线性外推；④转正门槛 1.52pct 依赖资本成本 1.08pct 倒推假设（EVA 表列载 0.78pct，差 0.30pct，正文采用自洽倒推口径）；⑤六行版补充待补：平安流通卡量、农行卡量、江苏官方信用卡不良率与消费金额、吉利/比亚迪协议与融合易贷贴息方案原文、本行交易数据（均<span class="lv lv4">待补</span>）；⑥本文件全部数字与主研报共用同一数据底座，口径冲突以底座与主研报来源披露为准。</p>
+
+<h2 class="sheet-title" id="s6" data-run="来源披露" data-full="来源披露（一段）"><span class="ch-title">来源披露（一段）</span></h2>
+<p>本文件全部数据取自数据底座五件：①种子底座（浦发 2.01%/民生 4.22%/邮储 1.45%+生成率 3.68%，EVA 表七产品行）；②Wind 补充（全行不良率 0.81%、表外未使用额度 534.33 亿、社零 M0001428、居民短贷 M0251917，未采用项同底座）；③官方口径补充（信用卡余额 -60.58 亿/-21.09%，反推 2025 末约 287.2 亿→2026-06-30 约 226.6 亿）；④风险校准（处置依赖度测算、S1-S4 信号、红线 4.0%）；⑤新增三家底座（Wind 12 次调用 0 次最终失败：平安余额 4,025.90 亿/-0.70%、不良率 2.23%/-0.01pct、消费 9,485.47 亿、流通户 4,285.21 万户；招行余额 8,909.08 亿/-5.13%、不良率 1.90%/+0.16pct、新生成不良 236.98 亿/+39.29 亿、交易 19,111.84 亿/-5.43%、流通卡 9,770.73 万张；农行余额 8,158.49 亿/-4.03%、不良率 2.05%/+0.17pct、消费超 1 万亿元——均半年报原文核验，余额×不良率自洽 ✓）。标注级：<span class="lv lv1">测算</span>=披露值推导/验算（恒等式 7 行、mix-shift 情景、弹性、门槛、体量倍数全部验算自洽）；<span class="lv lv2">估算</span>=量级推断（w≈23%、+5pct）；<span class="lv lv3">研判推断</span>=分析性判断；<span class="lv lv4">待补</span>=观察清单项。EVA 表资本成本列载 0.78pct 与恒等式倒推 1.08pct 差 0.30pct，正文采用自洽倒推口径（详见主研报来源披露）。行业主体均以披露行名称行文；本文件为内部经营分析，不构成投资建议。</p>
+</main>
+
+<section class="backcover" id="backcover">
+  <div class="bk-inner">
+    <p class="bk-label">收束金句</p>
+    <p class="bk-quote">先过线，再放量——降险开路，中收跟进，提价守成，规模殿后。</p>
+    <div class="bk-block">
+      <div class="bkrow"><span class="bk">版本</span><span>UE 专题 v3 · 客群×产品框架</span></div>
+      <div class="bkrow"><span class="bk">日期</span><span>2026-08-30</span></div>
+      <div class="bkrow"><span class="bk">数据期</span><span>2026-06-30（EVA 表）/ 2026H1（半年报）/ 2026-08-13（内部周报）</span></div>
+      <div class="bkrow"><span class="bk">主线</span><span>UE 恒等式：EVA = 客户收益率 - 资金运营 - 风险成本 - 资本成本</span></div>
+      <div class="bkrow"><span class="bk">质量门禁</span><span>G3 渲染自检 · t12+t12 复验 PASS</span></div>
+    </div>
+    <p class="bk-disclaim">内部经营分析，不构成投资建议；测算/估算/研判推断非官方统计</p>
+    <p class="bk-brand">99wiki ｜ 智见点评 · 行业研究</p>
+  </div>
+</section>
+</body>
+</html>

@@ -65,6 +65,7 @@ import {
   createAuditHandler,
   resolveAuditLogPath,
 } from './host/audit-log.ts'
+import { registerRenderPublishTool } from './host/render-publish.ts'
 import { invalidateBuiltinLegacyPack } from './v2/compat.ts'
 import { invalidateRuntimePack } from './v2/runtime-pack.ts'
 import {
@@ -239,6 +240,8 @@ export interface Config {
   expertModelOverrides?: Record<string, { provider: string; model: string; reasoningEffort?: string }>
   /** Per-tool execution policy (API vs CLI vs auto) for external capabilities. */
   toolExecution?: Record<string, ToolExecutionConfig>
+  /** Tool ids to exclude from this preset's model-facing tool catalog (e.g. `expert_teams_claim_task`); absent/empty = register everything. Host-layer tools registered by `index.ts` (e.g. `render_publish`) are NOT affected. */
+  disabledTools?: string[]
   /** Provider path/endpoint configuration (wind/zyt/beike); env/probe defaults apply when absent. */
   providers?: {
     /** Wind skill CLI path (`scripts/cli.mjs`); default probes `~/.agents/skills/wind-mcp-skill/scripts/cli.mjs` / `WIND_SKILL_CLI`. */
@@ -303,6 +306,7 @@ export const Config: z<Config> = z.object({
   packPriority: z.array(z.string()),
   expertModelOverrides: z.dict(memberModelSchema),
   toolExecution: z.dict(toolExecutionEntrySchema),
+  disabledTools: z.array(z.string()),
   providers: z.object({
     wind: providerWindSchema,
     zyt: providerZytSchema,
@@ -398,6 +402,10 @@ export function apply(ctx: Context, config: Config): void {
   const core = registerExpertTeamsTools(ctx, runtimeConfig)
   registerZhijianTools(ctx, runtimeConfig, core)
   registerCollabTools(ctx, runtimeConfig, core)
+  // render_publish: 通用基础设施工具（HTML5 产物 → 公网链接，无鉴权直出），
+  // 在 HOST 入口注册、不进任何领域工具组；也因此不进上方智见 usage prompt
+  // 的 toolNames 列表（该列表只描述智见/协作工具）。
+  registerRenderPublishTool(ctx)
 
   // Provider-call audit persistence: one JSONL file shared across restarts
   // (the in-memory registry audit is the live source; the file is the

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "Andrej Karpathy",
-    "publicLabel": "Andrej Karpathy",
-    "initials": "A"
+    "internalName": "手搓GPT老师",
+    "publicLabel": "手搓GPT老师",
+    "initials": "S"
   },
   "domains": [
     "realestate.general",

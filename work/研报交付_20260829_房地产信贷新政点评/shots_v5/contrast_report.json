@@ -1,0 +1,170 @@
+{
+ "desktop-1280": {
+  "contrastFails": [],
+  "overlaps": [],
+  "chapters": [
+   {
+    "i": 1,
+    "heading": "购房者：影子出资人 → ",
+    "headingW": 311,
+    "bodyChars": 1417
+   },
+   {
+    "i": 2,
+    "heading": "主办银行：资金贩子 → ",
+    "headingW": 247,
+    "bodyChars": 951
+   },
+   {
+    "i": 3,
+    "heading": "开发商：金融家 → 制造",
+    "headingW": 279,
+    "bodyChars": 697
+   },
+   {
+    "i": 4,
+    "heading": "上市房企：再融资通道收紧",
+    "headingW": 359,
+    "bodyChars": 652
+   },
+   {
+    "i": 5,
+    "heading": "建筑央企：被忽略的角色 ",
+    "headingW": 567,
+    "bodyChars": 610
+   },
+   {
+    "i": 6,
+    "heading": "信托：影子银行通道 → ",
+    "headingW": 295,
+    "bodyChars": 714
+   },
+   {
+    "i": 7,
+    "heading": "地方政府：场外操盘手 →",
+    "headingW": 391,
+    "bodyChars": 505
+   },
+   {
+    "i": 8,
+    "heading": "持有运营端：金融菜单缺席",
+    "headingW": 359,
+    "bodyChars": 543
+   },
+   {
+    "i": 9,
+    "heading": "经纪中介：信贷分销商 →",
+    "headingW": 519,
+    "bodyChars": 1890
+   },
+   {
+    "i": 10,
+    "heading": "数据评估：额度的化妆师 ",
+    "headingW": 327,
+    "bodyChars": 1376
+   },
+   {
+    "i": 11,
+    "heading": "城投：杠杆放大器 → 存",
+    "headingW": 263,
+    "bodyChars": 796
+   },
+   {
+    "i": 12,
+    "heading": "沉默角色：沉默接盘者 →",
+    "headingW": 394,
+    "bodyChars": 683
+   },
+   {
+    "i": 13,
+    "heading": "新入场者：缺席者 → 制",
+    "headingW": 327,
+    "bodyChars": 1022
+   }
+  ]
+ },
+ "mobile-375": {
+  "contrastFails": [],
+  "overlaps": [],
+  "chapters": [
+   {
+    "i": 1,
+    "heading": "购房者：影子出资人 → ",
+    "headingW": 299,
+    "bodyChars": 1417
+   },
+   {
+    "i": 2,
+    "heading": "主办银行：资金贩子 → ",
+    "headingW": 247,
+    "bodyChars": 951
+   },
+   {
+    "i": 3,
+    "heading": "开发商：金融家 → 制造",
+    "headingW": 279,
+    "bodyChars": 697
+   },
+   {
+    "i": 4,
+    "heading": "上市房企：再融资通道收紧",
+    "headingW": 299,
+    "bodyChars": 652
+   },
+   {
+    "i": 5,
+    "heading": "建筑央企：被忽略的角色 ",
+    "headingW": 299,
+    "bodyChars": 610
+   },
+   {
+    "i": 6,
+    "heading": "信托：影子银行通道 → ",
+    "headingW": 295,
+    "bodyChars": 714
+   },
+   {
+    "i": 7,
+    "heading": "地方政府：场外操盘手 →",
+    "headingW": 299,
+    "bodyChars": 505
+   },
+   {
+    "i": 8,
+    "heading": "持有运营端：金融菜单缺席",
+    "headingW": 299,
+    "bodyChars": 543
+   },
+   {
+    "i": 9,
+    "heading": "经纪中介：信贷分销商 →",
+    "headingW": 299,
+    "bodyChars": 1890
+   },
+   {
+    "i": 10,
+    "heading": "数据评估：额度的化妆师 ",
+    "headingW": 299,
+    "bodyChars": 1376
+   },
+   {
+    "i": 11,
+    "heading": "城投：杠杆放大器 → 存",
+    "headingW": 263,
+    "bodyChars": 796
+   },
+   {
+    "i": 12,
+    "heading": "沉默角色：沉默接盘者 →",
+    "headingW": 299,
+    "bodyChars": 683
+   },
+   {
+    "i": 13,
+    "heading": "新入场者：缺席者 → 制",
+    "headingW": 299,
+    "bodyChars": 1022
+   }
+  ]
+ }
+}

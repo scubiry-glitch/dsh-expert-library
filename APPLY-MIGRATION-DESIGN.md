@@ -480,7 +480,7 @@ conventions. New files:
    frameworkName, frameworkSteps, frameworkConstraints, wordLimitLine, outputFormText,
    fusionExtraRules}` → ok; roster `[bk-024, bk-025]`; `t1.expertIds` = selected;
    **`t2.expertIds` = `[]`** (fusion unassigned, after D4).
-2. expansion golden: 2 physical reviews (`专家研判：丁祖昱（行业研究·…）` via
+2. expansion golden: 2 physical reviews (`专家研判：定力董座（行业研究·…）` via
    `opts.expertDisplay` from ZHIJIAN_EXPERTS metas) + 1 unassigned fusion with deps
    `[t1,t2]`; fusion description contains `综合以下专家研判任务：t1, t2（…）`.
 3. 1 selected expert → 1 review + fusion; 5 selected → 5 reviews + fusion.

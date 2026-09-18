@@ -1,0 +1,9 @@
+{
+  "taskId": "t13",
+  "subject": "t13 渲染与发布：工艺版三件套（深青墨 register，G1-G5 五道门禁）",
+  "description": "## t13（队长直营）：工艺版三件套渲染与发布（G1-G5 全门禁）\n输入：新政下智见的机会_底稿_v4_工艺版.md（t12 产出）。渲染规范=模板唯一权威：**深青墨 #0e6a55＋琥珀金 #a9741f**、report-rail 布局、policy-print 质感、CSS-only 点睛图（多列数字条用 flex 不用 grid）；封面（品牌行+衬线特大主标+琥珀金句带+白卡四格关键数字条，数字全 md 在案）+封底（收束金句+版本块+免责行）；点睛图按九类选型 SVG/CSS 绘制。管线：md→HTML→PDF（weasyprint A4、98wiki 页脚、封面封底 @page 命名页、页码重排）→PPTX（pptfast seed=20260829 全页 notes）→sha256sums+shots 全页截图→发布（HTML render_publish 新 slug 一版一个，历史链接不覆盖；PDF cp /var/www/dsh-render/<团队id>/ 并 curl -I 验 200）。门禁：G1 禁例/应有清单 grep 脚本 0 命中/100% 在位；G2 锚点清单（t12 汇报的 30-50 项）逐 token 一致零新增；G3 finesse P0=0＋1280/375 双视口 0 溢出＋锚点零死链＋AA；G4 pptfast validate+audit 双 0；G5 pypdf 页数档/页脚/章节大纲逐项。五门全过才发布；一门不过修复后全门重跑。",
+  "dependencies": [
+    "t12"
+  ],
+  "createdAt": 1788065596149
+}

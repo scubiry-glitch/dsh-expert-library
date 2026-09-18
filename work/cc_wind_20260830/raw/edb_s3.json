@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"metrics\":[{\"code\":\"M5547489\",\"name\":\"中国:信用卡逾期半年未偿信贷总额:同比\",\"unit\":\"%\",\"source\":\"中国人民银行\",\"updateDate\":\"20250217\",\"freq\":\"年\"},{\"code\":\"Z0407705\",\"name\":\"巴西:非独立就业人数:每周工作50小时及以上:25至29岁\",\"unit\":\"千人\",\"source\":\"OECD\",\"magnitude\":\"千\",\"updateDate\":\"20230705\",\"freq\":\"年\"}]}"
+    }
+  ],
+  "isError": false,
+  "cli_meta": {
+    "schema_version": "1.0",
+    "server_type": "economic_data",
+    "tool_name": "search_economic_indicator",
+    "completeness": "not_asserted",
+    "tables": [],
+    "warnings": []
+  }
+}

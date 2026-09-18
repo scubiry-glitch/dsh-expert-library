@@ -31,7 +31,7 @@ test('beike pack validates clean with 13 cross-projected experts', () => {
   const pack = buildBeikeDomainPack()
   const result = validateDomainPack(pack)
   assert.equal(result.ok, true, JSON.stringify(result.diagnostics.filter(d => d.severity === 'error')))
-  assert.equal(pack.experts.length, 13)
+  assert.equal(pack.experts.length, 14)
   assert.deepEqual(pack.experts.map(e => e.id).sort(), [...BEIKE_EXPERT_IDS].sort())
   assert.equal(pack.scenarios.length, 2)
   assert.ok(pack.scenarios.some(s => s.id === 'beike-ecosystem'))
@@ -88,11 +88,11 @@ test('beike experts are shared registry entries (no duplicate registration)', ()
     assert.equal(ZHIJIAN_EXPERT_BY_ID.has(id), true, `${id} in shared registry`)
   }
   const left = ZHIJIAN_EXPERT_BY_ID.get('e08-08')
-  assert.equal(left?.name, '左晖')
+  assert.equal(left?.name, '难而正确君')
   const zhang = ZHIJIAN_EXPERT_BY_ID.get('s-07')
-  assert.equal(zhang?.name, '张勇')
+  assert.equal(zhang?.name, '组织一号位')
   const huang = ZHIJIAN_EXPERT_BY_ID.get('bk-016')
-  assert.equal(huang?.name, '黄奇帆')
+  assert.equal(huang?.name, '结构老市长')
 })
 
 test('routeRequest routes 贝壳生态与居住服务 to beike candidates', () => {

@@ -125,7 +125,11 @@ export type FilesViewProps = PropsRuntime<'conversation.view'>
  * right pane previews the selection (univer office viewer or raw embed).
  */
 export function FilesView({ useSession, sessionId }: FilesViewProps) {
-  const nodes = useSession((snapshot) => snapshot.chat.legacy.nodes)
+  // dsh 0.1.5-rc.1 dropped the old session snapshot's `chat.legacy` shape; the
+  // 文件 view degrades to an empty list instead of crashing the
+  // conversation.view slot until it is ported to the new uiConversation
+  // pipeline.
+  const nodes = useSession((snapshot) => snapshot?.chat?.legacy?.nodes ?? [])
 
   // Produced documents: fold tool-result nodes in seq order, first-seen wins.
   const produced = useMemo<readonly FileRow[]>(() => {

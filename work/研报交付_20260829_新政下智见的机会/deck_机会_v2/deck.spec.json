@@ -1,0 +1,114 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "zhijian-bluegold",
+  "filename": "新政下智见的机会_20260829_v2",
+  "seed": 20260829,
+  "meta": {
+    "organization": "智见 · 行业研究",
+    "authors": [
+      {
+        "name": "智见点评团队",
+        "role": "机会扫描 v2 · 战略版"
+      }
+    ],
+    "date": "2026-08-29",
+    "confidentiality": "internal"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "新政下智见的机会",
+      "summary": "1+N 新政 × 智见机会扫描 · v2 战略版 ｜「每次制度开票，都是一次 Token 的铸造。」"
+    },
+    {
+      "id": "overview",
+      "type": "content",
+      "heading": "卷首速览：26 张机会卡与 Token 四档",
+      "beat": "anchor"
+    },
+    {
+      "id": "logic",
+      "type": "content",
+      "heading": "Token 不是产品，是定价权",
+      "beat": "anchor"
+    },
+    {
+      "id": "layers",
+      "type": "content",
+      "heading": "Token 三层支撑：标尺定锚 · 工程定本 · 信用立信",
+      "beat": "dense"
+    },
+    {
+      "id": "evidence",
+      "type": "content",
+      "heading": "锚单实证：Token 三性是产品化现状",
+      "beat": "dense"
+    },
+    {
+      "id": "clients-gov",
+      "type": "content",
+      "heading": "免费的不是服务，是定价权的入场券",
+      "beat": "dense"
+    },
+    {
+      "id": "clients-fin",
+      "type": "content",
+      "heading": "36 万亿的年度重估，是订阅制的天花板",
+      "beat": "anchor"
+    },
+    {
+      "id": "clients-urban",
+      "type": "content",
+      "heading": "客户四 · 城投/国企：谁把闭环算清，谁给闭环定价",
+      "beat": "dense"
+    },
+    {
+      "id": "clients-dc",
+      "type": "content",
+      "heading": "不赚开发商的钱，赚围绕开发商交易的钱",
+      "beat": "dense"
+    },
+    {
+      "id": "matrix",
+      "type": "content",
+      "heading": "资源只给发动机，期权排队",
+      "beat": "dense"
+    },
+    {
+      "id": "plan",
+      "type": "content",
+      "heading": "落地清单：90 天与 12 个月的 Token 交付物",
+      "beat": "dense"
+    },
+    {
+      "id": "discipline",
+      "type": "content",
+      "heading": "拒绝清单比机会清单更值钱",
+      "beat": "anchor"
+    },
+    {
+      "id": "risks",
+      "type": "content",
+      "heading": "每个失灵变量都有对冲，才配叫战略",
+      "beat": "dense"
+    },
+    {
+      "id": "caliber",
+      "type": "content",
+      "heading": "口径声明：数字全程带口径 ｜ 2026Q4 先签先赢",
+      "beat": "breathing"
+    },
+    {
+      "id": "closing",
+      "type": "ending",
+      "heading": "2026Q4 先签先赢 ｜ 每次制度开票，都是一次 Token 的铸造。",
+      "summary": "98wiki ｜ 智见 / 机会扫描 · 底稿 v2（战略版）· 2026-08-29 · 不构成投资建议"
+    }
+  ]
+}

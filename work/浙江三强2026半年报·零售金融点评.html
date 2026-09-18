@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>浙江三强2026半年报·零售金融点评（智见点评）</title>
+<style>
+  :root{
+    --ink:#0e6a55;            /* 深青墨 主色 */
+    --ink-deep:#0a4a3c;       /* 深青墨-深 标题/强调 */
+    --ink-tint:#e6efe9;       /* 深青墨 浅底 */
+    --amber:#a9741f;          /* 琥珀金 装饰/大号 */
+    --amber-deep:#7c5210;     /* 琥珀金-深 小号文字 AA */
+    --amber-tint:#f6eedd;     /* 琥珀金 浅底 */
+    --paper:#faf9f5;          /* 纸底 */
+    --card:#ffffff;           /* 白卡不透明 */
+    --text:#1e2b26;
+    --text2:#46564f;
+    --line:#dce3dd;
+    --zebra:#f3f6f3;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--paper);color:var(--text);
+    font:15.5px/1.8 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC","Segoe UI",sans-serif;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+
+  /* ===== 封面区 ===== */
+  .hero{background:var(--ink);color:#fff;}
+  .hero-inner{max-width:1080px;margin:0 auto;padding:34px 20px 0;}
+  .brand{
+    font-size:13px;letter-spacing:.22em;color:#cfe4db;font-weight:600;
+    border-top:3px solid var(--amber);padding-top:10px;display:inline-block;
+  }
+  .title{
+    font-family:Georgia,"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+    font-size:clamp(30px,4.6vw,44px);font-weight:700;line-height:1.28;
+    margin:16px 0 6px;letter-spacing:.02em;
+  }
+  .subtitle{color:#e8f2ed;font-size:15px;font-weight:600;letter-spacing:.08em;}
+  .caliber{
+    margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.28);
+    font-size:13px;line-height:1.85;color:#cfe4db;
+  }
+  .quote-strip{
+    margin-top:20px;background:var(--card);color:var(--amber-deep);
+    border-left:5px solid var(--amber);border-radius:0 6px 6px 0;
+    padding:13px 18px;font-size:17px;font-weight:600;line-height:1.6;
+  }
+  .quote-strip .expert{white-space:nowrap;}
+  .hero-cards{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 20px;}
+  .kcard{
+    flex:1 1 210px;min-width:200px;background:var(--card);color:var(--text);
+    border-radius:6px;padding:14px 16px 12px;
+    box-shadow:0 1px 3px rgba(10,40,30,.22);
+  }
+  .kcard .num{
+    font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:700;
+    color:var(--ink-deep);line-height:1.2;letter-spacing:.01em;
+  }
+  .kcard .lbl{font-size:12.5px;color:var(--text2);margin-top:5px;line-height:1.55;}
+  .kcard .num .nw{white-space:nowrap;}
+  .nav{display:flex;flex-wrap:wrap;gap:8px;padding-bottom:26px;}
+  .nav a{
+    font-size:12.5px;color:#eaf4ef;text-decoration:none;
+    border:1px solid rgba(255,255,255,.38);border-radius:99px;padding:3px 12px;
+  }
+  .nav a:hover,.nav a:focus{background:#fff;color:var(--ink-deep);outline:none;}
+
+  /* ===== 章节骨架 ===== */
+  section{padding:30px 0 4px;scroll-margin-top:14px;}
+  .sec-head{display:flex;align-items:center;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:9px;margin-bottom:16px;}
+  .num-chip{
+    flex:none;width:36px;height:36px;background:var(--ink);color:#fff;font-weight:700;
+    display:flex;align-items:center;justify-content:center;border-radius:5px;
+    font-size:17px;font-family:Georgia,"Noto Serif SC","Songti SC",serif;
+  }
+  .sec-title{
+    font-size:21px;font-weight:700;color:var(--ink-deep);line-height:1.35;
+    font-family:Georgia,"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  }
+
+  /* 专家标注：领域·人设名（匿名格式） */
+  .expert{
+    display:inline-block;background:var(--amber-tint);color:var(--amber-deep);
+    border:1px solid #d9c9a3;border-radius:3px;padding:0 6px;
+    font-size:12.5px;font-weight:600;white-space:nowrap;
+  }
+  .kw{font-weight:700;color:var(--ink-deep);}
+
+  /* 执行摘要 */
+  .sum-item{
+    display:flex;gap:14px;padding:13px 16px;margin-bottom:10px;
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ink);
+    border-radius:0 6px 6px 0;
+  }
+  .sum-no{
+    flex:none;width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;
+    font-weight:700;display:flex;align-items:center;justify-content:center;font-size:14px;margin-top:3px;
+  }
+  .sum-item p{margin:0;}
+
+  /* 表格（大表） */
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--card);}
+  table{border-collapse:collapse;width:100%;min-width:660px;font-size:13.5px;line-height:1.65;}
+  th{background:var(--ink);color:#fff;padding:9px 12px;text-align:left;font-weight:600;white-space:nowrap;}
+  td{padding:8px 12px;border-top:1px solid var(--line);vertical-align:top;}
+  tbody tr:nth-child(even) td{background:var(--zebra);}
+  td.dim{font-weight:600;color:var(--ink-deep);white-space:nowrap;width:1%;}
+  .table-note{font-size:12.5px;color:var(--text2);margin-top:7px;}
+  .badge{
+    display:inline-block;font-size:12px;font-weight:700;padding:1px 10px;border-radius:99px;
+    white-space:nowrap;line-height:1.7;
+  }
+  .badge.fix{background:var(--amber-tint);color:var(--amber-deep);border:1px solid #d9c9a3;}
+  .badge.ok{background:var(--ink-tint);color:var(--ink-deep);border:1px solid #bcd4c8;}
+  .badge.void{background:#eceff0;color:#3f4a46;border:1px solid #cfd6d2;}
+
+  /* ===== 五层完整章节 ===== */
+  .layer-sec{
+    margin-top:26px;background:var(--card);border:1px solid var(--line);
+    border-radius:8px;padding:22px 22px 8px;scroll-margin-top:14px;
+  }
+  .layer-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:4px;}
+  .layer-chip{
+    flex:none;background:var(--ink);color:#fff;font-size:14px;font-weight:700;
+    padding:3px 14px;border-radius:99px;
+  }
+  .layer-chip.amber{background:var(--amber-deep);}
+  .layer-title{font-size:19px;font-weight:700;color:var(--ink-deep);line-height:1.4;}
+  .layer-owner{margin-left:auto;font-size:12.5px;color:var(--text2);}
+  .layer-sec .sec-rule{
+    border:0;border-top:1px solid var(--line);margin:12px 0 14px;
+  }
+
+  /* 章眼金句：accent 左边框引言块 */
+  .gist{
+    background:var(--paper);border-left:4px solid var(--amber);
+    border-radius:0 6px 6px 0;padding:13px 18px;margin:14px 0;
+    font-size:16px;font-weight:600;line-height:1.75;color:var(--text);
+  }
+  .gist .gist-mark{color:var(--amber-deep);font-family:Georgia,serif;font-size:22px;line-height:0;}
+  .gist .expert{margin-left:6px;}
+
+  /* 层内小节标题 */
+  .sub-h{
+    display:flex;align-items:baseline;gap:8px;margin:20px 0 10px;
+    font-size:15.5px;font-weight:700;color:var(--ink-deep);
+  }
+  .sub-h .tag{
+    flex:none;background:var(--ink-tint);color:var(--ink-deep);font-size:12px;font-weight:700;
+    padding:1px 10px;border-radius:99px;
+  }
+  .sub-h .tag.amber{background:var(--amber-tint);color:var(--amber-deep);border:1px solid #d9c9a3;}
+
+  /* 三强对照卡：小表 */
+  .tblwrap.small{background:var(--card);}
+  .tblwrap.small table{min-width:520px;font-size:13px;}
+  .tblwrap.small td,.tblwrap.small th{padding:7px 10px;}
+  .tblwrap.small td.dim{white-space:normal;width:auto;min-width:88px;}
+  td.bank{font-weight:700;color:var(--ink-deep);white-space:nowrap;}
+
+  /* 机制拆解条目 */
+  .mech{margin:0 0 10px;padding:11px 14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;}
+  .mech b{color:var(--ink-deep);}
+  .mech p{margin:0;}
+
+  /* 推论带编号 */
+  ol.ded{list-style:none;margin:0;padding:0;counter-reset:ded;}
+  ol.ded>li{
+    counter-increment:ded;position:relative;padding:11px 14px 11px 46px;margin-bottom:9px;
+    background:var(--paper);border:1px solid var(--line);border-radius:6px;
+  }
+  ol.ded>li::before{
+    content:counter(ded);position:absolute;left:12px;top:12px;
+    width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;
+    font-weight:700;font-size:12.5px;display:flex;align-items:center;justify-content:center;
+  }
+  ol.ded>li b{color:var(--ink-deep);}
+  ol.ded>li p{margin:0;}
+
+  /* 机会/风险虚线胶囊 */
+  .caps{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 14px;}
+  .cap{
+    flex:1 1 320px;border-radius:99px;padding:9px 16px;font-size:13.5px;line-height:1.7;
+    border:1.5px dashed;
+  }
+  .cap .cap-lbl{font-weight:700;margin-right:4px;}
+  .cap.opp{background:var(--ink-tint);border-color:var(--ink);color:var(--ink-deep);}
+  .cap.opp .cap-lbl{color:var(--ink-deep);}
+  .cap.risk{background:var(--amber-tint);border-color:var(--amber-deep);color:#5f430f;}
+  .cap.risk .cap-lbl{color:var(--amber-deep);}
+
+  /* 编号清单（矛盾/修正/开放问题） */
+  ol.cn{list-style:none;margin:0;padding:0;counter-reset:cn;}
+  ol.cn>li{
+    counter-increment:cn;position:relative;padding:11px 14px 11px 52px;margin-bottom:10px;
+    background:var(--card);border:1px solid var(--line);border-radius:6px;
+  }
+  ol.cn>li::before{
+    content:counter(cn);position:absolute;left:13px;top:12px;
+    width:26px;height:26px;border-radius:50%;background:var(--ink-tint);color:var(--ink-deep);
+    font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;
+  }
+
+  /* 行动建议 */
+  .phases{display:flex;flex-wrap:wrap;gap:12px;}
+  .phase{
+    flex:1 1 280px;background:var(--card);border:1px solid var(--line);border-top:3px solid var(--ink);
+    border-radius:0 0 6px 6px;padding:12px 16px;font-size:14.5px;page-break-inside:avoid;
+  }
+  .phase h4{margin:0 0 6px;font-size:15.5px;color:var(--ink-deep);}
+  .phase p{margin:0;}
+  .observe{
+    margin-top:14px;background:var(--amber-tint);border:1px solid #d9c9a3;border-left:4px solid var(--amber);
+    border-radius:0 6px 6px 0;padding:12px 16px;font-size:14px;
+  }
+  .observe b{color:var(--amber-deep);}
+
+  /* 说明块（v2 说明） */
+  .vnote{
+    background:var(--ink-tint);border:1px solid #bcd4c8;border-left:4px solid var(--ink);
+    border-radius:0 6px 6px 0;padding:12px 16px;font-size:13.5px;color:var(--text);
+    margin-bottom:4px;
+  }
+
+  /* ===== 封底 ===== */
+  .footer{background:var(--ink-deep);color:#e8f2ed;margin-top:34px;padding:38px 0 30px;}
+  .footer-inner{max-width:1080px;margin:0 auto;padding:0 20px;}
+  .closing{
+    font-size:20px;font-weight:600;color:#fff;line-height:1.6;
+    border-left:5px solid var(--amber);padding-left:16px;margin:0 0 22px;
+    font-family:Georgia,"Noto Serif SC","Source Han Serif SC","Songti SC",serif;
+  }
+  .src-title{font-size:15px;font-weight:700;color:#fff;letter-spacing:.1em;margin:0 0 8px;}
+  .src{font-size:12.5px;line-height:1.95;color:#cfe4db;margin:0;}
+  .disclaimer{
+    margin-top:16px;border-top:1px solid rgba(255,255,255,.28);padding-top:12px;
+    font-size:12px;color:#cfe4db;
+  }
+  .brand-footer{text-align:center;margin-top:18px;letter-spacing:.24em;color:#fff;font-size:13px;font-weight:600;}
+
+  /* 窄屏适配（375 视口） */
+  @media (max-width:640px){
+    body{font-size:15px;}
+    .wrap,.hero-inner,.footer-inner{padding-left:14px;padding-right:14px;}
+    .kcard{min-width:0;flex-basis:44%;}
+    .sec-title{font-size:18.5px;}
+    .num-chip{width:32px;height:32px;font-size:15px;}
+    .quote-strip{font-size:15.5px;}
+    .closing{font-size:17.5px;}
+    ol.cn>li{padding-left:46px;}
+    ol.cn>li::before{left:11px;}
+    .layer-sec{padding:16px 14px 4px;}
+    .layer-title{font-size:17px;}
+    .gist{font-size:15px;padding:11px 14px;}
+    .cap{flex-basis:100%;border-radius:14px;}
+    .caps{gap:8px;}
+  }
+  @media print{
+    body{background:#fff;}
+    .hero,.footer{background:var(--ink-deep) !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    section{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ================= 封面区 ================= -->
+<header class="hero">
+  <div class="hero-inner">
+    <span class="brand">98wiki ｜ 智见点评 · 行业研究</span>
+    <h1 class="title">浙江三强2026半年报·零售金融点评</h1>
+    <div class="subtitle">融合终稿 v2 · 五层展开版 · 数据期 2026H1（1-6月）· 对比基期 2025H1/2025年末</div>
+    <p class="caliber">数据期：2026H1（1-6月）；对比基期：2025H1/2025年末；来源：各行2026半年报（Wind核实）、金融监管总局行业数据。口径：杭银/宁波为银行口径，浙商为集团口径；余额≠发生额；"中期分红"≠全年分红。对外匿名标注：领域·人设名。融合：零售金融·一（主评），吸收零售信贷·信贷舵手、风险揭示·风控守门员、战略研判·琉、息差盈利·息差账房、战略视角·战略沙盘官。</p>
+    <div class="quote-strip">「宁波在造引擎、杭银在补油箱、浙商在换挡——三低时代，胜负不在跑速在发动机」 <span class="expert">战略研判·琉</span></div>
+    <div class="hero-cards">
+      <div class="kcard">
+        <div class="num">-0.57%</div>
+        <div class="lbl">行业净利同比（2026H1，商业银行）——三家正增长的大背景</div>
+      </div>
+      <div class="kcard">
+        <div class="num"><span class="nw">+9.87% /</span> <span class="nw">+12.12% /</span> <span class="nw">+2.05%</span></div>
+        <div class="lbl">归母净利增速：杭银 / 宁波（最实）/ 浙商（扣非 -1.72%）</div>
+      </div>
+      <div class="kcard">
+        <div class="num">471.96%</div>
+        <div class="lbl">杭银拨备覆盖率（较年初 -30.28pct），近5年首破500%</div>
+      </div>
+      <div class="kcard">
+        <div class="num"><span class="nw">1.48% /</span> <span class="nw">3.81% /</span> <span class="nw">2.93%</span></div>
+        <div class="lbl">零售不良同步上行：杭银零售 / 宁波普惠 / 浙商个贷</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="#s1">执行摘要</a><a href="#s2">口径核查</a><a href="#s3">三家对标</a>
+      <a href="#l1">战略层</a><a href="#l11">区域格局</a><a href="#l2">客群经营</a>
+      <a href="#l3">产品层</a><a href="#l4">资产层</a><a href="#l5">风险层</a>
+      <a href="#s5">跨层矛盾</a><a href="#s6">修正清单</a><a href="#s7">行动建议</a><a href="#s8">开放问题</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ================= 一、执行摘要 ================= -->
+  <section id="s1">
+    <div class="sec-head"><span class="num-chip">一</span><h2 class="sec-title">执行摘要（5条）</h2></div>
+
+    <div class="sum-item"><span class="sum-no">1</span>
+      <p><span class="kw">增长成色分层，不可直接比较</span>：行业净利 -0.57% 背景下三家均正增长，但宁波 +12.12% 最实（信用减值多提 +23.79% 下仍双位数增长）；杭银 +9.87% 含拨备反哺（拨备覆盖率 -30.28pct 至 471.96%，近5年首破500%）；浙商 +2.05% 但扣非 -1.72%（<span class="expert">息差盈利·息差账房</span>：归母含非经常性损益，成色打折）。</p>
+    </div>
+    <div class="sum-item"><span class="sum-no">2</span>
+      <p><span class="kw">文章最大遗漏——零售信贷同步承压</span>：杭银零售不良 1.48%（个经贷 2.08%、+0.56pct）、宁波普惠 3.81%（+36bp）、浙商个贷 2.93%（+48bp）；三家整体不良率持平（0.76%/0.76%/1.36%）系对公改善与认定严格掩盖（杭银逾期90+/不良 49.27%）。<span class="expert">风险揭示·风控守门员</span>：是同一宏观周期（居民收入预期+小微经营现金流）在三条信贷线上的同步显性化。</p>
+    </div>
+    <div class="sum-item"><span class="sum-no">3</span>
+      <p><span class="kw">宁波"零售壁垒"名实分离</span>：财富端成立（AUM 1.43万亿、+1,543亿；私行AUM 4,206亿、+25%；中收 +53.90%），信贷端收缩（新增信贷零售仅占 1.2%、个贷仅 +0.47%）——"零售"须拆为财富/信贷两条线。</p>
+    </div>
+    <div class="sum-item"><span class="sum-no">4</span>
+      <p><span class="kw">资本是最大战略约束</span>：杭银核心一级 9.52% 连续4季下行（低于行业 10.71%）、80亿定增到期自动失效；浙商 8.37% 叠加新晋 D-SIBs 附加资本 0.25%；唯宁波内生（资本充足率 14.64%、+0.34pct）——<span class="expert">战略研判·琉</span>：扩张半径已被"油箱"分档。</p>
+    </div>
+    <div class="sum-item"><span class="sum-no">5</span>
+      <p><span class="kw">文章叙事方向成立、三处口径必须修正</span>：中期分红≠全年累计（33.35亿/27%为中期方案）；"利息净收入 +19.17%"≠总利息收入；定增"到期自动失效"≠"被叫停"。</p>
+    </div>
+  </section>
+
+  <!-- ================= 二、口径核查表 ================= -->
+  <section id="s2">
+    <div class="sec-head"><span class="num-chip">二</span><h2 class="sec-title">口径核查表（8条逐条裁定）</h2></div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>#</th><th>文章表述</th><th>裁定</th><th>依据（2026H1）</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>"全年累计分红33亿、比例27%左右"</td><td><span class="badge fix">修正（口径错误）</span></td><td>系中期分红方案 33.35亿（+21.05%）、中期分红比例 27%（+2.26pct），非全年累计</td></tr>
+          <tr><td>2</td><td>"总的利息收入增长19.17%"</td><td><span class="badge fix">修正（口径瑕疵）</span></td><td>为利息净收入 +19.17%（占营收 74.11%）；非息净收入 -22.20%，原表述掩盖结构</td></tr>
+          <tr><td>3</td><td>"净息差提高0.04个百分点"</td><td><span class="badge fix">修正+补充</span></td><td>同比 +4bp 属实（1.39%），但绝对水平低于行业 1.41%/城商行 1.40%；<span class="expert">息差盈利·息差账房</span>："逆行业"仅同比方向成立，不可引申为行业领先</td></tr>
+          <tr><td>4</td><td>"核心一级资本充足率已低于9.52%"</td><td><span class="badge fix">修正</span></td><td>数值即 9.52%，应表述为"连续4季下行、低于行业均值 10.71%"</td></tr>
+          <tr><td>5</td><td>"80亿元定增被叫停"</td><td><span class="badge fix">修正+补充</span></td><td>两度延期后 2026-07-17 到期自动失效（原方案125亿调减至80亿）；背景为150亿转债 99.96% 转股补足核心一级 +135.16亿；"叫停"暗含监管干预，定性不准</td></tr>
+          <tr><td>6</td><td><span class="badge void">（重大遗漏）</span></td><td><span class="badge ok">同意+补充</span></td><td>零售风险、拨备分化（反哺 vs 多提 vs 最薄）、宁波信贷结构（对公95.7%/票据3.1%/零售1.2%）、浙商扣非 -1.72% 均须补入</td></tr>
+          <tr><td>7</td><td>"零售和财富管理形成坚实壁垒"</td><td><span class="badge fix">修正+补充</span></td><td>财富端成立（私行户均1,220万、代理类 +67.19%），信贷端收缩；<span class="expert">零售信贷·信贷舵手</span>：财富是壁垒，零售信贷是收缩</td></tr>
+          <tr><td>8</td><td>未给行业坐标</td><td><span class="badge ok">同意+补充</span></td><td>补行业净利 -0.57%、息差 1.41%（Q2环比+1bp，2022年来首次回升）、不良 1.52% 后，三强稀缺性增强；但行业企稳≠三家企稳（息差同比 -13bp~+4bp 分化）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= 三、三家对标表 ================= -->
+  <section id="s3">
+    <div class="sec-head"><span class="num-chip">三</span><h2 class="sec-title">三家对标表（2026H1，统一口径）</h2></div>
+    <div class="tblwrap">
+      <table>
+        <thead><tr><th>维度</th><th>杭州银行</th><th>宁波银行</th><th>浙商银行*</th></tr></thead>
+        <tbody>
+          <tr><td class="dim">总资产</td><td>24,680.78亿 / +4.46%</td><td>39,482.23亿 / +8.81%</td><td>36,958亿 / +6.17%（被宁波反超）</td></tr>
+          <tr><td class="dim">贷款</td><td>11,622.86亿 / +8.43%</td><td>19,499.58亿 / +12.50%</td><td>20,101.15亿 / +4.55%</td></tr>
+          <tr><td class="dim">营收</td><td>210.48亿 / +4.75%</td><td>414.50亿 / +11.54%</td><td>332.56亿 / +0.02%</td></tr>
+          <tr><td class="dim">归母净利</td><td>128.13亿 / +9.87%</td><td>165.62亿 / +12.12%</td><td>78.24亿 / +2.05%（扣非 -1.72%）</td></tr>
+          <tr><td class="dim">净息差</td><td>1.39% / +4bp（低于行业）</td><td>1.70% / -6bp（高于行业29bp）</td><td>1.56% / -13bp（绝对值最高、降幅最大）</td></tr>
+          <tr><td class="dim">中收</td><td>27.22亿 / +16.50%</td><td>43.17亿 / +53.90%（占营收10.41%）</td><td>+11.51%</td></tr>
+          <tr><td class="dim">不良率</td><td>0.76% 持平</td><td>0.76% 持平</td><td>1.36% 持平</td></tr>
+          <tr><td class="dim">零售不良</td><td>1.48%（个经贷2.08%、按揭0.95%）</td><td>普惠3.81%、按揭1.20%</td><td>个贷2.93%（+48bp）</td></tr>
+          <tr><td class="dim">拨备覆盖率</td><td>471.96% / -30.28pct（5年首破500%）</td><td>373.35% / +0.19pct（趋势下行）</td><td>155.85% / +0.48pct（三家最薄）</td></tr>
+          <tr><td class="dim">资本</td><td>核心一级 9.52% / 连续4季下行</td><td>资本充足率 14.64% / +0.34pct</td><td>核心一级 8.37%（D-SIBs附加0.25%）</td></tr>
+          <tr><td class="dim">财富/AUM</td><td>AUM 7,449.78亿 / +6.89%；理财存续 +0.19% 失速、代销 +52.29%</td><td>AUM 1.43万亿 / +1,543亿；私行AUM +25%</td><td>零售客户3,800万户；缺AUM细项（待验证）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="table-note">*浙商为集团口径。</p>
+  </section>
+
+  <!-- ================= 四、五层展开（v2 完整章节） ================= -->
+  <section id="s4">
+    <div class="sec-head"><span class="num-chip">四</span><h2 class="sec-title">五层展开（v2 完整章节）</h2></div>
+    <div class="vnote">v2 说明：本节由 v1「五层要点」展开为五层完整章节（战略/客群经营/产品/资产/风险，每层一位主责专家），战略层含「区域格局与同业镜鉴」姊妹篇小节；各层保留五件套结构（章眼金句/对照卡/推论与数据/机会风险），数字均出自六份分层稿与 Wind 核实数据包，零新增口径外数字；新增待验证项在各层小节内标注。</div>
+
+    <!-- ============ 4.1 战略层 ============ -->
+    <div class="layer-sec" id="l1">
+      <div class="layer-head">
+        <span class="layer-chip">4.1</span><span class="layer-title">战略层：三低时代的三台发动机</span>
+        <span class="layer-owner"><span class="expert">战略研判·琉</span></span>
+      </div>
+      <hr class="sec-rule">
+      <div class="gist"><span class="gist-mark">「</span>宁波在造引擎、杭银在补油箱、浙商在换挡——三低时代，胜负不在跑速在发动机；2026H1 的答案已写进 ROE（14.24% vs 8.87%）与资本（14.64% vs 9.52%/8.37%）。<span class="gist-mark">」</span><span class="expert">战略研判·琉</span></div>
+
+      <div class="sub-h"><span class="tag">对照卡</span>（1）三强战略定位对照卡（2026H1，Wind 核实；浙商为集团口径）</div>
+      <div class="tblwrap small">
+        <table>
+          <thead><tr><th>行</th><th>文章标签</th><th>修正标签</th><th>数据依据</th></tr></thead>
+          <tbody>
+            <tr><td class="bank">宁波银行</td><td>防守之盾</td><td>多元利润中心（实为最进攻者）</td><td>总资产 39,482.23亿（+8.81%）反超浙商；ROE 14.24%（+0.44pct）；中收 +53.90%；"9+4"子公司净利 30.69亿占集团 18%；存款付息率 1.32%（-39bp）</td></tr>
+            <tr><td class="bank">杭州银行</td><td>进攻之矛</td><td>对公单引擎（资本受限）</td><td>总资产 24,680.78亿（+4.46%）；ROE 8.87%（-0.63pct）；非息净收入 -22.20%；核心一级 9.52% 连续4季下行（低于行业 10.71%）；80亿定增到期自动失效</td></tr>
+            <tr><td class="bank">浙商银行</td><td>转型者·触底反弹</td><td>区域聚焦+风险出清（底未确认）</td><td>总资产 36,958亿（+6.17%）被反超；新增贷款 50%+ 投浙；扣非 -1.72%；核心一级 8.37% + D-SIBs 附加 0.25%；拨备 155.85% 三家最薄</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="sub-h"><span class="tag">机制</span>（2）战略选择机制拆解</div>
+      <p style="margin:0 0 10px;">三家同处三低时代（行业息差 1.41%、净利 -0.57%），差异不在运气在"发动机"构造——</p>
+      <div class="mech"><p><b>宁波＝双引擎</b>（事实）：多元利润中心（子公司净利 30.69亿、占集团 18%）对冲息差下行（-6bp），低成本负债（付息率 1.32%、-39bp；活期占比 35.57%、+1.14pct）压成本；两引擎互相供血→资本内生（14.64%、+0.34pct）→支撑 +8.81% 的最快扩张。规模与资本同向改善，是<span class="expert">战略沙盘官</span>"内涵式发展"的完整样本：RWA 增速与利润留存内生能力匹配。</p></div>
+      <div class="mech"><p><b>杭银＝单引擎</b>（事实+推断）：对公单腿（公司贷款 +10.30%，制造 +13.82%/科技 +18.21%），第二引擎熄火（非息 -22.20%）；净利 +9.87%＞营收 +4.75% 的缺口由拨备反哺补齐（覆盖率 -30.28pct 至 471.96%）；贷款 +8.43% 与核心一级 9.52% 四连降成剪刀差，80亿定增到期失效后弹药仅靠转债摊薄（150亿转债 99.96% 转股曾补 +135.16亿）——扩张半径已被"油箱"钉死，是"增长诅咒"的最近样本。</p></div>
+      <div class="mech"><p><b>浙商＝换挡</b>（事实）：用地理聚焦换确定性（新增贷款 50%+ 投浙、省内融资总量近 1.28万亿、省内存贷款增量居股份行第一），用时间换出清（个贷不良 2.93% +48bp 待消化；扣非 -1.72% 说明出清成本正在当期化）；但 D-SIBs 附加 0.25% + 核心一级 8.37%（缓冲约 0.6pct）压缩腾挪空间，"触底反弹"须先过资本与拨备两道闸。</p></div>
+
+      <div class="sub-h"><span class="tag">推论</span>（3）推论与数据（每条带数字锚）</div>
+      <ol class="ded">
+        <li><b>规模座次改写＝模式含金量重排</b>（事实+推断）：宁波总资产 39,482.23亿（+8.81%）反超浙商 36,958亿（+6.17%），杭银 24,680.78亿仅为宁波 62.5%；行业净利 -0.57% 背景下规模、盈利双榜首同时易位，模式比起点更决定座次。</li>
+        <li><b>ROE 14.24% vs 8.87% 是成色分水岭</b>（事实）：宁波在信用减值 +23.79% 多提下仍净利 +12.12%、ROE 上行 0.44pct，利润为经营内生；杭银 ROE -0.63pct 且净利增速超营收 5.12pct，缺口依赖拨备释放，成色打折。</li>
+        <li><b>资本是"油箱"，已按内生能力分档</b>（事实+推断）：核心一级 宁波 14.64%（+0.34pct）＞杭银 9.52%（四连降）＞浙商 8.37%（+D-SIBs 0.25%）；RWA 增速须匹配利润留存，否则规模即"增长诅咒"——三家扩张半径就此分档。</li>
+        <li><b>第二曲线决定抗息差能力</b>（事实）：宁波中收 +53.90%（占营收 10.41%）+ 子公司净利占 18%，对冲息差 -6bp；杭银中收 +16.50% 但非息 -22.20%，对冲断层。三低时代拼的是"服务收入替代利差收入"的转化率。</li>
+        <li><b>浙商反转未至，需过两道闸</b>（推断）：区域聚焦执行坚决（供应链 10万家链上企业、零售客户 3,800万户；挤压发生在政信/平台/制造同质化客群，差异化才是护城河）；但扣非 -1.72% + 拨备 155.85% 最薄 + 核心一级 8.37% 三重约束下，反弹成立需零售风险企稳在先，2026H1 底未确认。</li>
+      </ol>
+
+      <div class="sub-h"><span class="tag">机会与风险</span>（4）机会与风险（<span class="expert">战略研判·琉</span>）</div>
+      <div class="caps">
+        <div class="cap opp"><span class="cap-lbl">机会</span>（推断）：三低时代竞争已从"存款价格战"转向"客户经营能力战"，宁波证明"财富+利润中心+低成本负债"路径可复制；杭银代销 +52.29%、浙商 3,800万零售客户+10万家链上企业均有结构性卡位。</div>
+        <div class="cap risk"><span class="cap-lbl">风险</span>（推断，边界钉死）：若零售风险出清慢于预期（杭银个经贷 2.08%、宁波普惠 3.81%、浙商个贷 2.93% 同步上行）且资本缓冲不足（杭银 9.52% 四连降、浙商 8.37%+D-SIBs 0.25%），"以拨备换利润"与"被动扩张"将在 2026H2-2027 显性化——此判断以零售不良拐点未现为前提，若浙江城商行零售不良同业中枢企稳，风险等级下修。</div>
+      </div>
+
+      <!-- 4.1.1 区域格局与同业镜鉴 -->
+      <div class="layer-sec" id="l11" style="margin-top:18px;">
+        <div class="layer-head">
+          <span class="layer-chip amber">4.1.1</span><span class="layer-title">区域格局与同业镜鉴（战略层姊妹篇）</span>
+          <span class="layer-owner"><span class="expert">战略视角·战略沙盘官</span></span>
+        </div>
+        <hr class="sec-rule">
+        <div class="mech"><p><b>① 行业坐标锚定</b>：【事实】2026H1 商业银行累计净利 1.24 万亿、同比 -0.57%；净息差 Q2 1.41%、环比 +1bp（2022 年来首次回升）；不良率 1.52%、环比 +0.01pct——行业处"净利负增、息差企稳未反转、不良微升"三低坐标。三家净利 +12.12%/+9.87%/+2.05%（浙商扣非 -1.72%），逆势正增长，稀缺性成立。【研判】坐标证明"增长稀缺"非"增长成色"：杭银靠拨备反哺（-30.28pct）、浙商扣非为负，须分档计价；三家息差同比 -13bp~+4bp 分化，行业企稳≠个体反转。边界句：坐标仅锚定估值基准，不为成色背书。</p></div>
+        <div class="mech"><p><b>② 区域竞争推演</b>：【事实】浙商新增贷款 50%+ 投浙，省内融资总量近 1.28 万亿、存贷款增量居股份行第一；供应链覆盖 10 万+链上企业，零售客户 3,800 万户。对照：宁波对公 +19.32%、杭银 +10.30%。【研判】挤压集中在同质化客群（政信、平台、制造大客户），即杭甬新增弹药主战场；供应链生态与零售长尾是难复制的护城河。边界句：挤压是"客群分层"非"全维碾压"。待验证：三家浙江对公份额缺公开细项。</p></div>
+        <div class="mech"><p><b>③ 同业镜鉴三条</b>：资本内生即规模边界——杭银核心一级 9.52% 连 4 季下行、80 亿定增失效，宁波资本充足率 14.64%（+0.34pct），扩张半径由"油箱"分档；财富+利润中心为第二曲线——宁波子公司净利 30.69 亿占集团 18%、AUM 1.43 万亿、中收 +53.90%；零售出清纪律——三家零售不良同步上行（1.48%/3.81%/2.93%），整体不良持平系对公改善掩盖；【研判】收缩是理性止血，纪律决定重启时点。</p></div>
+        <div class="mech"><p><b>④ 马太效应条件化</b>：【研判】"马太效应加剧"是叙事非定律：行业息差企稳对弱者有利，浙商不良连续四年稳中有降，分化未固化。马太成立需三条件：资本内生（RWA 增速匹配利润留存，否则规模即增长诅咒）；资金中介向资源中介升级（以行业研究、资源整合、平台建设为抓手）；零售出清纪律。边界句：条件未满足前是"水平差"非"宿命差"。以长期主义与正确政绩观考核跨周期成色，不以单期座次论英雄——功成不必在我，功成必定有我。</p></div>
+      </div>
+    </div>
+
+    <!-- ============ 4.2 客群经营层 ============ -->
+    <div class="layer-sec" id="l2">
+      <div class="layer-head">
+        <span class="layer-chip">4.2</span><span class="layer-title">客群经营层：三家都在收缩零售风险敞口</span>
+        <span class="layer-owner"><span class="expert">零售信贷·信贷舵手</span></span>
+      </div>
+      <hr class="sec-rule">
+      <div class="gist"><span class="gist-mark">「</span>别被 AUM 增速带偏——三家 2026H1 的统一动作是收缩零售风险敞口。获客口径在扩张，盈利口径在收缩，零售信贷在三家都不是增长引擎。<span class="gist-mark">」</span><span class="expert">零售信贷·信贷舵手</span></div>
+
+      <div class="sub-h"><span class="tag">对照卡</span>（1）三强客群经营对照卡（2026H1，获客口径 vs 盈利口径）</div>
+      <div class="tblwrap small">
+        <table>
+          <thead><tr><th>银行</th><th>获客口径（事实）</th><th>盈利口径（事实）</th><th>客群动作</th></tr></thead>
+          <tbody>
+            <tr><td class="bank">杭州银行</td><td>AUM 7,449.78亿（+6.89%）；代销+52.29%，理财存续仅+0.19%</td><td>零售不良1.48%（+0.27pct）；个经贷2.08%（+0.56pct）</td><td>客群上收</td></tr>
+            <tr><td class="bank">宁波银行</td><td>AUM 1.43万亿（+1,543亿）；私行34,491户（+6,761户）、私行AUM 4,206亿（+25%）</td><td>新增信贷2,166亿中零售仅占1.2%；个贷5,370.04亿（+0.47%）</td><td>信贷止血、财富进攻</td></tr>
+            <tr><td class="bank">浙商银行*</td><td>零售客户超3,800万户，上半年净增超去年全年</td><td>个贷不良2.93%（+48bp）；拨备155.85%三家最薄</td><td>客群换时间</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">*浙商为集团口径。</p>
+
+      <div class="sub-h"><span class="tag">机制</span>（2）客群选择机制拆解</div>
+      <div class="mech"><p><b>宁波是止血逻辑</b>：普惠3.81%（+36bp）、按揭1.20%（+31bp）的不良下，新增信贷95.7%给对公、零售只留1.2%，个贷+0.47%仅是止住2025年的连续下滑——不是不要零售客户，是不要零售信贷敞口；客户交给财富线接（私行+6,761户、AUM+25%），投放交给对公线扛。</p></div>
+      <div class="mech"><p><b>杭银是客群上收</b>：个经贷2.08%（+0.56pct）已升至零售整体1.48%的1.4倍，倒逼小微授信向"三有"客群集中；但理财存续+0.19%（去年同期+38.53%）明显失速、代销+52.29%——自产转代销，客群经营重心正从资产端挪向财富端，接棒产品尚未到位。</p></div>
+      <div class="mech"><p><b>浙商是客群换时间</b>：3,800万户、半年净增超去年全年，获客在加速；但个贷2.93%配最薄拨备（155.85%），新客既不敢也不该快速转成新资产——用客群规模换风险出清的时间，获客-盈利的转化缺口是当下最刺眼的数字，转化账记在2027。</p></div>
+
+      <div class="sub-h"><span class="tag">推论</span>（3）推论与数据（5条）</div>
+      <ol class="ded">
+        <li><b>负债端才是客群经营的隐藏主战场</b>（事实+判断）：宁波存款付息率1.32%（-39bp）、活期占比35.57%（+1.14pct，活期+17.06%＞定期+11.37%）——代发与结算客群是活期之源，1.70%的息差高于行业29bp，负债端贡献第一。谁抓结算客群，谁赢息差。</li>
+        <li><b>财富客群与信贷客群正在分层运营</b>（事实+推断）：宁波私行户均1,220万，财富线全速进、信贷线只收不放——同一批企业主财富留下、信贷断供，信贷需求大概率外流他行（推断，待验证）。</li>
+        <li><b>杭银上收的代价在规模与客户体验</b>：个经贷2.08%压下来的同时，AUM +6.89%但理财失速，客群上收丢掉的尾部规模还没有新产品接住（事实+推断）。</li>
+        <li><b>浙商3,800万户是期权不是利润</b>（推断）：供应链10万家链上企业、公司价值客户4.8万户（+7.7%）是未来交叉销售的种子，但缺AUM/私行细项（待验证），近期只能"客群换时间"。</li>
+        <li><b>三家共同点</b>（判断）：零售信贷都不是增长引擎，客群经营主战场在负债端与财富端；谁先跑通"结算+财富"闭环，谁先拿到下一轮息差。</li>
+      </ol>
+
+      <div class="sub-h"><span class="tag">机会与风险</span>（4）机会与风险与操盘含义（<span class="expert">零售信贷·信贷舵手</span>）</div>
+      <div class="caps">
+        <div class="cap opp"><span class="cap-lbl">机会</span>代发与结算场景是活期之源——宁波1.32%付息率已证明路径，可批量复制。</div>
+        <div class="cap risk"><span class="cap-lbl">风险</span>客群上收≠客群流失，若财富、信贷分层运营让企业主信贷需求外流，交叉销售链断裂（呼应第五节跨层矛盾）。</div>
+      </div>
+      <div class="mech"><p><b>操盘行动含义（三条均可考核）</b>：①客群上收按"三有"标准（有抵押/有流水/有纳税）总行出模型、分行名单化执行，不做定制化——批量优于定制；②代发场景列为分行主攻：代发客户数、活期沉淀、存款付息率三指标季度排名通报；③考核从规模转向RAROC：增量投放绑定定价下限与不良生成率红线，财富条线按AUM沉淀与中收联动计分。别给我看PPT，给我看分行的执行进度。</p></div>
+    </div>
+
+    <!-- ============ 4.3 产品层 ============ -->
+    <div class="layer-sec" id="l3">
+      <div class="layer-head">
+        <span class="layer-chip">4.3</span><span class="layer-title">产品层：财富管理与交叉销售</span>
+        <span class="layer-owner"><span class="expert">零售金融·一</span></span>
+      </div>
+      <hr class="sec-rule">
+      <div class="gist"><span class="gist-mark">「</span>财富是壁垒，零售信贷是收缩；交叉销售动能的差距，藏在"货架—渠道—场景"闭环的完整度里。<span class="gist-mark">」</span><span class="expert">零售金融·一</span></div>
+
+      <div class="sub-h"><span class="tag">核心判断</span>核心判断（3条）</div>
+      <ol class="ded">
+        <li><b>交叉销售动能排序 宁波&gt;杭银&gt;浙商，差距在产品货架与渠道闭环的完整度</b>：宁波"9+4"利润中心+代销双强，财富第二曲线成立（事实）；杭银理财自产失速、代销补位，动能从"自产"转向"代销"（推断）；浙商有场景（3,800万零售客户+10万家链上企业）但 AUM/私行/代理类细项数据缺口，动能排序居末属"未证实"而非"证实偏弱"（口径提示）。</li>
+        <li><b>财富端与信贷端背离是产品层最大的结构性张力</b>：宁波 AUM 高增（+1,543亿）与零售信贷仅 +0.47% 停滞并存——"零售"须拆为财富/信贷两条线；私行企业主（户均1,220万）的信贷需求可能外流他行，交叉销售链在"企业主—家庭—企业"处存在断裂风险（推断，待浙江城商行同业数据验证）。</li>
+        <li><b>杭银理财存续 +0.19%（去年同期 +38.53%）是产品层最硬警报</b>：增量趋零不是基数效应，而是货架竞争力问题（推断）；代销 +52.29% 对冲了 AUM 增长压力（AUM 仍 +6.89%），"自产转代销"的结构切换正在发生，客层归因列为待验证项。</li>
+      </ol>
+
+      <div class="sub-h"><span class="tag">对照卡</span>（1）财富业务三强对照（口径：2026H1，杭银/宁波为银行口径、浙商为集团口径；AUM为余额、中收为发生额）</div>
+      <div class="tblwrap small">
+        <table>
+          <thead><tr><th>维度</th><th>宁波银行</th><th>杭州银行</th><th>浙商银行*</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">中收（手续费净收入）</td><td>43.17亿 / +53.90%（占营收10.41%）</td><td>27.22亿 / +16.50%</td><td>+11.51%（占比较2025全年+1.7pct）</td></tr>
+            <tr><td class="dim">AUM</td><td>14,300亿 / 较年初+1,543亿</td><td>7,449.78亿 / +6.89%</td><td>缺细项（待验证）</td></tr>
+            <tr><td class="dim">私行</td><td>客户34,491户（+6,761）、AUM 4,206亿（+25%）、户均1,220万</td><td>缺细项（待验证）</td><td>缺细项（待验证）</td></tr>
+            <tr><td class="dim">代理类</td><td>+67.19%</td><td>代销其他产品1,178.45亿 / +52.29%；托管佣金+47.92%</td><td>缺细项（待验证）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">*浙商为集团口径；三家中收占比可比性受营收分母差异影响，只做方向比较，不做伪精确排名。</p>
+
+      <div class="sub-h"><span class="tag">机制</span>（2）交叉销售动能拆解：宁波&gt;杭银&gt;浙商</div>
+      <div class="mech"><p><b>宁波：财富第二曲线成立（事实）</b>。代理类 +67.19%、手续费及佣金收入（总口径）58.73亿（+57.92%）；"9+4"利润中心中永赢金租、永赢基金、宁银理财、宁银消金四家净利合计 30.69亿（占集团净利 18%，其中永赢金租 16.69亿、永赢基金 5.22亿）；核心营收（净息收入+中收）+18.16%。货架（子公司矩阵）+渠道（代理类高增）+客群（私行户均1,220万）三环闭合，是全样本中唯一"第二曲线已兑现"的样本。</p></div>
+      <div class="mech"><p><b>杭银：自产转代销（推断，待归因验证）</b>。理财存续 6,087.62亿（较年初仅 +0.19%，同比 +18.35%，去年同期 +38.53%）与代销 +52.29% 的组合，指向货架结构从"自产理财"向"代销他品"切换；自产失速的客层归因（自营能力 vs 渠道结构 vs 净值化竞争）数据包不可得，列为待验证项。</p></div>
+      <div class="mech"><p><b>浙商：场景在、货架数据缺（待验证）</b>。手续费净收入 +11.51%、非息净收入 109.04亿（+6.88%）破百亿，动能存在但细项不可得；交叉销售排序居末应表述为"未证实"，而非"弱于同业"。</p></div>
+
+      <div class="sub-h"><span class="tag">口径与边际</span>（3）杭银理财失速：口径与边际</div>
+      <div class="mech"><p>事实层面：存续余额较年初 +0.19%（余额口径），同比 +18.35% 说明存量基数仍高，边际增量趋零；去年同期 +38.53% 构成鲜明对照。推断层面：AUM 仍 +6.89% 而理财存续停滞，说明增量被代销承接——产品层利润结构正在从"管理费"转向"代销费"，综合收益与客层黏性影响需专项测算（建议项）。</p></div>
+
+      <div class="sub-h"><span class="tag">链路设计</span>（4）交叉销售链路设计建议（STP→4P→4C→服务3P，以浙商"链上企业主"为例，宁波/杭银可平移）</div>
+      <div class="mech"><p><b>STP（前置分层）</b>：Segmentation 按资产层级、对公关系、行为活跃细分存量；Targeting 锁定"已有对公结算或信贷关系、个人资产沉淀不足"的企业主及其家庭；Positioning 定位为"链上生意伙伴的财富与现金管理方案"，不定位成单一产品售卖。</p></div>
+      <div class="mech"><p><b>4P（后台货架盘点）</b>：Product=结算+现金管理+代发+理财+私行+保险代理组合包；Price=综合定价（存款付息率 1.32%~1.70% 区间约束下以中收补收益）；Place=对公客户经理转介+企业/个人双端手机银行；Promotion=链上权益与场景权益。</p></div>
+      <div class="mech"><p><b>4C（对客营销）</b>：Consumer=企业主未满足的现金流管理与家庭配置需求（须逐客验证，不把对公关系直接当需求）；Cost=时间与认知成本（一次尽调多处复用）；Convenience=企业-个人账户打通、减少重复资料；Communication=方案式双向沟通，拒绝后停止规则明确。</p></div>
+      <div class="mech"><p><b>服务3P（转化保障）</b>：People=对公+零售客户经理协同考核（含销售资质与适当性能力）；Process=转介—适配校验—办理—回访 SLA；Physical Evidence=企业端资金看板、家庭资产配置报告。</p></div>
+      <div class="mech"><p><b>合规闸门（硬约束）</b>：零售信贷收缩期不得以信贷为交叉销售钩子（强制搭售红线）；适当性与独立风险揭示；激励机制纳入留存、投诉、撤单而非纯销量。</p></div>
+
+      <div class="sub-h"><span class="tag">行动含义</span>（5）行动含义与指标（<span class="expert">零售金融·一</span>，建议）</div>
+      <div class="mech"><p><b>行动</b>：①宁波——私行深耕（户均1,220万客群的家族配置与子公司协同，永赢基金公募7,571亿与母行渠道联动）；②杭银——理财失速专项归因、"自产转代销"利润留存测算与代销结构优化；③浙商——链上企业主交叉销售试点（上述 STP→4P→4C→服务3P 全链路）。</p></div>
+      <div class="mech"><p><b>指标</b>：代理类收入增速、中收/营收、AUM 增速与边际、私行户均 AUM、交叉销售渗透率（人均产品持有数）、理财存续环比边际。</p></div>
+      <div class="mech"><p><b>待验证项</b>：①浙商 AUM/私行/代理类细项；②杭银理财失速客层归因；③宁波交叉销售渗透率与人均持有产品数（数据包不可得）；④各行线上化占比（服务3P 便利性验证所需）。</p></div>
+    </div>
+
+    <!-- ============ 4.4 资产层 ============ -->
+    <div class="layer-sec" id="l4">
+      <div class="layer-head">
+        <span class="layer-chip">4.4</span><span class="layer-title">资产层：扩张半径的分档</span>
+        <span class="layer-owner"><span class="expert">息差盈利·息差账房</span></span>
+      </div>
+      <hr class="sec-rule">
+      <div class="gist"><span class="gist-mark">「</span>资产层的分化，本质是扩张半径的分档——内生资本能覆盖多快的 RWA 扩张，资产就敢走多远。三家之差异不在规模座次，而在"油箱"大小。<span class="gist-mark">」</span><span class="expert">息差盈利·息差账房</span></div>
+
+      <div class="sub-h"><span class="tag">对照卡</span>（1）三强资产四维对照卡（2026H1；Wind 核实；浙商为集团口径）</div>
+      <div class="tblwrap small">
+        <table>
+          <thead><tr><th>维度</th><th>杭州银行</th><th>宁波银行</th><th>浙商银行</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">规模</td><td>贷款 11,622.86 亿 / +8.43%</td><td>贷款 19,499.58 亿 / +12.50%</td><td>贷款 20,101.15 亿 / +4.55%</td></tr>
+            <tr><td class="dim">结构</td><td>对公 +10.30%，制造业 +13.82%、科技 +18.21%</td><td>对公 +19.32%，新增信贷对公占 95.7%</td><td>贷款 +4.55% 慢于存款 +6.55%，新增超 50% 投浙</td></tr>
+            <tr><td class="dim">收益</td><td>净息差 1.39%（+4bp）；利息净收入 +19.17%</td><td>净息差 1.70%（-6bp）；利息净收入 +14.26%</td><td>净息差 1.56%（-13bp）；利息净收入 -3.01%</td></tr>
+            <tr><td class="dim">久期与资本</td><td>贷款 +8.43% vs 核心一级 9.52%（连续4季下行）</td><td>贷款 +12.50% vs 资本充足率 14.64%（+0.34pct）</td><td>贷款 +4.55% vs 核心一级 8.37%（D-SIBs 附加 0.25%）</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">口径注：宁波核心一级细项未披露，以资本充足率代；三家久期均无直接披露，以重定价与期限结构代理，数值属事实、归因属研判。</p>
+
+      <div class="sub-h"><span class="tag">推论</span>（2）推论与数据</div>
+      <ol class="ded">
+        <li><b>扩张半径已分三档</b>（研判）：宁波是唯一"高扩张+资本内生"组合——贷款 +12.50% 的同时资本充足率升 0.34pct；杭银贷款 +8.43% 与核心一级 9.52% 连续4季下行成剪刀差，80亿定增到期自动失效后扩张半径收窄；浙商低扩张（+4.55%）与 8.37% 核心一级+0.25% 附加资本匹配，先守后攻。</li>
+        <li><b>结构决定收益韧性</b>（事实）：杭银向高收益对公倾斜（制造业 +13.82%、科技 +18.21%），支撑息差 +4bp、利息净收入 +19.17%；宁波以量补价——对公 +19.32% 撑起利息净收入 +14.26%，但贷款收益率 -52bp 拖累息差 -6bp；浙商息差 -13bp 降幅最大，利息净收入 -3.01% 靠非息 +6.88% 对冲。</li>
+        <li><b>杭银"利润增、每股减"背离</b>（推断）：归母净利 +9.87% 但 EPS -2.86%、加权 ROE -0.63pct——150亿转债 99.96% 转股（核心一级 +135.16亿）摊薄股本，叠加拨备反哺（拨备覆盖率 -30.28pct 至 471.96%）压低成色，一进一出：利润涨、每股跌、资本仅补至 9.52%。</li>
+        <li><b>浙商"存贷增速差"的资本节约逻辑</b>（研判）：存款 +6.55% 快于贷款 +4.55%，存贷比下降、RWA 占用节约，是对最薄资本（8.37%+0.25% 附加）的被动最优解，以负债先行换资本时间；定量验证待 RWA 细项。</li>
+        <li><b>久期：负债端是胜负手</b>（事实+推断）：宁波活期占比 35.57%（+1.14pct）、存款付息率 1.32%（-39bp），重定价成本优势显著；资产端最长久期资产是按揭（杭银 0.95%、宁波 1.20%，风险细节移交风险层），对公与零售贷款收益率下行是重定价主压（宁波生息资产收益率 -45bp）。</li>
+      </ol>
+
+      <div class="sub-h"><span class="tag">机会与风险</span>（3）机会与风险（<span class="expert">息差盈利·息差账房</span>）</div>
+      <div class="caps">
+        <div class="cap opp"><span class="cap-lbl">机会</span>宁波"低负债成本+高扩张"组合（付息率 1.32%、贷款 +12.50%）是三家唯一可跨周期扩表的样本，资产打法可复制性最强。</div>
+        <div class="cap risk"><span class="cap-lbl">风险</span>杭银"转债摊薄+拨备反哺"不可持续——若零售迁徙延续（个经贷 2.08%），471.96% 缓冲消耗与核心一级下行将双向压缩扩张半径（衔接风险层）。</div>
+      </div>
+
+      <div class="sub-h"><span class="tag">待验证</span>（4）待验证项</div>
+      <ol class="cn">
+        <li>杭银存款付息率/活期占比未披露——方法论：付息率降 1bp 约抵资产收益率升 3bp，负债成本是息差胜负手；待拆解其息差 +4bp 的资产/负债两端贡献。</li>
+        <li>宁波核心一级资本充足率（数据缺口，暂以资本充足率 14.64% 代）。</li>
+        <li>三家 RWA 增速与风险加权资产密度（浙商"存贷差"资本节约逻辑的定量验证）。</li>
+      </ol>
+    </div>
+
+    <!-- ============ 4.5 风险层 ============ -->
+    <div class="layer-sec" id="l5">
+      <div class="layer-head">
+        <span class="layer-chip">4.5</span><span class="layer-title">风险层：整体不良持平是表象，零售上行是实质</span>
+        <span class="layer-owner"><span class="expert">风险揭示·风控守门员</span></span>
+      </div>
+      <hr class="sec-rule">
+      <div class="gist"><span class="gist-mark">「</span>三家不良率分别"平"在 0.76%/0.76%/1.36%，但零售条线全线破位上行——整体不良持平是表象，零售上行是实质；同一宏观周期（居民收入预期＋小微经营现金流）正在三条信贷线上同步显性化。<span class="gist-mark">」</span><span class="expert">风险揭示·风控守门员</span></div>
+
+      <div class="sub-h"><span class="tag">对照卡</span>（1）三强风险对照卡（2026H1；口径：杭银/宁波为银行口径，浙商为集团口径）</div>
+      <div class="tblwrap small">
+        <table>
+          <thead><tr><th>维度</th><th>杭州银行</th><th>宁波银行</th><th>浙商银行</th></tr></thead>
+          <tbody>
+            <tr><td class="dim">零售不良</td><td>1.48%（+0.27pct）</td><td>普惠 3.81%（+36bp）</td><td>个贷 2.93%（+48bp）</td></tr>
+            <tr><td class="dim">细项</td><td>个经贷 2.08%（+0.56pct）；按揭 0.95%（+24bp）</td><td>按揭 1.20%（+31bp）</td><td>对公 1.01%（-9bp）</td></tr>
+            <tr><td class="dim">认定口径</td><td>逾期90+/不良 49.27%、逾期/不良 73.34%（从严认定）</td><td>—</td><td>—</td></tr>
+            <tr><td class="dim">拨备覆盖率</td><td>471.96%（-30.28pct，近5年首破500%）</td><td>373.35%（+0.19pct，自2024年末389.35%趋势下行）</td><td>155.85%（+0.48pct，三家最薄；拨贷比2.12%）</td></tr>
+            <tr><td class="dim">整体不良</td><td>0.76% 持平（余额+7.1亿）</td><td>0.76% 持平（余额+16.47亿）</td><td>1.36% 持平</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">口径提示：三家不良率不可直接比较，须先校准认定差异——杭银逾期90+/不良仅 49.27%，显著低于监管"逾期90天以上应纳入不良"的 100% 底线，属从严认定（将大量未逾期90天资产提前入不良）；若按统一口径还原，三家零售风险位次与差距将明显变化。</p>
+
+      <div class="sub-h"><span class="tag">传导链</span>（2）风险传导链拆解（研判推断，待浙江城商行同业中枢验证）</div>
+      <div class="mech"><p><b>最敏感端——个经贷/普惠</b>：小微经营现金流对宏观最先反应。杭银个经贷升幅最大（+0.56pct 至 2.08%）、宁波普惠绝对水平最高（3.81%），已逼近风险定价覆盖临界，"量增价降险升"不可能三角显性化；</p></div>
+      <div class="mech"><p><b>滞后端——按揭</b>：迁徙取决于居民收入修复斜率。杭银 0.95%、宁波 1.20% 升幅温和但方向一致，属滞后 6-12 个月的次生暴露；</p></div>
+      <div class="mech"><p><b>末端——区域小微客群共振</b>：三家同处浙江、客群高度重叠（个体户/小微企业主/链上企业），同一周期在三条信贷线上同步显性化，是区域共振而非个体偶发。</p></div>
+
+      <div class="sub-h"><span class="tag">准入与定价</span>（3）准入与定价：收缩与被动扩张并存</div>
+      <div class="mech"><p>宁波新增信贷 2,166 亿中零售仅占 1.2%、个贷仅 +0.47%，是主动准入收缩（止血）；杭银靠对公改善（对公不良 0.53%、-5bp）对冲零售上行；浙商个贷 2.93% 配最薄拨备，新增零售投放=加敞口，属"补课期被动扩张"（研判推断）。</p></div>
+
+      <div class="sub-h"><span class="tag">拨备策略</span>（4）拨备策略三分法（处置与储备）</div>
+      <div class="mech"><p><b>杭银——反哺消耗</b>：不良上、拨备下，净利 +9.87% 显著高于营收 +4.75%，缺口来自拨备反哺，周期错配、安全垫消耗中；</p></div>
+      <div class="mech"><p><b>宁波——跨周期储备</b>：信用减值 +23.79%（115.77 亿）多提下仍 +12.12% 双位数增长，利润成色最实；</p></div>
+      <div class="mech"><p><b>浙商——低垫脆弱</b>：155.85% 最薄，扣非 -1.72% 已暴露弹性；零售不良若延续上行，补提将直接侵蚀利润。</p></div>
+
+      <div class="sub-h"><span class="tag">资本约束</span>（5）资本约束收口（全生命周期终点约束）</div>
+      <div class="mech"><p><b>杭银</b>：核心一级 9.52%（连续4季下行，低于行业 10.71%），80 亿定增两度延期后到期自动失效，而中期分红比例升至 27%（+2.26pct）——分红-资本两难同步抬升；</p></div>
+      <div class="mech"><p><b>浙商</b>：核心一级 8.37%（Q1 曾 8.26%），叠加 2026年2月新晋 D-SIBs 第一组附加资本 0.25%，缓冲仅约 0.6pct，"触底反弹"受资本硬约束（反弹成立需零售风险先企稳，研判推断）；</p></div>
+      <div class="mech"><p><b>宁波</b>：资本充足率 14.64%（+0.34pct），唯内生补充，风险承担空间最大。</p></div>
+
+      <div class="sub-h"><span class="tag">压力测试</span>（6）压力测试与观察指标（<span class="expert">风险揭示·风控守门员</span>）</div>
+      <div class="mech"><p>建议按"补提拨备覆盖率 10/20pct"两档测算对净利敏感度（细项缺数据，列待验证）；统一高频跟踪：关注率（宁波 1.04%、-2bp 为锚）、不良生成率（中泰测算宁波 Q2 年化 0.79%）、逾期90+迁徙（盯杭银 49.27% 比例变动方向）、拨备覆盖率消耗速度、三家零售不良拐点。底线提示：从严认定口径不可放松——合规是底线，数据驱动，认定口径的放松是最隐蔽的风险美化。</p></div>
+    </div>
+  </section>
+
+  <!-- ================= 五、跨层矛盾 ================= -->
+  <section id="s5">
+    <div class="sec-head"><span class="num-chip">五</span><h2 class="sec-title">跨层关键矛盾与因果链</h2></div>
+    <ol class="cn">
+      <li><b>战略-资产</b>：宁波财富强、信贷收缩——私行企业主（户均1,220万）的信贷需求可能外流他行，交叉销售链存在断裂风险（推断，零售金融·一）；<span class="expert">零售信贷·信贷舵手</span>反向视角：收缩是"止血"理性动作，重启时点才是关键（分歧呈现）。</li>
+      <li><b>资产-风险</b>：整体不良持平 vs 零售全面上行——杭银以拨备反哺利润（-30.28pct），若零售迁徙延续，471.96% 缓冲的消耗速度决定利润可持续性。</li>
+      <li><b>战略-资本</b>：杭银贷款 +8.43% 与核心一级连续4季下行/定增失效成剪刀差；<span class="expert">战略视角·战略沙盘官</span>：RWA增速须匹配利润留存内生能力，否则规模即"增长诅咒"。</li>
+      <li><b>浙商悖论</b>：D-SIBs 附加资本 0.25% vs 核心一级 8.37%（Q1曾8.26%，缓冲约0.6pct）——"触底反弹"叙事受扣非转负与资本最薄双重制约；<span class="expert">风险揭示·风控守门员</span>：反弹成立需等零售风险企稳。</li>
+    </ol>
+  </section>
+
+  <!-- ================= 六、修正清单 ================= -->
+  <section id="s6">
+    <div class="sec-head"><span class="num-chip">六</span><h2 class="sec-title">对文章的修正与补充清单</h2></div>
+    <ol class="cn">
+      <li>三分法标签重命名（<span class="expert">战略研判·琉</span>）：宁波"防守之盾"→"多元利润中心"；杭银"进攻之矛"→"对公单引擎"；浙商"转型者"→"区域聚焦"。</li>
+      <li>"马太效应加剧"降级为"水平差扩大"（分歧点：<span class="expert">战略研判·琉</span>证据不足——浙商已止血、行业息差企稳对弱者有利、杭甬实为双雄挤压；<span class="expert">战略视角·战略沙盘官</span>分化非宿命，下一程取决于资本内生、客户经营升级、风险出清纪律）。</li>
+      <li>补行业坐标与资本约束两章（<span class="expert">战略研判·琉</span>：最大遗漏是资本硬约束）。</li>
+      <li>补零售不良与拨备分化数据（三位专家一致：不看零售不良与拨备，净利增速无成色可言）。</li>
+      <li>补浙商"触底"证据链（扣非 -1.72%、个贷不良 +48bp、拨备最薄——底未确认）。</li>
+    </ol>
+  </section>
+
+  <!-- ================= 七、行动建议 ================= -->
+  <section id="s7">
+    <div class="sec-head"><span class="num-chip">七</span><h2 class="sec-title">分阶段行动建议（含观察指标）</h2></div>
+    <div class="phases">
+      <div class="phase">
+        <h4>短期（Q3，数据跟踪）</h4>
+        <p>①建立三行高频跟踪指标：逾期90+/不良、关注率、不良生成率、零售RAROC（<span class="expert">风险揭示·风控守门员</span><span class="expert">零售信贷·信贷舵手</span>）；②核验待验证项（见第八节）；③对普惠/个经贷条线做"风险定价-不良生成"匹配度压力测试，测算补提拨备对利润的敏感度。</p>
+      </div>
+      <div class="phase">
+        <h4>中期（H2-2027，经营动作）</h4>
+        <p>①零售信贷出清纪律：控增量、小微向"三有"客群（有抵押/流水/纳税）集中、增量绑定定价下限与不良生成率红线（<span class="expert">零售信贷·信贷舵手</span>）；②财富第二曲线：杭银修复理财失速/优化代销结构、宁波深耕私行、浙商以链上企业主为交叉销售切入点（STP→4P→4C→服务3P）；③杭银打通资本补充渠道（<span class="expert">息差盈利·息差账房</span>：靠转债摊薄换资本不可持续）。</p>
+      </div>
+      <div class="phase">
+        <h4>长期（2027+）</h4>
+        <p>资本内生能力建设（RWA增速匹配利润留存）；客户经营由"资金中介"向"资源中介"升级（<span class="expert">战略视角·战略沙盘官</span>）；考核看跨周期真实成色而非单期净利座次。</p>
+      </div>
+    </div>
+    <div class="observe"><b>统一观察指标：</b>Q3息差边际（行业1.41%企稳后三家走向：杭银+4bp可持续性/宁波1.70%高位缓降/浙商降幅收敛）；个经贷2.08%、普惠3.81%、个贷2.93%拐点；宁波个贷 +0.47% 重启时点；浙商扣非转正；核心一级资本趋势；浙江对公增量份额竞争格局。</div>
+  </section>
+
+  <!-- ================= 八、开放问题 ================= -->
+  <section id="s8">
+    <div class="sec-head"><span class="num-chip">八</span><h2 class="sec-title">开放问题与待验证项</h2></div>
+    <ol class="cn">
+      <li>浙商零售 AUM/私行/中收细项（数据缺口）；</li>
+      <li>杭银存款付息率/活期占比——息差 +4bp 的资产、负债两端贡献拆分（<span class="expert">息差盈利·息差账房</span>方法论：付息率降1bp约抵资产收益率升3bp，负债成本是息差胜负手）；</li>
+      <li>宁波"个贷不良率创新高"媒体口径（需正式中报明细核验）；</li>
+      <li>浙商零售客群线上化占比（其个贷 2.93% 高不良的归因验证）；</li>
+      <li>浙江城商行零售不良同业中枢（作三家分化的锚）；</li>
+      <li>杭银理财失速的客层归因（自营能力 vs 渠道结构 vs 净值化竞争）。</li>
+    </ol>
+  </section>
+
+</div>
+
+<!-- ================= 封底 ================= -->
+<footer class="footer">
+  <div class="footer-inner">
+    <p class="closing">「扩张半径已被"油箱"分档」 <span class="expert">战略研判·琉</span></p>
+    <p class="src-title">来源披露</p>
+    <p class="src">融合说明（v1）：本稿以「零售金融·一」五层主评为骨架（任务类型识别、口径裁定、对标表、五层发现），吸收五份并行点评的核心增量并标注来源；共识直接并入，分歧（利润成色评估口径、马太效应强度、浙商定位、宁波收缩评价）保留双视角呈现；所有数字均出自 2026H1 Wind 核实数据包，未虚构，缺口列入待验证项。</p>
+    <p class="src">v2 融合说明：第四节按「每层一位主责专家」展开为完整章节——战略层（琉主稿+战略沙盘官姊妹篇合为一章两节）、客群经营层（信贷舵手）、产品层（一一）、资产层（息差账房）、风险层（风控守门员）；各章保留五件套结构（章眼金句/对照卡/推论与数据/机会风险）与「领域·人设名」标注；数字仅取自分层稿与 Wind 核实数据包，零新增口径外数字；各层新增待验证项已内嵌章节（如杭银存款付息率、宁波核心一级细项、三家 RWA 密度、浙商 AUM/私行细项、杭银理财失速客层归因、浙江城商行零售不良同业中枢）。</p>
+    <p class="src">版本：融合终稿 v2 · 五层展开版 · 数据期：2026H1（1-6月）· 对比基期：2025H1/2025年末 · 来源：各行2026半年报（Wind核实）、金融监管总局行业数据 · 口径：杭银/宁波为银行口径，浙商为集团口径；余额≠发生额；"中期分红"≠全年分红 · 对外匿名标注：领域·人设名。</p>
+    <p class="disclaimer">行业研究，不构成投资建议；测算/估算/研判推断非官方统计。</p>
+    <div class="brand-footer">98wiki ｜ 智见点评 · 行业研究</div>
+  </div>
+</footer>
+
+</body>
+</html>

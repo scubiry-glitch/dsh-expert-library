@@ -1,0 +1,82 @@
+{
+  "id": "bank.output.caliber-table",
+  "version": "1.1.0",
+  "schemaVersion": 2,
+  "media": [
+    "markdown"
+  ],
+  "sections": [
+    {
+      "id": "指标名",
+      "required": true,
+      "requires": [
+        "source",
+        "caliber"
+      ]
+    },
+    {
+      "id": "会计科目",
+      "required": true,
+      "requires": [
+        "source",
+        "caliber"
+      ]
+    },
+    {
+      "id": "经济实质",
+      "required": true,
+      "requires": [
+        "source",
+        "caliber"
+      ]
+    },
+    {
+      "id": "本行口径",
+      "required": true,
+      "requires": [
+        "source",
+        "caliber"
+      ]
+    },
+    {
+      "id": "外部口径",
+      "required": true,
+      "requires": [
+        "source",
+        "caliber"
+      ]
+    },
+    {
+      "id": "分母口径",
+      "required": true,
+      "requires": [
+        "source",
+        "caliber"
+      ]
+    },
+    {
+      "id": "差异说明",
+      "required": true,
+      "requires": [
+        "source",
+        "caliber"
+      ]
+    },
+    {
+      "id": "可比结论与不可比项",
+      "required": true,
+      "requires": [
+        "source",
+        "caliber"
+      ]
+    }
+  ],
+  "renderModes": {
+    "discussion": {
+      "anonymize": true
+    },
+    "final": {
+      "anonymize": false
+    }
+  }
+}

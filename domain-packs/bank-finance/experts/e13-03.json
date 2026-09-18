@@ -1,11 +1,11 @@
 {
   "id": "e13-03",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "梁斌",
-    "publicLabel": "梁斌",
-    "initials": "梁"
+    "internalName": "风控守门员",
+    "publicLabel": "风控守门员",
+    "initials": "F"
   },
   "domains": [
     "bank.strategy",

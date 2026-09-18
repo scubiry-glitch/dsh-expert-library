@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交叉验证比对报告 · 盲测稿 vs 出题方 · 智见点评</title>
+<style>
+/* finesse · register=product(report) · A=ink-teal #0e6a55 + amber #a9741f · B=700/400
+ * C=report 单栏 · D=CSS-only chips · E=policy-print ｜ 源：交叉验证比对报告_盲测vs出题方_20260830.md */
+:root{
+  --teal:#0e6a55; --teal-deep:#0a4a3c; --teal-soft:#e7f0ec; --teal-mist:rgba(14,106,85,.14);
+  --amber:#a9741f; --amber-soft:#f6ecd9;
+  --neg:#a4432e; --neg-soft:#f5e4de;
+  --ink:#22322d; --sub:#5d6b66; --hair:rgba(14,106,85,.18); --hair2:rgba(34,50,45,.10);
+  --paper:#f4f2ec; --card:#fffefb; --card2:#fbfaf5;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Noto Sans CJK SC","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--paper);color:var(--ink);font-size:15px;line-height:1.75;}
+.serif{font-family:"Noto Serif CJK SC","Noto Serif SC","Songti SC","SimSun",serif;}
+.sheet{max-width:960px;margin:26px auto;background:var(--card);
+  border:1px solid var(--hair2);box-shadow:0 2px 22px rgba(20,40,34,.07);padding:52px 60px 44px;}
+/* 封面带 */
+.cover-band{background:var(--teal-deep);color:#f2f6f3;padding:28px 60px 24px;
+  margin:-52px -60px 0;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;}
+.cover-band b{font-weight:700;letter-spacing:.06em;font-size:14px;}
+.cover-band span{font-size:12px;opacity:.85;}
+.head-inner{padding:40px 0 6px;}
+.kicker{color:var(--amber);font-weight:700;font-size:13px;letter-spacing:.34em;margin-bottom:14px;}
+h1{font-size:31px;line-height:1.3;font-weight:900;color:var(--teal-deep);}
+.subline{margin-top:10px;color:var(--sub);font-size:13.5px;}
+.verdict{display:flex;gap:12px;margin:22px 0 6px;flex-wrap:wrap;}
+.vcard{flex:1 1 150px;min-width:130px;background:var(--card);border:1px solid var(--hair);
+  border-top:3px solid var(--teal);padding:12px 14px 10px;}
+.vcard .vn{font-size:21px;font-weight:700;color:var(--teal-deep);}
+.vcard .vl{font-size:11.5px;color:var(--sub);margin-top:4px;line-height:1.5;}
+.vcard.warn{border-top-color:var(--amber);} .vcard.warn .vn{color:var(--amber);}
+.vcard.bad{border-top-color:var(--neg);} .vcard.bad .vn{color:var(--neg);}
+/* 章节 */
+h2.sec{font-size:18px;font-weight:700;color:var(--ink);margin:34px 0 12px;padding:10px 0 8px;
+  border-bottom:2px solid var(--teal);display:flex;align-items:baseline;gap:12px;}
+h2.sec .no{font-family:"Noto Serif CJK SC",serif;font-weight:900;font-size:24px;color:var(--teal);}
+h3.ss{font-size:14.5px;color:var(--teal-deep);font-weight:700;margin:20px 0 9px;padding-left:10px;border-left:3px solid var(--teal);}
+p{margin-bottom:10px;}
+blockquote.gn{border-left:4px solid var(--amber);background:var(--card2);
+  padding:13px 18px;margin:16px 0 18px;font-size:15.5px;line-height:1.8;color:#3d3320;}
+blockquote.gn b{color:var(--amber);}
+/* tag 与表格 */
+.tg{display:inline-block;font-size:10.5px;line-height:1;padding:3px 5px 2px;border-radius:2px;
+  vertical-align:2px;margin:0 2px;font-weight:400;letter-spacing:.05em;white-space:nowrap;}
+.tg.c{color:var(--teal);border:1px solid var(--teal-mist);background:var(--teal-soft);}
+.tg.e{color:#5a625e;border:1px solid rgba(34,50,45,.16);background:#f0efea;}
+.tg.j{color:var(--amber);border:1px solid rgba(169,116,31,.30);background:var(--amber-soft);}
+.tg.b{color:var(--neg);border:1px solid rgba(164,67,46,.30);background:var(--neg-soft);}
+.tblwrap{margin:14px 0 6px;break-inside:avoid;}
+table{width:100%;border-collapse:collapse;font-size:12.6px;line-height:1.55;}
+caption{caption-side:top;text-align:left;font-size:12px;color:var(--amber);font-weight:700;
+  letter-spacing:.06em;padding-bottom:7px;}
+caption i{font-style:normal;color:var(--sub);font-weight:400;letter-spacing:0;}
+th{background:var(--teal);color:#f2f6f3;font-weight:700;padding:7px 9px;text-align:left;border:1px solid var(--teal);font-size:12px;}
+td{padding:6.5px 9px;border:1px solid var(--hair2);vertical-align:top;}
+tbody tr:nth-child(even) td{background:var(--card2);}
+tr.hl td{background:var(--amber-soft) !important;}
+td.ok{color:var(--teal);font-weight:700;} td.no{color:var(--neg);font-weight:700;} td.wn{color:var(--amber);font-weight:700;}
+.tnote{font-size:11.5px;color:var(--sub);margin:6px 0 0;line-height:1.6;}
+/* 判定徽章 */
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;}
+.bg-ok{background:var(--teal-soft);color:var(--teal);border:1px solid var(--teal-mist);}
+.bg-no{background:var(--neg-soft);color:var(--neg);border:1px solid rgba(164,67,46,.30);}
+.bg-warn{background:var(--amber-soft);color:var(--amber);border:1px solid rgba(169,116,31,.30);}
+/* 行动表编号 */
+ol.act{list-style:none;counter-reset:act;padding:0;}
+ol.act>li{counter-increment:act;position:relative;padding-left:36px;margin-bottom:10px;}
+ol.act>li::before{content:counter(act,decimal-leading-zero);position:absolute;left:0;top:2px;
+  font-family:"Noto Serif CJK SC",serif;font-weight:700;font-size:13px;color:var(--amber);}
+ol.act b{color:var(--teal-deep);}
+.endquote{margin:30px 0 8px;border-top:2px solid var(--teal);padding-top:18px;
+  font-family:"Noto Serif CJK SC",serif;font-size:16.5px;line-height:1.9;color:var(--teal-deep);font-weight:700;}
+.foot{display:flex;justify-content:space-between;border-top:1px solid var(--hair2);
+  padding-top:14px;margin-top:26px;font-size:12px;color:var(--sub);flex-wrap:wrap;gap:8px;}
+.foot b{color:var(--teal);letter-spacing:.06em;}
+.chapter{break-before:page;}
+@page{size:A4;margin:19mm 15mm 17mm;
+  @bottom-left{content:"98wiki ｜ 智见点评 · 银行零售专题";font-size:8.5pt;color:#8a938e;}
+  @bottom-right{content:counter(page);font-size:9pt;color:#8a938e;}}
+@media print{body{background:#fffefb;}.sheet{box-shadow:none;border:none;margin:0;max-width:none;padding:0;
+  .cover-band{margin:0;}} body{font-size:10pt;}}
+@media screen and (max-width:720px){.sheet{padding:26px 18px;margin:10px;}
+  .cover-band{margin:-26px -18px 0;padding:20px 18px;} h1{font-size:24px;}
+  td,th{padding:5px 6px;} table{font-size:11.4px;}}
+</style>
+</head>
+<body>
+<div class="cover-band">
+  <b>98wiki ｜ 智见点评 · 行业研究</b>
+  <span>内部材料（半敏感）· 请勿外发公网</span>
+</div>
+<div class="sheet">
+
+<div class="head-inner">
+  <div class="kicker">信用卡 2026 中报季 · 盲测闭环</div>
+  <h1 class="serif">交叉验证比对报告</h1>
+  <div class="subline">独立盲测稿 vs 出题方结论 —— 五维比对 · 一致项 · 分歧项 · 缺失项 · 建议动作｜2026-08-30</div>
+  <div class="verdict">
+    <div class="vcard"><div class="vn">3.5 / 5</div><div class="vl">维度一致或兼容（w·过线表·最值钱杠杆·归因结构）</div></div>
+    <div class="vcard warn"><div class="vn">1 项</div><div class="vl">实质分歧：四抓手排序（根因＝协议返佣方向未注明）</div></div>
+    <div class="vcard bad"><div class="vn">1 项</div><div class="vl">对照缺失：Q7 剔除网贷 EVA 出题方未交付</div></div>
+    <div class="vcard"><div class="vn">23–24%</div><div class="vl">w 双模型收敛区间（口袋损失率假设差近一倍仍收敛）</div></div>
+  </div>
+</div>
+
+<h2 class="sec"><span class="no serif">一</span>五维比对总表</h2>
+<div class="tblwrap">
+<table>
+  <caption>比对框架（任务书 §七）<i>｜数字一致＝底座可信；数字分歧＝回查底座或口径；结论分歧＝最有价值的讨论素材</i></caption>
+  <thead><tr><th style="width:4%">#</th><th style="width:16%">维度</th><th style="width:28%">盲测稿（独立）</th><th style="width:28%">出题方</th><th style="width:12%">判定</th></tr></thead>
+  <tbody>
+    <tr><td>①</td><td>w（高风险口袋占比）</td><td><b>≈24%</b>（带 15–37%；L<sub>L</sub>=1.0%／L<sub>H</sub>=15% 行业带锚）<span class="tg c">测算</span></td><td><b>≈23%</b>（L<sub>H</sub>=7.61% 随e贷锚／L<sub>L</sub>=3.4%<span class="tg e">估算</span>）</td><td><span class="badge bg-ok">✓ 一致</span></td></tr>
+    <tr><td>②</td><td>过线表／平衡线</td><td>EVA(r)=1.51−r；平衡风险成本 <b>1.51%</b>；减亏线 2.51%<span class="tg c">测算</span></td><td>EVA(r)=1.52−r（总门槛 3.38pct）；平衡线 <b>1.52%</b>；减亏 ≈2.5%</td><td><span class="badge bg-ok">✓ 一致</span></td></tr>
+    <tr class="hl"><td>③</td><td>四抓手排序</td><td><b>①贴息账单分期 ②年费中收 ③交易经营 ④汽车分期（卡位）</b></td><td><b>①汽车分期 ②年费中收 ③贴息账单分期 ④交易经营</b></td><td><span class="badge bg-no">✗ 分歧</span></td></tr>
+    <tr><td>④</td><td>最值钱杠杆</td><td><b>降险最值钱</b>（可达 2.86pct→满额 6.8 亿/年）、中收最快（1.2–2.4 亿/年）<span class="tg c">测算</span></td><td><b>降险 2 倍价值</b>（−1pct≈2.27 亿 vs 中收 +0.5pct≈1.13 亿）</td><td><span class="badge bg-ok">✓ 一致</span></td></tr>
+    <tr><td>⑤</td><td>Q7 剔除网贷 EVA</td><td>含网贷 <b>+0.17%</b> → 剔除 <b>−0.37%</b>（6 产品日均口径，两期一致）<span class="tg c">测算</span></td><td><b>未交付</b>（三份对照材料检索零命中）</td><td><span class="badge bg-warn">⚠ 缺失</span></td></tr>
+  </tbody>
+</table>
+</div>
+<p class="tnote">总判定：数字层一致度极高（底座可信），结论层在四抓手排序上存在一处实质性分歧，且有 1 个对照项缺失。</p>
+
+<h2 class="sec chapter"><span class="no serif">二</span>一致项详解（底座可信）</h2>
+<h3 class="ss">2.1 w 反推：路径不同、答案收敛（① ✓）</h3>
+<p>盲测：4.37% ＝ w×15% ＋ (1−w)×1.0% → w≈24%；敏感性带 15–37%（L<sub>H</sub> 取 10–20%、L<sub>L</sub> 取 1.0–1.5%）。出题方：4.37% ≈ 7.61%（卡部随e贷级）× w ＋ 3.4% × (1−w) → w≈23%。</p>
+<p><b>交叉验证价值</b>：两个模型的口袋损失率假设相差近一倍（15% vs 7.61%）、低口袋假设也不同（1.0% vs 3.4%），但 w 均落在 23–24%——w 对 (L<sub>H</sub>, L<sub>L</sub>) 组合在中段不敏感，反推结构稳健。<b>两稿独立得出「约四分之一组合贡献绝大部分损失」，该结论可信度升级。</b></p>
+<p>情景路径同构：盲测「减亏需 w≤11%（L<sub>H</sub> 不变）」→ 组合 2.51%；出题方「w 23%→10% ＋ 正常客群 3.4%→1.9%」→ 2.47%。同一目标两条配方，且都强调<b>双变量（压 w ＋ 修低口袋）各走一半，单靠压降无法转正</b>——独立收敛。</p>
+<h3 class="ss">2.2 过线表与资本成本双口径互证（② ✓）</h3>
+<p>盲测采用 <b>DB 列载口径</b>：运营 0.31%（expense_cost 列）＋资本 0.78%（capital_cost 列）独立列示 → 平衡线＝2.60−0.31−0.78＝1.51%。出题方采用<b>倒推合并口径</b>：资金＋运营 2.30%＋资本 1.08% → 平衡线 1.52%；其门禁记录 L236 亦验算了盲测所用路径（4.90−2.29−0.31−4.37−0.78＝−2.85 ✓）。</p>
+<p><b>两条口径路径均自洽闭合、EVA 同为 −2.85%</b>——恒等式对资本成本的归属方式不敏感，过线结论稳健。</p>
+<h3 class="ss">2.3 其余一致项</h3>
+<div class="tblwrap">
+<table>
+  <thead><tr><th>项</th><th>盲测</th><th>出题方</th><th>判定</th></tr></thead>
+  <tbody>
+    <tr><td>亏损主因归因</td><td>风险项贡献 EVA 恶化的 93%<span class="tg c">测算</span></td><td>风险 4.37 ＝ 毛利 2.60 的 168%<span class="tg c">测算</span></td><td class="ok">✓ 同因不同表述</td></tr>
+    <tr><td>资金成本次矛盾</td><td>2.30 vs 合计 1.91（+0.39pct），压平也只到 −2.47%<span class="tg c">测算</span></td><td>同发现 +0.39pct，「次量级、先动风险」</td><td class="ok">✓ 完全一致</td></tr>
+    <tr><td>生成率带对标</td><td>邮储 3.68%／招行年化 ≈5.2%，我行 4.37% 落带内中位<span class="tg c">测算</span></td><td>同引邮储 3.68%、招行新生成 +39.29 亿，名义口径失真分析</td><td class="ok">✓ 同向</td></tr>
+    <tr><td>表外激活条件</td><td>白名单过线客群才放（结构激活反而年增亏 0.77 亿<span class="tg c">测算</span>）</td><td>只激活风险成本 &lt;1.52% 白名单（1.9% 客群 EVA≈−0.38% 不过线）</td><td class="ok">✓ 同机制</td></tr>
+    <tr><td>红线／信号体系</td><td>4.0% 红线、S1–S4、减亏 2.5%、重启 1.5%</td><td>同（源自风险校准底座）</td><td class="ok">✓ 一致</td></tr>
+    <tr><td>风险带收窄判断</td><td>点状企稳（平安 −0.01pct、上海银行 YTD 转正），流量端（邮储／招行生成）未收窄</td><td>头部存量带 1.90–2.23% 现实存在；上海银行为单一样本</td><td class="ok">✓ 兼容</td></tr>
+    <tr><td>「89%」表述</td><td>风险成本／客户收益率＝4.37/4.90 ≈ 89%<span class="tg c">测算</span></td><td>同值</td><td class="ok">✓ 一致</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2 class="sec chapter"><span class="no serif">三</span>分歧项详解（最有价值的讨论素材）</h2>
+<h3 class="ss">3.1 汽车分期：返佣的资金方向是分叉根（③ ✗ 核心）</h3>
+<div class="tblwrap">
+<table>
+  <thead><tr><th style="width:14%"></th><th>盲测稿</th><th>出题方</th></tr></thead>
+  <tbody>
+    <tr><td><b>返佣处理</b></td><td>返佣＝<b>渠道成本</b>（银行支出）→ 净价差＝贴息 2.0–2.3% − 返佣 2.1–2.7% ＝ −0.7~+0.2pct，未覆盖资金 2.30% → <b class="no">不过线</b></td><td>返佣＝<b>银行收入</b>（与贴息并取）→ 综合收益 4.1–4.7% → 高档返佣＋降险至 1% 时 EVA≈+0.32% <b class="ok">可过线</b> → 排序第 1</td></tr>
+    <tr><td><b>风险边界共识</b></td><td colspan="2">建行 5免2 返 7% 边界警示、不做价格战跟随——两稿一致</td></tr>
+  </tbody>
+</table>
+</div>
+<p><b>分歧根源</b>：partner_auto_pricing 底表 notes 仅载「返佣两档 2.1%／2.7%」，<b>未注明资金方向与贴息／返佣是否并取</b>。双方稿内均已声明假设（盲测：「协议口径未明确摊销方式」；出题方：「<span class="tg b">待补</span>协议原文核验」）——规则上无人违规，但结论完全相反。</p>
+<p><b>回查动作（建议）</b>：调取吉利／比亚迪协议原文，确认三点：①返佣支付方向（厂商→银行，还是银行→经销商团队）；②贴息与返佣是否互斥／联动（常见「高返佣低贴息」结构）；③返佣一次性 or 按余额存续摊销。<b>这一条协议条款直接决定第四抓手是「排第 1」还是「排第 4」，是本次交叉验证最有价值的待办。</b>过渡判断：原文核验前，两稿结论都应视为条件成立。</p>
+<h3 class="ss">3.2 贴息账单分期：放量门槛 2.5% vs 1.52%（③ ✗ 次级）</h3>
+<p>机制上<b>无分歧</b>：双方都承认「UE&lt;0 时放规模＝放大亏损」，都以 Vintage／风险成本作为放量前置。实质分歧在<b>门槛松紧与时序</b>：</p>
+<ul class="tight" style="padding-left:20px;">
+  <li><b>盲测稿</b>：放量客群 <b>Vintage &lt;2.5%</b>（减亏档容忍）即第一抓手——理由＝卡分期基础在案（日均 186.66 亿、执行定价 4.75–5.99%）、邮储／浦发双行验证、12 个月可兑现。</li>
+  <li><b>出题方</b>：<b>&lt;1.52%</b>（转正档）才正贡献，援引邮储（生成率 3.68% 未出清仍放量分期）为「以规模摊薄负 UE」的反例样本，坚持「先降险、后放量」。</li>
+</ul>
+<p><b>讨论价值</b>：2.5% 门槛下放量客群 EVA≈−1%，仍属减亏走廊而非利润贡献——若领导口径是「信用卡止损」，盲测稿节奏更快；若是「UE 纪律优先」，出题方更严谨。建议按风险预算分层：<b>减亏走廊客群限量放量、转正客群正常放量，把两稿条件合并为「双档门槛」</b>。</p>
+<h3 class="ss">3.3 排序连带：交易经营 ③/④、中收 ②</h3>
+<p>中收年费卡双稿同排第 2、机制表述一致（每分中收≈每分 EVA）——✓。交易经营 ③（盲测，漏斗 KPI）vs ④（出题方，先建仪表盘）——<b>无实质分歧</b>（均非利润抓手，出题方多一步「数据缺失先建仪表盘」的务实约束，盲测稿的「对标 4.3 次/年」与之兼容）。</p>
+<h3 class="ss">3.4 「最值钱」表述精度：2 倍 vs 可达幅度（④ ✓ 结论一致，表述口径建议统一）</h3>
+<p>出题方表述「降险价值是提价／中收的 2 倍」：步长不对称（降险按 1pct＝2.27 亿、中收按 0.5pct＝1.13 亿）。盲测稿表述：单位弹性相同（<b>每 1pct EVA＝2.39 亿</b>，基数 239.04 亿日均），降险的价值优势在<b>可达幅度</b>（2.86pct vs 中收 0.5–1.0pct vs 提价 ≈0）。<b>建议</b>：统一为「单位弹性相同、可达幅度决定杠杆价值」——避免「2 倍」被误读为单位经济差异。另：年化金额基数两稿不同（官方余额 226.6 亿 vs 卡分期＋循环日均 239.04 亿，差 5.5%），建议对外统一采用一个基数并在口径声明中并注。</p>
+<h3 class="ss">3.5 微观勘误（出题方 v3 一处排位表述）</h3>
+<p>v3「客户收益率 4.90%——个贷第二高（仅低于卡部随e贷 8.53%）」：按其自列恒等式总表，网贷 8.32% 亦高于信用卡，正确表述应为<b>个贷第三</b>（盲测稿即按第三表述）。不影响「收益端不是问题」的结论，建议勘误。</p>
+
+<h2 class="sec chapter"><span class="no serif">四</span>缺失项：Q7 无对照值（⑤ ⚠）</h2>
+<p>任务书 §七 建议比对「剔除网贷的个贷 EVA（Q7）——我方测算供盲测后对照」，但 <b>UE v3、研报主文、门禁记录三份材料中均无该测算</b>（检索「剔除网贷／ex-网贷／−0.37／42%」零命中；主研报仅在事实层引用「网贷权重（余额 42%、净收入 78%）」底表索引，未落测算）。</p>
+<p>我方盲测稿 Q7 为唯一在案值：<b>+0.17%（含网贷）→ −0.37%（剔除）</b>，且经 4/28 与 5/21 两期数据独立复算一致。<b>含义</b>：本次交叉验证中 Q7 实际上变成了「单边测算」——建议出题方补做后三方对照；该结论（零售利润引擎＝网贷单腿凳，网贷收益率每下行 1pct 抹掉零售全部 EVA 的 2.4 倍）对零售战略重要性高，值得双签确认。</p>
+
+<h2 class="sec"><span class="no serif">五</span>结论与建议动作</h2>
+<blockquote class="gn"><b>总评｜</b>①<b>底座可信度：高</b>——五维中三维半完全一致，且关键结论在不同模型路径下收敛，底座数据与 EVA 表可直接信赖；②一处实质分歧（四抓手排序）根因是底座缺口（协议返佣方向未注明），不是数据错误——分歧定点到了一张待补协议原文；③一项缺失（Q7 对照）与两处表述精度建议随下版修订。</blockquote>
+<div class="tblwrap">
+<table>
+  <caption>建议动作清单<i>｜P0 最高优先</i></caption>
+  <thead><tr><th style="width:6%">#</th><th>动作</th><th style="width:14%">责任</th><th style="width:10%">优先级</th></tr></thead>
+  <tbody>
+    <tr class="hl"><td>1</td><td>核验吉利／比亚迪协议原文：返佣方向、贴息返佣并取关系、摊销方式 → 定汽车分期 UE 与排序</td><td>卡部／计财</td><td class="no">P0（直接决定产品排序）</td></tr>
+    <tr><td>2</td><td>出题方补做 Q7 剔除网贷测算，与盲测 −0.37% 三方对照</td><td>计财／分析组</td><td class="wn">P1</td></tr>
+    <tr><td>3</td><td>统一年化金额基数口径（226.6 官方 vs 239.04 日均），口径声明并注</td><td>分析组</td><td class="wn">P1</td></tr>
+    <tr><td>4</td><td>「降险 2 倍价值」表述改为「单位弹性相同、可达幅度决定」；「个贷第二高」改「第三」</td><td>出题方修订</td><td>P2</td></tr>
+    <tr><td>5</td><td>贴息分期放量门槛合并为双档（减亏走廊限量／转正客群正常）</td><td>风控＋卡部</td><td>P2</td></tr>
+  </tbody>
+</table>
+</div>
+<div class="endquote">收束｜两支独立分析在同一数据底座上，把「亏在风险、降险定生死」的骨架算到了同一条 1.5% 的线上；真正的分歧不在数字，而在一张没读到的协议原文——这正是交叉验证该有的样子。</div>
+<div class="foot">
+  <b>98wiki ｜ 智见点评 · 行业研究</b>
+  <span>比对日 2026-08-30｜盲测稿：独立盲测_信用卡UE交叉验证_20260830｜内部材料，不构成投资建议</span>
+</div>
+</div>
+</body>
+</html>

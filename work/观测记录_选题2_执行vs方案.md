@@ -21,7 +21,7 @@
 |---|---|---|---|
 | 专家来源 | 40 位（8 通用 + 32 智见 bk-002~bk-033） | builtin-library/experts/ 8 个 JSON；zhijian-realestate/experts/ bk-*.json | ✅ |
 | 分配机制 | 场景为主入口 + 专家为参数 + 路由收敛 | `routingPolicy.candidateHints: [researcher, bk-004, bk-007, docs-coordinator]` → 成员 4 位 | ✅ |
-| 角色映射 | 专家 persona（role/background/原则/deliverables） | 邢自强 role=宏观经济·宏观周期派；张明 role=宏观经济·债务金融派；Researcher role=research analyst | ✅ |
+| 角色映射 | 专家 persona（role/background/原则/deliverables） | 周期班长 role=宏观经济·宏观周期派；张明 role=宏观经济·债务金融派；Researcher role=research analyst | ✅ |
 | 模型路由 | 专家预置路由 > 显式参数 > memberModel > 队长路由 | 全部 deepseek-official/deepseek-v4-flash（专家预置） | ✅ |
 | 成员记录 expert 字段 | —（架构文档未提） | team.json 成员记录 `expert` 字段为空 | ⚠️ 观察：场景成员未带 expert 档案 id，仅 role 区分；persona 是否注入专家档案待验证 |
 
@@ -39,7 +39,7 @@
 | 项 | 方案设计 | 实际执行 | 一致 |
 |---|---|---|---|
 | DAG 来源 | 场景预设任务 DAG | team-template research-report.legacy-team.json 的 tasks[]（含 dependsOn） | ✅ |
-| 实际 DAG | — | t1 资料梳理(Researcher) → t2 宏观研判(邢自强) + t3 风险债务(张明) 并行 → t4 融合成文(DocsCoordinator) | ✅ |
+| 实际 DAG | — | t1 资料梳理(Researcher) → t2 宏观研判(周期班长) + t3 风险债务(张明) 并行 → t4 融合成文(DocsCoordinator) | ✅ |
 | 依赖写入 | task.dependencies | t2 deps:[t1]；t3 deps:[t1]；t4 deps:[t2,t3] | ✅ |
 | 调度 | 事件驱动领取 + 冷恢复重试 | t1 被 Researcher 自动领取运行；t2 邢自强被唤醒准备（等待 t1） | ✅ |
 | retryPolicy | — | 模板定义 retryPolicy: "never"（与调度器 shouldAutoRetryTask attempt 预算机制并存，方向相反需注意） | ⚠️ 模板 never 与调度器 auto-retry(attempt∈{1,2}) 语义需厘清 |
@@ -77,7 +77,7 @@
 
 - `expertMemberPersona(expertId, expert, knowledgeGuideText)`：专家背景/原则/交付物 + 知识指引合并进成员 persona。
 - team.json 成员记录 `expert` 字段为空：**设计如此**——`addMemberCore` 的 member 对象本就不含 expert 属性，专家档案经 `personaOverride`（bk-* 走 `zhijianExpertPersona` Profile 烘焙，其余走 `expertMemberPersona`）编译进系统提示，无需在记录里重复存 id。
-- **已确认烘焙走通**：邢自强/张明启动消息自带「宏观周期派/债务金融派」口吻与研判框架（周期定位/债务-通缩/量化测算），与 bk-004/bk-007 档案一致。
+- **已确认烘焙走通**：周期班长/张明启动消息自带「宏观周期派/债务金融派」口吻与研判框架（周期定位/债务-通缩/量化测算），与 bk-004/bk-007 档案一致。
 - 偏差清单第 4 条据此**销项**（persona 烘焙链路确认走通，expert 字段为空是设计而非缺陷）。
 
 ---

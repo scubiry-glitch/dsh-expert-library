@@ -1,0 +1,153 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "balanced",
+    "audience": "executive"
+  },
+  "theme": "pulse",
+  "filename": "收储用途扩围与平台机会_正式稿",
+  "seed": 20260916,
+  "meta": {
+    "organization": "98wiki ｜ 智见点评",
+    "authors": [
+      {
+        "name": "智见点评",
+        "role": "制度设计"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "p1",
+      "type": "cover",
+      "heading": "收储用途扩围与平台机会",
+      "beat": "anchor"
+    },
+    {
+      "id": "p2",
+      "type": "content",
+      "heading": "核心结论：需求池扩容，不等于制度成型",
+      "beat": "anchor"
+    },
+    {
+      "id": "p3",
+      "type": "content",
+      "heading": "三处机制缺口决定制度天花板",
+      "beat": "dense"
+    },
+    {
+      "id": "p4",
+      "type": "content",
+      "heading": "谁来收、收什么、做什么：授权链是地方授权加中央资金",
+      "beat": "dense"
+    },
+    {
+      "id": "p5",
+      "type": "content",
+      "heading": "用途口径外扩：是案例结构示意，不是统计口径",
+      "beat": "anchor"
+    },
+    {
+      "id": "p6",
+      "type": "content",
+      "heading": "三条线不同步：资金端先行，采购制度化最慢",
+      "beat": "dense"
+    },
+    {
+      "id": "p7",
+      "type": "content",
+      "heading": "上海551套：应作上限锚点，不作起步基数",
+      "beat": "anchor"
+    },
+    {
+      "id": "p8",
+      "type": "content",
+      "heading": "高校以机构购买方进场：证明需求，不证明制度",
+      "beat": "dense"
+    },
+    {
+      "id": "p9",
+      "type": "content",
+      "heading": "归因（一）：负carry是结构性的，运营补不上",
+      "beat": "dense"
+    },
+    {
+      "id": "p10",
+      "type": "content",
+      "heading": "归因（二）：区位错配不是操作失误",
+      "beat": "dense"
+    },
+    {
+      "id": "p11",
+      "type": "content",
+      "heading": "归因（三）：改造合规是确定性成本，新增用途两端最重",
+      "beat": "breathing"
+    },
+    {
+      "id": "p12",
+      "type": "content",
+      "heading": "归因（四至六）：顺序倒置、退出缺位、补贴性质",
+      "beat": "dense"
+    },
+    {
+      "id": "p13",
+      "type": "content",
+      "heading": "四项判别阈值：当期均未打勾",
+      "beat": "dense"
+    },
+    {
+      "id": "p14",
+      "type": "content",
+      "heading": "红队复核：四条预判全部成立",
+      "beat": "anchor"
+    },
+    {
+      "id": "p15",
+      "type": "content",
+      "heading": "用途—现金流矩阵：用途是资本结构的选择变量",
+      "beat": "dense"
+    },
+    {
+      "id": "p16",
+      "type": "content",
+      "heading": "房源准入评分卡：四项一票否决",
+      "beat": "dense"
+    },
+    {
+      "id": "p17",
+      "type": "content",
+      "heading": "退出谱系：三条路径互斥，不能同时承诺",
+      "beat": "dense"
+    },
+    {
+      "id": "p18",
+      "type": "content",
+      "heading": "平台责任边界：交付判据，不承担资产",
+      "beat": "anchor"
+    },
+    {
+      "id": "p19",
+      "type": "content",
+      "heading": "三档判断与三条可证伪判据",
+      "beat": "breathing"
+    },
+    {
+      "id": "p20",
+      "type": "content",
+      "heading": "观察指标七项与不确定性",
+      "beat": "dense"
+    },
+    {
+      "id": "p21",
+      "type": "content",
+      "heading": "数据来源与口径",
+      "beat": "breathing"
+    },
+    {
+      "id": "p22",
+      "type": "ending",
+      "heading": "谢谢 · 欢迎提问"
+    }
+  ]
+}

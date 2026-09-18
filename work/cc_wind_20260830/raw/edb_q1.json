@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"metrics\":[{\"meta\":{\"code\":\"M5547489\",\"name\":\"中国:信用卡逾期半年未偿信贷总额:同比\",\"unit\":\"%\",\"source\":\"中国人民银行\",\"updateDate\":\"20250217\",\"freq\":\"年\"},\"date\":[\"20191231\",\"20201231\",\"20211231\",\"20221231\",\"20231231\",\"20241231\"],\"value\":[-5.83,12.92,2.59,0.63,13.35,26.32]}]}"
+    }
+  ],
+  "isError": false,
+  "cli_meta": {
+    "schema_version": "1.0",
+    "server_type": "economic_data",
+    "tool_name": "query_economic_indicator_data",
+    "completeness": "not_asserted",
+    "tables": [],
+    "warnings": []
+  }
+}

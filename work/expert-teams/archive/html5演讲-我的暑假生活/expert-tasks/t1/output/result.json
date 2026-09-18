@@ -1,0 +1,9 @@
+{
+  "taskId": "t1",
+  "status": "completed",
+  "attempt": 1,
+  "output": "设计简报与镜头方案完成。完整交付：expert-tasks/t1/artifacts/设计简报_镜头方案.md（t2 唯一依据）。\n\n【① 镜头对照表（幕×效果×时长）】\n1 封面 10s｜crane-rise-reveal（升降臂拉升揭示·适配太阳升起）：标题 3.2× 特写 hold≥1s → 相机 out-quad 减速升起、太阳/云/海鸥逐层涌入 → 标题收正+副标「莫弘毅·三年级」→ 静止≥1.5s\n2 出发 10s｜depth-layer-moves 视差滑轨（海浪0.35+blur / 沙滩礁石0.7主阅读层 / 螃蟹贝壳1.4前景）× list-reveal 文案逐条浮入（stagger 0.8s/条）→ 末行钩子句 hold≥1s\n3 装备 8s｜spotlight-sweep-moves A 式（光束 strict linear 匀速扫过，光到即弹起=同一因果链）× element-body-moves A 轴向拉伸+落点压扁回弹 × 末拍「全副武装」paper-title-card 逐词压印 hold≥1s\n4 妙招 15s｜主：步骤卡逐张入场（list-reveal 找位）+ draw-svg-trace 笔头描线画箭头（pathLength=1 技法）→ 落定后 line-boil 沸腾呼吸（seed=floor(f/3)，全片唯一沸腾组）；底：相机单向慢推 zoom 1→1.35；末卡 hold≥1.5s\n5 收获 12s｜crash-zoom-punch 撞停急推点名「约100只」+ counter-confetti 计数冲线（easeOutQuart）+ 纸屑抢拍（到位前 0.04 爆，灵魂半拍）+ 「1～2小时」「超开心」快拍亮相 + 螃蟹堆（card-stack 节奏，越来越快+0.5s 停）+ 金句压印 + 「开心」marker-underline 马克笔划线；hold≥1s\n6 谢谢 5s｜gradient-transition 渐变日落收束（天蓝→橙粉→navy，HSL 插值，太阳下沉）+ 谢谢大家大字淡入（不压印，保持谢幕低能量）→ 静止≥1.5s\n\n【② 设计 tokens】调色板沿用已确认 7 色（海蓝#14729E/阳光黄#F7B733/珊瑚#E86A5E/薄荷#4FB3A6/天蓝#8AC6E8/navy#17324D/bg#F0F7FA）+ tinted 补充（卡底#FBFCF7、发丝描边 rgba(23,50,77,.12)、染色阴影 .16，禁纯白纯黑）；字体 PingFang SC/微软雅黑，标题 120px、正文 40px（≥3%帧高）、关键句 56px（≥5%帧高，Q11 线）；插画纯内联 SVG 手绘风（粗圆描边 round cap，六色填充，每幕插画清单已列），无外链无 emoji；动效约束：GSAP 主时间线分幕、确定性渲染禁 Math.random、每幕一动效、hold≥1s、手法去重（急推/视差/扫光/沸腾/彩纸各一次）、reduced-motion 静止终态、16:9 letterbox。\n\n【③ Design Read（含 You'll see）】register=h5 舞台式 snap-deck · SOUL7 · SPECTACLE7 · DENSITY3 · engine=GSAP 相机运镜。You'll see：全屏浅蓝海边舞台，太阳升起相机抬升露出大标题；海浪沙滩三层视差横移；探照灯扫过装备挨个弹起立正；四张步骤卡逐张落位、手绘箭头自己画出来连上；「100只」冲线爆彩纸、螃蟹堆小山；日落渐变收束、谢谢大家浮现停住。Rejected default：卡通贴纸大杂烩+满屏乱飞；PPT 模板翻页。Not right? ① 开场 crane 太商务→备选 spotlight-hero-card ② 太闹→降 SPECTACLE 只留三处动效。\n\n已落实审美准则：R1（每幕 hold≥1s）、R2（批量入场 0.5s 停）、R3（开场 3s 弧）、Q1（手绘 SVG 非复刻）、Q4（光效只给主角）、Q5（开场单主角）、Q6（文字正视）、Q11（字高线）、P4（手法去重）。t2 请先读卡片全文（清单见简报 §3），参数命门不得降档。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1787842756373
+}

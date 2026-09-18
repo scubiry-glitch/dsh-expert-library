@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "taxonomy_version": "1.0",
+  "policy_version": "1.0",
+  "source": {
+    "skill": "ppt-polished-deck-collab",
+    "gate": "workspace_lint"
+  },
+  "artifact": {
+    "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro"
+  },
+  "target_milestone": "build",
+  "decision": {
+    "state": "clear",
+    "target_milestone": "build",
+    "hard_group_count": 0,
+    "soft_group_count": 0,
+    "advisory_group_count": 0
+  },
+  "summary": {
+    "group_count": 0,
+    "occurrence_count": 0,
+    "evidence_count": 0,
+    "by_action": {},
+    "by_domain": {}
+  },
+  "groups": [],
+  "full_report_ref": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/validation/workspace_lint/workspace_lint.json"
+}

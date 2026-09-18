@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "王芳",
-    "publicLabel": "王芳",
-    "initials": "王"
+    "internalName": "体验捕手",
+    "publicLabel": "体验捕手",
+    "initials": "T"
   },
   "domains": [
     "realestate.general"

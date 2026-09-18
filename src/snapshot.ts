@@ -165,6 +165,72 @@ function memberDocuments(memberName: string, tasks: readonly TeamTask[], teamId:
   return documents
 }
 
+/** Live driver activity of one member, as the activity panel renders it. */
+type MemberActivity = 'running' | 'idle' | 'ready'
+/**
+ * Bound on one live-activity listing. The panel polls its snapshot route every
+ * second while the harness's `listChildren` enumerates the entire session corpus
+ * (and cold-reads every child) per call, so an unbounded listing let a few
+ * dormant teams turn a single poll into a multi-second request — and a fleet of
+ * them into the ~18s response that starved the browser's connection pool.
+ */
+const ACTIVITY_TIMEOUT_MS = 2_000
+/** Reuse window for one captain's listing; polls inside it cost nothing. */
+const ACTIVITY_TTL_MS = 3_000
+/** Last bounded listing per captain session (successful or degraded alike). */
+const activityCache = new Map<string, { at: number; value: Map<string, MemberActivity> }>()
+/**
+ * Live subagent activity for one team, deliberately bounded.
+ *
+ * Two bounds keep the expensive listing off the poll path without changing what
+ * a live team shows:
+ *  - a captain that is not live in this process cannot have a running child, so
+ *    there is nothing to list — the common case for a finished team, and exactly
+ *    the case that used to pay for the whole-corpus enumeration;
+ *  - a live captain's listing is aborted at {@link ACTIVITY_TIMEOUT_MS} and its
+ *    result reused for {@link ACTIVITY_TTL_MS}, so one degraded listing can
+ *    never stall more than a single poll cycle.
+ * @param ctx - the plugin context (injects `agents` and `subagents`).
+ * @param state - the durable team record.
+ * @returns child id → activity; empty when nothing is live or the listing degraded.
+ */
+async function liveActivity(ctx: Context, state: TeamState): Promise<Map<string, MemberActivity>> {
+  const captainSessionId = state.captainSessionId
+  if (captainSessionId === '' || ctx.agents.get(captainSessionId as SessionId) === undefined) {
+    return new Map()
+  }
+  const cached = activityCache.get(captainSessionId)
+  const startedAt = Date.now()
+  if (cached !== undefined && startedAt - cached.at < ACTIVITY_TTL_MS) {
+    return cached.value
+  }
+  const value = new Map<string, MemberActivity>()
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), ACTIVITY_TIMEOUT_MS)
+  try {
+    const children = await ctx.subagents.listChildren(captainSessionId as SessionId, controller.signal)
+    for (const entry of children) {
+      if (entry.kind === 'child') {
+        const live = ctx.agents.get(entry.id)
+        value.set(entry.id, live === undefined ? 'ready' : live.status)
+      }
+    }
+  } catch (error: unknown) {
+    // A timeout under load is degradation, not an incident: this cycle simply
+    // reports no live activity, and the next one may cache a real listing.
+    if (controller.signal.aborted) {
+      ctx.logger.debug(`expert-teams: activity listing for ${state.name} timed out`)
+    } else {
+      ctx.logger.warn(`expert-teams: activity listing failed for ${state.name}: ${String(error)}`)
+    }
+  } finally {
+    clearTimeout(timer)
+  }
+  // Cache the degraded result too: that is what stops a slow listing from being
+  // retried once per poll.
+  activityCache.set(captainSessionId, { at: startedAt, value })
+  return value
+}
 /**
  * Assemble one team snapshot from its durable files plus live activity.
  * @param ctx - the plugin context (injects `subagents`, used for activity).
@@ -185,20 +251,9 @@ export async function assembleTeamSnapshot(
   const roster = options.includeRemoved === true
     ? state.members
     : state.members.filter((member) => member.status !== 'removed')
-  const activity = new Map<string, 'running' | 'idle' | 'ready'>()
-  if (options.historic !== true) {
-    try {
-      const children = await ctx.subagents.listChildren(state.captainSessionId as SessionId)
-      for (const entry of children) {
-        if (entry.kind === 'child') {
-          const live = ctx.agents.get(entry.id)
-          activity.set(entry.id, live === undefined ? 'ready' : live.status)
-        }
-      }
-    } catch (error: unknown) {
-      ctx.logger.warn(`expert-teams: activity listing failed for ${state.name}: ${String(error)}`)
-    }
-  }
+  const activity = options.historic === true
+    ? new Map<string, MemberActivity>()
+    : await liveActivity(ctx, state)
   const unreadByMember = new Map<string, number>()
   for (const member of roster) {
     try {

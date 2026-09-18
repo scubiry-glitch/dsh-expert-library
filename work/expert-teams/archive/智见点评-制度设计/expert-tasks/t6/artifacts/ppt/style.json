@@ -1,0 +1,19 @@
+{
+  "colors": {
+    "bg": "#F7FAF9",
+    "surface": "#FFFFFF",
+    "panel": "#EFF5F2",
+    "primary": "#0E6A55",
+    "accent": "#8F6119",
+    "text": "#0F1F1C",
+    "muted": "#5A6B66",
+    "border": "#DCEBE5",
+    "cardStroke": "#DCEBE5",
+    "chartPalette": [
+      "#0E6A55",
+      "#8F6119",
+      "#55636F",
+      "#5F9E8C"
+    ]
+  }
+}

@@ -45,7 +45,7 @@
   "snapshot": {
     "id": "pipeline-v1-2026-08-23",
     "takenAt": "2026-08-23T00:00:00Z",
-    "digest": "4e1dfa89499fef2ebf5d214efb63c38cd86e2443c95d120bffb54c6a82fcf972",
+    "digest": "dc32321508b0052702aa8d8f7e400bc0161495db11149b87ff18473f408f74fb",
     "recordCount": 106
   },
   "retrievalProfiles": [

@@ -1,0 +1,45 @@
+{
+  "name": "智见点评-七家银行信用卡2026H1",
+  "id": "智见点评-七家银行信用卡2026h1",
+  "description": "将七家银行信用卡2026H1同业点评正式稿v3渲染为HTML5+PDF对外版本",
+  "captainSessionId": "session-80ed1df0-63b1-47c0-9776-83a7951175b4",
+  "createdAt": 1788098117727,
+  "members": [
+    {
+      "id": "a0ec5211-21ab-46ba-9be2-8509954191c8",
+      "name": "Designer",
+      "role": "designer",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1788098119907,
+      "status": "removed"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "subject": "渲染七家银行信用卡2026H1同业点评正式稿v3（HTML5+PDF）",
+      "description": "把 /root/zhijian/dsh-expert-library/work/cc_wind_20260830/融合稿_v3_七家银行信用卡2026H1同业点评_正式稿.md 渲染为领导汇报级 HTML5 视觉稿。\n\n【风格基准】沿用 v2 成稿的版式语言（同系列正式稿，保持视觉延续性）：/root/zhijian/dsh-expert-library/work/cc_wind_20260830/render/20260830_三家银行信用卡2026H1同业点评_正式稿_v2.html —— 深蓝金正式汇报风、A4 竖版打印 CSS（@media print + @page）、章节编号大标题、数据表格斑马纹、结论卡片、关键数字高亮。可直接在该文件基础上改内容，也可重写但风格必须一致。\n\n【输出】/root/zhijian/dsh-expert-library/work/cc_wind_20260830/render/20260830_七家银行信用卡2026H1同业点评_正式稿_v3.html，并用 Chromium headless 出同名 PDF（--print-to-pdf，A4，print background）。参考命令：chromium --headless --disable-gpu --print-to-pdf=<pdf路径> --no-pdf-header-footer <html路径>。\n\n【内容要求】全文完整渲染，不删章节：卷首口径段、一、关键性结论（八条）、二、七家核心指标对照表（7列大表，可横向紧凑排版但不可截断列）、三、五层分析（战略/客群经营/产品/资产/风险，客群与产品是深度章节含路线图谱表、三样板链路表、旅程断点诊断表、产品矩阵表）、四、归因分析（六个背离）、五、收尾（四判断+五路径+三阶段行动）、六、监测指标体系表、七、数据缺口清单、落款。\n\n【锚点自查清单】完成后必须确认以下内容在 HTML 中全部存在：①标题「七家银行信用卡业务 2026H1 同业点评」；②「八条关键判断」；③七家不良率梯队表（邮储1.45%/招行1.90%/浦发2.01%/农行2.05%/平安2.23%/中信2.57%/民生4.22%）；④「4,531.90」「236.98」「8,158.49」「4,025.90」「9,770.73」「3,691.57」「57.39%」；⑤「工程师卡」与 Token 权益表述；⑥「六个跨层关键矛盾」；⑦三阶段行动（立刻做/本季做/观察等待）；⑧监测指标表（8行）；⑨数据缺口与待验证项（6条）；⑩「警示色」用于民生4.22%、消费贷3.52%等风险数字。\n\n完成后回复文件路径与 PDF 页数。",
+      "status": "completed",
+      "assignee": "Designer",
+      "dependencies": [],
+      "attempt": 1,
+      "createdAt": 1788098134930,
+      "updatedAt": 1788098543878,
+      "project": {
+        "path": "expert-tasks/t1",
+        "inputPath": "expert-tasks/t1/input/task.json",
+        "outputPath": "expert-tasks/t1/output/result.json",
+        "artifactsPath": "expert-tasks/t1/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "output": "渲染完成。交付物：\n1. HTML5：/root/zhijian/dsh-expert-library/work/cc_wind_20260830/render/20260830_七家银行信用卡2026H1同业点评_正式稿_v3.html（sha256 f3fefd72dcab60c05700e373bc83b3c52b6ea6ad2fd1bea1e839dfd0f60a68af）\n2. PDF：/root/zhijian/dsh-expert-library/work/cc_wind_20260830/render/20260830_七家银行信用卡2026H1同业点评_正式稿_v3.pdf，13 页 A4（sha256 30276656a2fe67d9f06a1985b6ca90fb35107b0c43d983f0a859f882d53cf6ee）\n\n【版式】沿用 v2 深蓝金正式汇报风（navy/gold token、A4 @page+@media print、固定页脚每页重复、章节编号大标题、斑马纹表格、结论编号卡、金句条/quote-band、警示红 hl-warn），扩展 7 列紧凑表组件（cmp7/matrix/journey/tier7，横向不截断列）。\n\n【13 页结构】p1 封面+卷首口径段+KPI 速览+结论1-4｜p2 结论5-8+总览金句｜p3 七家核心指标对照大表（12 行+※脚注+口径总提示+表外/动用率图）｜p4 战略层七行小卡+获客路线图谱表｜p5 三个深度样板链路表（山姆/车生态/县域普惠）｜p6 三条新路线速描+旅程断点诊断表｜p7 产品矩阵表（4角色×7家）+创新风向（权益AI化/客群定制化）｜p8 成本账+竞争四问｜p9 资产层三梯队+序列断点+三背离｜p10 风险层梯队表+周期判断｜p11 风险深描（品类迁移/表外/红线）+归因六个矛盾｜p12 收尾四判断+五路径+三阶段行动｜p13 监测指标表（8行）+数据缺口（6条）+落款。\n\n【渲染检查】13 页均无内容溢出安全线（内容 max_y ≤ 709.9pt / 限 808pt）、无文字重叠（逐页 0 对）、页脚 13 页全部可见；PDF 文本层 24 项锚点全部命中。10 项锚点自查清单全 PASS（标题/八条关键判断/不良率梯队表/7 个关键数字/工程师卡+Token/六个跨层关键矛盾/三阶段行动/监测表 8 行/缺口 6 条/民生4.22%与消费贷3.52%均用警示红 hl-warn）。数据严格忠于稿本，未增删数字（含稿本口径脚注原文，如\"民生 0.77% vs 2.01%\"按稿本原样保留）。",
+      "qualityScore": null,
+      "repairCount": 0
+    }
+  ],
+  "taskSeq": 1,
+  "completionNotifiedAt": 1788098543882
+}

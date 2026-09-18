@@ -1,6 +1,6 @@
 {
   "id": "bank.99wiki",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "domain": "banking.jiangsu",
   "boundary": "本地 99wiki（江苏银行/银行研究 Obsidian 知识库）：专家体系、银行业研究助手、江苏银行高端信用卡/算力金融/信用卡提质增效、银保渠道零售信贷合作、分行诊断、贝壳合作、feishu 素材（政策/研报/纪要/日报表）。内部资料，引用须注明出处；敏感数据不外发。",
@@ -64,6 +64,12 @@
       "description": "信用卡提质增效研究"
     },
     {
+      "id": "credit-card-methodology",
+      "root": "projects/信用卡方法论提取",
+      "format": "mixed",
+      "description": "信用卡方法论提取沉淀（81 条结构化记录 methodology-records.json / 总报告 / 待验证结果 / 落地台账模板）；条目「本行重算」数据入口见 bank.analytics 各 collection"
+    },
+    {
       "id": "ai-computing-finance",
       "root": "projects/江苏银行算力金融",
       "format": "markdown",
@@ -103,7 +109,7 @@
   "snapshot": {
     "id": "99wiki-local-2026-08-23",
     "takenAt": "2026-08-23T00:00:00Z",
-    "digest": "7cdfa497a4c3ee0fba24b867fa57c12dfd1199383020c256f36e125a98f0327f",
+    "digest": "e52a221995e9e3cea3bbd5c8a4f0bcb91428b6b72f02ad8f6a6d8ce03fe49e80",
     "recordCount": 0
   },
   "retrievalProfiles": [

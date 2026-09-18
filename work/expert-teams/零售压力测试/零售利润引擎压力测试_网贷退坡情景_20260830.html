@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>零售利润引擎压力测试 · 网贷退坡情景 · 智见点评</title>
+<style>
+/* finesse · register=product(report) · A=ink-teal #0e6a55 + amber #a9741f · B=700 serif/400 sans
+ * C=report 单栏 · D=CSS-only 图表（flex 条形） · E=policy-print ｜ md 唯一权威源：零售利润引擎压力测试_网贷退坡情景_20260830.md */
+:root{
+  --teal:#0e6a55; --teal-deep:#0a4a3c; --teal-soft:#e7f0ec; --teal-mist:rgba(14,106,85,.14);
+  --amber:#a9741f; --amber-soft:#f6ecd9;
+  --neg:#a4432e; --neg-soft:#f5e4de;
+  --ink:#22322d; --sub:#5d6b66; --hair:rgba(14,106,85,.18); --hair2:rgba(34,50,45,.10);
+  --paper:#f4f2ec; --card:#fffefb; --card2:#fbfaf5;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"Noto Sans CJK SC","Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  background:var(--paper);color:var(--ink);font-size:15px;line-height:1.75;}
+.serif{font-family:"Noto Serif CJK SC","Noto Serif SC","Songti SC","SimSun",serif;}
+.sheet{max-width:960px;margin:26px auto;background:var(--card);
+  border:1px solid var(--hair2);box-shadow:0 2px 22px rgba(20,40,34,.07);padding:52px 60px 44px;}
+/* 封面 */
+.cover-band{background:var(--teal-deep);color:#f2f6f3;padding:28px 60px 24px;
+  margin:-52px -60px 0;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;}
+.cover-band b{font-weight:700;letter-spacing:.06em;font-size:14px;}
+.cover-band span{font-size:12px;opacity:.85;}
+.head-inner{padding:42px 0 6px;}
+.kicker{color:var(--amber);font-weight:700;font-size:13px;letter-spacing:.34em;margin-bottom:16px;}
+h1{font-size:33px;line-height:1.28;font-weight:900;color:var(--teal-deep);}
+.subline{margin-top:12px;color:var(--sub);font-size:14.5px;}
+.meta{margin-top:10px;font-size:12.5px;color:var(--sub);display:flex;gap:16px;flex-wrap:wrap;}
+.quote-band{margin:26px 0 0;background:var(--amber-soft);border-left:4px solid var(--amber);
+  padding:15px 20px;font-size:15px;line-height:1.8;color:#4a3a17;}
+.quote-band i{font-style:normal;color:var(--amber);font-weight:700;margin-right:8px;}
+.kcards{display:flex;gap:13px;margin-top:22px;flex-wrap:wrap;}
+.kcard{flex:1 1 170px;min-width:150px;background:var(--card);border:1px solid var(--hair);
+  border-top:3px solid var(--teal);padding:13px 15px 11px;}
+.kcard .kv{font-size:23px;font-weight:700;color:var(--teal-deep);line-height:1.2;}
+.kcard .kv em{font-style:normal;font-size:12.5px;font-weight:400;color:var(--sub);}
+.kcard .kl{font-size:11.5px;color:var(--sub);margin-top:5px;line-height:1.5;}
+.kcard.hot{border-top-color:var(--amber);} .kcard.hot .kv{color:var(--amber);}
+.kcard.neg{border-top-color:var(--neg);} .kcard.neg .kv{color:var(--neg);}
+.nav{margin-top:24px;padding-top:13px;border-top:1px solid var(--hair2);font-size:12.5px;color:var(--sub);
+  display:flex;flex-wrap:wrap;gap:6px 14px;}
+.nav b{color:var(--teal);font-weight:700;}
+/* 章节 */
+.chapter{break-before:page;}
+.ch-head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--teal);padding-bottom:10px;margin:14px 0 18px;}
+.ch-no{font-family:"Noto Serif CJK SC",serif;font-weight:900;font-size:28px;color:var(--teal);line-height:1;}
+h2.ch-title{font-size:20px;font-weight:700;color:var(--ink);line-height:1.4;}
+h2.ch-title small{display:block;font-weight:400;font-size:12.5px;color:var(--sub);margin-top:3px;letter-spacing:.04em;}
+blockquote.gn{border-left:4px solid var(--amber);background:var(--card2);
+  padding:13px 18px;margin:0 0 16px;font-size:15.5px;line-height:1.8;color:#3d3320;}
+blockquote.gn b{color:var(--amber);}
+ol.chain{padding:0;list-style:none;counter-reset:chain;}
+ol.chain>li{counter-increment:chain;position:relative;padding-left:34px;margin-bottom:11px;}
+ol.chain>li::before{content:counter(chain,decimal-leading-zero);position:absolute;left:0;top:2px;
+  font-family:"Noto Serif CJK SC",serif;font-weight:700;font-size:13px;color:var(--amber);}
+ol.chain b{color:var(--teal-deep);}
+p{margin-bottom:10px;}
+ul.tight{padding-left:20px;} ul.tight li{margin-bottom:6px;}
+.tg{display:inline-block;font-size:10.5px;line-height:1;padding:3px 5px 2px;border-radius:2px;
+  vertical-align:2px;margin:0 2px;letter-spacing:.05em;white-space:nowrap;}
+.tg.c{color:var(--teal);border:1px solid var(--teal-mist);background:var(--teal-soft);}
+.tg.e{color:#5a625e;border:1px solid rgba(34,50,45,.16);background:#f0efea;}
+.tg.j{color:var(--amber);border:1px solid rgba(169,116,31,.30);background:var(--amber-soft);}
+.tg.b{color:var(--neg);border:1px solid rgba(164,67,46,.30);background:var(--neg-soft);}
+/* 表格 */
+.tblwrap{margin:15px 0 6px;break-inside:avoid;}
+table{width:100%;border-collapse:collapse;font-size:12.7px;line-height:1.55;}
+caption{caption-side:top;text-align:left;font-size:12px;color:var(--amber);font-weight:700;
+  letter-spacing:.06em;padding-bottom:7px;}
+caption i{font-style:normal;color:var(--sub);font-weight:400;letter-spacing:0;}
+th{background:var(--teal);color:#f2f6f3;font-weight:700;padding:7px 9px;text-align:left;border:1px solid var(--teal);font-size:12px;}
+td{padding:6.5px 9px;border:1px solid var(--hair2);vertical-align:top;}
+tbody tr:nth-child(even) td{background:var(--card2);}
+tr.hl td{background:var(--amber-soft) !important;font-weight:700;}
+tr.hot td{background:var(--teal-soft) !important;}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+td.pos{color:var(--teal);font-weight:700;} td.negv{color:var(--neg);font-weight:700;}
+.tnote{font-size:11.5px;color:var(--sub);margin:6px 0 0;line-height:1.6;}
+/* CSS 图表 */
+.chart{margin:17px 0 6px;break-inside:avoid;border:1px solid var(--hair2);background:var(--card2);padding:15px 18px 12px;}
+.chart h4{font-size:12px;color:var(--amber);font-weight:700;letter-spacing:.06em;margin-bottom:12px;}
+.chart h4 i{font-style:normal;color:var(--sub);font-weight:400;letter-spacing:0;}
+.zrow{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.zlab{flex:0 0 104px;font-size:11.5px;color:var(--sub);text-align:right;}
+.zlab b{color:var(--ink);}
+.zmid{flex:0 0 1px;background:var(--hair);}
+.zneg,.zpos{flex:1 1 50%;min-width:0;display:flex;}
+.zneg{justify-content:flex-end;} .zpos{justify-content:flex-start;}
+.zbar{height:15px;}
+.zneg .zbar{background:var(--neg);opacity:.85;}
+.zpos .zbar{background:var(--teal);opacity:.9;}
+.zval{flex:0 0 56px;font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:10px;font-size:11px;color:var(--sub);}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;margin-right:5px;vertical-align:-1px;}
+.lg5::before{background:var(--teal);} .lg6::before{background:var(--teal-deep);} .lg7::before{background:var(--neg);} .lg8::before{background:var(--amber);}
+/* 安全垫标尺 */
+.scale{position:relative;height:56px;margin:10px 4px 0;}
+.scale-line{position:absolute;left:0;right:0;top:24px;height:3px;background:var(--hair);}
+.bnd{position:absolute;top:18px;height:15px;background:var(--neg-soft);border:1px solid rgba(164,67,46,.30);}
+.mk{position:absolute;top:12px;width:2px;height:27px;background:var(--teal);}
+.mk-lab{position:absolute;top:42px;font-size:10px;color:var(--sub);transform:translateX(-50%);white-space:nowrap;}
+.scale-end{display:flex;justify-content:space-between;font-size:10px;color:var(--sub);margin-top:2px;}
+.endquote{margin:26px 0 8px;border-top:2px solid var(--teal);padding-top:18px;
+  font-family:"Noto Serif CJK SC",serif;font-size:16.5px;line-height:1.9;color:var(--teal-deep);font-weight:700;}
+.srcbox{border:1px solid var(--hair2);background:var(--card2);padding:14px 18px;font-size:12px;color:var(--sub);line-height:1.8;}
+.srcbox b{color:var(--ink);}
+.foot{display:flex;justify-content:space-between;border-top:1px solid var(--hair2);
+  padding-top:14px;margin-top:26px;font-size:12px;color:var(--sub);flex-wrap:wrap;gap:8px;}
+.foot b{color:var(--teal);letter-spacing:.06em;}
+.backcover{break-before:page;display:flex;flex-direction:column;justify-content:space-between;min-height:760px;}
+.bc-quote{font-family:"Noto Serif CJK SC",serif;font-size:19px;line-height:2;color:var(--teal-deep);font-weight:700;
+  border-left:5px solid var(--amber);padding-left:22px;margin:50px 0 36px;}
+.bc-meta{border:1px solid var(--hair);background:var(--card2);padding:15px 19px;font-size:12.5px;color:var(--sub);line-height:1.9;}
+.bc-meta b{color:var(--ink);}
+@page{size:A4;margin:19mm 15mm 17mm;
+  @bottom-left{content:"98wiki ｜ 智见点评 · 银行零售专题";font-size:8.5pt;color:#8a938e;}
+  @bottom-right{content:counter(page);font-size:9pt;color:#8a938e;}}
+@media print{body{background:#fffefb;font-size:10pt;}.sheet{box-shadow:none;border:none;margin:0;max-width:none;padding:0;}}
+@media screen and (max-width:720px){.sheet{padding:26px 18px;margin:10px;}
+  .cover-band{margin:-26px -18px 0;padding:20px 18px;} h1{font-size:25px;}
+  td,th{padding:5px 6px;} table{font-size:11.4px;} .zlab{flex-basis:78px;}}
+</style>
+</head>
+<body>
+<div class="cover-band">
+  <b>98wiki ｜ 智见点评 · 行业研究</b>
+  <span>内部材料（半敏感）· 请勿外发公网</span>
+</div>
+<div class="sheet">
+
+<div class="head-inner">
+  <div class="kicker">银行零售专题 · 自拟任务 · 2026-08-30</div>
+  <h1 class="serif">零售利润引擎压力测试</h1>
+  <div class="subline">网贷退坡情景下的组合 EVA 缺口、安全垫与补位路径——「网贷单腿凳」从单点测算到情景矩阵</div>
+  <div class="meta"><span>数据期：2026-06-30 计财部 EVA 表 × 2026-05-21 日均（4/28 复核）</span><span>口径：零售 6 产品日均 5,489.79 亿</span></div>
+  <div class="quote-band"><i>收束金句</i>零售现在赚的每一分钱里，有超过一半是网贷借给组合的；网贷降价每快一个月，零售找第二引擎的时间就少一个月——先立定价纪律，再谈引擎。</div>
+  <div class="kcards">
+    <div class="kcard hot"><div class="kv">222<em>%</em></div><div class="kl">网贷 EVA 金额占零售全部利润比重<span class="tg c">测算</span>（+21.13 / +9.52 亿）</div></div>
+    <div class="kcard neg"><div class="kv">−13.70<em>亿</em></div><div class="kl">网贷收益率 −1pct 时零售整体 EVA（−0.25%）——一格定价，整体翻负<span class="tg c">测算</span></div></div>
+    <div class="kcard"><div class="kv">0.41<em>pct</em></div><div class="kl">收益率安全垫<span class="tg c">测算</span>≈ 当前降价速度下 1.4 个月的新投放降幅</div></div>
+    <div class="kcard neg"><div class="kv">42<em>%</em></div><div class="kl">内部补位满额（+9.81 亿）对网贷 −1pct 缺口（23.2 亿）的覆盖率<span class="tg c">测算</span></div></div>
+  </div>
+  <div class="nav"><b>卷首速览</b><span>一 基准画像</span><span>二 压力情景矩阵</span><span>三 补位赛跑</span><span>四 时间窗与动作</span><span>附 口径与待补</span></div>
+</div>
+
+<!-- 卷首速览 -->
+<section class="chapter">
+  <div class="ch-head"><div class="ch-no serif">序</div><h2 class="ch-title">卷首速览<small>给 30 秒读者：六行结论，每行一个关键数字</small></h2></div>
+  <div class="tblwrap">
+  <table>
+    <thead><tr><th style="width:5%">#</th><th style="width:46%">结论</th><th class="num" style="width:49%">关键数字</th></tr></thead>
+    <tbody>
+      <tr class="hot"><td>1</td><td>零售组合 EVA +9.52 亿/年（+0.17%），网贷单产品贡献 222%——<b>这不是组合，是独奏</b></td><td class="num">固定拖累 −11.61 亿，全靠网贷对冲<span class="tg c">测算</span></td></tr>
+      <tr><td>2</td><td>定价是主导变量：网贷收益率每 −1pct，零售整体翻负</td><td class="num">−13.70 亿（−0.25%）；−2pct → −36.92 亿<span class="tg c">测算</span></td></tr>
+      <tr class="hl"><td>3</td><td><b>缩规模救不了利润</b>：定价守住时缩 10% 仅少赚 2.1 亿；定价失守时缩规模只是少亏，且盈亏平衡定价要求反而抬升</td><td class="num">安全垫 0.41pct（满规模）→ 0.35pct（缩 10%）<span class="tg c">测算</span></td></tr>
+      <tr><td>4</td><td>内部补位满额 +9.81 亿，只覆盖网贷 −1pct 缺口的 <b>42%</b>、−2pct 的 21%</td><td class="num">信用卡转正 6.84＋中收 1.20＋消费贷修复 1.78<span class="tg c">测算</span></td></tr>
+      <tr><td>5</td><td>安全垫 0.41pct ≈ 当前降价速度下 <b>1.4 个月</b>的新投放降幅</td><td class="num">13.66%→13.37%（7 月→8 月）<span class="tg c">测算</span>/<span class="tg j">研判推断</span></td></tr>
+      <tr><td>6</td><td>网贷依赖度五家城商行最高（41.9% vs 上海 20.6%）——<b>压力测试的必要性我行最大</b></td><td class="num">2026-03-31 月末余额口径<span class="tg c">测算</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- 一 -->
+<section class="chapter">
+  <div class="ch-head"><div class="ch-no serif">一</div><h2 class="ch-title">基准画像：+0.17% 的组合，利润的 2.2 倍来自一个产品<small>Q1 · 零售 EVA 瀑布与利润集中度</small></h2></div>
+  <blockquote class="gn"><b>金句｜</b>+0.17% 的零售组合，利润的 2.2 倍来自一个产品——这不是组合，是独奏。</blockquote>
+  <ol class="chain">
+    <li><b>基准测算</b>（2026-05-21 日均 × EVA 表 2026-06-30）：房贷 −1.98 亿、消费贷 −2.43 亿、经营贷 −0.01 亿、卡产品（卡分期 198.58＋卡循环 53.65）−7.19 亿、网贷 +21.13 亿 → <b>合计 +9.52 亿/年（+0.173%）</b><span class="tg c">测算</span>。</li>
+    <li><b>集中度</b>：网贷 EVA 金额占零售全部利润的 222%<span class="tg c">测算</span>——其余四产品合计 −11.61 亿是<b>固定拖累</b>，零售利润＝网贷利润减去一个固定数。结构上，6 产品口径内正 EVA 产品只有网贷（+0.91%）一个。</li>
+    <li><b>复核</b>：用 4/28 期日均同法测算 +9.43 亿、剔除网贷 −11.75 亿（−0.37%）——两期一致，基准稳健<span class="tg c">测算</span>。</li>
+    <li><b>同业对照</b>（2026-03-31 月末余额）：网贷占个贷比重——<b>江苏 41.9% ＞ 南京 36.7% ＞ 北京 26.7% ＞ 宁波 23.9% ＞ 上海 20.6%</b><span class="tg c">测算</span>。我行是对标城商行中网贷依赖度最高的一家：单腿凳问题我行最重，压力测试的必要性也最大<span class="tg j">研判推断</span>。</li>
+    <li><b>边界</b>：本口径不含随e贷（EVA −2.93%，余额<span class="tg b">待补</span>）与卡部随e贷外的其他消费贷（+0.05%，余额<span class="tg b">待补</span>）；若计入随e贷，固定拖累更深，安全垫更薄<span class="tg j">研判推断</span>。</li>
+  </ol>
+  <div class="chart">
+    <h4>点睛图 1 · 零售 EVA 金额瀑布（亿/年，零轴发散条；5/21 日均口径）<i>｜右侧＝正贡献，左侧＝拖累</i></h4>
+    <div class="zrow"><div class="zlab"><b>网贷</b></div><div class="zneg"></div><div class="zmid"></div><div class="zpos"><div class="zbar" style="width:100%"></div></div><div class="zval pos">+21.13</div></div>
+    <div class="zrow"><div class="zlab"><b>零售合计</b></div><div class="zneg"></div><div class="zmid"></div><div class="zpos"><div class="zbar" style="width:45.1%;background:var(--teal-deep)"></div></div><div class="zval pos">+9.52</div></div>
+    <div class="zrow"><div class="zlab">经营贷</div><div class="zneg"><div class="zbar" style="width:0.5%;min-width:2px"></div></div><div class="zmid"></div><div class="zpos"></div><div class="zval">−0.01</div></div>
+    <div class="zrow"><div class="zlab">房贷</div><div class="zneg"><div class="zbar" style="width:9.4%"></div></div><div class="zmid"></div><div class="zpos"></div><div class="zval">−1.98</div></div>
+    <div class="zrow"><div class="zlab">消费贷</div><div class="zneg"><div class="zbar" style="width:11.5%"></div></div><div class="zmid"></div><div class="zpos"></div><div class="zval">−2.43</div></div>
+    <div class="zrow"><div class="zlab">卡分期＋循环</div><div class="zneg"><div class="zbar" style="width:34.0%;background:var(--amber)"></div></div><div class="zmid"></div><div class="zpos"></div><div class="zval">−7.19</div></div>
+    <div class="zrow"><div class="zlab"><b>固定拖累</b></div><div class="zneg"><div class="zbar" style="width:54.9%;background:var(--neg)"></div></div><div class="zmid"></div><div class="zpos"></div><div class="zval negv">−11.61</div></div>
+    <div class="legend"><span class="lg5">正贡献</span><span class="lg6">零售合计</span><span class="lg8">卡产品拖累</span><span class="lg7">剔网贷固定拖累</span></div>
+  </div>
+  <div class="tblwrap">
+  <table>
+    <caption>点睛图 1-表 · 零售 EVA 金额瀑布（年化，亿，5/21 日均口径）<i>｜与图形同源，逐值一致</i></caption>
+    <thead><tr><th>产品</th><th class="num">EVA 率</th><th class="num">EVA 金额</th><th class="num">占日均余额</th></tr></thead>
+    <tbody>
+      <tr><td>网贷</td><td class="num pos">+0.91%</td><td class="num pos">+21.13</td><td class="num">42.3%</td></tr>
+      <tr><td>房贷</td><td class="num negv">−0.08%</td><td class="num negv">−1.98</td><td class="num">45.1%</td></tr>
+      <tr><td>消费贷</td><td class="num negv">−0.60%</td><td class="num negv">−2.43</td><td class="num">7.4%</td></tr>
+      <tr><td>卡分期＋卡循环</td><td class="num negv">−2.85%</td><td class="num negv">−7.19</td><td class="num">4.6%</td></tr>
+      <tr><td>经营贷</td><td class="num negv">−0.04%</td><td class="num negv">−0.01</td><td class="num">0.6%</td></tr>
+      <tr class="hot"><td><b>合计</b></td><td class="num pos"><b>+0.17%</b></td><td class="num pos"><b>+9.52</b></td><td class="num">100%</td></tr>
+      <tr class="hl"><td>固定拖累（剔网贷）</td><td class="num negv">−0.37%</td><td class="num negv">−11.61</td><td class="num">57.7%</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- 二 -->
+<section class="chapter">
+  <div class="ch-head"><div class="ch-no serif">二</div><h2 class="ch-title">压力情景：定价动一格，规模动四格也追不回<small>Q2 · 定价 × 规模双维矩阵与安全垫</small></h2></div>
+  <blockquote class="gn"><b>金句｜</b>矩阵里定价是主人，规模是仆人——定价每动 1 个百分点等于规模动 11 个百分点的利润；而缩规模救不了利润，盘子越小，盈亏平衡的定价要求反而越高。</blockquote>
+  <ol class="chain">
+    <li><b>情景矩阵</b>（静态单变量<span class="tg c">测算</span>，成本端与联动效应不建模）：以「固定拖累 −11.61 亿＋网贷余额×网贷 EVA 率」重构零售 EVA 金额。</li>
+    <li><b>弹性不对称</b>：定价维度每 −1pct ≈ −23.2 亿（满规模）；规模维度每 −10%（定价守住）≈ −2.1 亿——<b>定价弹性约为规模弹性的 11 倍</b><span class="tg c">测算</span>。定价 −1pct 一格，全部规模情景无一幸免于翻负。</li>
+    <li><b>反直觉结论——缩规模救不了利润</b>：①定价守住时，缩规模是少赚（−10% → 少 2.1 亿/年）；②定价失守时，缩规模只是少亏（−3pct 档：缩 30% 少亏 14.5 亿，仍 −45.6 亿）；③更关键的是盈亏平衡要求：满规模下网贷 EVA 率 ≥+0.50% 即可保住零售不亏，缩到 90% 后要求抬升至 ≥+0.56%<span class="tg c">测算</span>——<b>固定拖累被更小的分母除，组合对定价反而更脆弱</b>。金额口径下「以量补价」在这组参数上不成立。</li>
+    <li><b>双口径并注</b>：若改看组合率口径，缩规模在定价失守档有轻微缓冲（−3pct 档组合率 −1.10%→−0.95%）——负 EVA 资产出表摊薄亏损率；但利润绝对额是决策口径，本文以金额为准、率口径作注。</li>
+    <li><b>安全垫</b>：零售 EVA≥0 要求网贷 EVA 率 ≥+0.50%（满规模）——即<b>收益率安全垫只有 0.41pct</b><span class="tg c">测算</span>。对照：新投放执行定价 13.66%→13.37%，单月已降 0.29pct。</li>
+    <li><b>边界钉死</b>：①矩阵未建模「有选择的缩」——若收缩的是高风险尾部，EVA 率会内生改善，静态矩阵低估了主动管理的上行空间<span class="tg j">研判推断</span>；②资金、运营成本取当前值不动；③−3pct 档为极端压力，非预测<span class="tg j">研判推断</span>。</li>
+  </ol>
+  <div class="tblwrap">
+  <table>
+    <caption>点睛图 2-1 · 情景矩阵（单元格＝零售 EVA 金额（亿）/ 组合率；分母＝其余 3,167.9 亿＋网贷余额）<i>｜全部「测算」，静态单变量</i></caption>
+    <thead><tr><th>定价降幅 \ 规模</th><th class="num">0% 缩（2,321.9 亿）</th><th class="num">−10%（2,089.7）</th><th class="num">−20%（1,857.5）</th><th class="num">−30%（1,625.3）</th></tr></thead>
+    <tbody>
+      <tr class="hot"><td><b>0pct（+0.91%）</b></td><td class="num pos"><b>+9.5（+0.17%）</b></td><td class="num">+7.4（+0.14%）</td><td class="num">+5.3（+0.11%）</td><td class="num">+3.2（+0.07%）</td></tr>
+      <tr class="hl"><td><b>−1pct（−0.09%）</b></td><td class="num negv"><b>−13.7（−0.25%）</b></td><td class="num">−13.5（−0.26%）</td><td class="num">−13.3（−0.26%）</td><td class="num">−13.1（−0.27%）</td></tr>
+      <tr><td><b>−2pct（−1.09%）</b></td><td class="num negv">−36.9（−0.67%）</td><td class="num">−34.4（−0.65%）</td><td class="num">−31.9（−0.63%）</td><td class="num">−29.3（−0.61%）</td></tr>
+      <tr><td><b>−3pct（−2.09%）</b></td><td class="num negv">−60.1（−1.10%）</td><td class="num">−55.3（−1.05%）</td><td class="num">−50.4（−1.00%）</td><td class="num">−45.6（−0.95%）</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="chart">
+    <h4>点睛图 2-2 · 弹性对比：定价 −1pct vs 规模 −10%（对零售 EVA 金额的影响，亿）<i>｜定价弹性 ≈ 规模弹性的 11 倍</i></h4>
+    <div class="zrow"><div class="zlab"><b>定价 −1pct</b></div><div class="zneg"><div class="zbar" style="width:100%;background:var(--neg)"></div></div><div class="zmid"></div><div class="zpos"></div><div class="zval negv">−23.2</div></div>
+    <div class="zrow"><div class="zlab">规模 −10%</div><div class="zneg"><div class="zbar" style="width:9.1%;background:var(--amber)"></div></div><div class="zmid"></div><div class="zpos"></div><div class="zval">−2.1</div></div>
+  </div>
+  <div class="chart">
+    <h4>点睛图 2-3 · 收益率安全垫标尺（0–0.9pct）<i>｜安全垫 0.41pct vs 当前单月降幅 0.29pct ≈ 1.4 个月</i></h4>
+    <div class="scale">
+      <div class="scale-line"></div>
+      <div class="bnd" style="left:0;width:32.2%;" title="7→8月新投放降幅 0.29pct"></div>
+      <div class="mk" style="left:45.6%;" title="安全垫 0.41pct"></div>
+      <div class="mk-lab" style="left:16%">单月降幅 0.29pct</div>
+      <div class="mk-lab" style="left:45.6%">安全垫 0.41pct</div>
+    </div>
+    <div class="scale-end"><span>0</span><span>0.225</span><span>0.45</span><span>0.675</span><span>0.9pct</span></div>
+  </div>
+</section>
+
+<!-- 三 -->
+<section class="chapter">
+  <div class="ch-head"><div class="ch-no serif">三</div><h2 class="ch-title">补位赛跑：全跑出最好成绩，也只追上第一个缺口的四成<small>Q3 · 补位能力量化</small></h2></div>
+  <blockquote class="gn"><b>金句｜</b>补位赛跑的残酷之处在于——信用卡、中收、消费贷三条线全部兑现最好成绩，加起来也只够补上网贷退坡 1pct 缺口的四成。</blockquote>
+  <ol class="chain">
+    <li><b>补位矩阵</b>（全部<span class="tg c">测算</span>，兑现周期各异）：信用卡风险成本 −1pct → <b>+2.39 亿/年</b>（过线表弹性，12M）；信用卡修复转正（−2.86pct）→ <b>+6.84 亿/年</b>（依赖 w 24%→5–8%＋高口袋修复，24–36M）；信用卡中收 0→0.5pct → <b>+1.20 亿/年</b>（12–24M）；消费贷风险成本 1.34%→0.90% → <b>+1.78 亿/年</b>（12M，回到「其他消费贷 0.48%」与自身历史之间<span class="tg e">估算</span>）。</li>
+    <li><b>满额覆盖率</b>：三条线满额 +9.81 亿/年——覆盖网贷 −1pct 缺口（23.2 亿）的 <b>42%</b>、−2pct 缺口（46.4 亿）的 <b>21%</b><span class="tg c">测算</span>。</li>
+    <li><b>现实口径更紧</b>：12 个月窗口内可现实兑现的（信用卡 −1pct＋消费贷修复＋中收 0.3pct ≈ 0.72 亿）合计约 <b>+4.9 亿</b>，不到 −1pct 缺口的四分之一<span class="tg c">测算</span>。</li>
+    <li><b>赛跑的含义</b>：利差之内无解——内部补位的数学上限就是「填固定拖累的一半」，<b>第二引擎必须出利差</b>（财富/AUM 中收、或对公零售联动分润），而这两项的客群与收入数据均不在案<span class="tg b">待补</span>，本篇只能提出问题不能给量<span class="tg j">研判推断</span>。</li>
+    <li><b>边界</b>：补位测算与网贷情景为互斥假设下的静态对比；实际中信用卡修复若伴随收益率下行（客群上移），补位金额会缩水——双变量联动需按季回算<span class="tg j">研判推断</span>。</li>
+  </ol>
+  <div class="chart">
+    <h4>点睛图 3-1 · 补位累计覆盖 vs −1pct 缺口（23.2 亿 = 满宽）<i>｜逐路径累加，全部「测算」</i></h4>
+    <div class="zrow"><div class="zlab">信用卡 −1pct</div><div class="zneg"></div><div class="zmid"></div><div class="zpos"><div class="zbar" style="width:10%"></div></div><div class="zval">+2.39</div></div>
+    <div class="zrow"><div class="zlab">＋修复转正</div><div class="zneg"></div><div class="zmid"></div><div class="zpos"><div class="zbar" style="width:29.5%"></div></div><div class="zval">累计 6.84+2.39</div></div>
+    <div class="zrow"><div class="zlab">＋中收 0.5pct</div><div class="zneg"></div><div class="zmid"></div><div class="zpos"><div class="zbar" style="width:34.7%"></div></div><div class="zval">累计 8.04</div></div>
+    <div class="zrow"><div class="zlab"><b>＋消费贷修复</b></div><div class="zneg"></div><div class="zmid"></div><div class="zpos"><div class="zbar" style="width:42.3%;background:var(--amber)"></div></div><div class="zval"><b>42.3%</b></div></div>
+    <div class="zrow"><div class="zlab"><b>缺口剩余</b></div><div class="zneg"></div><div class="zmid"></div><div class="zpos"><div style="flex:1;height:15px;border:1px dashed rgba(164,67,46,.45);"></div></div><div class="zval negv">57.7%</div></div>
+  </div>
+  <div class="tblwrap">
+  <table>
+    <caption>点睛图 3-2 · 补位 vs 缺口（亿/年）<i>｜口径与周期见论证链</i></caption>
+    <thead><tr><th>路径</th><th class="num">年化金额</th><th>兑现周期</th><th class="num">累计覆盖 −1pct 缺口</th></tr></thead>
+    <tbody>
+      <tr><td>信用卡风险成本 −1pct</td><td class="num">+2.39</td><td>12M</td><td class="num">10%</td></tr>
+      <tr><td>＋信用卡修复转正</td><td class="num">+6.84</td><td>24–36M</td><td class="num">30%</td></tr>
+      <tr><td>＋中收 0.5pct</td><td class="num">+1.20</td><td>12–24M</td><td class="num">35%</td></tr>
+      <tr class="hl"><td>＋消费贷修复</td><td class="num">+1.78</td><td>12M</td><td class="num"><b>42%（满额）</b></td></tr>
+      <tr class="hot"><td><b>网贷 −1pct 缺口</b></td><td class="num negv">−23.2</td><td>—</td><td class="num negv">缺口剩余 58%</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- 四 -->
+<section class="chapter">
+  <div class="ch-head"><div class="ch-no serif">四</div><h2 class="ch-title">时间窗与管理动作：0.41 个百分点的安全垫<small>Q4 · 换算、动作、证伪条件</small></h2></div>
+  <blockquote class="gn"><b>金句｜</b>安全垫只有 0.41 个百分点，按当前的降价速度，留给零售找到第二引擎的时间以季度计，不以年计。</blockquote>
+  <ol class="chain">
+    <li><b>时间窗换算</b>：安全垫 0.41pct ÷ 新投放单月降幅 0.29pct ≈ <b>1.4 个月</b><span class="tg c">测算</span>。边界：新投放执行价与存量收益率（8.32%）口径不同（执行价含风险溢价的客户口径 vs 收益率入账口径），传导系数与时点未在案<span class="tg b">待补</span>——1.4 个月是<b>降价节奏的参照系，不是存量 EVA 击穿时间表</b><span class="tg j">研判推断</span>；若存量重定价滞后 2–4 个季度（按基准假设），击穿窗口落在 2027 年内<span class="tg e">估算</span>。</li>
+    <li><b>P0 网贷定价纪律</b>：新投放价格底线管理（当前 13.37%，月度红线建议 13.0%<span class="tg j">研判推断</span>），禁止以价换量——矩阵已证明定价是利润的唯一主导变量；同时把「缩规模」重新定义为<b>高风险尾部出清</b>而非总量收缩（出清改善 EVA 率，总量收缩恶化盈亏平衡要求）。</li>
+    <li><b>P1 零售 EVA 瀑布月报</b>：把本篇瀑布与情景矩阵固化为月度观测（数据全在案，边际成本低），红线＝零售组合 EVA 金额连续 2 月低于 +6 亿<span class="tg j">研判推断</span>。</li>
+    <li><b>P1 补位三线并行</b>：信用卡修复（w 压降主线）、消费贷风险成本修复、中收年费卡试点——信用卡研报节奏不变，本篇为其追加「网贷退坡」的对冲理由。</li>
+    <li><b>P2 第二引擎立项</b>：财富/AUM 中收与对公联动分润的客群基础、收入弹性测算立项（数据<span class="tg b">待补</span>：AUM 余额、财富中收、代发客群规模）。</li>
+    <li><b>观察指标与证伪</b>：观察——网贷新投放定价（周）、存量收益率（季）、零售 EVA 金额（月，本篇口径）、信用卡还原损失率（季）、中收/余额（月）。证伪——若网贷存量收益率两个季度不随新投放降价下行（传导断裂），本篇时间窗判断失效，压力后移；若信用卡风险成本如期两年降至 1.5%，补位覆盖率达 30%+，组合韧性上修<span class="tg j">研判推断</span>。</li>
+  </ol>
+</section>
+
+<!-- 附 -->
+<section class="chapter">
+  <div class="ch-head"><div class="ch-no serif">附</div><h2 class="ch-title">口径声明与待补清单<small>引用一致性 · 观察清单</small></h2></div>
+  <h3 class="sec" style="font-size:14.5px;color:var(--teal-deep);font-weight:700;margin:16px 0 10px;padding-left:10px;border-left:3px solid var(--teal);">口径</h3>
+  <ul class="tight">
+    <li>「零售」＝retail_product_income 六产品日均口径（房贷/消费贷/经营贷/卡分期/卡循环/网贷，5/21 基准 5,489.79 亿）；不含随e贷（−2.93%，余额<span class="tg b">待补</span>）与其他消费贷（+0.05%，余额<span class="tg b">待补</span>）——若计入，固定拖累更深，全部安全垫结论更保守<span class="tg j">研判推断</span>。</li>
+    <li>EVA 率取 EVA 表 2026-06-30 计财部口径；金额＝日均余额×EVA 率；4/28 期复核一致（+9.43 亿／剔除 −0.37%）。</li>
+    <li>情景矩阵为静态单变量测算：EVA 率与余额独立变动、成本端不动、无客群结构联动；金额口径为主、组合率口径并注。</li>
+    <li>城商行占比＝2026-03-31 月末余额（retail_loan_snapshot），非日均口径，仅作结构对照。</li>
+    <li>新投放定价（13.66%→13.37%）与存量收益率（8.32%）不同口径，时间窗换算为节奏参照而非预测。</li>
+  </ul>
+  <h3 class="sec" style="font-size:14.5px;color:var(--teal-deep);font-weight:700;margin:20px 0 10px;padding-left:10px;border-left:3px solid var(--teal);">待补（观察清单）</h3>
+  <div class="tblwrap">
+  <table>
+    <thead><tr><th style="width:6%">#</th><th>指标</th><th>用途</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>随e贷／其他消费贷日均余额 <span class="tg b">待补</span></td><td>瀑布补全（当前 6 产品口径）</td></tr>
+      <tr><td>2</td><td>网贷存量收益率对新投放降价的传导系数与时滞 <span class="tg b">待补</span></td><td>时间窗校准</td></tr>
+      <tr><td>3</td><td>财富/AUM 余额、财富中收、代发客群规模 <span class="tg b">待补</span></td><td>第二引擎量化</td></tr>
+      <tr><td>4</td><td>网贷客群风险分层（出清式缩量的 EVA 率内生改善幅度） <span class="tg b">待补</span></td><td>动态情景</td></tr>
+      <tr><td>5</td><td>网贷资本占用与额度约束 <span class="tg b">待补</span></td><td>规模情景的资本边界</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="endquote">收束｜零售现在赚的每一分钱里，有超过一半是网贷借给组合的；网贷降价每快一个月，零售找第二引擎的时间就少一个月——先立定价纪律，再谈引擎。</div>
+  <div class="srcbox">
+    <b>来源披露</b>｜数据全部取自 bank_analytics.db（置信＝高）：jsbank_product_eva_h1（2026-06-30 计财部分产品 EVA）、retail_product_income（2026-04-28／05-21 日均）、jsbank_new_pricing_weekly（网贷新投放定价 13.66%→13.37%）、retail_loan_snapshot（2026-03-31 五家城商行余额）；任务链上前篇：《独立盲测_信用卡UE交叉验证_20260830》（Q7 基准与过线表弹性）、风险校准（S1–S4）。本篇为自拟任务的独立压力测试，无外部数据依赖。<br>
+    <b>标注级</b>｜<span class="tg c">测算</span>披露值推导/情景计算 · <span class="tg e">估算</span>量级推断 · <span class="tg j">研判推断</span>分析性判断 · <span class="tg b">待补</span>观察清单。文中所有非引用数字均落四级标注之一。<br>
+    <b>声明</b>｜银行内部经营分析，含行内数据（半敏感），请勿外发公网；情景测算非预测，不构成投资建议。
+  </div>
+  <div class="foot"><b>98wiki ｜ 智见点评 · 行业研究</b><span>2026-08-30｜零售利润引擎压力测试 · 网贷退坡情景</span></div>
+</section>
+
+<!-- 封底 -->
+<section class="backcover">
+  <div>
+    <div class="kicker" style="margin-bottom:14px;">EPILOGUE · 收束</div>
+    <div class="bc-quote">定价是主人，规模是仆人。<br>守住 0.41 个百分点的安全垫，<br>就是守住零售转型的时间窗。</div>
+  </div>
+  <div>
+    <div class="bc-meta">
+      <b>版本信息</b>｜零售利润引擎压力测试 v1 · 2026-08-30（自拟任务）<br>
+      <b>数据口径</b>｜2026-06-30 计财部 EVA 表 × 2026-05-21 日均余额（4/28 复核）／2026-03-31 城商行快照<br>
+      <b>密级</b>｜<span style="color:var(--neg);font-weight:700;">内部材料（半敏感）· 请勿外发公网</span><br>
+      <b>任务链</b>｜信用卡 UE 盲测 → 交叉验证比对 → 本篇（Q7 深化）
+    </div>
+    <div class="foot" style="margin-top:18px;"><b>98wiki ｜ 智见点评 · 行业研究</b><span>行业研究，不构成投资建议；测算／估算／研判推断非官方统计</span></div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>

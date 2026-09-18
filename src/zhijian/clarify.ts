@@ -160,7 +160,7 @@ const BEIKE_QUESTIONS: readonly ClarificationQuestion[] = [
   },
   {
     id: 'beike_internal',
-    question: '是否引用内测对比项（陶琦 bk-031，贝壳/NIFD 口径）？——对外交付不引用',
+    question: '是否引用内测对比项（挂牌哨探 bk-031，贝壳/NIFD 口径）？——对外交付不引用',
     group: '领域',
     options: ['不引用', '仅内部讨论引用'],
     appliesTo: ['beike'],

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "张勇",
-    "publicLabel": "张勇",
-    "initials": "张"
+    "internalName": "组织一号位",
+    "publicLabel": "组织一号位",
+    "initials": "Z"
   },
   "domains": [
     "realestate.general",

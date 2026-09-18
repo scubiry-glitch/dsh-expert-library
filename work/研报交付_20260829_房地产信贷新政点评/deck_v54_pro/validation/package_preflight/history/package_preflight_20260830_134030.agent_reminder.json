@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "taxonomy_version": "1.0",
+  "policy_version": "1.0",
+  "source": {
+    "skill": "ppt-polished-deck-collab",
+    "gate": "package_preflight"
+  },
+  "artifact": {
+    "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/pptx/deck_v54.pptx"
+  },
+  "target_milestone": "final",
+  "decision": {
+    "state": "proceed_with_advisories",
+    "target_milestone": "final",
+    "hard_group_count": 0,
+    "soft_group_count": 0,
+    "advisory_group_count": 1
+  },
+  "summary": {
+    "group_count": 1,
+    "occurrence_count": 1,
+    "evidence_count": 1,
+    "by_action": {
+      "advisory": 1
+    },
+    "by_domain": {
+      "compatibility": 1
+    }
+  },
+  "groups": [
+    {
+      "group_id": "group_a68482cbe043",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "compatibility",
+      "family": "mobile",
+      "problem_class": "compatibility.mobile.embedded_object",
+      "code": "mobile_compatibility_embedded_object",
+      "fix_strategy_id": "replace_or_document_embedded_object",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 1,
+      "evidence_count": 1,
+      "actual_value_counts": {},
+      "message": "deck 中存在嵌入对象，这类对象在微信预览与移动端 WPS 中兼容性更脆弱。",
+      "suggested_fix": "如果外发目标包含微信或移动端 WPS，优先改为图片化 chart 或移除 workbook embedding。",
+      "sample_locations": [
+        "ppt"
+      ],
+      "omitted_location_count": 0,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    }
+  ],
+  "full_report_ref": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/validation/package_preflight/history/package_preflight_20260830_134030.json"
+}

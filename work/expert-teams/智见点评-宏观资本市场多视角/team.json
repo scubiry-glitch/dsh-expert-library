@@ -1,0 +1,120 @@
+{
+  "name": "智见点评·宏观资本市场多视角",
+  "id": "智见点评-宏观资本市场多视角",
+  "description": "框架D多分类融合：多位宏观专家就当前时点（2025年末最新数据）独立研判并融合。口径：统计局；Q3 GDP同比+4.8%、前三季度+5.2%；PMI 11月49.2→12月50.1；12月CPI同比+0.8%；11月企业贷款利率约3.1%。用途：个人决策参考，讨论稿。",
+  "captainSessionId": "session-f022b254-ae3d-4a92-b1b1-dcd11afd3a8c",
+  "createdAt": 1789656679478,
+  "members": [
+    {
+      "id": "569a7de7-1b5b-4807-8a69-06270245b9a5",
+      "name": "周期灯塔",
+      "role": "宏观经济·资本市场",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1789656685063,
+      "status": "idle"
+    },
+    {
+      "id": "1f2e8aa4-5aee-4408-8772-45cd5b29c739",
+      "name": "周期司南",
+      "role": "宏观经济·汇率分析",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1789656690966,
+      "status": "idle"
+    },
+    {
+      "id": "65afa082-ecc0-470d-887e-ef69e7ad145a",
+      "name": "周期账房",
+      "role": "宏观经济·金融学",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1789656696146,
+      "status": "idle"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "subject": "宏观研判·资本市场视角（E01-08 周期灯塔）",
+      "description": "数据（口径：国家统计局，2025年末最新）：Q3 GDP同比+4.8%、前三季度+5.2%、环比+1.1%；制造业PMI 11月49.2%（连续8个月低于荣枯线）→12月50.1%重回扩张，生产经营活动预期指数55.5%；12月CPI同比+0.8%（近3年最大涨幅）；11月企业新发放贷款利率约3.1%（同比低约30bp）。请从资本市场/周期视角独立研判：增长动能在哪、政策空间、股市债市方向判断，给出你的观点、依据与风险提示。数字只引用上述口径，不得编造其他数字；无法核实的只给分析框架。个人决策参考用途，600-900字。",
+      "status": "pending",
+      "assignee": "周期灯塔",
+      "dependencies": [],
+      "attempt": 2,
+      "createdAt": 1789656709081,
+      "updatedAt": 1789656744131,
+      "project": {
+        "path": "expert-tasks/t1",
+        "inputPath": "expert-tasks/t1/input/task.json",
+        "outputPath": "expert-tasks/t1/output/result.json",
+        "artifactsPath": "expert-tasks/t1/artifacts",
+        "version": 1
+      },
+      "reassigning": false
+    },
+    {
+      "id": "t2",
+      "subject": "宏观研判·汇率利率视角（E01-09 周期司南）",
+      "description": "数据（口径：国家统计局/公开报道，2025年末最新）：Q3 GDP同比+4.8%、前三季度+5.2%；制造业PMI 11月49.2%→12月50.1%；12月CPI同比+0.8%；11月企业新发放贷款利率约3.1%（同比低约30bp）。请从汇率/利率视角独立研判：低利率环境走向、人民币汇率压力与支撑、对资本市场与个人资产配置的含义。给出观点、依据与风险提示。数字只引用上述口径，不得编造其他数字；无法核实的只给框架。600-900字。",
+      "status": "pending",
+      "assignee": "周期司南",
+      "dependencies": [],
+      "attempt": 2,
+      "createdAt": 1789656717370,
+      "updatedAt": 1789656751670,
+      "project": {
+        "path": "expert-tasks/t2",
+        "inputPath": "expert-tasks/t2/input/task.json",
+        "outputPath": "expert-tasks/t2/output/result.json",
+        "artifactsPath": "expert-tasks/t2/artifacts",
+        "version": 1
+      },
+      "reassigning": false
+    },
+    {
+      "id": "t3",
+      "subject": "宏观研判·债务审慎视角（E01-07 周期账房）",
+      "description": "数据（口径：国家统计局/公开报道，2025年末最新）：Q3 GDP同比+4.8%、前三季度+5.2%、环比+1.1%；PMI 11月49.2%→12月50.1%；12月CPI同比+0.8%（近3年最大涨幅）；11月企业新发放贷款利率约3.1%（同比低约30bp）；2025年GDP增长目标顺利完成。请从宏观审慎/债务/金融学视角独立研判：物价结构性矛盾（低通胀）、债务与杠杆压力、宏观审慎政策取向、金融体系风险点。给出观点、依据与风险提示。数字只引用上述口径，不得编造其他数字；无法核实的只给框架。600-900字。",
+      "status": "pending",
+      "assignee": "周期账房",
+      "dependencies": [],
+      "attempt": 1,
+      "createdAt": 1789656727647,
+      "updatedAt": 1789656727659,
+      "project": {
+        "path": "expert-tasks/t3",
+        "inputPath": "expert-tasks/t3/input/task.json",
+        "outputPath": "expert-tasks/t3/output/result.json",
+        "artifactsPath": "expert-tasks/t3/artifacts",
+        "version": 1
+      },
+      "reassigning": false
+    },
+    {
+      "id": "t4",
+      "subject": "融合合成·多视角综合研判（框架D）",
+      "description": "在三位专家（资本市场/汇率利率/债务审慎）独立研判完成后，融合为一份框架D多视角综合稿：结构为①共识（三位一致的方向判断）②分歧（观点冲突点及各自依据）③各视角关键结论摘录④对个人资产配置的可操作落点⑤口径与数据来源说明（统计局口径、2025年末数据、讨论稿带匿名标注「领域·花名」）。500-800字，不得引入新数字。",
+      "status": "pending",
+      "dependencies": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "attempt": 0,
+      "createdAt": 1789656744123,
+      "updatedAt": 1789656744123,
+      "project": {
+        "path": "expert-tasks/t4",
+        "inputPath": "expert-tasks/t4/input/task.json",
+        "outputPath": "expert-tasks/t4/output/result.json",
+        "artifactsPath": "expert-tasks/t4/artifacts",
+        "version": 1
+      }
+    }
+  ],
+  "taskSeq": 4
+}

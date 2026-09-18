@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"metrics\":[{\"code\":\"B7744153\",\"name\":\"巴西:未偿信贷余额:信用卡:同比\",\"unit\":\"%\",\"source\":\"巴西央行\",\"updateDate\":\"20260122\",\"freq\":\"月\"}]}"
+    }
+  ],
+  "isError": false,
+  "cli_meta": {
+    "schema_version": "1.0",
+    "server_type": "economic_data",
+    "tool_name": "search_economic_indicator",
+    "completeness": "not_asserted",
+    "tables": [],
+    "warnings": []
+  }
+}

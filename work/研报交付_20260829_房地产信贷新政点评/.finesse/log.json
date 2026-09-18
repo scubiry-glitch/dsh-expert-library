@@ -1,0 +1,152 @@
+[
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829_v54.html",
+    "note": "v5.4 包装轮（内容零改动，纯装饰层）：①新增 PDF/HTML 封面（register 深青 #0e6a55 实底+渐变、琥珀 #a9741f 金句带左边框与题下饰线、白卡四格数字条 36.29 万亿/-11.8%/-19.2%/约 1.5%，口径行 Wind EDB 2026-07/2026Q2；金监总局 2026Q2；封面数字均 md 在案）；②新增封底（收束金句定价说明书+版本块+免责+品牌）；③打印用命名页 @page coverpage margin 0 置空页边框——封面/封底无页码，正文页脚 N/24 重排（22→24 页档）；④weasyprint 数字条弃 grid 用 flex（v69 grid 列宽塌陷）；⑤HTML 标题区升级为 hero 封面横幅，移动端 375 适配；⑥PPTX 封面刷新（主标题/副标题/金句 subheading/版本行 meta），末页新封底 ending（收束金句+版本+免责短句），原 closing 收尾页并入封底（制度底座句在 conclusion2 notes 保留），仍 30 页；deck 硬约束：dense pacing 页数上限 30、ending 页仅允许末位、ending 不渲染 footnote、subheading 须经 spec 页 summary 字段传入（page 文件该字段被 buildSlide 忽略）；finesse P0=0、双视口 0 溢出/裁切、AA 0 失败（渐变底补实底色+卡片不透明化后过检）、锚点 18/18、audit 0 findings、量值 token 0 泄漏",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829_v54.html",
+    "note": "v5.4 第三次渲染更新（纯文字 4 处，无图表改动）：①总论关键补充数据增第 7 条成交动能（贝壳政研通口径·京宁 3-6 月同比连续四个月为正）；②观察清单 30 城二手成交量同比改京宁已补/30 城待补；③第九章推论 2 增成交动能同步验证句；④来源披露 zyt 句更新为经修复可透出数值明细、采用趋势性结论。硬约束：二手成交量绝对量值（4,932/2,392 类）三件套全 0 命中；PDF 22 页、PPTX 30 页（supplement 页 7 条 bullets 拆 5+2 两块以过 audit max-6，0 findings）；finesse P0=0、双视口 0 溢出/0 裁切、AA 0、锚点 18/18",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829_v54.html",
+    "note": "v5.4 增量修订（三件套原样覆盖，样式零漂移；改图范围更正后终版）：①全书『贝壳式经纪』→『经纪行业』，『贝壳』仅存推论1案例句与来源披露两处；②第九章对照表增第四行小中介生态、推论1末追加贝壳案例句、推论3整段替换为返佣断流/出清先小后大、第十二章三类被忽略者之3补『返佣通道又被名单制掐断』；③点睛图③维持原 ROE 三因子拆解设计（与最新 md 第164行一致，未重画）；图④改画并购市场结构图（上半并购链条+证监会6/8条标注、下半谁当整合者三方对比卡、卡区标注整合者未必是同行）；⑧四段接力+两道闸门、⑨收入结构变迁+双锚点小图、⑬制度接续卡阵2×4（第8格好房子附注卡）；顺手修复图①/⑪三处SVG文字右缘裁切（前版遗留）；PDF 22页、PPTX 30页0 findings、finesse P0=0、双视口0溢出/0裁切/0重叠、锚点18/18、AA 0失败",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/信贷新政点评_20260829_v2.html",
+    "note": "v2 re-render of 信贷新政点评_20260829_final.html — same product register, ink-teal+amber, full-expansion v3 content (5 experts, 京宁 city deep-dive)",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829.html",
+    "note": "角色重写十二主体 v4 内容源渲染（HTML/PDF/PPTX 三交付物）— 延续 v2 product register（ink-teal+amber），新增三要素矩阵热力示意/旧→新身份对照/个贷红线示意；md 外数字（4247/3614/+1.4%/36.29/37.90）按『不得新增』规范未渲染",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829.html",
+    "note": "v4 内容源更新后重渲染：总论扩为 〇/一/二/三 四节（含 7 行结构表+全国五组数据+京宁分城市快照）、第一章增测算（30vs40 年月供 4247/3614、存量降 50bp×36.29 万亿≈1814 亿）、第十章增 Cotality 对标、新增总结章（三重再分配九小节+科斯时刻）；PDF 14 页、PPTX 23 页（新增结构表/数据底座/Cotality/总结×3）",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829.html",
+    "note": "第二轮内容源更新：总结章补齐最新 md 细节（烂尾了谁承担问句、好房子/证监会通道括注、预言二资产流转、落空形态、重写收束段含付费者排队括注）；md「三个/四个执行变量」标题-正文不一致按正文取四个；PDF 14 页、PPTX 23 页全绿",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829.html",
+    "note": "第三轮（图表轮）：md 文本与上版一致，为已有数据补可视化——图A 按揭余额 8 季度折线（37.56→37.90 峰值→36.29）、图B 京宁零轴发散对比、图C 全国 vs 北京二手收窄路径（仅披露点位；md 无 13 个月序列与 -5.9，按『不得新造数字』未采用）、图D 中美路径对照、图E 三强格局；PPTX 增 balance 折线页至 24 页；PDF 16 页",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829_final.html",
+    "note": "精编版 v5.2 全新渲染（_final 三件套）：十三章结构、科斯式起点、失灵五变量（新增知情权二次垄断）、预言概率区间表、+17.5% 扩容；八组图表（体系地图表/余额折线/京宁发散条/红线+月供对比含本金上限/收窄路径仅锚点连线/中美对照+三强/概率区间标尺/失灵阶梯）；HTML 17 页 PDF、PPTX 30 页 0 findings；P2 3 条（SVG 色值字面量/伪精确提示均为 md 实数）",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  },
+  {
+    "ts": "2026-08-29",
+    "file": "研报交付_20260829_房地产信贷新政点评/角色重写_十二主体_20260829_v54.html",
+    "note": "v5.4 骨架重构版（_v54 三件套）：卷首速览+五件套章节（金句引言块/角色对照/条款依据/推论/机会风险单行）+点睛图①-⑬+图A-D；HTML 23 页 PDF、PPTX 30 页 0 findings；P1 side-stripe 1 条为任务要求的金句强调条；P2 3 条同前（SVG 色值/伪精确=md 实数）",
+    "coordinates": {
+      "A": "ink-teal+amber",
+      "B": "700/400",
+      "C": "report-rail",
+      "D": "CSS-only",
+      "E": "policy-print",
+      "SOUL": 6,
+      "SPECTACLE": 2,
+      "DENSITY": 7
+    }
+  }
+]

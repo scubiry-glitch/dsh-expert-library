@@ -1,0 +1,115 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "zhijian-deepteal",
+  "filename": "新政下智见的机会_v4_工艺版",
+  "seed": 20260829,
+  "meta": {
+    "organization": "98wiki ｜ 智见 · 行业研究",
+    "authors": [
+      {
+        "name": "智见点评团队",
+        "role": "机会扫描 · 工艺版"
+      }
+    ],
+    "date": "2026-08-29",
+    "version": "v4 工艺版",
+    "confidentiality": "internal"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "新政下智见的机会",
+      "summary": "1+N 新政下的机会坐标 · 工艺版 v4 ｜「每次制度开票，都是一次 Token 的铸造」｜36.29 万亿存量按揭 · 26 卡（S 级 2 张）· 准入 12-18 个月（估算）· 2026Q4 白名单第一检验"
+    },
+    {
+      "id": "overview",
+      "type": "content",
+      "heading": "卷首速览：六主体一页读完",
+      "beat": "anchor"
+    },
+    {
+      "id": "necessity",
+      "type": "content",
+      "heading": "一个必然：估值函数更换，必有定价权再分配",
+      "beat": "anchor"
+    },
+    {
+      "id": "divergence",
+      "type": "content",
+      "heading": "为什么是现在：利率走平，余额连降 8 个季度",
+      "beat": "dense"
+    },
+    {
+      "id": "token",
+      "type": "content",
+      "heading": "Token 三性：可验证、可计价、可流转",
+      "beat": "anchor"
+    },
+    {
+      "id": "c-gov",
+      "type": "content",
+      "heading": "中央部委：从「景气描述」到「执行核验」",
+      "beat": "dense"
+    },
+    {
+      "id": "c-local",
+      "type": "content",
+      "heading": "地方监管：从「卖地给开发商」到「卖项目给资本」",
+      "beat": "dense"
+    },
+    {
+      "id": "c-fin",
+      "type": "content",
+      "heading": "金融机构：从「资金贩子」到「责任承包商」",
+      "beat": "anchor"
+    },
+    {
+      "id": "c-urban",
+      "type": "content",
+      "heading": "保租房国企/城投：从「放大器」到「存量运营商」",
+      "beat": "dense"
+    },
+    {
+      "id": "c-dev",
+      "type": "content",
+      "heading": "开发商：从「买家」到「被分析对象」",
+      "beat": "dense"
+    },
+    {
+      "id": "c-user",
+      "type": "content",
+      "heading": "C 端个人：从「影子出资人」到「受保护的消费者」",
+      "beat": "dense"
+    },
+    {
+      "id": "priority",
+      "type": "content",
+      "heading": "优先级收口：两台发动机，其余全是期权",
+      "beat": "anchor"
+    },
+    {
+      "id": "falsifiable",
+      "type": "content",
+      "heading": "可证伪预言与失灵变量排序（研判推断）",
+      "beat": "dense"
+    },
+    {
+      "id": "disclosure",
+      "type": "content",
+      "heading": "来源披露与免责声明",
+      "beat": "breathing"
+    },
+    {
+      "id": "closing",
+      "type": "ending",
+      "heading": "2026Q4 先签先赢 ｜ 每次制度开票，都是一次 Token 的铸造",
+      "summary": "98wiki ｜ 智见 / 机会扫描 · 工艺版 v4 · 2026-08-29 · 不构成投资建议"
+    }
+  ]
+}

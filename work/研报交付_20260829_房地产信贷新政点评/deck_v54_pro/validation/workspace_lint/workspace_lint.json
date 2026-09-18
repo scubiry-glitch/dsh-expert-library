@@ -1,0 +1,28 @@
+{
+  "workspace": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro",
+  "required_dirs": {
+    "data": true,
+    "assets": true,
+    "build": true,
+    "validation": true,
+    "final": true
+  },
+  "required_files": {
+    "brief.md": true,
+    "deck_narrative.md": true
+  },
+  "derived_slide_specs": true,
+  "contract_check": null,
+  "legacy_dirs": [],
+  "asset_counts": {
+    "diagrams": 0,
+    "charts": 0,
+    "icons": 0,
+    "images": 0,
+    "tables": 0
+  },
+  "source_font_size_observations": [],
+  "source_font_size_warning_count": 0,
+  "errors": [],
+  "warnings": []
+}

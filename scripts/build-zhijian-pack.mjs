@@ -95,7 +95,7 @@ export const SOURCE_DOCS = [
 /**
  * Both source baselines of the pack, oldest first. 1.0.0 shipped the original
  * 2026-08-19 zip (32 experts); 1.1.0 is regenerated from the newer unpacked
- * workspace copy (2026-08-20/21, adds 陈杰 BK-034). SOURCE-MANIFEST.json
+ * workspace copy (2026-08-20/21, adds 格物讲师 BK-034). SOURCE-MANIFEST.json
  * records both, so the provenance chain stays complete.
  */
 export const PACK_BASELINES = [
@@ -115,7 +115,7 @@ export const PACK_BASELINES = [
     snapshot: ZHIJIAN_PACK_SNAPSHOT,
     zipTotalFiles: 160,
     expertCount: 33,
-    note: 'Unpacked revision: adds 陈杰 BK-034 (专家总表.md 33 rows, 路由规则.md candidates updated 2026-08-21). The original 32 Profile JSONs are byte-identical to the 1.0.0 zip.',
+    note: 'Unpacked revision: adds 格物讲师 BK-034 (专家总表.md 33 rows, 路由规则.md candidates updated 2026-08-21). The original 32 Profile JSONs are byte-identical to the 1.0.0 zip.',
   },
 ]
 
@@ -127,7 +127,7 @@ export const PACK_UPGRADE_HISTORY = [
   {
     from: '1.0.0',
     to: '1.1.0',
-    adds: ['bk-034 陈杰'],
+    adds: ['bk-034 格物讲师'],
     reason: '1.0.0 deliberately kept the 32-expert runtime baseline and recorded BK-034 as a deferred upgrade (2026-08-20 addition to the unpacked source). 1.1.0 regenerates from that newer source: 33 experts, routing candidates updated (政策/制度/金融公积金视角), rich Profile detail projected into ExpertV2.',
   },
 ]
@@ -210,7 +210,7 @@ export async function copySourceAssets(parsed, srcDir, outDir) {
   }
 
   // library: flattened 专家库 pages — every page must belong to the roster;
-  // a roster BK WITHOUT a page is a documented source gap (1.1.0: 陈杰 BK-034
+  // a roster BK WITHOUT a page is a documented source gap (1.1.0: 格物讲师 BK-034
   // has no 专家库 page), recorded in the manifest, never fatal and never
   // fabricated.
   const libDir = parsed.layout === 'zip' ? join(parsed.root, '专家库') : join(srcDir, 'library')

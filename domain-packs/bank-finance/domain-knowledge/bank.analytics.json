@@ -1,0 +1,113 @@
+{
+  "id": "bank.analytics",
+  "version": "1.1.0",
+  "schemaVersion": 2,
+  "domain": "banking.jiangsu",
+  "boundary": "银行分析数据库（SQLite，99wiki/projects/银行分析数据库/）：同业周度、行内零售、分行对标、行业年度、宏观与政策。引用任何数字必须带 meta_sources 来源与可信度等级（年报/行研=high、微信=medium）；内部数据脱敏后使用，受 pii-redaction 硬门约束。方法包「本行重算」入口：阈值验算→jsbank_pricing_monitor_monthly，双基准对标→peer_15banks_weekly，归责→branch_*，损益对标→industry_*。",
+  "ontology": {
+    "entities": [
+      {
+        "id": "snapshot",
+        "description": "周度/月度数据快照（带 snapshot_date）"
+      },
+      {
+        "id": "bank",
+        "description": "银行维度（dim_banks，is_us 标记江苏银行）"
+      },
+      {
+        "id": "branch",
+        "description": "分行维度（dim_branches）"
+      },
+      {
+        "id": "product",
+        "description": "产品维度（dim_products）"
+      },
+      {
+        "id": "source",
+        "description": "数据来源与可信度（meta_sources）"
+      }
+    ],
+    "relations": [
+      {
+        "id": "snapshot-from-source",
+        "from": "snapshot",
+        "to": "source",
+        "description": "快照来自来源（batch/source 列）"
+      },
+      {
+        "id": "snapshot-of-bank",
+        "from": "snapshot",
+        "to": "bank",
+        "description": "快照属于银行"
+      }
+    ]
+  },
+  "collections": [
+    {
+      "id": "analytics-peer-weekly",
+      "root": "projects/银行分析数据库/bank_analytics.db",
+      "format": "sqlite",
+      "description": "同业周度快照：peer_15banks_weekly / peer_city_product_weekly / industry_consumer_loan_bigbank（15 家银行零售贷款余额·增减·排名，含 is_us 江苏银行标记）——双基准对标（B-06-02）与同业比较的数据源"
+    },
+    {
+      "id": "analytics-jsbank-internal",
+      "root": "projects/银行分析数据库/bank_analytics.db",
+      "format": "sqlite",
+      "description": "行内经营：jsbank_retail_loan_weekly / jsbank_income_progress_weekly / jsbank_pricing_monitor_monthly / jsbank_new_pricing_weekly / jsbank_target_scenario / jsbank_biz_loan_snapshot / jsbank_product_eva_h1 / jsbank_province_share_weekly——阈值验算（threshold-calc「本行重算」）与定价实测（B-06-04）的数据源"
+    },
+    {
+      "id": "analytics-branch",
+      "root": "projects/银行分析数据库/bank_analytics.db",
+      "format": "sqlite",
+      "description": "分行维度：branch_benchmarking_weekly / branch_capacity / branch_market_share / branch_product_matrix / branch_product_metrics / branch_mortgage——归责切分（attribution）与样板复制的数据源"
+    },
+    {
+      "id": "analytics-industry",
+      "root": "projects/银行分析数据库/bank_analytics.db",
+      "format": "sqlite",
+      "description": "行业年度/趋势：industry_bank_annual / industry_dupont / industry_nim_trend / industry_retail_segment / retail_loan_snapshot / retail_new_lending_rate / retail_product_income / retail_target_gap——三类损益（tiered-pnl）与口径还原对标（caliber-restore）的数据源"
+    },
+    {
+      "id": "analytics-macro",
+      "root": "projects/银行分析数据库/bank_analytics.db",
+      "format": "sqlite",
+      "description": "宏观：macro_indicators / macro_policy / dim_banks / dim_branches / dim_products / dim_partners 及合作方定价（partner_auto_pricing / partner_housing_products）"
+    },
+    {
+      "id": "analytics-provenance",
+      "root": "projects/银行分析数据库/bank_analytics.db",
+      "format": "sqlite",
+      "description": "溯源：meta_sources（每条数据的来源 URL/类型/可信度 high·medium 与日期）+ load_weekly_*.py / build_db_v2.py 建库脚本（可复现）——引用任何本库数字必须带 meta_sources 来源与等级"
+    },
+    {
+      "id": "analytics-legacy",
+      "root": "projects/银行分析数据库",
+      "format": "sqlite",
+      "description": "存量库：bank_industry.db（bank_overview/banks/nim_peer/retail_performance）、jsbank_internal.db（jsbank_new_lending_rate/jsbank_target_gap/retail_loan_snapshot/jsbank_product_income/peer_banks）；另有民生/浦发/邮储 2026 半年报 PDF 原件同目录"
+    }
+  ],
+  "snapshot": {
+    "id": "bank-analytics-2026-09-16",
+    "takenAt": "2026-08-23T00:00:00Z",
+    "digest": "e85f8ca747dfe6e5f081982e33da2cc93a1ced68c9e6f23f93a139a1b9243c6a",
+    "recordCount": 0
+  },
+  "retrievalProfiles": [
+    {
+      "id": "by-table",
+      "method": "keyword"
+    },
+    {
+      "id": "by-source",
+      "method": "keyword",
+      "config": {
+        "scope": "meta_sources"
+      }
+    }
+  ],
+  "policies": {
+    "citation": "required",
+    "freshness": "daily",
+    "access": "readonly"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "taskId": "t4",
+  "subject": "渲染C：p09–p13（五/六上下/七八/封底）",
+  "description": "按契约 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md（先通读，纪律部分逐条遵守）与设计系统 .build_html/theme.css，用 md /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md 为唯一内容源，产出 5 个片段文件到 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/：\n- p09.html 五、合作层次（三层阶梯点睛图 5000万→4000万；层次二「（对方口径，供参考）」flag；定价纪律段全文）\n- p10.html 六(上) 6.1+6.2（总原则强调条；方案一/二结构-优点-缺点-适用卡；共同要件含认股权条款；方案A标「（对方提议）」、B、E 三卡）\n- p11.html 六(下) 6.3+6.4（四列对比矩阵表 7行×5列全量逐格原文，表格禁跨页断裂；折扣标尺图 3.3/3.8/4.9 折含「口头意向」「情景测算」标注；三步建议三条原文强调块）\n- p12.html 七+八（风险六条编号警示列表 flag-w 落位；下一步三条卡 短期/中期/股权线；三步工作时间轴点睛图）\n- p13.html 封底（.backcover 居中；收束引用 2.7 结论原句；报告信息块：单位/日期/密级/编制依据尾行原句；使用提示措辞仅取自第七章第6条）\n格式与页眉页脚模板严格按 spec 第二节；页码 09–13/共13。完成后自查（无溢出/无遮挡/表格未断/零 script），向队长回报 flag 落位清单与自查结论。若 arch_review.md 已有针对你页面的排版建议，先采纳再动工。",
+  "dependencies": [
+    "t1"
+  ],
+  "createdAt": 1788602569709
+}

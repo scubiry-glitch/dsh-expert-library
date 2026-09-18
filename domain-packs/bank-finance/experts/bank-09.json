@@ -1,11 +1,11 @@
 {
   "id": "bank-09",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "王一帆",
+    "internalName": "信贷舵手",
     "publicLabel": "操盘手 X 城商行零售信贷负责人",
-    "initials": "W"
+    "initials": "X"
   },
   "domains": [
     "bank.retail",

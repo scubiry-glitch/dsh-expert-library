@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "林中",
-    "publicLabel": "林中",
-    "initials": "林"
+    "internalName": "营造账房",
+    "publicLabel": "营造账房",
+    "initials": "Y"
   },
   "domains": [
     "realestate.operations"

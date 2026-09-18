@@ -119,7 +119,7 @@ mkdirSync(join(KNOWLEDGE, 'scenarios'), { recursive: true })
 writeFileSync(join(KNOWLEDGE, 'scenarios', `${SCENARIO_ID}.json`), `${JSON.stringify(scenario, null, 2)}\n`)
 mkdirSync(join(KNOWLEDGE, 'scenarios', SCENARIO_ID), { recursive: true })
 writeFileSync(join(KNOWLEDGE, 'scenarios', SCENARIO_ID, '研讨工作说明.md'),
-  '# 研讨工作说明\n\n- 阵容默认：政策（仇保兴 bk-003）、存量循环（李宇嘉 bk-006）、宏观经济（邢自强 bk-004）、居住服务（杨现领 bk-033）+ 内置纪要/总结专家。\n- 如需换人：队长按 `shared/zhijian/专家总表.md` 与 `路由规则.md` 选择，`expert_teams_add_member(expert=bk-NNN)` 增补或移除默认成员。\n- 输出规范、匿名化、数字核实要求见 `shared/zhijian/SKILL.md`。\n')
+  '# 研讨工作说明\n\n- 阵容默认：政策（老规划 bk-003）、存量循环（存量猎手 bk-006）、宏观经济（周期班长 bk-004）、居住服务（渠道灯塔 bk-033）+ 内置纪要/总结专家。\n- 如需换人：队长按 `shared/zhijian/专家总表.md` 与 `路由规则.md` 选择，`expert_teams_add_member(expert=bk-NNN)` 增补或移除默认成员。\n- 输出规范、匿名化、数字核实要求见 `shared/zhijian/SKILL.md`。\n')
 
 console.log(`\n[ok] scenario ${SCENARIO_ID} (${scenario.experts.length} experts, ${scenario.tasks.length} tasks)`)
 console.log(`\nImported ${expertIds.length} experts → ${KNOWLEDGE}`)

@@ -15,10 +15,11 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { installModelSelection, type Agent, type ModelSelection } from '@deepseek-ai/dsh-agent'
 // Declaration merge only: makes ctx.subagents visible.
-import { foldSubagentDescriptor, SubagentError } from '@deepseek-ai/dsh-subagent'
+import { foldSubagentDescriptor } from '@deepseek-ai/dsh-subagent'
 import { ReasoningEffortId } from '@deepseek-ai/dsh-llm'
 import type { SessionId } from '@deepseek-ai/dsh-session'
 import { join } from 'node:path'
+import { guardSubagentDelivery, installContinuableMemberSetup, queueMemberPrompt, sessionOwnEvents } from './harness-compat.ts'
 import { readRetiredMemberIds, readTeamSync } from './state.ts'
 import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
 import type { TeamMember, TeamState } from './types.ts'
@@ -255,10 +256,10 @@ export async function resolveMemberLlmSelection(
  */
 export function installMemberSelectionRuntime(ctx: Context, stateDir: string): MemberSelectionRuntime {
   const pending = new Map<string, MemberLlmSelection>()
-  ctx.subagents.registerContinuableSetup((childCtx) => {
+  installContinuableMemberSetup(ctx, (childCtx) => {
     const child = childCtx.agent
     if (child === undefined) return () => undefined
-    const suffix = child.session.events.slice(child.session.header.seedLength ?? 0)
+    const suffix = sessionOwnEvents(child.session)
     const descriptor = foldSubagentDescriptor(suffix)
     if (descriptor?.mode !== 'continuable' || !descriptor.label.startsWith(MEMBER_LABEL_PREFIX)) {
       return () => undefined
@@ -494,10 +495,7 @@ export async function deliverToMember(
   signal: AbortSignal,
 ): Promise<boolean> {
   try {
-    await ctx.subagents.followup(captain, brandedSessionId(childId), [{ type: 'text', text }], {
-      source: { kind: 'plugin', plugin: 'dsh-expert-library' },
-      signal,
-    })
+    await queueMemberPrompt(ctx.subagents, captain, brandedSessionId(childId), [{ type: 'text', text }], signal)
     return true
   } catch (error: unknown) {
     ctx.logger.warn(`expert-teams: followup to member ${childId} failed: ${String(error)}`)
@@ -533,9 +531,10 @@ async function retiredForParent(ctx: Context, parentId: SessionId, stateDir: str
  *
  * Upstream `interrupt()` deliberately preserves continuable sessions and the
  * upstream seam exposes no targeted forget/retire method. The durable
- * Expert Teams index therefore guards all three public continuation boundaries:
- * retired rows disappear from `list_agents` (children and descendants), and a
- * direct `followup()` is rejected before it can cold-resume the member. Exact
+ * Expert Teams index therefore guards every public continuation boundary:
+ * retired rows disappear from `list_agents` (children and descendants), and
+ * direct delivery (`followup`, the internal deliverPrompt protocol, or
+ * `sendMessage`) is rejected before it can cold-resume the member. Exact
  * ids keep unrelated subagents untouched; transcripts remain in persistence
  * for archived-team review.
  */
@@ -544,7 +543,6 @@ export function installRetiredMemberGuard(ctx: Context, stateDir: string): void 
   ctx.effect(() => {
     const listChildren = runtime.listChildren
     const listDescendants = runtime.listDescendants
-    const followup = runtime.followup
 
     const guardedChildren: typeof runtime.listChildren = async (parentId, signal) => {
       const [entries, retired] = await Promise.all([
@@ -560,24 +558,17 @@ export function installRetiredMemberGuard(ctx: Context, stateDir: string): void 
       ])
       return entries.filter(entry => !retired.has(entry.id))
     }
-    const guardedFollowup: typeof runtime.followup = async (parent, childId, content, options) => {
-      const retired = await readRetiredMemberIds(join(parent.session.header.cwd ?? process.cwd(), stateDir))
-      if (retired.has(childId)) {
-        throw new SubagentError(
-          `Expert Teams member "${childId}" was retired and cannot be resumed`,
-          'NOT_RESUMABLE',
-        )
-      }
-      return followup.call(runtime, parent, childId, content, options)
-    }
 
     runtime.listChildren = guardedChildren
     runtime.listDescendants = guardedDescendants
-    runtime.followup = guardedFollowup
+    const restoreDelivery = guardSubagentDelivery(runtime, async (sender, childId) => {
+      const cwd = (sender as Agent | undefined)?.session?.header?.cwd ?? process.cwd()
+      return readRetiredMemberIds(join(cwd, stateDir)).has(childId)
+    })
     return () => {
       if (runtime.listChildren === guardedChildren) runtime.listChildren = listChildren
       if (runtime.listDescendants === guardedDescendants) runtime.listDescendants = listDescendants
-      if (runtime.followup === guardedFollowup) runtime.followup = followup
+      restoreDelivery()
     }
   }, 'expert-teams: retired member guard')
 }

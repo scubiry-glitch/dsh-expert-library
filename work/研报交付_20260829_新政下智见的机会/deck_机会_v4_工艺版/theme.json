@@ -1,0 +1,81 @@
+{
+  "id": "zhijian-deepteal",
+  "label": "深青墨 · 智见机会扫描（工艺版）",
+  "style": {
+    "id": "zhijian-deepteal",
+    "colors": {
+      "bg": "#F5F8F7",
+      "surface": "#FFFFFF",
+      "panel": "#E8F0ED",
+      "primary": "#0E6A55",
+      "accent": "#A9741F",
+      "text": "#14332B",
+      "muted": "#54706A",
+      "border": "#D3E1DC",
+      "cardStroke": "#C2D6CF",
+      "chartPalette": [
+        "#0E6A55",
+        "#A9741F",
+        "#4A9A85",
+        "#B0524A"
+      ],
+      "accentPool": [
+        "#A9741F",
+        "#0E6A55",
+        "#7D6437",
+        "#4A9A85"
+      ]
+    },
+    "fonts": {
+      "heading": [
+        "Noto Serif SC",
+        "Songti SC",
+        "serif"
+      ],
+      "body": [
+        "Noto Sans SC",
+        "PingFang SC",
+        "Microsoft YaHei",
+        "sans-serif"
+      ],
+      "mono": [
+        "SF Mono",
+        "Menlo",
+        "monospace"
+      ]
+    },
+    "shape": {
+      "radius": 6,
+      "gapScale": 1.0
+    },
+    "defaultBackgrounds": {
+      "cover": {
+        "kind": "gradient",
+        "from": "#F2F7F5",
+        "to": "#E3EEEA",
+        "direction": "diagonal"
+      },
+      "chapter": {
+        "kind": "color",
+        "value": "#E8F0ED"
+      },
+      "content": {
+        "kind": "color",
+        "value": "#F5F8F7"
+      },
+      "ending": {
+        "kind": "gradient",
+        "from": "#F2F7F5",
+        "to": "#E3EEEA",
+        "direction": "diagonal"
+      }
+    }
+  },
+  "tags": [
+    "deep-teal",
+    "amber",
+    "product",
+    "restrained",
+    "serif-heading"
+  ]
+}

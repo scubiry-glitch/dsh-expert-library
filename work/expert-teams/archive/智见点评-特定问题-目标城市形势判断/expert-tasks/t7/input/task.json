@@ -1,0 +1,9 @@
+{
+  "taskId": "t7",
+  "subject": "渲染与生成（正式稿三件套 + 发布）",
+  "description": "基于 t6 正式稿文本重新渲染三件套（讨论稿 t5 的正式稿版本）：①HTML5 视觉稿（沿用 t5 的贝壳蓝金 finesse-ui product register 风格与图表纪律「无数字不绘、中间月份只连锚点+图注」，文件名 chengdu-resale-2026-08-final.html）；②PDF（weasyprint A4，逐页页脚与墨迹程序化验证）；③PPTX（可编辑 16:9，全页 speaker notes，预测标「研判推断/估算」，沿用 build_ppt.py 管线，文件名 -final 后缀）；④发布 HTML+PDF 到外网（render_publish），校验发布副本与本地 sha256 一致；⑤渲染检查同 t5 标准：playwright 1280/375 双视口 0 溢出、pypdf 逐页验证；正式稿中不得残留任何匿名专家标注（D/F/L），交付前需自查全文无身份标注残留。",
+  "dependencies": [
+    "t6"
+  ],
+  "createdAt": 1788615873465
+}

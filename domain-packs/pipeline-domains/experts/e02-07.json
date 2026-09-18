@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "唐宁",
-    "publicLabel": "唐宁",
-    "initials": "唐"
+    "internalName": "体验账房",
+    "publicLabel": "体验账房",
+    "initials": "T"
   },
   "domains": [
     "realestate.general",

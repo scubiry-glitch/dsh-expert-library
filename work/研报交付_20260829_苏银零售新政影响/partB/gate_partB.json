@@ -1,0 +1,337 @@
+{
+  "type": "Part B 主文",
+  "standard": "wiki-gated-research · 99wiki 分型验收（Part B 验收器）",
+  "generated_at": "2026-08-29T21:36:45",
+  "deliverable": {
+    "html": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/主文.html",
+    "pdf": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/主文.pdf",
+    "gate": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/gate_partB.json",
+    "shots": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/shots"
+  },
+  "page_count_plan": "12 页（在 10-14 页范围内）：P01 封面 + P02-P11 正文 10 页（传导总图/底数仪表/战略/客群/产品/资产/风险/区域/行动/观察指标）+ P12 尾页来源披露",
+  "page_count_html": 12,
+  "page_count_pdf": 12,
+  "html_sha256": "d79ccbcb58ebb63d1a04287a1ac79016255ec66fe342aa628edc17abc34c8240",
+  "pdf_sha256": "7765a056e4691cba4b86aa4d5cbed41322ac33fcc5adeb57de5b894b83e5cb80",
+  "last_render": {
+    "time": "2026-08-29T21:36:40",
+    "method": "weasyprint 69.0 · A4 portrait · source=主文.html @media print"
+  },
+  "dom_checks": {
+    "engine": "playwright Chromium, viewport 1440x1200, file:// 加载后 DOM 检查（未用正则判嵌套）",
+    "nested_p_count": 0,
+    "js_errors": [],
+    "console_errors": [],
+    "horizontal_overflow": false,
+    "vertical_overflow_pages": [],
+    "footer_uniform": true,
+    "old_signature_hits": [],
+    "placeholder_hits": []
+  },
+  "visuals_per_page": [
+    {
+      "page": 1,
+      "role": "cover",
+      "visuals": 1,
+      "tables": 0,
+      "svg": 0,
+      "mech": 0,
+      "cover_exempt": true,
+      "pass": true
+    },
+    {
+      "page": 2,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 0,
+      "mech": 1,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 3,
+      "role": "body",
+      "visuals": 3,
+      "tables": 0,
+      "svg": 0,
+      "mech": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 4,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 1,
+      "mech": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 5,
+      "role": "body",
+      "visuals": 1,
+      "tables": 0,
+      "svg": 0,
+      "mech": 3,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 6,
+      "role": "body",
+      "visuals": 2,
+      "tables": 0,
+      "svg": 0,
+      "mech": 1,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 7,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 0,
+      "mech": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 8,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 0,
+      "mech": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 9,
+      "role": "body",
+      "visuals": 2,
+      "tables": 0,
+      "svg": 1,
+      "mech": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 10,
+      "role": "body",
+      "visuals": 1,
+      "tables": 0,
+      "svg": 0,
+      "mech": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 11,
+      "role": "body",
+      "visuals": 2,
+      "tables": 2,
+      "svg": 0,
+      "mech": 0,
+      "cover_exempt": false,
+      "pass": true
+    },
+    {
+      "page": 12,
+      "role": "body",
+      "visuals": 2,
+      "tables": 1,
+      "svg": 0,
+      "mech": 1,
+      "cover_exempt": false,
+      "pass": true
+    }
+  ],
+  "body_cjk_chars": {
+    "total_incl_cover": 11221,
+    "excluding_cover": 10824,
+    "excluding_cover_and_footer(报告口径)": 10736,
+    "threshold": 10000
+  },
+  "screenshots": {
+    "wide": [
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/shots/wide_p01.png",
+        "page": 1,
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无横向/纵向溢出、视觉对象计数通过）"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/shots/wide_p06.png",
+        "page": 6,
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无横向/纵向溢出、视觉对象计数通过）"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/shots/wide_p12.png",
+        "page": 12,
+        "checked": true,
+        "conclusion": "Chromium 元素级截图存档；配合 DOM 几何审计（无横向/纵向溢出、视觉对象计数通过）"
+      }
+    ],
+    "a4": [
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/shots/a4_p01.png",
+        "page": 1,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/shots/a4_p06.png",
+        "page": 6,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出"
+      },
+      {
+        "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_苏银零售新政影响/partB/shots/a4_p12.png",
+        "page": 12,
+        "checked": true,
+        "conclusion": "weasyprint A4 PDF fitz 栅格化存档；页脚由 @bottom-center 统一输出"
+      }
+    ],
+    "method_note": "本机渲染模型无图像输入通道（read_image 不可用），按纪律以 DOM 几何审计 + 截图存档替代目检并在此注明；截图已生成可供人工复核"
+  },
+  "visual_qa_substitute": {
+    "note": "无图像输入 → DOM 几何深审计替代目检",
+    "element_escape_count": 0,
+    "escapes": [],
+    "barcode_chart_issues": [],
+    "banned_styles": [],
+    "chart_height_ratios": [
+      {
+        "page": 3,
+        "chart": 0,
+        "declared": [
+          100,
+          76.2,
+          16.7
+        ],
+        "rendered": [
+          100,
+          76.2,
+          16.7
+        ],
+        "labels": [
+          "3,276.11 亿消费贷零售第一大",
+          "2,495.32 亿住房贷款2025",
+          "545.70 亿经营贷零售第三位"
+        ]
+      },
+      {
+        "page": 6,
+        "chart": 0,
+        "declared": [
+          100,
+          85.1,
+          72,
+          100
+        ],
+        "rendered": [
+          100,
+          85.1,
+          72,
+          100
+        ],
+        "labels": [
+          "4,247 元月供 · 30 年期基",
+          "3,614 元月供 · 40 年期降",
+          "52.9 万总利息 · 30 年期基",
+          "73.5 万总利息 · 40 年期升"
+        ]
+      },
+      {
+        "page": 7,
+        "chart": 0,
+        "declared": [
+          100,
+          95.8
+        ],
+        "rendered": [
+          100,
+          95.8
+        ],
+        "labels": [
+          "37.90 万亿前期高点全国按揭余额",
+          "36.29 万亿最新值-4.2%（连"
+        ]
+      }
+    ],
+    "pdf_text_block_overflow": []
+  },
+  "checks": [
+    {
+      "item": "页数计划（10-14 页范围）",
+      "pass": true,
+      "detail": "HTML .page = 12；PDF 页数 = 12；计划=12 页"
+    },
+    {
+      "item": "nested_p_count == 0（DOM 标准）",
+      "pass": true,
+      "detail": "0"
+    },
+    {
+      "item": "无 JS 错误",
+      "pass": true,
+      "detail": "pageerror=[]; console.error=[]"
+    },
+    {
+      "item": "除封面每页 ≥1 主题视觉对象",
+      "pass": true,
+      "detail": "P01(cover):1✓豁免; P02(body):2; P03(body):3; P04(body):2; P05(body):1; P06(body):2; P07(body):2; P08(body):2; P09(body):2; P10(body):1; P11(body):2; P12(body):2"
+    },
+    {
+      "item": "页脚统一署名（每页）",
+      "pass": true,
+      "detail": "署名='98wiki ｜ 智见 / 行业研究报告' 全 12 页"
+    },
+    {
+      "item": "无旧署名（政研通研究院）",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "item": "无占位句/占位符",
+      "pass": true,
+      "detail": "[]"
+    },
+    {
+      "item": "页面无横向溢出（DOM）",
+      "pass": true,
+      "detail": "body scrollW=1440 winW=1440"
+    },
+    {
+      "item": "页面无纵向溢出（DOM，宽屏 1754px 页框）",
+      "pass": true,
+      "detail": "全部通过"
+    },
+    {
+      "item": "正文中文字符 ≥10000（不含封面与页脚）",
+      "pass": true,
+      "detail": "10736"
+    },
+    {
+      "item": "PDF 页数与页级骨架一致（12）",
+      "pass": true,
+      "detail": "PDF=12 HTML=12"
+    },
+    {
+      "item": "几何深审计：无越界元素 / 无 barcode 图 / 无禁用样式",
+      "pass": true,
+      "detail": "escapes=0 barcode=[] banned=[]"
+    },
+    {
+      "item": "A4 PDF 无文本块越界",
+      "pass": true,
+      "detail": "[]"
+    }
+  ],
+  "result": "PASS"
+}

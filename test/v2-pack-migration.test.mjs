@@ -154,7 +154,7 @@ test('SOURCE-MANIFEST records both baselines (1.0.0 zip / 1.1.0 unpacked) and th
   assert.equal(manifest.upgradeHistory.length, 1)
   assert.equal(manifest.upgradeHistory[0].from, '1.0.0')
   assert.equal(manifest.upgradeHistory[0].to, '1.1.0')
-  assert.deepEqual(manifest.upgradeHistory[0].adds, ['bk-034 陈杰'])
+  assert.deepEqual(manifest.upgradeHistory[0].adds, ['bk-034 格物讲师'])
   // BK-034 has no 专家库 flattened page in the source — recorded as a
   // documented gap, never fabricated.
   assert.ok((manifest.library.missing ?? []).some(entry => entry.includes('BK-034')), JSON.stringify(manifest.library))

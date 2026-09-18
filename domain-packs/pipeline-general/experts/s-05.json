@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "马斯克",
-    "publicLabel": "马斯克",
-    "initials": "马"
+    "internalName": "火星殖民官",
+    "publicLabel": "火星殖民官",
+    "initials": "H"
   },
   "domains": [
     "realestate.general",

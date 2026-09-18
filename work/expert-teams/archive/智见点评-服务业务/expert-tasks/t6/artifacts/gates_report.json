@@ -1,0 +1,64 @@
+{
+ "gates": {
+  "G1_text": {
+   "forbidden_hits": [],
+   "pass": true,
+   "note": "禁例清单：专家实名/匿名标注/过程痕迹/未核实量值"
+  },
+  "G2_numbers": {
+   "md_distinct": 45,
+   "html_distinct": 45,
+   "new_in_html": [],
+   "pass": true,
+   "structural_allowlist": [
+    "00",
+    "01",
+    "02",
+    "03",
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "13",
+    "98"
+   ]
+  },
+  "G3_design": {
+   "p0": 0,
+   "findings": [],
+   "pass": true
+  },
+  "G5_pdf": {
+   "pages": 12,
+   "content_box_violations": 0,
+   "footer_on_body_pages": true,
+   "cover_unfooted": true,
+   "back_unfooted": true,
+   "pass": true
+  }
+ },
+ "artifacts": {
+  "AI无佣与人机协同_正式稿_v1.md": {
+   "sha256": "03271f0e126655981dfc5b86cce6802b97767ac8c0c24c6452f53e3cbd828736",
+   "bytes": 13238
+  },
+  "AI无佣与人机协同_正式稿_v1.html": {
+   "sha256": "cb96e6636ff4daf195c59df60e94a7d5715d55b53343249476d222fef1a4ddf9",
+   "bytes": 60064
+  },
+  "AI无佣与人机协同_正式稿_v1.pdf": {
+   "sha256": "c7a684a5ff8e281c741c5001e2abee7c424a5e5145e4390175b2e49c0b9ff6d4",
+   "bytes": 1176404
+  },
+  "AI无佣与人机协同_汇报版_v1.pptx": {
+   "sha256": "ca009f18bb03c077fd7e61d6c78e6bbdaef380979b3f341cf526f9307979fb2e",
+   "bytes": 88612
+  }
+ },
+ "all_pass": true
+}

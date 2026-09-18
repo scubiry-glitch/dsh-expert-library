@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "李明",
-    "publicLabel": "李明",
-    "initials": "李"
+    "internalName": "双碳哨兵",
+    "publicLabel": "双碳哨兵",
+    "initials": "S"
   },
   "domains": [
     "realestate.general"

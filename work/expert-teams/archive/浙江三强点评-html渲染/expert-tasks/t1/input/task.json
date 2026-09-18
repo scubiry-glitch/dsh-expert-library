@@ -1,0 +1,7 @@
+{
+  "taskId": "t1",
+  "subject": "Designer：渲染《浙江三强2026半年报·零售金融点评》HTML",
+  "description": "承接原DAG中T7「融合终稿」的下游渲染任务。T7产物（唯一权威源，禁止改写文本）：/root/zhijian/dsh-expert-library/work/浙江三强2026半年报·零售金融点评.md。数据底稿（数字核对用）：/root/zhijian/dsh-expert-library/work/浙三强2026H1_Wind数据包.md。要求：①先读视觉规范唯一权威 /root/zhijian/dsh-expert-library/knowledge/skills/zhijian-report-craft/references/report-template-fivepiece-v1.md（finesse五轴：深青墨#0e6a55+琥珀金#a9741f）；②将终稿md渲染为单文件自包含HTML（内联CSS，零外链、零JS依赖，1280/375双视口无溢出，AA对比度），结构：封面区（标题+数据期+口径行）→执行摘要5条→口径核查表（8条裁定表）→三家对标表（11维，浙商集团口径标注）→五层要点→跨层矛盾→修正补充清单→分阶段行动建议→开放问题与待验证项→封底免责与来源披露；③专家观点标注保留「领域·人设名」匿名格式；④G1门禁：HTML中数字与md逐token一致，禁新增数字、禁改写结论；⑤完成后输出文件路径并回报。",
+  "dependencies": [],
+  "createdAt": 1788143850912
+}

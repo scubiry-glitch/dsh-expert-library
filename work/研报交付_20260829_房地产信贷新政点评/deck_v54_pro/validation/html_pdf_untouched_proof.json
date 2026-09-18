@@ -1,0 +1,37 @@
+{
+  "note": "任务开始约 2026-08-30 13:00+08:00（备份文件创建时间 13:01）；html/pdf/shots_v54 全程只读。html/pdf 用 sha256+mtime 双基线比对；shots_v54 基线指纹算法不可复现（当时未记录拼接方式），改用「文件集合未变 + mtime 远早于任务开始 + 内容 sha256 存档」三重证据。",
+  "html": {
+    "file": "角色重写_十二主体_20260829_v54.html",
+    "sha256": "d145f887cfd918dfa7e021029feb109211871fd8adfeddfd2715060b148f5f86",
+    "sha256_match_baseline": true,
+    "mtime": 1788021416,
+    "mtime_match_baseline": true,
+    "untouched": true
+  },
+  "pdf": {
+    "file": "角色重写_十二主体_20260829_v54.pdf",
+    "sha256": "ef8256a7f23802d3d05189239b54c5b85ad83684b4910bda2faec10c225ef96a",
+    "sha256_match_baseline": true,
+    "mtime": 1788021461,
+    "mtime_match_baseline": true,
+    "untouched": true
+  },
+  "shots_v54": {
+    "files": {
+      "shots_v54/desktop-1280.png": {
+        "sha256": "62f00401d9b99d05dd04725c89e1eb96e8a345e5530c674864eb980d6021c20d",
+        "mtime": 1788021425,
+        "mtime_iso": "2026-08-30 00:37 (early morning)",
+        "predates_task": true
+      },
+      "shots_v54/mobile-375.png": {
+        "sha256": "14ea9eaf3846f5f10f892b24606340ce1c8f0420a1f779243d270ea272109e59",
+        "mtime": 1788021429,
+        "mtime_iso": "2026-08-30 00:37 (early morning)",
+        "predates_task": true
+      }
+    },
+    "untouched": true
+  },
+  "all_untouched": true
+}

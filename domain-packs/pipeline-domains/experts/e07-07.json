@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "吴恩达",
-    "publicLabel": "吴恩达",
-    "initials": "吴"
+    "internalName": "智能账房",
+    "publicLabel": "智能账房",
+    "initials": "Z"
   },
   "domains": [
     "realestate.general"

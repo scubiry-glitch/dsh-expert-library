@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信用卡方法论提取 · 精简版</title>
+<style>
+:root{--ink:#1a1a1a;--sub:#5c6470;--line:#e6e8ec;--green:#0d7a3f;--greenbg:#e6f4eb;--amber:#9a6700;--amberbg:#fdf3d8;--gray:#6b7280;--graybg:#eef0f3;--accent:#1a4f8b;--blue:#1a5fb4;--bluebg:#e3edf9;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:var(--ink);background:#fff;font-size:15px;line-height:1.7;}
+main{max-width:860px;margin:0 auto;padding:0 28px 80px;}
+.hero{padding:56px 0 8px;}
+.kicker{font-size:12px;letter-spacing:.2em;color:var(--accent);font-weight:600;margin-bottom:10px;}
+h1{font-size:28px;line-height:1.35;font-weight:700;margin-bottom:12px;}
+.nature{font-size:15px;color:var(--sub);margin-bottom:18px;}
+.nature strong{color:var(--ink);}
+.scope{font-size:13.5px;color:var(--sub);border-left:3px solid var(--line);padding-left:12px;margin-bottom:24px;}
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:10px;}
+.stat{flex:1 1 150px;border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+.stat .n{font-size:26px;font-weight:700;line-height:1.2;}
+.stat .n em{font-style:normal;font-size:14px;font-weight:600;}
+.stat .l{font-size:12.5px;color:var(--sub);margin-top:2px;}
+.warnline{font-size:13px;color:var(--sub);margin:14px 0 0;}
+.warnline b{color:#8a4b00;}
+section{margin-top:56px;}
+h2{font-size:20px;font-weight:700;padding-bottom:8px;border-bottom:2px solid var(--ink);margin-bottom:18px;}
+h2 .en{font-size:12px;color:var(--sub);font-weight:400;margin-left:8px;}
+h3{font-size:16px;font-weight:700;margin:26px 0 10px;}
+h3 .cnt{font-size:12px;color:var(--sub);font-weight:400;margin-left:8px;}
+p{margin-bottom:10px;}
+.lead{color:var(--sub);}
+.blk{margin-bottom:22px;}
+.blk>h3{margin-top:0;}
+.item{display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);}
+.item:last-child{border-bottom:none;}
+.item .no{flex:0 0 26px;font-weight:700;color:var(--accent);font-size:13.5px;padding-top:1px;}
+.item .tx{flex:1;}
+.item .tx b{font-weight:600;}
+.item .tx .ref{color:var(--sub);font-size:12.5px;}
+.twrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;}
+table{border-collapse:collapse;width:100%;font-size:13.5px;}
+thead th{position:sticky;top:0;background:#f7f8fa;text-align:left;font-weight:600;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:2;}
+tbody td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#f4f7fb;}
+.c-id{white-space:nowrap;font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600;}
+th.c-id{width:74px;}
+th.c-src{width:120px;}
+th.c-mig{width:88px;}
+.c-src{color:var(--sub);font-size:12.5px;white-space:nowrap;cursor:help;}
+.c-name{font-weight:500;min-width:170px;}
+.c-sum{color:#333;min-width:230px;}
+.bdg{display:inline-block;font-size:12px;font-weight:600;padding:1px 9px;border-radius:999px;line-height:1.6;cursor:help;}
+.bdg.hi{color:var(--green);background:var(--greenbg);}
+.bdg.md{color:var(--amber);background:var(--amberbg);}
+.bdg.lo{color:var(--gray);background:var(--graybg);}
+.bdg.na{color:#b6bcc6;background:#f5f6f8;}
+.bdg.vb-part{color:var(--amber);background:var(--amberbg);}
+.bdg.vb-ext{color:var(--gray);background:var(--graybg);}
+.bdg.vb-done{color:var(--green);background:var(--greenbg);}
+.tnote{font-size:12.5px;color:var(--sub);margin:-4px 0 10px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:680px){.grid{grid-template-columns:1fr;}}
+.card{border:1px solid var(--line);border-radius:12px;padding:16px 18px;break-inside:avoid;}
+.card:hover{border-color:#c9d6e6;}
+.card-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:2px;}
+.cid{font-weight:700;color:var(--accent);font-size:13.5px;}
+.cname{font-weight:600;font-size:14.5px;}
+.cmeta{font-size:12px;color:var(--sub);margin-bottom:8px;cursor:help;}
+.cd{font-size:13.5px;margin-bottom:6px;}
+.cb{font-size:12.5px;color:var(--sub);}
+.caliber table{font-size:13px;}
+.caliber td:first-child{white-space:nowrap;font-weight:600;}
+.notice{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;background:#fafbfc;padding:14px 16px;font-size:13.5px;color:#333;margin-top:20px;}
+footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--sub);}
+@media print{thead th{position:static;} }
+</style>
+</head>
+<body>
+<main>
+<div class="hero">
+  <div class="kicker">研报精简版 · 5–10 分钟读核心，需要时查条目</div>
+  <h1>信用卡方法论提取 · 精简版</h1>
+  <p class="nature">报告性质：<strong>方法论提取与融合，不是经营结论</strong>——凡涉及当期经营判断，只给口径、方法与动作，不给数字结论。</p>
+  <p class="scope">材料范围：25 份 = 行方业务资料 6 份（B01–B04、B06、B07）＋ 天风证券 B05 ＋ 彭千 B08 ＋ 阿蒙森洞察 17 期（A01–A17，2022 年第 6 期缺）。</p>
+  <div class="stats">
+    <div class="stat"><div class="n">81<em> 条</em></div><div class="l">方法论记录，统一编号</div></div>
+    <div class="stat"><div class="n">高 17 / 中 22 / 低 9</div><div class="l">综合可迁移性分级</div></div>
+    <div class="stat"><div class="n">0 <em>处</em></div><div class="l">引文回验失配</div></div>
+  </div>
+  <p class="warnline"><b>来源分层警示：</b>行方材料（内部复盘）／券商研究（B05，含荐股立场）／平台商务材料（B08，含合作诉求）／美团经营口径（阿蒙森，平台视角）——四类不得混用、不得合并为同一结论。</p>
+</div>
+<p class="scope" style="margin-top:18px">本页用法：先读「核心结论」（约 5 分钟）；要查具体条目，用「速查表」按编号检索；只想知道最值得做的 17 件事，直接看「精选卡」。完整版含全部原文引句与质检记录。</p>
+
+<section id="core">
+<h2>核心结论<span class="en">跨层观察精编</span></h2>
+
+<div class="blk">
+<h3>① 两套互补范式：操作级 vs 行业级</h3>
+<p>阿蒙森（A 系列）提供「怎么做」的<b>操作级</b>方法——实验、分层、模型、月度/账龄粒度，产出可执行动作；天风 B05 提供「为什么值得做」的<b>行业级</b>推导与口径还原纪律——收入结构解构、比率横比、国际对标，产出方向判断。二者是任务类型不同，不是谁更好；选用前先确认要解决什么问题。</p>
+<p>两套范式反复出现的三条元规则，也是贯穿 81 条记录的公共纪律：<b>口径先统一</b>（B-05-12 科目还原、B-05-15 分母修正）；<b>无对照不做因果</b>（A01-03 平行世界、A06-01 实验）；<b>缺数据显式标注、不补数</b>（示意数据只认排序）。
+</div>
+
+<div class="blk">
+<h3>② 最值得带走的 4 件可迁移工具</h3>
+<div class="item"><div class="no">1</div><div class="tx"><b>三类损益框架</b>（B-08-12）：获客层亏损、交易层保本、资产层盈利——判断任一产品线能否赚钱，先问「资产层能否覆盖获客层」。</div></div>
+<div class="item"><div class="no">2</div><div class="tx"><b>玩家分层坐标系</b>（B-08-14/18）：按牌照×客群×资金量级排五类玩家，再对国有/股份制/区域银行做优劣势并排——竞品地图与自我定位一把尺。</div></div>
+<div class="item"><div class="no">3</div><div class="tx"><b>OTT／管道化判定规则</b>（B-08-22）：互联网只挑战「简单标准化业务」；被管道化的判据是业务是否标准化——据此决定哪些能力必须自建。</div></div>
+<div class="item"><div class="no">4</div><div class="tx"><b>两把量化尺</b>：分期实际年化测算法（B-05-13，名义费率仅为实际约 6 成，须重算不得引用）＋ 分母修正法（B-05-15，报人均必报分母，换分母差 2.4 倍）。</div></div>
+</div>
+
+<div class="blk">
+<h3>③ 六组张力与裁定建议</h3>
+<div class="item"><div class="no">1</div><div class="tx"><b>规模 vs 风险考核</b>：杠杆量化只用于排序，不作单独加压依据；以正负分同表为默认——只发文件不给收益＝机制空转。</div></div>
+<div class="item"><div class="no">2</div><div class="tx"><b>低线放量 vs 风险前置</b>：低线城市放量必须以风险识别能力为前置条件，并在再逾期监测口径下执行。</div></div>
+<div class="item"><div class="no">3</div><div class="tx"><b>费用压降 vs 前置投入</b>：压降必须与调优准入策略配对；节省额度优先投向高杠杆前置动作（促激活、促绑卡）。</div></div>
+<div class="item"><div class="no">4</div><div class="tx"><b>平台「赋能」叙事 vs 行内自主</b>（最直接的矛盾）：以行内为主权方——可让渡流量与场景，不让渡客户、数据、定价规则与账期节奏。</div></div>
+<div class="item"><div class="no">5</div><div class="tx"><b>转化优化 vs 消保/反欺诈</b>：转化优化与消保动作同批下发，话术培训与考核绑定，沿用「严禁承诺免违约金」红线。</div></div>
+<div class="item"><div class="no">6</div><div class="tx"><b>模型确定性 vs 样本可信度</b>：阿蒙森部分期次自陈「示意数据」，凡图表绝对值一律不得引用，只引用排序与结构。</div></div>
+</div>
+
+<div class="blk">
+<h3>③′ 六条可组装的「工作链」</h3>
+<p class="lead">三层单独看都成立，合起来能组装出六条成品工作链（完整版 6.1，组件归属与本页速查表 chain_refs 一致）：</p>
+<div class="item"><div class="no">1</div><div class="tx"><b>年度经营计划模板（指标树＋杠杆排序＋正负分同表）</b>：A10-01 三因素分解×覆盖面 ＋ B-06-01 分期指标树 ＋ B-01-03 负分考核（外部校准：B-08-12 三类损益）</div></div>
+<div class="item"><div class="no">2</div><div class="tx"><b>活动与定价测试标准流程（立项即填五栏）</b>：A01-03 平行世界 ＋ A01-04 定位定指标 ＋ A06-01 双指标判读 ＋ B-06-04 定价实测 ＋ B-05-13 年化复算</div></div>
+<div class="item"><div class="no">3</div><div class="tx"><b>口径对照表（任何比较先过表）</b>：B-05-12 科目还原 ＋ B-05-15 分母修正 ＋ A04-01 归属口径 ＋ B-06-01 统一口径 ＋ B-06-02 标杆标来源</div></div>
+<div class="item"><div class="no">4</div><div class="tx"><b>阈值与定价验算规程（先算后定）</b>：B-05-13 实际年化 ＋ B-05-14 盈亏门槛 ＋ B-01-01 早偿临界 ＋ B-01-02 返佣封顶与底线（外部校准：B-08-13/12）</div></div>
+<div class="item"><div class="no">5</div><div class="tx"><b>客群工程全链（分层→标签→投放→定价）</b>：A01-01 五阶段八层 ＋ A16-01 切分点＋交叉聚类 ＋ A17-01 四象限 ＋ A03-01 双模型 ＋ B-06-06 四层标签 ＋ B-06-03 补缺（收口：B-08-11 矩阵）</div></div>
+<div class="item"><div class="no">6</div><div class="tx"><b>线上转化＋消保一体化（转化与消保同批下发）</b>：A02-01 转化节点（阈值须重测）＋ B-03-02 前十大来电回溯＋未激活不付 CPS（外部校准：B-08-23）</div></div>
+</div>
+
+<div class="blk">
+<h3>③″ 四类口径陷阱（任何比较先过这张表）</h3>
+<div class="item"><div class="no">1</div><div class="tx"><b>分期手续费＝利息</b>：还原后「实际利息收入占比约 70%」，「非息收入占比高」类叙事须复核。</div></div>
+<div class="item"><div class="no">2</div><div class="tx"><b>发卡量 ≠ 流通卡 ≠ 流通户 ≠ 活卡</b>：四种口径混用会让同一判断差出数倍。</div></div>
+<div class="item"><div class="no">3</div><div class="tx"><b>人均分母</b>：全国口径 0.39 张 vs 20–59 岁城镇 0.95 张，换分母必须明示。</div></div>
+<div class="item"><div class="no">4</div><div class="tx"><b>「实动卡均交易」无公开定义</b>：引用外部数据前先核对口径与时点。</div></div>
+</div>
+
+<div class="blk">
+<h3>④ 证据独立性警示（引用前必读）</h3>
+<div class="item"><div class="no">1</div><div class="tx"><b>B05 同源</b>：B05 被第一、三层各提取一次，同一引文不得计为两条独立证据。</div></div>
+<div class="item"><div class="no">2</div><div class="tx"><b>「中美对标」D1 同源</b>：B05 与 B08 立场相反却同用「对标美国→还有 N 倍空间」，只说明该推论工具好用，不构成独立验证；并列引用应删除。</div></div>
+<div class="item"><div class="no">3</div><div class="tx"><b>阿蒙森是平台口径</b>：美团侧经营数据与行内自营口径不可直接换算，引用须带「平台视角」标注。</div></div>
+<div class="item"><div class="no">4</div><div class="tx"><b>B08 是商务材料</b>：其对区域银行劣势的描述，可信度高于其对平台自身优势的描述（含 2018-05 合作诉求）。</div></div>
+</div>
+
+<div class="blk">
+<h3>⑤ 四条采信建议（bank-09 提出，报告全部采纳）</h3>
+<div class="item"><div class="no">1</div><div class="tx"><b>意愿抵触是真问题</b>——直销队伍已基本放弃分期营销；只发文件不给收益＝空转，机制上配正负分同表。</div></div>
+<div class="item"><div class="no">2</div><div class="tx"><b>必须加再逾期监测</b>——协商还款再逾期已超首次进入不良金额；放宽政策须同时设监测与回收上限。</div></div>
+<div class="item"><div class="no">3</div><div class="tx"><b>用外部流量，不用外部规则</b>——客户、数据、账户、定价规则留在行内，写进合作管理办法。</div></div>
+<div class="item"><div class="no">4</div><div class="tx"><b>员工违规是外部风险的放大器</b>——话术培训与考核同批下发，绑定违约金承诺红线。</div></div>
+</div>
+</section>
+
+<section id="tables">
+<h2>81 条方法论速查表<span class="en">按层分表 · 表头吸顶 · 迁移性＝综合排序（完整版 6.4）</span></h2>
+<p class="tnote">本层回答「别人是怎么分析的」：阿蒙森给客户级操作方法（实验、分层、模型、复盘），B05 给行业级推导与口径纪律。</p><h3>第一层｜材料自带的分析方法论（阿蒙森 A 系列＋天风 B05 研究方法）<span class="cnt">25 条</span></h3>
+<div class="twrap"><table><thead><tr><th class="c-id">编号</th><th>方法名</th><th>一句话要点</th><th class="c-src">出处</th><th class="c-mig">迁移性</th></tr></thead><tbody>
+<tr><td class="c-id">A01-01</td><td class="c-name" title="客户生命周期五阶段 × 八层级分层法">客户生命周期五阶段 × 八层级分层法</td><td class="c-sum" title="条目级初判：高。五阶段＋双轴（MOT×分客群）骨架与平台无关，可直接套用到行内客户经营的策略地图；但 8 层的具体切分点必须用行内自身行为数据重算，不能照搬（照搬会把平台场景份额当成客户价值）。">五阶段×八层生命周期分层：支付心智＋经营价值定层，各层对齐经营目标</td><td class="c-src" title="A01 阿蒙森洞察-2022年第1期.pdf，PDF页码 4–5（目录与核心摘要）、PDF页码 5–7（分层方法论与策略表）">A01·22-1期 P4–5</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">A01-02</td><td class="c-name" title="vintage 曲线定分层切分点">vintage 曲线定分层切分点</td><td class="c-sum" title="条目级初判：高。vintage 是信用卡行业通行语言，行内账龄数据即得；且它同时解决&quot;分层切分点&quot;和&quot;权益期后承接&quot;两个问题。">vintage 曲线找斜率突变点：突变点即阶段分界，也是经营承接窗口</td><td class="c-src" title="A01 阿蒙森洞察-2022年第1期.pdf，PDF页码5（渗透率 vintage）、PDF页码5 脚注（M0–M6+ 定义）">A01·22-1期 P5</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">A11-01</td><td class="c-name" title="STP 三段式（细分→目标→定位）选客群">STP 三段式（细分→目标→定位）选客群</td><td class="c-sum" title="条目级初判：高（框架）／中（参数）。三段式与 Hunter/Farmer 判别逻辑可整段迁移；但利润口径公式里的资金成本（4.0%）、NCL 折算方式必须换成本行口径重算，不可直接套用 2021 年平台参数。">STP 三段选客群：细分维度须触点前可识别，按价值而非规模选目标</td><td class="c-src" title="A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码2–3（STP 引言与理论释义图）、PDF页码4–7（六档细分与 Targeting / Positioning）">A11·21-3期 P2–3</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">A11-02</td><td class="c-name" title="分层维度的年度迭代法">分层维度的年度迭代法</td><td class="c-sum" title="条目级初判：中。&quot;随业务阶段换维度&quot;的元规则有价值，但落地依赖行内是否有能力同时维护两套标签；建议一次只换一个维度并保留对照期。">分层维度随业务阶段滚动重检：换维须锁定切换时点并保留对照期</td><td class="c-src" title="A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码3">A11·21-3期 P3</td><td class="c-mig"><span class="bdg na" title="中。&quot;随业务阶段换维度&quot;的元规则有价值，但落地依赖行内是否有能力同时维护两套标签；建议一次只换一个维度并保留对照期。">—</span></td></tr>
+<tr><td class="c-id">A01-03</td><td class="c-name" title="大促活动效果评估：PSM-DID 与简化平行世界">大促活动效果评估：PSM-DID 与简化平行世界</td><td class="c-sum" title="条目级初判：高。行内同样大量存在&quot;全量短信/权益活动无对照组&quot;的场景；且方法自带&quot;科学版/可复现版&quot;两档，可按分析资源择一，关键在于把口径写进分析模板（渗透率、增量金额、ROI 三条定义）。">无对照组活动估增量：PSM-DID 科学版／简化平行世界可复现版，两档任选</td><td class="c-src" title="A01 阿蒙森洞察-2022年第1期.pdf，PDF页码9（方法论述与口径定义）、PDF页码9–10（实例）">A01·22-1期 P9</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">A01-04</td><td class="c-name" title="活动效果按活动定位分层评价">活动效果按活动定位分层评价</td><td class="c-sum" title="条目级初判：高。这是一条低成本、防自欺的规则，可直接写入行内活动立项模板：立项时先填&quot;活动定位→主指标→口径&quot;三栏。">活动四分类（品牌/促活/拉交易/拉分期）：定位决定主指标，防口径错配自欺</td><td class="c-src" title="A01 阿蒙森洞察-2022年第1期.pdf，PDF页码8–9；A05 阿蒙森洞察-2022年第5期.pdf，PDF页码7；A06 阿蒙森洞察-2022年第7期.pdf，PDF页码8；A12 阿蒙森洞察报告-2021年第4期.pdf，PDF页码9">A01·22-1期 P8–9</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">A02-01</td><td class="c-name" title="活动前曝光-转化结构分析法（定关键时间节点）">活动前曝光-转化结构分析法（定关键时间节点）</td><td class="c-sum" title="条目级初判：中。方法本身通用（行内线上申卡/激活页同样有埋点），但 3 秒/20 秒/2 次这些具体阈值不可迁移，必须重测。">用曝光次数/停留时长对转化曲线求导找拐点，定投放关键时间节点</td><td class="c-src" title="A01 阿蒙森洞察-2022年第1期.pdf，PDF页码10（曝光次数）；A02 阿蒙森洞察-2022年第2期.pdf，PDF页码8–9（停留时长）">A01·22-1期 P10</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+<tr><td class="c-id">A06-01</td><td class="c-name" title="单变量 A/B 实验 + 分客群响应拆解">单变量 A/B 实验 + 分客群响应拆解</td><td class="c-sum" title="条目级初判：高。双指标判读规则是防止&quot;用单一指标自证成功&quot;的直接工具，行内做权益/头图/话术测试可直接套用。">单变量 A/B＋双指标判读：相对提升与结构占比并读，防单一指标自证</td><td class="c-src" title="A06 阿蒙森洞察-2022年第7期.pdf，PDF页码4–7；A02 阿蒙森洞察-2022年第2期.pdf，PDF页码8–11">A06·22-7期 P4–7</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">A02-02</td><td class="c-name" title="分渠道分客群 TGI 定位经营阵地">分渠道分客群 TGI 定位经营阵地</td><td class="c-sum" title="条目级初判：高。行内分渠道/分场景/分产品条线的资源分配可直接用；必须同时报&quot;绝对规模＋TGI&quot;两个数。">分渠道分客群算 TGI（&amp;gt;100 强于大盘），向浓度最高阵地倾斜资源</td><td class="c-src" title="A11 阿蒙森洞察报告-2021年第3期.pdf，PDF页码5–6；A02 PDF页码14；A14 阿蒙森洞察报告-2021年第6期.pdf，PDF页码4–7">A11·21-3期 P5–6</td><td class="c-mig"><span class="bdg na" title="高。行内分渠道/分场景/分产品条线的资源分配可直接用；必须同时报&quot;绝对规模＋TGI&quot;两个数。">—</span></td></tr>
+<tr><td class="c-id">A16-01</td><td class="c-name" title="客户画像的聚类要素法（切分点＋交叉）">客户画像的聚类要素法（切分点＋交叉）</td><td class="c-sum" title="条目级初判：高。&quot;单因素→强特征→切分点＋交叉聚类&quot;可低成本落地；但必须区分&quot;渗透率高的客群&quot;与&quot;实际获批的客群&quot;两层结构，否则会把被风险策略筛掉的人群当经营目标。">单因素扫描选出两个强区分特征，写明切分点数值再交叉聚类</td><td class="c-src" title="A13 阿蒙森洞察报告-2021年第5期.pdf，PDF页码9–10；A16 阿蒙森洞察报告-2021年第8期.pdf，PDF页码7–8；A09 阿蒙森洞察报告-2021年第1期.pdf，PDF页码4–5">A13·21-5期 P9–10</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">A09-01</td><td class="c-name" title="经营维度的类决策树单因素分析法">经营维度的类决策树单因素分析法</td><td class="c-sum" title="条目级初判：中。方法骨架（列举→筛选→拆层→标注条件性）可迁移；但绝对阈值必须用行内数据重算，且排序≠效应量。">广列因素→相关性筛选→逐层找分水岭值；该期自陈绝对值模糊，仅排序为真</td><td class="c-src" title="A09 阿蒙森洞察报告-2021年第1期.pdf，PDF页码4–5">A09·21-1期 P4–5</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+<tr><td class="c-id">A17-01</td><td class="c-name" title="四象限资源分配法（意愿 × 营销响应）">四象限资源分配法（意愿 × 营销响应）</td><td class="c-sum" title="条目级初判：高。符合&quot;降本增效&quot;导向，尤其适用于电销/外呼资源有限的行内场景；前提是把&quot;减少打扰&quot;作为正当目标写入考核，否则执行不下去。">意愿×营销响应四象限定触达：摇摆户加投、无意愿户停止打扰降成本</td><td class="c-src" title="A17 阿蒙森洞察报告-2021年第9期.pdf，PDF页码9–10">A17·21-9期 P9–10</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">A03-01</td><td class="c-name" title="算法模型替代固定阈值：睡眠倾向分＋价格敏感度双模型">算法模型替代固定阈值：睡眠倾向分＋价格敏感度双模型</td><td class="c-sum" title="条目级初判：中–高。双模型拆解＋成本约束最优化＋8:1:1 样本机制可直接迁移；对算法能力有门槛，行内若无建模团队，可先落&quot;8:1:1 样本机制＋分档阈值&quot;的简版，但要如实标注为简版。">睡眠倾向分＋价格敏感度双模型：把促活拆成「促谁」与「促多少」分别求解</td><td class="c-src" title="A03 阿蒙森洞察-2022年第3期.pdf，PDF页码15–17">A03·22-3期 P15+</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">A03-02</td><td class="c-name" title="睡眠户促活三阶段演进复盘">睡眠户促活三阶段演进复盘</td><td class="c-sum" title="条目级初判：中。&quot;按能力形态而非时间分期&quot;的复盘骨架可迁移；但阶段归因必须配同期对照，否则变成叙事而非论证。">按能力形态（探测/人工/算法）划三段复盘专项，逐段归因效果来源</td><td class="c-src" title="A03 阿蒙森洞察-2022年第3期.pdf，PDF页码15、PDF页码16–17">A03·22-3期 P15</td><td class="c-mig"><span class="bdg na" title="中。&quot;按能力形态而非时间分期&quot;的复盘骨架可迁移；但阶段归因必须配同期对照，否则变成叙事而非论证。">—</span></td></tr>
+<tr><td class="c-id">A03-03</td><td class="c-name" title="NPS 三层问卷诊断法">NPS 三层问卷诊断法</td><td class="c-sum" title="条目级初判：高。三层问卷结构＋双指数交叉可直接复用到行内产品体验诊断；但须报告本行独立数据，不能引用跨行平均值。">NPS 三层问卷：分类打分→主动提及归因→追问行动方向，双指数定位短板</td><td class="c-src" title="A03 阿蒙森洞察-2022年第3期.pdf，PDF页码8–10">A03·22-3期 P8–10</td><td class="c-mig"><span class="bdg na" title="高。三层问卷结构＋双指数交叉可直接复用到行内产品体验诊断；但须报告本行独立数据，不能引用跨行平均值。">—</span></td></tr>
+<tr><td class="c-id">A04-01</td><td class="c-name" title="分环节漏斗拆解与团队责任切分">分环节漏斗拆解与团队责任切分</td><td class="c-sum" title="条目级初判：高。跷跷板＋端到端结果指标是线上获客的通用治理逻辑；指标分团队口径表可直接改写为行内版本。">前端跷跷板失真改用端到端指标，按发卡账龄拆段归责到团队</td><td class="c-src" title="A04 阿蒙森洞察-2022年第4期.pdf，PDF页码10–12">A04·22-4期 P10+</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">A10-01</td><td class="c-name" title="经营动作杠杆量化：单位提升 × 覆盖面">经营动作杠杆量化：单位提升 × 覆盖面</td><td class="c-sum" title="条目级初判：高。这是&quot;把经营计划写成可验收过程指标&quot;的通用工具；落地时须行内自测单位增量，且对多动作叠加做去重处理。">流通卡卡均交易三因素分解；每动作＝单位净提升×覆盖面，用于排序</td><td class="c-src" title="A10 阿蒙森洞察报告-2021年第2期.pdf，PDF页码1–3（PDF页码8–10）">A10·21-2期 P1–3</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">A03-04</td><td class="c-name" title="跨界对标的方法（亚马逊联名卡案例）">跨界对标的方法（亚马逊联名卡案例）</td><td class="c-sum" title="条目级初判：中。三段式骨架与&quot;先归一化再比较＋标注不可比项&quot;的纪律价值高；但跨境数据可得性差，落地更多是对标方法训练而非直接取数。">跨界对标三段式：先做量纲归一化再比较，显式标注不可比项</td><td class="c-src" title="A03 阿蒙森洞察-2022年第3期.pdf，PDF页码5–7">A03·22-3期 P5–7</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+<tr><td class="c-id">B-05-12</td><td class="c-name" title="&quot;收入结构解构 + 口径还原&quot;分析法">&quot;收入结构解构 + 口径还原&quot;分析法</td><td class="c-sum" title="条目级初判：高。这是本批材料中对&quot;口径先统一，再谈比较&quot;最直接的示范：先建科目-实质映射，再还原，最后才对标；行内做同业比较时的收入结构分析可照此三步走。">建「会计科目↔经济实质」映射：分期手续费还原为利息，再谈结构比较</td><td class="c-src" title="B05 信用卡大有可为，渐成零售业务主力（天风证券，2018-06-03）.pdf，PDF页码 6–9（表1、图4、图6、图9 相关段落）">B05·18 P6–9</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-05-13</td><td class="c-name" title="分期实际年化利率的现金流测算法">分期实际年化利率的现金流测算法</td><td class="c-sum" title="条目级初判：高。行内做分期定价、以量补价测算、竞对价格对标时，必须用实际年化而非名义费率，否则会系统性低估成本。">由 pv/pmt/期数解实际利率：名义 0.7%×12=8.4%，实际年化 14.26%</td><td class="c-src" title="B05，PDF页码9（&quot;分期收入，筑梦新蓝海&quot;节）">B05·18 P9</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-05-14</td><td class="c-name" title="&quot;盈亏平衡点&quot;阈值判断法">&quot;盈亏平衡点&quot;阈值判断法</td><td class="c-sum" title="条目级初判：中。方法价值在于&quot;把规模阈值拆成经营基础/收支平衡/盈利三档并标注口径&quot;；具体数字必须用行内自身成本结构重算，不能引用 300 万张这一历史经验值。">三档规模阈值（150/200–250/300 万张）判盈亏阶段，引用须标口径并重算</td><td class="c-src" title="B05，PDF页码6–7、PDF页码12（&quot;信用卡业务支出，考验综合经营能力&quot;节）">B05·18 P6–7</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-05-15</td><td class="c-name" title="国际对标法的口径处理（人均持有量）">国际对标法的口径处理（人均持有量）</td><td class="c-sum" title="条目级初判：高。方法纪律&quot;报人均指标必须同时报分母&quot;在行内做同业/跨区域对标时同样关键（本专家一贯纪律：机构范围口径统一后再比较）。">人均持有量换目标客群分母：全国 0.39 张→20–59 岁城镇 0.95 张</td><td class="c-src" title="B05，PDF页码12–17">B05·18 P12–17</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">A03-05</td><td class="c-name" title="自下而上市场空间测算法">自下而上市场空间测算法</td><td class="c-sum" title="条目级初判：中。适合做&quot;增长空间&quot;的粗略合理性检验；不适合作为经营目标的直接依据（输入参数多为外部估算）。">自下而上参数化测算市场空间：只作增长合理性检验，不作经营目标依据</td><td class="c-src" title="注：该方法出自 **A03**（阿蒙森），非 B05；列于此处是与 B05 的行业测算形成**两种测算范式对照**">A03 P</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+<tr><td class="c-id">B-05-16</td><td class="c-name" title="单一公司深钻拆解（招行/中信/浦发三案例）">单一公司深钻拆解（招行/中信/浦发三案例）</td><td class="c-sum" title="条目级初判：高。&quot;按模式差异选代表 + 同组比率横比 + 由比率反推经营模式 + 标注粗略口径&quot;是一套完整的同业对标纪律；行内对标时应先做机构范围/口径还原，再解读差异（与本专家&quot;口径先统一，再谈比较&quot;一致）。">按路径差异（非规模）选代表行，同组比率横比、由比率反推模式</td><td class="c-src" title="B05，PDF页码19–22（&quot;4.3 信用卡收入贡献有多大？—细看招行、中信、浦发&quot;与投资建议节）">B05·18 P19–22</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-05-17</td><td class="c-name" title="研究假设的前置条件与风险提示写法">研究假设的前置条件与风险提示写法</td><td class="c-sum" title="条目级初判：高（结构）／低（形式）。行内复盘汇报可直接用&quot;结论—前提—风险&quot;三段；评级与免责体系不适用。">结论—前提—风险三段式：前提须是可核验事实链，风险提示不搬卖方体例</td><td class="c-src" title="B05，PDF页码21–22（&quot;5. 投资建议&quot;与&quot;6. 风险提示&quot;）">B05·18 P21–22</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+</tbody></table></div>
+<p class="tnote">本层是行内打法的机制设计：指标分解、定价实测、返佣与清退、催收拆解、费用与消保——多为「发文＋台账」即可落地的动作。</p><h3>第二层｜业务打法方法论（行方材料）<span class="cnt">18 条</span></h3>
+<div class="twrap"><table><thead><tr><th class="c-id">编号</th><th>方法名</th><th>一句话要点</th><th class="c-src">出处</th><th class="c-mig">迁移性</th></tr></thead><tbody>
+<tr><td class="c-id">B-06-01</td><td class="c-name" title="分期核心指标分解法（过程指标优先）">分期核心指标分解法（过程指标优先）</td><td class="c-sum" title="条目级初判：高。这套指标树可直接作为当前分期业务 KPI 分解模板，无需改造系统，只需统一口径。">结果指标分期余额、过程指标成交金额，逐级拆渗透率×户均，加留存修正</td><td class="c-src" title="B06《江苏银行信用卡线上分期业务规划F.pptx》幻灯片 20">B06·21 幻20</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-06-02</td><td class="c-name" title="同业双基准对标找缺口法">同业双基准对标找缺口法</td><td class="c-sum" title="条目级初判：高。同池对标是找位次最快的方法，且可批量套用到汽车分期、装修分期等所有合作品种。">行业标杆＋同池基准双对标，用结构表定位缺口性质：缺产品还是缺产能</td><td class="c-src" title="B06 幻灯片 15、16、17">B06·21 幻15</td><td class="c-mig"><span class="bdg na" title="高。同池对标是找位次最快的方法，且可批量套用到汽车分期、装修分期等所有合作品种。">—</span></td></tr>
+<tr><td class="c-id">B-06-03</td><td class="c-name" title="产品-渠道-客户三位一体补缺法">产品-渠道-客户三位一体补缺法</td><td class="c-sum" title="条目级初判：高。可抽成&quot;补缺十二问&quot;标准清单，各分行/各品种逐项打勾。">补产品、扩客量、补渠道三位一体补缺，每项举措附责任与完成时点</td><td class="c-src" title="B06 幻灯片 23（总体思路）、24（举措1）、27（举措2-3/8）、28（举措3）、29（举措4）、32（举措7）、36（举措10）">B06·21 幻23</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-06-04</td><td class="c-name" title="差异化定价 A/B 实测与客群切分法">差异化定价 A/B 实测与客群切分法</td><td class="c-sum" title="条目级初判：高。这是最典型的&quot;先测再推&quot;样板，可要求每个分行报一版定价测试方案。">先 4 周小范围差异化定价实测，读渗透率/金额/收入四件套，有效再固化</td><td class="c-src" title="B06 幻灯片 30（举措5）">B06·21 幻30</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-06-05</td><td class="c-name" title="AI 电销与电销阶梯定价法">AI 电销与电销阶梯定价法</td><td class="c-sum" title="条目级初判：高。&quot;按结果阶梯定价&quot;原则上可复制到所有外包渠道（电销、催收、引流）。">AI 电销低成本试点，用接通率/转化率/成本三项对比，按结果阶梯定价</td><td class="c-src" title="B06 幻灯片 27（举措2-3）、33（举措8）">B06·21 幻27</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-06-06</td><td class="c-name" title="分期客户四层标签精准触达法">分期客户四层标签精准触达法</td><td class="c-sum" title="条目级初判：中高。四层结构可作标准标签框架，但落地依赖数据平台，需大数据部排期。">资格/高价值转化/差异化定价/资产行为四层标签，分层决定触达与定价</td><td class="c-src" title="B06 幻灯片 32（举措7）">B06·21 幻32</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-06-07</td><td class="c-name" title="&quot;达标门槛&quot;式活动设计法">&quot;达标门槛&quot;式活动设计法</td><td class="c-sum" title="条目级初判：高。这是费用使用率的标准做法，可直接写进费用管理办法。">达标门槛式活动：达标才给权益，把「发钱」变成拉高户均成交的杠杆</td><td class="c-src" title="B06 幻灯片 31（举措6）；B03 幻灯片 20">B06·21 幻31</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-07-01</td><td class="c-name" title="高返政策下的早偿监测指标法">高返政策下的早偿监测指标法</td><td class="c-sum" title="条目级初判：高。这是可批量复制的监测模板，汽车分期、装修分期、车位分期通用。">mob3/6/12 固定窗口分层监测早偿，逐月看拐点；观察期不足须诚实标注</td><td class="c-src" title="B07《汽车分期业务经营分析会.pptx》幻灯片 9">B07·24 幻9</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-01-01</td><td class="c-name" title="早偿率阈值与商户清退分层法">早偿率阈值与商户清退分层法</td><td class="c-sum" title="条目级初判：高。这是&quot;阈值—协议—通报—清退&quot;闭环最完整的样板，可直接改写为其他品种的管控模板。">早偿阈值分级管控（≤5% 合作/5–10% 换签/&amp;gt;10% 清退），写进协议挂通报</td><td class="c-src" title="B01 幻灯片 3、幻灯片 6；B07 幻灯片 17">B01·25 幻3</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-01-02</td><td class="c-name" title="返佣标准与差额底线法">返佣标准与差额底线法</td><td class="c-sum" title="条目级初判：高。&quot;封顶 + 息差底线&quot;是最容易被忽略却最关键的一条，建议直接制度化。">返佣合计封顶＋息差底线双下（≤14%、差额≥10%），防以返佣换规模</td><td class="c-src" title="B01 幻灯片 3、5">B01·25 幻3</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-07-02</td><td class="c-name" title="返佣摊销与追回联动法">返佣摊销与追回联动法</td><td class="c-sum" title="条目级初判：高。这套&quot;摊销 + 抵扣 + 对账日调节&quot;是最容易被外行忽略的操作层核心，建议原样成文。">佣金按期数等额摊销，提前还款当期一次性显性化；追回条款＋系统留痕</td><td class="c-src" title="B07 幻灯片 15；B01 幻灯片 6；B01 幻灯片 7">B07·24 幻15</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-01-03</td><td class="c-name" title="追回率挂绩效负分法（考核绑定）">追回率挂绩效负分法（考核绑定）</td><td class="c-sum" title="条目级初判：高。这是&quot;损失内化&quot;最直接的机制，建议各品种统一按此结构建负分表。">追回率挂绩效负分：个人与机构双挂，正负分同表（当期/半年各 50%）</td><td class="c-src" title="B01 幻灯片 7；B01 幻灯片 4">B01·25 幻7</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-02-01</td><td class="c-name" title="追回目标三段拆解法">追回目标三段拆解法</td><td class="c-sum" title="条目级初判：高。三段拆解法可原样套用到消费贷、经营贷的催收目标管理。">沿催收链条设入催/逾期/不良三段降损目标，各配目标＋手段＋测算</td><td class="c-src" title="B02 幻灯片 10、11、12">B02·24 幻10</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-02-02</td><td class="c-name" title="驻场诊断式流程攻坚法">驻场诊断式流程攻坚法</td><td class="c-sum" title="条目级初判：高。可标准化为&quot;驻场 2 周 + 全节点清单 + 单日指标对比&quot;的攻坚模板。">驻场诊断式攻坚：不打报告改流程，逐环节找堵点，用回款数据收口</td><td class="c-src" title="B02 幻灯片 12">B02·24 幻12</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-02-03</td><td class="c-name" title="费用压降三分类法">费用压降三分类法</td><td class="c-sum" title="条目级初判：高。三分类 + &quot;数字卡替代实体卡&quot;是当下最通用的压降路径。">费用三分类：一次性可收回、刚性减压（调优准入）、运营细抠</td><td class="c-src" title="B02 幻灯片 14、15；B03 幻灯片 24">B02·24 幻14</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-02-04</td><td class="c-name" title="客户生命周期价值论证法">客户生命周期价值论证法</td><td class="c-sum" title="条目级初判：中高。口径可复用，但需统一&quot;纯新客户/引流/转化&quot;的统计口径，否则容易被质疑。">客户生命周期价值论证：新增客户链条＋双卡对比（AUM3 倍、收入 9 倍）</td><td class="c-src" title="B02 幻灯片 19、20；B03 幻灯片 13；B04 工作表1 行5">B02·24 幻19</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-03-01</td><td class="c-name" title="额度动态管理与资本成本管控法">额度动态管理与资本成本管控法</td><td class="c-sum" title="条目级初判：中。方向明确但落地依赖额度系统与策略参数，需数字风控部排期。">月中调额＋不活跃客户降额，运用资本计量规则压降资本占用成本</td><td class="c-src" title="B03 幻灯片 24">B03·23 幻24</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-03-02</td><td class="c-name" title="前十大来电压降法（消保前置）">前十大来电压降法（消保前置）</td><td class="c-sum" title="条目级初判：中高。&quot;前十大来电回溯 + 未激活不付 CPS&quot;是可批量复制的低成本打法。">前十大来电回溯归因；发卡 T+3 主动核实、未激活不付 CPS，消保前置</td><td class="c-src" title="B03 幻灯片 26">B03·23 幻26</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+</tbody></table></div>
+<p class="tnote">本层是外部视角的评价框架与校准：B05 行业推导（1–11）＋B08 平台视角（12–38）；B-08-27 为立场自证元规则。</p><h3>第三层｜外部视角评价框架（B05 行业研究＋B08 彭千）<span class="cnt">38 条</span></h3>
+<div class="twrap"><table><thead><tr><th class="c-id">编号</th><th>方法名</th><th>一句话要点</th><th class="c-src">出处</th><th class="c-mig">迁移性</th></tr></thead><tbody>
+<tr><td class="c-id">B-05-01</td><td class="c-name" title="券商专题的&quot;叙事—拆利—验证—评级&quot;四段式结构">券商专题的&quot;叙事—拆利—验证—评级&quot;四段式结构</td><td class="c-sum" title="条目级初判：高（作为结构模板），中（作为结论）——四段式可用我方内部分析的骨架，但结论须剥离荐股立场。">券商专题四段式：叙事—拆利—验证—评级；引用时须自证其卖方立场</td><td class="c-src" title="B05 第 1–3 页（摘要与目录）、第 23 页（评级体系与免责声明）">B05·18 P1–3</td><td class="c-mig"><span class="bdg na" title="高（作为结构模板），中（作为结论）——四段式可用我方内部分析的骨架，但结论须剥离荐股立场。">—</span></td></tr>
+<tr><td class="c-id">B-05-02</td><td class="c-name" title="收入结构分解 + &quot;分期手续费还原为利息&quot;的口径修正">收入结构分解 + &quot;分期手续费还原为利息&quot;的口径修正</td><td class="c-sum" title="条目级初判：高——凡出现&quot;非息收入占比高&quot;的自我叙事，都应按此口径复核一遍。">收入全项分解＋口径修正：分期手续费还原为利息后实际利息占比约 70%</td><td class="c-src" title="B05 第 7–8 页">B05·18 P7–8</td><td class="c-mig"><span class="bdg na" title="高——凡出现&quot;非息收入占比高&quot;的自我叙事，都应按此口径复核一遍。">—</span></td></tr>
+<tr><td class="c-id">B-05-03</td><td class="c-name" title="分期实际年化利率测算法">分期实际年化利率测算法</td><td class="c-sum" title="条目级初判：高——可直接建表复算我方各类分期产品的实际年化，作为定价与话术合规的双重依据。">分期实际年化测算法与可复算算例：6000 元/0.7%/6 期→年化 14.26%</td><td class="c-src" title="B05 第 9 页（循环利息对照句见第 8 页）">B05·18 P9</td><td class="c-mig"><span class="bdg na" title="高——可直接建表复算我方各类分期产品的实际年化，作为定价与话术合规的双重依据。">—</span></td></tr>
+<tr><td class="c-id">B-05-04</td><td class="c-name" title="笔数与收入背离的交叉指标">笔数与收入背离的交叉指标</td><td class="c-sum" title="条目级初判：高——极低成本、极高信息量，建议列为常规报表。">分期笔数占比×收入占比并排：账单分期占 6 成笔数，大额分期贡献 4 成收入</td><td class="c-src" title="B05 第 9–10 页">B05·18 P9–10</td><td class="c-mig"><span class="bdg na" title="高——极低成本、极高信息量，建议列为常规报表。">—</span></td></tr>
+<tr><td class="c-id">B-05-05</td><td class="c-name" title="盈亏平衡点的门槛规则">盈亏平衡点的门槛规则</td><td class="c-sum" title="条目级初判：中——作为&quot;规模门槛&quot;的历史锚可用，但必须重算我方口径的门槛（用我方获客成本与资产收益率反推）。">盈亏平衡三门槛：150 万活卡为基础、200–250 万平衡、&amp;gt;300 万可能盈利</td><td class="c-src" title="B05 第 6 页、第 12 页、第 21 页">B05·18 P6</td><td class="c-mig"><span class="bdg na" title="中——作为&quot;规模门槛&quot;的历史锚可用，但必须重算我方口径的门槛（用我方获客成本与资产收益率反推）。">—</span></td></tr>
+<tr><td class="c-id">B-05-06</td><td class="c-name" title="成本四分法">成本四分法</td><td class="c-sum" title="条目级初判：高——建议按四分法重建我方信用卡业务的成本视图，并显式采用 FTP 判据。">支出四分法：运营/营销/资金（FTP 判据：收益率高于 FTP 即正利差）/风险</td><td class="c-src" title="B05 第 12 页">B05·18 P12</td><td class="c-mig"><span class="bdg na" title="高——建议按四分法重建我方信用卡业务的成本视图，并显式采用 FTP 判据。">—</span></td></tr>
+<tr><td class="c-id">B-05-07</td><td class="c-name" title="分母修正法（人均持卡量：全国 vs 目标客群）">分母修正法（人均持卡量：全国 vs 目标客群）</td><td class="c-sum" title="条目级初判：高（作为口径审查动作），数值仅作历史样本。">人均持卡分母修正：同一指标全国与目标客群两口径差 2.4 倍</td><td class="c-src" title="B05 第 12–13 页（0.95 张一句见第 12 页）">B05·18 P12–13</td><td class="c-mig"><span class="bdg na" title="高（作为口径审查动作），数值仅作历史样本。">—</span></td></tr>
+<tr><td class="c-id">B-05-08</td><td class="c-name" title="中美差距对标法（差距对标的标准做法）">中美差距对标法（差距对标的标准做法）</td><td class="c-sum" title="条目级初判：高（作为对标方法）／低（作为增速判断）——方法可复用，空间结论不可引用（见第 7 节校准点 1）。">四层次同口径中美对照：贷款占比/单行占比/人均持卡/收入结构</td><td class="c-src" title="B05 第 15–17 页（花旗/摩根大通对照句见第 16 页）">B05·18 P15–17</td><td class="c-mig"><span class="bdg na" title="高（作为对标方法）／低（作为增速判断）——方法可复用，空间结论不可引用（见第 7 节校准点 1）。">—</span></td></tr>
+<tr><td class="c-id">B-05-09</td><td class="c-name" title="&quot;首次盈利年份&quot;证据链构建法">&quot;首次盈利年份&quot;证据链构建法</td><td class="c-sum" title="条目级初判：高——&quot;用首次盈利年份拼行业成熟度 + 找同类型机构的稀缺可比样本&quot;可直接复用。">首次盈利年份证据链：公开报道逐家拼接，回答行业何时开始赚钱</td><td class="c-src" title="B05 第 7 页">B05·18 P7</td><td class="c-mig"><span class="bdg na" title="高——&quot;用首次盈利年份拼行业成熟度 + 找同类型机构的稀缺可比样本&quot;可直接复用。">—</span></td></tr>
+<tr><td class="c-id">B-05-10</td><td class="c-name" title="中小银行的&quot;分期差异化定价&quot;弯道超车判断 + 回佣&quot;价权不在银行&quot;">中小银行的&quot;分期差异化定价&quot;弯道超车判断 + 回佣&quot;价权不在银行&quot;</td><td class="c-sum" title="条目级初判：中——&quot;用定价而非规模切入&quot;值得作为选项之一，但必须先用 B-08-12 的三类损益验算再决定。">中小银行以差异化分期定价弯道超车；商户回佣价权不在银行</td><td class="c-src" title="B05 第 10 页、第 10–11 页">B05·18 P10</td><td class="c-mig"><span class="bdg na" title="中——&quot;用定价而非规模切入&quot;值得作为选项之一，但必须先用 B-08-12 的三类损益验算再决定。">—</span></td></tr>
+<tr><td class="c-id">B-05-11</td><td class="c-name" title="战略地位指标体系（信用卡对银行意味着什么）">战略地位指标体系（信用卡对银行意味着什么）</td><td class="c-sum" title="条目级初判：高——建议直接采用这 6 个指标做成我方的&quot;信用卡战略地位仪表盘&quot;，并标注口径统一规则。">战略地位六指标：收入/营收、收入/零售收入、卡均收入、收益率等</td><td class="c-src" title="B05 第 18–21 页（24.2%/49.4% 对照句另见第 1 页摘要；收益率估算法见第 20 页）">B05·18 P18–21</td><td class="c-mig"><span class="bdg na" title="高——建议直接采用这 6 个指标做成我方的&quot;信用卡战略地位仪表盘&quot;，并标注口径统一规则。">—</span></td></tr>
+<tr><td class="c-id">B-08-01</td><td class="c-name" title="零售银行的&quot;存贷汇&quot;边界定义 + 四阶段分期框架">零售银行的&quot;存贷汇&quot;边界定义 + 四阶段分期框架</td><td class="c-sum" title="条目级初判：中——&quot;用代表产品锚定阶段&quot;这一做法可迁移（我方可自建第五期并给出证据），四阶段的具体年份与命名属历史样本，只能原样引用。">存贷汇三格定业务边界，四时代分期（储蓄/卡/财富/互联网金融）看演进</td><td class="c-src" title="B08 幻灯片 4–5">B08·18 幻4</td><td class="c-mig"><span class="bdg na" title="中——&quot;用代表产品锚定阶段&quot;这一做法可迁移（我方可自建第五期并给出证据），四阶段的具体年份与命名属历史样本，只能原样引用。">—</span></td></tr>
+<tr><td class="c-id">B-08-02</td><td class="c-name" title="招行&quot;履带战略&quot;式的能力跃迁框架">招行&quot;履带战略&quot;式的能力跃迁框架</td><td class="c-sum" title="条目级初判：高——机制可迁移：&quot;每一项能力都必须与当下正在发生的介质更替对齐；一旦该介质成为标配，就换下一节履带&quot;。">履带战略：每次只用一项能力形成差异化，吃到红利再换下一节履带</td><td class="c-src" title="B08 幻灯片 6–9">B08·18 幻6</td><td class="c-mig"><span class="bdg na" title="高——机制可迁移：&quot;每一项能力都必须与当下正在发生的介质更替对齐；一旦该介质成为标配，就换下一节履带&quot;。">—</span></td></tr>
+<tr><td class="c-id">B-08-03</td><td class="c-name" title="信用卡本质的&quot;四性&quot;定义法">信用卡本质的&quot;四性&quot;定义法</td><td class="c-sum" title="条目级初判：高——四性可直接作为&quot;信用卡对本行的战略价值&quot;标准提问框架，但必须逐性给出我方的证据，不能只引用属性名。">四性定义信用卡：普适性/盈利性/互动性/基础性，各对应一种战略价值</td><td class="c-src" title="B08 幻灯片 21、55">B08·18 幻21</td><td class="c-mig"><span class="bdg na" title="高——四性可直接作为&quot;信用卡对本行的战略价值&quot;标准提问框架，但必须逐性给出我方的证据，不能只引用属性名。">—</span></td></tr>
+<tr><td class="c-id">B-08-04</td><td class="c-name" title="信用卡＝&quot;个人金融入门级产品&quot;的客户生命周期阶梯">信用卡＝&quot;个人金融入门级产品&quot;的客户生命周期阶梯</td><td class="c-sum" title="条目级初判：中高——&quot;入口产品—生命周期交叉销售&quot;的提问方式可迁移，具体阶梯顺序需用我方客群数据替换。">信用卡是个人金融入门级产品：先有卡，后沿生命周期交叉销售</td><td class="c-src" title="B08 幻灯片 22（资料来源标注：汇丰银行）">B08·18 幻22</td><td class="c-mig"><span class="bdg na" title="中高——&quot;入口产品—生命周期交叉销售&quot;的提问方式可迁移，具体阶梯顺序需用我方客群数据替换。">—</span></td></tr>
+<tr><td class="c-id">B-08-05</td><td class="c-name" title="中国信用卡&quot;四时期 + 变异断代&quot;叙事">中国信用卡&quot;四时期 + 变异断代&quot;叙事</td><td class="c-sum" title="条目级初判：中——时期划分可作产业史坐标；&quot;变异&quot;判断宜作为待检验假设（例如用&quot;是否跳过某类客户的信贷教育&quot;来检验），不可当事实引用。">中国信用卡四时期断代，讲者自加判断：1985–2002 属「变异、扭曲」</td><td class="c-src" title="B08 幻灯片 23–24">B08·18 幻23</td><td class="c-mig"><span class="bdg na" title="中——时期划分可作产业史坐标；&quot;变异&quot;判断宜作为待检验假设（例如用&quot;是否跳过某类客户的信贷教育&quot;来检验），不可当事实引用。">—</span></td></tr>
+<tr><td class="c-id">B-08-06</td><td class="c-name" title="招行卡中心&quot;阶段—愿景—能力&quot;三层对齐">招行卡中心&quot;阶段—愿景—能力&quot;三层对齐</td><td class="c-sum" title="条目级初判：高——&quot;阶段—愿景—能力&quot;对齐结构可直接套用于我方信用卡业务的年度规划表述。">卡中心发展写成阶段—能力—愿景三层对齐，愿景一句可考核</td><td class="c-src" title="B08 幻灯片 25">B08·18 幻25</td><td class="c-mig"><span class="bdg na" title="高——&quot;阶段—愿景—能力&quot;对齐结构可直接套用于我方信用卡业务的年度规划表述。">—</span></td></tr>
+<tr><td class="c-id">B-08-07</td><td class="c-name" title="卡中心价值定位的&quot;动态重述法&quot;">卡中心价值定位的&quot;动态重述法&quot;</td><td class="c-sum" title="条目级初判：高——尤其适用于向行领导论证&quot;信用卡中心的定位&quot;这一类汇报场景。">卡中心价值定位动态重述：随环境在品牌/利润/流量入口间换表述</td><td class="c-src" title="B08 幻灯片 32">B08·18 幻32</td><td class="c-mig"><span class="bdg na" title="高——尤其适用于向行领导论证&quot;信用卡中心的定位&quot;这一类汇报场景。">—</span></td></tr>
+<tr><td class="c-id">B-08-08</td><td class="c-name" title="竞争策略三段递进 + 载体替换对照表">竞争策略三段递进 + 载体替换对照表</td><td class="c-sum" title="条目级初判：高——&quot;左列现状／右列目标&quot;的载体替换表是最好用的转译工具，可直接改造为我方版本并补上优先级列。">品牌→运营→技术三段递进；载体替换对照表逐项从模拟换到智能</td><td class="c-src" title="B08 幻灯片 33、34">B08·18 幻33</td><td class="c-mig"><span class="bdg na" title="高——&quot;左列现状／右列目标&quot;的载体替换表是最好用的转译工具，可直接改造为我方版本并补上优先级列。">—</span></td></tr>
+<tr><td class="c-id">B-08-09</td><td class="c-name" title="年度判断的&quot;可回测句&quot;写法 + 十年尺度竞争观">年度判断的&quot;可回测句&quot;写法 + 十年尺度竞争观</td><td class="c-sum" title="条目级初判：高——可直接借用&quot;年度判断写成三句可回测短句&quot;的汇报格式，但要补上我方版本的证伪条件与复盘时间点。">年度判断写成可回测短句并逐条打勾复盘；1 年与 10 年两套竞争视野</td><td class="c-src" title="B08 幻灯片 126、127、129">B08·18 幻126</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+<tr><td class="c-id">B-08-10</td><td class="c-name" title="消费金融的&quot;三类商业模式光谱&quot;">消费金融的&quot;三类商业模式光谱&quot;</td><td class="c-sum" title="条目级初判：高——&quot;按客户经营强度分光谱&quot;比&quot;按牌照分&quot;更有解释力，可用于我方判断合作方与竞品归属。">消费金融三类模式光谱：按金融属性强度×是否做客户经营排 A/B/C</td><td class="c-src" title="B08 幻灯片 38">B08·18 幻38</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+<tr><td class="c-id">B-08-11</td><td class="c-name" title="逐产品的&quot;六维 + 盈利期&quot;竞争矩阵">逐产品的&quot;六维 + 盈利期&quot;竞争矩阵</td><td class="c-sum" title="条目级初判：高——&quot;把盈利期作为竞争矩阵的收口维度&quot;是极好的提问方式：任何新产品都应先回答&quot;它的盈利期有多长、用什么摊销获客成本&quot;。">六维＋盈利期矩阵横比信用卡/信用贷/现金贷：盈利期是收口维度</td><td class="c-src" title="B08 幻灯片 40">B08·18 幻40</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-08-12</td><td class="c-name" title="三类损益框架（获客 / 交易 / 资产）">三类损益框架（获客 / 交易 / 资产）</td><td class="c-sum" title="条目级初判：高——建议直接改造为我方版本：逐层列我方产品线的收入与成本，先回答&quot;资产层能不能覆盖前两层&quot;。">三类损益各自算账：获客层亏损、交易层保本、资产层才是盈利所在</td><td class="c-src" title="B08 幻灯片 41（配套收入成本全清单见幻灯片 56、57）">B08·18 幻41</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-08-13</td><td class="c-name" title="消费金融成功三要素（ABC）">消费金融成功三要素（ABC）</td><td class="c-sum" title="条目级初判：高——可作为我方信用卡业务的&quot;能力体检表&quot;，重点是诚实回答&quot;三项里哪一项是短板&quot;。">成功三要素 ABC：获客比成本、风险比大数法则、客户经营比粘度</td><td class="c-src" title="B08 幻灯片 42">B08·18 幻42</td><td class="c-mig"><span class="bdg na" title="高——可作为我方信用卡业务的&quot;能力体检表&quot;，重点是诚实回答&quot;三项里哪一项是短板&quot;。">—</span></td></tr>
+<tr><td class="c-id">B-08-14</td><td class="c-name" title="五类玩家的竞争地图">五类玩家的竞争地图</td><td class="c-sum" title="条目级初判：中高——&quot;用户数 / 交易额 / 贷款余额&quot;三数快照是对标研究里最经济的口径；但须补上我方可获得的口径与时点。">五类玩家竞争地图：按牌照属性×客群×资金量级排列并给量级数据</td><td class="c-src" title="B08 幻灯片 47">B08·18 幻47</td><td class="c-mig"><span class="bdg na" title="中高——&quot;用户数 / 交易额 / 贷款余额&quot;三数快照是对标研究里最经济的口径；但须补上我方可获得的口径与时点。">—</span></td></tr>
+<tr><td class="c-id">B-08-15</td><td class="c-name" title="&quot;金融不会被 721 通吃&quot;的四条约束（反共识判断）">&quot;金融不会被 721 通吃&quot;的四条约束（反共识判断）</td><td class="c-sum" title="条目级初判：高——可直接用于我方与平台合作谈判的底层判断（决定&quot;哪些必须自建、哪些可合作&quot;），但须警惕其&quot;因此你需要合作&quot;的隐含落点。">金融不会被 721 通吃：主体地位/监管/资本/网络效应四条约束</td><td class="c-src" title="B08 幻灯片 48">B08·18 幻48</td><td class="c-mig"><span class="bdg na" title="高——可直接用于我方与平台合作谈判的底层判断（决定&quot;哪些必须自建、哪些可合作&quot;），但须警惕其&quot;因此你需要合作&quot;的隐含落点。">—</span></td></tr>
+<tr><td class="c-id">B-08-16</td><td class="c-name" title="自营 vs 平台（fintech vs techfin）四维对照">自营 vs 平台（fintech vs techfin）四维对照</td><td class="c-sum" title="条目级初判：高——四维（与主业关系 / 客户经营 / 场景 / 盈利模式）可直接用来给我方未来的每一个合作模式做画像。">自营 vs 平台四维对照（主业关系/客户经营/场景/盈利模式），各有代价</td><td class="c-src" title="B08 幻灯片 49">B08·18 幻49</td><td class="c-mig"><span class="bdg na" title="高——四维（与主业关系 / 客户经营 / 场景 / 盈利模式）可直接用来给我方未来的每一个合作模式做画像。">—</span></td></tr>
+<tr><td class="c-id">B-08-17</td><td class="c-name" title="区域银行的&quot;位置诊断&quot;框架（含江苏银行自身数据）">区域银行的&quot;位置诊断&quot;框架（含江苏银行自身数据）</td><td class="c-sum" title="条目级初判：高——&quot;体量—业务—效率&quot;三层定位法可复用；江苏银行那一格数字必须带口径与时点引用，并回原件核实。">区域银行三层位置诊断：体量—业务—效率；贷记卡发卡几乎为 0</td><td class="c-src" title="B08 幻灯片 50、51、52、53">B08·18 幻50</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-08-18</td><td class="c-name" title="三类玩家的优劣势矩阵">三类玩家的优劣势矩阵</td><td class="c-sum" title="条目级初判：中——矩阵本身可用于快速定位（尤其&quot;区域银行=网点下沉强、品牌与零售客户基础弱&quot;），但配对关系需核实后才可正式引用。">三类银行优劣势并排：国有缺经营意识、股份制成本高、区域缺品牌</td><td class="c-src" title="B08 幻灯片 54">B08·18 幻54</td><td class="c-mig"><span class="bdg na" title="中——矩阵本身可用于快速定位（尤其&quot;区域银行=网点下沉强、品牌与零售客户基础弱&quot;），但配对关系需核实后才可正式引用。">—</span></td></tr>
+<tr><td class="c-id">B-08-19</td><td class="c-name" title="&quot;必由之路&quot;判断 + 区域银行的两个痛点">&quot;必由之路&quot;判断 + 区域银行的两个痛点</td><td class="c-sum" title="条目级初判：高——建议把&quot;资金通道&quot;作为我方合作方案的红线自检项。">信用卡是零售必由之路；区域银行无品牌沉淀，默认结局是资金通道</td><td class="c-src" title="B08 幻灯片 55">B08·18 幻55</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-08-20</td><td class="c-name" title="信用卡与传统业务的效益对照（指标设计示范）">信用卡与传统业务的效益对照（指标设计示范）</td><td class="c-sum" title="条目级初判：中高——&quot;用同一组指标横比业务线&quot;的做法可迁移；数字只能作历史样本引用，且须连带口径。">同一组指标（成本收入比/平均收益率/ROA）横比批发/零售/信用卡</td><td class="c-src" title="B08 幻灯片 58（注：2017 招行卡中心业务数据；平均收益率＝利息收入/平均资产余额）">B08·18 幻58</td><td class="c-mig"><span class="bdg na" title="中高——&quot;用同一组指标横比业务线&quot;的做法可迁移；数字只能作历史样本引用，且须连带口径。">—</span></td></tr>
+<tr><td class="c-id">B-08-21</td><td class="c-name" title="平台战略与&quot;三流合一&quot;的信息流制高点论">平台战略与&quot;三流合一&quot;的信息流制高点论</td><td class="c-sum" title="条目级初判：中——&quot;信息流是否成体系&quot;是一个好的自我诊断问题，但不要接受&quot;因此必须引入外部信息流&quot;这一跳跃，应先验证自有数据是否真的不可用。">三流合一论：信息流是平台制高点，顶尖互联网企业靠控制信息变现</td><td class="c-src" title="B08 幻灯片 72、73">B08·18 幻72</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+<tr><td class="c-id">B-08-22</td><td class="c-name" title="银行被 OTT／管道化的挑战判定规则（★核心）">银行被 OTT／管道化的挑战判定规则（★核心）</td><td class="c-sum" title="条目级初判：高——建议列为常规自检：对我方每条产品线问&quot;它是标准化业务吗？若被外部以更高效率替代，我们剩下什么？&quot;">OTT 判定规则：互联网只挑战简单标准化业务，复杂专业业务暂不可替代</td><td class="c-src" title="B08 幻灯片 74">B08·18 幻74</td><td class="c-mig"><span class="bdg md">中</span></td></tr>
+<tr><td class="c-id">B-08-23</td><td class="c-name" title="4C 挑战评估 + 银行成本结构脆弱点">4C 挑战评估 + 银行成本结构脆弱点</td><td class="c-sum" title="条目级初判：高——&quot;用 4C 结构审视外部挑战 + 用成本结构定位自身脆弱点&quot;的组合可复用；数字替换为我方口径。">4C 组织外部挑战（顾客/成本/便捷/沟通）＋银行人力网点成本脆弱点</td><td class="c-src" title="B08 幻灯片 75">B08·18 幻75</td><td class="c-mig"><span class="bdg na" title="高——&quot;用 4C 结构审视外部挑战 + 用成本结构定位自身脆弱点&quot;的组合可复用；数字替换为我方口径。">—</span></td></tr>
+<tr><td class="c-id">B-08-24</td><td class="c-name" title="Build / Partnership / Buy 决策框架">Build / Partnership / Buy 决策框架</td><td class="c-sum" title="条目级初判：高——建议数字化改造：为每条判据打分，得出一条路径结论而不是靠直觉。">Build/Partnership/Buy 三路径：优点/缺点/适用条件逐项对照再选择</td><td class="c-src" title="B08 幻灯片 81">B08·18 幻81</td><td class="c-mig"><span class="bdg na" title="高——建议数字化改造：为每条判据打分，得出一条路径结论而不是靠直觉。">—</span></td></tr>
+<tr><td class="c-id">B-08-25</td><td class="c-name" title="合作方尽调七条清单（谈判用尺）">合作方尽调七条清单（谈判用尺）</td><td class="c-sum" title="条目级初判：高——尤其&quot;关注合作方能投入的资源&quot;应作为反向条款使用：合作谈判时逐项要求对方给出可量化的投入承诺。">合作方尽调七条：反过来是把尺——逐项要求对方给出可验证投入</td><td class="c-src" title="B08 幻灯片 88、89">B08·18 幻88</td><td class="c-mig"><span class="bdg hi">高</span></td></tr>
+<tr><td class="c-id">B-08-26</td><td class="c-name" title="业态分类学：A/B1/B2 + LBS 四象限">业态分类学：A/B1/B2 + LBS 四象限</td><td class="c-sum" title="条目级初判：高（作为方法）——&quot;先按一刀分类、再看每类的核心能力&quot;是可复用的分析动作，能防止把不同业态放在同一张表里比较。">业态两级分类 A/B1/B2＋LBS 四象限：先一刀切，再看各类核心能力</td><td class="c-src" title="B08 幻灯片 107、108、110">B08·18 幻107</td><td class="c-mig"><span class="bdg lo">低</span></td></tr>
+<tr><td class="c-id">B-08-27</td><td class="c-name" title="材料目的自证：一份&quot;招商材料&quot;，不是行业评价">材料目的自证：一份&quot;招商材料&quot;，不是行业评价</td><td class="c-sum" title="条目级初判：高（元规则）——本层全部 B08 记录引用时，应连带&quot;招商立场&quot;标注。">材料目的自证：末页求合作、团队背书、方案收尾——招商材料而非行业评价</td><td class="c-src" title="B08 幻灯片 130、118、50、51、122–125">B08·18 幻130</td><td class="c-mig"><span class="bdg na" title="高（元规则）——本层全部 B08 记录引用时，应连带&quot;招商立场&quot;标注。">—</span></td></tr>
+</tbody></table></div>
+<p class="tnote">「—」＝该条未进入全篇综合可迁移性排序；<b>悬停查看条目级初判；综合排序标准见完整版 6.4</b>。出处列为短标，悬停可看完整文件名与页码。</p>
+</section>
+
+<section id="cards">
+<h2>高迁移性 17 条精选<span class="en">本月可动：只需发文＋台账模板＋月度通报</span></h2>
+<div class="grid">
+<div class="card"><div class="card-h"><span class="cid">A01-03</span><span class="cname">大促活动效果评估：PSM-DID 与简化平行世界</span></div>
+<div class="cmeta" title="A01 阿蒙森洞察-2022年第1期.pdf，PDF页码9（方法论述与口径定义）、PDF页码9–10（实例）">A01·22-1期 P9</div>
+<p class="cd">全量活动没有对照组时，用 PSM-DID 匹配对照组，或以「活动前自然表现＋全量时间效应」构造平行世界；渗透率、增量金额、ROI 三条口径须写进分析模板。</p><p class="cb">边界：外部冲击对活动组与全量影响不同质时简化法会失真；人群未拉齐则规模不可比。</p><p class="cb">落地前提：把渗透率、增量金额、ROI 三条口径写进活动分析模板。</p></div>
+<div class="card"><div class="card-h"><span class="cid">A01-04</span><span class="cname">活动效果按活动定位分层评价</span></div>
+<div class="cmeta" title="A01 阿蒙森洞察-2022年第1期.pdf，PDF页码8–9；A05 阿蒙森洞察-2022年第5期.pdf，PDF页码7；A06 阿蒙森洞察-2022年第7期.pdf，PDF页码8；A12 阿蒙森洞察报告-2021年第4期.pdf，PDF页码9">A01·22-1期 P8–9</div>
+<p class="cd">活动分品牌/促活/拉交易/拉分期四类，定位决定主指标：促活看实动率、拉交易看增量金额。用副指标给活动邀功（如品牌活动拿实动率）属口径错配。</p><p class="cb">边界：立项时定位不清，任何指标都「看起来有提升」。</p><p class="cb">落地前提：立项先填「定位→主指标→口径」三栏，低成本防自欺。</p></div>
+<div class="card"><div class="card-h"><span class="cid">A06-01</span><span class="cname">单变量 A/B 实验 + 分客群响应拆解</span></div>
+<div class="cmeta" title="A06 阿蒙森洞察-2022年第7期.pdf，PDF页码4–7；A02 阿蒙森洞察-2022年第2期.pdf，PDF页码8–11">A06·22-7期 P4–7</div>
+<p class="cd">随机分组、单变量改动；判读必须双指标并读——相对提升看「对哪层更有效」，分布占比看「哪层更偏好」。</p><p class="cb">边界：分层会稀释样本，不足须标注不置信；两指标可能反向，单看一个会得出相反结论。</p><p class="cb">落地前提：分层后样本量不足时须标注不置信。</p></div>
+<div class="card"><div class="card-h"><span class="cid">A17-01</span><span class="cname">四象限资源分配法（意愿 × 营销响应）</span></div>
+<div class="cmeta" title="A17 阿蒙森洞察报告-2021年第9期.pdf，PDF页码9–10">A17·21-9期 P9–10</div>
+<p class="cd">以「自然激活意愿×营销响应度」划四象限：摇摆户加投资源，无意愿户停止打扰；把「减少打扰」写进考核才能落地。</p><p class="cb">边界：分类是建模输出，需防模型漂移；对不营销象限须确认合规与客诉影响。</p><p class="cb">落地前提：把「减少打扰」写入考核，否则执行不下去。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-05-12</span><span class="cname">&quot;收入结构解构 + 口径还原&quot;分析法</span></div>
+<div class="cmeta" title="B05 信用卡大有可为，渐成零售业务主力（天风证券，2018-06-03）.pdf，PDF页码 6–9（表1、图4、图6、图9 相关段落）">B05·18 P6–9</div>
+<p class="cd">先建「会计科目↔经济实质」映射表，把分期手续费还原为利息，再谈收入结构比较；还原后实际利息占比约 70%。</p><p class="cb">边界：不做映射直接比「利息占比」，同一实质算成两类收入、结论会反向；口径切换年份前后不可比。</p><p class="cb">落地前提：跨行比较前先统一科目口径，建复算表。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-05-13</span><span class="cname">分期实际年化利率的现金流测算法</span></div>
+<div class="cmeta" title="B05，PDF页码9（&quot;分期收入，筑梦新蓝海&quot;节）">B05·18 P9</div>
+<p class="cd">由期初金额、每期还款额、期数解出每期实际利率×12：名义 0.7%×12=8.4% 的分期，实际年化 14.26%。</p><p class="cb">边界：含服务费/权益费必须全计入现金流；数值须按我方产品重算，不得直接引用算例。</p><p class="cb">落地前提：建复算表，含服务费/权益费；14.26% 仅为算例。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-05-15</span><span class="cname">国际对标法的口径处理（人均持有量）</span></div>
+<div class="cmeta" title="B05，PDF页码12–17">B05·18 P12–17</div>
+<p class="cd">人均持有量的分母从全国人口换成 20–59 岁城镇居民：0.39 张变 0.95 张，差 2.4 倍。</p><p class="cb">边界：换分母必须明示，否则同一事实可得出「渗透率极低」或「接近饱和」两种结论。</p><p class="cb">落地前提：报人均必报分母；分母变更须显式说明。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-06-01</span><span class="cname">分期核心指标分解法（过程指标优先）</span></div>
+<div class="cmeta" title="B06《江苏银行信用卡线上分期业务规划F.pptx》幻灯片 20">B06·21 幻20</div>
+<p class="cd">结果指标定分期余额，核心过程指标定成交金额，再拆渗透率×户均金额，两端加留存率修正。</p><p class="cb">边界：余额是慢变量、成交额是快变量；只考核成交额会掩盖提前还款与留存恶化。</p><p class="cb">落地前提：结果指标与过程指标一起考核，统一口径即可落 KPI。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-06-04</span><span class="cname">差异化定价 A/B 实测与客群切分法</span></div>
+<div class="cmeta" title="B06 幻灯片 30（举措5）">B06·21 幻30</div>
+<p class="cd">首分/复分切客群，先 4 周小范围差异化定价实测，读渗透率、金额、收入四件套，有效再固化为常规策略。</p><p class="cb">边界：结论依赖测试期与客群结构，跨品种不可直接搬用；须先定最低定价与最低差额。</p><p class="cb">落地前提：先定最低定价与最低差额，再开 4 周实测。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-07-01</span><span class="cname">高返政策下的早偿监测指标法</span></div>
+<div class="cmeta" title="B07《汽车分期业务经营分析会.pptx》幻灯片 9">B07·24 幻9</div>
+<p class="cd">按放款后 mob3/6/12 固定窗口分层统计早偿率，逐月看趋势拐点，分年度口径对比。</p><p class="cb">边界：新放款表现期不足，不能与成熟样本比大小，须诚实标注——该材料自己点出了这个坑。</p><p class="cb">落地前提：固定观察窗口＋分年度口径，直接套模板。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-01-01</span><span class="cname">早偿率阈值与商户清退分层法</span></div>
+<div class="cmeta" title="B01 幻灯片 3、幻灯片 6；B07 幻灯片 17">B01·25 幻3</div>
+<p class="cd">早偿率分级管控：≤5% 继续合作、5–10% 换签协议、&gt;10% 清退；阈值写进协议、挂月度通报。</p><p class="cb">边界：清退须配可替换商户清单；阈值按品种重估（汽车与装修分期早偿规律不同）。</p><p class="cb">落地前提：发文＋台账＋月度通报，配可替换商户清单；先解队伍意愿抵触。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-01-02</span><span class="cname">返佣标准与差额底线法</span></div>
+<div class="cmeta" title="B01 幻灯片 3、5">B01·25 幻3</div>
+<p class="cd">返佣合计封顶（≤14%）＋对客费率与返佣差额底线（≥10%），两条一起下。</p><p class="cb">边界：只压返佣不设底线，分行会用降价绕开，规模与利润两头落空。</p><p class="cb">落地前提：封顶与差额底线两条一起下，防止降价绕开。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-07-02</span><span class="cname">返佣摊销与追回联动法</span></div>
+<div class="cmeta" title="B07 幻灯片 15；B01 幻灯片 6；B01 幻灯片 7">B07·24 幻15</div>
+<p class="cd">佣金当月计提、按期数等额摊销；提前还款当期一次性摊销把损失显性化，追回三条款写进协议并系统留痕。</p><p class="cb">边界：依赖协议换签进度，换签不到位即空转。</p><p class="cb">落地前提：依赖协议换签进度；换签不到位即空转。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-01-03</span><span class="cname">追回率挂绩效负分法（考核绑定）</span></div>
+<div class="cmeta" title="B01 幻灯片 7；B01 幻灯片 4">B01·25 幻7</div>
+<p class="cd">追回率挂绩效负分，个人与机构双挂；与正分同表（当期/半年各计 50%）。</p><p class="cb">边界：只挂负分不给收益机制，队伍会整体退出该品种——已有前车之鉴。</p><p class="cb">落地前提：正负分同表（当期/半年各 50%），否则队伍退出该品种。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-02-01</span><span class="cname">追回目标三段拆解法</span></div>
+<div class="cmeta" title="B02 幻灯片 10、11、12">B02·24 幻10</div>
+<p class="cd">沿催收链条设入催/逾期/不良三段降损目标，每段配「目标＋手段＋测算」三件套。</p><p class="cb">边界：协商还款放宽须同时设再逾期监测与回收上限，否则只是把风险后移。</p><p class="cb">落地前提：必须配再逾期监测与回收上限。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-08-19</span><span class="cname">&quot;必由之路&quot;判断 + 区域银行的两个痛点</span></div>
+<div class="cmeta" title="B08 幻灯片 55">B08·18 幻55</div>
+<p class="cd">信用卡是发展零售与消费金融的必由之路；但区域银行无品牌沉淀、缺持续客户经营，默认结局是沦为资金通道。</p><p class="cb">边界：判断出自招商方立场（落点是「与我合作」）；如何避免通道化须行内自答。</p><p class="cb">落地前提：与「规则留行内」绑定使用，作对外汇报的位置陈述框架。</p></div>
+<div class="card"><div class="card-h"><span class="cid">B-08-25</span><span class="cname">合作方尽调七条清单（谈判用尺）</span></div>
+<div class="cmeta" title="B08 幻灯片 88、89">B08·18 幻88</div>
+<p class="cd">对记账类 APP 的七条调研小结，反过来就是量合作方的尺：逐项要求对方给出可验证的资源投入承诺。</p><p class="cb">边界：清单针对工具型伙伴，不覆盖持牌机构；为 2018 年观察，个案须更新。</p><p class="cb">落地前提：逐项要求可验证投入承诺，反向用作谈判条款。</p></div>
+</div>
+</section>
+
+<section id="verify">
+<h2>待验证 12 项<span class="en">V-01～V-12 · 完整版 6.6 · 不臆造、不补数</span></h2>
+<p class="tnote">已闭环 9 项（text/ 逐页检索＋原件 OOXML 解包逐项复核）；部分闭环 2 项（关键结论已核、残留口径需外部）；需外部材料 1 项。悬停可看一句话核实结论（源自 verification-results.md）。</p>
+<div class="twrap"><table><thead><tr><th class="c-id">编号</th><th>待验证内容</th><th class="c-mig">状态</th></tr></thead><tbody>
+<tr><td class="c-id">V-01</td><td class="c-sum" title="text/ 提取件仅存数值标签残片，需回 sources/ 原件读图｜抽核 3 处正文引用绝对值均与 PDF 文本层一致（47/35/18 出自正文）；仅图上未印数值标签的数据点本地读不出，核查范围内报告未引用此类数值">阿蒙森各期图表中的绝对值（正文未写出的 pp/百分比）</td><td class="c-mig"><span class="bdg vb-part" title="抽核 3 处正文引用绝对值均与 PDF 文本层一致（47/35/18 出自正文）；仅图上未印数值标签的数据点本地读不出，核查范围内报告未引用此类数值">部分闭环</span></td></tr>
+<tr><td class="c-id">V-02</td><td class="c-sum" title="原文明确标注为&quot;示意数据/假数据&quot;，仅排序性为真｜确证 A10 行237「假数据，排序性未变」、A09 行166「示意数据…绝对值已模糊处理」原文自注，报告不引绝对值的处理与原文一致">A10（原 A-17）、A09（原 A-11）相关期次图表数值</td><td class="c-mig"><span class="bdg vb-done" title="确证 A10 行237「假数据，排序性未变」、A09 行166「示意数据…绝对值已模糊处理」原文自注，报告不引绝对值的处理与原文一致">已闭环</span></td></tr>
+<tr><td class="c-id">V-03</td><td class="c-sum" title="正文未给｜确证原文未给阈值/AUC/漂移监控（「低于20分」仅为举例）；补齐需外部算法方">睡眠倾向模型的分数阈值、区分度（AUC）与漂移监控</td><td class="c-mig"><span class="bdg vb-done" title="确证原文未给阈值/AUC/漂移监控（「低于20分」仅为举例）；补齐需外部算法方">已闭环</span></td></tr>
+<tr><td class="c-id">V-04</td><td class="c-sum" title="正文只给结果｜确证 A13/A16 只给聚类结果，k-means 等算法名与阈值 0 命中；补齐需外部">客群聚类的具体算法与阈值</td><td class="c-mig"><span class="bdg vb-done" title="确证 A13/A16 只给聚类结果，k-means 等算法名与阈值 0 命中；补齐需外部">已闭环</span></td></tr>
+<tr><td class="c-id">V-05</td><td class="c-sum" title="原文未说明口径切换期如何处理数据可比性｜确证原文只讲迭代动因，双轨/切换/可比 0 命中；「双轨过渡」系报告引申要求，做法需外部补齐">分层维度迭代期的&quot;双轨过渡&quot;做法</td><td class="c-mig"><span class="bdg vb-done" title="确证原文只讲迭代动因，双轨/切换/可比 0 命中；「双轨过渡」系报告引申要求，做法需外部补齐">已闭环</span></td></tr>
+<tr><td class="c-id">V-06</td><td class="c-sum" title="原文按单动作量化杠杆｜确证原文按单动作量化杠杆，叠加/蚕食/互斥 0 命中；多动作叠加测算须自行补校正">多动作叠加的相互蚕食效应</td><td class="c-mig"><span class="bdg vb-done" title="确证原文按单动作量化杠杆，叠加/蚕食/互斥 0 命中；多动作叠加测算须自行补校正">已闭环</span></td></tr>
+<tr><td class="c-id">V-07</td><td class="c-sum" title="该期不在本批材料中｜2022 年第 6 期 text/ 与 sources/ 均缺失（17 份齐全清单核对），本地不可弥补">阿蒙森 2022 年第 6 期内容</td><td class="c-mig"><span class="bdg vb-ext" title="2022 年第 6 期 text/ 与 sources/ 均缺失（17 份齐全清单核对），本地不可弥补">需外部材料</span></td></tr>
+<tr><td class="c-id">V-08</td><td class="c-sum" title="需另找区域性银行样本才能用于城商行对标｜确证 B05 全篇「城商行」0 命中，测算分母均为全国/上市行口径；城商行对标须另找区域性银行样本">B05 全篇的&quot;我国/上市行&quot;整体口径未拆城商行层级</td><td class="c-mig"><span class="bdg vb-done" title="确证 B05 全篇「城商行」0 命中，测算分母均为全国/上市行口径；城商行对标须另找区域性银行样本">已闭环</span></td></tr>
+<tr><td class="c-id">V-09</td><td class="c-sum" title="文内未标注日期，2025 年度为推断｜改判：B04 计划表年度为「2026 年度」——xlsx 元数据 created 2026-03-15 自证（creator 蔡诚），文内「苏超服务」等佐证；此前「推断 2025 年度」作废">B04 的计划年度</td><td class="c-mig"><span class="bdg vb-done" title="改判：B04 计划表年度为「2026 年度」——xlsx 元数据 created 2026-03-15 自证（creator 蔡诚），文内「苏超服务」等佐证；此前「推断 2025 年度」作废">已闭环</span></td></tr>
+<tr><td class="c-id">V-10</td><td class="c-sum" title="各品种早偿规律不同，阈值须重估｜确证 B06 全篇仅汽车分期早偿数据（装修/车位 0 命中）；外推须另行取证">汽车分期早偿规律能否外推到装修/车位分期</td><td class="c-mig"><span class="bdg vb-done" title="确证 B06 全篇仅汽车分期早偿数据（装修/车位 0 命中）；外推须另行取证">已闭环</span></td></tr>
+<tr><td class="c-id">V-11</td><td class="c-sum" title="文本层按行序打散，本报告按语义分组，配对须回原件核对｜幻41/49/54 配对经原件 slideN.xml shape 坐标（EMU）逐项核实，报告语义分组全部无误，「需回原件核对」标注可解除">B08 幻灯片 41/49/54 多栏页的原始配对关系</td><td class="c-mig"><span class="bdg vb-done" title="幻41/49/54 配对经原件 slideN.xml shape 坐标（EMU）逐项核实，报告语义分组全部无误，「需回原件核对」标注可解除">已闭环</span></td></tr>
+<tr><td class="c-id">V-12</td><td class="c-sum" title="该页未标时点（同节前页为截至 2016 年底），&quot;实动卡均交易&quot;无公开定义｜幻53 时点改标「约2017年」（图内嵌工作簿数据系列名自证，属强指向非文内明示；同节幻50–51 为截至2016年底口径）；「实动卡均交易」精确口径仍需外部（银联定义）">B08 幻灯片 53 江苏省数据的口径与时点</td><td class="c-mig"><span class="bdg vb-part" title="幻53 时点改标「约2017年」（图内嵌工作簿数据系列名自证，属强指向非文内明示；同节幻50–51 为截至2016年底口径）；「实动卡均交易」精确口径仍需外部（银联定义）">部分闭环</span></td></tr>
+</tbody></table></div>
+<p class="tnote">文件指引：逐字引文与质检明细见《信用卡方法论提取-专家分析报告》（完整版）；面向业务同事的口语化版本见《信用卡方法论提取-通俗版》。</p>
+</section>
+
+
+<section id="caliber" class="caliber">
+<h2>口径纪律<span class="en">四类来源</span></h2>
+<h3>材料 ID 图例</h3><div class="twrap"><table><tbody><tr><td class="c-name">A01–A17</td><td class="c-sum">阿蒙森洞察 2021–2022 年 17 期（2022 年第 6 期缺；A01–A07 为 2022 年样本，A08–A17 为 2021 年样本）</td></tr><tr><td class="c-name">B01–B04</td><td class="c-sum">行方业务资料：商户返佣与早偿管控／不良催收复盘／经营分析（B03）／年度计划推断稿（B04，文内未标日期）</td></tr><tr><td class="c-name">B05</td><td class="c-sum">天风证券行业研究《信用卡大有可为，渐成零售业务主力》（2018-06-03）</td></tr><tr><td class="c-name">B06–B07</td><td class="c-sum">行方分期业务规划（B06，2021-08）／汽车分期经营分析会（B07，2024-07）</td></tr><tr><td class="c-name">B08</td><td class="c-sum">彭千（美团金融总裁）历史分享（2018-05-12，平台商务材料）</td></tr></tbody></table></div>
+<div class="twrap"><table>
+<thead><tr><th>来源类别</th><th>材料</th><th>立场与口径特征</th></tr></thead>
+<tbody>
+<tr><td>行方材料</td><td>B01–B04、B06、B07</td><td>内部复盘/规划底稿，服务于行内决策；不等于已发生事实全貌</td></tr>
+<tr><td>外部券商研究</td><td>B05 天风（2018-06）</td><td>卖方立场：含行业评级「强于大市」与荐股，评级窗口 6 个月</td></tr>
+<tr><td>外部历史分享</td><td>B08 彭千（2018-05）</td><td>平台商务材料：末页直接请求 Fintech 合作机会，含合作诉求</td></tr>
+<tr><td>美团经营分析</td><td>A01–A17 阿蒙森（2021–22）</td><td>平台方经营口径，基于各行美团卡业务；与行内自营口径不可直接换算</td></tr>
+</tbody></table></div>
+<div class="notice">本页为精简版：<b>完整 81 条含原文关键句逐字引文、方法拆解全文、质检记录（Q-01～Q-13）、编号映射与去重对照、附录 A–D</b>，请查阅《信用卡方法论提取-专家分析报告》完整版。</div>
+</section>
+
+<footer>本页由 methodology-records.json 生成（build_brief.py），完整版为准。依据《信用卡方法论提取-专家分析报告》（25 份材料、81 条记录、引文回验 0 失配）编成；逐字引文与质检明细见完整版，口语化版见《信用卡方法论提取-通俗版》。待验证项状态已按 verification-results.md 核实结论更新（V-09 改判 2026 年度等），完整版报告原文未改动。全部数值为 2018–2026 各材料基准时点的历史样本，不得当作现行经营事实引用。环境路径变更声明见完整版 1.1 节。</footer>
+</main>
+</body>
+</html>

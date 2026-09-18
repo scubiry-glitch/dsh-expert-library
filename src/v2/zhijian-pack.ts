@@ -25,10 +25,10 @@
  * - **display** uses the already-anonymized `personaName`/`initials` — never
  *   the `'legacy'` placeholder of the generic V1 adapter.
  * - **compliance** is set only where the data asserts it: `deceased` for
- *   bk-022 (顾云昌, 固化规则), `internalOnly` for bk-031 (陶琦, 路由规则内测
+ *   bk-022 (慢牛主席, 固化规则), `internalOnly` for bk-031 (挂牌哨探, 路由规则内测
  *   对比项), `citationPolicy` for the experts whose caliber affiliation is
- *   stated in the routing constraints (丁祖昱=克而瑞/普睿, 黄瑜=中指,
- *   陶琦=贝壳/NIFD).
+ *   stated in the routing constraints (定力董座=克而瑞/普睿, 百城台长=中指,
+ *   挂牌哨探=贝壳/NIFD).
  * - **stance/summary** have no ExpertV2 slot; they stay at routing level
  *   (`candidateHints`, stance pairing in later routing overlays) and inside
  *   `display.publicLabel` (personaName embeds the stance). Documented gap.
@@ -80,7 +80,7 @@ export const ZHIJIAN_PACK_VERSION = '1.1.0'
 
 /**
  * Snapshot id of the current profile baseline. 1.1.0 = the 2026-08-20/21
- * unpacked revision (adds 陈杰 BK-034 to the original 2026-08-19 zip
+ * unpacked revision (adds 格物讲师 BK-034 to the original 2026-08-19 zip
  * baseline; the pack's SOURCE-MANIFEST records both baselines).
  */
 export const ZHIJIAN_PACK_SNAPSHOT = 'zhijian-v1-2026-08-21'
@@ -234,7 +234,7 @@ export const TAG_CAPABILITIES: Readonly<Record<string, string>> = {
 /** Deceased experts (固化规则: 只可引用历史观点). */
 const DECEASED_IDS: ReadonlySet<string> = new Set(['bk-022'])
 
-/** Internal-only experts (路由规则.md §五: 陶琦 bk-031 为内测对比项, 政研通产品不引用). */
+/** Internal-only experts (路由规则.md §五: 挂牌哨探 bk-031 为内测对比项, 政研通产品不引用). */
 const INTERNAL_ONLY_IDS: ReadonlySet<string> = new Set(['bk-031'])
 
 /** Known caliber affiliations (routing.ts zhijian-monthly constraints). */

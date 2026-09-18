@@ -1,0 +1,88 @@
+{
+  "version": "1",
+  "narrative": "boardroom-report",
+  "theme": "vermilion",
+  "filename": "信贷新政点评_20260829_final",
+  "seed": 20260829,
+  "meta": {
+    "organization": "智见 · 行业研究",
+    "authors": [
+      {
+        "name": "智见点评团队",
+        "role": "政策解读 · 正式稿"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "房地产信贷「制度重构」：能拿房、再还贷"
+    },
+    {
+      "id": "position",
+      "type": "content",
+      "heading": "定位：制度重构，而非需求刺激"
+    },
+    {
+      "id": "clauses",
+      "type": "content",
+      "heading": "六条核心条款速览",
+      "beat": "dense"
+    },
+    {
+      "id": "clauses2",
+      "type": "content",
+      "heading": "需求端与调控端：期限、时点、宏观审慎",
+      "beat": "dense"
+    },
+    {
+      "id": "kpi",
+      "type": "content",
+      "heading": "数据底座：五组关键指标",
+      "beat": "dense"
+    },
+    {
+      "id": "balance",
+      "type": "content",
+      "heading": "按揭余额：先升后降，连续净减少"
+    },
+    {
+      "id": "rate",
+      "type": "content",
+      "heading": "按揭利率：历史低位平台"
+    },
+    {
+      "id": "yoy",
+      "type": "content",
+      "heading": "同比三线：量价同向走弱"
+    },
+    {
+      "id": "consensus",
+      "type": "content",
+      "heading": "共识：四项研判一致"
+    },
+    {
+      "id": "divergence",
+      "type": "content",
+      "heading": "分歧与边界条件",
+      "beat": "dense"
+    },
+    {
+      "id": "outlook",
+      "type": "content",
+      "heading": "影响展望与观察指标"
+    },
+    {
+      "id": "indicators",
+      "type": "content",
+      "heading": "可验证观察指标",
+      "beat": "breathing"
+    },
+    {
+      "id": "ending",
+      "type": "ending",
+      "heading": "政策底已现，市场底未到"
+    }
+  ]
+}

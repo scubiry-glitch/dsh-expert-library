@@ -1,0 +1,186 @@
+{
+  "schema_version": "1.0",
+  "taxonomy_version": "1.0",
+  "policy_version": "1.0",
+  "source": {
+    "skill": "ppt-polished-deck-collab",
+    "gate": "structure_precheck"
+  },
+  "artifact": {
+    "path": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/pptx/deck_v54.pptx"
+  },
+  "target_milestone": "final",
+  "decision": {
+    "state": "soft_blocked",
+    "target_milestone": "final",
+    "hard_group_count": 0,
+    "soft_group_count": 1,
+    "advisory_group_count": 2
+  },
+  "summary": {
+    "group_count": 3,
+    "occurrence_count": 44,
+    "evidence_count": 53,
+    "by_action": {
+      "soft_block": 1,
+      "advisory": 2
+    },
+    "by_domain": {
+      "layout": 2,
+      "typography": 1
+    }
+  },
+  "groups": [
+    {
+      "group_id": "group_c14d8ecad9d1",
+      "agent_action": "soft_block",
+      "severity": "not_checked",
+      "status": "not_checked",
+      "domain": "layout",
+      "family": "overlap",
+      "problem_class": "layout.overlap.chart_label_collision",
+      "code": "structured_chart_label_collision_not_checked",
+      "fix_strategy_id": "complete_chart_label_check",
+      "resolution": {
+        "policy_id": "complete_evidence",
+        "conditions": [
+          "evidence_exists",
+          "exception_recorded"
+        ],
+        "requires_human": true,
+        "continue_when": "补齐检测证据或登记完整例外后继续。"
+      },
+      "enforcement": {
+        "block_before": "final",
+        "allowed_resolution_actions": [
+          "rerun",
+          "manual_review",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 4,
+      "evidence_count": 4,
+      "actual_value_counts": {},
+      "message": "首期 `structure_precheck` 还没有读取原生 chart 内部 label 的真实边界，因此该 chart 的内部标签碰撞未自动检查。",
+      "suggested_fix": "当前先保留逐页预览复核；后续可补 chart title / axis / legend / data label 的结构化检查。",
+      "sample_locations": [
+        "slide 10 | shape 21 | chart",
+        "slide 10 | shape 22 | chart",
+        "slide 9 | shape 8 | chart"
+      ],
+      "omitted_location_count": 1,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_3822d022aa00",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "layout",
+      "family": "text_fit",
+      "problem_class": "layout.text_fit.width_pressure",
+      "code": "compact_textbox_width_pressure",
+      "fix_strategy_id": "repair_text_fit",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 2,
+      "evidence_count": 2,
+      "actual_value_counts": {
+        "9": 2
+      },
+      "message": "短标题或标签的有效宽度过窄，已经进入 forced-wrap / width-pressure 区间，即使当前还没完全越界，也很容易出现被迫换行、压边或字形挤压。",
+      "suggested_fix": "增加该标签框宽度，或缩短短标题文案，避免把本应单行的短文本塞进过窄容器。",
+      "sample_locations": [
+        "slide 15 | shape 15 | shape_text"
+      ],
+      "omitted_location_count": 1,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    },
+    {
+      "group_id": "group_632e4b3e3925",
+      "agent_action": "advisory",
+      "severity": "warning",
+      "status": "detected",
+      "domain": "typography",
+      "family": "font_size",
+      "problem_class": "typography.font_size.role_drift",
+      "code": "body_text_below_theme_token",
+      "fix_strategy_id": "repair_font_size_token",
+      "resolution": {
+        "policy_id": "document_or_fix",
+        "conditions": [
+          "documented_or_fixed"
+        ],
+        "requires_human": false,
+        "continue_when": "当前修订轮处理，或在 handoff 中说明保留原因。"
+      },
+      "enforcement": {
+        "block_before": null,
+        "allowed_resolution_actions": [
+          "edit_source",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "resolved",
+        "source": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/build/generated/slide_specs.yaml",
+        "token": "theme_tokens.body_font_pt",
+        "value_pt": 12.0,
+        "language": "zh",
+        "role": "body",
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 38,
+      "evidence_count": 47,
+      "actual_value_counts": {
+        "9": 10,
+        "10.5": 28
+      },
+      "message": "当前中文正文字号为 10.5pt×28, 9pt×10；active `theme_tokens.body_font_pt` 推荐 12pt。",
+      "suggested_fix": "如无模板、品牌或已登记的 profile 例外，直接改为 12pt。",
+      "sample_locations": [
+        "slide 32 | shape 10 | shape_text"
+      ],
+      "omitted_location_count": 37,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    }
+  ],
+  "full_report_ref": "/root/zhijian/dsh-expert-library/work/研报交付_20260829_房地产信贷新政点评/deck_v54_pro/validation/structure_precheck/history/structure_precheck_20260830_134237.json"
+}

@@ -1,0 +1,17 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "{\"metrics\":[{\"code\":\"G1109245\",\"name\":\"美国:零售和食品服务销售额:季调:当月同比\",\"unit\":\"%\",\"source\":\"美国人口普查局\",\"updateDate\":\"20260814\",\"freq\":\"月\"},{\"code\":\"M5405527\",\"name\":\"中国:社会消费品零售总额:实际累计同比\",\"unit\":\"%\",\"source\":\"Wind\",\"updateDate\":\"20230117\",\"freq\":\"月\"}]}"
+    }
+  ],
+  "isError": false,
+  "cli_meta": {
+    "schema_version": "1.0",
+    "server_type": "economic_data",
+    "tool_name": "search_economic_indicator",
+    "completeness": "not_asserted",
+    "tables": [],
+    "warnings": []
+  }
+}

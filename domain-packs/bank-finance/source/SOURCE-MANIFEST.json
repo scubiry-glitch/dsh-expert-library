@@ -1,6 +1,6 @@
 {
   "packId": "bank-finance",
-  "packVersion": "1.0.0",
+  "packVersion": "1.1.0",
   "schemaVersion": 2,
   "baselines": [
     {
@@ -9,29 +9,31 @@
       "date": "2026-08-23T00:00:00Z",
       "snapshot": "bank-v1-2026-08-23",
       "expertCount": 1,
-      "note": "首发：王一帆 BANK-09（江苏银行零售信贷负责人·操盘手视角）。原始材料：99wiki/projects/专家体系/BANK-99_调用说明.md、王一帆_专家画像_BANK-09.pdf/html、skills/bank-99/references/profile.md。"
+      "note": "首发：信贷舵手 BANK-09（江苏银行零售信贷负责人·操盘手视角）。原始材料：99wiki/projects/专家体系/BANK-99_调用说明.md、信贷舵手_专家画像_BANK-09.pdf/html、skills/bank-99/references/profile.md。"
     }
   ],
   "rawProfiles": {
     "count": 6,
     "files": {
-      "一一_专家Profile_BANK-10.json": "9eec9efd4d10957c4026798dfcf5d56fee668cdb4781aea36bb794bd7e7a5f45",
-      "梁斌_专家Profile_E13-03.json": "efd32d98c7068cc612133e41ae1428b0279cdcf19c8aad1a15d70947301a3683",
-      "王一帆_专家Profile_BANK-09.json": "d7386a1b44140a6dc302f91c256adf73547df9f0adf9b870851ca735d3ac9bd1",
-      "琉_专家Profile_BANK-11.json": "18b7ea60e82118953af23d0ebd96321c6c0e1c9abd89f958cdf6f58f9e5b1410",
-      "袁军_专家Profile_E13-01.json": "ff51504c1c99d9c68f1dc6fe595611c38ee1045b48e03b2a8717a91d5828e981",
-      "高增银_专家Profile_E13-02.json": "0e139e8389bb0d538f45a44dd24217a423e90d542b8f575c761824feba99121e"
+      "一一_专家Profile_BANK-10.json": "1eae1f4cc9305d002d53a19b52a4dfea0030a35aa79ae16cb8fca618bbeab5a0",
+      "信贷舵手_专家Profile_BANK-09.json": "2fd158b75e5a02ca19309efc6a6370957d02a4e2bba5273adf60e9f95e5bf279",
+      "息差账房_专家Profile_E13-02.json": "106155ae4bd986f972f42d025a771ee386b124d0d0fce26af4d652fce1ae5bdb",
+      "战略沙盘官_专家Profile_E13-01.json": "cf516933510ac30b5610b338afcc2599f9a4e496c31a0637398d3b9c8bd80acf",
+      "琉_专家Profile_BANK-11.json": "c3874f2ff05b5dcbecf1af75cdc87a2a2c9422c1dbf5d15f6275256423692e43",
+      "风控守门员_专家Profile_E13-03.json": "2ce33989b7c68c6051044ba8f191be11d48a315ffa881f745d88ad8723614b71"
     }
   },
   "docs": {
-    "count": 1,
+    "count": 2,
     "files": {
-      "专家总表.md": "17763804f5071a1ac55a1379684b4c35627b7a1f9aebb50d2697a76ad1a588b3"
+      "专家总表.md": "02f65153568975fb5166898c7ed84c9f1eb27e4b2547e8ed0b42da1962371f9b",
+      "信用卡方法论提取摘要.md": "ec9fac65ddf48721ffc0fa1beda82ad6953b4d39a2e35d05e1d3ef678e0a131f"
     }
   },
   "skills": {
-    "count": 62,
+    "count": 63,
     "files": {
+      "bank-activity-eval/SKILL.md": "40c2f91ab7a48316f0b50259ec95e5c738edd3cca2645a39c98e88f528c511a5",
       "bank-retail-finance-analysis/SKILL.md": "c260871eba2e34097cc3bbec29384578759c5aab520ace308846dd60e6fb5d39",
       "bank-retail-finance-analysis/references/analysis-templates.md": "e81824ef75e472856ee43c1d4238c76e67f89a87aeee5ecff424f4e293ceac93",
       "finesse-ui/SKILL.md": "b3c95a871163a8fbed75dca16a6530170c6311627c577dd12e05242e412a2b8c",

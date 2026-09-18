@@ -1,0 +1,100 @@
+{
+  "taskId": "t6",
+  "renderVersion": "v3",
+  "renderSource": "expert-tasks/t5/artifacts/融合正式稿_v3.md（队长指定唯一渲染源；v1/v2 弃用）",
+  "status": "completed",
+  "design": {
+    "system": "审计账本式纸墨（账册对开）",
+    "paper": "#ECEFF5",
+    "card": "#FBFCFE",
+    "accent_cobalt": "#1B3A6B",
+    "gold": "#A9741F",
+    "note": "配色按队长最新指令维持墨钴蓝＋印刷金"
+  },
+  "deliverables": [
+    {
+      "kind": "HTML5 视觉稿 v3",
+      "path": "expert-tasks/t6/artifacts/AI无佣与人机协同_正式稿_v3.html",
+      "sha256": "212d30d8ffe90837cf678525d673bf5f60879c8cfc938b588e5f63a690e5936b",
+      "url": "https://yy.meizu.life/render/智见点评-服务业务/ai-wuyong-renji-v3.html"
+    },
+    {
+      "kind": "PDF v3（A4，14 页）",
+      "path": "expert-tasks/t6/artifacts/AI无佣与人机协同_正式稿_v3.pdf",
+      "sha256": "4e0925070626e7c6dea586ff7747a245b68c5fb3c6491ff083d28153d57b56d2",
+      "url": "https://yy.meizu.life/render/智见点评-服务业务/ai-wuyong-renji-v3.pdf"
+    },
+    {
+      "kind": "PPTX v3（可编辑，18 页，全页备注）",
+      "path": "expert-tasks/t6/artifacts/AI无佣与人机协同_汇报版_v3.pptx",
+      "sha256": "c56a8e0f32442320b714c33b5387b65a4d0d8ec78c952385894a0319b460af85",
+      "url": "https://yy.meizu.life/render/智见点评-服务业务/ai-wuyong-renji-v3.pptx"
+    },
+    {
+      "kind": "渲染源 md",
+      "path": "expert-tasks/t6/artifacts/AI无佣与人机协同_正式稿_v3.md",
+      "sha256": "f528f648ff25e021d57db6df6dc0fd10bb382f21d4aa992e7cd3d7441612a67a"
+    },
+    {
+      "kind": "交付说明 v3",
+      "path": "expert-tasks/t6/artifacts/交付说明_v3.md",
+      "sha256": "16801852c029de587ce9db98a6429fdedcf07ccb55413db74ffb664297e633c9"
+    },
+    {
+      "kind": "门禁报告 v3",
+      "path": "expert-tasks/t6/artifacts/gates_report_v3.json",
+      "sha256": "120924b36db358d39f8d038686eff9511bd540399108275212865f529c3a15e0"
+    },
+    {
+      "kind": "旧版归档（未删除）",
+      "path": "expert-tasks/t6/artifacts/archive_old/",
+      "note": "v1/v2 的 html/pdf/pptx/md 及旧脚本，改名 _old 归档"
+    }
+  ],
+  "gates": {
+    "G1_text": true,
+    "G2_numbers": true,
+    "G3_design": true,
+    "G4_ppt": true,
+    "G5_pdf": true
+  },
+  "render_check": {
+    "detector_p0": 0,
+    "viewports": [
+      320,
+      360,
+      375,
+      414,
+      480,
+      600,
+      768,
+      1024,
+      1280
+    ],
+    "viewport_failures": 0,
+    "contrast_pairs": "16/16 通过 AA",
+    "pdf_pages": 14,
+    "pdf_rasterized_pages": 14,
+    "tables_single_page": true,
+    "pdf_content_box_violations": 0,
+    "exhibits": {
+      "表1 八段成本树行数": 8,
+      "表2 责任边界矩阵行数": 3,
+      "表3 三类场景行数": 3,
+      "表4 Q1-Q5 预言表行数": 5,
+      "表5 观察面板行数": 10,
+      "责任链条断点数": 13,
+      "三重剥离条数": 3,
+      "编号图卡数": 1,
+      "柱状图轴标签数": 2,
+      "未采用数字留痕条目": 1
+    },
+    "shots_dir": "expert-tasks/t6/artifacts/shots_v3/"
+  },
+  "not_done": [
+    "PPTX 逐页预览图（本机无 LibreOffice/PowerPoint；图表标签碰撞 not_checked）",
+    "人工肉眼复核（以运行态几何＋对比度＋检测器＋PDF 逐页栅格化＋五表单页校验代替）",
+    "视频（按令不做）"
+  ],
+  "awaiting": "用户确认新外链与 PDF/PPT 是否符合预期；如需三栏版/省墨版/5 页管理层版可继续"
+}

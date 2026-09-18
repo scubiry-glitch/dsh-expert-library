@@ -17,6 +17,15 @@
         "实操",
         "数据"
       ]
+    },
+    {
+      "topic": "方法论提取（从材料/复盘/研报沉淀可复用方法、打法、框架）",
+      "framework": "B",
+      "primaryField": "银行经营",
+      "preferredTags": [
+        "实操",
+        "解读"
+      ]
     }
   ],
   "stancePairs": [

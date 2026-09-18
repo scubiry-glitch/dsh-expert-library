@@ -1,0 +1,45 @@
+{
+  "name": "智见报告V2·Designer渲染",
+  "id": "智见报告v2-designer渲染",
+  "description": "v2 渲染：同一内容契约（md 唯一内容源、13 页映射、口径纪律与数字锚点不变），由 Designer 专家以其内置 finesse-ui 模板（product/document register）整体重做视觉层，产出 v2 独立文件，绝不覆盖 v1。",
+  "captainSessionId": "session-aec3fc2a-285d-4c57-b987-901ac5a3d58b",
+  "createdAt": 1788618232837,
+  "members": [
+    {
+      "id": "10c6e20e-fc97-4d3d-9dae-80a3cabfa9a5",
+      "name": "Designer",
+      "role": "渲染设计师",
+      "provider": "deepseek-official",
+      "model": "deepseek-v4-flash",
+      "reasoningEffort": "max",
+      "joinedAt": 1788618234956,
+      "status": "removed"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "subject": "Designer v2 渲染：finesse-ui 模板重做视觉层（13 页，不覆盖 v1）",
+      "description": "用你的内置 finesse-ui 模板重渲染《成都数据集团合作分析报告》v2（视觉层整体重做，内容契约与 v1 完全一致）。\n\n【内容契约（硬约束，与 v1 相同）】\n- 唯一内容源 md：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v1.md\n- 渲染契约（13 页映射/存疑口径锚点/数字锚点/纪律）：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/spec.md —— 逐条遵守\n- 内容取材可参考 v1 已校对片段（文字与 19 处 flag 徽标落位已过双门禁，直接沿用其文字内容；但视觉/CSS 不得照抄 v1 贝壳蓝 theme）：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/.build_html/pages/p01–p13.html\n- 结构不可改：八章节名节名逐字；正文表述只能原句摘录；存疑语原文入徽（flag 效果自定样式，语义等同）；每章一点睛图（无数字不绘/定性示意标注）；表格全量（六来源表 6 行、6.3 矩阵 7×5）且单页不断。\n\n【版式硬约束】794×1123px A4 纵向（@page margin:0），每页 .page 固定尺寸 overflow:hidden；每页页眉含「内部讨论稿」密级标识＋报告名；页脚含页码「第 N 页 / 共 13 页」（N=01–13）；正文≥15px；单文件内联 CSS、零 JS、零外链字体/图片。\n\n【你的模板】finesse-ui：/root/zhijian/dsh-expert-library/knowledge/skills/finesse-ui/SKILL.md（先通读 SKILL.md，再按需读 references/：document.md、product-ui.md、product-palettes.md、dataviz.md、chart-crafting.md、anti-cheap.md、theming.md）。用 product/document register 完整重做视觉系统：色板、字重层级、hairline 边框、图表语汇、封面封底范式。贝壳蓝主题不保留，以你的 register 为准（如需保留「内部讨论稿/页码」等语义位，用你的语汇重绘）。\n\n【交付】\n1) 写出 /root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v2.html（新文件，严禁改动同名 v1 文件）；\n2) 按你的角色规范做渲染检查：playwright 截图 13 页全检（无遮挡/无溢出/页脚可见），逐页截图存 .build_html/shots_v2/，记录 sha256；\n3) 向队长回报：设计决策摘要（register/色板/图表语汇选择与理由）、自检结论、sha256。\n队长将复跑 G1（存疑短语+结构）/G2（数字逐 token）/G3（溢出实测）三门禁后验收。",
+      "status": "completed",
+      "assignee": "Designer",
+      "dependencies": [],
+      "attempt": 1,
+      "createdAt": 1788618255703,
+      "updatedAt": 1788620829174,
+      "project": {
+        "path": "expert-tasks/t1",
+        "inputPath": "expert-tasks/t1/input/task.json",
+        "outputPath": "expert-tasks/t1/output/result.json",
+        "artifactsPath": "expert-tasks/t1/artifacts",
+        "version": 1
+      },
+      "reassigning": false,
+      "output": "✅ v2 渲染完成。交付物：/root/.openclaw/workspace/98wiki/projects/成都数据集团合作/20260905_成都数据集团合作分析报告_贝壳视角_v2.html（新文件，v1 未动，sha256=5b2ee78e3c7057b5aaebc21c41bd96bc72caa65b5a37cd01ba9d3261d38e90ad）。\n\n【设计决策摘要】register=product(document-report)；拒绝 v1 贝壳蓝主题→新「sage 纸本档案」系统：暖纸底 --sheet #F5F4EB + 森林松绿 accent #2E6B4F（唯一品牌色）+ 暖金 #B8893B 仅作封面细线 + 赭红 warn 仅用于 flag-w；hairline 边框（rgba ink 8-16%）、tinted 阴影、卡片 white-soft #FDFDF6；正文 15px/表格 13.5px/徽标 11.5px/图注 10.5px 层级；标题衬线（Noto Serif CJK SC）仅封面/封底，正文黑体族；封面范式=纸本档案浅色封面（无蓝色渐变，金线+松绿章号），封底=居中收束引用+信息卡；页眉页脚保持 spec 语义位（内部讨论稿徽标/报告名/页码）以新语汇重绘。图表语汇：表格行 hairline+panel 表头、确定性徽标（较高=松绿 tag/中等=灰 tag/待书面确认=flag-w 琥珀），p05 电价条形图与 p07 三角图为重绘 SVG（数值比例几何真实、文字 token 与 v1 一致）。\n\n【自检结论】①文本逐页 tag-strip diff vs v1 双门禁页面 13/13 MATCH（含 19 处 flag 徽标 8+11 原位）；②G1/G2 门禁自跑 PASS（flags=19 pages=13 ph=13 pf=13 script=0，数字/存疑短语/结构锚点全在）；③G3 溢出实测 13 页全 PASS（.page 794×1123、.pm 无滚动、0 元素越界、表格距页脚>32px、页脚可见）；④playwright 逐页截图存 .build_html/shots_v2/p01–p13.png + full.png，经视觉 QA 13 页无遮挡/无溢出/页脚可见（p05 图第三行坐标已修正、封面节奏已调平）。零 JS、零外链、单文件内联 CSS。\n\n请队长复跑 G1/G2/G3 三门禁验收。",
+      "qualityScore": null,
+      "repairCount": 0
+    }
+  ],
+  "taskSeq": 1,
+  "completionNotifiedAt": 1788620829179
+}

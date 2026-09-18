@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>零售金融专家 · 从真实客户意图到银行合规经营</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<style>
+  /* finesse · deck-v2 · soul=authority-navy+gold · register=brand-deck · dials SOUL6/SPEC4/DENSITY5 */
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root{
+    --bg:#0A0F18;            /* Deep Navy — page base, tinted toward blue */
+    --surface:#101827;       /* Raised plane */
+    --card:#131E30;          /* Card plane */
+    --ink:#EAEEF6;           /* Body text, never pure white */
+    --muted:#8B98AC;         /* Secondary text */
+    --dim:#8593A8;           /* Tertiary — 6.16:1 on bg, 5.36:1 on card (AA) */
+    --gold:#D4A95C;          /* Sovereign Gold — primary accent, locked */
+    --gold-soft:rgba(212,169,92,.14);
+    --blue:#5B8DD9;          /* Structural Blue — links & secondary accent */
+    --line:rgba(150,170,200,.13);
+    --line-strong:rgba(150,170,200,.22);
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:'Noto Sans SC',"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;overflow:hidden}
+
+  /* grain layer */
+  body::before{content:'';position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.03;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  .skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--gold);color:#1A1206;
+    padding:10px 18px;font-weight:600}
+  .skip:focus{left:12px;top:12px}
+
+  .deck{position:relative;height:100vh;width:100vw;z-index:2}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;
+    padding:64px 96px 96px;overflow:auto;
+    background:
+      radial-gradient(ellipse 80% 60% at 78% -10%, rgba(91,141,217,.07), transparent 60%),
+      var(--bg);}
+  .slide.active{display:flex}
+  .slide.active > *{animation:rise .65s cubic-bezier(.16,1,.3,1) both}
+  .slide.active > *:nth-child(2){animation-delay:.07s}
+  .slide.active > *:nth-child(3){animation-delay:.14s}
+  .slide.active > *:nth-child(4){animation-delay:.21s}
+  .slide.active > *:nth-child(5){animation-delay:.28s}
+  .slide.active > *:nth-child(6){animation-delay:.35s}
+  @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
+
+  .kicker{font-size:12.5px;letter-spacing:.34em;font-weight:600;color:var(--gold);
+    text-transform:uppercase;margin-bottom:14px}
+  h1{font-family:'Noto Serif SC',serif;font-weight:700;font-size:clamp(44px,4.6vw,64px);
+    line-height:1.14;letter-spacing:-.01em;margin-bottom:18px}
+  h2{font-weight:900;font-size:clamp(28px,2.6vw,36px);line-height:1.25;letter-spacing:-.015em;
+    margin-bottom:8px}
+  h2 .no{font-family:'JetBrains Mono',monospace;font-weight:400;font-size:.42em;color:var(--dim);
+    letter-spacing:.1em;display:block;margin-bottom:10px}
+  .sub{font-size:19px;font-weight:300;color:var(--muted);line-height:1.8;margin-bottom:30px;max-width:62em}
+  .rule{height:1px;background:linear-gradient(90deg,var(--gold),transparent 70%);
+    width:220px;margin:18px 0 30px}
+  p,li{font-size:16.5px;font-weight:300;line-height:1.8;color:var(--ink)}
+  strong{font-weight:600;color:#fff}
+  .g{color:var(--gold);font-weight:600}
+  .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+  /* table wrapper for mobile horizontal scroll */
+  .tw{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;position:relative}
+  .swipe{display:none;font-size:12px;color:var(--dim);letter-spacing:.08em;margin:-8px 0 12px}
+  .kpis.five{grid-template-columns:repeat(5,1fr)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:15.5px;min-width:640px}
+  th{font-weight:500;font-size:13px;letter-spacing:.08em;color:var(--muted);text-align:left;
+    padding:11px 16px;border-bottom:1px solid var(--line-strong)}
+  td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.65;font-weight:300}
+  tbody tr{transition:background .25s}
+  tbody tr:hover{background:rgba(212,169,92,.045)}
+  td strong{font-weight:600}
+  td:first-child{font-weight:500}
+
+  a{color:var(--blue);text-decoration:none;border-bottom:1px solid transparent;transition:.25s}
+  a:hover{color:var(--gold);border-bottom-color:var(--gold)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
+
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .card{background:linear-gradient(160deg,rgba(255,255,255,.028),transparent 55%),var(--card);
+    border:1px solid var(--line);border-radius:16px;padding:24px 26px;
+    box-shadow:0 20px 50px -30px rgba(2,6,14,.9);
+    transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .45s}
+  .card:hover{transform:translateY(-3px);border-color:var(--line-strong)}
+  .card h4{font-weight:700;font-size:17.5px;letter-spacing:-.01em;margin-bottom:9px;color:#fff}
+  .card p{font-size:14.5px;color:var(--muted);line-height:1.72}
+  .card .tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    letter-spacing:.12em;color:var(--gold);margin-bottom:10px}
+  .card.hi{border-color:rgba(212,169,92,.45);
+    background:linear-gradient(160deg,rgba(212,169,92,.09),transparent 60%),var(--card)}
+
+  /* KPI blocks — numbers belong to the eye, not to a sentence */
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:26px 0 4px}
+  .kpi{background:linear-gradient(160deg,rgba(255,255,255,.03),transparent 60%),var(--card);
+    border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .kpi .n{font-family:'JetBrains Mono',monospace;font-size:34px;font-weight:600;color:var(--gold);
+    letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+  .kpi .n small{font-size:15px;color:var(--muted);font-weight:400;margin-left:4px;letter-spacing:0}
+  .kpi .l{font-size:13.5px;color:var(--muted);margin-top:9px;line-height:1.55;font-weight:300}
+  .kpi.blue .n{color:var(--blue)}
+
+  .callout{margin:18px 0;background:var(--gold-soft);border:1px solid rgba(212,169,92,.35);
+    border-left:3px solid var(--gold);border-radius:12px;padding:16px 22px;font-size:16px;
+    font-weight:300;line-height:1.8}
+  .callout.blue{background:rgba(91,141,217,.09);border-color:rgba(91,141,217,.3);border-left-color:var(--blue)}
+
+  .pill{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.06em;
+    color:var(--gold);background:rgba(212,169,92,.1);border:1px solid rgba(212,169,92,.3);
+    border-radius:999px;padding:3px 13px;margin-left:8px;vertical-align:middle}
+
+  /* flow */
+  .flow{max-width:1020px}
+  .fstep{display:flex;align-items:center;gap:20px;position:relative;
+    background:linear-gradient(160deg,rgba(255,255,255,.028),transparent 55%),var(--card);
+    border:1px solid var(--line);border-radius:14px;padding:15px 24px;margin-bottom:4px;
+    transition:border-color .3s}
+  .fstep:hover{border-color:var(--line-strong)}
+  .fstep:not(:last-child)::after{content:'';position:absolute;left:44px;bottom:-5px;width:1px;height:5px;
+    background:var(--line-strong)}
+  .fnum{flex:0 0 42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;font-weight:600;font-size:16px;color:var(--gold);
+    border:1px solid rgba(212,169,92,.5);background:rgba(212,169,92,.08)}
+  .fstep .t{font-size:17px;font-weight:600;color:#fff}
+  .fstep .d{font-size:13.5px;color:var(--muted);margin-top:2px;font-weight:300}
+  .fstep.end{border-color:rgba(212,169,92,.55);
+    background:linear-gradient(160deg,rgba(212,169,92,.12),transparent 60%),var(--card)}
+  .fstep.end .fnum{background:var(--gold);color:#1A1206;border-color:var(--gold)}
+
+  /* case cards */
+  .cases{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+  .case{display:block;background:linear-gradient(160deg,rgba(255,255,255,.03),transparent 60%),var(--card);
+    border:1px solid var(--line);border-radius:14px;padding:20px 22px;color:var(--ink);
+    border-bottom:1px solid var(--line);
+    transition:transform .45s cubic-bezier(.16,1,.3,1),border-color .35s}
+  .case:hover{transform:translateY(-4px);border-color:rgba(212,169,92,.5);color:var(--ink)}
+  .case-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .case-top .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--gold)}
+  .case-top .arw{font-size:15px;color:var(--dim);transition:.3s}
+  .case:hover .arw{color:var(--gold);transform:translate(2px,-2px)}
+  .case h4{font-size:16px;font-weight:600;line-height:1.5;margin-bottom:8px;color:#fff}
+  .case p{font-size:13.5px;color:var(--muted);line-height:1.65;font-weight:300}
+  .case .ft{margin-top:12px;padding-top:11px;border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--dim);letter-spacing:.03em}
+  .case.static{cursor:default}
+  .case.static:hover{transform:none;border-color:var(--line)}
+
+  /* comparison page */
+  .cmp{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px;align-items:start}
+  .cmp .col{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 26px}
+  .cmp .col.us{border-color:rgba(212,169,92,.5);
+    background:linear-gradient(160deg,rgba(212,169,92,.12),transparent 60%),var(--card);
+    box-shadow:0 24px 60px -34px rgba(212,169,92,.45)}
+  .cmp h4{font-size:17px;color:#fff;font-weight:700;margin-bottom:6px}
+  .cmp .role{font-size:12.5px;color:var(--dim);letter-spacing:.1em;margin-bottom:16px;display:block}
+  .cmp ul{margin:0}
+  .cmp li{font-size:14.5px;color:var(--muted);margin:11px 0}
+  .cmp .col.us li{color:var(--ink)}
+  .cmp li::before{background:var(--dim)}
+  .cmp .col.us li::before{background:var(--gold)}
+
+  /* cover */
+  .cover{justify-content:center}
+  .cover .vig{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(ellipse 90% 70% at 30% 40%,transparent 40%,rgba(10,15,24,.9) 100%)}
+  .cover .glow{position:absolute;right:-8%;top:-12%;width:52vw;height:52vw;pointer-events:none;
+    background:radial-gradient(circle,rgba(212,169,92,.1),transparent 62%);
+    animation:breathe 9s ease-in-out infinite}
+  @keyframes breathe{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+  .brandbar{position:absolute;top:56px;left:96px;display:flex;align-items:center;gap:12px}
+  .brandbar .mk{width:30px;height:30px;border:1px solid rgba(212,169,92,.6);border-radius:9px;
+    display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;
+    font-size:13px;color:var(--gold);background:rgba(212,169,92,.08)}
+  .brandbar .nm{font-size:14px;letter-spacing:.2em;color:var(--muted)}
+  .cover-meta{display:flex;gap:0;margin-top:52px;border-top:1px solid var(--line-strong);position:relative}
+  .cover-meta>div{padding:22px 34px 0 0;margin-right:34px;border-right:1px solid var(--line)}
+  .cover-meta>div:last-child{border-right:none}
+  .cover-meta b{display:block;font-weight:600;font-size:16.5px;margin-bottom:5px;color:#fff}
+  .cover-meta span{font-size:13.5px;color:var(--muted);font-weight:300;line-height:1.6;display:block}
+
+  /* footer & nav */
+  .footer{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-between;align-items:center;
+    padding:14px 96px;font-size:12.5px;letter-spacing:.1em;color:var(--dim);
+    background:linear-gradient(transparent,rgba(10,15,24,.95) 55%);pointer-events:none;z-index:5}
+  #pageinfo{font-family:'JetBrains Mono',monospace}
+  .nav{position:fixed;right:30px;bottom:52px;display:flex;gap:10px;z-index:9}
+  .nav button{background:rgba(19,30,48,.85);backdrop-filter:blur(8px);color:var(--ink);
+    border:1px solid var(--line-strong);border-radius:12px;width:46px;height:46px;font-size:20px;
+    cursor:pointer;transition:.3s}
+  .nav button:hover{background:var(--gold);color:#1A1206;border-color:var(--gold)}
+  .progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--blue),var(--gold));
+    width:0;z-index:9;transition:width .45s cubic-bezier(.16,1,.3,1)}
+  .hint{position:fixed;left:96px;bottom:52px;font-size:12px;color:var(--dim);letter-spacing:.08em;z-index:5}
+  .dots{position:fixed;left:50%;transform:translateX(-50%);bottom:44px;display:flex;gap:9px;z-index:9}
+  .dots button{width:9px;height:9px;padding:0;border-radius:50%;cursor:pointer;
+    background:rgba(150,170,200,.25);border:1px solid transparent;transition:.3s}
+  .dots button:hover{background:rgba(212,169,92,.6)}
+  .dots button[aria-current="true"]{background:var(--gold);width:22px;border-radius:999px}
+
+  ul{list-style:none;margin:10px 0}
+  ul li{padding-left:24px;position:relative;margin:10px 0}
+  ul li::before{content:'';position:absolute;left:2px;top:.72em;width:7px;height:7px;border-radius:2px;
+    background:var(--gold);opacity:.75;transform:rotate(45deg)}
+
+  .endgrid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:18px;margin-top:24px}
+  .endcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 26px}
+  .endcard.big{border-color:rgba(212,169,92,.5);
+    background:linear-gradient(160deg,rgba(212,169,92,.12),transparent 60%),var(--card)}
+  .endcard h4{font-size:17.5px;font-weight:700;margin-bottom:9px;color:#fff}
+  .endcard p{font-size:14px;color:var(--muted);line-height:1.7;font-weight:300}
+
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media (max-width:1100px){
+    .kpis,.kpis.five{grid-template-columns:repeat(2,1fr)}
+    .cases,.cmp{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (max-width:900px){
+    .slide{padding:40px 26px 110px}
+    .grid2,.grid3,.endgrid,.cases,.cmp{grid-template-columns:1fr}
+    .kpis,.kpis.five{grid-template-columns:1fr 1fr}
+    .cover-meta{flex-direction:column;gap:14px}
+    .cover-meta>div{border-right:none;padding:0;margin:0}
+    .brandbar{top:24px;left:26px}
+    .footer,.hint{display:none}
+    .dots{bottom:24px}
+    .swipe{display:block}
+    h1{font-size:34px}
+  }
+  @media (max-width:600px){
+    .kpis,.kpis.five{grid-template-columns:1fr}
+    .fstep{gap:13px;padding:12px 16px}
+  }
+
+  /* ── print / PDF export: one slide per page, light ink ─────────────── */
+  @media print{
+    @page{size:A4 landscape;margin:0}
+    html,body{height:auto;overflow:visible;background:#fff;color:#16202E}
+    body::before{display:none}
+    .deck{height:auto;width:auto}
+    .slide{position:relative!important;display:flex!important;inset:auto;
+      height:auto;min-height:0;page-break-after:always;break-after:page;
+      break-inside:avoid;padding:11mm 12mm;background:#fff!important;overflow:visible}
+    .slide:last-child{page-break-after:auto}
+    .slide > *{animation:none!important;opacity:1!important;transform:none!important}
+    .footer,.nav,.hint,.dots,.progress,.skip,.swipe{display:none!important}
+    .cover .vig,.cover .glow{display:none}
+    :root{--bg:#fff;--ink:#16202E;--muted:#5A6779;--dim:#656F7E;--card:#F5F7FA;
+      --gold:#8A6A1F;--blue:#1B4FA0;--line:rgba(20,40,70,.16);--line-strong:rgba(20,40,70,.3);
+      --gold-soft:rgba(138,106,31,.08)}
+    h1,h2,.card h4,.cmp h4,.case h4,.endcard h4{color:#0E1726!important}
+    h1{font-size:30px;margin-bottom:10px}
+    h2{font-size:21px;margin-bottom:6px}
+    .kicker{font-size:10px;margin-bottom:8px}
+    .sub{font-size:11.5px;margin-bottom:12px}
+    p,li{font-size:11.5px;line-height:1.6}
+    .rule{margin:10px 0 16px}
+    .cover-meta{margin-top:20px}
+    strong{color:#0E1726}
+    .card,.case,.kpi,.cmp .col,.endcard,.fstep,.callout,.kpis,.tw,table,tr,ul{
+      break-inside:avoid;page-break-inside:avoid}
+    .card,.case,.kpi,.cmp .col,.endcard,.fstep,.callout{box-shadow:none!important;
+      background:#F5F7FA!important;border-color:#D6DDE6!important}
+    .cmp .col.us{background:#FBF6E9!important;border-color:#C9A96B!important}
+    table{font-size:11.5px;min-width:0}
+    th,td{padding:6px 9px}
+    .kpi{padding:12px 14px}
+    .kpi .n{font-size:22px;color:#8A6A1F}
+    .fstep{padding:9px 14px}
+    .fnum{flex:0 0 30px;height:30px;font-size:12px}
+    .fstep .t{font-size:12.5px}
+    .fstep .d{font-size:10.5px}
+    .card{padding:14px 16px}
+    .card h4{font-size:13px}
+    .card p,.case p,.endcard p{font-size:10.5px;line-height:1.55}
+    .case{padding:12px 14px}
+    .case h4{font-size:12px}
+    .grid2,.grid3,.cases,.cmp,.kpis,.kpis.five{gap:10px}
+    a{color:#1B4FA0!important;border:none}
+  }
+  /* full-bleed iframe pages (reference-layout advantages) */
+  .slide.adv{padding:0;overflow:hidden}
+  .slide.adv iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+</style>
+<body>
+<a class="skip" href="#deck">跳到幻灯片内容</a>
+<div class="deck" id="deck" tabindex="-1" role="region" aria-label="演示幻灯片">
+
+<!-- 01 封面 -->
+<section class="slide cover active" aria-label="封面">
+  <div class="vig"></div><div class="glow"></div>
+  <div class="brandbar"><div class="mk">零</div><div class="nm">零售金融专家</div></div>
+  <div>
+    <div class="kicker">RETAIL FINANCE EXPERT · FOR BANKS</div>
+    <h1>零售金融专家<br>从真实客户意图<br>到银行合规经营</h1>
+    <div class="rule"></div>
+    <p class="sub" style="margin-bottom:0">零售获客 · 押品证据 · Agent 服务——<br>把购房过程中的真实客户意图，转化为银行可合规承接的经营机会。</p>
+    <div class="cover-meta">
+      <div><b>主线 A · 零售获客与经营</b><span>真实意图 → 合规触达 → 银行转化</span></div>
+      <div><b>主线 B · 押品评估与风险</b><span>数据真实 → 估值可复核 → 嵌入流程</span></div>
+      <div><b>底座</b><span>自主开发 · 本地部署 · 证据可追溯</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 先讲结论 -->
+<section class="slide" aria-label="我们为银行解决什么">
+  <div class="kicker">先讲结论 · WHAT WE SOLVE</div>
+  <h2><span class="no">02</span>我们为银行解决什么</h2>
+  <p class="sub">三件事，各对应银行一个部门的日常。</p>
+  <div class="grid3" style="margin-top:20px">
+    <div class="card"><div class="tag">零售 · 获客</div><h4>获客</h4><p style="font-size:15.5px;color:var(--ink)">从购房行为中识别<strong>理财、按揭、经营资金</strong>需求——客户在真实交易里，不在名单里。</p></div>
+    <div class="card"><div class="tag">零售 · 经营</div><h4>经营</h4><p style="font-size:15.5px;color:var(--ink)">通过 <strong>CPA / CPT / 平台接入</strong>，把有明确意图的客户以合规方式交给银行经营。</p></div>
+    <div class="card"><div class="tag">风险 · 押品</div><h4>风控</h4><p style="font-size:15.5px;color:var(--ink)">房产估值、监测与<strong>证据链</strong>，辅助授信审查与押品全流程管理。</p></div>
+  </div>
+  <div class="callout" style="margin-top:26px"><strong>一条真实意图链，连接零售经营与押品决策。</strong></div>
+</section>
+
+<!-- 03 零售客户旅程（主轴） -->
+<section class="slide" aria-label="零售客户旅程">
+  <div class="kicker">主线 A · 零售获客与经营</div>
+  <h2><span class="no">03</span>零售客户旅程：全 deck 的主轴</h2>
+  <p class="sub">客户不动，信号先动。后面所有零售产品与合规设计，都从这条链展开。</p>
+  <div class="flow">
+    <div class="fstep"><div class="fnum">1</div><div><div class="t">行为信号</div><div class="d">找房 / 关注 / 带看 / 贷款计算器 / IM 咨询——未说出口的金融需求</div></div></div>
+    <div class="fstep"><div class="fnum">2</div><div><div class="t">真实意图识别 <span class="pill">数据与模型服务</span></div><div class="d">画像 + 分类器把行为翻译成需求信号</div></div></div>
+    <div class="fstep"><div class="fnum">3</div><div><div class="t">按揭 / 理财 / 经营资金分类</div><div class="d">需求分型，决定分发给谁、何时触达</div></div></div>
+    <div class="fstep"><div class="fnum">4</div><div><div class="t">授权留资与核验</div><div class="d">客户主动授权、明示用途；有效线索 = 预约完成 / 回拨核验通过</div></div></div>
+    <div class="fstep"><div class="fnum">5</div><div><div class="t">合规触达银行</div><div class="d">贵行以自有身份联系；敏感字段最小必要、接口只读、审计留痕</div></div></div>
+    <div class="fstep"><div class="fnum">6</div><div><div class="t">银行自主转化</div><div class="d">产品销售与客户关系留在贵行</div></div></div>
+    <div class="fstep end"><div class="fnum">7</div><div><div class="t">脱敏回写，优化下一轮分发</div><div class="d">转化结果（脱敏聚合）回流，分发模型与包段定价持续校准</div></div></div>
+  </div>
+</section>
+
+<!-- 04 零售条线怎么用 -->
+<section class="slide" aria-label="零售条线怎么用">
+  <div class="kicker">主线 A · 零售获客与经营</div>
+  <h2><span class="no">04</span>零售条线怎么用：场景 × 客群 × 银行动作</h2>
+  <p class="sub">只讲零售。贵行零售部门在哪里接得住，就在哪里用。</p>
+  <div class="tw" style="margin-top:20px">
+    <table>
+      <thead><tr><th style="width:18%">零售场景</th><th style="width:40%">客群</th><th>银行动作</th></tr></thead>
+      <tbody>
+        <tr><td><strong>财富获客</strong></td><td>卖房、置换、高总价房产客户——大额资金到账即财富重配需求</td><td>理财开户与资产配置</td></tr>
+        <tr><td><strong>按揭经营</strong></td><td>新房、二手房、抵押经营资金客户</td><td>贷款预审、产品匹配</td></tr>
+        <tr><td><strong>存量经营</strong></td><td>房贷客户、交易后客户</td><td>消费贷、保险、代发交叉经营</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" style="margin-top:20px">
+    <strong>边界一句话</strong>：平台不替银行完成销售，平台负责把「有明确意图的人」以合规方式交给银行。
+  </div>
+</section>
+
+<!-- 05 零售服务产品与计费 -->
+<section class="slide" aria-label="零售服务产品与计费">
+  <div class="kicker">主线 A · 零售获客与经营</div>
+  <h2><span class="no">05</span>零售服务产品与计费</h2>
+  <div class="kpis four" style="grid-template-columns:repeat(4,1fr);margin:22px 0 4px">
+    <div class="kpi"><div class="n" style="font-size:22px">CPA</div><div class="l">按有效线索计费<br>空号 / 拒接 / 重复不计费</div></div>
+    <div class="kpi"><div class="n" style="font-size:22px">CPT</div><div class="l">专家时段 / 专场 / 场域包段<br>时段内资源独占</div></div>
+    <div class="kpi"><div class="n" style="font-size:22px">年费</div><div class="l">平台接入<br>插件 · 数据围栏 · 运营支持</div></div>
+    <div class="kpi blue"><div class="n" style="font-size:22px">订阅/调用</div><div class="l">数据与模型服务<br>数据按订阅，画像按场景</div></div>
+  </div>
+  <div class="callout" style="margin-top:20px">
+    <strong>商务框架</strong>：年费三包 + 按次计费；不按点击收费、不参与成交分成——转化由贵行自主完成。具体以合同为准。
+  </div>
+</section>
+
+<!-- 06 从真实意图到合规触达 -->
+<section class="slide" aria-label="合规责任分界">
+  <div class="kicker">主线 A · 合规设计</div>
+  <h2><span class="no">06</span>从真实意图到合规触达：责任分界</h2>
+  <p class="sub">零售合规不是一句口号，而是每个环节都写清「谁负责什么」。</p>
+  <div class="tw" style="margin-top:20px">
+    <table>
+      <thead><tr><th style="width:16%">环节</th><th>平台负责</th><th>银行负责</th></tr></thead>
+      <tbody>
+        <tr><td><strong>意图识别</strong></td><td>行为信号、画像、分类</td><td>确认目标客群</td></tr>
+        <tr><td><strong>授权留资</strong></td><td>授权记录与来源留痕</td><td>确认触达用途</td></tr>
+        <tr><td><strong>线索核验</strong></td><td>去重、核验、有效性判断</td><td>接收并跟进</td></tr>
+        <tr><td><strong>合规触达</strong></td><td>权限、脱敏、审计</td><td>以银行身份联系客户</td></tr>
+        <tr><td><strong>转化经营</strong></td><td>脱敏结果回写</td><td>产品销售与客户关系</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" style="margin-top:20px"><strong>意图在客户，识别在平台，触达在银行，转化归银行。</strong></div>
+</section>
+
+<!-- 07 为什么是现在 -->
+<section class="slide" aria-label="为什么是现在">
+  <div class="kicker">两条主线共同的时代背景</div>
+  <h2><span class="no">07</span>为什么是现在</h2>
+  <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:22px 0 4px">
+    <div class="kpi"><div class="n">36.29<small>万亿</small></div><div class="l">个人住房贷款余额，较峰值 -4.2%（Wind EDB，2026-06）</div></div>
+    <div class="kpi"><div class="n">≈1.5<small>%</small></div><div class="l">商业银行净息差（金监总局，2026Q2）</div></div>
+    <div class="kpi blue"><div class="n">23.18<small>%</small></div><div class="l">70 城二手住宅较高点累计回调（容诚材料 2026.08）</div></div>
+    <div class="kpi blue"><div class="n">0.67<small>%→0.88%</small></div><div class="l">六大行住房贷不良率（同上口径）</div></div>
+  </div>
+  <div class="callout" style="margin-top:20px">
+    房地产金融 <strong>1+N 新政</strong>（央行 + 金监总局，2026-08-27）重新分配的是<strong>知情权、控制权与责任</strong>：主办银行制下，「审的不再只是财报，也要看项目和押品过程」；36 万亿存量按揭进入年度重估——<strong>押品数据与评估，正从辅助材料走向风控基础设施</strong>。零售端同理：粗放买流量的时代结束，真实意图与合规触达成为获客的前提。
+  </div>
+</section>
+
+<!-- 08 押品评估与监测 -->
+<section class="slide" aria-label="押品评估与监测">
+  <div class="kicker">主线 B · 押品评估与风险</div>
+  <h2><span class="no">08</span>押品评估与监测：四场景 × 三类交付</h2>
+  <p class="sub">不替代贵行既有评估与审批，而是补充一条可交叉验证、可持续复核的市场证据线；不构成资产评估报告或房地产估价报告。</p>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><div class="tag">FOUR SCENES</div><h4>四类场景</h4><p style="font-size:15px;color:var(--ink)">贷前准入（单套价值参考）· 存量监测（LTV / 覆盖异常清单）· 区域预警（城市—板块—小区分层）· 不良处置（时点与折价空间、租售流动性）</p></div>
+    <div class="card"><div class="tag">DELIVERY</div><h4>三类交付</h4><p style="font-size:15px;color:var(--ink)">咨询报告（结论 / 口径 / 样本边界 / 版本全披露）· API（结构化区间 + 证据 + 版本）· 银行场景 Agent（组织案件 → 匹配证据 → 留版本 → 识别异常 → 人工复核）</p></div>
+  </div>
+  <div class="callout" style="margin-top:20px">
+    四项直接价值：识别<strong>高评高贷</strong>与 LTV 安全垫压力 · 提升<strong>批量复核</strong>效率 · 持续跟踪<strong>单套与区域变化</strong> · 为<strong>不良处置</strong>提供市场证据。
+  </div>
+</section>
+
+<!-- 09 评估案例 -->
+<section class="slide" aria-label="评估案例">
+  <div class="kicker">主线 B · 押品评估与风险</div>
+  <h2><span class="no">09</span>三个案例，各证明一种能力</h2>
+  <div class="cases" style="margin-top:22px">
+    <a class="case" href="https://yy.meizu.life/render/Gz/jiaozi-1hao-townhouse.html" target="_blank" rel="noopener">
+      <div class="case-top"><span class="tag">可复算</span><span class="arw" aria-hidden="true">↗</span></div>
+      <h4>佳馨苑 · 单套租金测算（容诚 2026-07）</h4>
+      <p>模型参考点 2,364 元/月 vs 样本加权 2,203 元/月；事后检验 880 条样本，平均误差 13.9%；建议区间附使用条件。</p>
+      <div class="ft">单套颗粒度 · 证据链工艺</div>
+    </a>
+    <a class="case" href="https://yy.meizu.life/render/Gz/wanli-plate.html" target="_blank" rel="noopener">
+      <div class="case-top"><span class="tag">可比较</span><span class="arw" aria-hidden="true">↗</span></div>
+      <h4>万柳板块 · 板块与小区分化</h4>
+      <p>16 盘横向对比、小区 α 溢价分化、租售比排序——区域分层如何传导到单套押品。</p>
+      <div class="ft">区域预警 · 四层联动</div>
+    </a>
+    <a class="case" href="https://yy.meizu.life/render/98wiki-feishu/20260824-jiangbei-beike-joint-acquisition-v3.html" target="_blank" rel="noopener">
+      <div class="case-top"><span class="tag">可推演</span><span class="arw" aria-hidden="true">↗</span></div>
+      <h4>南京江北收储 · 敏感性与决策红线</h4>
+      <p>盈亏平衡折扣判定、折扣 × 资金成本矩阵、ROE 分情景——处置时点与折价空间的量化推演。</p>
+      <div class="ft">不良处置 · 量化测算</div>
+    </a>
+  </div>
+  <div class="callout" style="margin-top:20px">
+    <strong>扩展材料（点击后深读）</strong>：新房项目样例（<a href="https://yy.meizu.life/render/Gz/jinchengyuan-phase3.html" target="_blank" rel="noopener">锦宸院三期</a>）、南京收储敏感性分析正式文稿（现场提供）、全部样例的证据留存入口（<a href="https://dss.ke.com/valuation/index.html" target="_blank" rel="noopener">dss.ke.com/valuation</a>）。
+  </div>
+</section>
+
+<!-- 10 数据与证据能力 -->
+<section class="slide" aria-label="数据与证据能力">
+  <div class="kicker">底座 · 数据为什么值得信</div>
+  <h2><span class="no">10</span>数据与证据能力：真实 × 可追溯</h2>
+  <p class="sub">他人主要提供结果数据；我们拥有成交前的过程数据，并把每一次结论留在证据链上。</p>
+  <div class="kpis" style="grid-template-columns:repeat(4,1fr);margin:20px 0 4px">
+    <div class="kpi"><div class="n" style="font-size:19px">挂牌</div><div class="l">供给意愿——成交前即可观测</div></div>
+    <div class="kpi"><div class="n" style="font-size:19px">带看</div><div class="l">真实需求意图——先于成交</div></div>
+    <div class="kpi blue"><div class="n" style="font-size:19px">去化周期</div><div class="l">市场均衡速度的标尺</div></div>
+    <div class="kpi blue"><div class="n" style="font-size:19px">价差</div><div class="l">挂牌价－成交价 = 议价空间</div></div>
+  </div>
+  <div class="callout" style="margin-top:18px">
+    <strong>证据链</strong>：样本、参数、版本、复核记录全程留存；四级数据标注（测算 / 估算 / 研判推断 / 待补），编数字比不回答更严重；证据留存入口 <a href="https://dss.ke.com/valuation/index.html" target="_blank" rel="noopener">dss.ke.com/valuation</a>——每个结论可回溯到样本与参数版本。
+  </div>
+</section>
+
+<!-- 11 自主可控底座 -->
+<section class="slide" aria-label="自主可控底座">
+  <div class="kicker">底座 · 自主可控</div>
+  <h2><span class="no">11</span>自主可控底座：自助开发 + 本地部署</h2>
+  <p class="sub">能力以「原生能力」方式开放，数据与运行边界留在贵行域内。依据：<a href="https://yy.meizu.life/render/zhijian/partner-devdoc.html#s1" target="_blank" rel="noopener">合作伙伴开放能力开发文档</a>。</p>
+  <div class="grid2" style="margin-top:18px">
+    <div class="card"><div class="tag">自助开发</div><h4>专家 · DAG · Skill · 模板 · 门禁</h4><p>自定义专家（Expert Profile）、任务编排（Scenario）、Skill 工艺包、输出模板与五道质量门禁——专业方法论沉淀为贵行可点名的原生能力。</p></div>
+    <div class="card"><div class="tag">本地部署</div><h4>数据不出域 · 离线可用</h4><p>私有化部署，33+ 位专家预置、BK 档案就地复用，满足银行敏感场景的合规硬门槛。</p></div>
+    <div class="card"><div class="tag">AGENT 编排</div><h4>多步推演 · 工具调用 · 审批流</h4><p>多专家并行研判 → 依赖链 → 融合成文：「专家团多轮出力，不是预置知识一次成稿」。</p></div>
+    <div class="card hi"><div class="tag">版本链</div><h4>可回放 · 可审计 · 可回滚</h4><p>证据回写与版本链支撑同条件重放——「可审计」不是口号，是工程。</p></div>
+  </div>
+</section>
+
+<!-- 12 安全与合规 -->
+<section class="slide" aria-label="安全与合规">
+  <div class="kicker">安全与合规 · GOVERNANCE</div>
+  <h2><span class="no">12</span>银行会追问的四个合规问题</h2>
+  <div class="grid2" style="margin-top:20px">
+    <div class="card"><div class="tag">法律边界</div><h4>评估服务的边界</h4><p>提供市场价值参考测算、监测与咨询分析，<strong>不构成资产评估报告或房地产估价报告</strong>；法定程序由贵行另行开展。</p></div>
+    <div class="card"><div class="tag">ACCESS</div><h4>数据权限隔离</h4><p>每家机构独立数据权限白名单：可见范围、应用边界、敏感字段逐一约定，接口只读优先。</p></div>
+    <div class="card"><div class="tag">PI PL</div><h4>个人信息授权与脱敏</h4><p>线索来自客户在真实交易中的主动授权留资，明示用途与接收方；授权链条可追溯，无授权不入库。</p></div>
+    <div class="card"><div class="tag">AUDIT</div><h4>调用审计与异常复核</h4><p>全量调用审计日志、频率与并发控制、专属仪表盘；异常清单触发人工复核，不以自动结果替代专业判断。</p></div>
+  </div>
+</section>
+
+<!-- 13 五大优势总览 -->
+<section class="slide" aria-label="五大优势总览">
+  <div class="kicker">总结 · 五大优势</div>
+  <h2><span class="no">13</span>五大优势：为什么能交付</h2>
+  <div class="grid3" style="margin-top:20px">
+    <div class="card hi"><div class="tag">ADV.01 自主</div><h4>自助开发 + 本地部署</h4><p>原生能力开放，数据不出域、离线可用。</p></div>
+    <div class="card"><div class="tag">ADV.02 真实</div><h4>成交前过程数据</h4><p>挂牌 / 成交 / 带看自有体系——他人只有结果数据。</p></div>
+    <div class="card"><div class="tag">ADV.03 基础设施</div><h4>估值框架 + 标准</h4><p>估值框架、指数体系与标准制定者闭环。</p></div>
+    <div class="card"><div class="tag">ADV.04 深度</div><h4>harness + 垂类模型</h4><p>三层一体，合作方无法在合同期内自建。</p></div>
+    <div class="card hi"><div class="tag">ADV.05 信用</div><h4>可复测 · 可追溯</h4><p>四本账 + 五链，信任是可审计的工程。</p></div>
+    <div class="card"><div class="tag">深度材料</div><h4>优势 2–5 展开版</h4><p>参考稿原版式四页（<a href="https://yy.meizu.life/render/zhijian/jiaoyi-adv2.html" target="_blank" rel="noopener">真实</a> · <a href="https://yy.meizu.life/render/zhijian/jiaoyi-adv3.html" target="_blank" rel="noopener">基础设施</a> · <a href="https://yy.meizu.life/render/zhijian/jiaoyi-adv4.html" target="_blank" rel="noopener">深度</a> · <a href="https://yy.meizu.life/render/zhijian/jiaoyi-adv5.html" target="_blank" rel="noopener">信用</a>），会后深读。</p></div>
+  </div>
+</section>
+
+<!-- 14 试点合作路径 -->
+<section class="slide" aria-label="试点合作路径">
+  <div class="kicker">合作路径 · HOW WE START</div>
+  <h2><span class="no">14</span>试点合作路径：三步，门槛很低</h2>
+  <div class="grid3" style="margin-top:22px">
+    <div class="card"><div class="tag">STEP 1</div><h4>20 笔样本回测</h4><p>贵行提供押品或客群样本，我们先做一轮免费回测，用结果说话。</p></div>
+    <div class="card hi"><div class="tag">STEP 2 · 60 分钟</div><h4>口径与合规对齐</h4><p>一次会议：数据范围、合规口径、验收标准三方对齐。</p></div>
+    <div class="card"><div class="tag">STEP 3</div><h4>确定试点</h4><p>选定零售获客试点或押品监测试点，明确范围、周期与验收指标。</p></div>
+  </div>
+  <div class="callout" style="margin-top:22px">样本规模、周期与商务条款以双方约定为准。</div>
+</section>
+
+<!-- 15 FAQ -->
+<section class="slide" aria-label="常见问题">
+  <div class="kicker">FAQ · 现场讨论</div>
+  <h2><span class="no">15</span>银行最常问的五个问题</h2>
+  <div class="tw" style="margin-top:18px">
+    <table>
+      <thead><tr><th style="width:30%">问题</th><th>回答</th></tr></thead>
+      <tbody>
+        <tr><td><strong>不构成评估报告，怎么嵌入行内流程？</strong></td><td>定位为辅助证据：贷前筛查、存量复核、异常识别与人工评估触发；法定程序仍由贵行开展。</td></tr>
+        <tr><td><strong>数据来源与口径如何复核？</strong></td><td>交付披露来源、样本期、筛选边界、修正参数与版本；证据留存入口可回溯样本与参数。</td></tr>
+        <tr><td><strong>线索的授权链条可靠吗？</strong></td><td>客户主动授权留资、明示用途与接收方；核验通过才计有效线索，授权可追溯。</td></tr>
+        <tr><td><strong>数据权限与敏感字段如何隔离？</strong></td><td>按机构配置白名单与最小必要字段；接口只读优先，全量调用可审计。</td></tr>
+        <tr><td><strong>试点怎么开始、怎么验收？</strong></td><td>20 笔样本回测起步；围绕覆盖率、可复核性、异常识别、流程衔接共同设定验收指标。</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 16 尾页 -->
+<section class="slide cover" aria-label="结尾">
+  <div class="vig"></div>
+  <div class="brandbar"><div class="mk">零</div><div class="nm">零售金融专家</div></div>
+  <div>
+    <div class="kicker">THANK YOU · NEXT STEP</div>
+    <h1 style="font-size:clamp(36px,3.6vw,52px)">先选一条线<br>用一轮回测开始</h1>
+    <div class="rule"></div>
+    <div class="grid2" style="max-width:900px">
+      <div class="card hi"><div class="tag">选项 A</div><h4>零售获客试点</h4><p>一组客群样本 + 一次口径对齐，验证真实意图到合规触达的全链路。</p></div>
+      <div class="card hi"><div class="tag">选项 B</div><h4>押品监测试点</h4><p>一组押品样本免费回测，验证估值参考、异常清单与证据链。</p></div>
+    </div>
+    <div class="cover-meta" style="margin-top:34px">
+      <div><b>现场材料</b><span>样例全文 · 标杆报告 · API 接入说明</span></div>
+      <div><b>证据留存</b><span><a href="https://dss.ke.com/valuation/index.html" target="_blank" rel="noopener">dss.ke.com/valuation</a></span></div>
+      <div><b>开放文档</b><span><a href="https://yy.meizu.life/render/zhijian/partner-devdoc.html#s1" target="_blank" rel="noopener">合作伙伴开放能力开发文档</a></span></div>
+    </div>
+  </div>
+</section>
+
+
+</div>
+<div class="footer"><span>零售金融专家 · 从真实客户意图到银行合规经营</span><span id="pageinfo">01 / 16</span></div><div class="hint">← → 翻页 · 点击左右边缘 · ⌘/Ctrl+P 导出 PDF</div><nav class="dots" id="dots" aria-label="幻灯片导航"></nav><div class="nav"><button onclick="go(-1)" aria-label="上一页" type="button"><span aria-hidden="true">‹</span></button><button onclick="go(1)" aria-label="下一页" type="button"><span aria-hidden="true">›</span></button></div>
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const dots=document.getElementById('dots');
+let cur=0;
+
+slides.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.type='button';
+  b.setAttribute('aria-label','第 '+(i+1)+' 页');
+  b.addEventListener('click',()=>show(i,{focus:true}));
+  dots.appendChild(b);
+});
+const dotEls=[...dots.children];
+
+// slide semantics + focus targets
+slides.forEach((s,i)=>{
+  s.setAttribute('role','group');
+  s.setAttribute('aria-roledescription','幻灯片');
+  s.setAttribute('tabindex','-1');
+  s.dataset.name=s.getAttribute('aria-label')||('幻灯片 '+(i+1));
+});
+
+function show(i,opts){
+  const next=Math.max(0,Math.min(slides.length-1,i));
+  slides.forEach((s,idx)=>{
+    const on=idx===next;
+    s.classList.toggle('active',on);
+    if(on){s.removeAttribute('aria-hidden')}else{s.setAttribute('aria-hidden','true')}
+    s.setAttribute('aria-label',s.dataset.name+'（第 '+(idx+1)+' 页，共 '+slides.length+' 页）');
+  });
+  cur=next;
+  dotEls.forEach((d,idx)=>d.setAttribute('aria-current',String(idx===cur)));
+  document.getElementById('pageinfo').textContent=
+    String(cur+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  document.getElementById('progress').style.width=((cur+1)/slides.length*100)+'%';
+  slides[cur].scrollTop=0;
+  // move focus into the new slide so screen readers follow the deck
+  if(opts&&opts.focus){slides[cur].focus({preventScroll:true})}
+}
+function go(d){show(cur+d,{focus:true})}
+
+function typingIn(el){
+  if(!el) return false;
+  const t=(el.tagName||'').toLowerCase();
+  return t==='input'||t==='textarea'||t==='select'||el.isContentEditable;
+}
+document.addEventListener('keydown',e=>{
+  if(typingIn(e.target))return;
+  const onControl=e.target.closest&&e.target.closest('a,button,[role="button"],[tabindex]:not([tabindex="-1"])');
+  if(onControl)return;   // controls keep their own keys; dots/links move focus into the slide
+  if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)){e.preventDefault();go(1)}
+  else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();go(-1)}
+  else if(e.key==='Home'){e.preventDefault();show(0,{focus:true})}
+  else if(e.key==='End'){e.preventDefault();show(slides.length-1,{focus:true})}
+});
+
+// click-to-advance only in the outer edge bands, so text selection & cards behave
+document.getElementById('deck').addEventListener('click',e=>{
+  if(e.target.closest('a,button,input,select,textarea,[role="button"]'))return;
+  if(window.getSelection&&String(window.getSelection()).length)return;
+  const band=Math.max(90,innerWidth*0.12);
+  if(e.clientX<band)show(cur-1,{focus:true});
+  else if(e.clientX>innerWidth-band)show(cur+1,{focus:true});
+});
+show(0);
+</script>
+</body>
+</html>

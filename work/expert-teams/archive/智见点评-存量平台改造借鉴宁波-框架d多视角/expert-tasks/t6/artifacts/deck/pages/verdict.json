@@ -1,0 +1,15 @@
+{
+  "subheading": "以苏银生活为唯一入口做任务型改造，把 800 万月活流量转化为业务沉淀",
+  "components": [
+    { "type": "verdict_banner", "tone": "positive", "icon": "landmark", "text": "学宁波，学逻辑不学形态：90天两场景试点定取舍，验收看活期、代发留存、卡渗透、中收，不看注册数。" },
+    { "type": "kpi_cards", "items": [
+      { "value": "800", "unit": "万", "label": "苏银生活月活", "delta": "flat", "icon": "users-round" },
+      { "value": "35.57", "unit": "%", "label": "宁波活期占比", "delta": "up", "icon": "piggy-bank" },
+      { "value": "10.42", "unit": "%", "label": "宁波中收占比", "delta": "up", "icon": "chart-pie" },
+      { "value": "85", "unit": "%", "label": "代理类占中收", "delta": "up", "icon": "percent" },
+      { "value": "17.6", "unit": "万", "label": "波波知了企业用户", "delta": "up", "icon": "building-2" }
+    ]},
+    { "type": "callout", "variant": "info", "icon": "target", "text": "苏银生活年底月活目标 1000 万；宁波手续费净收入 +53.9%。这是三低时代支撑双提升的战略路径，须以长期主义与正确政绩观推进。" }
+  ],
+  "notes": "核心结论页：先给结论再讲论据。800万月活是现成底座，宁波用17.6万企业用户撬动2000亿对公理财与85%代理类中收，本质差距是转化率。"
+}

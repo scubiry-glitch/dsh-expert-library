@@ -1,0 +1,114 @@
+{
+  "version": "1",
+  "narrative": {
+    "strategy": "pyramid",
+    "pacing": "dense",
+    "audience": "executive"
+  },
+  "theme": "zhijian-bluegold",
+  "filename": "新政下智见的机会_20260829_v1",
+  "seed": 20260829,
+  "meta": {
+    "organization": "智见 · 行业研究",
+    "authors": [
+      {
+        "name": "智见点评团队",
+        "role": "机会扫描 v1 · Token 主线"
+      }
+    ],
+    "date": "2026-08-29",
+    "confidentiality": "internal"
+  },
+  "pages": [
+    {
+      "id": "cover",
+      "type": "cover",
+      "heading": "新政下智见的机会",
+      "summary": "1+N 新政 × 智见机会扫描 ｜「每次制度开票，都是一次 Token 的铸造。」"
+    },
+    {
+      "id": "overview",
+      "type": "content",
+      "heading": "卷首速览：26 张机会卡与 Token 四档",
+      "beat": "anchor"
+    },
+    {
+      "id": "logic",
+      "type": "content",
+      "heading": "制度逻辑：条款就是发票，Token 就是交付",
+      "beat": "anchor"
+    },
+    {
+      "id": "layers",
+      "type": "content",
+      "heading": "Token 三层支撑：标尺定锚 · 工程定本 · 信用立信",
+      "beat": "dense"
+    },
+    {
+      "id": "evidence",
+      "type": "content",
+      "heading": "锚单实证：Token 三性是产品化现状",
+      "beat": "dense"
+    },
+    {
+      "id": "clients-gov",
+      "type": "content",
+      "heading": "客户一/二 · 部委与地方监管：免费换标准",
+      "beat": "dense"
+    },
+    {
+      "id": "clients-fin",
+      "type": "content",
+      "heading": "客户三 · 金融机构：存量合规账单",
+      "beat": "anchor"
+    },
+    {
+      "id": "clients-urban",
+      "type": "content",
+      "heading": "客户四 · 城投/国企：全闭环现金流底稿机",
+      "beat": "dense"
+    },
+    {
+      "id": "clients-dc",
+      "type": "content",
+      "heading": "客户五/六 · 开发商与 C 端：生态位与引流",
+      "beat": "dense"
+    },
+    {
+      "id": "matrix",
+      "type": "content",
+      "heading": "优先级矩阵：两灯塔是发动机，其余是期权",
+      "beat": "dense"
+    },
+    {
+      "id": "plan",
+      "type": "content",
+      "heading": "落地清单：90 天与 12 个月的 Token 交付物",
+      "beat": "dense"
+    },
+    {
+      "id": "discipline",
+      "type": "content",
+      "heading": "不做什么：纪律是第四层过程壁垒",
+      "beat": "anchor"
+    },
+    {
+      "id": "risks",
+      "type": "content",
+      "heading": "风险与对冲：Token 三雷与四窗口观察",
+      "beat": "dense"
+    },
+    {
+      "id": "caliber",
+      "type": "content",
+      "heading": "口径声明：数字全程带口径",
+      "beat": "breathing"
+    },
+    {
+      "id": "closing",
+      "type": "ending",
+      "heading": "每次制度开票，都是一次 Token 的铸造。",
+      "summary": "98wiki ｜ 智见 / 机会扫描 · 2026-08-29 · 不构成投资建议"
+    }
+  ]
+}

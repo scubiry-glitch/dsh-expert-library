@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>房地产信贷「制度重构」点评 · 智见</title>
+<style>
+/* finesse · register=product · A=ink-teal+amber · B=700/400 · C=report-rail
+ * D=CSS-only · E=policy-print · SOUL=6 SPECTACLE=2 DENSITY=7 */
+:root{
+  /* substrate — warm paper tinted toward ink-teal */
+  --page:#eef1ed;  --bg:#fcfdfb;  --panel-2:#f3f6f2;  --panel-3:#eaf0ea;
+  --border:rgba(20,35,29,.09);  --border-2:rgba(20,35,29,.16);
+  /* ink — green-black, tinted, no pure black/white */
+  --ink-1:#15241e;  --ink-2:#35473e;  --ink-3:#5e7066;
+  /* brand: ink-teal + amber */
+  --accent:#0e6a55;  --accent-2:#a9741f;  --accent-soft:rgba(14,106,85,.10);
+  --amber-soft:rgba(169,116,31,.13);  --on-accent:#f4faf7;  --on-amber:#4a3a10;
+  --glow:rgba(14,106,85,.28);
+  /* semantic — functional, not identity */
+  --up:#1e7a46;  --down:#c0453c;  --warn:#a9741f;
+  --up-soft:rgba(30,122,70,.10);  --down-soft:rgba(192,69,60,.10);
+  /* elevation — tinted toward ink */
+  --shadow:0 1px 3px rgba(21,36,30,.06);
+  --shadow-lg:0 40px 90px -50px rgba(21,36,30,.38);
+  --r:18px;  --r-sm:12px;  --r-lg:30px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+html,body{overflow-x:clip}
+body{
+  background:var(--page);
+  color:var(--ink-2);
+  font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",-apple-system,"Segoe UI",sans-serif;
+  font-size:14px; line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+}
+/* ============ floating report shell ============ */
+.shell{
+  max-width:1120px; margin:26px auto 40px;
+  background:var(--bg);
+  border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);
+  border:1px solid var(--border);
+  overflow:hidden;
+  position:relative;
+}
+.shell::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(420px 240px at 92% -8%, rgba(14,106,85,.09), transparent 62%);
+}
+.pad{padding:34px 44px 30px}
+/* ============ type ============ */
+h1,h2,h3,h4{color:var(--ink-1); font-weight:700; text-wrap:balance; overflow-wrap:anywhere; min-width:0}
+h1{font-family:"Noto Serif CJK SC","Songti SC",serif; font-size:29px; line-height:1.4; letter-spacing:.01em}
+h2{font-size:19px; line-height:1.4; letter-spacing:.005em; display:flex; align-items:baseline; gap:10px}
+h2 .sec-no{font-size:13px; color:var(--accent); font-weight:700; letter-spacing:.04em}
+h3{font-size:14.5px; line-height:1.5}
+p{text-wrap:pretty}
+.lede{font-size:15px; line-height:1.9}
+.tnum{font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+.small{font-size:12px; color:var(--ink-3)}
+.micro{font-size:11px; letter-spacing:.06em; color:var(--ink-3); font-weight:600}
+/* ============ header ============ */
+.masthead{border-bottom:1px solid var(--border); padding:36px 44px 26px; position:relative}
+.masthead::after{
+  content:""; position:absolute; left:44px; right:44px; bottom:-1px; height:2px;
+  background:linear-gradient(90deg, var(--accent) 0%, var(--accent) 34%, var(--accent-2) 100%);
+  opacity:.85; border-radius:2px;
+}
+.brand-row{display:flex; align-items:center; gap:12px; margin-bottom:18px}
+.brand-mark{
+  width:34px; height:34px; border-radius:10px; background:var(--accent);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--on-accent); font-weight:800; font-size:16px; letter-spacing:.02em;
+  box-shadow:var(--shadow);
+}
+.brand-name{font-size:12.5px; font-weight:700; color:var(--ink-1); letter-spacing:.08em}
+.brand-sub{font-size:11px; color:var(--ink-3); letter-spacing:.04em}
+.kicker{margin-bottom:10px}
+.masthead h1{margin-bottom:14px}
+.masthead .meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:16px; color:var(--ink-3); font-size:12px}
+.meta b{color:var(--ink-2); font-weight:600}
+/* ============ sections ============ */
+section{padding:30px 0 6px; border-bottom:1px solid var(--border)}
+section:last-of-type{border-bottom:none}
+section h2{margin-bottom:16px}
+.sec-intro{font-size:13.5px; color:var(--ink-3); margin-bottom:16px}
+/* ============ KPI band ============ */
+.kpi-band{display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:12px; padding:22px 44px 8px}
+.kpi{
+  background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:14px 16px 12px; position:relative; overflow:hidden;
+}
+.kpi::before{content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent); opacity:.75; border-radius:0 2px 2px 0}
+.kpi.gold::before{background:var(--accent-2)}
+.kpi.down::before{background:var(--down)}
+.kpi .v{font-size:23px; font-weight:800; color:var(--ink-1); line-height:1.25}
+.kpi .v .unit{font-size:12.5px; font-weight:600; color:var(--ink-3); margin-left:3px}
+.kpi .l{font-size:11.5px; color:var(--ink-3); margin-top:4px; line-height:1.5}
+/* ============ cards / lists ============ */
+.clause-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px}
+.clause{
+  background:var(--panel-2); border:1px solid var(--border); border-radius:var(--r-sm);
+  padding:14px 16px; display:flex; gap:12px;
+}
+.clause .no{
+  flex:none; width:26px; height:26px; border-radius:8px; background:var(--accent-soft);
+  color:var(--accent); font-weight:800; font-size:13px;
+  display:flex; align-items:center; justify-content:center;
+}
+.clause b{color:var(--ink-1); display:block; font-size:13.5px; margin-bottom:4px}
+.clause p{font-size:12.5px; color:var(--ink-2); line-height:1.7}
+/* consensus / divergence */
+.duo{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); gap:14px}
+.panel{border:1px solid var(--border); border-radius:var(--r); padding:18px 20px}
+.panel.consensus{background:var(--accent-soft); border-color:rgba(14,106,85,.22)}
+.panel.divergence{background:var(--amber-soft); border-color:rgba(169,116,31,.24)}
+.panel h3{margin-bottom:10px}
+.panel.consensus h3{color:var(--accent)}
+.panel.divergence h3{color:var(--on-amber)}
+.panel ul{list-style:none}
+.panel li{
+  padding:8px 0 8px 18px; position:relative; font-size:12.8px; line-height:1.7;
+  border-bottom:1px dashed var(--border);
+}
+.panel li:last-child{border-bottom:none}
+.panel.consensus li::before{content:"✓"; position:absolute; left:0; top:8px; color:var(--accent); font-weight:800; font-size:12px}
+.panel.divergence li::before{content:"!"; position:absolute; left:0; top:8px; color:var(--accent-2); font-weight:800; font-size:12px}
+.panel li b{color:var(--ink-1)}
+/* ============ table ============ */
+.tbl-wrap{border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:14px}
+table{width:100%; border-collapse:collapse; font-size:12.8px}
+thead th{
+  background:var(--panel-3); color:var(--ink-1); font-weight:700; text-align:left;
+  padding:11px 14px; border-bottom:1px solid var(--border-2); white-space:nowrap;
+}
+tbody td{padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.65}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:var(--panel-2)}
+td .num{font-weight:700; color:var(--ink-1)}
+td .neg{color:var(--down); font-weight:700}
+td .pos{color:var(--up); font-weight:700}
+td .cal{display:block; font-size:11px; color:var(--ink-3); margin-top:2px}
+/* ============ charts ============ */
+.chart-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:14px; margin-bottom:14px}
+.chart-card{border:1px solid var(--border); border-radius:var(--r); padding:18px 20px 14px}
+.chart-card h4{font-size:13.5px; margin-bottom:2px}
+.chart-card .cap{font-size:11.5px; color:var(--ink-3); margin-bottom:10px}
+.chart-card svg{width:100%; height:auto; display:block}
+.chart-legend{display:flex; gap:16px; font-size:11.5px; color:var(--ink-3); margin-top:8px; flex-wrap:wrap}
+.chart-legend i{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:-1px}
+/* bars (同比三线) */
+.bar-row{display:grid; grid-template-columns:110px minmax(0,1fr) 84px; align-items:center; gap:12px; padding:9px 0; border-bottom:1px dashed var(--border)}
+.bar-row:last-child{border-bottom:none}
+.bar-row .bl{font-size:12.5px; color:var(--ink-2)}
+.bar-row .bv{font-size:13px; font-weight:800; color:var(--ink-1); text-align:right}
+.bar-track{background:var(--panel-3); border-radius:6px; height:14px; position:relative; overflow:hidden}
+.bar-fill{position:absolute; inset:0 auto 0 50%; background:var(--down); border-radius:6px; transform-origin:left; opacity:.85}
+.bar-fill.pos{background:var(--up)}
+.bar-fill.gold{background:var(--accent-2)}
+/* ============ outlook ============ */
+.out-grid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px}
+.out{border:1px solid var(--border); border-radius:var(--r-sm); padding:14px 16px; background:var(--panel-2)}
+.out .tag{display:inline-block; font-size:11px; font-weight:700; color:var(--accent); background:var(--accent-soft); border-radius:20px; padding:2px 10px; margin-bottom:8px}
+.out p{font-size:12.8px; line-height:1.7}
+.tag-row{display:flex; flex-wrap:wrap; gap:8px}
+.obs-tag{
+  font-size:12.5px; color:var(--ink-1); background:var(--panel-2);
+  border:1px solid var(--border-2); border-radius:20px; padding:5px 13px;
+}
+.obs-tag b{color:var(--accent)}
+/* ============ note / footer ============ */
+.note{
+  font-size:12px; color:var(--ink-3); background:var(--panel-2);
+  border:1px solid var(--border);
+  padding:12px 16px; margin:14px 0;
+}
+.note b{color:var(--ink-2)}
+.shell-footer{border-top:1px solid var(--border); padding:14px 44px; background:var(--panel-2); font-size:11.5px; color:var(--ink-3); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.shell-footer .fz{color:var(--ink-2)}
+/* ============ responsive collapse ============ */
+@media (max-width: 900px){
+  .kpi-band{grid-template-columns:repeat(3, minmax(0,1fr))}
+  .clause-grid,.chart-grid,.out-grid{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .pad{padding:24px 20px 20px}
+  .masthead{padding:26px 20px 20px}
+  .masthead::after{left:20px; right:20px}
+  .masthead h1{font-size:23px}
+  .kpi-band{grid-template-columns:repeat(2, minmax(0,1fr)); padding:16px 20px 6px}
+  .duo{grid-template-columns:minmax(0,1fr)}
+  .shell-footer{padding:12px 20px}
+  .tbl-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch}
+  table{min-width:560px}
+  .kpi .v{font-size:20px}
+}
+/* ============ print ============ */
+@media print{
+  @page{
+    size:A4; margin:15mm 13mm 17mm;
+    @bottom-center{ content:"98wiki ｜ 智见 / 行业研究报告"; font-size:8.5pt; color:#65766d; font-family:"Noto Sans CJK SC",sans-serif; }
+    @bottom-right{ content:counter(page) " / " counter(pages); font-size:8.5pt; color:#65766d; }
+  }
+  body{background:#fcfdfb; font-size:11px}
+  .shell{max-width:none; margin:0; border:none; box-shadow:none; border-radius:0}
+  .pad{padding:0}
+  .masthead{padding:0 0 14px}
+  .masthead::after{left:0; right:0}
+  .kpi-band{padding:14px 0 4px}
+  section{padding:14px 0 4px; break-inside:auto}
+  .kpi,.clause,.panel,.out,.chart-card,.tbl-wrap,.note,.avoid-break{break-inside:avoid; box-shadow:none}
+  .shell-footer{border-top:1px solid var(--border); padding:8px 0}
+  .kpi-band,.clause-grid,.duo,.chart-grid,.out-grid{break-inside:auto}
+  *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+}
+/* ============ motion (screen only, feedback-grade) ============ */
+@media (prefers-reduced-motion: no-preference){
+  .kpi{transition:transform .18s ease-out, box-shadow .18s ease-out}
+  .kpi:hover{transform:translateY(-2px); box-shadow:0 8px 20px -8px rgba(21,36,30,.16)}
+  .bar-fill{animation:growx .9s cubic-bezier(.16,1,.3,1) both}
+  .bar-fill.pos{animation-name:growx-pos}
+  @keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @keyframes growx-pos{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  .line-path{stroke-dasharray:600; stroke-dashoffset:600; animation:draw 1.4s cubic-bezier(.16,1,.3,1) forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms!important; transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ============ masthead ============ -->
+  <header class="masthead">
+    <div class="brand-row">
+      <div class="brand-mark">智</div>
+      <div>
+        <div class="brand-name">智见 · 行业研究</div>
+        <div class="brand-sub">ZHIJIAN INDUSTRY RESEARCH · 政策解读</div>
+      </div>
+    </div>
+    <div class="kicker micro" style="color:var(--accent)">政策解读 · 正式稿</div>
+    <h1>房地产信贷「制度重构」：<br>能拿房、再还贷</h1>
+    <p class="lede" style="margin-top:12px">《关于改革完善房地产信贷管理 推动加快构建房地产发展新模式的意见》（2026-08-28，中国人民银行、国家金融监督管理总局联合印发，七章36条）点评。</p>
+    <div class="meta">
+      <span><b>定位</b> 制度重构而非需求刺激 · 先立制度、再稳市场</span>
+      <span><b>基调</b> 政策底已现，市场底未到</span>
+      <span><b>日期</b> 2026-08-29</span>
+      <span><b>城市</b> 全国</span>
+    </div>
+  </header>
+
+  <!-- ============ KPI band ============ -->
+  <div class="kpi-band">
+    <div class="kpi"><div class="v tnum">36.29<span class="unit">万亿</span></div><div class="l">个人住房贷款余额 · 2026-06<br>央行（Wind EDB）</div></div>
+    <div class="kpi down"><div class="v tnum">-1.61<span class="unit">万亿</span></div><div class="l">较2025-03峰值37.90万亿累计净减少（约-4.2%）· 连续约15个月</div></div>
+    <div class="kpi"><div class="v tnum">3.06<span class="unit">%</span></div><div class="l">新发放按揭加权平均利率 · 2026Q2<br>历史低位平台（存量3.05%）</div></div>
+    <div class="kpi down"><div class="v tnum">-11.8<span class="unit">%</span></div><div class="l">商品房销售面积累计同比 · 2026-07<br>国家统计局</div></div>
+    <div class="kpi gold down"><div class="v tnum">-19.2<span class="unit">%</span></div><div class="l">房地产开发投资累计同比 · 2026-07<br>持续探底</div></div>
+  </div>
+
+  <!-- ============ 一、文件定位与核心条款 ============ -->
+  <section class="pad" id="s1">
+    <h2><span class="sec-no">壹</span>文件定位与核心条款速览</h2>
+    <p style="font-size:13.5px; margin-bottom:16px">这是房地产金融从周期性调控转向制度性重构的标志性文件：以「能拿房、再还贷」的交付逻辑嵌入信贷制度，把房地产信贷从依附预售制的销售回款驱动模式，切换为竣工交付驱动的全项目周期管理模式，是新发展模式住房、土地、财税、金融四类制度变革中，金融制度率先系统落地的部分。</p>
+    <div class="clause-grid">
+      <div class="clause"><div class="no">1</div><div><b>开发贷款主办银行制度</b><p>单个项目对应一家主办银行单独或牵头银团放贷；期限覆盖开工至竣工备案，预售项目最长5年、现房销售及商业地产最长7年；首次还本原则上在竣工备案后。</p></div></div>
+      <div class="clause"><div class="no">2</div><div><b>按揭与开发贷衔接</b><p>个人住房贷款受托支付：现房销售付至项目公司在主办银行账户，预售付至预售资金监管账户。</p></div></div>
+      <div class="clause"><div class="no">3</div><div><b>按揭期限延长</b><p>个人住房贷款期限由最长30年延长至40年，由借贷双方协商。</p></div></div>
+      <div class="clause"><div class="no">4</div><div><b>延后放款时点</b><p>现房销售备案后发放；预售严格在竣工备案后发放——「能拿房、再还贷」。</p></div></div>
+      <div class="clause"><div class="no">5</div><div><b>资金封闭管理</b><p>预售资金监管账户与定金账户须在主办银行开立；项目全部相关资金纳入主办银行账户管理，对外负债、投资等重大事项事先告知主办银行。</p></div></div>
+      <div class="clause"><div class="no">6</div><div><b>宏观审慎制度化</b><p>新设「房地产金融宏观审慎管理」章节：首付比例、利率、贷款集中度等工具纳入央行会同相关部门建立的逆周期调节机制。</p></div></div>
+    </div>
+  </section>
+
+  <!-- ============ 二、共识与分歧 ============ -->
+  <section class="pad" id="s2">
+    <h2><span class="sec-no">贰</span>共识与分歧</h2>
+    <div class="duo">
+      <div class="panel consensus">
+        <h3>共识 · 四项研判一致</h3>
+        <ul>
+          <li><b>制度重构定性</b>：文件不是需求刺激，而是把「保交楼」的事后应急转为事前制度，用金融纪律约束高周转预售、倒逼现房/准现房销售。</li>
+          <li><b>风险转移至银行体系</b>：延后放款与资金封闭管理，把期房信用风险从购房者一侧整体转移至银行体系，消除「付了钱拿不到房」的信用坍塌点。</li>
+          <li><b>预售回款节奏冲击</b>：预售阶段开发商现金回流锐减，需开发贷期限与还本安排同步延长对冲；文件内部设计配套，执行中的时序错配才是真正风险点。</li>
+          <li><b>短期不改磨底格局</b>：量价双弱、利率工具钝化背景下，文件不改变「止跌回稳尚需时间」的判断，<b>政策底≠市场底</b>。</li>
+        </ul>
+      </div>
+      <div class="panel divergence">
+        <h3>分歧与边界条件 · 降级为风险提示</h3>
+        <ul>
+          <li><b>40年按揭实效</b>：压低月供（按等额本息、3.06%测算，100万贷款月供30年期约4247元 → 40年期约3614元，降幅约15%），但测算总利息增加约四成、债务周期穿透至退休年龄——解决的是还贷能力而非购房能力，对中低收入群体边际受益有限。</li>
+          <li><b>执行次序「一步到位 vs 渐进」</b>：放款后移若先于开发贷供给到位，对预售依赖度高的房企是「先断粮、后补粮」，短期供给收缩可能进一步下探（研判推断）。</li>
+          <li><b>公积金期限错配</b>：多数城市公积金贷款上限仍为30年，与40年商贷组合将出现期限错配，组合贷产品与公积金政策性功能如何跟进，是待答的制度衔接问题。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 三、数据底座 ============ -->
+  <section class="pad" id="s3">
+    <h2><span class="sec-no">叁</span>数据底座</h2>
+    <p class="sec-intro">口径：全国 · Wind EDB（中国人民银行 / 国家统计局）· 月度截至2026-07、季度截至2026Q2</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th style="width:24%">指标</th><th style="width:20%">最新值</th><th>关键变化</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>个人住房贷款余额</td>
+            <td><span class="num tnum">36.29</span> 万亿元<span class="cal">2026-06 · 央行</span></td>
+            <td>自2025-03峰值 <span class="num tnum">37.90</span> 万亿连续净减少（累计约15个月），累计 <span class="neg tnum">-1.61</span> 万亿（约 <span class="neg tnum">-4.2%</span>）；2024Q3→2026Q2 先升至2025Q1峰值、此后连续5个季度净减少</td>
+          </tr>
+          <tr>
+            <td>个人住房贷款加权平均利率</td>
+            <td>存量 <span class="num tnum">3.05</span>%<br>新发放 <span class="num tnum">3.06</span>%<span class="cal">2026Q2 · 央行季度</span></td>
+            <td>新发放序列 <span class="tnum">3.33→3.10→3.11→3.09→3.07→3.06→3.06→3.06</span>%（2024Q3→2026Q2），处历史低位平台，利率弹性钝化</td>
+          </tr>
+          <tr>
+            <td>商品房销售面积累计同比</td>
+            <td><span class="neg tnum">-11.8</span>%<span class="cal">2026-07 · 国家统计局</span></td>
+            <td>较2025-07的 <span class="neg tnum">-4.0</span>% 明显走阔；2026-02 曾探 <span class="neg tnum">-13.5</span>%</td>
+          </tr>
+          <tr>
+            <td>70城新建商品住宅价格当月同比</td>
+            <td><span class="neg tnum">-3.4</span>%<span class="cal">2026-07 · 国家统计局</span></td>
+            <td>较2025-10最窄的 <span class="neg tnum">-2.6</span>% 再度走阔，「以价换量」在减弱</td>
+          </tr>
+          <tr>
+            <td>房地产开发投资累计同比</td>
+            <td><span class="neg tnum">-19.2</span>%<span class="cal">2026-07 · 国家统计局</span></td>
+            <td>持续探底：2025-12为 <span class="neg tnum">-17.2</span>%、2026-06为 <span class="neg tnum">-18.0</span>%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card avoid-break">
+        <h4>个人住房贷款余额：先升后降，连续净减少</h4>
+        <div class="cap">万亿元 · 季度 · 央行（Wind EDB）</div>
+        <svg viewBox="0 0 480 200" role="img" aria-label="个人住房贷款余额季度序列 37.56 降至 36.29 万亿元">
+          <line x1="30" y1="172" x2="466" y2="172" stroke="rgba(20,35,29,.18)" stroke-width="1"/>
+          <line x1="30" y1="86" x2="466" y2="86" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/>
+          <path class="line-path" d="M40,120 L98,110 L156,86 L214,104 L272,128 L330,152 L388,162 L446,172" fill="none" stroke="#0e6a55" stroke-width="2.5" stroke-linecap="round"/>
+          <g fill="#0e6a55">
+            <circle cx="40" cy="120" r="3.2"/><circle cx="98" cy="110" r="3.2"/><circle cx="156" cy="86" r="3.8"/>
+            <circle cx="214" cy="104" r="3.2"/><circle cx="272" cy="128" r="3.2"/><circle cx="330" cy="152" r="3.2"/>
+            <circle cx="388" cy="162" r="3.2"/><circle cx="446" cy="172" r="3.2"/>
+          </g>
+          <text x="156" y="76" text-anchor="middle" font-size="11" fill="#0e6a55" font-weight="700">37.90 峰值</text>
+          <text x="446" y="188" text-anchor="end" font-size="11" fill="#35473e">36.29（2026Q2）</text>
+          <text x="30" y="12" font-size="10" fill="#65766d">37.90</text>
+          <text x="30" y="186" font-size="10" fill="#65766d">36.0</text>
+          <text x="38" y="194" font-size="9" fill="#65766d">24Q3</text>
+          <text x="440" y="194" font-size="9" fill="#65766d">26Q2</text>
+        </svg>
+        <div class="chart-legend"><span><i style="background:#0e6a55"></i>余额（万亿）</span></div>
+      </div>
+      <div class="chart-card avoid-break">
+        <h4>按揭利率：历史低位平台，弹性钝化</h4>
+        <div class="cap">% · 季度 · 央行（Wind EDB）</div>
+        <svg viewBox="0 0 480 200" role="img" aria-label="新发放按揭利率 3.33 降至 3.06 后走平">
+          <line x1="30" y1="160" x2="466" y2="160" stroke="rgba(20,35,29,.18)" stroke-width="1"/>
+          <line x1="30" y1="80" x2="466" y2="80" stroke="rgba(20,35,29,.08)" stroke-width="1" stroke-dasharray="3 4"/>
+          <path class="line-path" d="M40,52 L98,98 L156,94 L214,100 L272,106 L330,112 L388,112 L446,112" fill="none" stroke="#a9741f" stroke-width="2.5" stroke-linecap="round"/>
+          <g fill="#a9741f">
+            <circle cx="40" cy="52" r="3.2"/><circle cx="98" cy="98" r="3.2"/><circle cx="156" cy="94" r="3.2"/>
+            <circle cx="214" cy="100" r="3.2"/><circle cx="272" cy="106" r="3.2"/><circle cx="330" cy="112" r="3.2"/>
+            <circle cx="388" cy="112" r="3.2"/><circle cx="446" cy="112" r="3.2"/>
+          </g>
+          <text x="40" y="44" text-anchor="middle" font-size="11" fill="#a9741f" font-weight="700">3.33</text>
+          <text x="446" y="126" text-anchor="end" font-size="11" fill="#35473e">3.06 平台</text>
+          <text x="30" y="12" font-size="10" fill="#65766d">3.4</text>
+          <text x="30" y="172" font-size="10" fill="#65766d">3.0</text>
+          <text x="38" y="182" font-size="9" fill="#65766d">24Q3</text>
+          <text x="440" y="182" font-size="9" fill="#65766d">26Q2</text>
+        </svg>
+        <div class="chart-legend"><span><i style="background:#a9741f"></i>新发放利率（%）</span><span><i style="background:#65766d"></i>存量 3.05%</span></div>
+      </div>
+    </div>
+
+    <div class="chart-card avoid-break" style="margin-bottom:14px">
+      <h4>同比三线：销售、价格、投资同向走弱</h4>
+      <div class="cap">累计同比 / 当月同比 · % · 国家统计局（Wind EDB）· 2026-07</div>
+      <div class="bar-row">
+        <div class="bl">商品房销售面积</div>
+        <div class="bar-track"><div class="bar-fill" style="left:50%; width:29.5%"></div></div>
+        <div class="bv tnum">-11.8%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bl">70城新房价格</div>
+        <div class="bar-track"><div class="bar-fill gold" style="left:50%; width:8.5%"></div></div>
+        <div class="bv tnum">-3.4%</div>
+      </div>
+      <div class="bar-row">
+        <div class="bl">房地产开发投资</div>
+        <div class="bar-track"><div class="bar-fill" style="left:50%; width:48%"></div></div>
+        <div class="bv tnum">-19.2%</div>
+      </div>
+    </div>
+
+    <div class="note">
+      <b>城市分化（研判推断）</b>：城市级量化数据暂缺，以下为基于政策机制与全国数据的结构性判断。其一，主办银行制与延后放款对现房占比高、项目资金闭环成熟的核心城市（北京、上海等）冲击银行投放节奏最强——按揭与开发贷集中度高，放款时点后移对主办银行资金安排与投放节奏的影响最先显现；其二，40年按揭对高总价城市月供摊薄效应最显著——总价越高、期限延长的月供边际改善越明显；其三，三四线城市受回款后移冲击更大——对预售回款依赖度高、开发贷承接能力弱，放款后移至竣工备案将放大其现金流压力。上述判断待城市级数据补充后验证。
+    </div>
+  </section>
+
+  <!-- ============ 四、影响展望与观察指标 ============ -->
+  <section class="pad" id="s4" style="border-bottom:none">
+    <h2><span class="sec-no">肆</span>影响展望与观察指标</h2>
+    <div class="out-grid" style="margin-bottom:16px">
+      <div class="out"><span class="tag">余额 · 研判推断</span><p>若执行刚性到位、开发贷配套供给充足、存量房贷利率跟进下调，余额净减少态势有望在2026Q4前后触底企稳，个人住房贷款余额有望在2027年上半年止住净减少。</p></div>
+      <div class="out"><span class="tag">节奏 · 研判推断</span><p>销售端2026下半年有望筑底；投资端受放款时点后移的短期冲击，见底时点或滞后销售2-3个季度。</p></div>
+      <div class="out"><span class="tag">周期 · 研判推断</span><p>参考国际经验（美国2006-2012、香港1997-2003），本轮自2021H2起算的调整进入第6年即2027年具备周期拐点条件，前提是制度底座、收库存、贴按揭三招齐备。</p></div>
+      <div class="out"><span class="tag">结构 · 研判推断</span><p>现房销售占比随「竣工备案后放款」逐步提升，预售制度渐进退出；银企关系从「多行放贷」转为「主办银行全程管理」，低杠杆央国企与现房项目受益。</p></div>
+    </div>
+    <h3 style="margin-bottom:10px; font-size:13.5px; color:var(--ink-2)">可验证观察指标</h3>
+    <div class="tag-row">
+      <span class="obs-tag"><b>40年</b>按揭占比</span>
+      <span class="obs-tag"><b>竣工备案后</b>放款执行率</span>
+      <span class="obs-tag">个贷余额<b>月度净变动</b></span>
+      <span class="obs-tag">70城价格同比<b>收窄幅度</b></span>
+      <span class="obs-tag">主办行<b>项目覆盖率</b></span>
+      <span class="obs-tag"><b>开发贷</b>余额同比</span>
+      <span class="obs-tag">现房销售<b>项目占比</b></span>
+      <span class="obs-tag">监管账户<b>划转节奏</b></span>
+    </div>
+  </section>
+
+  <!-- ============ footer ============ -->
+  <footer class="shell-footer">
+    <div>
+      <span class="fz">数据来源：</span>Wind EDB〔中国人民银行、国家统计局〕，月度截至2026-07、季度截至2026Q2；贝壳政研通（zyt）通道已完成多次验证调用（指标目录/城市时序/多城对比），本 session 通道返回成功但未透出可引用数值明细，城市级量化验证列为后续观察项；政策条款以《意见》原文为准；「测算」为模型测算口径，「研判推断」为分析性判断。
+    </div>
+    <div style="white-space:nowrap">98wiki ｜ 智见 / 行业研究报告</div>
+  </footer>
+
+</div>
+</body>
+</html>

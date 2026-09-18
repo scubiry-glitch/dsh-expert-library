@@ -1,0 +1,9 @@
+{
+  "taskId": "t9",
+  "status": "completed",
+  "attempt": 2,
+  "output": "【t9 完成·v2 战略版三件套交付（队长直营）】研报交付_20260829_新政下智见的机会/：\n① 新政下智见的机会_v2.html（218.9KB）：正式研报版式——独立封面页（98wiki kicker+主标题+金句\"每次制度开票，都是一次 Token 的铸造\"+版本日期）、12 章金句章名+每章点睛图规格条+论据链、框架五句话总表、总论 v2 五节（1.1 一个必然论点论据/1.2 三个倒计时+三种易主/1.4 护城河四层+铸造流水线/1.5 与新政三重关系/1.6 行动三张表+本周三件事）、封底落款；页眉\"新政下智见的机会 · v2 战略版\"+页脚\"98wiki ｜ 第 N 页\"\n② 新政下智见的机会_v2.pdf（57 页 A4，封面独立 P1、速览 P2）\n③ 新政下智见的机会_v2.pptx（15 页，audit 0 findings，v1→v2 版式零漂移，数字零改动核验，全页 notes 同步）\n④ deck_机会_v2/ 工程目录 + sha256sums_机会_v2.txt（html efe46a564dd96350/pdf 9045e44887369d66/pptx af4f1983b40dd0f2，sha256sum -c 全验 ✓）+ shots_机会_v2/\n门禁：结构解析 0 错误、finesse P0=0、playwright 1280 scrollW=1280/0 溢出、375 scrollW=375 表格容器内滚、锚点零死链、数字终检全命中（36.29 万亿×9/2800 万×8/analytics-v1.1×3/三倒计时日期×4/四档 1-14-9-2）。\n已发布外链：https://yy.meizu.life/render/新政下智见的机会/jihui-scan-v2.html（v1 三件套保留未覆盖；既往 v5.x 三链接不动）。用户五点反馈全部落地。",
+  "qualityScore": null,
+  "repairCount": 0,
+  "updatedAt": 1788026193529
+}

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "王岑",
-    "publicLabel": "王岑",
-    "initials": "王"
+    "internalName": "品牌账房",
+    "publicLabel": "品牌账房",
+    "initials": "P"
   },
   "domains": [
     "realestate.general"

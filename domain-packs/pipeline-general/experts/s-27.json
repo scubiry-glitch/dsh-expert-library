@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "李彦宏",
-    "publicLabel": "李彦宏",
-    "initials": "李"
+    "internalName": "搜索布道者",
+    "publicLabel": "搜索布道者",
+    "initials": "S"
   },
   "domains": [
     "realestate.general",

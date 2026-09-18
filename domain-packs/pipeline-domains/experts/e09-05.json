@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "schemaVersion": 2,
   "display": {
-    "internalName": "刘芳",
-    "publicLabel": "刘芳",
-    "initials": "刘"
+    "internalName": "故事参谋",
+    "publicLabel": "故事参谋",
+    "initials": "G"
   },
   "domains": [
     "realestate.general"

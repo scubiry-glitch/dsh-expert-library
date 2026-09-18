@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0",
+  "taxonomy_version": "1.0",
+  "policy_version": "1.0",
+  "source": {
+    "skill": "ppt-polished-deck-collab",
+    "gate": "structure_precheck"
+  },
+  "artifact": {
+    "path": "/root/zhijian/dsh-expert-library/work/expert-teams/智见点评-服务业务/expert-tasks/t6/artifacts/AI无佣与人机协同_汇报版_v3.pptx"
+  },
+  "target_milestone": "final",
+  "decision": {
+    "state": "soft_blocked",
+    "target_milestone": "final",
+    "hard_group_count": 0,
+    "soft_group_count": 1,
+    "advisory_group_count": 0
+  },
+  "summary": {
+    "group_count": 1,
+    "occurrence_count": 1,
+    "evidence_count": 1,
+    "by_action": {
+      "soft_block": 1
+    },
+    "by_domain": {
+      "layout": 1
+    }
+  },
+  "groups": [
+    {
+      "group_id": "group_361704dc3b0a",
+      "agent_action": "soft_block",
+      "severity": "not_checked",
+      "status": "not_checked",
+      "domain": "layout",
+      "family": "overlap",
+      "problem_class": "layout.overlap.chart_label_collision",
+      "code": "structured_chart_label_collision_not_checked",
+      "fix_strategy_id": "complete_chart_label_check",
+      "resolution": {
+        "policy_id": "complete_evidence",
+        "conditions": [
+          "evidence_exists",
+          "exception_recorded"
+        ],
+        "requires_human": true,
+        "continue_when": "补齐检测证据或登记完整例外后继续。"
+      },
+      "enforcement": {
+        "block_before": "final",
+        "allowed_resolution_actions": [
+          "rerun",
+          "manual_review",
+          "document_exception"
+        ]
+      },
+      "recommendation": {
+        "status": "unresolved",
+        "source": null,
+        "token": null,
+        "value_pt": null,
+        "language": null,
+        "role": null,
+        "nearest_half_point_pt": null
+      },
+      "occurrence_count": 1,
+      "evidence_count": 1,
+      "actual_value_counts": {},
+      "message": "首期 `structure_precheck` 还没有读取原生 chart 内部 label 的真实边界，因此该 chart 的内部标签碰撞未自动检查。",
+      "suggested_fix": "当前先保留逐页预览复核；后续可补 chart title / axis / legend / data label 的结构化检查。",
+      "sample_locations": [
+        "slide 5 | shape 7 | chart"
+      ],
+      "omitted_location_count": 0,
+      "related_codes": [],
+      "suppressed_finding_count": 0,
+      "superseded_finding_count": 0
+    }
+  ],
+  "full_report_ref": "validation_pptx_structure_v3.json"
+}

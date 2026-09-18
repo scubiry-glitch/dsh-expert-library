@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-08-30 13:45:19",
+  "final_pptx": "角色重写_十二主体_20260829_v54.pptx",
+  "final_sha256_12": "a0753846a02f",
+  "backup_file": "角色重写_十二主体_20260829_v54.pptx.pptfast-bak",
+  "slide_count": 33,
+  "editable_profile": "fully_editable（native text 21 tables / native chart 4 / diagram-visual shapes / 零位图）",
+  "gates": {
+    "check_pptx_package_preflight.py": "PASS (0 error / 1 warning: chart 自带 embedded xlsx，为 fully_editable 合同的有意选择)",
+    "check_pptx_structure_precheck.py": "PASS (0 error / 49 warning：研报弱层级 9/10.5pt 说明文字 + 表格长文本行，属 dense_reference 授权范围)",
+    "check_pptx_connectors.py": "PASS (0 error，装饰线已绑定或改箭头)",
+    "lint_deck_assets.py": "PASS (source_font_size_warnings=0)",
+    "export_pptx_previews.py + render_review": "NOT_CHECKED（环境无 PowerPoint/LibreOffice/pdftoppm 后端）；补偿证据：build/structural_selfcheck.py → PASS (0 issues；无越界/无页脚侵入/notes 齐全/ea 槽位抽查 0 缺失)",
+    "token_scan.py": "PASS×3（禁例 41 token 0 命中；锚点 74 项全在场；反向扫描 0 个未溯源数字）"
+  },
+  "archetype_distribution": {
+    "cover": [
+      "S01"
+    ],
+    "toc_table": [
+      "S02"
+    ],
+    "dark_compass": [
+      "S03",
+      "S25"
+    ],
+    "essay": [
+      "S04",
+      "S05",
+      "S06",
+      "S30"
+    ],
+    "map_table": [
+      "S07"
+    ],
+    "data_chart": [
+      "S08",
+      "S09",
+      "S10"
+    ],
+    "chapter": [
+      "S11",
+      "S12",
+      "S13",
+      "S14",
+      "S15",
+      "S16",
+      "S17",
+      "S18",
+      "S19",
+      "S20",
+      "S21",
+      "S22",
+      "S23",
+      "S24"
+    ],
+    "summary": [
+      "S26",
+      "S27",
+      "S28",
+      "S29"
+    ],
+    "closing_table": [
+      "S31"
+    ],
+    "sources": [
+      "S32"
+    ],
+    "back_cover": [
+      "S33"
+    ]
+  },
+  "html_pdf_shots_untouched": true
+}

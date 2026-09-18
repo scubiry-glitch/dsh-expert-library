@@ -1,0 +1,92 @@
+{
+ "subheading": "从1到N改造存量：一个入口、两条转化链、公私联动",
+ "components": [
+  {
+   "type": "flowchart",
+   "direction": "TD",
+   "nodes": [
+    {
+     "id": "hub",
+     "label": "苏银生活·任务型入口",
+     "kind": "rect"
+    },
+    {
+     "id": "p1",
+     "label": "高频任务",
+     "kind": "rect"
+    },
+    {
+     "id": "p2",
+     "label": "个人任务链",
+     "kind": "rect"
+    },
+    {
+     "id": "p3",
+     "label": "账户/卡/财富",
+     "kind": "rect"
+    },
+    {
+     "id": "b1",
+     "label": "代发增值",
+     "kind": "rect"
+    },
+    {
+     "id": "b2",
+     "label": "企业任务链",
+     "kind": "rect"
+    },
+    {
+     "id": "b3",
+     "label": "代发/授信",
+     "kind": "rect"
+    },
+    {
+     "id": "l1",
+     "label": "公私联动：零售线索反哺对公",
+     "kind": "rect"
+    }
+   ],
+   "edges": [
+    {
+     "from": "hub",
+     "to": "p1"
+    },
+    {
+     "from": "p1",
+     "to": "p2"
+    },
+    {
+     "from": "p2",
+     "to": "p3"
+    },
+    {
+     "from": "hub",
+     "to": "b1"
+    },
+    {
+     "from": "b1",
+     "to": "b2"
+    },
+    {
+     "from": "b2",
+     "to": "b3"
+    },
+    {
+     "from": "p3",
+     "to": "l1"
+    },
+    {
+     "from": "b3",
+     "to": "l1"
+    }
+   ]
+  },
+  {
+   "type": "callout",
+   "variant": "info",
+   "icon": "smartphone",
+   "text": "代发增值是「任务链＋金融转化」最短路径；渠道「一重两轻」，复杂需求引导网点/私行中心。"
+  }
+ ],
+ "notes": "架构页：一个入口、两条转化链、公私联动。私行客户走重渠道，任务入口只做触达与预约。"
+}

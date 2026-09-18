@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 无佣与人机协同：成本承担权之争｜智见点评 · 行业研究（正式稿 v3）</title>
+<meta name="description" content="居住服务行业研究报告（正式稿 v3）：成本承担权之争、八段成本树、责任边界矩阵（纵轴定生死）、三类场景路线选择器、合规风险三题、趋同四项制度前置条件、Q1—Q5 可证伪预言与十项观察面板。">
+<!--
+  ============================================================================
+  智见点评 · 服务业务 ｜ t6 渲染与生成 ｜ 渲染源：expert-tasks/t5/artifacts/融合正式稿_v3.md（唯一权威源，v1/v2 弃用）
+  交付：HTML5（本文件）→ PDF（weasyprint A4）→ PPTX（可编辑）；视频按令不做。
+
+  Design Read（finesse-ui SKILL §0.B）
+  Lazy default (rejected): 贝壳蓝品牌页 + 金色渐变 hero + 玻璃拟态卡片 + AI 蓝紫发光；
+                           第二层默认也已否决：「暖米色＋铜金」的房地产研报套路配色。
+  Design Read: 居住服务行业研究 · 审计账本式纸墨（账册对开） · register=product · SPECTACLE=2 ·
+               layout=账册对开（发丝线分栏 + 划线表格 + 审计行） · engine=无（静态优先，零外部依赖）
+  You'll see: 冷调纸底（#ECEFF5）上压近白卡（#FBFCFE）；封面一条墨钴蓝（#1B3A6B）账头带压大号衬线标题，
+              下面一排四格数字——格子之间全是发丝线而不是卡片；正文分栏处用 1px 墨线分隔，
+              五张划线表（八段成本树 / 责任边界矩阵 3×4 / 三类场景 / Q1–Q5 预言 / 十项观察面板）
+              加一张编号图；全部分位数字等宽对齐，印刷金（#A9741F）只出现在章线、图号与金句条上。
+  Motion: 首屏 内容本来就是完整静态的，载入时整片轻微上浮一次
+          滚动 无视差、无吸附翻页
+          交互 表行悬停染一层极浅底色
+          收尾 图 1 的对比条从底部长起一次
+          静止版 全部定格（关掉动效即为完整静态报告；打印版不依赖任何脚本）
+  Images: 0 张照片。图像位由 6 张数据图卡（含五张表）承担；不生成、不下载任何图片。
+  Not right? ① 你想要的是每屏一页、可翻页的汇报演示稿，而不是可打印的长文档；
+             ② 墨钴蓝账头太重，封面想改成近白底墨蓝题字。
+  Rotation: 同工作区最近四份（零售金融专家-优势页 adv2–adv5）都是「钴蓝+金 · 100vh 翻页 deck · 900/700/500 字重」；
+            本稿换掉三轴：版式改为账册对开（非翻页 deck）、动效降为静态优先（无 snap scroll）、
+            材质换成审计账本纸墨（发丝线分栏 / 划线表格 / 分位数字 / 页脚页码）。
+  ============================================================================
+-->
+<style>
+/* finesse · register=product · A=ink-cobalt+print-gold on cool tinted neutral · B=serif display 600 / sans 400·500·700 / mono tabular figures · C=ledger spread (hairline column rules, ruled tables, audit rows) · D=static-first (one load reveal + one bar grow, CSS only) · E=audit ledger on paper stock (ruled columns, folio, stamp line) · SOUL=7 SPECTACLE=2 DENSITY=9 */
+
+:root{
+  /* --- substrate: 冷调纸底 + 近白卡（账本纸墨） --- */
+  --page:#eceff5;
+  --bg:#fbfcfe;
+  --panel-2:#f2f5fa;
+  --panel-3:#e7ecf4;
+  --border:rgba(20,32,56,.13);
+  --border-soft:rgba(20,32,56,.08);
+  --border-strong:rgba(20,32,56,.26);
+
+  /* --- ink --- */
+  --ink-1:#0f1a2e;
+  --ink-2:#33415c;
+  --ink-3:#5a6880;
+  --ink-on-dark:#eef2f9;
+  --ink-on-dark-dim:#bcc7d9;
+
+  /* --- brand: 墨钴蓝（主）+ 印刷金（章线/条款/图号） --- */
+  --accent:#1b3a6b;
+  --accent-mid:#2d5bd8;
+  --accent-soft:rgba(27,58,107,.10);
+  --accent-soft-2:rgba(27,58,107,.05);
+  --on-accent:#f4f7fc;
+  --glow:rgba(27,58,107,.28);
+  --gold:#a9741f;
+  --gold-ink:#8a5e12;
+  --gold-soft:rgba(169,116,31,.13);
+
+  /* --- semantic: functional, kept off the brand --- */
+  --up:#2f7a55;
+  --down:#c0453c;
+  --warn:#a8402c;
+
+  /* --- elevation, tinted toward the ink --- */
+  --shadow:0 1px 2px rgba(20,32,56,.05);
+  --shadow-lg:0 34px 76px -48px rgba(20,32,56,.30);
+
+  /* --- radius: 账本用更方一点的角 --- */
+  --r:14px; --r-sm:10px; --r-lg:22px;
+
+  /* --- type --- */
+  --font-serif:"Noto Serif CJK SC","Source Han Serif SC","Songti SC",Georgia,"Times New Roman",serif;
+  --font-sans:"Noto Sans CJK SC","Source Han Sans SC","PingFang SC","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-mono:"Noto Sans Mono CJK SC",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+
+  --nav-h:52px;
+  --measure:40em;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{overflow-x:clip}
+body{
+  overflow-x:clip;
+  margin:0;background:var(--page);color:var(--ink-2);
+  font-family:var(--font-sans);font-size:10.5pt;line-height:1.78;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+h1,h2,h3,h4,p,ul,ol,figure,figcaption,table{margin:0}
+ul,ol{padding:0;list-style:none}
+a{color:var(--accent);text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+strong{font-weight:700;color:var(--ink-1)}
+.num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.u{font-size:.74em;font-weight:500;color:var(--ink-2);letter-spacing:0;margin-left:1px}
+.tag-ref,.tag-calc,.tag-jud,.tag-todo{
+  display:inline-block;font-size:.86em;font-weight:700;line-height:1.5;padding:0 4px;border-radius:4px;
+  white-space:nowrap;vertical-align:1px;
+}
+.tag-ref{color:var(--accent);background:var(--accent-soft-2)}
+.tag-calc{color:var(--gold-ink);background:var(--gold-soft)}
+.tag-jud{color:var(--ink-2);background:var(--panel-3)}
+.tag-todo{color:var(--warn);background:rgba(168,64,44,.08)}
+
+/* ---------------- masthead (the page's only sticky) ---------------- */
+.masthead{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border)}
+.masthead .inner{max-width:1120px;margin:0 auto;padding:0 22px;display:flex;align-items:center;gap:16px;min-height:var(--nav-h)}
+.brandline{font-size:8.5pt;letter-spacing:.05em;color:var(--ink-3);white-space:nowrap;flex:0 1 auto;min-width:0;
+  text-overflow:ellipsis;overflow:hidden}
+.brandline b{color:var(--ink-1);font-weight:700}
+.mast-links{display:flex;gap:2px;margin-left:auto;flex-wrap:nowrap}
+.mast-links a{display:flex;align-items:center;min-height:36px;padding:0 9px;font-size:9pt;color:var(--ink-2);
+  border-radius:8px;white-space:nowrap}
+.mast-links a:hover{background:var(--accent-soft-2);color:var(--accent)}
+
+/* ---------------- sheet ---------------- */
+.sheet{max-width:1120px;margin:0 auto;padding:26px 22px 88px}
+section{scroll-margin-top:calc(var(--nav-h) + 12px)}
+
+/* ---------------- cover ---------------- */
+.cover{background:var(--bg);border:1px solid var(--border-soft);border-radius:var(--r-lg);
+  box-shadow:var(--shadow-lg);overflow:hidden;position:relative}
+.cover::after{content:"";position:absolute;inset:0 0 auto auto;width:340px;height:240px;
+  background:radial-gradient(300px 210px at 90% -10%,var(--glow),transparent 62%);pointer-events:none}
+.cover-band{background:var(--accent);color:var(--ink-on-dark);padding:22px 30px 26px;position:relative}
+.cover-eyebrow{font-size:8.5pt;letter-spacing:.1em;color:var(--ink-on-dark-dim);line-height:1.2}
+.cover h1{font-family:var(--font-serif);font-weight:600;color:var(--ink-on-dark);
+  font-size:30pt;line-height:1.2;letter-spacing:-.015em;margin:12px 0 0;
+  overflow-wrap:anywhere;min-width:0}
+.cover-sub{font-family:var(--font-serif);font-size:13.5pt;line-height:1.5;color:var(--ink-on-dark-dim);
+  margin:10px 0 0;overflow-wrap:anywhere}
+.cover-body{padding:24px 30px 30px}
+.metaline{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:9pt;color:var(--ink-3);
+  border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);padding:10px 0;margin:0 0 20px}
+.metaline b{color:var(--ink-1);font-weight:500}
+
+.kicker-quote{background:var(--gold-soft);box-shadow:inset 4px 0 0 var(--gold);border-radius:6px;
+  padding:13px 18px 14px;font-family:var(--font-serif);font-size:12pt;line-height:1.62;color:var(--ink-1);
+  margin:0 0 22px;overflow-wrap:anywhere}
+.kicker-quote .qmark{color:var(--gold-ink);font-weight:700;margin-right:2px}
+
+/* 数字条：账本一行四格，格间发丝线 */
+.numstrip{display:flex;gap:0;margin:0 0 22px;background:var(--bg);
+  border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.numstrip .cell{flex:1 1 0;min-width:0;background:transparent;border:0;
+  border-left:1px solid var(--border);border-radius:0;padding:15px 16px 14px}
+.numstrip .cell:first-child{border-left:0}
+.numstrip .cell .big{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:19pt;
+  font-weight:700;color:var(--ink-1);letter-spacing:-.02em;line-height:1.1}
+.numstrip .cell .big .u{font-size:11pt;font-weight:500;color:var(--ink-2);margin-left:2px}
+.numstrip .cell .lbl{font-size:9pt;color:var(--ink-2);margin:7px 0 0;line-height:1.5}
+.numstrip .cell .src{font-size:8pt;color:var(--ink-3);margin:4px 0 0;line-height:1.45}
+
+.tocrow{display:flex;flex-wrap:wrap;gap:8px}
+.tocrow a{display:flex;align-items:center;min-height:34px;padding:0 13px;border-radius:999px;
+  border:1px solid var(--border);background:var(--panel-2);font-size:9pt;color:var(--ink-2);white-space:nowrap}
+.tocrow a:hover{border-color:var(--border-strong);color:var(--accent);background:var(--accent-soft-2)}
+.tocrow a .n{font-family:var(--font-mono);color:var(--gold-ink);margin-right:7px;font-size:8.5pt}
+
+/* ---------------- chapters ---------------- */
+.chapter{margin:0 0 40px}
+.chapter-head{display:flex;align-items:baseline;gap:14px;border-bottom:3px double var(--gold);
+  padding-bottom:9px;margin:0 0 22px}
+.chapter-head .chapno{font-family:var(--font-mono);font-size:8.5pt;font-weight:500;letter-spacing:.12em;
+  color:var(--gold-ink);text-transform:uppercase;line-height:1.1;white-space:nowrap;margin-right:11px;vertical-align:2px}
+.chapter-head h2{font-family:var(--font-serif);font-weight:600;font-size:17pt;line-height:1.35;
+  color:var(--ink-1);letter-spacing:-.01em;overflow-wrap:anywhere;min-width:0}
+.chapter-head .lead{margin-left:auto;font-size:9pt;color:var(--ink-3);text-align:right;max-width:26em;line-height:1.55}
+h3{font-family:var(--font-serif);font-weight:600;font-size:12.5pt;color:var(--ink-1);
+  line-height:1.5;margin:26px 0 10px;overflow-wrap:anywhere;display:flex;align-items:baseline;gap:9px}
+h3 .sn{font-family:var(--font-mono);font-size:9pt;color:var(--gold-ink);font-weight:500;letter-spacing:.06em}
+h4{font-size:10.5pt;font-weight:700;color:var(--ink-1);margin:16px 0 6px}
+.prose{max-width:var(--measure)}
+.prose p + p{margin-top:11px}
+.prose p{text-wrap:pretty}
+
+.keyrows{border-top:1px solid var(--border-soft);margin:16px 0 6px}
+.keyrow{display:flex;gap:14px;padding:13px 2px;border-bottom:1px solid var(--border-soft)}
+.keyrow .tag{flex:0 0 84px;font-size:9pt;color:var(--ink-1);font-weight:700;line-height:1.6}
+.keyrow .body{flex:1 1 auto;min-width:0;font-size:10.5pt}
+.keyrow .body em{font-style:normal;color:var(--gold-ink);font-weight:700}
+
+.block{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:18px 20px;margin:18px 0}
+.block.flat{box-shadow:none;background:var(--panel-2);border-color:var(--border-soft)}
+.block .bt{font-size:9.5pt;font-weight:700;color:var(--ink-1);margin:0 0 8px}
+.callout{background:var(--accent-soft-2);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:14px 16px;margin:14px 0 0;font-size:9.5pt;line-height:1.72}
+.callout .ct{font-size:9.5pt;font-weight:700;color:var(--accent);margin:0 0 5px}
+.caption{font-size:8.5pt;color:var(--ink-3);line-height:1.65;margin:10px 0 0}
+.caption b{color:var(--ink-2);font-weight:700}
+
+/* two-column ledger spread */
+.compare{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;margin:18px 0;
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.side{background:transparent;border:0;border-radius:0;padding:18px 20px;min-width:0}
+.side + .side{border-left:1px solid var(--border)}
+.side .who{font-family:var(--font-serif);font-size:11.5pt;font-weight:600;color:var(--ink-1);
+  display:flex;align-items:center;gap:9px;margin:0 0 4px}
+.side .who .pip{width:9px;height:9px;border-radius:50%;background:var(--accent-mid);flex:0 0 auto}
+.side.challenger .who .pip{background:var(--gold)}
+.side .stance{font-size:9pt;color:var(--ink-3);margin:0 0 12px;line-height:1.6}
+.side li{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--border-soft);font-size:10pt;line-height:1.72}
+.side li:first-of-type{border-top:0}
+.side li .d{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:8.5pt;
+  color:var(--gold-ink);flex:0 0 66px;padding-top:2px}
+
+/* timeline */
+.timeline{margin:18px 0 0;border-left:1px solid var(--border-strong)}
+.tl{display:flex;gap:16px;padding:9px 0 9px 18px;position:relative}
+.tl::before{content:"";position:absolute;left:-4.5px;top:18px;width:8px;height:8px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--accent-mid)}
+.tl.gold::before{border-color:var(--gold)}
+.tl .when{flex:0 0 84px;font-family:var(--font-mono);font-variant-numeric:tabular-nums;
+  font-size:8.5pt;color:var(--ink-1);padding-top:3px}
+.tl .what{flex:1 1 auto;min-width:0;font-size:10pt;line-height:1.72}
+.tl .what b{font-weight:700;color:var(--ink-1)}
+
+/* tables */
+.tblwrap{margin:18px 0 0;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:var(--shadow);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:9pt;border-top:2px solid var(--gold)}
+caption{caption-side:top;text-align:left;padding:14px 18px 10px;font-size:9pt;color:var(--ink-3);
+  border-bottom:1px solid var(--border-soft);line-height:1.6}
+caption b{color:var(--ink-1);font-weight:700}
+th{background:var(--panel-2);text-align:left;font-weight:700;color:var(--ink-1);font-size:8.5pt;
+  letter-spacing:.02em;padding:8px 12px;border-bottom:1px solid var(--border);line-height:1.5;
+  font-variant-numeric:tabular-nums}
+td{padding:9px 12px;border-bottom:1px solid var(--border-soft);vertical-align:top;line-height:1.65;
+  font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--accent-soft-2)}
+td.stage{font-weight:700;color:var(--ink-1)}
+td.axis{font-weight:700;color:var(--accent);background:var(--accent-soft-2)}
+td.cell-open{background:var(--gold-soft)}
+td.cell-moat{background:var(--accent-soft)}
+.chip{display:inline-flex;align-items:center;min-height:19px;padding:1px 8px;border-radius:999px;
+  font-size:8.5pt;font-weight:700;white-space:nowrap;border:1px solid transparent}
+.chip-hi{background:var(--accent-soft);color:var(--accent);border-color:var(--border)}
+.chip-mid{background:var(--gold-soft);color:var(--gold-ink);border-color:var(--gold-soft)}
+.chip-lo{background:var(--panel-3);color:var(--ink-3);border-color:var(--border-soft)}
+.chip-flag{background:rgba(168,64,44,.09);color:var(--warn);border-color:rgba(168,64,44,.16)}
+
+/* exhibits */
+.exhibit{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:20px 22px 18px;margin:22px 0}
+.ex-head{display:flex;align-items:baseline;gap:11px;margin:0 0 4px}
+.ex-no{font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.08em;color:var(--gold-ink);
+  text-transform:uppercase;line-height:1.1;white-space:nowrap}
+.ex-title{font-family:var(--font-serif);font-size:12pt;font-weight:600;color:var(--ink-1);line-height:1.45}
+.ex-sub{font-size:9pt;color:var(--ink-3);margin:6px 0 0;line-height:1.62}
+
+/* bar chart */
+.chartrow{display:flex;gap:26px;align-items:flex-end;margin:22px 0 6px;flex-wrap:wrap}
+.bars{display:flex;gap:34px;align-items:flex-end;height:196px;padding:0 4px 0 2px;position:relative;--lab-h:24px}
+.bars::after{content:"";position:absolute;left:0;right:0;bottom:var(--lab-h);height:0;border-top:1px solid var(--border-strong)}
+.col{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.col .val{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:11pt;font-weight:700;
+  color:var(--ink-1);margin-bottom:6px;white-space:nowrap}
+.col .val .u{font-size:8.5pt;font-weight:500;color:var(--ink-2);margin-left:1px}
+.col .stack{display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.col .bar{width:56px;max-width:56px;border-radius:8px 8px 3px 3px;transform-origin:bottom center}
+.col .bar.prev{background:var(--panel-3);border:1px solid var(--border-strong)}
+.col .bar.now{background:var(--accent-mid);border:1px solid var(--accent)}
+.col .axlab{flex:0 0 var(--lab-h);display:flex;align-items:flex-end;justify-content:center;
+  padding-top:6px;font-size:9pt;color:var(--ink-2);text-align:center;line-height:1.3}
+.chartnote{flex:1 1 250px;min-width:230px;border-left:1px solid var(--border-soft);padding-left:20px}
+.chartnote .delta{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:15pt;
+  font-weight:700;color:var(--accent);line-height:1.2}
+.chartnote .delta .u{font-size:9.5pt;font-weight:500;color:var(--ink-2);margin-left:2px}
+.chartnote p{font-size:9pt;color:var(--ink-3);margin:6px 0 0;line-height:1.68}
+.chartnote p b{color:var(--ink-2)}
+.checkline{margin:16px 0 0;padding:12px 15px;background:var(--panel-2);border:1px solid var(--border-soft);
+  border-radius:var(--r-sm);font-size:9pt;color:var(--ink-2);line-height:1.7}
+.checkline .num{color:var(--ink-1);font-weight:700}
+
+/* strips */
+.strips{margin:16px 0 0}
+.strip{display:flex;gap:16px;padding:15px 18px;background:var(--panel-2);border:1px solid var(--border-soft);
+  border-radius:var(--r-sm);margin-bottom:10px}
+.strip .no{font-family:var(--font-mono);font-size:9pt;font-weight:700;color:var(--gold-ink);flex:0 0 26px;padding-top:2px}
+.strip .t{flex:1 1 auto;min-width:0}
+.strip .t b{display:block;font-size:10pt;color:var(--ink-1);font-weight:700;margin-bottom:4px}
+.strip .t p{font-size:9.5pt;line-height:1.72}
+.strip.result{background:var(--accent-soft);border-color:var(--border);margin-bottom:0}
+.strip.result .no{color:var(--accent)}
+
+/* tiers / numbered rows */
+.tiers{margin:16px 0 0;border-top:1px solid var(--border-soft)}
+.tier{display:flex;gap:16px;align-items:flex-start;padding:13px 2px;border-bottom:1px solid var(--border-soft)}
+.tier .lv{flex:0 0 132px;font-size:9pt;line-height:1.55}
+.tier .lv b{display:block;color:var(--ink-1);font-weight:700}
+.tier .lv span{color:var(--ink-3);font-size:8.5pt}
+.tier .body{flex:1 1 auto;min-width:0;font-size:10pt}
+
+.nrows{margin:14px 0 0;border-top:1px solid var(--border-soft)}
+.nrow{display:flex;gap:16px;padding:13px 2px;border-bottom:1px solid var(--border-soft)}
+.nrow .no{flex:0 0 30px;font-family:var(--font-mono);font-size:9.5pt;font-weight:700;color:var(--gold-ink);padding-top:2px}
+.nrow .t{flex:1 1 auto;min-width:0}
+.nrow .t b{display:block;font-size:10pt;color:var(--ink-1);font-weight:700;margin-bottom:3px}
+.nrow .t p{font-size:9.5pt;line-height:1.72}
+
+/* cards (hairline-divided columns) */
+.cards3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;margin:16px 0 0;
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden}
+.sc{background:transparent;border:0;border-right:1px solid var(--border);border-radius:0;
+  padding:17px 18px;display:flex;flex-direction:column;min-width:0}
+.sc:last-child{border-right:0}
+.sc .h{font-family:var(--font-serif);font-size:11pt;font-weight:600;color:var(--ink-1);margin:0 0 8px}
+.sc .verdict{font-size:9.5pt;font-weight:700;color:var(--accent);margin:0 0 8px;line-height:1.6}
+.sc p{font-size:9.5pt;line-height:1.72;margin:0 0 10px}
+.sc .foot{margin-top:auto;font-size:8.5pt;color:var(--ink-3);border-top:1px solid var(--border-soft);
+  padding-top:9px;line-height:1.6}
+
+/* matrix (3.4) reading frame */
+.frame{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0;margin:14px 0 0;
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.frame div{padding:14px 18px;min-width:0}
+.frame div + div{border-left:1px solid var(--border)}
+.frame .k{font-size:9pt;color:var(--ink-3)}
+.frame .v{font-size:10pt;font-weight:700;color:var(--ink-1);margin-top:4px}
+
+/* disclosure */
+.disc{margin:18px 0 0;border-top:1px solid var(--border-soft)}
+.disc .row{display:flex;gap:18px;padding:11px 0;border-bottom:1px solid var(--border-soft);font-size:9pt}
+.disc .row .k{flex:0 0 104px;color:var(--ink-3)}
+.disc .row .v{flex:1 1 auto;min-width:0;color:var(--ink-2);line-height:1.72}
+
+/* back cover */
+.back{background:var(--accent);color:var(--ink-on-dark);border-radius:var(--r-lg);
+  padding:36px 34px 30px;margin-top:34px;position:relative;overflow:hidden}
+.back::after{content:"";position:absolute;inset:auto auto -80px -60px;width:320px;height:250px;
+  background:radial-gradient(280px 210px at 10% 110%,var(--glow),transparent 65%);pointer-events:none}
+.back .close{font-family:var(--font-serif);font-size:15.5pt;line-height:1.62;color:var(--ink-on-dark);
+  margin:0 0 24px;max-width:34em;overflow-wrap:anywhere}
+.back .close .qmark{color:var(--gold);margin-right:3px}
+.back .metagrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 26px;
+  border-top:1px solid var(--border-soft);padding-top:20px}
+.back .metagrid div{font-size:8.5pt;color:var(--ink-on-dark-dim);line-height:1.65}
+.back .metagrid b{display:block;color:var(--ink-on-dark);font-weight:500;font-size:9pt}
+.back .fine{margin:22px 0 0;font-size:8.5pt;color:var(--ink-on-dark-dim);line-height:1.7;
+  border-top:1px solid var(--border-soft);padding-top:16px}
+
+.colophon{margin:34px 0 0;padding-top:14px;border-top:1px solid var(--border-soft);
+  display:flex;flex-wrap:wrap;gap:6px 20px;font-size:8.5pt;color:var(--ink-3)}
+.colophon b{color:var(--ink-2);font-weight:500}
+
+/* reveal: authored in final state; JS only adds the from-state */
+.reveal{opacity:1;transform:none}
+.anim .reveal{opacity:0;transform:translateY(14px)}
+.anim-in .reveal{opacity:1;transform:none;
+  transition:opacity .62s cubic-bezier(.16,1,.3,1),transform .62s cubic-bezier(.16,1,.3,1);
+  transition-delay:var(--d,0s)}
+.anim .bar{transform:scaleY(0)}
+.anim-in .bar{transform:scaleY(1);transition:transform .85s cubic-bezier(.16,1,.3,1);transition-delay:var(--d,0s)}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .anim .reveal{opacity:1 !important;transform:none !important}
+  .anim .bar{transform:none !important}
+}
+
+/* ---------------- responsive ---------------- */
+@media (max-width:960px){
+  .cards3{grid-template-columns:minmax(0,1fr)}
+  .sc{border-right:0;border-bottom:1px solid var(--border)}
+  .sc:last-child{border-bottom:0}
+  .cover h1{font-size:24pt}
+}
+@media (max-width:720px){
+  body{font-size:10pt}
+  .sheet{padding:16px 14px 68px}
+  .cover-band{padding:18px 20px 20px}
+  .cover-body{padding:18px 20px 22px}
+  .cover h1{font-size:21pt}
+  .mast-links{display:none}
+  .brandline{white-space:normal}
+  .compare,.frame,.back .metagrid{grid-template-columns:minmax(0,1fr)}
+  .side + .side,.frame div + div{border-left:0;border-top:1px solid var(--border)}
+  .numstrip{flex-wrap:wrap}
+  .numstrip .cell{flex:1 1 50%;border-left:1px solid var(--border)}
+  .numstrip .cell:nth-child(odd){border-left:0}
+  .numstrip .cell:nth-child(n+3){border-top:1px solid var(--border)}
+  .bars{gap:22px;height:170px}
+  .col .bar{width:46px;max-width:46px}
+  .chartnote{flex:1 1 100%;border-left:0;padding-left:0;border-top:1px solid var(--border-soft);padding-top:14px}
+  .chapter-head{flex-wrap:wrap;gap:6px 12px}
+  .chapter-head .lead{margin-left:0;text-align:left;max-width:none;flex:1 1 100%}
+  .keyrow{flex-direction:column;gap:4px}
+  .keyrow .tag{flex:0 0 auto}
+  .tier,.nrow{flex-direction:column;gap:5px}
+  .tier .lv,.nrow .no{flex:0 0 auto}
+  .disc .row{flex-direction:column;gap:3px}
+  .disc .row .k{flex:0 0 auto}
+  .tl{gap:10px;padding-left:14px}
+  .tl .when{flex:0 0 74px}
+}
+@media (max-width:560px){
+  .tblwrap table,.tblwrap tbody,.tblwrap tr,.tblwrap td,.tblwrap th{display:block;width:auto}
+  .tblwrap thead{display:none}
+  .tblwrap caption{border-bottom:1px solid var(--border-soft)}
+  .tblwrap tr{padding:12px 14px;border-bottom:1px solid var(--border-soft)}
+  .tblwrap tr:last-child{border-bottom:0}
+  .tblwrap td{border:0;padding:3px 0;overflow-wrap:anywhere}
+  .tblwrap td.stage,.tblwrap td.axis{font-size:11pt;margin-bottom:5px;background:transparent}
+  .tblwrap td[data-label]::before{content:attr(data-label);display:block;font-size:8pt;letter-spacing:.04em;
+    color:var(--ink-3);line-height:1.5}
+  .tblwrap .chip{margin-bottom:2px}
+}
+
+/* ---------------- print (A4) ---------------- */
+@page{
+  size:A4;margin:14mm 13mm 16mm;
+  @bottom-left{content:"98wiki ｜ 智见 / 行业研究报告";font-family:"Noto Sans CJK SC",sans-serif;
+    font-size:7.5pt;color:#5a6880}
+  @bottom-right{content:counter(page) " / " counter(pages);font-family:"Noto Sans Mono CJK SC",monospace;
+    font-size:7.5pt;color:#5a6880}
+}
+@page cover{@bottom-left{content:""}@bottom-right{content:""}}
+@page back{@bottom-left{content:""}@bottom-right{content:""}}
+@media print{
+  :root{--page:#fdfdff;--shadow:none;--shadow-lg:none}
+  html,body{background:var(--page)}
+  body{font-size:9pt;line-height:1.7}
+  .masthead,.colophon{display:none}
+  .sheet{max-width:none;padding:0}
+  .cover{page:cover;border-radius:0;border:0;box-shadow:none}
+  .back{page:back;border-radius:0;box-shadow:none}
+  .pbreak{break-before:page}
+  .chapter{margin-bottom:24px}
+  .cover,.numstrip .cell,.block,.callout,.side,.exhibit,.strip,.tier,.nrow,.sc,.frame,.tblwrap,.tblwrap tr,.checkline{break-inside:avoid}
+  .chapter-head,h3,h4,th{break-after:avoid}
+  .chapter-head h2{font-size:14pt}
+  .cover h1{font-size:25pt}
+  .prose{max-width:none}
+  table{font-size:8pt}
+  th{font-size:7.5pt;padding:6px 9px}
+  td{padding:7px 9px;line-height:1.6}
+  .exhibit{padding:16px 17px 14px}
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="inner">
+    <div class="brandline"><b>98wiki ｜ 智见点评 · 行业研究</b>　居住服务 · 正式稿 v3</div>
+    <nav class="mast-links" aria-label="报告章节">
+      <a href="#s1">关键性结论</a>
+      <a href="#s2">关键事实</a>
+      <a href="#s3">归因分析</a>
+      <a href="#s4">收尾</a>
+      <a href="#src">来源与留痕</a>
+    </nav>
+  </div>
+</header>
+
+<main class="sheet" id="main">
+
+  <!-- ===================== 封面 ===================== -->
+  <section class="cover" aria-label="封面">
+    <div class="cover-band">
+      <div class="cover-eyebrow">智见点评 · 行业研究　｜　居住服务　｜　正式稿 v3（渲染源 v3）</div>
+      <h1>AI 无佣与人机协同：成本承担权之争</h1>
+      <p class="cover-sub">三笔账记在谁的资产负债表上，决定这个业态的最终形状</p>
+    </div>
+    <div class="cover-body">
+      <div class="metaline">
+        <span>框架：<b>通用四段式</b></span>
+        <span>口径：<b>全国（易居、贝壳业务口径）</b></span>
+        <span>时段：<b>2025-09 — 2026-09</b></span>
+        <span>日期：<b>2026-09-16</b></span>
+      </div>
+
+      <div class="kicker-quote reveal">
+        <span class="qmark">「</span>每一分收入由谁承担，错一单由谁负责。模型是外生的、人人可得；三笔账是内生的、谁也无法白拿。
+      </div>
+
+      <div class="numstrip reveal" style="--d:.06s">
+        <div class="cell">
+          <div class="big num">245<span class="u">亿元</span></div>
+          <div class="lbl">二季度净收入</div>
+          <div class="src"><span class="tag-ref">引用</span> 2026-08-21 业绩披露</div>
+        </div>
+        <div class="cell">
+          <div class="big num">14.6<span class="u">%</span></div>
+          <div class="lbl">经调整经营利润率，同比提升 8.5 个百分点</div>
+          <div class="src"><span class="tag-ref">引用</span> 经调整经营利润 35.9 亿元</div>
+        </div>
+        <div class="cell">
+          <div class="big num">9338<span class="u">亿元</span></div>
+          <div class="lbl">二季度总成交额，同比增长 6.3%</div>
+          <div class="src"><span class="tag-ref">引用</span> 二手房成交单量同比 +25%</div>
+        </div>
+        <div class="cell">
+          <div class="big num">2.26<span class="u">亿套</span></div>
+          <div class="lbl">楼盘字典覆盖（挑战方自述口径）</div>
+          <div class="src"><span class="tag-ref">引用</span> 2026-05-28 同源声明</div>
+        </div>
+      </div>
+
+      <nav class="tocrow" aria-label="报告导航">
+        <a href="#s0"><span class="n">00</span>卷首速览</a>
+        <a href="#s1"><span class="n">01</span>关键性结论</a>
+        <a href="#s2"><span class="n">02</span>关键事实及其变化</a>
+        <a href="#s3"><span class="n">03</span>归因分析</a>
+        <a href="#s4"><span class="n">04</span>收尾</a>
+        <a href="#src"><span class="n">05</span>来源与留痕</a>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ===================== 卷首速览 ===================== -->
+  <section class="chapter pbreak" id="s0" aria-label="卷首速览">
+    <div class="chapter-head">
+      <h2><span class="chapno">00</span>卷首速览</h2>
+      <span class="lead">一页读完：主基调、五条判断、当前最大的验证缺口。</span>
+    </div>
+
+    <div class="kicker-quote reveal">
+      <span class="qmark">「</span>这是成本承担权之争。错误建议的责任、线下履约的成本、冷启动的补贴——三笔账记在谁的资产负债表上，决定这个业态的最终形状。
+    </div>
+
+    <div class="keyrows reveal" style="--d:.05s">
+      <div class="keyrow">
+        <div class="tag">性质</div>
+        <div class="body"><strong>两条路线不对称。</strong>「零佣＋按项收费」是入口定价权的<em>进攻型重构</em>，赌注在按项收费能否覆盖核验与履约成本【研判推断】；「武装经纪人」是单件履约成本的<em>防守型提效</em>，费率不动，靠组织与工具压成本【研判推断】。一个在存量佣金池里提效，一个在攻击佣金池本身。</div>
+      </div>
+      <div class="keyrow">
+        <div class="tag">因果</div>
+        <div class="body"><strong>因果顺序必须先摆正。</strong>责任划分不清不是「零佣」未获验证的原因，而是它尚未签约的症状；准确说法是「不想承担履约责任，所以只能不收佣金」。</div>
+      </div>
+      <div class="keyrow">
+        <div class="tag">验证缺口</div>
+        <div class="body">真正的缺口是三件可查的实物：按项价目表与验收标准、履约主体资质与独立性、运营数据（成本、完成率、纠纷率、退费率）——三项均为【待补】。<strong>缺的不是责任共识，是责任合同</strong>【研判推断】。</div>
+      </div>
+      <div class="keyrow">
+        <div class="tag">结构</div>
+        <div class="body"><strong>渠道会变重，不是变轻</strong>；服务者向权属风险、复杂谈判、家庭共同决策三段上移，而非被替代。</div>
+      </div>
+      <div class="keyrow">
+        <div class="tag">趋同</div>
+        <div class="body"><strong>「趋同」是边界条件，不是主基调。</strong>趋势判定以「零佣方是否公布按项收费价目表与验收条款」为标志，并需四项制度前置条件同时具备【研判推断】。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 01 关键性结论 ===================== -->
+  <section class="chapter pbreak" id="s1" aria-label="关键性结论">
+    <div class="chapter-head">
+      <h2><span class="chapno">01</span>关键性结论</h2>
+      <span class="lead">主基调：这是成本承担权之争。</span>
+    </div>
+
+    <div class="prose reveal">
+      <p><strong>主基调：这是成本承担权之争。</strong>错误建议的责任、线下履约的成本、冷启动的补贴——三笔账记在谁的资产负债表上，决定这个业态的最终形状。分水岭只有一句：<strong>每一分收入由谁承担，错一单由谁负责</strong>。模型是外生的、人人可得；三笔账是内生的、谁也无法白拿。</p>
+      <p>两条路线的性质不对称。「零佣＋按项收费」是<strong>入口定价权的进攻型重构</strong>，赌注在按项收费能否覆盖核验与履约成本，且必须靠交易量摊薄【研判推断】；「武装经纪人」是<strong>单件履约成本的防守型提效</strong>，费率不动，靠组织与工具压成本，收益落在经纪人留存与股东利润率上，代价是组织重构【研判推断】。一个在存量佣金池里提效，一个在攻击佣金池本身。</p>
+      <p><strong>因果顺序必须先摆正</strong>：责任划分不清不是「零佣」未获验证的原因，而是它尚未签约的症状。纯居间模式下责任恰恰是清晰的——报告机会、不担结果，责任因此清晰地留在平台之外。准确的说法是「不想承担履约责任，所以只能不收佣金」，而不是「责任不清所以不能收佣金」。把因果倒过来，会得出错误药方：以为补一份责任清单就能验证零佣。</p>
+      <p>真正的验证缺口是三件可查的实物——按项价目表与验收标准是否公开、履约主体是否具备资质且独立、运营数据（成本、完成率、纠纷率、退费率）是否可核；三项在当前公开信息中均为<span class="tag-todo">待补</span>，其中第三项由企业自陈「运营数据不足」<span class="tag-ref">引用</span>。<strong>缺的不是责任共识，是责任合同</strong>【研判推断】。</p>
+      <p><strong>渠道会变重，不是变轻</strong>；服务者向权属风险、复杂谈判、家庭共同决策三段上移，而非被替代。</p>
+      <p><strong>「趋同」是边界条件，不是主基调</strong>。趋势判定以「零佣方是否公布按项收费价目表与验收条款」为标志，并需四项制度前置条件同时具备（详见 3.8）【研判推断】。</p>
+    </div>
+  </section>
+
+  <!-- ===================== 02 关键事实及其变化 ===================== -->
+  <section class="chapter pbreak" id="s2" aria-label="关键事实及其变化">
+    <div class="chapter-head">
+      <h2><span class="chapno">02</span>关键事实及其变化</h2>
+      <span class="lead">一边抽走四项无法律责任的脑力环节，一边把管理成本改成履约成本。</span>
+    </div>
+
+    <div class="compare reveal">
+      <div class="side challenger">
+        <p class="who"><span class="pip"></span>挑战方：易居·小新</p>
+        <p class="stance">「AI 做居间，成交无佣；服务凭专业，按劳计费」，抽取资讯、配对、撮合、推荐四项脑力工作交给智能体。</p>
+        <ul>
+          <li><span class="d">2026-05<br>27/28</span><span>提出上述定位，底层为覆盖超 <strong>2.26 亿套</strong>房的楼盘字典<span class="tag-ref">引用</span>；同源明确「<strong>运营数据不足</strong>」<span class="tag-ref">引用</span>。</span></li>
+          <li><span class="d">2026-06<br>-16</span><span>钛媒体列五项落地难关，核验、权属、履约责任在列<span class="tag-ref">引用</span>。</span></li>
+          <li><span class="d">2026-09<br>-08</span><span>在珠海启动买卖双方公测<span class="tag-ref">引用</span>。</span></li>
+          <li><span class="d">口径</span><span>被抽走的恰是四项<strong>无法律责任的脑力环节</strong>，核验与签约留在体系外。</span></li>
+        </ul>
+      </div>
+      <div class="side">
+        <p class="who"><span class="pip"></span>在位方：贝壳</p>
+        <p class="stance">用组织与工具把单件履约成本压下来，把决策链压到离交易最近的一层。</p>
+        <ul>
+          <li><span class="d">2026-03<br>-29</span><span>成立以来最大规模组织调整：撤销南北大区，改设成都、重庆、广州、杭州、南京、深圳、苏州、天津、武汉、西安<strong>十大直属区域</strong>，由集团直接管理；同期 <strong>3000 名干部下一线</strong><span class="tag-ref">引用</span>。</span></li>
+          <li><span class="d">2026-05<br>-08</span><span>重仓服务者，<strong>52 万</strong>经纪人改称「社区客户经理」；管理层称「消费者需要的不只是更多信息，而是确定性解决方案」<span class="tag-ref">引用</span>。</span></li>
+          <li><span class="d">2026-08<br>-17</span><span>披露线上服务助手成交效率提升 <strong>6 倍</strong>，口径为北京、2026 年 3 月启动试点、累计服务近 <strong>10 万人次</strong>、「AI＋人工」模式<span class="tag-ref">引用</span>。</span></li>
+          <li><span class="d">2026-08<br>-21</span><span>二季度业绩：总成交额 <strong>9338 亿元</strong>、同比增长 6.3%，二手房成交单量同比增长 <strong>25%</strong>，净收入 <strong>245 亿元</strong>，经调整经营利润 <strong>35.9 亿元</strong>、利润率 <strong>14.6<span class="u">%</span></strong>、同比提升 8.5 个百分点<span class="tag-ref">引用</span>。</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <h3><span class="sn">2.1</span>时间轴</h3>
+    <div class="timeline reveal" style="--d:.04s">
+      <div class="tl gold"><span class="when num">2026-03-29</span><span class="what"><b>组织先动。</b>撤销南北大区、改设十大直属区域，3000 名干部下一线，管理层级压缩。</span></div>
+      <div class="tl gold"><span class="when num">2026-05-08</span><span class="what"><b>身份改写。</b>52 万经纪人改称「社区客户经理」，服务者被产品化。</span></div>
+      <div class="tl"><span class="when num">2026-05-27/28</span><span class="what"><b>挑战方入场。</b>「成交无佣」定位发布，抽走四项无法律责任环节，核验与签约留在体系外；同源声明运营数据不足。</span></div>
+      <div class="tl"><span class="when num">2026-06-16</span><span class="what"><b>落地难关被点出。</b>核验、权属、履约责任在列。</span></div>
+      <div class="tl gold"><span class="when num">2026-08-17</span><span class="what"><b>效率指标出场。</b>线上服务助手成交效率提升 6 倍（北京单城、同源自述、口径限定）。</span></div>
+      <div class="tl gold"><span class="when num">2026-08-21</span><span class="what"><b>利润表出场。</b>二季度量、利润、人效同向。</span></div>
+      <div class="tl"><span class="when num">2026-09-08</span><span class="what"><b>挑战方进入公测。</b>珠海启动买卖双方公测。</span></div>
+    </div>
+
+    <p class="caption reveal">人民网 2026-08-24 所载 Q2 数值未随任务下发，本稿不补数<span class="tag-todo">待补</span>。</p>
+
+    <!-- 图 1 -->
+    <figure class="exhibit reveal" style="--d:.06s">
+      <div class="ex-head"><span class="ex-no">图 1</span><span class="ex-title">二季度经营质量：利润率对比条与自洽校验</span></div>
+      <p class="ex-sub">纵轴为经调整经营利润率（%），零轴起算，条高 = 数值 ÷ 坐标域上限 15%；左条为上年同期（测算口径），右条为本期（引用口径）。</p>
+      <div class="chartrow">
+        <div class="bars">
+          <div class="col">
+            <div class="val num">6.1<span class="u">%</span></div>
+            <div class="stack">
+              <div class="bar prev" style="height:40.67%" aria-hidden="true"></div>
+            </div>
+            <div class="axlab">上年同期<span class="tag-calc">测算</span></div>
+          </div>
+          <div class="col">
+            <div class="val num">14.6<span class="u">%</span></div>
+            <div class="stack">
+              <div class="bar now grow" style="height:97.33%" aria-hidden="true"></div>
+            </div>
+            <div class="axlab">本期<span class="tag-ref">引用</span></div>
+          </div>
+        </div>
+        <div class="chartnote">
+          <div class="delta num">+8.5<span class="u">个百分点</span></div>
+          <p><b>同比差额</b>：14.6% − 8.5 个百分点 = 6.1%<span class="tag-calc">测算</span>。</p>
+          <p><b>自洽校验</b>：经调整经营利润 35.9 ÷ 净收入 245 ≈ <span class="num">14.7<span class="u">%</span></span>（保留一位小数），与披露的 14.6% 一致，差异属舍入<span class="tag-calc">测算</span>。</p>
+        </div>
+      </div>
+      <figcaption class="caption"><b>口径与来源</b>：二季度业绩披露（2026-08-21），公开报道口径，非审计口径。两项测算均为正文引用数字的算术派生，见文末「附：附图数据说明」；本图不含任何新造数字。</figcaption>
+    </figure>
+  </section>
+
+  <!-- ===================== 03 归因分析 ===================== -->
+  <section class="chapter pbreak" id="s3" aria-label="归因分析">
+    <div class="chapter-head">
+      <h2><span class="chapno">03</span>归因分析</h2>
+      <span class="lead">成本树、三重剥离、责任边界矩阵、制度钥匙、合规三题、趋同前置条件与可证伪预言。</span>
+    </div>
+
+    <!-- 3.1 成本树 -->
+    <h3><span class="sn">3.1</span>全流程成本树（二手住宅买卖，八段）</h3>
+    <div class="tblwrap reveal">
+      <table>
+        <caption><b>表 1 ｜ 全流程成本树.</b> 「AI 可压缩性」与「刚性／错配成本」为定性判断【研判推断】，不赋权重、不编数值；核验独立成本项分项数额无公开数据<span class="tag-todo">待补</span>。</caption>
+        <thead>
+          <tr><th scope="col">环节</th><th scope="col">主要成本项</th><th scope="col">AI 可压缩性</th><th scope="col">成本承担方</th><th scope="col">刚性／错配成本</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="stage" data-label="环节">获客</td><td data-label="主要成本项">流量采买、线索分发、门店转化</td><td data-label="AI 可压缩性"><span class="chip chip-hi">高</span>（可变成本）</td><td data-label="成本承担方">平台／门店</td><td data-label="刚性／错配成本">非刚性</td></tr>
+          <tr><td class="stage" data-label="环节">核验</td><td data-label="主要成本项">产权、查封、共有、欠费、学位占用</td><td data-label="AI 可压缩性"><span class="chip chip-lo">低</span>（仅能做预检）</td><td data-label="成本承担方">须具名持牌人签字</td><td data-label="刚性／错配成本">刚性；<strong>错配</strong>：AI 可以给结论，赔偿责任落不到算法头上，「机器推荐人担责」是当前最典型的责任错配</td></tr>
+          <tr><td class="stage" data-label="环节">匹配</td><td data-label="主要成本项">楼盘字典、推荐、带看路径规划</td><td data-label="AI 可压缩性"><span class="chip chip-hi">高</span>（边际成本最低）</td><td data-label="成本承担方">平台／算法</td><td data-label="刚性／错配成本">非刚性</td></tr>
+          <tr><td class="stage" data-label="环节">谈判</td><td data-label="主要成本项">价格与条款博弈、情绪管理</td><td data-label="AI 可压缩性"><span class="chip chip-lo">低</span>（责任与关系密集）</td><td data-label="成本承担方">服务者</td><td data-label="刚性／错配成本">刚性</td></tr>
+          <tr><td class="stage" data-label="环节">带看</td><td data-label="主要成本项">现场时间、交通、钥匙门禁</td><td data-label="AI 可压缩性"><span class="chip chip-lo">低—中</span></td><td data-label="成本承担方">门店／服务者</td><td data-label="刚性／错配成本">刚性</td></tr>
+          <tr><td class="stage" data-label="环节">按揭</td><td data-label="主要成本项">资质预审、银行对接、材料合规</td><td data-label="AI 可压缩性"><span class="chip chip-mid">中</span></td><td data-label="成本承担方">平台＋金融机构</td><td data-label="刚性／错配成本">半刚性</td></tr>
+          <tr><td class="stage" data-label="环节">过户</td><td data-label="主要成本项">网签、税费、登记、资金监管</td><td data-label="AI 可压缩性"><span class="chip chip-mid">中</span>（流程化但不可容错）</td><td data-label="成本承担方">居间机构</td><td data-label="刚性／错配成本">刚性</td></tr>
+          <tr><td class="stage" data-label="环节">售后</td><td data-label="主要成本项">交房、维修、纠纷兜底</td><td data-label="AI 可压缩性"><span class="chip chip-lo">低</span></td><td data-label="成本承担方">品牌方／机构</td><td data-label="刚性／错配成本">刚性</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout reveal">
+      <p class="ct">结构判断</p>
+      <p>AI 压缩集中在前四段的可变成本；核验签字、带看、售后三段是<strong>刚性成本</strong>——只改变由谁承担，不因模型变强而消失【研判推断】。</p>
+    </div>
+
+    <!-- 3.2 三重剥离 -->
+    <h3><span class="sn">3.2</span>「6 倍效率」的三重剥离</h3>
+    <div class="strips reveal">
+      <div class="strip">
+        <div class="no">1</div>
+        <div class="t"><b>分母口径限定</b><p>该指标分母为「经线上服务助手深度沟通后流转至经纪人的客户」，非全部客源，存在选择偏差；服务本身是「AI＋人工」，名义倍数已混入人工贡献。</p></div>
+      </div>
+      <div class="strip">
+        <div class="no">2</div>
+        <div class="t"><b>同期三项变动叠加</b><p>2026-03-29 组织调整压缩管理层级；二季度二手房单量同比增长 25% 带来分母效应；企业自述、无第三方复核。</p></div>
+      </div>
+      <div class="strip result">
+        <div class="no">＝</div>
+        <div class="t"><b>剥离后的用法</b><p>三重混淆未剥离，<strong>该数字仅作节点效率指标，不可归因 AI，不可外推全链条成本</strong>【研判推断】。</p></div>
+      </div>
+    </div>
+
+    <!-- 3.3 证据分级 -->
+    <h3><span class="sn">3.3</span>挑战方证据分级与重估阈值</h3>
+    <div class="tiers reveal">
+      <div class="tier">
+        <div class="lv"><b>2.26 亿套楼盘字典</b><span>事实 · 成本结构证据</span></div>
+        <div class="body">房源数据结构化已接近完成，搜寻环节的信息成本会持续下降。</div>
+      </div>
+      <div class="tier">
+        <div class="lv"><b>「成交无佣」</b><span>定位 · 定价策略</span></div>
+        <div class="body">不是已验证的经济模型；可以今天宣布，代价必须明天兑付。</div>
+      </div>
+      <div class="tier">
+        <div class="lv"><b>「运营数据不足」</b><span>自陈的模型缺口 · 证据强度最弱</span></div>
+        <div class="body">三者混为「已验证模式」属引用越界。按现证据判定：「零佣」是产品定位而非已验证经济模型【研判推断】。</div>
+      </div>
+    </div>
+    <div class="callout reveal">
+      <p class="ct">重估阈值</p>
+      <p><strong>连续 2 个季度不披露可核验的成交／运营数据，即判定为营销定位。</strong></p>
+    </div>
+
+    <!-- 3.4 责任边界矩阵 -->
+    <h3><span class="sn">3.4</span>责任边界矩阵：纵轴定生死</h3>
+    <div class="frame reveal">
+      <div><div class="k">横轴（谁给出建议）</div><div class="v">平台算法 ／ 算法＋持牌经纪人复核 ／ 纯人工</div></div>
+      <div><div class="k">纵轴（谁承担履约结果）</div><div class="v">平台 ／ 持牌履约方 ／ 服务者个人 ／ 第三方机构</div></div>
+    </div>
+    <div class="tblwrap reveal" style="margin-top:14px">
+      <table>
+        <caption><b>表 2 ｜ 责任边界矩阵（3×4）.</b> 读法：<strong>判断一个模式能否成立只看纵轴——横轴换多少次模型，都不改变纵轴上的责任落点。</strong> 高亮格＝最可能的稳态与当前形态；判断均为【研判推断】。</caption>
+        <thead>
+          <tr><th scope="col">建议责任＼履约责任</th><th scope="col">平台承担</th><th scope="col">持牌履约方承担</th><th scope="col">服务者个人承担</th><th scope="col">第三方机构承担</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="axis" data-label="建议责任＼履约责任">纯 AI 建议（无人工复核）</td>
+            <td class="cell-open" data-label="平台承担"><strong>会计上成立、法律上高风险</strong>：平台须同时具备履约资质与赔付能力，否则「零佣」只能覆盖咨询与线索（挑战方当前形态【研判推断】）</td>
+            <td data-label="持牌履约方承担">须逐项签署委托与验收条款；平台实际沦为引流方，报酬被履约方分走</td>
+            <td data-label="服务者个人承担">不成立：AI 建议不可由个体承接结果责任，责任链断裂处即纠纷起点</td>
+            <td data-label="第三方机构承担">与按揭、过户天然并存；平台须披露利益关系，否则按项收费易被认定为关联交易</td>
+          </tr>
+          <tr>
+            <td class="axis" data-label="建议责任＼履约责任">AI 建议＋持牌经纪人复核</td>
+            <td class="cell-moat" data-label="平台承担"><strong>人机协同最可能的稳态</strong>：平台担算法与数据责任，经纪人担保验与建议责任（在位方路线方向【研判推断】）</td>
+            <td class="cell-moat" data-label="持牌履约方承担">双责任主体须在合同层明确「谁签字谁担责」，否则追责成本高于赔付本身</td>
+            <td data-label="服务者个人承担">须配套建议日志（可回溯到具体人）与执业保险，否则个体承担不起权属级错误</td>
+            <td data-label="第三方机构承担">按揭与过户的第三方责任须书面化，避免「系统说的」式免责</td>
+          </tr>
+          <tr>
+            <td class="axis" data-label="建议责任＼履约责任">纯人工建议</td>
+            <td data-label="平台承担">平台仅提供信息基础设施，责任落回经纪人／机构</td>
+            <td data-label="持牌履约方承担">传统居间形态，责任清晰但成本不摊薄</td>
+            <td data-label="服务者个人承担">传统形态，个人信用即风险敞口</td>
+            <td data-label="第三方机构承担">传统形态</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>责任链条的三处断点（最需要盯的三处）</h4>
+    <div class="nrows reveal">
+      <div class="nrow">
+        <div class="no">①</div>
+        <div class="t"><b>建议与签字分离</b><p>AI 给建议、人签字，若建议日志不可追溯，签字的持牌人承担了非自己生成的判断，责任与权力不匹配。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">②</div>
+        <div class="t"><b>按项收费无验收标准</b><p>按项收费在法律上是把一份佣金拆成 N 份服务合同，每份都需要验收标准、失败退费与赔付上限，否则纠纷时收费方仍在主张「居间」身份，退化为「收费按项、责任不按项」【研判推断】。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">③</div>
+        <div class="t"><b>资金安全</b><p>若按揭材料、监管资金与过户材料经第三方之手而平台掌握信息流，则平台获得资金池影响力却无持牌责任，这一项比佣金高低严重得多。</p></div>
+      </div>
+    </div>
+
+    <!-- 3.5 制度钥匙 -->
+    <h3><span class="sn">3.5</span>制度钥匙：居间与委托分开谈</h3>
+    <div class="prose reveal">
+      <p>居间只报告机会、不承担结果责任；委托代理才对结果负责。纯居间模式下「零佣」在会计上成立，原因不是「责任不清」，而是<strong>责任清晰地把履约责任留在了平台之外，平台同时放弃了履约报酬</strong>。一旦要为核验、过户、纠纷兜底，费用必然回来。费用没有消失，只是换了主体承担。</p>
+      <p>第二把钥匙：中国缺少独权代理与跨市场数据共享（MLS）这一层基础设施，没有它，所有「去佣金」尝试都会退化为费率战——费率之争的底层是责任之争【研判推断】。落点是<strong>建议责任与履约责任分证管理</strong>：AI 仅限信息核验与标准化咨询，权属、按揭、签约须由具名持牌人签署并强制投保。</p>
+      <p class="caption">海外对标（按职能发放不同资格、每个资格绑定独立责任与赔付账户）一律标<b>公开报道口径、未经独立核验，仅作方向性对比，不落数字</b><span class="tag-ref">引用</span>。</p>
+    </div>
+
+    <!-- 3.6 场景选择器 -->
+    <h3><span class="sn">3.6</span>三类交易场景路线选择器</h3>
+    <div class="tblwrap reveal">
+      <table>
+        <caption><b>表 3 ｜ 三类场景路线选择器.</b> 场景归类为【研判推断】；「人主导」的高复杂场景中，AI 的价值是把信息整理到家庭能吵得下去，不是替家庭决策。</caption>
+        <thead><tr><th scope="col">场景</th><th scope="col">特征</th><th scope="col">路线</th></tr></thead>
+        <tbody>
+          <tr><td class="stage" data-label="场景">租赁</td><td data-label="特征">标准化最高、单笔金额小、重复率高、纠纷集中于押金与维修</td><td data-label="路线"><strong>纯 AI 可先跑通</strong></td></tr>
+          <tr><td class="stage" data-label="场景">普通二手</td><td data-label="特征">含核验、赎楼、按揭三项持牌环节</td><td data-label="路线"><strong>人机混合是唯一稳态</strong></td></tr>
+          <tr><td class="stage" data-label="场景">高复杂</td><td data-label="特征">继承析产、共有产权、法拍、家庭决策分歧</td><td data-label="路线"><strong>人主导</strong>，AI 的价值是把信息整理到家庭能吵得下去，不是替家庭决策</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3.7 合规风险三题 -->
+    <h3><span class="sn">3.7</span>合规风险三题</h3>
+    <div class="nrows reveal">
+      <div class="nrow">
+        <div class="no">一</div>
+        <div class="t"><b>「算法中立」宣传的合规风险</b>
+          <p>「中立智能体」在宣传层面是差异化定位，在合规层面至少要拆成三份可验证承诺：<strong>算法规则可审计</strong>（排序与推荐依据能否被外部核验）、<strong>利益关系披露</strong>（是否优先展示自营、合作或关联房源）、<strong>数据来源可追溯</strong>（2.26 亿套<span class="tag-ref">引用</span>是覆盖广度，覆盖广度不等于准确性）。把「中立」从形容词变成规则条款与披露义务，它才是资产；停留在形容词，它是负债【研判推断】。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">二</div>
+        <div class="t"><b>第三方履约的合规风险</b>
+          <p>按项收费若要真正履约，必然引入第三方（带看、代办、按揭服务、评估、担保），三处必须书面化：<strong>责任切割</strong>（「系统说的」不能成为免责事由）、<strong>验收与失败退还</strong>（价目表须附失败情形与退费规则）、<strong>资金与个人信息合规</strong>（资金监管路径、材料托管、授权链条）。对挑战方的特殊风险在于：若履约方与平台存在关联关系，按项收费实质是集团内利润转移，会同时触发关联交易披露与「中立」自相矛盾——这是「中立智能体」叙事最脆弱的一环【研判推断】。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">三</div>
+        <div class="t"><b>数据偏差风险</b>
+          <p>房源字典类资产的偏差不在覆盖量，而在四类系统性偏差：<strong>时效偏差</strong>（下架与成交更新滞后→虚假房源与无效带看→反过来推高履约成本）、<strong>口径偏差</strong>（学位与学区随政策漂移）、<strong>样本偏差</strong>（以历史成交与挂牌价训练→锚定偏差）、<strong>激励偏差</strong>（排序若与商业合作相关，「最合适」与「最推荐」分离）。信息成本是交易成本的核心，而数据偏差是其中最难被降价解决的部分——能被技术缓解，不能被「零佣」消灭【研判推断】。</p></div>
+      </div>
+    </div>
+
+    <!-- 3.8 趋同前置条件 -->
+    <h3><span class="sn">3.8</span>趋同的四项制度前置条件</h3>
+    <p class="caption reveal">趋同不是模型问题，是<strong>责任可分配性</strong>问题，四项缺一不可【研判推断】。</p>
+    <div class="nrows reveal">
+      <div class="nrow">
+        <div class="no">1</div>
+        <div class="t"><b>建议可追溯</b><p>每条 AI 生成的建议挂责任主体（持牌人或机构）、数据依据与时效——这是把人机协同的「双责任主体」从模糊变可追责的唯一办法。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">2</div>
+        <div class="t"><b>价目与验收条款公开</b><p>按项收费须有公开价目、验收标准、失败退费与赔付上限，这也是 Q1 的观测点。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">3</div>
+        <div class="t"><b>履约主体独立且有资质</b><p>核验、按揭、过户的履约方须持对应资质并披露与平台的利益关系；平台不宜既作规则制定者又作履约者。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">4</div>
+        <div class="t"><b>数据质量强制标准</b><p>去重规则、时效上限、来源标注、纠错机制可审计——<strong>闭环的真实性纪律靠平台自律，公共的真实性纪律靠制度</strong>。</p></div>
+      </div>
+    </div>
+    <div class="callout reveal">
+      <p class="ct">另有一项行业基础设施条件</p>
+      <p><strong>独家委托合同（独权代理）采用率。</strong>若仍接近零，两路线的成本结构无法被重新组织，趋同只能以费率战的方式完成——这是「趋同」的最坏路径【研判推断】。</p>
+    </div>
+
+    <!-- 3.9 可证伪预言 -->
+    <h3><span class="sn">3.9</span>Q1—Q5 可证伪预言</h3>
+    <div class="tblwrap reveal">
+      <table>
+        <caption><b>表 4 ｜ Q1—Q5 可证伪预言（5 列）.</b> 判定列为【研判推断】；Q1 中的覆盖率口径为【测算】。</caption>
+        <thead><tr><th scope="col">编号</th><th scope="col">预言内容</th><th scope="col">观测点</th><th scope="col">判定</th></tr></thead>
+        <tbody>
+          <tr><td class="stage" data-label="编号">Q1</td><td data-label="预言内容">零佣方合同文本中出现按项收费价目、验收与失败退费条款</td><td data-label="观测点">合同与官网文本，12 个月</td><td data-label="判定">未出现→支持「营销定位非经济模型」；出现且价目能覆盖履约成本（覆盖率<span class="tag-calc">测算</span>口径）→本判断被反证</td></tr>
+          <tr><td class="stage" data-label="编号">Q2</td><td data-label="预言内容">「中立」转为可审计的排序规则与利益关系披露</td><td data-label="观测点">平台规则页，半年</td><td data-label="判定">无→「中立」是合规敞口而非模式创新</td></tr>
+          <tr><td class="stage" data-label="编号">Q3</td><td data-label="预言内容">履约主体取得对应执业资质且独立于平台，关联关系披露</td><td data-label="观测点">资质公示，事件驱动</td><td data-label="判定">无→按项收费的合法性弱于商业吸引力</td></tr>
+          <tr><td class="stage" data-label="编号">Q4</td><td data-label="预言内容">有保险公司对「AI 居间建议」承保并按建议质量定价</td><td data-label="观测点">保险产品披露，事件驱动</td><td data-label="判定"><strong>可保性是当代最重要的制度信号</strong>：不可承保则履约承诺无兜底；可承保则验证路径已打开【研判推断】</td></tr>
+          <tr><td class="stage" data-label="编号">Q5</td><td data-label="预言内容">独家委托合同采用率仍接近零</td><td data-label="观测点">行业协会或抽样</td><td data-label="判定">接近零→交易成本重组无从谈起，趋同以费率战形式出现</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== 04 收尾 ===================== -->
+  <section class="chapter pbreak" id="s4" aria-label="收尾">
+    <div class="chapter-head">
+      <h2><span class="chapno">04</span>收尾</h2>
+      <span class="lead">三条洞察、十项观察面板、不确定性与两条边界条件。</span>
+    </div>
+
+    <h3><span class="sn">4.1</span>三条洞察</h3>
+    <div class="keyrows reveal">
+      <div class="keyrow">
+        <div class="tag">洞察 一</div>
+        <div class="body">这一轮不是工具升级，是<em>责任机制重构</em>：行业要从关系型撮合转向可追溯的履约，「谁签字、谁赔付」必须从业务话术变成合同条款。</div>
+      </div>
+      <div class="keyrow">
+        <div class="tag">洞察 二</div>
+        <div class="body">判断服务者体系健康度看一个反向指标——若经纪人净流出而人均人效上升，那是<em>挤出，不是提效</em>。</div>
+      </div>
+      <div class="keyrow">
+        <div class="tag">洞察 三</div>
+        <div class="body"><em>规模不带来摊销</em>：核验、带看、过户是随单量线性增长的人力成本，这是纯 AI 路线的天花板所在。</div>
+      </div>
+    </div>
+
+    <h3><span class="sn">4.2</span>4—6 季度观察面板（十项）</h3>
+    <div class="tblwrap reveal">
+      <table>
+        <caption><b>表 5 ｜ 4—6 季度观察面板（十项）.</b> 观察期设定为【研判推断】；重估阈值为定性判读，未披露指标不新造数值。</caption>
+        <thead><tr><th scope="col">维度</th><th scope="col">指标</th><th scope="col">口径／频次</th><th scope="col">重估阈值</th></tr></thead>
+        <tbody>
+          <tr><td class="stage" data-label="维度">定价</td><td data-label="指标">按项收费价目表与验收标准是否公布</td><td data-label="口径／频次">官方发布，季度</td><td data-label="重估阈值">公布→收敛启动；连续 2 季度不披露可核数据→判营销定位</td></tr>
+          <tr><td class="stage" data-label="维度">效率</td><td data-label="指标">人机交接率（AI 可端到端完成环节占比）</td><td data-label="口径／频次">企业或第三方，季度</td><td data-label="重估阈值">交接率上升而返工率同升→人机混岗</td></tr>
+          <tr><td class="stage" data-label="维度">成本</td><td data-label="指标">单均全链条成本</td><td data-label="口径／频次">分母＝完整成交单，非咨询量</td><td data-label="重估阈值">只披露节点倍数而不披露全链成本→视为营销口径</td></tr>
+          <tr><td class="stage" data-label="维度">人效</td><td data-label="指标">人均成交套数与服务者净留存率</td><td data-label="口径／频次">财报／调研，季度</td><td data-label="重估阈值">净流出＋人效升→挤出而非提效</td></tr>
+          <tr><td class="stage" data-label="维度">渗透</td><td data-label="指标">AI 使用服务者覆盖率</td><td data-label="口径／频次">企业口径，季／半年</td><td data-label="重估阈值">≥50% 且须区分强制与自愿使用</td></tr>
+          <tr><td class="stage" data-label="维度">风险</td><td data-label="指标">核验纠纷率、赔付金额、返工率</td><td data-label="口径／频次">诉讼与投诉抽样</td><td data-label="重估阈值">搜寻成本降而返工率升→履约成本转移</td></tr>
+          <tr><td class="stage" data-label="维度">制度</td><td data-label="指标">居间责任分类与强制 E&amp;O／营业保证金规则是否出台</td><td data-label="口径／频次">监管文件，事件驱动</td><td data-label="重估阈值">出台→责任分证管理落地</td></tr>
+          <tr><td class="stage" data-label="维度">制度</td><td data-label="指标">AI 建议责任归属的处罚或判例</td><td data-label="口径／频次">监管／司法，事件驱动</td><td data-label="重估阈值">出现判例→定价权重估</td></tr>
+          <tr><td class="stage" data-label="维度">制度</td><td data-label="指标">「AI 居间建议」可保性与承保定价</td><td data-label="口径／频次">保险产品，事件驱动</td><td data-label="重估阈值">不可承保→履约承诺无兜底（Q4）</td></tr>
+          <tr><td class="stage" data-label="维度">结构</td><td data-label="指标">独家委托合同采用率</td><td data-label="口径／频次">行业协会或抽样</td><td data-label="重估阈值">接近零→MLS 式成本重组无从谈起（Q5）</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="sn">4.3</span>不确定性</h3>
+    <div class="prose reveal">
+      <p>挑战方运营与赔付数据无公开来源，零佣能否覆盖履约成本无法判断，严按未验证处理<span class="tag-todo">待补</span>；在位方 6 倍为单城同期自述指标，不可外推【研判推断】；四类数据偏差的方向与量级无法用公开信息估计，只能定性排序<span class="tag-todo">待补</span>；关联交易与算法推荐披露的具体合规结论取决于监管口径与实际合同文本，本稿只给框架与方向，不作结论性定论。</p>
+    </div>
+    <h4>两条会改变主基调方向的边界条件</h4>
+    <div class="nrows reveal">
+      <div class="nrow">
+        <div class="no">其一</div>
+        <div class="t"><p>若 4—6 个季度内零佣方既未公布按项履约价目、也未软化「无佣」表述，收敛判断需修正，「趋同」不再成立。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">其二</div>
+        <div class="t"><p>若监管按「流程合规」而非「资格资质」确权，则居间责任分类的价值下降，「2026—2027 年内不会出现可承保零佣经济模型」的判断需同步下修——该判断以强制执业责任保险落地为条件，本稿降级为条件性风险提示，不作并行观点处理。</p></div>
+      </div>
+      <div class="nrow">
+        <div class="no">修正</div>
+        <div class="t"><p>若零佣方公布完整价目与运营数据，本稿「责任不清是派生症状」的因果判断需重估，作者保留修正。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== 05 来源与留痕 ===================== -->
+  <section class="chapter pbreak" id="src" aria-label="来源与留痕">
+    <div class="chapter-head">
+      <h2><span class="chapno">05</span>来源与留痕</h2>
+      <span class="lead">标注口径、数据来源与未采用数字留痕。</span>
+    </div>
+
+    <div class="disc reveal">
+      <div class="row"><span class="k">标注口径</span><span class="v"><span class="tag-ref">引用</span>公开报道；<span class="tag-calc">测算</span>模型推算；<span class="tag-jud">研判推断</span>分析性判断；<span class="tag-todo">待补</span>数据不可得、进观察面板不补编。</span></div>
+      <div class="row"><span class="k">数据来源</span><span class="v">新浪财经、中房网、钛媒体、证券时报、人民网、新华社、澎湃新闻、21 财经、北京商报、36 氪、虎嗅、亿欧（2025-09—2026-09 公开报道）。海外制度描述为公开报道口径、未经独立核验。</span></div>
+      <div class="row"><span class="k">附图数据说明</span><span class="v">图 1 的两项条高与自洽校验均为正文引用数字的算术派生：上年同期经调整经营利润率 = 14.6% − 8.5 个百分点 = 6.1%<span class="tag-calc">测算</span>；自洽校验 = 35.9 ÷ 245 ≈ 14.7%（保留一位小数），与披露 14.6% 一致，差异属舍入<span class="tag-calc">测算</span>；绘图坐标域上限 15%（仅用于条高换算）。定性类图示与矩阵格均标注<span class="tag-jud">研判推断</span>，不赋权重、不编数值。</span></div>
+      <div class="row"><span class="k">未采用数字留痕</span><span class="v"><strong>（防编造声明，随稿保留）</strong>①「存量住房资产 250 万亿元」未核到可靠来源（可核第三方为 2021 年口径约 418 万亿元，时点差异大），正文改用「存量流通」表述；②「核验约 40 项」无公开权威清单，改为定性列举；③人均年成交 2—3 单、套均 400 万元、费率 2.5—3%、单位可变成本降 10—20% 均系量级估算，正式稿不引用具体数值，仅保留方法框架。</span></div>
+      <div class="row"><span class="k">免责</span><span class="v">行业研究，不构成投资建议；测算／研判推断非官方统计。</span></div>
+    </div>
+  </section>
+
+  <!-- ===================== 封底 ===================== -->
+  <section class="back" aria-label="封底">
+    <p class="close"><span class="qmark">「</span>缺的不是责任共识，是责任合同——谁签「建议错误」的赔付条款，谁就握着定价权。</p>
+    <div class="metagrid">
+      <div><b>报告</b>AI 无佣与人机协同：成本承担权之争</div>
+      <div><b>版本</b>正式稿 v3 ｜ 2026-09-16</div>
+      <div><b>框架</b>通用四段式（关键性结论 · 关键事实及其变化 · 归因分析 · 收尾）</div>
+      <div><b>数据口径</b>全国（易居、贝壳业务口径）｜时段 2025-09 — 2026-09</div>
+    </div>
+    <p class="fine">行业研究，不构成投资建议；测算／研判推断非官方统计。本报告图表与矩阵中的数值均为正文引用数字或其算术派生，未新造数字；未采用数字留痕见「来源与留痕」。</p>
+  </section>
+
+  <footer class="colophon" aria-label="版本与来源">
+    <span><b>98wiki ｜ 智见点评 · 行业研究</b></span>
+    <span>AI 无佣与人机协同：成本承担权之争</span>
+    <span>正式稿 v3 ｜ 2026-09-16</span>
+    <span>标注口径：【引用】／【测算】／【研判推断】／【待补】</span>
+  </footer>
+
+</main>
+
+<script>
+/* Static-first: content is authored in its final state. JS only *adds* the
+   from-state and animates in, so PDF rendering (no JS) and reduced-motion users
+   both get the finished report. */
+(function () {
+  var root = document.documentElement;
+  try {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    root.classList.add('anim');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { root.classList.add('anim-in'); });
+    });
+  } catch (e) {
+    root.classList.remove('anim', 'anim-in');
+  }
+})();
+</script>
+</body>
+</html>

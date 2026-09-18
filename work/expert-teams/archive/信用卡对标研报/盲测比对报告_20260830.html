@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><style>
+@page { size: A4; margin: 16mm 15mm 18mm 15mm;
+  @bottom-left { content: "智见点评 · 盲测比对报告"; font-family: "Noto Sans CJK SC"; font-size: 7pt; color: #8a9a94; }
+  @bottom-right { content: "第 " counter(page) " 页 / 共 " counter(pages) " 页"; font-family: "Noto Sans CJK SC"; font-size: 7pt; color: #8a9a94; } }
+* { box-sizing: border-box; }
+body { font-family: "Noto Sans CJK SC", sans-serif; font-size: 9.3pt; line-height: 1.62; color: #22302c; margin: 0; }
+.cover { background: #0e6a55; color: #fff; padding: 20px 22px 16px; border-radius: 4px; margin-bottom: 12px; }
+.cover .brand { font-size: 8pt; letter-spacing: .2em; color: #bcd8cf; margin-bottom: 10px; }
+.cover h1 { font-family: "Noto Serif CJK SC", serif; font-size: 20pt; font-weight: 900; margin: 0 0 6px; line-height: 1.3; }
+.cover .sub { font-size: 10pt; color: #d9ebe5; margin-bottom: 8px; }
+.cover .meta { font-size: 7.5pt; color: #a7c8be; border-top: 1px solid rgba(255,255,255,.25); padding-top: 7px; }
+.cards { display: flex; gap: 8px; margin: 0 0 14px; }
+.card { flex: 1; background: #fff; border: 1px solid #d8e4df; border-top: 3px solid #a9741f; border-radius: 3px; padding: 8px 10px; }
+.card .num { font-family: "Noto Serif CJK SC", serif; font-size: 15pt; font-weight: 900; color: #0e6a55; line-height: 1.15; }
+.card .lbl { font-size: 7.2pt; color: #5c6d67; margin-top: 3px; line-height: 1.4; }
+h2 { font-family: "Noto Serif CJK SC", serif; font-size: 13pt; color: #0e6a55; border-left: 5px solid #0e6a55; padding-left: 9px; margin: 20px 0 8px; page-break-after: avoid; }
+h3 { font-size: 10.5pt; color: #a9741f; margin: 13px 0 6px; page-break-after: avoid; }
+p { margin: 5px 0; } li { margin: 2.5px 0; }
+blockquote { margin: 10px 0; padding: 8px 12px; background: #f2f7f5; border-left: 4px solid #a9741f; color: #0e4a3c; font-weight: 700; font-size: 9.8pt; }
+blockquote p { margin: 0; }
+table { border-collapse: collapse; width: 100%; margin: 8px 0 12px; font-size: 8.2pt; }
+th { background: #0e6a55; color: #fff; font-weight: 700; padding: 4.5px 6px; text-align: left; border: 1px solid #0b5847; }
+td { padding: 4px 6px; border: 1px solid #d8e4df; vertical-align: top; }
+tr:nth-child(even) td { background: #f5f9f7; }
+tr { page-break-inside: avoid; }
+strong { color: #0b4a3c; }
+code { background: #fdf6ea; color: #8a5a12; font-family: "Noto Sans CJK SC"; font-size: 8.2pt; padding: 0 3px; border-radius: 2px; font-weight: 700; }
+hr { border: none; border-top: 1px dashed #c8d6d0; margin: 14px 0; }
+ol, ul { padding-left: 18px; margin: 5px 0; }
+</style></head>
+<body><div class="cover"><div class="brand">98wiki ｜ 智见点评 · 交叉验证盲测</div><h1>盲测交叉验证比对报告</h1>
+<div class="sub">江苏银行信用卡 2026 中报季 ｜ 盲测稿 × 出题方材料 逐维度比对</div><div class="meta">比对时间 2026-08-30 ｜ 数字一致=底座可信 · 数字分歧=回查口径 · 结论分歧=讨论素材 ｜ 含行内数据 · 勿发公网</div></div>
+<div class="cards"><div class="card"><div class="num">5/5</div><div class="lbl">过线表·降险杠杆 双方一致</div></div><div class="card"><div class="num">23%↔40%</div><div class="lbl">w 分歧（L_g 假设）</div></div><div class="card"><div class="num">±2pct</div><div class="lbl">汽车分期贴息归属待核</div></div><div class="card"><div class="num">0</div><div class="lbl">共同引用数字漂移</div></div></div><blockquote>
+<p>比对时间：2026-08-30｜盲测稿：《盲测研判_信用卡UE_独立稿_20260830.md》（开卷前定稿，未改动）
+对照：出题方 UE 专题 v3 ＋ 研报主文（三章对标+两章破局）＋ 门禁记录 G1G2
+规则：数字一致=底座可信；数字分歧=回查底座或口径；结论分歧=最有价值的讨论素材</p>
+</blockquote>
+<hr />
+<h2>卷首 · 比对总表</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>比对维度</th>
+<th>出题方</th>
+<th>盲测稿</th>
+<th>判定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>①</td>
+<td>w 反推值</td>
+<td><strong>≈23%</strong>（L_h=7.61%、L_g=3.4%）</td>
+<td><strong>≈1/3~1/2、中枢 40%</strong>（L_g=1.5%、L_h=7.6~10%）</td>
+<td><strong>数字分歧（假设参数）</strong>→ 见分歧一</td>
+</tr>
+<tr>
+<td>②</td>
+<td>过线表</td>
+<td>4.37→−2.85｜2.5→−0.98｜<strong>1.52→0</strong>（另 3.0→−1.48、1.9→−0.38）</td>
+<td>4.37→−2.85｜3.5→−2.0｜2.5→−1.0｜<strong>1.5→≈0</strong>（平衡点 1.51-1.52%）</td>
+<td><strong>一致 ✓</strong>（公式同源 EVA≈1.51/1.52−RC，差异 0.01pct 舍入）</td>
+</tr>
+<tr>
+<td>③</td>
+<td>四抓手排序</td>
+<td>汽车＞<strong>年费卡</strong>＞<strong>贴息账单分期</strong>＞交易</td>
+<td>汽车＞<strong>贴息账单分期</strong>＞<strong>年费卡</strong>＞交易</td>
+<td><strong>2/3 位互换（排序维度不同）</strong>→ 见分歧二</td>
+</tr>
+<tr>
+<td>④</td>
+<td>最值钱杠杆</td>
+<td>降险（−1pct≈2.27 亿=提价/中收 +0.5pct≈1.13 亿的 2 倍）</td>
+<td>降险（空间 2.86pct≈6.5 亿/年，为提价近 10 倍/中收 30 倍）</td>
+<td><strong>一致 ✓</strong>（同判降险；倍数差系可达空间取参不同）</td>
+</tr>
+<tr>
+<td>⑤</td>
+<td>剔网贷个贷 EVA</td>
+<td><strong>两份材料均未落地该测算</strong></td>
+<td><strong>−0.35%（−0.40~−0.30）</strong>，余额加权</td>
+<td><strong>出题方缺口，盲测稿为增量</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>数字层面总核对</strong>：双方共同引用的全部底座数字（六行余额/降幅/不良率/生成率/新生成/消费/卡量、恒等式七行、官方 −60.58 亿/−21.09%、周报 230.0→227.3→220.4、表外 534.33 亿、卡分期 104.3%/89.3%、城商行 YTD、宏观两项、每亿亏 285 万/年亏 6.5 亿、S3 节奏 −3.6 亿/月、上海银行 7 月转正）<strong>逐项一致，零漂移</strong>——底座可信度确认 ✓。</p>
+<hr />
+<h2>一致结论（互相印证，可信度升级）</h2>
+<ol>
+<li><strong>亏损主因＝风险成本单因素</strong>：两边同判"毛利 2.60 为正、被 4.37 吃穿"，收益端无责；同比恶化 −0.27pct 几乎全由风险 +0.25pct 解释。</li>
+<li><strong>转正数学</strong>：过线＝风险成本 ≤1.5%（平衡点 1.51/1.52%）；减亏里程碑＝2.5%（EVA≈−1）；出清只能贡献前半程，过线必须客群上移——两边情景路径同构（出题方：口袋→3%＋正常客群→1.34%；盲测稿：w≤10-15%＋L_g 0.6-1.0%）。</li>
+<li><strong>降险是最值钱杠杆</strong>：4 名盲测专家与出题方同判；先降险、后提价，顺序不可颠倒。</li>
+<li><strong>UE 位置</strong>：出清深度七行之最（−21.09% 为邮储 2.2 倍）、风险还原口径处高位带（量级对照不排名）、接近出清后期、企稳参照上海银行。</li>
+<li><strong>表外激活纪律一致</strong>：534.33 亿≈表内 2.4 倍、使用率约三成；只激活风险成本 &lt;1.52% 白名单客群、先过线再放量。</li>
+<li><strong>交易经营垫底</strong>：信贷敞口口径下负 UE（循环放量 −0.29 亿/年）vs UE&lt;0 放量=放大亏损——同一结论两种写法。</li>
+</ol>
+<h2>分歧一：w＝23% 还是 1/3~1/2？（最有价值的讨论素材）</h2>
+<ul>
+<li><strong>数学根源</strong>：w＝(4.37−L_g)/(L_h−L_g)，两边 L_h 都取 7.61%（随e贷级），<strong>分歧全在低段损失率 L_g</strong>：出题方 L_g=3.4%（<code>估算</code>，接近网贷 3.80%），盲测稿 L_g=1.5%（对标招行名义 1.90% 与本行消费贷还原 1.34%）。两组验算各自自洽，<strong>没有计算错误，只有客群定义分歧</strong>。</li>
+<li><strong>管理含义量化</strong>：w=23% → 高风险口袋约 52 亿、压到 10% 需压降约 29 亿；w=40% → 口袋约 91 亿、压到 10% 需压降约 68 亿。<strong>出清任务量差 2 倍以上，直接资源规划</strong>。</li>
+<li><strong>裁定</strong>：w 对 L_g 极敏感（L_g 每降 0.5pct，w 抬升约 5-7pct），在 Vintage/客级数据落地前无法定谳→<strong>w 表述统一为区间 20-50%、以 L_g 真值为锚</strong>，并将"L_g 的 Vintage 校准"列入待补首位。共识底线不变：<strong>无论 w 取 23% 还是 40%，单靠压 w 都过不了线，都必须 L_g 结构性下移</strong>。</li>
+<li><strong>附注</strong>：盲测稿另有两个视角解（信用卡占个贷权重 3.5-4.6%；资本维度 75% 与监管权重自洽），出题方未涉及，留作附注视角不进主结论。</li>
+</ul>
+<h2>分歧二：第 2/3 号抓手互换（排序维度不同，均成立）</h2>
+<ul>
+<li>出题方把<strong>年费卡</strong>排第 2：中收零风险敞口直接加 EVA 分子、"数学上最安全"；把<strong>贴息账单分期</strong>排第 3，理由关键且盲测稿未充分吸收：<strong>贴息只改客户成本、不改银行 UE</strong>（银行照合同利率足额收息），UE&lt;0 时放贴息规模=放大亏损，必须与客群上移捆绑——邮储 +10.93% 是在其生成率 3.68% 未出清下的"以规模摊薄负 UE"样本，不可照抄。</li>
+<li>盲测稿把<strong>贴息账单分期</strong>排第 2：同业验证最强（邮储 +10.93%、浦发国补 120 万笔）、规模弹性大于年费卡小盘子（0.2-0.5 亿/年空间）。</li>
+<li><strong>裁定</strong>：两个排序回答的是不同问题——"最安全的 EVA 数学"选年费卡，"可放量的规模抓手"选贴息分期。<strong>合并表述：贴息账单分期=最大可放量抓手但须捆绑降险（放量对象风险成本 &lt;1.52%）；年费卡=最安全但天花板最低的培育项。</strong> 若按"当前即可执行且无放大亏损风险"的严格标准，出题方排序更稳；若按"2027 重建的规模期权价值"，盲测稿排序更优。</li>
+</ul>
+<h2>分歧三：汽车分期 UE（贴息归属是最大敏感项）</h2>
+<ul>
+<li>出题方：综合收益 4.1-4.7%（客户实付 2.0-2.3%＋返佣 2.1-2.7%）→ 高档返佣＋降险至 1% 时 EVA≈+0.32% 条件过线，低档 −0.28% 不过线；<strong>全量铺开即亏损，只做过线组合</strong>。</li>
+<li>盲测稿（操盘手）：利息 4.0%＋返佣 2.1-2.7%−成本 3.39−风险 1.0% → <strong>+1.7~+2.2%</strong>，直接过线。</li>
+<li><strong>根源</strong>：厂商"贴息 2.0/2.3%"的会计归属——若贴息由厂商/财政付给银行（银行足额收息），银行收益率应为标价利率（盲测稿口径）；若银行收入仅客户实付＋返佣（出题方口径），则少 2pct。<strong>±2pct 直接翻转过线判定</strong>，且协议原文在双方材料中均<code>待补</code>。</li>
+<li><strong>连带发现</strong>：出题方材料内部对"贴息"处理不一致——汽车分期未把贴息计入银行收入，账单分期却明确"银行按合同利率足额入账"。两处应统一。</li>
+<li><strong>裁定</strong>：回查吉利/比亚迪协议原文前，汽车分期 UE 记为 <strong>+0.3~+2.2% 区间、条件过线</strong>，排序不变（第 1，因两口径下均为四抓手最优），但投放节奏上先核协议再定返佣档位策略。建行式 7% 返佣成本打法两边同判：坚决不跟。</li>
+</ul>
+<h2>分歧四（修正盲测稿）：民生交易与交易经营的解读</h2>
+<ul>
+<li>盲测稿引民生"交易 +18.4%↔不良 4.22%"作负面样本（有因果暗示之嫌）；出题方指出这是<strong>"量缩额增"的解耦现象</strong>——交易中收不占信贷敞口，与不良率无因果，场景活跃是独立价值。</li>
+<li><strong>裁定</strong>：交易经营拆两层——<strong>信贷层（循环放量）冻结</strong>（负 UE 成立）；<strong>中收/数据层建设</strong>（交易仪表盘、场景活动、先补数据）可行。吸收出题方表述，修正盲测稿"冻结"的一刀切。</li>
+</ul>
+<h2>盲测稿对出题方的增量贡献（出题方材料缺口/遗留疑点）</h2>
+<ol>
+<li><strong>EVA 表口径之争的解</strong>：出题方正文用"资金运营 2.30＋资本 1.08"倒推口径（0.78 vs 1.08 差 0.30 悬而未决，门禁仅双口径并存说明）；盲测稿证明 <strong>expense_cost 0.31＋capital_cost 0.78 即表列真值，8 行恒等式全闭合、残差≤0.01，"净收益率＝客户收益率−资金"</strong>，1.08 系漏掉运营项的两步法产物。对结论影响仅 0.01pct（1.51 vs 1.52），但消灭了一个悬置口径。</li>
+<li><strong>卡分期 104.3% 之谜</strong>：门禁遗留"104.3% 与 2.8/4.31=65% 不自洽"疑点；盲测稿给出数学解——<strong>104.3% 是序时完成率</strong>（2.8÷[4.31×62% 时间进度]≈104%），全年达成率实为 65%，"达标"表象弱于读数。</li>
+<li><strong>Q7 剔网贷 EVA</strong>：出题方两份材料均未落地，盲测稿补齐 <strong>−0.35%（−0.40~−0.30）</strong>及"零售=网贷单引擎"判断（网贷 42% 余额/79% 净收入贡献 +0.38pct，独撑个贷 +0.19%；剔除后毁值，信用卡系年化 −7.2 亿）。</li>
+<li><strong>代理对标体系扩展</strong>：消费强度代理（平安 2.35×、邮储 2.17×、招行 2.09×、农行 ≥1.20×、民生 0.88× 窄口径）；周报自洽验证（230.0+57.3=287.3≈官方 287.2）。</li>
+</ol>
+<h2>回查清单（分歧驱动，全部 <code>待补</code>）</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>事项</th>
+<th>驱动分歧</th>
+<th>定谳手段</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>吉利/比亚迪协议"贴息"会计归属（是否厂商付给银行）</td>
+<td>汽车分期 UE ±2pct</td>
+<td>协议原文＋计财入账口径</td>
+</tr>
+<tr>
+<td>2</td>
+<td>低段客群损失率 L_g 真值（1.5~3.4%）</td>
+<td>w=23% vs 40%</td>
+<td>客户级 Vintage/RFM 落地</td>
+</tr>
+<tr>
+<td>3</td>
+<td>EVA 表"净收益率"定义（含不含运营）——虽已 8 行闭合论证，仍需计财确认</td>
+<td>口径之争终审</td>
+<td>计财部表结构说明</td>
+</tr>
+<tr>
+<td>4</td>
+<td>快照 271.36 vs 官方反推 287.2 亿差 16 亿成因</td>
+<td>两口径并注</td>
+<td>半年报原文贷款明细</td>
+</tr>
+<tr>
+<td>5</td>
+<td>江苏信用卡单独不良率/生成率/核销额</td>
+<td>全部风险判断的唯一硬锚缺口</td>
+<td>半年报正文/监管口径</td>
+</tr>
+</tbody>
+</table>
+<h2>结论</h2>
+<ol>
+<li><strong>底座可信</strong>：共同引用数字零漂移，出题方门禁（≈120 锚点 0 硬错误）与盲测独立验算互证。</li>
+<li><strong>四大核心结论四重独立收敛</strong>（盲测 4 专家＋出题方）：亏在风险端、过线 1.5%、降险最值钱、剔网贷 −0.35% 单引擎——交叉验证通过。</li>
+<li><strong>真分歧集中在假设参数而非计算</strong>：w 的 L_g、汽车分期贴息归属、抓手 2/3 位排序维度——全部已转为可定谳的回查项。</li>
+<li><strong>互相修正</strong>：盲测稿吸收"贴息不改银行 UE""交易经营双层拆解"；出题方建议吸收"0.78+0.31 表读口径""104.3% 序时解""Q7 测算""消费强度代理"。</li>
+<li>盲测稿（开卷前定稿）保持原样不改，本报告为唯一比对文书；后续如需，可出融合版终稿。</li>
+</ol>
+<blockquote>
+<p>比对方法披露：盲测稿由 4 个独立 pi 进程（--no-session、互不可见、仅喂底座）产出，队长总裁判融合；对照材料在盲测稿落盘后开启。本报告为内部经营分析，不构成投资建议；含行内数据，勿发公网。</p>
+</blockquote></body></html>

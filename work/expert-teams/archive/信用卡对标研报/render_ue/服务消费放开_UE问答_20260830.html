@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>服务消费放开：该做什么？该做信用卡吗？——兼论国有大行发力信用卡的深层原因</title>
+<style>
+  :root{
+    --ink:#16332b; --teal:#0e6a55; --teal-deep:#0a4d3e; --amber:#a9741f;
+    --paper:#f7f4ee; --card:#ffffff; --line:#e4ddd0; --muted:#6b7a74;
+    --risk:#8a3b2a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans CJK SC','Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+       background:var(--paper);color:var(--ink);line-height:1.75;font-size:15.5px;}
+  .wrap{max-width:880px;margin:0 auto;padding:36px 22px 60px;}
+  header.hero{border-top:5px solid var(--teal);background:var(--card);
+       padding:30px 32px 24px;border:1px solid var(--line);border-top:5px solid var(--teal);}
+  .brand{font-size:12.5px;letter-spacing:.18em;color:var(--amber);font-weight:600;margin-bottom:14px;}
+  h1{font-family:'Noto Serif CJK SC','Noto Serif SC',serif;font-size:27px;line-height:1.4;
+     color:var(--teal-deep);margin-bottom:12px;font-weight:700;}
+  .sub{color:var(--muted);font-size:14px;margin-bottom:16px;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted);}
+  .meta span{border:1px solid var(--line);border-radius:3px;padding:3px 9px;background:#fbfaf7;}
+  .meta span.warn{color:var(--risk);border-color:#e0c4b8;background:#faf3f0;}
+  section{background:var(--card);border:1px solid var(--line);margin-top:22px;padding:26px 30px;}
+  h2{font-family:'Noto Serif CJK SC',serif;font-size:19.5px;color:var(--teal-deep);
+     padding-left:12px;border-left:4px solid var(--amber);margin-bottom:16px;line-height:1.4;}
+  h3{font-size:15.5px;color:var(--teal);margin:18px 0 8px;}
+  p{margin:9px 0;text-align:justify;}
+  .lead{font-size:16.5px;font-weight:600;color:var(--teal-deep);
+        background:#eef4f0;border-left:4px solid var(--teal);padding:12px 16px;margin:4px 0 14px;}
+  .quote{font-family:'Noto Serif CJK SC',serif;font-size:16px;color:var(--teal-deep);
+         border-left:4px solid var(--amber);background:#faf6ec;padding:12px 16px;margin:14px 0;}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px;}
+  th{background:var(--teal);color:#fff;text-align:left;padding:8px 10px;font-weight:600;}
+  td{border:1px solid var(--line);padding:8px 10px;vertical-align:top;background:#fff;}
+  tr:nth-child(even) td{background:#faf8f3;}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  ul,ol{margin:8px 0 8px 22px;}
+  li{margin:6px 0;}
+  .tag{display:inline-block;font-size:11.5px;border-radius:3px;padding:1px 7px;margin-right:5px;
+       vertical-align:1px;font-weight:600;}
+  .t1{background:#eef4f0;color:var(--teal);}
+  .t2{background:#faf3e4;color:var(--amber);}
+  .t3{background:#f2ecec;color:var(--muted);}
+  .risk-box{border:1px solid #e0c4b8;background:#faf3f0;border-left:4px solid var(--risk);
+            padding:12px 16px;margin:12px 0;}
+  .grid2{display:flex;flex-wrap:wrap;gap:14px;margin:14px 0;}
+  .grid2 .cell{flex:1 1 340px;background:#fbfaf7;border:1px solid var(--line);padding:14px 16px;}
+  .cell b{color:var(--teal-deep);}
+  footer{margin-top:26px;padding:20px 26px;background:var(--teal-deep);color:#e8efe9;
+         font-size:12.5px;line-height:1.8;}
+  footer b{color:#f3d9a8;}
+  .src{color:var(--muted);font-size:12.5px;margin-top:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="brand">99wiki ｜ 智见点评 · 行业研究</div>
+  <h1>服务消费放开：该做什么？该做信用卡吗？<br>——兼论国有大行发力信用卡的深层原因</h1>
+  <div class="sub">宏观边际周报（2026-08-30）研读 × 江苏银行信用卡对标分析（UE 视角）延伸问答</div>
+  <div class="meta">
+    <span>2026-08-30</span><span>数据期：2026H1 半年报 + 内部周报至 2026-08-13</span>
+    <span>内部经营分析 · 勿外发</span><span class="warn">本篇含研判推断，非官方统计</span>
+  </div>
+</header>
+
+<section>
+  <h2>〇、前提校准：先分清大行"发力"的是什么</h2>
+  <p><b>大行发力的是场景与分期，收缩的恰恰是透支余额。</b>把声量与资产负债表分开看：</p>
+  <table>
+    <tr><th style="width:26%">证据</th><th>数据</th></tr>
+    <tr><td>大行卡余额集体负增长</td><td>建行 10,091 亿（−5.33%）、工行 6,975 亿（−10.04%）、中行缩表居六大行之首（2025 末，新京报/北京商报）；2026H1 本行底座核验：农行 −4.03%、邮储 −9.55%</td></tr>
+    <tr><td>发力在场景分期</td><td>建行汽车分期内卷（部分分行 5免2、给客户 7% 返佣）；邮储贴息账单分期交易额 +10.93%；农行信用卡消费超 1 万亿、表外承诺 9,980.12 亿</td></tr>
+    <tr><td>发力在政策站位</td><td>促消费是政治任务；服务消费放开后大行必须配套声量与产品</td></tr>
+  </table>
+  <p><b>结论："发力"是结构性的——攻场景分期和支付入口，退透支循环。</b>这与全行业从"放透支"切向"调结构"的共识完全同向。</p>
+  <p class="src">政策信号来源：《宏观边际 MacroMargin》2026-08-30 周度简报——"一些商品消费已趋于饱和或进入平台期，未来扩大消费更重点看服务消费"；"以旧换新"存在逐步退坡可能；政策靠放开服务消费的供给与准入找增量。</p>
+</section>
+
+<section>
+  <h2>一、服务消费放开，我们该做什么？该做信用卡吗？</h2>
+  <div class="lead">该做——但要做"支付 + 场景分期"的信用卡，不做"透支规模"的信用卡。</div>
+  <p>用本行 UE 恒等式（EVA = 客户收益率 − 资金运营 − 风险成本 − 资本成本）拆开看，<b>服务消费放开对信用卡是结构性利好，但只利好两端：</b></p>
+  <div class="grid2">
+    <div class="cell"><b>① 利好交易/中收端（零敞口）</b><br>服务消费是高频小额场景，支付笔数与商户回佣直接放量——弹性表里唯一"零风险"的杠杆：中收率 +0.5pct → EVA +0.5pct ≈ 1.13 亿/年（测算，按 226.6 亿余额）。政策给的是顺风。</div>
+    <div class="cell"><b>② 利好场景分期端（条件过线）</b><br>服务消费分期的风险逻辑优于现金分期：真实用途、封闭场景、受控商户——正是汽车分期已验证的模型（综合收益 4.1-4.7%，风险须 &lt;0.72-1.32% 才过线）。服务消费分期的本行 UE 分解暂无现成数据（待补），先按汽车模型做门槛预筛。</div>
+  </div>
+  <div class="risk-box"><b>不利好透支端：</b>EVA −2.85% 未转正（4.90% − 2.30% − 4.37% − 1.08%），<b>放透支规模 = 放大亏损</b>（每 100 亿余额年亏 2.85 亿，测算）。政策热度与 UE 纪律是两回事。</div>
+  <h3>四个动作（按 UE 优先级）</h3>
+  <ol>
+    <li><b>场景复制</b>：把汽车分期"商户返佣 + 优质客群 + 门槛筛"模型复制到本地服务消费场景（文旅/医疗健康/养老）——区域场景深耕，不跟大行打全国规模战；</li>
+    <li><b>仪表盘先行</b>：交易/中收数据看板提前建（承接政策放量的计量前提）；</li>
+    <li><b>保养期权</b>：534.33 亿表外未使用额度（授信仅收 5.19%、用信收 21.09%）——额度不回收、白名单客群不流失，待风险成本 &lt;1.52% 再行权；</li>
+    <li><b>规模纪律</b>：透支规模考核维持冻结至 S1+S2+S3 三条件满足。</li>
+  </ol>
+  <div class="quote">一句话：服务消费放开的正确姿势不是"多放透支"，是"多刷、多分期、不放循环"。</div>
+</section>
+
+<section>
+  <h2>二、国有大行发力信用卡的深层原因</h2>
+  <p>"盘活/守住存量促消费"的方向对了一半，完整答案是三层，一层比一层深：</p>
+  <h3>① 表层：促消费的政治传导</h3>
+  <p>服务消费放开后，消费信贷必须配套到位，大行是政策第一承接人——这解释了声量与站位，解释不了价格战。</p>
+  <h3>② 中层：资金成本优势的降维变现（最关键）</h3>
+  <p>回到 UE 恒等式：本行资金运营 2.30pct；大行存款成本低，同项估计 1.8-1.9pct（研判推断，无分项披露）。<b>同一门生意，大行的 EVA 比本行高约 0.4-0.5pct</b>——建行敢给 7% 返佣、敢打 5免2，不是因为不算账，而是因为在它们的恒等式里这门生意是正的，在本行是负的。<b>价格战本质是低成本资金在出清期抢优质客群</b>：用性价比最好的时候，把复苏期的客群先锁掉。</p>
+  <h3>③ 深层：守支付入口就是守存款</h3>
+  <p>服务消费是居民最高频的支付场景（频次比商品消费高一个量级）。<b>卡是入口不是资产</b>——大行要的不是信用卡的利息，是高频场景带来的 MAU、结算沉淀与客户主账户地位。这解释了为什么余额在缩、发力在场景：大行在把信用卡从"资产负债表科目"改造成"客户经营科目"。</p>
+  <h3>对本行的两个操作含义</h3>
+  <ul>
+    <li><b>不要把大行发力读成行业回暖</b>——余额集体负增长，跟进去放透支就是接盘；</li>
+    <li><b>不要在价格战赛道跟</b>——UE 恒等式不同打不起；本行差异化在区域场景密度（汽车已签吉利/比亚迪）与网贷引擎的准入纪律（个贷 EVA +0.19% 全靠网贷扛起，把这套风控进口到卡客群上移）。</li>
+  </ul>
+</section>
+
+<section>
+  <h2>三、合并结论</h2>
+  <div class="quote" style="font-size:17px">服务消费放开的红利在"刷"不在"借"；大行发力是在用低成本资金锁场景、守入口——本行跟不了规模战，但守得住区域场景和白名单存量。</div>
+  <table>
+    <tr><th>维度</th><th>该做</th><th>不该做</th></tr>
+    <tr><td>透支规模</td><td>冻结考核，守白名单</td><td>跟政策热度放量</td></tr>
+    <tr><td>场景分期</td><td>汽车模型复制到本地服务消费场景，门槛预筛</td><td>无门槛全量铺开</td></tr>
+    <tr><td>交易/中收</td><td>仪表盘先行，承接政策放量</td><td>—</td></tr>
+    <tr><td>同业应对</td><td>区域差异化、存量防守</td><td>跟价格战、误读为回暖</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>附：来源与标注纪律</h2>
+  <p><b>政策来源</b>：《宏观边际 MacroMargin》2026-08-30 周度简报（微信公众平台"资管小参"整理转载）——地产新政改制度非刺激、增长守 4.5% 下限、消费转向服务消费供给放开。</p>
+  <p><b>数据来源</b>：本行数据底座五件（种子版/Wind 补充/官方口径补充/新增三家/风险校准）——六行 2026 半年报官方数据经 Wind 公告检索原文核验；大行 2025 年余额数据引自新京报、北京商报对 2025 年报的汇总报道。</p>
+  <p><b>标注</b>：<span class="tag t1">测算</span>=披露值推导/验算；<span class="tag t2">研判推断</span>=分析性判断（大行资金运营 1.8-1.9pct、服务消费分期风险优于现金分期）；<span class="tag t3">待补</span>=服务消费场景分期 UE 分解、大行资金成本分项披露。行业主体均以披露名称行文；本篇为内部经营分析，不构成投资建议。</p>
+</section>
+
+<footer>
+  <b>99wiki ｜ 智见点评 · 行业研究</b>　内部经营分析 · 勿外发<br>
+  编数字比不回答更严重：本文全部数字可溯源至数据底座或注明来源报道；研判推断项已逐条标注。<br>
+  2026-08-30 · UE 视角延伸问答（服务消费专题）
+</footer>
+
+</div>
+</body>
+</html>

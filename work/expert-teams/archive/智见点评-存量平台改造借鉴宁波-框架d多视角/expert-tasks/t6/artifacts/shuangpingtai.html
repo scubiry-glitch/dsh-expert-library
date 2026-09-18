@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>存量平台改造借鉴宁波双平台打法 · 行领导汇报稿（正式稿）</title>
+<meta name="description" content="智见点评·多视角融合正式稿：学宁波学逻辑不学形态，苏银生活任务型改造，90天两场景试点。数据口径：苏银研究院第17期（2026H1）、量子教育会议纪要（2026-08-26）、宁波银行官方公开资料。">
+<style>
+/* ============ TOKENS — bank blue & gold, tinted cold-slate ramp ============ */
+:root{
+  /* substrate — tinted toward cobalt */
+  --page:#eef1f6;
+  --bg:#ffffff;
+  --panel-2:#f4f6fa;
+  --border:rgba(18,28,48,.08);
+  --border-strong:rgba(18,28,48,.14);
+
+  /* ink */
+  --ink-1:#0f1b2e;
+  --ink-2:#33415c;
+  --ink-3:#64748c;
+
+  /* brand — bank navy + gold partner */
+  --accent:#1A4A7F;
+  --accent-2:#C08A2E;
+  --accent-soft:rgba(26,74,127,.10);
+  --gold-soft:rgba(192,138,46,.12);
+  --on-accent:#ffffff;
+  --glow:rgba(26,74,127,.28);
+
+  /* semantic */
+  --up:#2F7A55;
+  --down:#C0453C;
+  --warn:#B77A16;
+
+  /* elevation */
+  --shadow:0 1px 3px rgba(18,28,48,.06);
+  --shadow-md:0 8px 24px -12px rgba(18,28,48,.16);
+  --shadow-lg:0 40px 90px -50px rgba(18,28,48,.38);
+
+  /* radii */
+  --r:20px;
+  --r-sm:12px;
+  --r-lg:30px;
+
+  /* type */
+  --font-sans:-apple-system,"Segoe UI",Roboto,"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+  --font-mono:"SF Mono","Cascadia Code",Consolas,"Noto Sans Mono CJK SC",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-sans);
+  background:var(--page);
+  color:var(--ink-2);
+  line-height:1.75;
+  font-size:15px;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+/* ============ LAYOUT SHELL ============ */
+.shell{max-width:1200px;margin:0 auto;padding:0 24px}
+.page-wrap{max-width:1200px;margin:28px auto 64px;position:relative}
+
+/* two-tone: light content, dark rail (nav) */
+.rail{
+  position:fixed;top:0;left:0;bottom:0;width:236px;
+  background:#0f1b2e;
+  padding:26px 18px;
+  display:flex;flex-direction:column;gap:4px;
+  z-index:50;
+  border-right:1px solid rgba(255,255,255,.06);
+}
+.rail .brand{
+  display:flex;align-items:center;gap:10px;
+  padding:0 10px 20px;margin-bottom:8px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.rail .brand .mark{
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(135deg,#2D5BD8,#1A4A7F);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-weight:800;font-size:13px;letter-spacing:.02em;
+  box-shadow:0 4px 14px rgba(45,91,216,.4);
+}
+.rail .brand .name{color:#eef1f6;font-size:12.5px;font-weight:700;line-height:1.45}
+.rail .brand .name small{display:block;color:#8fa0b8;font-weight:500;font-size:10.5px;margin-top:1px}
+.rail a{
+  display:flex;align-items:center;gap:10px;
+  color:#a8adbd;text-decoration:none;
+  font-size:12.8px;font-weight:600;
+  padding:8px 10px;border-radius:9px;
+  transition:background .18s ease,color .18s ease;
+  line-height:1.4;
+}
+.rail a .num{
+  font-family:var(--font-mono);font-size:10.5px;color:#5d6480;
+  width:18px;flex:none;transition:color .18s ease;
+}
+.rail a:hover{background:rgba(255,255,255,.05);color:#e8ecf3}
+.rail a.active{background:rgba(45,91,216,.22);color:#fff}
+.rail a.active .num{color:#8fb0f0}
+.rail .rail-foot{margin-top:auto;padding:14px 10px 4px;border-top:1px solid rgba(255,255,255,.06);color:#5d6480;font-size:10.5px;line-height:1.6}
+
+/* ============ MAIN COLUMN ============ */
+.main{margin-left:236px;min-height:100vh}
+
+/* ============ COVER ============ */
+.cover{
+  position:relative;
+  background:
+    radial-gradient(560px 320px at 88% -8%, rgba(45,91,216,.16), transparent 62%),
+    radial-gradient(420px 260px at 8% 108%, rgba(192,138,46,.10), transparent 60%),
+    linear-gradient(180deg,#ffffff 0%, #f7f9fc 100%);
+  border-bottom:1px solid var(--border);
+  padding:64px 0 56px;
+}
+.cover .eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--accent);
+  text-transform:uppercase;
+  padding:6px 14px;border:1px solid var(--border-strong);border-radius:999px;
+  background:rgba(255,255,255,.7);
+  margin-bottom:22px;
+}
+.cover .eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent-2)}
+.cover h1{
+  font-size:clamp(28px,4vw,42px);
+  font-weight:800;color:var(--ink-1);
+  line-height:1.28;letter-spacing:-.01em;
+  text-wrap:balance;
+  max-width:760px;
+}
+.cover h1 .gold{color:var(--accent-2)}
+.cover .sub{
+  margin-top:14px;font-size:15px;color:var(--ink-3);
+  display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;
+}
+.cover .sub .chip{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:600;color:var(--ink-2);
+  background:var(--panel-2);border:1px solid var(--border);
+  padding:4px 12px;border-radius:999px;
+}
+.cover .sub .chip b{color:var(--accent)}
+.thesis{
+  margin-top:30px;
+  max-width:860px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:24px 28px;
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+.thesis::before{
+  content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:linear-gradient(180deg,var(--accent),var(--accent-2));
+}
+.thesis .tag{
+  font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--accent-2);
+  margin-bottom:8px;
+}
+.thesis p{font-size:16.5px;color:var(--ink-1);font-weight:600;line-height:1.7}
+.thesis p .hl{color:var(--accent);font-weight:800}
+.thesis p .hl-gold{color:var(--accent-2);font-weight:800}
+
+/* KPI row */
+.kpi-row{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:14px;
+  margin-top:34px;
+}
+.kpi{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:16px 18px 14px;
+  box-shadow:var(--shadow);
+  transition:transform .2s ease,box-shadow .2s ease;
+}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.kpi .k-label{font-size:11px;font-weight:600;color:var(--ink-3);letter-spacing:.04em;line-height:1.5}
+.kpi .k-num{
+  font-size:26px;font-weight:800;color:var(--ink-1);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  margin-top:6px;line-height:1.2;
+}
+.kpi .k-num .unit{font-size:14px;font-weight:700;color:var(--ink-3);margin-left:2px}
+.kpi .k-num.gold{color:var(--accent-2)}
+.kpi .k-num.blue{color:var(--accent)}
+.kpi .k-foot{font-size:10.5px;color:var(--ink-3);margin-top:4px;line-height:1.5}
+
+/* ============ SECTION CHROME ============ */
+.section{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r-lg);
+  padding:38px 40px 42px;
+  margin:22px 0;
+  box-shadow:var(--shadow);
+  scroll-margin-top:24px;
+}
+.sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:8px}
+.sec-head .no{
+  font-family:var(--font-mono);
+  font-size:13px;font-weight:700;color:var(--accent-2);
+  letter-spacing:.06em;
+}
+.sec-head h2{font-size:21px;font-weight:800;color:var(--ink-1);letter-spacing:-.01em}
+.sec-sub{font-size:12.5px;color:var(--ink-3);margin-bottom:22px;padding-left:2px}
+.section h3{
+  font-size:15.5px;font-weight:700;color:var(--ink-1);
+  margin:24px 0 10px;
+}
+.section h3:first-child{margin-top:0}
+.section p{margin:10px 0}
+.section p.lead{font-size:15.5px;color:var(--ink-1)}
+strong{color:var(--ink-1);font-weight:700}
+.hl{color:var(--accent);font-weight:700}
+.hl-gold{color:var(--accent-2);font-weight:700}
+
+/* ============ CARD GRIDS ============ */
+.grid{display:grid;gap:14px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:18px 20px;
+  box-shadow:var(--shadow);
+}
+.card .c-tag{
+  font-size:10.5px;font-weight:700;letter-spacing:.08em;color:var(--accent);
+  margin-bottom:8px;text-transform:uppercase;
+}
+.card .c-tag.gold{color:var(--accent-2)}
+.card h4{font-size:14.5px;font-weight:700;color:var(--ink-1);margin-bottom:8px;line-height:1.5}
+.card p{font-size:13px;color:var(--ink-2);margin:0;line-height:1.7}
+.card .c-num{
+  font-size:30px;font-weight:800;color:var(--accent);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+  margin:6px 0 2px;line-height:1.2;
+}
+.card .c-num.gold{color:var(--accent-2)}
+.card .c-num small{font-size:14px;color:var(--ink-3);font-weight:700;margin-left:2px}
+.card .c-foot{font-size:11px;color:var(--ink-3);margin-top:6px;line-height:1.55}
+
+/* list */
+.sec-list{list-style:none;margin:10px 0}
+.sec-list li{
+  position:relative;padding:7px 0 7px 26px;
+  font-size:14px;color:var(--ink-2);line-height:1.7;
+}
+.sec-list li::before{
+  content:"";position:absolute;left:4px;top:16px;
+  width:7px;height:7px;border-radius:2px;
+  background:var(--accent);opacity:.75;
+}
+.sec-list li b{color:var(--ink-1)}
+.sec-list li .gold-b{border:none}
+.sec-list.gold li::before{background:var(--accent-2)}
+
+/* ============ DATA VIZ ============ */
+.viz-row{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin:20px 0}
+.viz-card{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:22px 24px;
+  box-shadow:var(--shadow);
+}
+.viz-card .v-title{font-size:13.5px;font-weight:700;color:var(--ink-1);margin-bottom:4px}
+.viz-card .v-sub{font-size:11.5px;color:var(--ink-3);margin-bottom:16px}
+
+/* grouped bar */
+.bars{display:flex;align-items:flex-end;gap:clamp(18px,4vw,44px);height:150px;padding:6px 4px 0;border-bottom:1px solid var(--border)}
+.bar-cluster .bars:last-of-type{border-bottom:none}
+.bar-group{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end;gap:8px}
+.bar-pair{display:flex;align-items:flex-end;gap:8px;width:100%;justify-content:center;height:100%}
+.bar-col{display:flex;flex-direction:column;justify-content:flex-end;align-items:center;width:clamp(30px,3.6vw,46px)}
+.bar-col .bar{
+  width:100%;
+  border-radius:6px 6px 2px 2px;
+  transform-origin:bottom;
+}
+.bar-col .bar.nb{background:linear-gradient(180deg,#3D6CB3,var(--accent));box-shadow:0 6px 16px -6px rgba(26,74,127,.45)}
+.bar-col .bar.js{background:linear-gradient(180deg,#D9A94F,var(--accent-2));box-shadow:0 6px 16px -6px rgba(192,138,46,.4)}
+.bar-col .bar .v{
+  font-family:var(--font-mono);font-size:11.5px;font-weight:700;
+  color:var(--ink-1);margin-bottom:5px;
+}
+.bar-group .g-label{font-size:11.5px;font-weight:700;color:var(--ink-2);text-align:center}
+.legend{display:flex;gap:18px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-2);font-weight:600}
+.legend i{width:11px;height:11px;border-radius:3.5px;display:inline-block}
+.legend i.nb{background:var(--accent)}
+.legend i.js{background:var(--accent-2)}
+
+/* donut */
+.donut-wrap{display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.donut{position:relative;width:168px;height:168px;flex:none}
+.donut svg{transform:rotate(-90deg)}
+.donut .center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+}
+.donut .center .big{font-size:27px;font-weight:800;color:var(--ink-1);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.donut .center .big .unit{font-size:13px;color:var(--ink-3)}
+.donut .center .cap{font-size:10.5px;color:var(--ink-3);margin-top:1px}
+.donut-legend{list-style:none;flex:1;min-width:190px}
+.donut-legend li{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 0;font-size:12.5px;color:var(--ink-2);
+  border-bottom:1px dashed var(--border);
+}
+.donut-legend li:last-child{border-bottom:none}
+.donut-legend i{width:10px;height:10px;border-radius:3px;flex:none}
+.donut-legend b{margin-left:auto;color:var(--ink-1);font-variant-numeric:tabular-nums}
+
+/* h-bars (comparison) */
+.hbar-row{margin:12px 0}
+.hbar-row .hb-label{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:5px;
+}
+.hbar-row .hb-label .val{font-family:var(--font-mono);font-weight:700;color:var(--ink-1)}
+.hbar-track{
+  height:26px;background:var(--panel-2);
+  border:1px solid var(--border);border-radius:8px;
+  position:relative;overflow:hidden;
+}
+.hbar-fill{
+  height:100%;border-radius:7px 0 0 7px;
+  transform-origin:left;
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-right:10px;
+}
+.hbar-fill.nb{background:linear-gradient(90deg,var(--accent),#3D6CB3)}
+.hbar-fill.js{background:linear-gradient(90deg,var(--accent-2),#D9A94F)}
+.hbar-fill .inner{color:#fff;font-size:10.5px;font-weight:700;font-family:var(--font-mono)}
+.hbar-note{font-size:11px;color:var(--ink-3);margin-top:3px}
+
+/* big stat trio */
+.stat-trio{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+.stat{
+  text-align:center;padding:22px 16px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--r-sm);box-shadow:var(--shadow);
+}
+.stat .s-num{
+  font-size:32px;font-weight:800;color:var(--accent);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1.2;
+}
+.stat .s-num.gold{color:var(--accent-2)}
+.stat .s-num small{font-size:15px;color:var(--ink-3);font-weight:700}
+.stat .s-label{font-size:12px;color:var(--ink-3);margin-top:6px;line-height:1.55}
+.stat .s-delta{display:inline-block;margin-top:8px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px}
+.s-delta.up{background:rgba(47,122,85,.12);color:var(--up)}
+.s-delta.gold{background:var(--gold-soft);color:var(--warn)}
+
+/* ============ ARCHITECTURE DIAGRAM (一个入口·两条转化链·公私联动) ============ */
+.arch{background:var(--panel-2);border:1px solid var(--border);border-radius:var(--r);padding:26px 24px;margin:20px 0}
+.arch-hub{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  margin-bottom:20px;flex-wrap:wrap;
+}
+.arch-hub .hub-card{
+  background:var(--bg);border:1.5px solid var(--accent);
+  border-radius:var(--r-sm);padding:14px 22px;
+  text-align:center;box-shadow:var(--shadow-md);
+}
+.arch-hub .hub-card .h1{font-size:16px;font-weight:800;color:var(--accent)}
+.arch-hub .hub-card .h2{font-size:11px;color:var(--ink-3);margin-top:3px}
+.arch-hub .arrow{font-size:20px;color:var(--accent-2);font-weight:800}
+.arch-chains{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.arch-chain{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);
+  padding:18px 20px;
+}
+.arch-chain .ac-tag{font-size:11px;font-weight:800;letter-spacing:.06em;margin-bottom:10px}
+.arch-chain .ac-tag.personal{color:var(--accent)}
+.arch-chain .ac-tag.biz{color:var(--accent-2)}
+.arch-chain .ac-flow{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  font-size:12px;font-weight:600;color:var(--ink-2);
+}
+.arch-chain .ac-flow .step{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-radius:8px;padding:5px 11px;white-space:nowrap;
+}
+.arch-chain .ac-flow .step.hot{
+  background:var(--accent-soft);border-color:rgba(26,74,127,.28);color:var(--accent);font-weight:700;
+}
+.arch-chain .ac-flow .step.hot-gold{
+  background:var(--gold-soft);border-color:rgba(192,138,46,.32);color:var(--warn);font-weight:700;
+}
+.arch-chain .ac-flow .sep{color:var(--ink-3);font-weight:800}
+.arch-chain .ac-flow .out{
+  background:var(--ink-1);color:#fff;border-radius:8px;padding:5px 11px;font-weight:700;white-space:nowrap;
+}
+.arch-chain p.ac-note{font-size:11.5px;color:var(--ink-3);margin-top:10px;line-height:1.6}
+.arch-linkage{
+  margin-top:16px;
+  background:var(--bg);border:1px dashed rgba(26,74,127,.35);
+  border-radius:var(--r-sm);padding:14px 20px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.arch-linkage .al-tag{font-size:12px;font-weight:800;color:var(--accent);white-space:nowrap}
+.arch-linkage .al-text{font-size:12.5px;color:var(--ink-2);line-height:1.6}
+.arch-linkage .al-text b{color:var(--ink-1)}
+
+/* ============ TIMELINE (90天试点) ============ */
+.timeline{position:relative;margin:20px 0 8px;padding-left:26px}
+.timeline::before{
+  content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;
+  background:linear-gradient(180deg,var(--accent),var(--accent-2));
+  border-radius:2px;
+}
+.tl-item{position:relative;padding:0 0 20px 14px}
+.tl-item:last-child{padding-bottom:4px}
+.tl-item::before{
+  content:"";position:absolute;left:-25px;top:6px;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--bg);border:3px solid var(--accent);
+}
+.tl-item.gold::before{border-color:var(--accent-2)}
+.tl-item .tl-date{font-family:var(--font-mono);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.04em}
+.tl-item.gold .tl-date{color:var(--accent-2)}
+.tl-item h4{font-size:14px;font-weight:700;color:var(--ink-1);margin:2px 0 4px}
+.tl-item p{font-size:12.5px;color:var(--ink-2);line-height:1.7;margin:0}
+
+/* ============ ACCEPTANCE TABLE ============ */
+.accept{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+.accept-col{border-radius:var(--r-sm);padding:18px 22px}
+.accept-col.yes{background:rgba(47,122,85,.06);border:1px solid rgba(47,122,85,.25)}
+.accept-col.no{background:rgba(192,69,60,.05);border:1px solid rgba(192,69,60,.22)}
+.accept-col h4{font-size:13.5px;font-weight:800;margin-bottom:10px}
+.accept-col.yes h4{color:var(--up)}
+.accept-col.no h4{color:var(--down)}
+.accept-col ul{list-style:none}
+.accept-col li{
+  position:relative;padding:5px 0 5px 22px;
+  font-size:12.8px;color:var(--ink-2);line-height:1.65;
+}
+.accept-col li::before{
+  content:"";position:absolute;left:2px;top:13px;
+  width:8px;height:8px;border-radius:50%;
+}
+.accept-col.yes li::before{background:var(--up)}
+.accept-col.no li::before{background:var(--down)}
+
+/* ============ RISK / FUTURE ============ */
+.risk-note{
+  background:var(--panel-2);border:1px solid var(--border);
+  border-left:3px solid var(--accent-2);
+  border-radius:var(--r-sm);padding:16px 20px;margin:14px 0;
+  font-size:13px;color:var(--ink-2);line-height:1.75;
+}
+.risk-note b{color:var(--ink-1)}
+.risk-note .r-tag{font-size:11px;font-weight:800;color:var(--accent-2);letter-spacing:.06em;margin-bottom:6px;display:block}
+
+/* ============ CLOSING ============ */
+.closing{
+  background:
+    radial-gradient(520px 300px at 92% -10%, rgba(45,91,216,.14), transparent 60%),
+    #0f1b2e;
+  border-radius:var(--r-lg);
+  padding:44px 46px;
+  color:#c6cede;margin:22px 0;
+  position:relative;overflow:hidden;
+}
+.closing::after{
+  content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;
+  border:1px solid rgba(255,255,255,.08);border-radius:50%;
+}
+.closing .c-tag{font-size:11.5px;font-weight:800;letter-spacing:.14em;color:var(--accent-2);text-transform:uppercase;margin-bottom:14px}
+.closing h2{font-size:24px;font-weight:800;color:#fff;line-height:1.4;text-wrap:balance;max-width:820px}
+.closing p{margin-top:14px;font-size:14.5px;line-height:1.9;max-width:860px}
+.closing p b{color:#fff}
+.closing .src{
+  margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,.1);
+  font-size:11.5px;color:#8fa0b8;line-height:1.8;
+}
+
+/* ============ FOOTER ============ */
+.foot{
+  border-top:1px solid var(--border);
+  padding:22px 0 34px;color:var(--ink-3);font-size:11.5px;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.foot .caliber{max-width:760px;line-height:1.7}
+
+/* ============ REVEAL / MOTION ============ */
+.reveal{opacity:0;transform:translateY(18px)}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  .reveal{opacity:1;transform:none}
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1080px){
+  .rail{display:none}
+  .main{margin-left:0}
+  .kpi-row{grid-template-columns:repeat(3,1fr)}
+  .grid-4{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:760px){
+  .page-wrap{margin:14px auto 40px;padding:0 14px}
+  .section{padding:26px 20px 30px;border-radius:var(--r)}
+  .kpi-row{grid-template-columns:repeat(2,1fr)}
+  .grid-3,.grid-2,.grid-4{grid-template-columns:1fr}
+  .viz-row{grid-template-columns:1fr}
+  .arch-chains{grid-template-columns:1fr}
+  .stat-trio{grid-template-columns:1fr}
+  .accept{grid-template-columns:1fr}
+  .cover{padding:40px 0 36px}
+  .closing{padding:32px 24px}
+}
+
+/* ============ PRINT (A4) ============ */
+@page{
+  size:A4;
+  margin:14mm 12mm 16mm 12mm;
+  @bottom-center{
+    content:"98wiki ｜ 智见 / 行业研究报告";
+    font-size:8pt;color:#64748c;font-family:-apple-system,"Noto Sans CJK SC",sans-serif;
+  }
+  @bottom-right{
+    content:counter(page);
+    font-size:8pt;color:#64748c;
+  }
+}
+@media print{
+  body{background:#fff;font-size:11pt;line-height:1.65}
+  .rail{display:none}
+  .main{margin-left:0}
+  .page-wrap{max-width:100%;margin:0;padding:0}
+  .cover{padding:24px 0 18px;box-shadow:none;border:none;background:#fff}
+  .cover h1{font-size:22pt}
+  .section{
+    border:none;border-radius:0;box-shadow:none;
+    padding:14px 0;margin:8px 0;
+    break-inside:auto;
+  }
+  .sec-head h2{font-size:14pt}
+  .card,.viz-card,.kpi,.stat,.arch-chain,.accept-col{box-shadow:none;break-inside:avoid}
+  .kpi-row{gap:10px}
+  .kpi{padding:12px 14px}
+  .kpi .k-num{font-size:20pt}
+  .section h3{font-size:12pt}
+  .reveal{opacity:1 !important;transform:none !important}
+  .arch{break-inside:avoid}
+  .closing{border-radius:0;break-inside:avoid}
+  .bar-col .bar{box-shadow:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== SIDE RAIL ===== -->
+<nav class="rail" id="rail">
+  <div class="brand">
+    <div class="mark">苏</div>
+    <div class="name">智见点评 · 多视角融合<small>行领导汇报稿 · 正式稿</small></div>
+  </div>
+  <a href="#cover"><span class="num">★</span>核心结论</a>
+  <a href="#s2"><span class="num">01</span>形势判断</a>
+  <a href="#s3"><span class="num">02</span>关键事实与分析</a>
+  <a href="#s4"><span class="num">03</span>学什么</a>
+  <a href="#s5"><span class="num">04</span>怎么学</a>
+  <a href="#s6"><span class="num">05</span>试点安排</a>
+  <a href="#s7"><span class="num">06</span>验收标准</a>
+  <a href="#s8"><span class="num">07</span>不确定性与趋势</a>
+  <a href="#s9"><span class="num">08</span>风险底线与未来关注</a>
+  <div class="rail-foot">数据口径：2026H1（半年报）<br>苏银研究院第17期 · 量子教育会议纪要 · 宁波银行官方公开资料</div>
+</nav>
+
+<div class="main">
+
+  <!-- ===== COVER ===== -->
+  <header class="cover" id="cover">
+    <div class="shell">
+      <span class="eyebrow">智见点评 · 多视角融合 · 正式稿</span>
+      <h1>存量平台改造借鉴宁波双平台打法<span class="gold">——学逻辑，不学形态</span></h1>
+      <div class="sub">
+        <span class="chip">用途：<b>行领导汇报</b></span>
+        <span class="chip">对标：<b>宁波银行</b>（2026H1）</span>
+        <span class="chip">本行：<b>江苏银行</b>（存量平台改造）</span>
+        <span class="chip">数据时段：<b>2026H1</b></span>
+      </div>
+      <div class="thesis reveal">
+        <div class="tag">核心结论</div>
+        <p>学宁波，<span class="hl">学逻辑不学形态</span>。以苏银生活为唯一入口做任务型改造，把 <span class="hl">800万月活</span> 流量转化为业务沉淀；<span class="hl">90天两场景试点</span>定取舍，验收看活期、代发留存、卡渗透、中收，<span class="hl-gold">不看注册数</span>。这是三低时代下支撑省内金融贡献与全国综合排名双提升的战略路径，须以长期主义与正确政绩观推进，功成不必在我，功成必定有我。</p>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi reveal"><div class="k-label">苏银生活月活</div><div class="k-num blue">800<span class="unit">万</span></div><div class="k-foot">年底目标 1000 万（本行）</div></div>
+        <div class="kpi reveal"><div class="k-label">宁波活期占比</div><div class="k-num">35.57<span class="unit">%</span></div><div class="k-foot">对标行 2026H1</div></div>
+        <div class="kpi reveal"><div class="k-label">宁波中收占比</div><div class="k-num">10.42<span class="unit">%</span></div><div class="k-foot">手续费净收入 +53.9%</div></div>
+        <div class="kpi reveal"><div class="k-label">代理类占中收</div><div class="k-num gold">85<span class="unit">%</span></div><div class="k-foot">代理类收入 49.9 亿元</div></div>
+        <div class="kpi reveal"><div class="k-label">波波知了企业用户</div><div class="k-num">17.6<span class="unit">万</span></div><div class="k-foot">官方口径 · 20+ 服务</div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== 01 形势判断 ===== -->
+  <div class="page-wrap">
+  <section class="section" id="s2">
+    <div class="sec-head"><span class="no">01</span><h2>形势判断：三低时代，拼的是经营逻辑</h2></div>
+    <div class="sec-sub">低利率 · 低息差 · 低增速</div>
+    <p class="lead">低利率、低息差、低增速的三低时代，息差收窄压缩资金中介模式的盈利空间。宁波银行 <span class="hl">2026H1 营收 +11.54%、净利 +12.12%、两项收入增速 18.2%（我行 11%）</span>，差距不在规模禀赋，在经营逻辑——宁波用服务收入对冲息差压力（手续费净收入 <span class="hl">+53.9%</span>、中收占比 <span class="hl">10.42%</span>），我行若仍在资金中介单腿走路，双提升就缺一条腿。</p>
+    <p><strong>借鉴宁波不是可选项，是形势使然。</strong> 三低时代的竞争已从「存款价格战」转向「客户经营能力战」，谁的平台能把流量变成中收，谁就掌握下一个五年的定价权。</p>
+  </section>
+
+  <!-- ===== 02 关键事实与分析 ===== -->
+  <section class="section" id="s3">
+    <div class="sec-head"><span class="no">02</span><h2>关键事实与分析：对标差距的本质是经营逻辑</h2></div>
+    <div class="sec-sub">数据口径：苏银研究院第17期（宁波银行2026H1半年报）· 量子教育会议纪要（2026-08-26）· 宁波银行官方公开资料</div>
+
+    <h3>（一）负债端：宁波强在客户经营，而非价格战</h3>
+    <div class="stat-trio">
+      <div class="stat reveal"><div class="s-num">1.32<span class="unit">%</span></div><div class="s-label">宁波存款成本率（2026H1）</div><span class="s-delta up">较上年降 39bp</span></div>
+      <div class="stat reveal"><div class="s-num">35.57<span class="unit">%</span></div><div class="s-label">宁波活期存款占比</div><span class="s-delta gold">客户经营红利</span></div>
+      <div class="stat reveal"><div class="s-num gold">+53.9<span class="unit">%</span></div><div class="s-label">宁波手续费净收入增速</div><span class="s-delta gold">服务收入对冲息差</span></div>
+    </div>
+
+    <h3>（二）收入结构：中收以客户综合服务为底座</h3>
+    <div class="viz-row">
+      <div class="viz-card">
+        <div class="v-title">收入与增速对比 · 两组口径</div>
+        <div class="v-sub">左：两项收入增速（宁波 18.2% vs 我行 11%）｜ 右：代理类收入（49.9 亿 vs 29.1 亿），2026H1 半年报口径</div>
+        <div class="bar-cluster">
+          <div class="bars" id="bar-growth">
+            <div class="bar-group">
+              <div class="bar-pair">
+                <div class="bar-col"><div class="bar nb" style="height:100%"><span class="v">18.2%</span></div></div>
+              </div>
+              <div class="g-label">宁波</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-pair">
+                <div class="bar-col"><div class="bar js" style="height:60.4%"><span class="v">11.0%</span></div></div>
+              </div>
+              <div class="g-label">我行</div>
+            </div>
+          </div>
+          <div class="bars" id="bar-agent" style="margin-top:18px">
+            <div class="bar-group">
+              <div class="bar-pair">
+                <div class="bar-col"><div class="bar nb" style="height:100%"><span class="v">49.9亿</span></div></div>
+              </div>
+              <div class="g-label">宁波代理类</div>
+            </div>
+            <div class="bar-group">
+              <div class="bar-pair">
+                <div class="bar-col"><div class="bar js" style="height:58.3%"><span class="v">29.1亿</span></div></div>
+              </div>
+              <div class="g-label">我行代理类</div>
+            </div>
+          </div>
+        </div>
+        <div class="legend">
+          <span><i class="nb"></i>宁波银行</span>
+          <span><i class="js"></i>我行</span>
+        </div>
+        <div class="hbar-note" style="margin-top:10px">注：两组柱分别按组内最大值归一（18.2% / 49.9 亿为基准 100%）；对公理财对比见下方卡片。</div>
+      </div>
+      <div class="viz-card">
+        <div class="v-title">代理类收入占中收结构</div>
+        <div class="v-sub">宁波 2026H1 · 代理类 49.9 亿，占中收 85%</div>
+        <div class="donut-wrap">
+          <div class="donut">
+            <svg width="168" height="168" viewBox="0 0 168 168">
+              <circle cx="84" cy="84" r="62" fill="none" stroke="var(--panel-2)" stroke-width="20"/>
+              <circle class="donut-seg" cx="84" cy="84" r="62" fill="none" stroke="var(--accent)" stroke-width="20" stroke-linecap="round" stroke-dasharray="389.6 389.6" stroke-dashoffset="389.6"/>
+            </svg>
+            <div class="center"><div class="big">85<span class="unit">%</span></div><div class="cap">代理类占中收</div></div>
+          </div>
+          <ul class="donut-legend">
+            <li><i style="background:var(--accent)"></i>代理类收入<span><b>49.9 亿</b></span></li>
+            <li><i style="background:var(--panel-2);border:1px solid var(--border)"></i>其他中收<span><b>≈ 8.8 亿</b></span></li>
+            <li style="border-bottom:none;font-size:11px;color:var(--ink-3)">结构含义：中收以客户综合服务为底座，收入结构健康</li>
+          </ul>
+        </div>
+        <div class="hbar-note" style="margin-top:12px">代理类收入高我行 <b class="hl">29.1 亿元</b>；我行代理类收入绝对额与之差距即中收差距的主来源。</div>
+      </div>
+    </div>
+
+    <h3>（三）财富与对公：差距集中在「触达 → 沉淀」环节</h3>
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="c-tag gold">私行 · 财富管理</div>
+        <h4>私行 AUM 占比对比（占全行 AUM）</h4>
+        <div class="hbar-row">
+          <div class="hb-label"><span>宁波银行</span><span class="val">4206 亿 · 29.4%</span></div>
+          <div class="hbar-track"><div class="hbar-fill nb" style="width:100%"><span class="inner">29.4%</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hb-label"><span>我行</span><span class="val">2552 亿 · 13.9%</span></div>
+          <div class="hbar-track"><div class="hbar-fill js" style="width:47.3%"><span class="inner">13.9%</span></div></div>
+        </div>
+        <div class="hbar-note">宁波私行客户 3.45 万户；我行占比仅为对标行一半弱。</div>
+      </div>
+      <div class="card reveal">
+        <div class="c-tag gold">对公 · 理财</div>
+        <h4>对公理财规模对比</h4>
+        <div class="hbar-row">
+          <div class="hb-label"><span>宁波银行</span><span class="val">2000 亿 +</span></div>
+          <div class="hbar-track"><div class="hbar-fill nb" style="width:100%"><span class="inner">2000亿+</span></div></div>
+        </div>
+        <div class="hbar-row">
+          <div class="hb-label"><span>我行</span><span class="val">658 亿</span></div>
+          <div class="hbar-track"><div class="hbar-fill js" style="width:32.9%"><span class="inner">658亿</span></div></div>
+        </div>
+        <div class="hbar-note">对公理财是「企业任务链 → 结算/授信」转化链的直接承接产品。</div>
+      </div>
+    </div>
+
+    <div class="risk-note" style="margin-top:18px">
+      <span class="r-tag">核心判断</span>
+      <b>差距集中在「触达→沉淀」环节：</b>我行 800 万月活是流量，尚未充分变成中收；宁波 17.6 万企业用户是任务链入口，撬动 2000 亿对公理财与 85% 代理类中收。<b>学宁波，本质是学转化率。</b>
+    </div>
+
+    <h3>（四）样板就在腹地：逻辑已经跑通</h3>
+    <p>波波知了 <span class="hl">2023 年上线、17 万企业用户</span>（南京约 2 万家；官方公开口径 <span class="hl-gold">17.6 万家、20+ 服务</span>），按「<strong>帮企业赚钱 / 省钱 / 管钱</strong>」三层框架，聚焦江浙沪制造 / 科技 / 外贸，落地出海对接、节能规划、AI 赋能，靠政府园区招商联动获客；数字人力按「<strong>只撮合不交付、不收服务费</strong>」模式运营、2026 年底上线。</p>
+    <p><strong>江苏本地已跑通，南京能做各分行就能做。</strong> 按定稿口径，双平台按企业任务链分工：波波知了 = 企业外部经营综合企服（经营侧），数字人力 = 企业内部组织运营与人薪税费（组织侧），同一企业可同时使用。</p>
+    <div class="grid grid-3" style="margin-top:14px">
+      <div class="card reveal"><div class="c-tag">经营侧</div><h4>波波知了</h4><p>企业外部经营综合企服：出海对接、节能规划、AI 赋能，政企协同获客。</p><div class="c-foot">2023 上线 · 独立运营非金融平台</div></div>
+      <div class="card reveal"><div class="c-tag gold">组织侧</div><h4>数字人力</h4><p>企业内部组织运营与人薪税费：只撮合不交付、不收服务费。</p><div class="c-foot">2026 年底上线 · 量子拟入驻 9 折（待核实口径）</div></div>
+      <div class="card reveal"><div class="c-tag">任务链逻辑</div><h4>同一企业可同时使用</h4><p>经营侧 + 组织侧双入口，按企业任务链分工而非客户分层。</p><div class="c-foot">定稿口径 · INDEX #261/#262</div></div>
+    </div>
+
+    <h3>（五）从 1 到 N 改造存量：资源中介升级的江苏路径</h3>
+    <p>宁波从 0 到 1 新建双平台，我行从 1 到 N 改造存量：<span class="hl">苏银生活月活 800 万</span>（年底目标 1000 万）是宁波没有的零售流量底座，代发、信用卡、消费贷、私行均现成。<strong>我们不缺资源，缺的是把资源变成服务的转化机制。</strong></p>
+  </section>
+
+  <!-- ===== 03 学什么 ===== -->
+  <section class="section" id="s4">
+    <div class="sec-head"><span class="no">03</span><h2>学什么：四条可迁移逻辑，形态坚决不学</h2></div>
+    <div class="sec-sub">学逻辑 · 不学形态 · 不新建平台</div>
+    <div class="grid grid-4">
+      <div class="card reveal"><div class="c-tag">逻辑 ①</div><h4>任务链逻辑</h4><p>从客户「要办成什么事」出发组织服务，而非从产品出发。</p></div>
+      <div class="card reveal"><div class="c-tag">逻辑 ②</div><h4>独立运营逻辑</h4><p>专业团队配置，把平台当事业而非附属品。</p></div>
+      <div class="card reveal"><div class="c-tag">逻辑 ③</div><h4>政银协同获客</h4><p>政府园区招商联动，把政策资源变成获客入口。</p></div>
+      <div class="card reveal"><div class="c-tag">逻辑 ④</div><h4>先服务后转化</h4><p>免费服务换数据与信任，先撮合后交付。</p></div>
+    </div>
+    <div class="risk-note" style="margin-top:16px">
+      <span class="r-tag">形态上坚决不学</span>
+      <b>不新建 App、不重复建设、不烧钱获客。</b>再造两个 App 重投入（宁波平台团队阿里/字节社招、单岗年薪百万级）且与零售个人流量错配。<b>平安信用卡仅作旁证，不入主框架。</b>
+    </div>
+  </section>
+
+  <!-- ===== 04 怎么学 ===== -->
+  <section class="section" id="s5">
+    <div class="sec-head"><span class="no">04</span><h2>怎么学：一个入口、两条转化链、公私联动</h2></div>
+    <div class="sec-sub">存量改造的落地架构</div>
+
+    <div class="arch">
+      <div class="arch-hub">
+        <div class="hub-card"><div class="h1">苏银生活</div><div class="h2">任务型改造 · 唯一入口</div></div>
+        <div class="arrow">→</div>
+        <div class="hub-card" style="border-color:var(--accent-2)"><div class="h1" style="color:var(--accent-2)">两条转化链</div><div class="h2">任务 → 金融产品</div></div>
+        <div class="arrow">→</div>
+        <div class="hub-card"><div class="h1">公私联动</div><div class="h2">零售反哺对公线索</div></div>
+      </div>
+      <div class="arch-chains">
+        <div class="arch-chain">
+          <div class="ac-tag personal">个人任务链</div>
+          <div class="ac-flow">
+            <span class="step hot">社保/公积金</span><span class="sep">·</span>
+            <span class="step hot">缴费</span><span class="sep">·</span>
+            <span class="step">健康</span><span class="sep">·</span>
+            <span class="step">教育</span><span class="sep">·</span>
+            <span class="step">出行</span><span class="sep">·</span>
+            <span class="step">以旧换新</span>
+            <span class="sep">→</span>
+            <span class="out">账户 / 卡 / 分期 / 财富</span>
+          </div>
+          <p class="ac-note">任务选择决定客户为什么打开——选高频、刚需、有数据价值的任务，把苏银生活从「生活服务陈列馆」改造成「任务型服务入口＋金融转化漏斗」。</p>
+        </div>
+        <div class="arch-chain">
+          <div class="ac-tag biz">企业任务链</div>
+          <div class="ac-flow">
+            <span class="step hot-gold">工资单</span><span class="sep">·</span>
+            <span class="step hot-gold">个税</span><span class="sep">·</span>
+            <span class="step hot-gold">报销</span><span class="sep">·</span>
+            <span class="step hot-gold">五险一金</span><span class="sep">·</span>
+            <span class="step hot-gold">福利商城</span>
+            <span class="sep">→</span>
+            <span class="out">代发 / 结算 / 授信</span>
+          </div>
+          <p class="ac-note">代发增值是企业任务链枢纽，且是「任务链＋金融转化」最短路径，直接贡献活期沉淀与存款成本下降。</p>
+        </div>
+      </div>
+      <div class="arch-linkage">
+        <span class="al-tag">公私联动</span>
+        <span class="al-text">零售个人任务链产生企业线索（个体户收款、企业主身份识别）反哺对公，形成<b>「零售获客 → 对公承接」正循环</b>；「下一步」即渠道协同触发点：公积金提取完成 → 引导消费贷/信用卡；工资单查看 → 引导理财/定投。</span>
+      </div>
+    </div>
+
+    <h3>渠道协同：「一重两轻」</h3>
+    <div class="grid grid-3">
+      <div class="card reveal"><div class="c-tag">轻渠道</div><h4>苏银生活</h4><p>承接高频简易需求，任务办理即转化入口。</p></div>
+      <div class="card reveal"><div class="c-tag gold">重渠道</div><h4>网点 / 客户经理 / 私行中心</h4><p>承接复杂金融需求；私行客户走重渠道，任务入口只做触达与预约。</p></div>
+      <div class="card reveal"><div class="c-tag">技术底座</div><h4>复用 + 数据治理 + AI 嵌入</h4><p>任务模块 = 外部接口接入 + 统一任务引擎 + 埋点体系；接口口径、更新频率、字段质量先治理再建模。</p></div>
+    </div>
+  </section>
+
+  <!-- ===== 05 试点安排 ===== -->
+  <section class="section" id="s6">
+    <div class="sec-head"><span class="no">05</span><h2>试点安排：90 天两场景，试点即止损闸门</h2></div>
+    <div class="sec-sub">度量先行 · 标准工具包 · 达标放量</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">前置 · DAY 0</div>
+        <h4>度量先行</h4>
+        <p>漏斗埋点与北极星指标先定义——否则试点无法回答「转化率」这个核心问题。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">试点 A · 90 天</div>
+        <h4>苏银生活高频任务：社保 / 公积金查询缴费</h4>
+        <p>核心测<b>转化率</b>：任务 → 账户 / 卡 / 分期 / 财富漏斗。</p>
+      </div>
+      <div class="tl-item gold">
+        <div class="tl-date">试点 B · 90 天</div>
+        <h4>代发客户轻模块：工资单 + 五险一金 + 福利购</h4>
+        <p>核心测<b>留存、沉淀、渗透</b>。</p>
+      </div>
+      <div class="tl-item">
+        <div class="tl-date">执行机制</div>
+        <h4>标准化工具包 + 样板先行</h4>
+        <p>给分行标准化工具包（任务模板 + 话术 + 考核表），先跑样板，月度通报、季度排名。</p>
+      </div>
+      <div class="tl-item gold">
+        <div class="tl-date">闸门 · DAY 90</div>
+        <h4>试点数据达标再放量，不达标回调打法</h4>
+        <p>试点即止损闸门：90 天验证转化率信号，不验证全年中收增量（中收兑现通常需 2-3 个季度）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 06 验收标准 ===== -->
+  <section class="section" id="s7">
+    <div class="sec-head"><span class="no">06</span><h2>验收标准：看业务沉淀，不看注册数</h2></div>
+    <div class="sec-sub">经营与管理双提质 · 防止「双提升」被曲解为「双第一」层层加码</div>
+    <div class="accept">
+      <div class="accept-col yes">
+        <h4>验收看什么</h4>
+        <ul>
+          <li>活期沉淀（对标宁波活期占比 35.57%）</li>
+          <li>代发留存</li>
+          <li>卡渗透</li>
+          <li>中收贡献（对标代理类占中收 85% 的结构）</li>
+        </ul>
+      </div>
+      <div class="accept-col no">
+        <h4>不验收什么</h4>
+        <ul>
+          <li>注册数</li>
+          <li>纯功能使用量</li>
+          <li>表面客户升级（实际仍停留在资金中介）</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 07 不确定性与趋势 ===== -->
+  <section class="section" id="s8">
+    <div class="sec-head"><span class="no">07</span><h2>不确定性与趋势</h2></div>
+    <div class="sec-sub">研判推断 · 待验证项明确标注</div>
+    <ul class="sec-list">
+      <li><b>数字人力形态待核实：</b>2026 年底上线的实际形态与服务细节未经访谈核实，仅作对标逻辑引用；若形态与我行认知不等同，对标结论需修正（待核实后纳入）。</li>
+      <li><b>中收兑现存在时滞：</b>任务链转化到中收沉淀通常需 2-3 个季度，90 天试点只能验证转化率信号，不能验证全年中收增量。</li>
+      <li><b>政企资源依赖：</b>波波知了获客高度依赖政府园区招商联动，若我行无法复刻同等政企资源，企业任务链转化率预期应打折。</li>
+      <li><b>月活目标节奏：</b>苏银生活月活 800 万 → 1000 万目标的达成节奏存在不确定性，试点转化率分母口径需相应调整。</li>
+      <li><b>权益产品待校准：</b>365 元课程权益、消费贷团办的接受度与续费率待试点校准。</li>
+      <li><b>同业竞争：</b>同业生活平台亦在任务化，须立足江苏本省政务与本地生活资源差异化。</li>
+    </ul>
+  </section>
+
+  <!-- ===== 08 风险底线与未来关注 ===== -->
+  <section class="section" id="s9">
+    <div class="sec-head"><span class="no">08</span><h2>风险底线与未来关注</h2></div>
+
+    <h3>（一）合规与底线五条</h3>
+    <ul class="sec-list">
+      <li><b>个人信息与征信红线：</b>社保/公积金数据用于授信评估须客户单独明确授权，符合个保法最小必要原则，不得以任务办理为名变相采集数据用于营销。</li>
+      <li><b>数据来源合法：</b>政务/第三方接口签数据合作协议，权属与使用范围书面厘清。</li>
+      <li><b>反洗钱：</b>以旧换新补贴、消费券类任务防范套利刷单，资金流纳入监测。</li>
+      <li><b>适当性管理：</b>不因任务入口放松。</li>
+      <li><b>不突破风险底线换取一时业绩：</b>非金融权益嵌入须前置合规与消费者权益评估。</li>
+    </ul>
+
+    <h3>（二）外部合作守底线</h3>
+    <div class="risk-note">
+      <span class="r-tag">合作红线</span>
+      量子教育只配当供应商，<b>客户、数据、账户、核心规则必须在我行手里</b>；宁波百万级单岗的成本结构不照抄，存量团队 + 能力采购，<b>底座必须是自己的</b>。
+    </div>
+
+    <h3>（三）机制建设（经营与管理双提质）</h3>
+    <div class="grid grid-2">
+      <div class="card reveal">
+        <div class="c-tag">机制 · 组织</div>
+        <h4>平台运营专业团队</h4>
+        <p>市场化人才机制；政银协同制度化，政府园区招商联动纳入常态化获客渠道，防止「运动式」联动。</p>
+      </div>
+      <div class="card reveal">
+        <div class="c-tag">机制 · 决策</div>
+        <h4>试点-复盘-推广制度化</h4>
+        <p>建立跨部门数据中台与公私联动线索台账（零售反哺对公的线索量 → 结算/授信落地转化），纳入季度经营分析。</p>
+      </div>
+    </div>
+
+    <h3>（四）未来关注五件事</h3>
+    <ul class="sec-list gold">
+      <li>宁波 2026 年报双平台经营数据，验证对标逻辑。</li>
+      <li>90 天试点周度监测（A 转化率、B 留存/沉淀/渗透），达标即启动第二批场景放量。</li>
+      <li>苏银生活任务功能上线排期与月活目标节奏。</li>
+      <li>代发轻模块合规评审与个人信息保护审查，与试点同步推进。</li>
+      <li>季度复盘中收结构与代理类占比，对照宁波中收占比 10.42%、代理类占中收 85% 的结构校准路径。</li>
+    </ul>
+  </section>
+
+  <!-- ===== CLOSING ===== -->
+  <section class="closing">
+    <div class="c-tag">结语</div>
+    <h2>存量平台改造不是短期冲规模，而是以长期主义重构客户经营体系</h2>
+    <p>把苏银生活从「生活服务平台」升级为<b>「资源整合与转化平台」</b>，实现资金中介向资源中介升级，支撑双提升。考核评价体现长期主义与正确政绩观——<b>三年看体系、五年看格局</b>，不争一时之短长。</p>
+    <p>本次改造坚持<b>不新建平台、不重复建设、不烧钱获客</b>，用存量资源、增量机制，走出江苏银行自己的资源中介升级之路。</p>
+    <div class="src">
+      数据来源：苏银研究院第 17 期（宁波银行 2026H1 半年报口径）· 量子教育会议纪要（2026-08-26）· 宁波银行官方公开资料。行内商密仅聚合口径。预测与试点目标为研判推断，实际以试点验证为准。
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>智见点评 · 多视角融合 · 正式稿</span>
+    <span class="caliber">框架 D（多分类融合）· 数据时段 2026H1 · 数字人力形态表述待核实 · 生成日期 2026-08-27</span>
+  </footer>
+
+  </div><!-- /page-wrap -->
+</div><!-- /main -->
+
+<script src="lib/gsap.min.js"></script>
+<script src="lib/ScrollTrigger.min.js"></script>
+<script>
+(function(){
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* reveal on scroll */
+  if (window.gsap && !RM) {
+    gsap.utils.toArray('.reveal').forEach(function(el){
+      gsap.fromTo(el, {opacity:0, y:18}, {opacity:1, y:0, duration:.7, ease:'power3.out',
+        scrollTrigger:{trigger:el, start:'top 88%'}});
+    });
+
+    /* bars grow */
+    gsap.utils.toArray('.bar').forEach(function(b){
+      gsap.from(b, {scaleY:0, duration:.9, ease:'power3.out',
+        scrollTrigger:{trigger:b, start:'top 92%'}});
+    });
+    gsap.utils.toArray('.hbar-fill').forEach(function(b){
+      gsap.from(b, {scaleX:0, duration:.9, ease:'power3.out',
+        scrollTrigger:{trigger:b, start:'top 92%'}});
+    });
+
+    /* donut draw-in */
+    var seg = document.querySelector('.donut-seg');
+    if (seg) {
+      gsap.to(seg, {strokeDashoffset:389.6 * (1 - 0.85), duration:1.4, ease:'power2.inOut',
+        scrollTrigger:{trigger:seg, start:'top 90%'}});
+    }
+  } else {
+    var s = document.querySelectorAll('.reveal, .bar, .hbar-fill');
+    for (var i=0;i<s.length;i++){ s[i].style.opacity = 1; s[i].style.transform = 'none'; }
+    var seg2 = document.querySelector('.donut-seg');
+    if (seg2) seg2.style.strokeDashoffset = 389.6 * (1 - 0.85);
+  }
+
+  /* rail active state */
+  var links = document.querySelectorAll('.rail a');
+  var secs = ['cover','s2','s3','s4','s5','s6','s7','s8','s9'];
+  function onScroll(){
+    var y = window.scrollY + 120, cur = 'cover';
+    for (var i=0;i<secs.length;i++){
+      var el = document.getElementById(secs[i]);
+      if (el && el.offsetTop <= y) cur = secs[i];
+    }
+    links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + cur); });
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+})();
+</script>
+</body>
+</html>

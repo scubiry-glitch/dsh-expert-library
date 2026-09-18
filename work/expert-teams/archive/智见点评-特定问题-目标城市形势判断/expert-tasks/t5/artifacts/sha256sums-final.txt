@@ -1,0 +1,6 @@
+f6be677ed9a342eb21ba10217de9dc9e35378075a8472b42d4b2d76daa0eea7b  chengdu-resale-2026-08-final.html
+af36dc56f6eba5914a73d4a1289f9aa888b2b02349c47fba054205ad9cef3563  chengdu-resale-2026-08-final.pdf
+d6b49f08730aef63a6cf6a4123ea1a0c8ac168b2f5ee1eefe782b702eba81718  chengdu-resale-2026-08-final.pptx
+34f3a51c762de32a705e7821a8fcf40677303f105ba58e2bdf766712fc005dea  build_ppt_final.py
+fb22c14f91569a364950a7e8a0cf2c51663221fda57f2c4d06ff8f5fec17fced  shots/chengdu-resale-2026-08-final_1280.png
+17dbe79001a48d08230a3e447b47aa1969dcc6d55025ec8c2b783af13c6c8d25  shots/chengdu-resale-2026-08-final_375.png

@@ -9,8 +9,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-01",
     "bk": "E01-01",
-    "name": "刘明远",
-    "personaName": "刘明远",
+    "name": "周期掌门",
+    "personaName": "周期掌门",
     "field": "宏观经济",
     "secondaryField": "政策研究",
     "stance": "周期分析",
@@ -20,7 +20,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 宏观经济、周期分析、政策研究",
-    "initials": "刘",
+    "initials": "Z",
     "style": [
       "沉稳审慎，以数据说话，注重长期趋势而非短期噪音"
     ],
@@ -180,8 +180,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-02",
     "bk": "E01-02",
-    "name": "陈志华",
-    "personaName": "陈志华",
+    "name": "周期哨兵",
+    "personaName": "周期哨兵",
     "field": "宏观经济",
     "secondaryField": "货币政策",
     "stance": "货币银行学",
@@ -191,7 +191,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 宏观经济、货币银行学、货币政策",
-    "initials": "陈",
+    "initials": "Z",
     "style": [
       "严谨、专业、政策导向，注重逻辑链条的完整性"
     ],
@@ -361,8 +361,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-03",
     "bk": "E01-03",
-    "name": "王海涛",
-    "personaName": "王海涛",
+    "name": "周期匠人",
+    "personaName": "周期匠人",
     "field": "宏观经济",
     "secondaryField": "中美关系",
     "stance": "国际宏观",
@@ -371,7 +371,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 宏观经济、国际宏观、中美关系",
-    "initials": "王",
+    "initials": "Z",
     "style": [
       "严谨、系统、擅长跨市场比较与跨境联动分析"
     ],
@@ -528,8 +528,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-04",
     "bk": "E01-04",
-    "name": "李雪琴",
-    "personaName": "李雪琴",
+    "name": "周期捕手",
+    "personaName": "周期捕手",
     "field": "宏观经济",
     "secondaryField": "区域研究",
     "stance": "产业经济",
@@ -538,7 +538,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 宏观经济、产业经济、区域研究",
-    "initials": "李",
+    "initials": "Z",
     "style": [
       "学术严谨，善于从产业视角切入宏观问题，论证层次清晰"
     ],
@@ -685,8 +685,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-05",
     "bk": "E01-05",
-    "name": "张伟强",
-    "personaName": "张伟强",
+    "name": "周期参谋",
+    "personaName": "周期参谋",
     "field": "宏观经济",
     "secondaryField": "货币政策",
     "stance": "通胀研究",
@@ -695,7 +695,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 宏观经济、通胀研究、货币政策",
-    "initials": "张",
+    "initials": "Z",
     "style": [
       "严谨、量化导向、注重实证"
     ],
@@ -855,8 +855,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-06",
     "bk": "E01-06",
-    "name": "赵敏",
-    "personaName": "赵敏",
+    "name": "周期游侠",
+    "personaName": "周期游侠",
     "field": "宏观经济",
     "secondaryField": "土地财政",
     "stance": "房地产周期",
@@ -866,7 +866,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 宏观经济、房地产周期、土地财政",
-    "initials": "赵",
+    "initials": "Z",
     "style": [
       "系统思维，关注长期趋势，严谨学术"
     ],
@@ -1019,8 +1019,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-07",
     "bk": "E01-07",
-    "name": "李扬",
-    "personaName": "李扬",
+    "name": "周期账房",
+    "personaName": "周期账房",
     "field": "宏观经济",
     "secondaryField": "宏观审慎",
     "stance": "金融学",
@@ -1030,7 +1030,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 宏观经济、金融学、宏观审慎",
-    "initials": "李",
+    "initials": "Z",
     "style": [
       "学术严谨，政策洞察力强"
     ],
@@ -1184,8 +1184,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-08",
     "bk": "E01-08",
-    "name": "高善文",
-    "personaName": "高善文",
+    "name": "周期灯塔",
+    "personaName": "周期灯塔",
     "field": "宏观经济",
     "secondaryField": "经济周期",
     "stance": "资本市场",
@@ -1194,7 +1194,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 宏观经济、资本市场、经济周期",
-    "initials": "高",
+    "initials": "Z",
     "style": [
       "独立思考，观点鲜明，学术严谨与市场实用相结合"
     ],
@@ -1349,8 +1349,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e01-09",
     "bk": "E01-09",
-    "name": "鲁政委",
-    "personaName": "鲁政委",
+    "name": "周期司南",
+    "personaName": "周期司南",
     "field": "宏观经济",
     "secondaryField": "利率趋势",
     "stance": "汇率分析",
@@ -1360,7 +1360,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "理论"
     ],
     "summary": "擅长 宏观经济、汇率分析、利率趋势",
-    "initials": "鲁",
+    "initials": "Z",
     "style": [
       "数据驱动，逻辑严密"
     ],
@@ -1512,15 +1512,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-01",
     "bk": "E02-01",
-    "name": "孙浩然",
-    "personaName": "孙浩然",
+    "name": "体验掌门",
+    "personaName": "体验掌门",
     "field": "金融科技",
     "stance": "金融科技",
     "tags": [
       "研判"
     ],
     "summary": "擅长 金融科技",
-    "initials": "孙",
+    "initials": "T",
     "style": [
       "用户导向，关注体验"
     ],
@@ -1606,15 +1606,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-02",
     "bk": "E02-02",
-    "name": "周婷婷",
-    "personaName": "周婷婷",
+    "name": "体验哨兵",
+    "personaName": "体验哨兵",
     "field": "金融科技",
     "stance": "金融科技",
     "tags": [
       "研判"
     ],
     "summary": "擅长 金融科技",
-    "initials": "周",
+    "initials": "T",
     "style": [
       "技术信仰，金融创新"
     ],
@@ -1700,15 +1700,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-03",
     "bk": "E02-03",
-    "name": "李明辉",
-    "personaName": "李明辉",
+    "name": "体验匠人",
+    "personaName": "体验匠人",
     "field": "金融科技",
     "stance": "金融科技",
     "tags": [
       "研判"
     ],
     "summary": "擅长 金融科技",
-    "initials": "李",
+    "initials": "T",
     "style": [
       "数据驱动，理性分析"
     ],
@@ -1794,15 +1794,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-04",
     "bk": "E02-04",
-    "name": "王芳",
-    "personaName": "王芳",
+    "name": "体验捕手",
+    "personaName": "体验捕手",
     "field": "金融科技",
     "stance": "金融科技",
     "tags": [
       "研判"
     ],
     "summary": "擅长 金融科技",
-    "initials": "王",
+    "initials": "T",
     "style": [
       "合规第一，风险意识强"
     ],
@@ -1888,15 +1888,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-05",
     "bk": "E02-05",
-    "name": "张建国",
-    "personaName": "张建国",
+    "name": "体验参谋",
+    "personaName": "体验参谋",
     "field": "金融科技",
     "stance": "金融科技",
     "tags": [
       "研判"
     ],
     "summary": "擅长 金融科技",
-    "initials": "张",
+    "initials": "T",
     "style": [
       "平台思维，生态视角"
     ],
@@ -1982,15 +1982,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-06",
     "bk": "E02-06",
-    "name": "陈小雨",
-    "personaName": "陈小雨",
+    "name": "体验游侠",
+    "personaName": "体验游侠",
     "field": "金融科技",
     "stance": "金融科技",
     "tags": [
       "研判"
     ],
     "summary": "擅长 金融科技",
-    "initials": "陈",
+    "initials": "T",
     "style": [
       "场景化思维，用户洞察"
     ],
@@ -2076,8 +2076,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-07",
     "bk": "E02-07",
-    "name": "唐宁",
-    "personaName": "唐宁",
+    "name": "体验账房",
+    "personaName": "体验账房",
     "field": "金融科技",
     "secondaryField": "财富管理",
     "stance": "普惠金融",
@@ -2085,7 +2085,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 金融科技、普惠金融、财富管理",
-    "initials": "唐",
+    "initials": "T",
     "style": [
       "前瞻性、长期主义、务实、数据驱动、关注社会价值"
     ],
@@ -2250,15 +2250,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-08",
     "bk": "E02-08",
-    "name": "叶大清",
-    "personaName": "叶大清",
+    "name": "体验灯塔",
+    "personaName": "体验灯塔",
     "field": "金融科技",
     "stance": "金融科技",
     "tags": [
       "研判"
     ],
     "summary": "擅长 金融科技",
-    "initials": "叶",
+    "initials": "T",
     "style": [
       "用户导向，数据驱动"
     ],
@@ -2344,15 +2344,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e02-09",
     "bk": "E02-09",
-    "name": "计葵生",
-    "personaName": "计葵生",
+    "name": "体验司南",
+    "personaName": "体验司南",
     "field": "金融科技",
     "stance": "金融科技",
     "tags": [
       "研判"
     ],
     "summary": "擅长 金融科技",
-    "initials": "计",
+    "initials": "T",
     "style": [
       "国际化视野，战略思维"
     ],
@@ -2438,15 +2438,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-01",
     "bk": "E03-01",
-    "name": "王鹏",
-    "personaName": "王鹏",
+    "name": "电芯掌门",
+    "personaName": "电芯掌门",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "王",
+    "initials": "D",
     "style": [
       "技术深耕，追求能量密度"
     ],
@@ -2532,15 +2532,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-02",
     "bk": "E03-02",
-    "name": "李婷",
-    "personaName": "李婷",
+    "name": "电芯哨兵",
+    "personaName": "电芯哨兵",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "李",
+    "initials": "D",
     "style": [
       "产业视角，关注成本曲线"
     ],
@@ -2626,15 +2626,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-03",
     "bk": "E03-03",
-    "name": "张浩",
-    "personaName": "张浩",
+    "name": "电芯匠人",
+    "personaName": "电芯匠人",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "张",
+    "initials": "D",
     "style": [
       "系统集成思维，关注商业模式"
     ],
@@ -2720,15 +2720,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-04",
     "bk": "E03-04",
-    "name": "刘洋",
-    "personaName": "刘洋",
+    "name": "电芯捕手",
+    "personaName": "电芯捕手",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "刘",
+    "initials": "D",
     "style": [
       "长期主义，看好氢能未来"
     ],
@@ -2814,15 +2814,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-05",
     "bk": "E03-05",
-    "name": "陈静",
-    "personaName": "陈静",
+    "name": "电芯参谋",
+    "personaName": "电芯参谋",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "陈",
+    "initials": "D",
     "style": [
       "市场敏感，关注消费者需求"
     ],
@@ -2908,15 +2908,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-06",
     "bk": "E03-06",
-    "name": "周明",
-    "personaName": "周明",
+    "name": "电芯游侠",
+    "personaName": "电芯游侠",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "周",
+    "initials": "D",
     "style": [
       "运营导向，关注网络效应"
     ],
@@ -3002,15 +3002,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-07",
     "bk": "E03-07",
-    "name": "曾毓群",
-    "personaName": "曾毓群",
+    "name": "电芯账房",
+    "personaName": "电芯账房",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "曾",
+    "initials": "D",
     "style": [
       "技术狂，快速决策"
     ],
@@ -3096,15 +3096,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-08",
     "bk": "E03-08",
-    "name": "刘汉元",
-    "personaName": "刘汉元",
+    "name": "电芯灯塔",
+    "personaName": "电芯灯塔",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "刘",
+    "initials": "D",
     "style": [
       "实业家，成本控制大师"
     ],
@@ -3190,15 +3190,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e03-09",
     "bk": "E03-09",
-    "name": "高纪凡",
-    "personaName": "高纪凡",
+    "name": "电芯司南",
+    "personaName": "电芯司南",
     "field": "新能源",
     "stance": "新能源",
     "tags": [
       "研判"
     ],
     "summary": "擅长 新能源",
-    "initials": "高",
+    "initials": "D",
     "style": [
       "全球化视野，长期主义"
     ],
@@ -3284,15 +3284,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e04-01",
     "bk": "E04-01",
-    "name": "吴建华",
-    "personaName": "吴建华",
+    "name": "新药掌门",
+    "personaName": "新药掌门",
     "field": "医疗健康",
     "stance": "医疗健康",
     "tags": [
       "研判"
     ],
     "summary": "擅长 医疗健康",
-    "initials": "吴",
+    "initials": "X",
     "style": [
       "科学严谨，追求突破"
     ],
@@ -3378,15 +3378,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e04-02",
     "bk": "E04-02",
-    "name": "林小红",
-    "personaName": "林小红",
+    "name": "新药哨兵",
+    "personaName": "新药哨兵",
     "field": "医疗健康",
     "stance": "医疗健康",
     "tags": [
       "研判"
     ],
     "summary": "擅长 医疗健康",
-    "initials": "林",
+    "initials": "X",
     "style": [
       "工程思维，关注临床需求"
     ],
@@ -3472,15 +3472,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e04-03",
     "bk": "E04-03",
-    "name": "郑强",
-    "personaName": "郑强",
+    "name": "新药匠人",
+    "personaName": "新药匠人",
     "field": "医疗健康",
     "stance": "医疗健康",
     "tags": [
       "研判"
     ],
     "summary": "擅长 医疗健康",
-    "initials": "郑",
+    "initials": "X",
     "style": [
       "运营思维，关注服务品质"
     ],
@@ -3566,15 +3566,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e04-04",
     "bk": "E04-04",
-    "name": "王雪",
-    "personaName": "王雪",
+    "name": "新药捕手",
+    "personaName": "新药捕手",
     "field": "医疗健康",
     "stance": "医疗健康",
     "tags": [
       "研判"
     ],
     "summary": "擅长 医疗健康",
-    "initials": "王",
+    "initials": "X",
     "style": [
       "政策敏感，关注支付端"
     ],
@@ -3879,15 +3879,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e04-06",
     "bk": "E04-06",
-    "name": "赵芳",
-    "personaName": "赵芳",
+    "name": "新药游侠",
+    "personaName": "新药游侠",
     "field": "医疗健康",
     "stance": "医疗健康",
     "tags": [
       "研判"
     ],
     "summary": "擅长 医疗健康",
-    "initials": "赵",
+    "initials": "X",
     "style": [
       "技术乐观，关注医疗可及性"
     ],
@@ -3973,15 +3973,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e04-07",
     "bk": "E04-07",
-    "name": "李革",
-    "personaName": "李革",
+    "name": "新药账房",
+    "personaName": "新药账房",
     "field": "医疗健康",
     "stance": "医疗健康",
     "tags": [
       "研判"
     ],
     "summary": "擅长 医疗健康",
-    "initials": "李",
+    "initials": "X",
     "style": [
       "科学家气质，商业头脑"
     ],
@@ -4067,15 +4067,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e04-08",
     "bk": "E04-08",
-    "name": "钟睒睒",
-    "personaName": "钟睒睒",
+    "name": "新药灯塔",
+    "personaName": "新药灯塔",
     "field": "医疗健康",
     "stance": "医疗健康",
     "tags": [
       "研判"
     ],
     "summary": "擅长 医疗健康",
-    "initials": "钟",
+    "initials": "X",
     "style": [
       "低调务实，营销大师"
     ],
@@ -4161,15 +4161,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e04-09",
     "bk": "E04-09",
-    "name": "孙飘扬",
-    "personaName": "孙飘扬",
+    "name": "新药司南",
+    "personaName": "新药司南",
     "field": "医疗健康",
     "stance": "医疗健康",
     "tags": [
       "研判"
     ],
     "summary": "擅长 医疗健康",
-    "initials": "孙",
+    "initials": "X",
     "style": [
       "技术出身，创新导向"
     ],
@@ -4255,15 +4255,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e05-01",
     "bk": "E05-01",
-    "name": "周华",
-    "personaName": "周华",
+    "name": "品牌掌门",
+    "personaName": "品牌掌门",
     "field": "消费零售",
     "stance": "消费零售",
     "tags": [
       "研判"
     ],
     "summary": "擅长 消费零售",
-    "initials": "周",
+    "initials": "P",
     "style": [
       "消费者洞察，品牌思维"
     ],
@@ -4349,15 +4349,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e05-02",
     "bk": "E05-02",
-    "name": "孙丽",
-    "personaName": "孙丽",
+    "name": "品牌哨兵",
+    "personaName": "品牌哨兵",
     "field": "消费零售",
     "stance": "消费零售",
     "tags": [
       "研判"
     ],
     "summary": "擅长 消费零售",
-    "initials": "孙",
+    "initials": "P",
     "style": [
       "数据驱动，关注效率"
     ],
@@ -4443,15 +4443,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e05-03",
     "bk": "E05-03",
-    "name": "张明",
-    "personaName": "张明",
+    "name": "品牌匠人",
+    "personaName": "品牌匠人",
     "field": "消费零售",
     "stance": "消费零售",
     "tags": [
       "研判"
     ],
     "summary": "擅长 消费零售",
-    "initials": "张",
+    "initials": "P",
     "style": [
       "流量思维，内容敏感"
     ],
@@ -4537,15 +4537,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e05-04",
     "bk": "E05-04",
-    "name": "李艳",
-    "personaName": "李艳",
+    "name": "品牌捕手",
+    "personaName": "品牌捕手",
     "field": "消费零售",
     "stance": "消费零售",
     "tags": [
       "研判"
     ],
     "summary": "擅长 消费零售",
-    "initials": "李",
+    "initials": "P",
     "style": [
       "运营细节，服务至上"
     ],
@@ -4631,15 +4631,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e05-05",
     "bk": "E05-05",
-    "name": "王建国",
-    "personaName": "王建国",
+    "name": "品牌参谋",
+    "personaName": "品牌参谋",
     "field": "消费零售",
     "stance": "消费零售",
     "tags": [
       "研判"
     ],
     "summary": "擅长 消费零售",
-    "initials": "王",
+    "initials": "P",
     "style": [
       "长期主义，关注LTV"
     ],
@@ -4725,15 +4725,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e05-06",
     "bk": "E05-06",
-    "name": "叶国富",
-    "personaName": "叶国富",
+    "name": "品牌游侠",
+    "personaName": "品牌游侠",
     "field": "消费零售",
     "stance": "消费零售",
     "tags": [
       "研判"
     ],
     "summary": "擅长 消费零售",
-    "initials": "叶",
+    "initials": "P",
     "style": [
       "产品偏执狂，效率至上"
     ],
@@ -4819,15 +4819,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e05-07",
     "bk": "E05-07",
-    "name": "王岑",
-    "personaName": "王岑",
+    "name": "品牌账房",
+    "personaName": "品牌账房",
     "field": "消费零售",
     "stance": "消费零售",
     "tags": [
       "研判"
     ],
     "summary": "擅长 消费零售",
-    "initials": "王",
+    "initials": "P",
     "style": [
       "消费洞察敏锐，实战派"
     ],
@@ -4913,15 +4913,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e05-08",
     "bk": "E05-08",
-    "name": "江南春",
-    "personaName": "江南春",
+    "name": "品牌灯塔",
+    "personaName": "品牌灯塔",
     "field": "消费零售",
     "stance": "消费零售",
     "tags": [
       "研判"
     ],
     "summary": "擅长 消费零售",
-    "initials": "江",
+    "initials": "P",
     "style": [
       "营销大师，战略思维"
     ],
@@ -5007,15 +5007,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-01",
     "bk": "E06-01",
-    "name": "陈军",
-    "personaName": "陈军",
+    "name": "良率掌门",
+    "personaName": "良率掌门",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "陈",
+    "initials": "L",
     "style": [
       "工艺极致，良率至上"
     ],
@@ -5101,15 +5101,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-02",
     "bk": "E06-02",
-    "name": "刘洋",
-    "personaName": "刘洋",
+    "name": "良率哨兵",
+    "personaName": "良率哨兵",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "刘",
+    "initials": "L",
     "style": [
       "架构思维，性能优先"
     ],
@@ -5195,15 +5195,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-03",
     "bk": "E06-03",
-    "name": "张敏",
-    "personaName": "张敏",
+    "name": "良率匠人",
+    "personaName": "良率匠人",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "张",
+    "initials": "L",
     "style": [
       "精密工程，系统思维"
     ],
@@ -5289,15 +5289,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-04",
     "bk": "E06-04",
-    "name": "王强",
-    "personaName": "王强",
+    "name": "良率捕手",
+    "personaName": "良率捕手",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "王",
+    "initials": "L",
     "style": [
       "系统集成，成本敏感"
     ],
@@ -5383,15 +5383,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-05",
     "bk": "E06-05",
-    "name": "李芳",
-    "personaName": "李芳",
+    "name": "良率参谋",
+    "personaName": "良率参谋",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "李",
+    "initials": "L",
     "style": [
       "材料科学，纯度和工艺"
     ],
@@ -5477,15 +5477,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-06",
     "bk": "E06-06",
-    "name": "赵刚",
-    "personaName": "赵刚",
+    "name": "良率游侠",
+    "personaName": "良率游侠",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "赵",
+    "initials": "L",
     "style": [
       "应用导向，可靠性第一"
     ],
@@ -5571,15 +5571,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-07",
     "bk": "E06-07",
-    "name": "张忠谋",
-    "personaName": "张忠谋",
+    "name": "良率账房",
+    "personaName": "良率账房",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "张",
+    "initials": "L",
     "style": [
       "战略眼光，长期主义"
     ],
@@ -5665,15 +5665,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-08",
     "bk": "E06-08",
-    "name": "梁孟松",
-    "personaName": "梁孟松",
+    "name": "良率灯塔",
+    "personaName": "良率灯塔",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "梁",
+    "initials": "L",
     "style": [
       "技术天才，专注研发"
     ],
@@ -5759,15 +5759,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e06-09",
     "bk": "E06-09",
-    "name": "虞仁荣",
-    "personaName": "虞仁荣",
+    "name": "良率司南",
+    "personaName": "良率司南",
     "field": "半导体",
     "stance": "半导体",
     "tags": [
       "研判"
     ],
     "summary": "擅长 半导体",
-    "initials": "虞",
+    "initials": "L",
     "style": [
       "并购整合高手，战略眼光"
     ],
@@ -5853,15 +5853,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-01",
     "bk": "E07-01",
-    "name": "杨强",
-    "personaName": "杨强",
+    "name": "智能掌门",
+    "personaName": "智能掌门",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "杨",
+    "initials": "Z",
     "style": [
       "算法创新，关注泛化能力"
     ],
@@ -5947,15 +5947,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-02",
     "bk": "E07-02",
-    "name": "林小红",
-    "personaName": "林小红",
+    "name": "智能哨兵",
+    "personaName": "智能哨兵",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "林",
+    "initials": "Z",
     "style": [
       "语言理解，关注应用场景"
     ],
@@ -6041,15 +6041,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-03",
     "bk": "E07-03",
-    "name": "王鹏",
-    "personaName": "王鹏",
+    "name": "智能匠人",
+    "personaName": "智能匠人",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "王",
+    "initials": "Z",
     "style": [
       "工程导向，关注落地"
     ],
@@ -6135,15 +6135,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-04",
     "bk": "E07-04",
-    "name": "陈静",
-    "personaName": "陈静",
+    "name": "智能捕手",
+    "personaName": "智能捕手",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "陈",
+    "initials": "Z",
     "style": [
       "软硬件协同，性能至上"
     ],
@@ -6229,15 +6229,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-05",
     "bk": "E07-05",
-    "name": "张华",
-    "personaName": "张华",
+    "name": "智能参谋",
+    "personaName": "智能参谋",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "张",
+    "initials": "Z",
     "style": [
       "产品思维，关注用户价值"
     ],
@@ -6323,15 +6323,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-06",
     "bk": "E07-06",
-    "name": "李明",
-    "personaName": "李明",
+    "name": "智能游侠",
+    "personaName": "智能游侠",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "李",
+    "initials": "Z",
     "style": [
       "审慎，关注长期风险"
     ],
@@ -6417,15 +6417,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-07",
     "bk": "E07-07",
-    "name": "吴恩达",
-    "personaName": "吴恩达",
+    "name": "智能账房",
+    "personaName": "智能账房",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "吴",
+    "initials": "Z",
     "style": [
       "教育情怀，技术乐观主义"
     ],
@@ -6511,15 +6511,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-08",
     "bk": "E07-08",
-    "name": "颜水成",
-    "personaName": "颜水成",
+    "name": "智能灯塔",
+    "personaName": "智能灯塔",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "颜",
+    "initials": "Z",
     "style": [
       "学术严谨，工程实践"
     ],
@@ -6605,15 +6605,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-09",
     "bk": "E07-09",
-    "name": "周靖人",
-    "personaName": "周靖人",
+    "name": "智能司南",
+    "personaName": "智能司南",
     "field": "人工智能",
     "stance": "人工智能",
     "tags": [
       "研判"
     ],
     "summary": "擅长 人工智能",
-    "initials": "周",
+    "initials": "Z",
     "style": [
       "技术战略思维，云原生"
     ],
@@ -6699,8 +6699,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e07-10",
     "bk": "E07-10",
-    "name": "谷文栋",
-    "personaName": "谷文栋",
+    "name": "智能观察家",
+    "personaName": "智能观察家",
     "field": "大模型",
     "secondaryField": "AI工程化",
     "stance": "机器学习",
@@ -6709,7 +6709,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 大模型、机器学习、AI工程化",
-    "initials": "谷",
+    "initials": "Z",
     "style": [
       "工程与科研双修，先辨问题类别再选技术路线，反对堆概念"
     ],
@@ -6885,15 +6885,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-01",
     "bk": "E08-01",
-    "name": "王建国",
-    "personaName": "王建国",
+    "name": "营造掌门",
+    "personaName": "营造掌门",
     "field": "房地产",
     "stance": "房地产",
     "tags": [
       "研判"
     ],
     "summary": "擅长 房地产",
-    "initials": "王",
+    "initials": "Y",
     "style": [
       "稳健经营，产品主义"
     ],
@@ -6979,15 +6979,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-02",
     "bk": "E08-02",
-    "name": "李芳",
-    "personaName": "李芳",
+    "name": "营造哨兵",
+    "personaName": "营造哨兵",
     "field": "房地产",
     "stance": "房地产",
     "tags": [
       "研判"
     ],
     "summary": "擅长 房地产",
-    "initials": "李",
+    "initials": "Y",
     "style": [
       "资产运营，现金流导向"
     ],
@@ -7073,15 +7073,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-03",
     "bk": "E08-03",
-    "name": "张明",
-    "personaName": "张明",
+    "name": "营造匠人",
+    "personaName": "营造匠人",
     "field": "房地产",
     "stance": "房地产",
     "tags": [
       "研判"
     ],
     "summary": "擅长 房地产",
-    "initials": "张",
+    "initials": "Y",
     "style": [
       "服务思维，长期主义"
     ],
@@ -7167,15 +7167,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-04",
     "bk": "E08-04",
-    "name": "陈华",
-    "personaName": "陈华",
+    "name": "营造捕手",
+    "personaName": "营造捕手",
     "field": "房地产",
     "stance": "房地产",
     "tags": [
       "研判"
     ],
     "summary": "擅长 房地产",
-    "initials": "陈",
+    "initials": "Y",
     "style": [
       "城市规划，产城融合"
     ],
@@ -7261,15 +7261,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-05",
     "bk": "E08-05",
-    "name": "刘洋",
-    "personaName": "刘洋",
+    "name": "营造参谋",
+    "personaName": "营造参谋",
     "field": "房地产",
     "stance": "房地产",
     "tags": [
       "研判"
     ],
     "summary": "擅长 房地产",
-    "initials": "刘",
+    "initials": "Y",
     "style": [
       "金融思维，风险敏感"
     ],
@@ -7355,15 +7355,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-06",
     "bk": "E08-06",
-    "name": "吴亚军",
-    "personaName": "吴亚军",
+    "name": "营造游侠",
+    "personaName": "营造游侠",
     "field": "房地产",
     "stance": "房地产",
     "tags": [
       "研判"
     ],
     "summary": "擅长 房地产",
-    "initials": "吴",
+    "initials": "Y",
     "style": [
       "品质至上，稳健经营"
     ],
@@ -7449,15 +7449,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-07",
     "bk": "E08-07",
-    "name": "林中",
-    "personaName": "林中",
+    "name": "营造账房",
+    "personaName": "营造账房",
     "field": "房地产",
     "stance": "房地产",
     "tags": [
       "研判"
     ],
     "summary": "擅长 房地产",
-    "initials": "林",
+    "initials": "Y",
     "style": [
       "战略清晰，管理精细"
     ],
@@ -7543,8 +7543,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-08",
     "bk": "E08-08",
-    "name": "左晖",
-    "personaName": "左晖",
+    "name": "难而正确君",
+    "personaName": "难而正确君",
     "field": "房地产",
     "secondaryField": "服务品质",
     "stance": "平台经济",
@@ -7553,7 +7553,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 房地产、平台经济、服务品质",
-    "initials": "左",
+    "initials": "N",
     "style": [
       "沉稳、理性、注重逻辑与数据，善于穿透表象直击本质"
     ],
@@ -7714,8 +7714,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e08-09",
     "bk": "E08-09",
-    "name": "魏行空",
-    "personaName": "魏行空",
+    "name": "营造司南",
+    "personaName": "营造司南",
     "field": "资产配置",
     "secondaryField": "房产估值与算法",
     "stance": "不动产金融",
@@ -7724,7 +7724,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "实操"
     ],
     "summary": "擅长 资产配置、不动产金融、房产估值与算法",
-    "initials": "魏",
+    "initials": "Y",
     "style": [
       "务实直接、工程化解构金融问题；消息简洁，直奔主题，少寒暄"
     ],
@@ -8008,15 +8008,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-01",
     "bk": "E09-01",
-    "name": "张晓明",
-    "personaName": "张晓明",
+    "name": "故事掌门",
+    "personaName": "故事掌门",
     "field": "文化传媒",
     "stance": "文化传媒",
     "tags": [
       "研判"
     ],
     "summary": "擅长 文化传媒",
-    "initials": "张",
+    "initials": "G",
     "style": [
       "故事思维，用户洞察"
     ],
@@ -8102,15 +8102,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-02",
     "bk": "E09-02",
-    "name": "李芳",
-    "personaName": "李芳",
+    "name": "故事哨兵",
+    "personaName": "故事哨兵",
     "field": "文化传媒",
     "stance": "文化传媒",
     "tags": [
       "研判"
     ],
     "summary": "擅长 文化传媒",
-    "initials": "李",
+    "initials": "G",
     "style": [
       "算法思维，流量敏感"
     ],
@@ -8196,15 +8196,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-03",
     "bk": "E09-03",
-    "name": "王强",
-    "personaName": "王强",
+    "name": "故事匠人",
+    "personaName": "故事匠人",
     "field": "文化传媒",
     "stance": "文化传媒",
     "tags": [
       "研判"
     ],
     "summary": "擅长 文化传媒",
-    "initials": "王",
+    "initials": "G",
     "style": [
       "长期主义，品牌思维"
     ],
@@ -8290,15 +8290,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-04",
     "bk": "E09-04",
-    "name": "陈静",
-    "personaName": "陈静",
+    "name": "故事捕手",
+    "personaName": "故事捕手",
     "field": "文化传媒",
     "stance": "文化传媒",
     "tags": [
       "研判"
     ],
     "summary": "擅长 文化传媒",
-    "initials": "陈",
+    "initials": "G",
     "style": [
       "玩法创新，数据驱动"
     ],
@@ -8384,15 +8384,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-05",
     "bk": "E09-05",
-    "name": "刘芳",
-    "personaName": "刘芳",
+    "name": "故事参谋",
+    "personaName": "故事参谋",
     "field": "文化传媒",
     "stance": "文化传媒",
     "tags": [
       "研判"
     ],
     "summary": "擅长 文化传媒",
-    "initials": "刘",
+    "initials": "G",
     "style": [
       "效果导向，创意驱动"
     ],
@@ -8478,15 +8478,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-06",
     "bk": "E09-06",
-    "name": "陈睿",
-    "personaName": "陈睿",
+    "name": "故事游侠",
+    "personaName": "故事游侠",
     "field": "文化传媒",
     "stance": "文化传媒",
     "tags": [
       "研判"
     ],
     "summary": "擅长 文化传媒",
-    "initials": "陈",
+    "initials": "G",
     "style": [
       "理性冷静，社区信仰"
     ],
@@ -8572,15 +8572,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-07",
     "bk": "E09-07",
-    "name": "龚宇",
-    "personaName": "龚宇",
+    "name": "故事账房",
+    "personaName": "故事账房",
     "field": "文化传媒",
     "stance": "文化传媒",
     "tags": [
       "研判"
     ],
     "summary": "擅长 文化传媒",
-    "initials": "龚",
+    "initials": "G",
     "style": [
       "技术背景，内容战略"
     ],
@@ -8666,15 +8666,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-08",
     "bk": "E09-08",
-    "name": "樊路远",
-    "personaName": "樊路远",
+    "name": "故事灯塔",
+    "personaName": "故事灯塔",
     "field": "文化传媒",
     "stance": "文化传媒",
     "tags": [
       "研判"
     ],
     "summary": "擅长 文化传媒",
-    "initials": "樊",
+    "initials": "G",
     "style": [
       "互联网背景，生态思维"
     ],
@@ -8760,8 +8760,8 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e09-09",
     "bk": "E09-09",
-    "name": "李白",
-    "personaName": "李白",
+    "name": "故事司南",
+    "personaName": "故事司南",
     "field": "文化传媒",
     "secondaryField": "品牌叙事",
     "stance": "诗歌创作",
@@ -8769,7 +8769,7 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
       "研判"
     ],
     "summary": "擅长 文化传媒、诗歌创作、品牌叙事",
-    "initials": "李",
+    "initials": "G",
     "style": [
       "想象力极强，善用夸张与意象，先立情绪峰值再落观点"
     ],
@@ -8950,15 +8950,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e10-01",
     "bk": "E10-01",
-    "name": "王强",
-    "personaName": "王强",
+    "name": "效率掌门",
+    "personaName": "效率掌门",
     "field": "先进制造",
     "stance": "先进制造",
     "tags": [
       "研判"
     ],
     "summary": "擅长 先进制造",
-    "initials": "王",
+    "initials": "X",
     "style": [
       "自动化思维，效率至上"
     ],
@@ -9044,15 +9044,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e10-02",
     "bk": "E10-02",
-    "name": "李明",
-    "personaName": "李明",
+    "name": "效率哨兵",
+    "personaName": "效率哨兵",
     "field": "先进制造",
     "stance": "先进制造",
     "tags": [
       "研判"
     ],
     "summary": "擅长 先进制造",
-    "initials": "李",
+    "initials": "X",
     "style": [
       "质量第一，安全至上"
     ],
@@ -9138,15 +9138,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e10-03",
     "bk": "E10-03",
-    "name": "张芳",
-    "personaName": "张芳",
+    "name": "效率匠人",
+    "personaName": "效率匠人",
     "field": "先进制造",
     "stance": "先进制造",
     "tags": [
       "研判"
     ],
     "summary": "擅长 先进制造",
-    "initials": "张",
+    "initials": "X",
     "style": [
       "数字化转型，系统思维"
     ],
@@ -9232,15 +9232,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e10-04",
     "bk": "E10-04",
-    "name": "陈华",
-    "personaName": "陈华",
+    "name": "效率捕手",
+    "personaName": "效率捕手",
     "field": "先进制造",
     "stance": "先进制造",
     "tags": [
       "研判"
     ],
     "summary": "擅长 先进制造",
-    "initials": "陈",
+    "initials": "X",
     "style": [
       "材料创新，应用导向"
     ],
@@ -9326,15 +9326,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e10-05",
     "bk": "E10-05",
-    "name": "刘洋",
-    "personaName": "刘洋",
+    "name": "效率参谋",
+    "personaName": "效率参谋",
     "field": "先进制造",
     "stance": "先进制造",
     "tags": [
       "研判"
     ],
     "summary": "擅长 先进制造",
-    "initials": "刘",
+    "initials": "X",
     "style": [
       "精度追求，工艺专家"
     ],
@@ -9420,15 +9420,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e10-06",
     "bk": "E10-06",
-    "name": "谭旭光",
-    "personaName": "谭旭光",
+    "name": "效率游侠",
+    "personaName": "效率游侠",
     "field": "先进制造",
     "stance": "先进制造",
     "tags": [
       "研判"
     ],
     "summary": "擅长 先进制造",
-    "initials": "谭",
+    "initials": "X",
     "style": [
       "铁腕管理，国际化视野"
     ],
@@ -9514,15 +9514,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e10-07",
     "bk": "E10-07",
-    "name": "曾光安",
-    "personaName": "曾光安",
+    "name": "效率账房",
+    "personaName": "效率账房",
     "field": "先进制造",
     "stance": "先进制造",
     "tags": [
       "研判"
     ],
     "summary": "擅长 先进制造",
-    "initials": "曾",
+    "initials": "X",
     "style": [
       "国际化，创新驱动"
     ],
@@ -9608,15 +9608,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e10-08",
     "bk": "E10-08",
-    "name": "高德康",
-    "personaName": "高德康",
+    "name": "效率灯塔",
+    "personaName": "效率灯塔",
     "field": "先进制造",
     "stance": "先进制造",
     "tags": [
       "研判"
     ],
     "summary": "擅长 先进制造",
-    "initials": "高",
+    "initials": "X",
     "style": [
       "工匠精神，品牌情怀"
     ],
@@ -9702,15 +9702,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e11-01",
     "bk": "E11-01",
-    "name": "王芳",
-    "personaName": "王芳",
+    "name": "双碳掌门",
+    "personaName": "双碳掌门",
     "field": "ESG可持续",
     "stance": "ESG可持续",
     "tags": [
       "研判"
     ],
     "summary": "擅长 ESG可持续",
-    "initials": "王",
+    "initials": "S",
     "style": [
       "科学严谨，政策敏感"
     ],
@@ -9796,15 +9796,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e11-02",
     "bk": "E11-02",
-    "name": "李明",
-    "personaName": "李明",
+    "name": "双碳哨兵",
+    "personaName": "双碳哨兵",
     "field": "ESG可持续",
     "stance": "ESG可持续",
     "tags": [
       "研判"
     ],
     "summary": "擅长 ESG可持续",
-    "initials": "李",
+    "initials": "S",
     "style": [
       "投资视角，长期主义"
     ],
@@ -9890,15 +9890,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e11-03",
     "bk": "E11-03",
-    "name": "张华",
-    "personaName": "张华",
+    "name": "双碳匠人",
+    "personaName": "双碳匠人",
     "field": "ESG可持续",
     "stance": "ESG可持续",
     "tags": [
       "研判"
     ],
     "summary": "擅长 ESG可持续",
-    "initials": "张",
+    "initials": "S",
     "style": [
       "金融创新，环境导向"
     ],
@@ -9984,15 +9984,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e11-04",
     "bk": "E11-04",
-    "name": "陈静",
-    "personaName": "陈静",
+    "name": "双碳捕手",
+    "personaName": "双碳捕手",
     "field": "ESG可持续",
     "stance": "ESG可持续",
     "tags": [
       "研判"
     ],
     "summary": "擅长 ESG可持续",
-    "initials": "陈",
+    "initials": "S",
     "style": [
       "系统思维，资源效率"
     ],
@@ -10078,15 +10078,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e11-05",
     "bk": "E11-05",
-    "name": "刘洋",
-    "personaName": "刘洋",
+    "name": "双碳参谋",
+    "personaName": "双碳参谋",
     "field": "ESG可持续",
     "stance": "ESG可持续",
     "tags": [
       "研判"
     ],
     "summary": "擅长 ESG可持续",
-    "initials": "刘",
+    "initials": "S",
     "style": [
       "社会影响，利益相关方"
     ],
@@ -10172,15 +10172,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e11-06",
     "bk": "E11-06",
-    "name": "马骏",
-    "personaName": "马骏",
+    "name": "双碳游侠",
+    "personaName": "双碳游侠",
     "field": "ESG可持续",
     "stance": "ESG可持续",
     "tags": [
       "研判"
     ],
     "summary": "擅长 ESG可持续",
-    "initials": "马",
+    "initials": "S",
     "style": [
       "政策研究，国际视野"
     ],
@@ -10266,15 +10266,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e11-07",
     "bk": "E11-07",
-    "name": "张希良",
-    "personaName": "张希良",
+    "name": "双碳账房",
+    "personaName": "双碳账房",
     "field": "ESG可持续",
     "stance": "ESG可持续",
     "tags": [
       "研判"
     ],
     "summary": "擅长 ESG可持续",
-    "initials": "张",
+    "initials": "S",
     "style": [
       "学术研究，政策参与"
     ],
@@ -10360,15 +10360,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e11-08",
     "bk": "E11-08",
-    "name": "龙平芳",
-    "personaName": "龙平芳",
+    "name": "双碳灯塔",
+    "personaName": "双碳灯塔",
     "field": "ESG可持续",
     "stance": "ESG可持续",
     "tags": [
       "研判"
     ],
     "summary": "擅长 ESG可持续",
-    "initials": "龙",
+    "initials": "S",
     "style": [
       "数据驱动，标准建设"
     ],
@@ -10454,15 +10454,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e12-01",
     "bk": "E12-01",
-    "name": "张明",
-    "personaName": "张明",
+    "name": "扬帆掌门",
+    "personaName": "扬帆掌门",
     "field": "跨境出海",
     "stance": "跨境出海",
     "tags": [
       "研判"
     ],
     "summary": "擅长 跨境出海",
-    "initials": "张",
+    "initials": "Y",
     "style": [
       "流量思维，供应链优势"
     ],
@@ -10548,15 +10548,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e12-02",
     "bk": "E12-02",
-    "name": "王芳",
-    "personaName": "王芳",
+    "name": "扬帆哨兵",
+    "personaName": "扬帆哨兵",
     "field": "跨境出海",
     "stance": "跨境出海",
     "tags": [
       "研判"
     ],
     "summary": "擅长 跨境出海",
-    "initials": "王",
+    "initials": "Y",
     "style": [
       "合规第一，风险意识"
     ],
@@ -10642,15 +10642,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e12-03",
     "bk": "E12-03",
-    "name": "李强",
-    "personaName": "李强",
+    "name": "扬帆匠人",
+    "personaName": "扬帆匠人",
     "field": "跨境出海",
     "stance": "跨境出海",
     "tags": [
       "研判"
     ],
     "summary": "擅长 跨境出海",
-    "initials": "李",
+    "initials": "Y",
     "style": [
       "创意驱动，数据优化"
     ],
@@ -10736,15 +10736,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e12-04",
     "bk": "E12-04",
-    "name": "陈华",
-    "personaName": "陈华",
+    "name": "扬帆捕手",
+    "personaName": "扬帆捕手",
     "field": "跨境出海",
     "stance": "跨境出海",
     "tags": [
       "研判"
     ],
     "summary": "擅长 跨境出海",
-    "initials": "陈",
+    "initials": "Y",
     "style": [
       "合规严谨，风险规避"
     ],
@@ -10830,15 +10830,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e12-05",
     "bk": "E12-05",
-    "name": "刘静",
-    "personaName": "刘静",
+    "name": "扬帆参谋",
+    "personaName": "扬帆参谋",
     "field": "跨境出海",
     "stance": "跨境出海",
     "tags": [
       "研判"
     ],
     "summary": "擅长 跨境出海",
-    "initials": "刘",
+    "initials": "Y",
     "style": [
       "效率导向，成本控制"
     ],
@@ -10924,15 +10924,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e12-06",
     "bk": "E12-06",
-    "name": "阳萌",
-    "personaName": "阳萌",
+    "name": "扬帆游侠",
+    "personaName": "扬帆游侠",
     "field": "跨境出海",
     "stance": "跨境出海",
     "tags": [
       "研判"
     ],
     "summary": "擅长 跨境出海",
-    "initials": "阳",
+    "initials": "Y",
     "style": [
       "产品驱动，品牌思维"
     ],
@@ -11018,15 +11018,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e12-07",
     "bk": "E12-07",
-    "name": "文俊杰",
-    "personaName": "文俊杰",
+    "name": "扬帆账房",
+    "personaName": "扬帆账房",
     "field": "跨境出海",
     "stance": "跨境出海",
     "tags": [
       "研判"
     ],
     "summary": "擅长 跨境出海",
-    "initials": "文",
+    "initials": "Y",
     "style": [
       "供应链专家，数据驱动"
     ],
@@ -11112,15 +11112,15 @@ export const PIPELINE_EXPERTS: readonly ZhijianExpertMeta[] = [
   {
     "id": "e12-08",
     "bk": "E12-08",
-    "name": "郑焕",
-    "personaName": "郑焕",
+    "name": "扬帆灯塔",
+    "personaName": "扬帆灯塔",
     "field": "跨境出海",
     "stance": "跨境出海",
     "tags": [
       "研判"
     ],
     "summary": "擅长 跨境出海",
-    "initials": "郑",
+    "initials": "Y",
     "style": [
       "转型勇气，品牌坚持"
     ],
