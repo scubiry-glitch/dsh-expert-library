@@ -91,6 +91,21 @@ async function callManage(path, init, endpoint) {
         : 'refused: the manage token was rejected',
     )
   }
+  // The gateway's own browser-session gate answers before any plugin handler,
+  // so a CLI without a session cookie lands here. Say so explicitly: an empty
+  // result would otherwise read as "no packs installed" — a silent lie.
+  if (res.status === 401) {
+    throw new Error(
+      'refused by the gateway auth gate (401). The manage surface sits behind the platform browser '
+      + 'session, which this CLI does not carry — use the settings page card, or run against a '
+      + 'gateway whose auth gate is disabled.',
+    )
+  }
+  // Any other error status without a structured body is a transport-level
+  // failure, not a business answer; never let it look like an empty result.
+  if (body === null && res.status >= 400) {
+    throw new Error(`HTTP ${res.status} from ${path} (no JSON body)`)
+  }
   return { status: res.status, body }
 }
 
@@ -224,4 +239,12 @@ async function main() {
   return 2
 }
 
-process.exitCode = await main()
+// Report refusals as one line, not a stack: every failure this CLI raises is an
+// operator-facing condition (auth, unreachable gateway, refused pack), and the
+// stack only buries the sentence that matters.
+try {
+  process.exitCode = await main()
+} catch (error) {
+  console.error(error instanceof Error ? error.message : String(error))
+  process.exitCode = 1
+}
