@@ -68,6 +68,11 @@ export interface ToolsConfig {
   knowledgeDir: string
   /** Domain pack directory name under each workspace root (read-only preview surface). */
   packsDir: string
+  /**
+   * Shared token admitting non-loopback access to `/manage/*`. Absent means
+   * the write surface is loopback-only. Never logged.
+   */
+  manageToken?: string
   /** Workspace domain pack ids enabled for runtime compile; absent/empty = every valid workspace pack. */
   enabledPacks?: readonly string[]
   /** Workspace domain pack id order (first = highest precedence); absent = discovery order. */

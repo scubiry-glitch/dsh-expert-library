@@ -47,6 +47,7 @@ import { readTeam } from './state.ts'
 import type { TeamState } from './types.ts'
 import { droppedSessionEvents } from './events.ts'
 import { handleManage } from './host/manage.ts'
+import { authorizeManageRequest, resolveManageToken } from './host/auth.ts'
 import {
   installExpertLibrarySettings,
   type ExpertLibrarySettings,
@@ -226,6 +227,12 @@ export interface Config {
   knowledgeDir?: string
   /** Domain pack directory name under each workspace root (default `domain-packs`). */
   packsDir?: string
+  /**
+   * Shared token admitting non-loopback access to `/manage/*`. Prefer the
+   * {@link MANAGE_TOKEN_ENV} environment variable so the secret stays out of
+   * the settings file. Unset means the write surface is loopback-only.
+   */
+  manageToken?: string
   /** Prompt-section order for the usage policy (default `117`, after delegation policy). */
   promptSectionOrder?: number
   /** Whether the usage policy section is announced to agents (default `true`). */
@@ -299,6 +306,7 @@ export const Config: z<Config> = z.object({
   maxMembers: z.natural().min(1).default(8),
   knowledgeDir: z.string().default('knowledge'),
   packsDir: z.string().default('domain-packs'),
+  manageToken: z.string().default(''),
   promptSectionOrder: z.natural().default(117),
   announceToAgent: z.boolean().default(true),
   defaultModel: memberModelSchema,
@@ -364,6 +372,7 @@ export function apply(ctx: Context, config: Config): void {
     maxMembers: config.maxMembers ?? 8,
     knowledgeDir: config.knowledgeDir ?? 'knowledge',
     packsDir: config.packsDir ?? 'domain-packs',
+    manageToken: config.manageToken,
     enabledPacks: config.enabledPacks,
     packPriority: config.packPriority,
     expertModelOverrides: config.expertModelOverrides,
@@ -505,6 +514,7 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.maxMembers = value.maxMembers ?? 8
     runtimeConfig.knowledgeDir = value.knowledgeDir ?? 'knowledge'
     runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
+    runtimeConfig.manageToken = value.manageToken
     runtimeConfig.enabledPacks = value.enabledPacks
     runtimeConfig.packPriority = value.packPriority
     runtimeConfig.expertModelOverrides = value.expertModelOverrides
@@ -939,6 +949,20 @@ export function apply(ctx: Context, config: Config): void {
     kind: 'prefix',
     path: '/plugins/dsh-expert-library/manage',
     handler: async (req, res) => {
+      // The plugin's write surface is not covered by the Harness browser-auth
+      // gate (measured: `/plugins/*` answers 200 unauthenticated on both the
+      // loopback and the public authority), so every route below — reads
+      // included, since `knowledge-roots` discloses filesystem paths — passes
+      // the loopback/token fence first. Fail-closed: see host/auth.ts.
+      const decision = authorizeManageRequest(
+        { headers: req.headers, remoteAddress: req.socket?.remoteAddress },
+        resolveManageToken(runtimeConfig.manageToken),
+      )
+      if (!decision.ok) {
+        res.writeHead(403, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' })
+        res.end(JSON.stringify({ ok: false, error: `manage surface refused: ${decision.reason}` }))
+        return
+      }
       const url = new URL(req.url ?? '/', 'http://x')
       const registry = (ctx.get(WORKSPACE_KEYS[0]) ?? ctx.get(WORKSPACE_KEYS[1])) as
         | { list(): Array<{ path: string }> }
