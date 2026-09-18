@@ -41,6 +41,8 @@ export interface RuntimePackSelection {
   readonly enabledPacks?: readonly string[]
   /** Workspace pack id order (first = highest precedence); absent = discovery order. */
   readonly packPriority?: readonly string[]
+  /** Absolute directory of packs vendored from external sources; empty = none. */
+  readonly vendorPacksDir?: string
 }
 
 /** Result of resolving the runtime pack. */
@@ -148,7 +150,7 @@ export async function resolveRuntimePack(
   const selectionKey = selectionKeyOf(selection)
   const cacheKey = `${base.pack.id}\u0000${selectionKey}`
 
-  const dirs = await discoverPackDirs(ctx, selection.packsDir)
+  const dirs = await discoverPackDirs(ctx, selection.packsDir, selection.vendorPacksDir ?? '')
   const enabled = selection.enabledPacks === undefined
     ? undefined
     : new Set(selection.enabledPacks.filter(id => id !== ''))

@@ -248,16 +248,33 @@ export async function discoverPackDirsIn(base: string, packsDir: string): Promis
   return out
 }
 
-/** List pack directories across every workspace root, first hit per dir wins. */
-export async function discoverPackDirs(ctx: Context, packsDir: string = DEFAULT_PACKS_DIR): Promise<readonly PackDir[]> {
+/**
+ * List pack directories across every workspace root, first hit per dir wins.
+ *
+ * `vendorRoot` is an **absolute** directory of packs vendored from external
+ * sources (see host/pack-source.ts). It is scanned last so a workspace copy of
+ * the same id keeps precedence, and its children are enumerated directly —
+ * unlike a workspace root it is not `<base>/<packsDir>` shaped.
+ */
+export async function discoverPackDirs(
+  ctx: Context,
+  packsDir: string = DEFAULT_PACKS_DIR,
+  vendorRoot = '',
+): Promise<readonly PackDir[]> {
   const out: PackDir[] = []
   const seen = new Set<string>()
-  for (const workspace of workspaceRootsOf(ctx)) {
-    for (const item of await discoverPackDirsIn(workspace, packsDir)) {
+  const add = async (items: readonly PackDir[]): Promise<void> => {
+    for (const item of items) {
       if (seen.has(item.dir)) continue
       seen.add(item.dir)
       out.push(item)
     }
+  }
+  for (const workspace of workspaceRootsOf(ctx)) {
+    await add(await discoverPackDirsIn(workspace, packsDir))
+  }
+  if (vendorRoot.trim() !== '') {
+    await add(await discoverPackDirsIn(vendorRoot, '.'))
   }
   return out
 }

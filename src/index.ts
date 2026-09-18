@@ -1007,7 +1007,7 @@ export function apply(ctx: Context, config: Config): void {
         // precedence, silently overwriting).
         knownPackIds: async () => {
           const ids = new Set<string>()
-          for (const dir of await discoverPackDirs(ctx, runtimeConfig.packsDir ?? 'domain-packs')) {
+          for (const dir of await discoverPackDirs(ctx, runtimeConfig.packsDir ?? 'domain-packs', runtimeConfig.vendorPacksDir ?? '')) {
             const loaded = await loadPackFromDir(dir.dir)
             if (loaded.pack !== undefined) ids.add(loaded.pack.pack.id)
           }
@@ -1061,7 +1061,7 @@ export function apply(ctx: Context, config: Config): void {
           seen.add(pack.dir)
           packDirs.push(pack)
         }
-        for (const pack of await discoverPackDirs(ctx, packsDir)) {
+        for (const pack of await discoverPackDirs(ctx, packsDir, runtimeConfig.vendorPacksDir ?? '')) {
           if (seen.has(pack.dir)) continue
           seen.add(pack.dir)
           packDirs.push(pack)

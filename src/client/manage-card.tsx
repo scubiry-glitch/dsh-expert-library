@@ -32,6 +32,19 @@ interface KnowledgeRootsWire {
   readonly skillsDir?: string
 }
 
+/**
+ * 一个已入库的外部来源包（GET /manage/packs/registry）。
+ * `state` 由 host 重算树摘要得出：clean = 与入库时一致，modified = 本地被改过。
+ */
+interface VendoredPackWire {
+  readonly id: string
+  readonly locator: string
+  readonly revision: string
+  readonly trust: string
+  readonly state: string
+  readonly rollbackAvailable: boolean
+}
+
 /** 一个已存在的自定义专家（GET /manage/experts）。 */
 interface ManagedExpertWire {
   readonly id: string
@@ -252,6 +265,9 @@ export function ManageCard(_props: ManageCardProps) {
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
   const [tokenDraft, setTokenDraft] = useState(manageToken)
+  const [sources, setSources] = useState<readonly VendoredPackWire[]>([])
+  const [locator, setLocator] = useState('')
+  const [sourceRef, setSourceRef] = useState('')
 
   // ── 编辑器状态 ────────────────────────────────────────────────────────────
   const [mode, setMode] = useState<'expert' | 'scenario'>('expert')
@@ -286,9 +302,93 @@ export function ManageCard(_props: ManageCardProps) {
     setPacks(packsValue)
   }
 
+  /** 已入库的外部来源包。授权失败时静默留空——授权区自己会说明原因。 */
+  const refreshSources = async (): Promise<void> => {
+    const value = await listFetch<VendoredPackWire>(`${MANAGE_BASE}/packs/registry`, 'packs')
+    setSources(value)
+  }
+
   useEffect(() => {
     void refresh()
+    void refreshSources()
   }, [])
+
+  /** 外部来源：拉取 → 校验 → 入库。未列入白名单的 host 会先回报告等确认。 */
+  const onboard = async (approve: boolean): Promise<void> => {
+    const target = locator.trim()
+    if (target === '') return
+    setBusy('onboard')
+    setError('')
+    setMessage('')
+    const payload: Record<string, unknown> = { locator: target, approve }
+    if (sourceRef.trim() !== '') payload.ref = sourceRef.trim()
+    try {
+      const res = await fetch(`${MANAGE_BASE}/packs/onboard`, {
+        method: 'POST',
+        cache: 'no-store' as RequestCache,
+        headers: manageHeaders({ 'content-type': 'application/json' }),
+        body: JSON.stringify(payload),
+      })
+      const value: unknown = await res.json()
+      const body = isRecord(value) ? value : {}
+      if (body['ok'] === true) {
+        setMessage(`已入库 ${String(body['packId'])} @ ${String(body['revision']).slice(0, 12)}（${String(body['trust'])}，drift=${String(body['drift'])}）。`)
+        await refreshSources()
+      } else if (body['needsReview'] === true) {
+        const invalid = body['valid'] === false
+        setError(
+          `该 host 不在白名单，未入库。已拉到 ${String(body['revision']).slice(0, 12)}，`
+          + `包 id ${String(body['packId'] ?? '（未解析）')}，校验${invalid ? '未通过' : '通过'}。`
+          + `${invalid ? '先修掉诊断再提交。' : '确认无误后点「确认入库」。'}`,
+        )
+      } else {
+        setError(describeAuthFailure(res.status, typeof body['error'] === 'string' ? body['error'] : undefined))
+      }
+    } catch (cause) {
+      setError(`入库失败：${String(cause)}`)
+    } finally {
+      setBusy('')
+    }
+  }
+
+  /** 回退到入库时记录的上一版。 */
+  const rollbackSource = async (id: string): Promise<void> => {
+    setBusy(`rollback-${id}`)
+    setError('')
+    const result = await jsonFetch(`${MANAGE_BASE}/packs/rollback`, 'POST', { id })
+    setBusy('')
+    if (result.ok) {
+      setMessage(`已回退 ${id}。`)
+      await refreshSources()
+    } else {
+      setError(result.error ?? '回退失败')
+    }
+  }
+
+  /** 卸载一个外部来源包（仅从 vendor 目录移除，不影响平台自带包）。 */
+  const removeSource = async (id: string): Promise<void> => {
+    setBusy(`remove-${id}`)
+    setError('')
+    try {
+      const res = await fetch(`${MANAGE_BASE}/packs/vendored?id=${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        cache: 'no-store' as RequestCache,
+        headers: manageHeaders(),
+      })
+      const value: unknown = await res.json()
+      const body = isRecord(value) ? (value as unknown as ManageResponse) : { ok: false, error: `HTTP ${res.status}` }
+      if (body.ok) {
+        setMessage(`已卸载 ${id}。`)
+        await refreshSources()
+      } else {
+        setError(body.error ?? '卸载失败')
+      }
+    } catch (cause) {
+      setError(`卸载失败：${String(cause)}`)
+    } finally {
+      setBusy('')
+    }
+  }
 
   const setField = (key: keyof EditorDraft, value: string): void => {
     setDraft((prev) => ({ ...prev, [key]: value }))
@@ -603,6 +703,76 @@ export function ManageCard(_props: ManageCardProps) {
           </table>
         )}
         {packs.length === 0 && <p className={css.packsNote}>暂无领域包。</p>}
+
+        {/* ── 外部来源包（vendored） ──────────────────────────────────────── */}
+        <h3 className={css.sectionTitle}>外部来源包（vendored）</h3>
+        <p className={css.sectionHint}>
+          从外部地址引入领域包：平台拉取 → 用与构建同一套校验器校验 → 冻结成本地包入库。
+          <strong>运行时不联网</strong>——地址只是一次性的引进通道，拉下来的内容永远是本地包。
+          白名单外的 host 会先返回校验报告，确认后再入库。未配置 <code>vendorPacksDir</code> 时此区不可用。
+        </p>
+        <div className={css.fields}>
+          <label className={css.field}>
+            <span className={css.fieldLabel}>来源地址</span>
+            <input
+              className={css.input}
+              value={locator}
+              autoComplete="off"
+              placeholder="如 https://git.example.com/acme/domain-pack.git"
+              onChange={(event) => setLocator(event.target.value)}
+            />
+          </label>
+          <label className={css.field}>
+            <span className={css.fieldLabel}>版本（tag / 分支 / commit，留空取默认分支）</span>
+            <input
+              className={css.input}
+              value={sourceRef}
+              autoComplete="off"
+              placeholder="如 v1.0.0"
+              onChange={(event) => setSourceRef(event.target.value)}
+            />
+          </label>
+          <button className={css.button} type="button" disabled={busy !== '' || locator.trim() === ''} onClick={() => void onboard(false)}>
+            {busy === 'onboard' ? '处理中…' : '拉取并校验'}
+          </button>
+          <button className={css.button} type="button" disabled={busy !== '' || locator.trim() === ''} onClick={() => void onboard(true)}>
+            确认入库
+          </button>
+        </div>
+
+        {sources.length > 0 && (
+          <table className={css.packTable}>
+            <thead>
+              <tr>
+                <th>包 id</th><th>来源</th><th>版本</th><th>信任级</th><th>状态</th><th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sources.map((source) => (
+                <tr key={source.id}>
+                  <td>{source.id}</td>
+                  <td>{source.locator}</td>
+                  <td>{source.revision.slice(0, 12)}</td>
+                  <td>{source.trust}</td>
+                  <td>
+                    <span className={css.statusLabel}>
+                      {source.state === 'clean' ? '一致' : source.state === 'modified' ? '本地已改' : '缺失'}
+                    </span>
+                  </td>
+                  <td>
+                    <button className={css.button} type="button" disabled={busy !== '' || !source.rollbackAvailable} onClick={() => void rollbackSource(source.id)}>
+                      {busy === `rollback-${source.id}` ? '回退中…' : '回退'}
+                    </button>{' '}
+                    <button className={css.button} type="button" disabled={busy !== ''} onClick={() => void removeSource(source.id)}>
+                      {busy === `remove-${source.id}` ? '卸载中…' : '卸载'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {sources.length === 0 && <p className={css.packsNote}>暂无外部来源包。</p>}
       </div>
     </section>
   )
