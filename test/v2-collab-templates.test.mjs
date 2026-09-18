@@ -155,9 +155,9 @@ test('ppt: 架构 → 内容供给(fan-out) → 逐页文案 → 渲染和出图
   assert.equal(expanded.tasks[4]?.dependsOn.length, 1)
   assert.equal(expanded.tasks[4]?.dependsOn[0], 't4')
   assert.equal(expanded.tasks[4]?.assigneeExpertId, 'docs-coordinator')
-  assert.ok(expanded.tasks[4]?.description.includes('finesse-ui/SKILL.md'), 'render task instructs the finesse craft floor')
+  assert.ok(expanded.tasks[4]?.description.includes('finesse-ui'), 'render task instructs the finesse craft floor')
   assert.ok(expanded.tasks[4]?.description.includes('pptfast'), 'render task instructs the pptfast conversion')
-  assert.ok(expanded.tasks[4]?.description.includes('video-shotcraft/SKILL.md'), 'render task instructs the video-shotcraft path')
+  assert.ok(expanded.tasks[4]?.description.includes('video-shotcraft'), 'render task instructs the video-shotcraft path')
   // No template given → no template line, no placeholder leak.
   assert.ok(!expanded.tasks[4]?.description.includes('指定模板：'))
   assert.ok(!expanded.tasks[4]?.description.includes('{templateLine}'))

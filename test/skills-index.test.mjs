@@ -139,7 +139,7 @@ test('skillsGuideSection lists every installed skill as `- <id>: <name>` with th
   try {
     const section = skillsGuideSection(stubCtx, workspace, 'knowledge')
     assert.ok(section.includes('Available local skills'), 'section header present')
-    assert.ok(section.includes('read knowledge/skills/<id>/SKILL.md'), 'convention hint present')
+    assert.ok(section.includes('GET /plugins/dsh-expert-library/skills'), 'convention hint names the authoritative channel')
     assert.ok(section.includes('- alpha: Alpha Skill'), 'frontmatter name surfaces in the line')
     assert.ok(section.includes('- beta: beta'), 'id fallback surfaces in the line')
     // Bundled skills ride the union (finesse-ui ships with the plugin).

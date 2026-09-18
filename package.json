@@ -70,7 +70,7 @@
     "check:pack": "node scripts/build-zhijian-pack.mjs --check",
     "build:builtin": "node scripts/build-builtin-pack.mjs",
     "check:builtin": "node scripts/build-builtin-pack.mjs --check",
-    "test": "pnpm build && node --test test/"
+    "test": "pnpm build && node --test 'test/**/*.test.mjs'"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1-rc.1",

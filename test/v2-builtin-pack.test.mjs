@@ -123,9 +123,9 @@ test('ppt-gen builtin DAG shape: the 渲染和出图 render task is the final no
   assert.deepEqual(render?.dependsOn, [2], 'render depends on the final copy/content task (逐页文案生成)')
   assert.equal(render?.expert, 'docs-coordinator', 'render uses the docs-coordinator render-role convention')
   const description = render?.description ?? ''
-  assert.ok(description.includes('finesse-ui/SKILL.md'), 'instructs the finesse craft floor')
+  assert.ok(description.includes('finesse-ui'), 'instructs the finesse craft floor')
   assert.ok(description.includes('pptfast'), 'instructs the pptfast conversion')
-  assert.ok(description.includes('video-shotcraft/SKILL.md'), 'instructs the video-shotcraft path')
+  assert.ok(description.includes('video-shotcraft'), 'instructs the video-shotcraft path')
   assert.ok(description.includes('goal/data'), 'scenario-level template note: 模板可由用户在 goal/data 参数中指定')
   // The video-shotcraft skill binding rides on the render task (final node).
   assert.equal(scenario.skill?.appliesToTaskIndex, 3)
