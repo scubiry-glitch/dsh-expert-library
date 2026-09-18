@@ -86,6 +86,57 @@ const MANAGE_BASE = '/plugins/dsh-expert-library/manage'
 const SKILLS_URL = '/plugins/dsh-expert-library/skills'
 const PACKS_URL = '/plugins/dsh-expert-library/packs'
 
+/**
+ * 与 host `src/host/auth.ts` 的 `MANAGE_TOKEN_HEADER` 对齐。客户端不 import
+ * host 代码（那会把 node:crypto 拖进浏览器包），wire 常量按本仓惯例在两侧
+ * 各自声明。
+ */
+const MANAGE_TOKEN_HEADER = 'x-expert-library-manage-token'
+
+/** 授权令牌的本地存储键。 */
+const TOKEN_STORAGE_KEY = 'dsh-expert-library.manageToken'
+
+/**
+ * host 侧对整个 `/manage/*` 按「回环或持令牌」放行：从本机地址打开设置页
+ * 无需令牌，经公网域名打开则需要。令牌随请求头送，不存在于 URL 里。
+ */
+let manageToken = readStoredToken()
+
+function readStoredToken(): string {
+  try {
+    return window.localStorage.getItem(TOKEN_STORAGE_KEY)?.trim() ?? ''
+  } catch {
+    // 隐私模式下 localStorage 不可用；未持令牌即只能回环访问。
+    return ''
+  }
+}
+
+/** 设置令牌并持久化；空串表示仅本机可用。 */
+function setManageToken(value: string): void {
+  manageToken = value.trim()
+  try {
+    if (manageToken === '') window.localStorage.removeItem(TOKEN_STORAGE_KEY)
+    else window.localStorage.setItem(TOKEN_STORAGE_KEY, manageToken)
+  } catch {
+    // 同上：存不下就只在本会话内有效，不阻断使用。
+  }
+}
+
+/** 合并授权头；未设令牌时返回 undefined，让 fetch 用默认值。 */
+function manageHeaders(extra?: Record<string, string>): Record<string, string> | undefined {
+  const headers: Record<string, string> = { ...extra }
+  if (manageToken !== '') headers[MANAGE_TOKEN_HEADER] = manageToken
+  return Object.keys(headers).length === 0 ? undefined : headers
+}
+
+/** host 拒绝时的提示：区分「没带令牌」与「令牌不对」。 */
+function describeAuthFailure(status: number, error: string | undefined): string {
+  if (status !== 403) return error ?? `HTTP ${status}`
+  return manageToken === ''
+    ? '本机地址之外的访问需要授权令牌：请在下方填入 host 的 manageToken 后重试。'
+    : '授权令牌无效或已变更：请核对后重填。'
+}
+
 /** 包重建白名单（与 host PACK_BUILD_ALLOWLIST 对齐；不齐时 host 会拒绝）。 */
 const REBUILD_ALLOWLIST = ['zhijian-realestate', 'bank-finance', 'beike', 'pipeline-domains', 'pipeline-general', 'builtin-library']
 
@@ -156,7 +207,7 @@ async function jsonFetch(path: string, method: string, body?: unknown): Promise<
   const res = await fetch(path, {
     method,
     cache: 'no-store' as RequestCache,
-    headers: body === undefined ? undefined : { 'content-type': 'application/json' },
+    headers: manageHeaders(body === undefined ? undefined : { 'content-type': 'application/json' }),
     body: body === undefined ? undefined : JSON.stringify(body),
   })
   let value: unknown = null
@@ -166,15 +217,18 @@ async function jsonFetch(path: string, method: string, body?: unknown): Promise<
     value = null
   }
   if (isRecord(value) && typeof value['ok'] === 'boolean') {
+    if (value['ok'] === false && !res.ok) {
+      return { ok: false, error: describeAuthFailure(res.status, typeof value['error'] === 'string' ? value['error'] : undefined) } as unknown as ManageResponse
+    }
     return value as unknown as ManageResponse
   }
-  return { ok: false, error: `HTTP ${res.status}` }
+  return { ok: false, error: describeAuthFailure(res.status, undefined) }
 }
 
 /** 列表请求守卫。 */
 async function listFetch<T>(path: string, key: string): Promise<T[]> {
   try {
-    const res = await fetch(path, { cache: 'no-store' as RequestCache })
+    const res = await fetch(path, { cache: 'no-store' as RequestCache, headers: manageHeaders() })
     if (!res.ok) return []
     const value: unknown = await res.json()
     if (isRecord(value) && Array.isArray(value[key])) return value[key] as T[]
@@ -197,6 +251,7 @@ export function ManageCard(_props: ManageCardProps) {
   const [busy, setBusy] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
+  const [tokenDraft, setTokenDraft] = useState(manageToken)
 
   // ── 编辑器状态 ────────────────────────────────────────────────────────────
   const [mode, setMode] = useState<'expert' | 'scenario'>('expert')
@@ -217,7 +272,7 @@ export function ManageCard(_props: ManageCardProps) {
     ])
     void rootsValue
     try {
-      const res = await fetch(`${MANAGE_BASE}/knowledge-roots`, { cache: 'no-store' as RequestCache })
+      const res = await fetch(`${MANAGE_BASE}/knowledge-roots`, { cache: 'no-store' as RequestCache, headers: manageHeaders() })
       if (res.ok) {
         const value: unknown = await res.json()
         if (isRecord(value)) setRoots(value as unknown as KnowledgeRootsWire)
@@ -318,10 +373,14 @@ export function ManageCard(_props: ManageCardProps) {
       const res = await fetch(`${MANAGE_BASE}/skills`, {
         method: 'POST',
         cache: 'no-store' as RequestCache,
+        // 不设 content-type：multipart 的 boundary 由浏览器补。
+        headers: manageHeaders(),
         body: form,
       })
       const value: unknown = await res.json()
-      const result = isRecord(value) ? (value as unknown as ManageResponse) : { ok: false, error: `HTTP ${res.status}` }
+      const result = isRecord(value)
+        ? (value as unknown as ManageResponse)
+        : { ok: false, error: describeAuthFailure(res.status, undefined) }
       setBusy('')
       if (result.ok) {
         setMessage(`技能「${result.id}」已安装（${result.files ?? 0} 个文件 → ${roots?.skillsDir ?? 'knowledge/skills/'}），惰性生效。`)
@@ -366,6 +425,41 @@ export function ManageCard(_props: ManageCardProps) {
             {error !== '' && <button className={css.button} type="button" onClick={() => setError('')}>关闭</button>}
           </p>
         )}
+
+        {/* ── 授权（非本机访问） ──────────────────────────────────────────── */}
+        <h3 className={css.sectionTitle}>授权（非本机访问）</h3>
+        <p className={css.sectionHint}>
+          以本机地址（127.0.0.1 / localhost）打开本页无需令牌。经公网域名打开时，host 会拒绝
+          未持令牌的 <code>/manage/*</code> 请求，下面的令牌即用于放行。令牌取自 host 配置项
+          <code>manageToken</code> 或环境变量 <code>DSH_EXPERT_LIBRARY_MANAGE_TOKEN</code>；
+          仅保存在本浏览器 localStorage，随请求头送出，不写入 URL。
+        </p>
+        <div className={css.fields}>
+          <label className={css.field}>
+            <span className={css.fieldLabel}>授权令牌</span>
+            <input
+              className={css.input}
+              type="password"
+              value={tokenDraft}
+              autoComplete="off"
+              placeholder={manageToken === '' ? '未设置——仅本机可用' : '已设置（清空并保存可移除）'}
+              onChange={(event) => setTokenDraft(event.target.value)}
+            />
+          </label>
+          <button
+            className={css.button}
+            type="button"
+            onClick={() => {
+              setManageToken(tokenDraft)
+              setTokenDraft(manageToken)
+              setError('')
+              setMessage(manageToken === '' ? '已清除令牌：/manage/* 现在仅本机可用。' : '令牌已保存到本浏览器，正在重试请求…')
+              void refresh()
+            }}
+          >
+            保存令牌
+          </button>
+        </div>
 
         {/* ── 专家 / 场景管理 ─────────────────────────────────────────────── */}
         <h3 className={css.sectionTitle}>专家与场景（工作区覆盖层）</h3>
