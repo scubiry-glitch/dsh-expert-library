@@ -21,7 +21,21 @@ import { DomainPacksCard } from './domain-packs-card.tsx'
 import { ManageCard } from './manage-card.tsx'
 
 /** Required services: conversation nodes, slots, and sessions navigation. */
-export const inject = ['conversationEvents', 'slots', 'sessions', 'settingsScope']
+export const inject = ['uiConversation', 'slots', 'sessions', 'settingsScope']
+
+/**
+ * rc.1 renamed the browser registry service `conversationEvents` →
+ * `uiConversation` and moved registration under `.events`
+ * (`UiConversation.events: ConversationEventRegistry`); the old name does not
+ * exist anywhere in the rc.1 core tree. This package's own node_modules still
+ * pins rc.8 typings that declare only the old name, so the read goes through a
+ * narrow structural cast instead of the stale declaration. Drop the cast once
+ * the local dependency tree resolves against rc.1.
+ */
+const conversationNodeRegistry = (ctx: ClientContext): { register(definition: typeof agentTeamsCardDefinition): void } =>
+  (ctx as unknown as {
+    uiConversation: { events: { register(definition: typeof agentTeamsCardDefinition): void } }
+  }).uiConversation.events
 
 /**
  * Mount the floater through a body portal (the web shell has no top-right
@@ -43,7 +57,7 @@ export function apply(ctx: ClientContext): void {
     host.remove()
   }, 'expert-teams: activity panel')
 
-  ctx.conversationEvents.register(agentTeamsCardDefinition)
+  conversationNodeRegistry(ctx).register(agentTeamsCardDefinition)
 
   const settingsScope = ctx.settingsScope.bind<ExpertLibrarySettings>({ namespace: 'expert-library' })
   ctx.slots.register({
