@@ -88,6 +88,10 @@ export interface ExpertLibrarySettings {
    * to `<DSH_HOME>/vendor-packs`, and to disabled when there is no DSH home.
    */
   vendorPacksDir?: string
+  /** HTTPS center origin; changing this or packCenterDir requires plugin restart. */
+  packCenterOrigin?: string
+  /** Private deployment-local storage; defaults under DSH_HOME, never the plugin tree. */
+  packCenterDir?: string
   /** Locator hosts whose packs install on validation success, without review. */
   packSourceAllowlist?: string[]
   /** Member subagent provider name (`spawn` or `fork`). */
@@ -158,6 +162,8 @@ export const ExpertLibrarySettingsSchema: z<ExpertLibrarySettings> = z.object({
   knowledgeDir: z.string(),
   packsDir: z.string(),
   vendorPacksDir: z.string(),
+  packCenterOrigin: z.string(),
+  packCenterDir: z.string(),
   packSourceAllowlist: z.array(z.string()),
   memberProvider: z.string(),
   memberMaxDepth: z.natural(),

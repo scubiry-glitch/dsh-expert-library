@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "normalizationVersion": 1,
+  "digestAlgorithmVersion": 1,
+  "fixtures": {
+    "demo-v1": {
+      "contentTreeSha256": "46b911cffc02b1e4288d283c33b3ac63db080c1a030dbcced24afc8b9136f596",
+      "fileCount": 2,
+      "sizeBytes": 3498
+    },
+    "demo-v2": {
+      "contentTreeSha256": "ca05c4ddc42846c9cb69f33b3e5925e4bc3b64b8034e70d8652e8f9c637b4b50",
+      "fileCount": 2,
+      "sizeBytes": 3528
+    },
+    "invalid": {
+      "contentTreeSha256": "e8383a961797ee4f15f9fece3c42f6ec7877acc4a21688f4cc9d3846c937ebdf",
+      "fileCount": 1,
+      "sizeBytes": 113
+    }
+  }
+}

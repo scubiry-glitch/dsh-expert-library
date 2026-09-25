@@ -1,0 +1,146 @@
+{
+  "pack": {
+    "id": "demo.review",
+    "version": "1.0.0",
+    "schemaVersion": 2,
+    "name": "领域包中心验收样例",
+    "description": "样例 V1；用于审核、分发和版本切换的非业务样例。"
+  },
+  "experts": [
+    {
+      "id": "demo.review.expert",
+      "version": "1.0.0",
+      "schemaVersion": 2,
+      "display": {
+        "internalName": "样例分析员",
+        "publicLabel": "样例 V1",
+        "initials": "D"
+      },
+      "domains": [
+        "demo"
+      ],
+      "capabilities": [
+        {
+          "capability": "demo.review",
+          "proficiency": 3,
+          "coverage": "medium"
+        }
+      ],
+      "persona": {},
+      "methods": [],
+      "knowledgeBindings": [],
+      "toolAffinities": [],
+      "compliance": {}
+    }
+  ],
+  "teamTemplates": [
+    {
+      "id": "demo.review.team",
+      "version": "1.0.0",
+      "schemaVersion": 2,
+      "slots": [
+        {
+          "id": "role.analyst",
+          "capabilities": [
+            "demo.review"
+          ],
+          "cardinality": {
+            "min": 1,
+            "max": 1
+          }
+        }
+      ],
+      "tasks": [
+        {
+          "id": "analyze",
+          "role": "role.analyst",
+          "dependsOn": [],
+          "inputs": [],
+          "allowedCapabilities": [],
+          "outputSchema": "demo.review.output",
+          "retryPolicy": "never"
+        }
+      ],
+      "gates": [],
+      "deliverables": [
+        {
+          "id": "summary",
+          "outputTemplate": "demo.review.output",
+          "fromTasks": [
+            "analyze"
+          ]
+        }
+      ]
+    }
+  ],
+  "outputTemplates": [
+    {
+      "id": "demo.review.output",
+      "version": "1.0.0",
+      "schemaVersion": 2,
+      "media": [
+        "markdown"
+      ],
+      "sections": [
+        {
+          "id": "summary",
+          "required": true
+        }
+      ],
+      "renderModes": {
+        "final": {
+          "anonymize": false
+        }
+      }
+    }
+  ],
+  "qualityPolicies": [
+    {
+      "id": "demo.review.quality",
+      "version": "1.0.0",
+      "schemaVersion": 2,
+      "gates": [
+        {
+          "id": "schema",
+          "kind": "deterministic",
+          "appliesTo": [
+            "summary"
+          ],
+          "severity": "hard"
+        }
+      ],
+      "maxRepairRounds": 2
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "demo.review.scenario",
+      "version": "1.0.0",
+      "schemaVersion": 2,
+      "domain": "demo",
+      "intents": [
+        "演示领域包版本"
+      ],
+      "requiredCapabilities": [],
+      "routingPolicy": {
+        "candidateHints": [
+          "demo.review.expert"
+        ]
+      },
+      "teamTemplate": "demo.review.team",
+      "outputTemplate": "demo.review.output",
+      "qualityPolicy": "demo.review.quality",
+      "knowledgePolicy": {
+        "required": []
+      },
+      "toolPolicy": {
+        "allowed": []
+      }
+    }
+  ],
+  "toolProviders": [],
+  "knowledgeProviders": [],
+  "domainKnowledge": [],
+  "methodPacks": [],
+  "skillPackages": []
+}

@@ -17,6 +17,7 @@ import {
   REVIEW_CAPABILITY,
   FIELD_DOMAINS,
   TAG_CAPABILITIES,
+  ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES,
 } from '../lib/v2/index.js'
 import { ZHIJIAN_EXPERTS } from '../lib/zhijian/data/experts.generated.js'
 import { ZHIJIAN_EXPERT_IDS, ZHIJIAN_EXPERT_BY_ID } from '../lib/zhijian/registry.js'
@@ -79,11 +80,12 @@ test('pack contains no legacySource markers and no legacy initials placeholder',
   }
 })
 
-test('capabilities derive only from roster-asserted field/tags, proficiency is the unassessed floor', () => {
+test('capabilities derive from roster assertions plus the reviewed pipeline compatibility overlay', () => {
   const allowed = new Set([
     REVIEW_CAPABILITY,
     ...Object.values(FIELD_DOMAINS).map(domain => `${domain}.review`),
     ...Object.values(TAG_CAPABILITIES),
+    ...ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES,
   ])
   for (const expert of build().experts) {
     assert.ok(expert.capabilities.length > 0)
@@ -91,7 +93,10 @@ test('capabilities derive only from roster-asserted field/tags, proficiency is t
       assert.ok(allowed.has(claim.capability), `unexpected capability ${claim.capability} on ${expert.id}`)
       assert.equal(claim.proficiency, 1, 'metas assert membership, not level — floor 1 only')
       assert.ok(claim.coverage === 'high' || claim.coverage === 'medium' || claim.coverage === 'low')
-      assert.deepEqual(claim.evidenceRefs, ['zhijian:roster'])
+      const expectedEvidence = ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES.includes(claim.capability)
+        ? ['zhijian:compatibility/pipeline-review']
+        : ['zhijian:roster']
+      assert.deepEqual(claim.evidenceRefs, expectedEvidence)
       assert.equal(claim.legacySource, undefined)
     }
   }

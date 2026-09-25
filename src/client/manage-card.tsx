@@ -1,16 +1,24 @@
 /**
- * 专家库手动管理设置页（`settings.section` entry `expert-library-manage`）：
- * 把「增加专家 / 增加领域包 / 变更专家 skill / 变更领域包包含的专家」等高频
- * 操作固定成可手动配置的表单，避免每次靠 agent 执行的随机性。
+ * 专家库设置页（`settings.section` entry `expert-library-manage`），四个 Tab：
+ * - 内容管理：自定义专家/场景覆盖层编辑器、技能 zip 安装；
+ * - 模型设置：默认模型 + 专家模型路由覆盖（expertModelOverrides）；
+ * - 运行设置：状态/知识目录、成员数量/委托深度、提示词顺序；
+ * - 权限：/manage/* 授权令牌（本浏览器 localStorage）。
+ *
+ * 领域包相关（列表/重建/外部来源/包目录）统一由「领域包」设置页负责
+ * （本地校验 Tab + 本地来源 Tab），此处不再重复入口。
  *
  * 写目标（host `src/host/manage.ts`）：
  * - 专家/场景 → `<workspace>/<knowledgeDir>/{experts,scenarios}/<id>.json`
- *   （V1 用户自定义覆盖层，惰性生效、零漂移——领域包本体是构建产物绝不直写）；
- * - 技能 → `<knowledgeDir>/skills/<id>/`（zip 上传，安全 id + zip-slip 防护）；
- * - 领域包重建 → host 白名单脚本 `build-packs.mjs <id>`（仅允许列表内 pack id）。
+ *   （V1 用户自定义覆盖层，惰性生效、零漂移）；
+ * - 技能 → `<knowledgeDir>/skills/<id>/`（zip 上传，安全 id + zip-slip 防护）。
+ *
+ * 专家模型路由覆盖（从原 专家库 设置卡迁入）：`GET /experts` 列出每位专家的
+ * 生效路由与继承来源，覆盖写入 `expertModelOverrides` 设置。
  *
  * 取数（只读）：
  * - `GET /plugins/dsh-expert-library/manage/experts|scenarios|knowledge-roots`
+ * - `GET /plugins/dsh-expert-library/experts`（专家路由清单）
  * - `GET /plugins/dsh-expert-library/skills`（已装技能清单，id/name/path）
  * - `GET /plugins/dsh-expert-library/packs`（领域包清单）
  *
@@ -19,8 +27,31 @@
  * @module dsh-expert-library/client/manage-card
  */
 
-import { useEffect, useRef, useState } from 'react'
+import type { KeyboardEvent } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import css from './settings-card.module.css'
+import {
+  MANAGE_BASE,
+  describeAuthFailure,
+  getManageToken,
+  jsonFetch,
+  listFetch,
+  manageHeaders,
+  setManageToken,
+  type ManageResponse,
+} from './manage-client.ts'
+import {
+  EXPERTS_URL,
+  number,
+  text,
+  SOURCE_LABEL,
+  isExpertRouteWire,
+  normalizeOverride,
+  routeText,
+  type ExpertRouteWire,
+  type ExpertLibrarySettingsScope,
+  type RouteOverrideDraft,
+} from './settings-shared.ts'
 
 /** 写目标知识根（镜像 host ManageKnowledgeRoots）。 */
 interface KnowledgeRootsWire {
@@ -30,19 +61,6 @@ interface KnowledgeRootsWire {
   readonly expertsDir?: string
   readonly scenariosDir?: string
   readonly skillsDir?: string
-}
-
-/**
- * 一个已入库的外部来源包（GET /manage/packs/registry）。
- * `state` 由 host 重算树摘要得出：clean = 与入库时一致，modified = 本地被改过。
- */
-interface VendoredPackWire {
-  readonly id: string
-  readonly locator: string
-  readonly revision: string
-  readonly trust: string
-  readonly state: string
-  readonly rollbackAvailable: boolean
 }
 
 /** 一个已存在的自定义专家（GET /manage/experts）。 */
@@ -70,88 +88,14 @@ interface InstalledSkillWire {
   readonly hasReferences?: boolean
 }
 
-/** 领域包摘要（GET /packs）。 */
-interface PackSummaryWire {
-  readonly id: string
-  readonly version?: string
-  readonly name?: string
-  readonly layer?: string
-  readonly counts?: Record<string, number>
-}
-
-/** 管理操作响应（host 统一信封）。 */
-interface ManageResponse {
-  readonly ok: boolean
-  readonly error?: string
-  readonly id?: string
-  readonly name?: string
-  readonly files?: number
-  readonly stdout?: string
-  readonly stderr?: string
-}
-
 export interface ManageCardProps {
   /** 关闭设置面板（shell 持有开合状态）。 */
   close: () => void
+  /** 共享 expert-library 设置 scope；注入后开放专家路由覆盖编辑。 */
+  scope?: ExpertLibrarySettingsScope
 }
 
-const MANAGE_BASE = '/plugins/dsh-expert-library/manage'
 const SKILLS_URL = '/plugins/dsh-expert-library/skills'
-const PACKS_URL = '/plugins/dsh-expert-library/packs'
-
-/**
- * 与 host `src/host/auth.ts` 的 `MANAGE_TOKEN_HEADER` 对齐。客户端不 import
- * host 代码（那会把 node:crypto 拖进浏览器包），wire 常量按本仓惯例在两侧
- * 各自声明。
- */
-const MANAGE_TOKEN_HEADER = 'x-expert-library-manage-token'
-
-/** 授权令牌的本地存储键。 */
-const TOKEN_STORAGE_KEY = 'dsh-expert-library.manageToken'
-
-/**
- * host 侧对整个 `/manage/*` 按「回环或持令牌」放行：从本机地址打开设置页
- * 无需令牌，经公网域名打开则需要。令牌随请求头送，不存在于 URL 里。
- */
-let manageToken = readStoredToken()
-
-function readStoredToken(): string {
-  try {
-    return window.localStorage.getItem(TOKEN_STORAGE_KEY)?.trim() ?? ''
-  } catch {
-    // 隐私模式下 localStorage 不可用；未持令牌即只能回环访问。
-    return ''
-  }
-}
-
-/** 设置令牌并持久化；空串表示仅本机可用。 */
-function setManageToken(value: string): void {
-  manageToken = value.trim()
-  try {
-    if (manageToken === '') window.localStorage.removeItem(TOKEN_STORAGE_KEY)
-    else window.localStorage.setItem(TOKEN_STORAGE_KEY, manageToken)
-  } catch {
-    // 同上：存不下就只在本会话内有效，不阻断使用。
-  }
-}
-
-/** 合并授权头；未设令牌时返回 undefined，让 fetch 用默认值。 */
-function manageHeaders(extra?: Record<string, string>): Record<string, string> | undefined {
-  const headers: Record<string, string> = { ...extra }
-  if (manageToken !== '') headers[MANAGE_TOKEN_HEADER] = manageToken
-  return Object.keys(headers).length === 0 ? undefined : headers
-}
-
-/** host 拒绝时的提示：区分「没带令牌」与「令牌不对」。 */
-function describeAuthFailure(status: number, error: string | undefined): string {
-  if (status !== 403) return error ?? `HTTP ${status}`
-  return manageToken === ''
-    ? '本机地址之外的访问需要授权令牌：请在下方填入 host 的 manageToken 后重试。'
-    : '授权令牌无效或已变更：请核对后重填。'
-}
-
-/** 包重建白名单（与 host PACK_BUILD_ALLOWLIST 对齐；不齐时 host 会拒绝）。 */
-const REBUILD_ALLOWLIST = ['zhijian-realestate', 'bank-finance', 'beike', 'pipeline-domains', 'pipeline-general', 'builtin-library']
 
 /** 表单草稿：专家 / 场景共用（专家忽略 tasks/deliverable 之外的场景字段）。 */
 interface EditorDraft {
@@ -215,44 +159,16 @@ function buildScenarioJson(draft: EditorDraft): unknown {
   }
 }
 
-/** 通用 JSON 请求。 */
-async function jsonFetch(path: string, method: string, body?: unknown): Promise<ManageResponse> {
-  const res = await fetch(path, {
-    method,
-    cache: 'no-store' as RequestCache,
-    headers: manageHeaders(body === undefined ? undefined : { 'content-type': 'application/json' }),
-    body: body === undefined ? undefined : JSON.stringify(body),
-  })
-  let value: unknown = null
-  try {
-    value = await res.json()
-  } catch {
-    value = null
-  }
-  if (isRecord(value) && typeof value['ok'] === 'boolean') {
-    if (value['ok'] === false && !res.ok) {
-      return { ok: false, error: describeAuthFailure(res.status, typeof value['error'] === 'string' ? value['error'] : undefined) } as unknown as ManageResponse
-    }
-    return value as unknown as ManageResponse
-  }
-  return { ok: false, error: describeAuthFailure(res.status, undefined) }
-}
-
-/** 列表请求守卫。 */
-async function listFetch<T>(path: string, key: string): Promise<T[]> {
-  try {
-    const res = await fetch(path, { cache: 'no-store' as RequestCache, headers: manageHeaders() })
-    if (!res.ok) return []
-    const value: unknown = await res.json()
-    if (isRecord(value) && Array.isArray(value[key])) return value[key] as T[]
-  } catch {
-    return []
-  }
-  return []
-}
+/** Tab 定义：内容管理 / 模型设置 / 运行设置 / 权限。 */
+const TAB_ITEMS = [
+  { id: 'content', label: '内容管理' },
+  { id: 'model', label: '模型设置' },
+  { id: 'runtime', label: '运行设置' },
+  { id: 'auth', label: '权限' },
+] as const
 
 /** 主管理面板。 */
-export function ManageCard(_props: ManageCardProps) {
+export function ManageCard({ scope }: ManageCardProps) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   // ── 数据快照 ──────────────────────────────────────────────────────────────
@@ -260,33 +176,64 @@ export function ManageCard(_props: ManageCardProps) {
   const [experts, setExperts] = useState<readonly ManagedExpertWire[]>([])
   const [scenarios, setScenarios] = useState<readonly ManagedScenarioWire[]>([])
   const [skills, setSkills] = useState<readonly InstalledSkillWire[]>([])
-  const [packs, setPacks] = useState<readonly PackSummaryWire[]>([])
   const [busy, setBusy] = useState('')
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
-  const [tokenDraft, setTokenDraft] = useState(manageToken)
-  const [sources, setSources] = useState<readonly VendoredPackWire[]>([])
-  const [locator, setLocator] = useState('')
-  const [sourceRef, setSourceRef] = useState('')
+  const [tokenDraft, setTokenDraft] = useState(getManageToken())
+
+  // ── 专家路由覆盖（自原 专家库 设置卡迁入）────────────────────────────────
+  const [routeExperts, setRouteExperts] = useState<readonly ExpertRouteWire[] | null>(null)
+  const [routeError, setRouteError] = useState('')
+  const [routeFilter, setRouteFilter] = useState('')
+  const [routeOverrides, setRouteOverrides] = useState<Record<string, RouteOverrideDraft>>(() => {
+    const out: Record<string, RouteOverrideDraft> = {}
+    const value = scope?.getSnapshot().value
+    for (const [id, route] of Object.entries(value?.expertModelOverrides ?? {})) {
+      out[id] = { ...route }
+    }
+    return out
+  })
+  const [routeMessage, setRouteMessage] = useState('')
+  const [routeSaving, setRouteSaving] = useState(false)
+
+  // ── 运行配置（自「专家库运行」分区迁入）──────────────────────────────────
+  const [runtimeDraft, setRuntimeDraft] = useState(() => ({
+    stateDir: text(scope?.getSnapshot().value?.stateDir),
+    knowledgeDir: text(scope?.getSnapshot().value?.knowledgeDir),
+    memberProvider: text(scope?.getSnapshot().value?.memberProvider),
+    maxMembers: number(scope?.getSnapshot().value?.maxMembers),
+    memberMaxDepth: number(scope?.getSnapshot().value?.memberMaxDepth),
+    promptSectionOrder: number(scope?.getSnapshot().value?.promptSectionOrder),
+    modelProvider: text(scope?.getSnapshot().value?.defaultModel?.provider),
+    modelName: text(scope?.getSnapshot().value?.defaultModel?.model),
+    reasoningEffort: text(scope?.getSnapshot().value?.defaultModel?.reasoningEffort),
+    announceToAgent: scope?.getSnapshot().value?.announceToAgent ?? true,
+  }))
+  const [runtimeMessage, setRuntimeMessage] = useState('')
+  const [runtimeSaving, setRuntimeSaving] = useState(false)
 
   // ── 编辑器状态 ────────────────────────────────────────────────────────────
   const [mode, setMode] = useState<'expert' | 'scenario'>('expert')
   const [draft, setDraft] = useState<EditorDraft>(EMPTY_DRAFT)
   const [editingId, setEditingId] = useState<string>('')
+  const [tab, setTab] = useState<'content' | 'model' | 'runtime' | 'auth'>('content')
+
+  function tabKeys(event: KeyboardEvent<HTMLButtonElement>): void {
+    const index = TAB_ITEMS.findIndex((item) => item.id === tab)
+    const next = event.key === 'ArrowRight' ? (index + 1) % TAB_ITEMS.length : event.key === 'ArrowLeft' ? (index + TAB_ITEMS.length - 1) % TAB_ITEMS.length
+      : event.key === 'Home' ? 0 : event.key === 'End' ? TAB_ITEMS.length - 1 : null
+    if (next === null) return
+    event.preventDefault(); setTab(TAB_ITEMS[next]!.id)
+    const buttons = event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+    buttons?.[next]?.focus()
+  }
 
   const refresh = async (): Promise<void> => {
-    const [rootsValue, expertsValue, scenariosValue, skillsValue, packsValue] = await Promise.all([
-      listFetch<KnowledgeRootsWire>(`${MANAGE_BASE}/knowledge-roots`, 'ok').then((list) => {
-        // knowledge-roots 返回的是对象本身（非数组）；listFetch 用 key='ok' 拿数组，
-        // 这里退回直接 fetch。
-        return null
-      }),
+    const [expertsValue, scenariosValue, skillsValue] = await Promise.all([
       listFetch<ManagedExpertWire>(`${MANAGE_BASE}/experts`, 'experts'),
       listFetch<ManagedScenarioWire>(`${MANAGE_BASE}/scenarios`, 'scenarios'),
       listFetch<InstalledSkillWire>(SKILLS_URL, 'skills'),
-      listFetch<PackSummaryWire>(PACKS_URL, 'packs'),
     ])
-    void rootsValue
     try {
       const res = await fetch(`${MANAGE_BASE}/knowledge-roots`, { cache: 'no-store' as RequestCache, headers: manageHeaders() })
       if (res.ok) {
@@ -299,94 +246,147 @@ export function ManageCard(_props: ManageCardProps) {
     setExperts(expertsValue)
     setScenarios(scenariosValue)
     setSkills(skillsValue)
-    setPacks(packsValue)
   }
 
   /** 已入库的外部来源包。授权失败时静默留空——授权区自己会说明原因。 */
-  const refreshSources = async (): Promise<void> => {
-    const value = await listFetch<VendoredPackWire>(`${MANAGE_BASE}/packs/registry`, 'packs')
-    setSources(value)
-  }
-
   useEffect(() => {
     void refresh()
-    void refreshSources()
   }, [])
 
-  /** 外部来源：拉取 → 校验 → 入库。未列入白名单的 host 会先回报告等确认。 */
-  const onboard = async (approve: boolean): Promise<void> => {
-    const target = locator.trim()
-    if (target === '') return
-    setBusy('onboard')
-    setError('')
-    setMessage('')
-    const payload: Record<string, unknown> = { locator: target, approve }
-    if (sourceRef.trim() !== '') payload.ref = sourceRef.trim()
+  /** 专家路由清单：GET /experts（含预设/覆盖/生效路由）。 */
+  const fetchRouteExperts = async (): Promise<void> => {
+    setRouteError('')
     try {
-      const res = await fetch(`${MANAGE_BASE}/packs/onboard`, {
-        method: 'POST',
-        cache: 'no-store' as RequestCache,
-        headers: manageHeaders({ 'content-type': 'application/json' }),
-        body: JSON.stringify(payload),
-      })
-      const value: unknown = await res.json()
-      const body = isRecord(value) ? value : {}
-      if (body['ok'] === true) {
-        setMessage(`已入库 ${String(body['packId'])} @ ${String(body['revision']).slice(0, 12)}（${String(body['trust'])}，drift=${String(body['drift'])}）。`)
-        await refreshSources()
-      } else if (body['needsReview'] === true) {
-        const invalid = body['valid'] === false
-        setError(
-          `该 host 不在白名单，未入库。已拉到 ${String(body['revision']).slice(0, 12)}，`
-          + `包 id ${String(body['packId'] ?? '（未解析）')}，校验${invalid ? '未通过' : '通过'}。`
-          + `${invalid ? '先修掉诊断再提交。' : '确认无误后点「确认入库」。'}`,
-        )
-      } else {
-        setError(describeAuthFailure(res.status, typeof body['error'] === 'string' ? body['error'] : undefined))
-      }
-    } catch (cause) {
-      setError(`入库失败：${String(cause)}`)
-    } finally {
-      setBusy('')
+      const response = await fetch(EXPERTS_URL, { cache: 'no-store' as RequestCache })
+      if (!response.ok) throw new Error('non-ok response')
+      const body: unknown = await response.json()
+      if (!isExpertRouteWire(body) || !Array.isArray(body.experts)) throw new Error('malformed body')
+      setRouteExperts(body.experts as readonly ExpertRouteWire[])
+    } catch {
+      setRouteError('专家路由列表请求失败')
     }
   }
 
-  /** 回退到入库时记录的上一版。 */
-  const rollbackSource = async (id: string): Promise<void> => {
-    setBusy(`rollback-${id}`)
-    setError('')
-    const result = await jsonFetch(`${MANAGE_BASE}/packs/rollback`, 'POST', { id })
-    setBusy('')
-    if (result.ok) {
-      setMessage(`已回退 ${id}。`)
-      await refreshSources()
-    } else {
-      setError(result.error ?? '回退失败')
+  useEffect(() => { void fetchRouteExperts() }, [])
+
+  // 设置 scope 值就绪后同步覆盖草稿（首次快照可能晚于挂载）。
+  useEffect(() => {
+    if (scope === undefined) return
+    if (scope.getSnapshot().status !== 'ready') return
+    const value = scope.getSnapshot().value
+    if (value === undefined) return
+    setRouteOverrides((current) => {
+      const merged: Record<string, RouteOverrideDraft> = { ...current }
+      for (const [id, route] of Object.entries(value.expertModelOverrides ?? {})) {
+        merged[id] = { ...route }
+      }
+      return merged
+    })
+    setRuntimeDraft({
+      stateDir: text(value.stateDir),
+      knowledgeDir: text(value.knowledgeDir),
+      memberProvider: text(value.memberProvider),
+      maxMembers: number(value.maxMembers),
+      memberMaxDepth: number(value.memberMaxDepth),
+      promptSectionOrder: number(value.promptSectionOrder),
+      modelProvider: text(value.defaultModel?.provider),
+      modelName: text(value.defaultModel?.model),
+      reasoningEffort: text(value.defaultModel?.reasoningEffort),
+      announceToAgent: value.announceToAgent ?? true,
+    })
+  }, [scope, scope?.getSnapshot().status, scope?.getSnapshot().value])
+
+  const filteredRouteExperts = useMemo(() => {
+    if (routeExperts === null) return null
+    const query = routeFilter.trim().toLowerCase()
+    if (query === '') return routeExperts
+    return routeExperts.filter(expert =>
+      expert.id.toLowerCase().includes(query)
+      || expert.name.toLowerCase().includes(query)
+      || (expert.field ?? '').toLowerCase().includes(query)
+      || (expert.stance ?? '').toLowerCase().includes(query))
+  }, [routeExperts, routeFilter])
+
+  /** 设置一位专家的路由覆盖（空串 = 清除该字段；全空 = 移除覆盖）。 */
+  const setRouteOverride = (
+    id: string,
+    field: keyof RouteOverrideDraft,
+    next: string,
+  ): void => {
+    setRouteOverrides(current => {
+      const updated = { ...(current[id] ?? {}), [field]: next }
+      if (normalizeOverride(updated) === undefined) {
+        const { [id]: _removed, ...rest } = current
+        return rest
+      }
+      return { ...current, [id]: updated }
+    })
+    setRouteMessage('')
+  }
+
+  const setRuntime = (field: keyof typeof runtimeDraft, next: string | boolean): void => {
+    setRuntimeDraft(current => ({ ...current, [field]: next }))
+    setRuntimeMessage('')
+  }
+
+  const saveRuntime = async (): Promise<void> => {
+    if (scope === undefined || runtimeSaving) return
+    setRuntimeSaving(true)
+    setRuntimeMessage('')
+    try {
+      const writes: Array<[string, unknown]> = [
+        ['stateDir', runtimeDraft.stateDir],
+        ['knowledgeDir', runtimeDraft.knowledgeDir],
+        ['memberProvider', runtimeDraft.memberProvider],
+        ['maxMembers', Number(runtimeDraft.maxMembers)],
+        ['memberMaxDepth', runtimeDraft.memberMaxDepth.trim() === '' ? '' : Number(runtimeDraft.memberMaxDepth)],
+        ['promptSectionOrder', Number(runtimeDraft.promptSectionOrder)],
+        ['announceToAgent', runtimeDraft.announceToAgent],
+      ]
+      for (const [field, next] of writes) {
+        if (typeof next === 'string' && next.trim() === '') await scope.unset(field)
+        else await scope.set(field, next)
+      }
+      setRuntimeMessage('已保存')
+    } catch (error) {
+      setRuntimeMessage(error instanceof Error ? error.message : '保存失败')
+    } finally {
+      setRuntimeSaving(false)
     }
   }
 
-  /** 卸载一个外部来源包（仅从 vendor 目录移除，不影响平台自带包）。 */
-  const removeSource = async (id: string): Promise<void> => {
-    setBusy(`remove-${id}`)
-    setError('')
+  /** 默认模型（模型设置 Tab）。 */
+  const saveModel = async (): Promise<void> => {
+    if (scope === undefined || runtimeSaving) return
+    setRuntimeSaving(true)
+    setRuntimeMessage('')
     try {
-      const res = await fetch(`${MANAGE_BASE}/packs/vendored?id=${encodeURIComponent(id)}`, {
-        method: 'DELETE',
-        cache: 'no-store' as RequestCache,
-        headers: manageHeaders(),
-      })
-      const value: unknown = await res.json()
-      const body = isRecord(value) ? (value as unknown as ManageResponse) : { ok: false, error: `HTTP ${res.status}` }
-      if (body.ok) {
-        setMessage(`已卸载 ${id}。`)
-        await refreshSources()
-      } else {
-        setError(body.error ?? '卸载失败')
-      }
-    } catch (cause) {
-      setError(`卸载失败：${String(cause)}`)
+      await scope.set('defaultModel', { provider: runtimeDraft.modelProvider, model: runtimeDraft.modelName, reasoningEffort: runtimeDraft.reasoningEffort })
+      setRuntimeMessage('已保存')
+    } catch (error) {
+      setRuntimeMessage(error instanceof Error ? error.message : '保存失败')
     } finally {
-      setBusy('')
+      setRuntimeSaving(false)
+    }
+  }
+
+  const saveRoutes = async (): Promise<void> => {
+    if (scope === undefined || routeSaving) return
+    setRouteSaving(true)
+    setRouteMessage('')
+    try {
+      const out: Record<string, unknown> = {}
+      for (const [id, route] of Object.entries(routeOverrides)) {
+        const normalized = normalizeOverride(route)
+        if (normalized !== undefined) out[id] = normalized
+      }
+      if (Object.keys(out).length > 0) await scope.set('expertModelOverrides', out)
+      else await scope.unset('expertModelOverrides')
+      setRouteMessage('已保存')
+    } catch (error) {
+      setRouteMessage(error instanceof Error ? error.message : '保存失败')
+    } finally {
+      setRouteSaving(false)
     }
   }
 
@@ -495,27 +495,11 @@ export function ManageCard(_props: ManageCardProps) {
     }
   }
 
-  const rebuild = async (packId: string): Promise<void> => {
-    setBusy(`rebuild-${packId}`)
-    setError('')
-    const result = await jsonFetch(`${MANAGE_BASE}/packs/rebuild`, 'POST', { id: packId })
-    setBusy('')
-    if (result.ok) {
-      const tail = (result.stdout ?? '').split('\n').filter((line) => line.trim() !== '').slice(-4).join('\n')
-      setMessage(`领域包「${packId}」重建完成：\n${tail}`)
-      void refresh()
-    } else {
-      setError(result.error ?? `重建失败：${(result.stderr ?? '').slice(-300)}`)
-    }
-  }
-
-  const packCount = (pack: PackSummaryWire, key: string): number => pack.counts?.[key] ?? 0
-
   return (
     <section className={css.card}>
       <header className={css.head}>
         <h2 className={css.title}>专家库管理</h2>
-        <span className={css.subtitle}>手动配置高频操作：增加/编辑/删除自定义专家与场景、安装技能、重建领域包——避免每次靠 agent 执行的随机性。写目标：{roots?.workspace ?? '工作区'}/{roots?.knowledgeDir ?? 'knowledge'}/。</span>
+        <span className={css.subtitle}>自定义专家与场景、技能、模型路由与运行参数；领域包及其来源请到「领域包」设置页。写目标：{roots?.workspace ?? '工作区'}/{roots?.knowledgeDir ?? 'knowledge'}/。</span>
       </header>
 
       <div className={css.body}>
@@ -526,7 +510,27 @@ export function ManageCard(_props: ManageCardProps) {
           </p>
         )}
 
-        {/* ── 授权（非本机访问） ──────────────────────────────────────────── */}
+        <nav className={css.tabs} role="tablist" aria-label="专家库管理">
+          {TAB_ITEMS.map((item, index) => (
+            <button
+              className={css.tab}
+              key={item.id}
+              id={`elc-manage-tab-${index}`}
+              role="tab"
+              type="button"
+              aria-selected={tab === item.id}
+              aria-controls={`elc-manage-panel-${index}`}
+              tabIndex={tab === item.id ? 0 : -1}
+              onKeyDown={tabKeys}
+              onClick={() => setTab(item.id)}
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
+
+        {tab === 'auth' && (
+        <>
         <h3 className={css.sectionTitle}>授权（非本机访问）</h3>
         <p className={css.sectionHint}>
           以本机地址（127.0.0.1 / localhost）打开本页无需令牌。经公网域名打开时，host 会拒绝
@@ -542,7 +546,7 @@ export function ManageCard(_props: ManageCardProps) {
               type="password"
               value={tokenDraft}
               autoComplete="off"
-              placeholder={manageToken === '' ? '未设置——仅本机可用' : '已设置（清空并保存可移除）'}
+              placeholder={getManageToken() === '' ? '未设置——仅本机可用' : '已设置（清空并保存可移除）'}
               onChange={(event) => setTokenDraft(event.target.value)}
             />
           </label>
@@ -551,15 +555,20 @@ export function ManageCard(_props: ManageCardProps) {
             type="button"
             onClick={() => {
               setManageToken(tokenDraft)
-              setTokenDraft(manageToken)
+              setTokenDraft(getManageToken())
               setError('')
-              setMessage(manageToken === '' ? '已清除令牌：/manage/* 现在仅本机可用。' : '令牌已保存到本浏览器，正在重试请求…')
+              setMessage(getManageToken() === '' ? '已清除令牌：/manage/* 现在仅本机可用。' : '令牌已保存到本浏览器，正在重试请求…')
               void refresh()
             }}
           >
             保存令牌
           </button>
         </div>
+        </>
+        )}
+
+        {tab === 'content' && (
+        <>
 
         {/* ── 专家 / 场景管理 ─────────────────────────────────────────────── */}
         <h3 className={css.sectionTitle}>专家与场景（工作区覆盖层）</h3>
@@ -675,104 +684,100 @@ export function ManageCard(_props: ManageCardProps) {
           </table>
         )}
 
-        {/* ── 领域包重建 ───────────────────────────────────────────────────── */}
-        <h3 className={css.sectionTitle}>领域包重建</h3>
-        <p className={css.sectionHint}>领域包是构建产物（<code>domain-packs/</code>），由 <code>build-packs.mjs</code> 确定性生成并带 <code>--check</code> 漂移校验。改源（raw-profile / 专家总表 / 场景定义）后在此一键重建；重建后请再跑「重新校验」确认零漂移。</p>
-        {packs.length > 0 && (
-          <table className={css.packTable}>
-            <thead>
-              <tr><th>包</th><th>版本</th><th>专家</th><th>场景</th><th>操作</th></tr>
-            </thead>
-            <tbody>
-              {packs.map((pack) => (
-                <tr key={pack.id}>
-                  <td><span className={css.packName}>{pack.name ?? pack.id}</span><code className={css.packId}>{pack.id}</code></td>
-                  <td>{pack.version ?? '—'}</td>
-                  <td>{packCount(pack, 'experts')}</td>
-                  <td>{packCount(pack, 'scenarios')}</td>
-                  <td>
-                    {REBUILD_ALLOWLIST.includes(pack.id) ? (
-                      <button className={css.button} type="button" disabled={busy !== ''} onClick={() => void rebuild(pack.id)}>{busy === `rebuild-${pack.id}` ? '重建中…' : '重建'}</button>
-                    ) : (
-                      <span className={css.statusLabel}>只读</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        </>
         )}
-        {packs.length === 0 && <p className={css.packsNote}>暂无领域包。</p>}
 
-        {/* ── 外部来源包（vendored） ──────────────────────────────────────── */}
-        <h3 className={css.sectionTitle}>外部来源包（vendored）</h3>
-        <p className={css.sectionHint}>
-          从外部地址引入领域包：平台拉取 → 用与构建同一套校验器校验 → 冻结成本地包入库。
-          <strong>运行时不联网</strong>——地址只是一次性的引进通道，拉下来的内容永远是本地包。
-          白名单外的 host 会先返回校验报告，确认后再入库。未配置 <code>vendorPacksDir</code> 时此区不可用。
-        </p>
-        <div className={css.fields}>
-          <label className={css.field}>
-            <span className={css.fieldLabel}>来源地址</span>
-            <input
-              className={css.input}
-              value={locator}
-              autoComplete="off"
-              placeholder="如 https://git.example.com/acme/domain-pack.git"
-              onChange={(event) => setLocator(event.target.value)}
-            />
-          </label>
-          <label className={css.field}>
-            <span className={css.fieldLabel}>版本（tag / 分支 / commit，留空取默认分支）</span>
-            <input
-              className={css.input}
-              value={sourceRef}
-              autoComplete="off"
-              placeholder="如 v1.0.0"
-              onChange={(event) => setSourceRef(event.target.value)}
-            />
-          </label>
-          <button className={css.button} type="button" disabled={busy !== '' || locator.trim() === ''} onClick={() => void onboard(false)}>
-            {busy === 'onboard' ? '处理中…' : '拉取并校验'}
-          </button>
-          <button className={css.button} type="button" disabled={busy !== '' || locator.trim() === ''} onClick={() => void onboard(true)}>
-            确认入库
-          </button>
+        {tab === 'model' && (
+        <>
+        <h3 className={css.sectionTitle}>默认模型</h3>
+        <p className={css.sectionHint}>未单独覆盖路由的成员/专家使用的全局默认模型。</p>
+        <label className={css.field}><span className={css.fieldLabel}>默认模型 Provider</span><input className={css.input} value={runtimeDraft.modelProvider} onChange={event => setRuntime('modelProvider', event.target.value)} /></label>
+        <label className={css.field}><span className={css.fieldLabel}>默认模型</span><input className={css.input} value={runtimeDraft.modelName} onChange={event => setRuntime('modelName', event.target.value)} /></label>
+        <label className={css.field}><span className={css.fieldLabel}>默认推理强度</span><input className={css.input} value={runtimeDraft.reasoningEffort} onChange={event => setRuntime('reasoningEffort', event.target.value)} /></label>
+        {scope !== undefined && (
+          <div className={css.packToolbar}>
+            {runtimeMessage !== '' && <span className={css.message} role="status">{runtimeMessage}</span>}
+            <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={runtimeSaving} onClick={() => void saveModel()}>{runtimeSaving ? '保存中…' : '保存默认模型'}</button>
+          </div>
+        )}
+
+        <h3 className={css.sectionTitle}>专家模型路由</h3>
+        <p className={css.sectionHint}>每位专家的生效模型路由与继承来源：设置覆盖 &gt; 专家预设 &gt; 全局默认。输入 provider/model（可带推理强度）即可为该专家覆盖路由，保存后立即生效。</p>
+        {scope === undefined && <p className={css.hint}>当前环境未开放设置写入，以下为只读展示。</p>}
+        <div className={css.packToolbar}>
+          <input
+            className={css.input}
+            placeholder="按 id / 姓名 / 领域 / 立场过滤…"
+            value={routeFilter}
+            onChange={event => setRouteFilter(event.target.value)}
+          />
+          <button className={css.button} type="button" onClick={() => void fetchRouteExperts()}>刷新</button>
+          {scope !== undefined && (
+            <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={routeSaving} onClick={() => void saveRoutes()}>{routeSaving ? '保存中…' : '保存路由覆盖'}</button>
+          )}
+          {routeMessage !== '' && <span className={css.message} role="status">{routeMessage}</span>}
         </div>
-
-        {sources.length > 0 && (
-          <table className={css.packTable}>
-            <thead>
-              <tr>
-                <th>包 id</th><th>来源</th><th>版本</th><th>信任级</th><th>状态</th><th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sources.map((source) => (
-                <tr key={source.id}>
-                  <td>{source.id}</td>
-                  <td>{source.locator}</td>
-                  <td>{source.revision.slice(0, 12)}</td>
-                  <td>{source.trust}</td>
-                  <td>
-                    <span className={css.statusLabel}>
-                      {source.state === 'clean' ? '一致' : source.state === 'modified' ? '本地已改' : '缺失'}
-                    </span>
-                  </td>
-                  <td>
-                    <button className={css.button} type="button" disabled={busy !== '' || !source.rollbackAvailable} onClick={() => void rollbackSource(source.id)}>
-                      {busy === `rollback-${source.id}` ? '回退中…' : '回退'}
-                    </button>{' '}
-                    <button className={css.button} type="button" disabled={busy !== ''} onClick={() => void removeSource(source.id)}>
-                      {busy === `remove-${source.id}` ? '卸载中…' : '卸载'}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {routeError !== '' && <p className={css.statusError} role="status">{routeError} <button className={css.button} type="button" onClick={() => void fetchRouteExperts()}>重试</button></p>}
+        {filteredRouteExperts === null && <p className={css.packsNote}>正在读取专家列表…</p>}
+        {filteredRouteExperts !== null && filteredRouteExperts.length === 0 && <p className={css.packsNote}>无匹配专家</p>}
+        {filteredRouteExperts !== null && filteredRouteExperts.length > 0 && (
+          <div className={css.expertTableWrap}>
+            <table className={css.packTable}>
+              <thead>
+                <tr><th>专家</th><th>领域/立场</th><th>预设路由</th><th>当前生效</th><th>来源</th><th>覆盖路由（provider / model / effort）</th></tr>
+              </thead>
+              <tbody>
+                {filteredRouteExperts.map(expert => {
+                  const override = routeOverrides[expert.id]
+                  return (
+                    <tr key={expert.id}>
+                      <td><span className={css.packName}>{expert.name}</span><code className={css.packId}>{expert.id}{expert.deceased === true ? '（已故）' : ''}</code></td>
+                      <td>{[expert.field, expert.stance].filter(part => part !== undefined && part !== '').join(' · ') || (expert.role ?? '—')}</td>
+                      <td className={css.mono}>{routeText(expert.preset)}</td>
+                      <td className={css.mono} data-severity={expert.source === 'override' ? 'pass' : 'idle'}>{routeText(expert.effective)}</td>
+                      <td>{SOURCE_LABEL[expert.source] ?? expert.source}</td>
+                      <td>
+                        {scope === undefined
+                          ? <span className={css.packId}>—</span>
+                          : (
+                            <span className={css.routeEditor}>
+                              <input className={css.miniInput} placeholder="provider" value={override?.provider ?? ''} onChange={event => setRouteOverride(expert.id, 'provider', event.target.value)} />
+                              <input className={css.miniInput} placeholder="model" value={override?.model ?? ''} onChange={event => setRouteOverride(expert.id, 'model', event.target.value)} />
+                              <input className={css.miniInput} placeholder="effort" value={override?.reasoningEffort ?? ''} onChange={event => setRouteOverride(expert.id, 'reasoningEffort', event.target.value)} />
+                            </span>
+                          )}
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
-        {sources.length === 0 && <p className={css.packsNote}>暂无外部来源包。</p>}
+
+        </>
+        )}
+
+        {tab === 'runtime' && (
+        <>
+        <h3 className={css.sectionTitle}>运行配置</h3>
+        <p className={css.sectionHint}>成员运行时、默认模型、提示词策略与领域包目录。留空表示继承默认配置。</p>
+        {scope === undefined && <p className={css.hint}>当前环境未开放设置写入，运行配置不可编辑。</p>}
+        <label className={css.field}><span className={css.fieldLabel}>状态目录</span><input className={css.input} value={runtimeDraft.stateDir} onChange={event => setRuntime('stateDir', event.target.value)} /></label>
+        <label className={css.field}><span className={css.fieldLabel}>知识目录</span><input className={css.input} value={runtimeDraft.knowledgeDir} onChange={event => setRuntime('knowledgeDir', event.target.value)} /></label>
+        <label className={css.field}><span className={css.fieldLabel}>成员 Provider</span><input className={css.input} value={runtimeDraft.memberProvider} onChange={event => setRuntime('memberProvider', event.target.value)} /></label>
+        <label className={css.field}><span className={css.fieldLabel}>最大成员数</span><input className={css.input} type="number" min="1" value={runtimeDraft.maxMembers} onChange={event => setRuntime('maxMembers', event.target.value)} /></label>
+        <label className={css.field}><span className={css.fieldLabel}>成员委托深度</span><input className={css.input} type="number" min="0" value={runtimeDraft.memberMaxDepth} onChange={event => setRuntime('memberMaxDepth', event.target.value)} /></label>
+        <label className={css.field}><span className={css.fieldLabel}>提示词顺序</span><input className={css.input} type="number" min="0" value={runtimeDraft.promptSectionOrder} onChange={event => setRuntime('promptSectionOrder', event.target.value)} /></label>
+        <label className={css.checkRow}><input className={css.checkbox} type="checkbox" checked={runtimeDraft.announceToAgent} onChange={event => setRuntime('announceToAgent', event.target.checked)} /> 向 Agent 注入专家库使用协议</label>
+        {scope !== undefined && (
+          <div className={css.packToolbar}>
+            {runtimeMessage !== '' && <span className={css.message} role="status">{runtimeMessage}</span>}
+            <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={runtimeSaving} onClick={() => void saveRuntime()}>{runtimeSaving ? '保存中…' : '保存运行配置'}</button>
+          </div>
+        )}
+        </>
+        )}
       </div>
     </section>
   )

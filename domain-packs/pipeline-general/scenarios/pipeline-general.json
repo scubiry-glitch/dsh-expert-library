@@ -8,12 +8,7 @@
   ],
   "requiredCapabilities": [
     {
-      "capability": "pipeline-general.review",
-      "minProficiency": 1,
-      "cardinality": 1
-    },
-    {
-      "capability": "pipeline.general.review",
+      "capability": "zhijian.review",
       "minProficiency": 1,
       "cardinality": 1
     }

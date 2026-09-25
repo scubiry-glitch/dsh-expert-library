@@ -51,6 +51,7 @@ import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
 import { scenarioById } from './zhijian/routing.ts'
 import { expertMemoryGuideSection } from './zhijian/expert-memory.ts'
 import type { ToolExecutionConfig, ToolExecutionMode } from './settings.ts'
+import type { RuntimeCenterSnapshot } from './v2/runtime-pack.ts'
 
 /** Resolved plugin config consumed by the tools. */
 export interface ToolsConfig {
@@ -75,6 +76,11 @@ export interface ToolsConfig {
   manageToken?: string
   /** Directory holding vendored external packs; empty disables that surface. */
   vendorPacksDir?: string
+  /** Remote center origin and deployment-private inventory; changes require restart. */
+  packCenterOrigin?: string
+  packCenterDir?: string
+  /** Internal local-state provider; never serialized as a plugin setting. */
+  getPackCenterSnapshot?: () => Promise<RuntimeCenterSnapshot>
   /** Locator hosts whose packs install on validation success, without review. */
   packSourceAllowlist?: readonly string[]
   /** Workspace domain pack ids enabled for runtime compile; absent/empty = every valid workspace pack. */

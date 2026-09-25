@@ -23,7 +23,7 @@ import { steerCaptainReport } from '../tools.ts'
 import { applyExecutionPlan, compileErrorOf } from '../apply.ts'
 import { compileExecutionPlan } from '../v2/compiler.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
-import { resolveRuntimePack } from '../v2/runtime-pack.ts'
+import { resolveManagedRuntimePack } from '../host/pack-runtime.ts'
 import { frameworkById, GLOBAL_OUTPUT_RULES } from './frameworks.ts'
 import { ALL_EXPERT_METAS, normalizeExpertId } from './registry.ts'
 import { matchExperts, mentalModelCatalog } from './capability.ts'
@@ -342,7 +342,7 @@ export function registerZhijianTools(
         .map(rule => `5. ${rule}`)
         .join('\n')
       const compiled = compileExecutionPlan({
-        pack: (await resolveRuntimePack(ctx, config, buildZhijianDomainPack())).pack,
+        pack: (await resolveManagedRuntimePack(ctx, config, buildZhijianDomainPack())).pack,
         templateId: `zhijian.team.${frameworkId}`,
         ...(scenario === undefined ? {} : { scenarioId: scenario.id }),
         // 渲染与生成（t3）默认指派内置通用专家 designer：领域专家管内容、

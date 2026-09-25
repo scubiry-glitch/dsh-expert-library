@@ -178,8 +178,18 @@ export function guardSubagentDelivery(
     signal: AbortSignal,
     mode: string,
   ) => {
+    // Bounded diagnostic (≤3 per install): log the synchronous caller stack of
+    // queuePrompt deliveries — used to trace the 2026-09-21 delivery retry storm.
+    const q = guardedQueue as unknown as { traceN?: number }
+    if ((q.traceN ??= 0) < 3) {
+      q.traceN += 1
+      console.error(`[guardedQueue-trace] call #${q.traceN}\n${new Error('trace').stack}`)
+    }
     await check(parent, childId)
-    return (host[deliverPrompt] as (this: unknown, ...args: unknown[]) => Promise<unknown>)
+    // Call the captured implementation: the runtime's property now points to
+    // this guard, and reading it again would recurse instead of delivering.
+    const queue = typeof deliver === 'function' ? deliver : legacyQueue
+    return (queue as (this: unknown, ...args: unknown[]) => Promise<unknown>)
       .call(runtime, parent, childId, content, source, signal, mode)
   }
   const guardedSend = async (

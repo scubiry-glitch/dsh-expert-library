@@ -374,8 +374,21 @@ export async function writeTeam(stateRoot: string, state: TeamState): Promise<vo
   await atomicWriteText(join(stateRoot, state.id, 'team.json'), JSON.stringify(state, null, 2))
 }
 
+/**
+ * Hot-path cache for the retired-member deny-list: the delivery guard reads it
+ * on every queued prompt, so an unthrottled retry loop turns into an fs storm.
+ * Short TTL; invalidated on write (recordRetiredMemberIds).
+ */
+const retiredIdsCache = new Map<string, { at: number; ids: Set<string> }>()
+const RETIRED_IDS_CACHE_TTL_MS = 30_000
+
 /** Read the durable set of member session ids retired by remove/delete. */
 export async function readRetiredMemberIds(stateRoot: string): Promise<Set<string>> {
+  const cached = retiredIdsCache.get(stateRoot)
+  if (cached && Date.now() - cached.at < RETIRED_IDS_CACHE_TTL_MS) {
+    return cached.ids
+  }
+  let ids: Set<string>
   try {
     const parsed: unknown = JSON.parse(stripLeadingBom(
       await readFile(join(stateRoot, RETIRED_MEMBERS_FILE), 'utf8'),
@@ -383,13 +396,16 @@ export async function readRetiredMemberIds(stateRoot: string): Promise<Set<strin
     if (!Array.isArray(parsed) || parsed.some(value => typeof value !== 'string' || value === '')) {
       throw new Error('invalid Expert Teams retired member index')
     }
-    return new Set(parsed)
+    ids = new Set(parsed)
   } catch (error: unknown) {
     if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
-      return new Set()
+      ids = new Set()
+    } else {
+      throw error
     }
-    throw error
   }
+  retiredIdsCache.set(stateRoot, { at: Date.now(), ids })
+  return ids
 }
 
 /** Atomically add session ids to the durable retired-member deny-list. */
@@ -404,6 +420,7 @@ export async function recordRetiredMemberIds(stateRoot: string, memberIds: reado
       join(stateRoot, RETIRED_MEMBERS_FILE),
       `${JSON.stringify([...retired].sort(), null, 2)}\n`,
     )
+    retiredIdsCache.delete(stateRoot)
   })
 }
 

@@ -40,6 +40,11 @@ export {
 } from './zhijian-pack.ts'
 export type { BuildZhijianPackOptions } from './zhijian-pack.ts'
 export {
+  ZHIJIAN_PIPELINE_COMPATIBILITY,
+  ZHIJIAN_PIPELINE_COMPATIBILITY_EVIDENCE,
+  ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES,
+} from './zhijian-pipeline-compat.ts'
+export {
   buildBankDomainPack,
   BANK_PACK_ID,
   BANK_PACK_VERSION,

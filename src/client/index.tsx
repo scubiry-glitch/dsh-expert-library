@@ -17,8 +17,8 @@ import { ExpertTeamsCard, type ExpertTeamsCardInjected } from './AgentTeamsCard.
 import { agentTeamsCardDefinition } from './agent-teams-card-definition.ts'
 import { FilesView } from './FilesView.tsx'
 import { ExpertLibrarySettingsCard } from './settings-card.tsx'
-import { DomainPacksCard } from './domain-packs-card.tsx'
 import { ManageCard } from './manage-card.tsx'
+import { PackCenterCard } from './pack-center-card.tsx'
 
 /** Required services: conversation nodes, slots, and sessions navigation. */
 export const inject = ['uiConversation', 'slots', 'sessions', 'settingsScope']
@@ -60,32 +60,39 @@ export function apply(ctx: ClientContext): void {
   conversationNodeRegistry(ctx).register(agentTeamsCardDefinition)
 
   const settingsScope = ctx.settingsScope.bind<ExpertLibrarySettings>({ namespace: 'expert-library' })
+  // 智见数据（原「专家库」）：纯粹的数据源管理 —— 外部 provider 注册/连通
+  // 与工具执行模式。其余原区块拆至下方各分区。
   ctx.slots.register({
     name: 'settings.section',
     id: 'expert-library',
     order: 160,
-    label: '专家库',
+    label: '智见数据',
     inject: () => ({ scope: settingsScope }),
   }, ExpertLibrarySettingsCard)
 
-  // Read-only Domain Pack preview (Phase 1 「设置页只读预览校验」): next to the
-  // writable 专家库 runtime card, without any settings scope — the page only
-  // reads the host `/plugins/dsh-expert-library/packs` route.
+  // Read-only Domain Pack validation preview. Tenant version operations live in
+  // the separate settings section labelled 「领域包」 below; this preview keeps
+  // the existing local pack-health view distinct from center-managed versions.
+  // 领域包：版本管理中心吸收本地校验（DomainPacksCard 的 Panel 作为
+  // 「本地校验」Tab 嵌入）+ 运行参与（enabledPacks/packPriority）。
   ctx.slots.register({
     name: 'settings.section',
-    id: 'expert-library-packs',
+    id: 'expert-library-center',
     order: 165,
     label: '领域包',
-  }, DomainPacksCard)
+    inject: () => ({ scope: settingsScope }),
+  }, PackCenterCard)
 
   // 专家库手动管理（写侧）：专家/场景覆盖层 CRUD、技能 zip 安装、领域包重建。
   // 把高频操作固定成设置表单，避免每次靠 agent 执行的随机性；host 路由
   // /plugins/dsh-expert-library/manage/*（白名单脚本 + 惰性写覆盖层）。
+  // 专家库：写侧管理（专家/场景/技能）+ 专家模型路由覆盖 + 运行配置。
   ctx.slots.register({
     name: 'settings.section',
     id: 'expert-library-manage',
     order: 170,
-    label: '专家库管理',
+    label: '专家库',
+    inject: () => ({ scope: settingsScope }),
   }, ManageCard)
   ctx.slots.inject('conversation.chat.node', () => ctx.slots.register({
     name: 'conversation.chat.node',

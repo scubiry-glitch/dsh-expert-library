@@ -5,6 +5,16 @@
   "type": "module",
   "main": "lib/index.js",
   "types": "lib/types/index.d.ts",
+  "imports": {
+    "#pack-contract": {
+      "types": "./packages/pack-contract/index.d.mts",
+      "default": "./packages/pack-contract/index.mjs"
+    },
+    "#pack-artifact": {
+      "types": "./packages/pack-artifact/index.d.mts",
+      "default": "./packages/pack-artifact/index.mjs"
+    }
+  },
   "exports": {
     ".": {
       "types": "./lib/types/index.d.ts",
@@ -19,12 +29,22 @@
       "types": "./lib/types/v2/index.d.ts",
       "default": "./lib/v2/index.js"
     },
+    "./pack-validator": {
+      "types": "./lib/types/pack-validator.d.ts",
+      "default": "./lib/pack-validator.js"
+    },
     "./client": "./lib/client.js",
     "./domain-packs/*": "./domain-packs/*",
     "./package.json": "./package.json"
   },
   "files": [
     "lib",
+    "packages/pack-contract/index.mjs",
+    "packages/pack-contract/index.d.mts",
+    "packages/pack-contract/package.json",
+    "packages/pack-artifact/index.mjs",
+    "packages/pack-artifact/index.d.mts",
+    "packages/pack-artifact/package.json",
     "assets",
     "knowledge",
     "domain-packs",
@@ -70,7 +90,8 @@
     "check:pack": "node scripts/build-zhijian-pack.mjs --check",
     "build:builtin": "node scripts/build-builtin-pack.mjs",
     "check:builtin": "node scripts/build-builtin-pack.mjs --check",
-    "test": "pnpm build && node --test 'test/**/*.test.mjs'"
+    "test": "pnpm build && node --test --test-concurrency=1 'test/**/*.test.mjs'",
+    "test:pack-center": "pnpm build && node --test --test-concurrency=1 packages/pack-contract/test/*.test.mjs packages/pack-artifact/test/*.test.mjs test/host-pack-source.test.mjs test/v2-runtime-pack.test.mjs test/v2-no-network.test.mjs"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1-rc.1",

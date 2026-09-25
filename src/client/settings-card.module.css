@@ -453,3 +453,32 @@
     transition: none;
   }
 }
+
+/* ── Tabs（专家库管理分区） ──────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 16px 0;
+  border-bottom: 1px solid var(--elc-border, #ddd);
+  padding-bottom: 5px;
+}
+
+.tab {
+  flex: 1 1 auto;
+  border: 0;
+  border-radius: 7px;
+  padding: 9px 10px;
+  min-height: 40px;
+  background: transparent;
+  color: var(--elc-label-dim, #777);
+  font: inherit;
+  cursor: pointer;
+}
+
+.tab[aria-selected='true'] {
+  background: var(--elc-soft, #f2f2f2);
+  color: var(--elc-label, #222);
+  box-shadow: inset 0 -2px var(--elc-brand, #4a6cf7);
+  font-weight: 600;
+}

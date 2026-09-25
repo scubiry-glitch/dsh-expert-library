@@ -4,8 +4,11 @@
  * by the plugin's `GET /plugins/dsh-expert-library/packs` route and shows one
  * pack's validation detail on selection.
  *
- * Read-only by design (Phase 1 「设置页只读预览校验」): no settings scope, no
- * `scope.set`/`unset`, no write controls. The wire types are mirrored locally
+ * The pack list / validation detail stays read-only. The runtime
+ * participation block below (enabledPacks / packPriority + content drift via
+ * `/health?probe=packs`) moved here from the former 专家库 settings card and
+ * is editable through the shared `expert-library` settings scope when one is
+ * injected. The wire types are mirrored locally
  * (like ActivityPanel mirrors host snapshots) because the client bundle must
  * not import the host `src/v2` modules.
  *
@@ -20,6 +23,15 @@
 
 import { useEffect, useState } from 'react'
 import css from './domain-packs-card.module.css'
+import tableCss from './settings-card.module.css'
+import {
+  DRIFT_LABEL,
+  HEALTH_URL,
+  LAYER_LABEL,
+  isHealthWire,
+  type HealthWire,
+  type ExpertLibrarySettingsScope,
+} from './settings-shared.ts'
 
 /** One pack row of the host list response (mirrors host PackSummary). */
 interface ClientPackSummary {
@@ -57,17 +69,19 @@ interface ClientDomainPackPreview {
 export interface DomainPacksCardProps {
   /** Close the settings panel (the shell owns the open state). */
   close: () => void
+  /** Shared expert-library settings scope; editing is only offered when
+   * injected (absent scope = read-only preview). */
+  scope?: ExpertLibrarySettingsScope
 }
 
 /** Host route serving pack summaries and per-pack previews. */
 const PACKS_URL = '/plugins/dsh-expert-library/packs'
 
-/** Layer badge labels. */
-const LAYER_LABEL: Record<string, string> = {
-  builtin: '内置',
+/** Layer badge labels (superset of the shared table labels). */
+const LOCAL_LAYER_LABEL: Record<string, string> = {
   'domain-pack': '领域包',
-  workspace: '工作区',
   request: '请求',
+  ...LAYER_LABEL,
 }
 
 /** Counts grid order: collection key → 中文 label. */
@@ -85,7 +99,7 @@ const COUNTS: ReadonlyArray<readonly [string, string]> = [
 ]
 
 function layerLabel(layer: string): string {
-  return LAYER_LABEL[layer] ?? layer
+  return LOCAL_LAYER_LABEL[layer] ?? layer
 }
 
 /** One severity group of diagnostics. */
@@ -146,8 +160,20 @@ function PreviewResult({ preview }: { readonly preview: ClientDomainPackPreview 
   )
 }
 
-/** Read-only Domain Pack preview and validation page. */
-export function DomainPacksCard({ close }: DomainPacksCardProps) {
+/** Read-only Domain Pack preview and validation page. Tenant version management
+ * is exposed by the separate settings section labelled 「领域包」. */
+/** Slot wrapper: full-page card with header + close. */
+export function DomainPacksCard({ close, scope }: DomainPacksCardProps) {
+  return <PackValidationPanel scope={scope} onClose={close} />
+}
+
+/** Embeddable validation + runtime-participation panel (no outer card shell).
+ * Used standalone in the 「领域包校验」 slot and as the 「本地校验」 tab of the
+ * 领域包 version-management card. */
+export function PackValidationPanel({ scope, onClose }: {
+  scope?: ExpertLibrarySettingsScope
+  onClose?: () => void
+}) {
   const [packs, setPacks] = useState<readonly ClientPackSummary[] | null>(null)
   const [listLoading, setListLoading] = useState(true)
   const [listError, setListError] = useState('')
@@ -155,6 +181,16 @@ export function DomainPacksCard({ close }: DomainPacksCardProps) {
   const [preview, setPreview] = useState<ClientDomainPackPreview | null>(null)
   const [previewLoading, setPreviewLoading] = useState(false)
   const [previewError, setPreviewError] = useState('')
+  // Content-drift probe (mirrors host /health?probe=packs payload).
+  const [drift, setDrift] = useState<HealthWire | null>(null)
+  const [driftError, setDriftError] = useState('')
+  const writable = scope?.getSnapshot().writable === true
+  const settingsValue = scope?.getSnapshot().value
+  // Runtime participation drafts (moved from the former 专家库 card).
+  const [enabledPacks, setEnabledPacks] = useState<readonly string[]>(settingsValue?.enabledPacks ?? [])
+  const [packPriority, setPackPriority] = useState<readonly string[]>(settingsValue?.packPriority ?? [])
+  const [packsMessage, setPacksMessage] = useState('')
+  const [packsSaving, setPacksSaving] = useState(false)
 
   const loadList = async (): Promise<void> => {
     setListLoading(true)
@@ -197,16 +233,93 @@ export function DomainPacksCard({ close }: DomainPacksCardProps) {
 
   useEffect(() => { void loadList() }, [])
 
+  const loadDrift = async (): Promise<void> => {
+    setDriftError('')
+    try {
+      const response = await fetch(`${HEALTH_URL}?probe=packs`, { cache: 'no-store' })
+      if (!response.ok) throw new Error('non-ok response')
+      const body: unknown = await response.json()
+      if (!isHealthWire(body)) throw new Error('malformed body')
+      setDrift(body)
+    } catch {
+      setDriftError('漂移探测请求失败')
+    }
+  }
+
+  useEffect(() => {
+    if (scope === undefined) return
+    if (scope.getSnapshot().status !== 'ready') return
+    const value = scope.getSnapshot().value
+    if (value === undefined) return
+    setEnabledPacks(value.enabledPacks ?? [])
+    setPackPriority(value.packPriority ?? [])
+  }, [scope, scope?.getSnapshot().status, scope?.getSnapshot().value])
+
+  useEffect(() => {
+    void loadDrift()
+  }, [])
+
+  /** See the former 专家库 card: empty enabledPacks = all valid packs. */
+  const togglePack = (id: string, next: boolean): void => {
+    const workspaceIds = (packs ?? [])
+      .filter(pack => pack.layer !== 'builtin')
+      .map(pack => pack.id)
+    setEnabledPacks(current => {
+      if (next) return [...current, id]
+      if (current.length > 0) return current.filter(candidate => candidate !== id)
+      return workspaceIds.filter(candidate => candidate !== id)
+    })
+    setPackPriority(current => next
+      ? (current.includes(id) ? current : [...current, id])
+      : current.filter(candidate => candidate !== id))
+    setPacksMessage('')
+  }
+
+  const movePack = (id: string, delta: -1 | 1): void => {
+    setPackPriority(current => {
+      const index = current.indexOf(id)
+      if (index === -1) {
+        return delta === -1 ? [id, ...current] : [...current, id]
+      }
+      const target = index + delta
+      if (target < 0 || target >= current.length) return current
+      const next = [...current]
+      next.splice(index, 1)
+      next.splice(target, 0, id)
+      return next
+    })
+    setPacksMessage('')
+  }
+
+  const savePacks = async (): Promise<void> => {
+    if (scope === undefined || !writable || packsSaving) return
+    setPacksSaving(true)
+    setPacksMessage('')
+    try {
+      if (enabledPacks.length > 0) await scope.set('enabledPacks', enabledPacks)
+      else await scope.unset('enabledPacks')
+      if (packPriority.length > 0) await scope.set('packPriority', packPriority)
+      else await scope.unset('packPriority')
+      setPacksMessage('已保存')
+    } catch (error) {
+      setPacksMessage(error instanceof Error ? error.message : '保存失败')
+    } finally {
+      setPacksSaving(false)
+    }
+  }
+
   return (
     <section className={css.card}>
-      <header className={css.head}>
-        <h2 className={css.title}>领域包</h2>
-        <p className={css.subtitle}>Domain Pack 只读预览与校验结果：内置 zhijian-realestate 包与各工作区 <code className={css.mono}>domain-packs/</code> 目录下的包；此处仅读取并重新校验，不修改任何文件。</p>
-      </header>
+      {onClose !== undefined && (
+        <header className={css.head}>
+          <h2 className={css.title}>领域包校验</h2>
+          <p className={css.subtitle}>Domain Pack 只读预览与校验结果：内置 zhijian-realestate 包与各工作区 <code className={css.mono}>domain-packs/</code> 目录下的包；此处仅读取并重新校验，不修改任何文件。</p>
+        </header>
+      )}
       <div className={css.body}>
         <div className={css.toolbar}>
           <button className={css.button} type="button" disabled={listLoading} onClick={() => void loadList()}>{listLoading ? '刷新中…' : '刷新'}</button>
-          <button className={css.button} type="button" onClick={close}>关闭</button>
+          {onClose !== undefined && <button className={css.button} type="button" onClick={onClose}>关闭</button>}
         </div>
         {listLoading && packs === null && <p className={css.hint}>正在读取领域包…</p>}
         {listError !== '' && packs === null && (
@@ -249,6 +362,60 @@ export function DomainPacksCard({ close }: DomainPacksCardProps) {
             )}
             {!previewLoading && preview !== null && <PreviewResult preview={preview} />}
           </section>
+        )}
+
+        <h3 className={tableCss.sectionTitle}>运行参与与内容漂移</h3>
+        <p className={tableCss.sectionHint}>「运行」勾选 = 该工作区包参与团队编译（可覆盖内置专家/场景/模板）；优先级决定多个包并存时的覆盖顺序（↑ 越靠前优先级越高）。未勾选任何包 = 全部有效包参与（默认）。漂移列来自 <code>GET /health?probe=packs</code> 树摘要比对。包的增删改请使用生成器 CLI。</p>
+        {scope === undefined && <p className={css.hint}>当前环境未开放设置写入，以下为只读展示。</p>}
+        {driftError !== '' && <p className={css.statusError} role="status">{driftError}</p>}
+        <div className={tableCss.packToolbar}>
+          <button className={tableCss.button} type="button" onClick={() => void loadDrift()}>重新校验漂移</button>
+          {writable && (
+            <button className={`${tableCss.button} ${tableCss.buttonPrimary}`} type="button" disabled={packsSaving} onClick={() => void savePacks()}>{packsSaving ? '保存中…' : '保存运行配置'}</button>
+          )}
+          {packsMessage !== '' && <span className={tableCss.message} role="status">{packsMessage}</span>}
+        </div>
+        {packs !== null && packs.length > 0 && (
+          <table className={tableCss.packTable}>
+            <thead>
+              <tr><th>包</th><th>层级</th><th>漂移</th><th>运行</th><th>优先级</th></tr>
+            </thead>
+            <tbody>
+              {packs.map((pack) => {
+                const driftEntry = drift?.packs.find((candidate) => candidate.id === pack.id)
+                const enabled = pack.layer === 'builtin' ? true : enabledPacks.length === 0 || enabledPacks.includes(pack.id)
+                const rank = packPriority.indexOf(pack.id)
+                return (
+                  <tr key={`${pack.layer}:${pack.id}`}>
+                    <td><span className={tableCss.packName}>{pack.name}</span><code className={tableCss.packId}>{pack.id}@{pack.version}</code></td>
+                    <td>{LAYER_LABEL[pack.layer] ?? pack.layer}</td>
+                    <td data-drift={driftEntry?.drift ?? 'unknown'}>{driftEntry === undefined ? '—' : DRIFT_LABEL[driftEntry.drift]}</td>
+                    <td>
+                      {pack.layer === 'builtin' || !writable
+                        ? <span className={tableCss.packId}>{pack.layer === 'builtin' ? '始终' : '—'}</span>
+                        : (
+                          <label className={tableCss.checkRow}>
+                            <input className={tableCss.checkbox} type="checkbox" checked={enabled} onChange={event => togglePack(pack.id, event.target.checked)} />
+                            {enabled ? '参与' : '停用'}
+                          </label>
+                        )}
+                    </td>
+                    <td>
+                      {pack.layer === 'builtin' || !enabled || !writable
+                        ? <span className={tableCss.packId}>—</span>
+                        : (
+                          <span className={tableCss.priorityControl}>
+                            <button className={tableCss.button} type="button" disabled={rank === 0} onClick={() => movePack(pack.id, -1)}>↑</button>
+                            <span className={tableCss.packId}>{rank === -1 ? '默认' : rank + 1}</span>
+                            <button className={tableCss.button} type="button" disabled={rank !== -1 && rank >= packPriority.length - 1} onClick={() => movePack(pack.id, 1)}>↓</button>
+                          </span>
+                        )}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         )}
       </div>
     </section>

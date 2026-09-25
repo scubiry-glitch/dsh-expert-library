@@ -48,6 +48,8 @@ import type { TeamState } from './types.ts'
 import { droppedSessionEvents } from './events.ts'
 import { handleManage } from './host/manage.ts'
 import { authorizeManageRequest, resolveManageToken } from './host/auth.ts'
+import { createPackCenterHost } from './host/pack-center-host.ts'
+import { createPackCenterRouteHandler } from './host/pack-center-routes.ts'
 
 /**
  * Resolve the vendored-pack root. Deliberately not under the plugin module
@@ -90,7 +92,7 @@ import { discoverPackDirs, discoverPackDirsIn, listDomainPacks, previewDomainPac
 import { loadPackFromDir } from './v2/pack-loader.ts'
 import { readRegistry } from './host/pack-registry.ts'
 import { buildZhijianDomainPack } from './v2/zhijian-pack.ts'
-import { resolveRuntimePack } from './v2/runtime-pack.ts'
+import { resolveManagedRuntimePack } from './host/pack-runtime.ts'
 import type { DomainPackV2 } from './v2/types.ts'
 import {
   collectSkillEntries,
@@ -254,6 +256,9 @@ export interface Config {
    * surface entirely rather than picking a directory to write into.
    */
   vendorPacksDir?: string
+  /** HTTPS center origin and private storage. Changes require plugin restart. */
+  packCenterOrigin?: string
+  packCenterDir?: string
   /** Locator hosts whose packs install on validation success, without review. */
   packSourceAllowlist?: string[]
   /** Prompt-section order for the usage policy (default `117`, after delegation policy). */
@@ -331,6 +336,8 @@ export const Config: z<Config> = z.object({
   packsDir: z.string().default('domain-packs'),
   manageToken: z.string().default(''),
   vendorPacksDir: z.string().default(''),
+  packCenterOrigin: z.string().default(''),
+  packCenterDir: z.string().default(''),
   packSourceAllowlist: z.array(z.string()).default([]),
   promptSectionOrder: z.natural().default(117),
   announceToAgent: z.boolean().default(true),
@@ -399,6 +406,8 @@ export function apply(ctx: Context, config: Config): void {
     packsDir: config.packsDir ?? 'domain-packs',
     manageToken: config.manageToken,
     vendorPacksDir: resolveVendorPacksDir(config.vendorPacksDir),
+    packCenterOrigin: config.packCenterOrigin,
+    packCenterDir: config.packCenterDir,
     packSourceAllowlist: config.packSourceAllowlist ?? [],
     enabledPacks: config.enabledPacks,
     packPriority: config.packPriority,
@@ -543,6 +552,8 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
     runtimeConfig.manageToken = value.manageToken
     runtimeConfig.vendorPacksDir = resolveVendorPacksDir(value.vendorPacksDir)
+    runtimeConfig.packCenterOrigin = value.packCenterOrigin
+    runtimeConfig.packCenterDir = value.packCenterDir
     runtimeConfig.packSourceAllowlist = value.packSourceAllowlist ?? []
     runtimeConfig.enabledPacks = value.enabledPacks
     runtimeConfig.packPriority = value.packPriority
@@ -571,6 +582,18 @@ export function apply(ctx: Context, config: Config): void {
     onChange: () => applySource(current),
   })
   applySource(() => config)
+
+  const packCenter = createPackCenterHost(ctx, runtimeConfig, () => {
+    const registry = (ctx.get(WORKSPACE_KEYS[0]) ?? ctx.get(WORKSPACE_KEYS[1])) as WorkspaceRegistry | undefined
+    return registry?.list().map(workspace => workspace.path) ?? []
+  })
+  runtimeConfig.getPackCenterSnapshot = () => packCenter.activeSnapshot()
+  const handlePackCenter = createPackCenterRouteHandler({ service: packCenter.service,
+    getManageToken: () => resolveManageToken(runtimeConfig.manageToken) })
+  // No network on startup; resumes persisted jobs and verifies local receipts.
+  // Fixed log text only: configuration/transport errors must not print secrets.
+  void packCenter.service.start().catch(() => ctx.logger.warn('expert-library: pack-center local startup needs administrator attention'))
+  ctx.effect(() => () => { void packCenter.service.close().catch(() => {}) }, 'expert-library: pack-center local manager')
 
   // The activity panel data/artwork routes need the Web server and the
   // workspace registry, which headless profiles do not mount; under
@@ -908,8 +931,11 @@ export function apply(ctx: Context, config: Config): void {
       // failures degrade to the builtin pack alone.
       let overlayPack: DomainPackV2 | undefined
       try {
-        overlayPack = (await resolveRuntimePack(ctx, runtimeConfig, buildZhijianDomainPack())).pack
-      } catch {
+        overlayPack = (await resolveManagedRuntimePack(ctx, runtimeConfig, buildZhijianDomainPack())).pack
+      } catch (error) {
+        // Managed failures must remain visible; a builtin-only listing would
+        // misrepresent the active release. Preserve legacy-only fallback.
+        if (runtimeConfig.getPackCenterSnapshot !== undefined) throw error
         overlayPack = undefined
       }
       const experts = [...BUILTIN_EXPERT_BY_ID.values(), ...ZHIJIAN_EXPERT_BY_ID.values()]
@@ -978,6 +1004,9 @@ export function apply(ctx: Context, config: Config): void {
     kind: 'prefix',
     path: '/plugins/dsh-expert-library/manage',
     handler: async (req, res) => {
+      // Raw URL enters the stricter center router before normalization or legacy
+      // handling. It independently enforces local auth and browser CSRF rules.
+      if (await handlePackCenter(req, res)) return
       // The plugin's write surface is not covered by the Harness browser-auth
       // gate (measured: `/plugins/*` answers 200 unauthenticated on both the
       // loopback and the public authority), so every route below — reads
