@@ -32,6 +32,18 @@ AgentTeams 的关键经验不是“多开几个子代理”，而是把团队当
 
 ## 开发阶段和验收标准
 
+下面是执行摘要；各阶段的源码范围、任务细节和负向测试在后文展开。
+
+| 阶段 | 开发计划 | 目标 | 验收标准 | 前置/停止条件 |
+|---|---|---|---|---|
+| A0 基线审计 | 固定 AgentTeams v0.1.21 对照版本；补齐 state、attempt、mailbox、quality、profile fixtures；记录现有门禁 | 明确专家库已有底座和真实缺口 | 同输入 plan/digest/DAG 稳定；V1/V2、专家包、provider 回归通过；新环境可复现 | 无前置；对照表和 fixtures 未完成，不改执行路径 |
+| A1 持久计划审批 | 增加 `StagedPlan`、preview/stage/edit/approve/discard、CAS、过期、journal、归档 | 用户批准前不创建成员、任务或调度 | preview 零副作用；旧 digest 拒绝；并发 approve 只建一队；重启可恢复；失败无半队 | A0；状态机或迁移未冻结，停止 apply 改造 |
+| A2 Profile 动态规划 | 增加 `captain/seed` profile；固定 roster/route/门禁；Captain 在 staged 阶段生成 DAG | 固定协作模板与目标驱动规划分离 | profile 错误不写状态；DAG 无环且可审阅；反馈修改原 plan；seed golden 不变 | A1；不能验证同一 plan 的编辑/批准，停止 UI 接入 |
+| A3 Attempt 与消息准入 | 强化 claim/reassign/resume/halt；消息增加 source task/attempt/status、sequence、幂等键、lease/ack | 迟到更新和旧消息不能覆盖当前执行代际 | 并发 claim 仅一次；旧 attempt update/message 被拒；坏邮箱可跳过；重启不重复 spawn；halt 不被静默解除 | A1；没有 kill/restart、并发和投递失败证据，停止质量调度 |
+| A4 结构化质量闭环 | 增加 task contract、finding、verdict、acceptance、commands、changedPaths；review→repair→re-review→integration | 质量结果由状态和证据决定，不靠文本自报 | reviewer≠assignee；hard block/越界路径/缺 artifact 被拒；最多两轮；第三次 escalated；预算跨重启；failed review 不解锁下游 | A3；旧 inline gate 与新 QualityRun 未隔离，停止扩大场景覆盖 |
+| A5 能力与冷恢复 | 增加成员 `capabilityScope`、模型 route/fallback、maxDepth、bootstrap、spawnError、compat matrix | 成员身份、工具范围和模型路由可解释、可恢复 | 越权 capability denied；默认 depth=0；route 不漂移；宿主缺能力有可见降级；冷恢复不重复成员 | A4；没有 scope/route/host 矩阵，停止声明兼容 |
+| A6 UI、Doctor 与发布 | activity/workspace 展示 staged plan、DAG、finding、attempt、archive；增加 doctor 和四层验证 | 用户可审阅、停止、恢复、诊断和复盘 | UI/API/磁盘快照一致；刷新/重启恢复；doctor 无副作用；真实 Host/Web 链路和回滚通过；兼容矩阵留证 | A5；真实 e2e、故障注入和回滚未通过，不 bump minor |
+
 ### A0：基线审计和学习样例
 
 **目标**：把 AgentTeams 的机制映射到专家库现有实现，先建立可比较的行为样例。
