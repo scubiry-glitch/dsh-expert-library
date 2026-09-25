@@ -58,7 +58,7 @@ AgentTeams 的关键经验不是“多开几个子代理”，而是把团队当
 
 **开发任务**
 
-- 增加 `StagedPlan`、`schemaVersion`、`planId`、`digest`、`revision`、`expiresAt`、`planProvenance`、`editLog` 和 `approval`；状态固定为 `staged → approved → running → completed|failed`，另有 `discarded|expired` 终态。
+- 增加 `StagedPlan`、`schemaVersion`、`planId`、`digest`、`revision`、`expiresAt`、`planProvenance`、`editLog` 和 `approval`；参考实现使用 `phase=staged|running` 加 `approvedAt`，专家库在适配层增加可审计的 `approved` 中间态，最终状态为 `staged → approved → running → completed|failed`，另有 `discarded|expired` 终态。
 - 增加 `expert_teams_plan_preview`、`expert_teams_plan_stage`、`expert_teams_plan_edit`、`expert_teams_plan_approve`、`expert_teams_plan_discard`；preview 是纯读，stage 才落盘。
 - approve 使用 team/plan 锁和 CAS；只有 approved plan 可以调用现有 `applyExecutionPlan`，并建立唯一 `planId → teamId` 映射。
 - 重启扫描 staged/running 计划；半成品按 journal 清理或进入可诊断 failed；完成后归档。

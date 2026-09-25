@@ -1,7 +1,8 @@
 # dsh-agent-teams 与 dsh-expert-library 架构分析对比
 
-> 版本：原插件 `@nanmicoder/dsh-agent-teams` v0.1.7（fork 基线） vs 新插件 `@zhijian/dsh-expert-library` v0.1.0（当前迭代）
-> 日期：2026-08-19 · 依据：双方完整源码（Host + Client）
+> 版本：参考插件 `@nanmicoder/dsh-agent-teams` v0.1.21（commit `f60d40d`） vs `@zhijian/dsh-expert-library` v0.1.0（当前迭代）
+> 日期：2026-09-26 · 依据：双方完整源码（Host + Client）
+> 本次刷新重点：以 v0.1.21 的 staged approval、结构化 quality-gates、mailbox provenance、capability scope、doctor/兼容矩阵为学习基线；专家库的差距和落地顺序见 [ITERATION-PLAN.md](ITERATION-PLAN.md)。
 > Phase 0 刷新（2026-08-22）：调度器/状态层已加硬化（cancelled 终态、补偿事务），skill 绑定改为仅本地，代码规模与打包状态按当前源码更新。
 > V2 刷新（2026-08-23）：V2 数据与运行时层落地——Domain Packs（schema validator / pack-loader / 确定性 overlay 合并）、Provider Runtime（ProviderRegistry / CapabilityResolver / ProviderEnvelope + host provider-service）、TeamTemplate Compiler → ExecutionPlan、Quality Gate Chain；client/settings 已打包；专家 capability overlay 按 capability id 合并；质量 gate 逻辑 id 重绑定到物理 fan-out 任务产物。
 
@@ -22,7 +23,7 @@
 | 维度 | 原 dsh-agent-teams | 新 dsh-expert-library |
 |---|---|---|
 | 插件名 | `agent-teams` | `expert-library` |
-| 工具总数 | **10** | **21**：12 `expert_teams_*`（含 `scenario_apply`/`chat`）+ 4 协作（debate/roundtable/ppt/report）+ 4 智见（route/apply/clarify/feedback）+ 1 `expert_provider_call` |
+| 工具总数 | **14 个协调工具**（含 staged plan、resume、amend） | **21**：12 `expert_teams_*`（含 `scenario_apply`/`chat`）+ 4 协作（debate/roundtable/ppt/report）+ 4 智见（route/apply/clarify/feedback）+ 1 `expert_provider_call` |
 | 内置专家 | 无（成员是通用 worker，仅 role 字符串） | **33 位智见（bk-002~bk-034）** + 通用/银行/pipeline 专家（s-*/xhs-*/e*-*/bank-*），按领域包装载（如 beike 包 13 位跨命名空间交叉投影） |
 | 场景模板 | 无 | **10 个**（6 通用 + 4 协作） |
 | 领域路由 | 无 | **原生路由表**（11 话题 → 框架 → 主责领域 → 候选专家） |
@@ -135,10 +136,10 @@ dsh-agent-teams                     dsh-expert-library
 
 | 对象 | 原 | 新 |
 |---|---|---|
-| TeamState | name/id/description/captainSessionId/members/tasks/taskSeq | + `scenarioId` |
+| TeamState | name/id/description/captainSessionId/members/tasks/taskSeq + `phase`/`planReviewState`/`approvedAt`/`halted`/`escalated` | + `scenarioId`、`planRef`、`planProvenance`、`qualityPlan`；尚无 staged runtime 状态 |
 | TeamTask | id/subject/status/assignee/dependencies/output/**attempt/attemptId/handoffId**/reassigning/时间戳 | 相同（attempt 代际机制继承） |
 | TeamMember | id/name/role/provider/model/reasoningEffort/status | 相同（路由快照继承） |
-| TeamMessage | from/to/content/ts + 投递租约 | 相同（双通道投递继承） |
+| TeamMessage | from/to/content/ts + recipient/source task/attempt/status、delivery lease、ack/read/discard | from/to/content/ts + delivery lease/ack/read；source provenance/idempotency 仍是缺口 |
 | Expert | — | id/name/role/background/principles/deliverables/**model 预置**/suitedFor |
 | Scenario | — | id/experts/**任务 DAG**/deliverable/knowledge/**skill 绑定** |
 | 路由/框架 | — | ZhijianRouteTopic/Scenario/StancePair/FrameworkSpec |
