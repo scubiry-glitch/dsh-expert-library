@@ -221,6 +221,8 @@
 - reviewer 必须与 assignee 分离；pass/soft warn 进入 integration，hard fail 只生成定向 repair，repair 后 re-review，最多两轮。
 - 第三次失败进入 blocked，只有显式 waiver 才能继续；integration 只消费通过的 artifact refs，并把最终 hashes 和 findings 写入报告。
 
+当前 `runQualityChain` 虽有可选 repair callback，但生产完成门禁仍主要是 `gateFailCount` 与同 attempt 重试；在独立 QualityRun、reviewer/repair task 和 provenance 接通前，只能算旧闭环，不能作为本波完成证据。
+
 **验收标准**
 
 - 覆盖 pass、soft warn、hard block、repair-pass、两轮后通过、第三次失败 blocked、artifact missing/hash mismatch、reviewer=assignee 拒绝。
