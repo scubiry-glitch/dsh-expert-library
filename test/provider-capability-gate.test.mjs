@@ -27,6 +27,7 @@ import { join } from 'node:path'
 import { registerProviderCallTool, resolveCapabilityAllowance } from '../lib/host/provider-tool.js'
 import { readTeam } from '../lib/state.js'
 import { okEnvelope } from '../lib/v2/index.js'
+import { createCapabilityScope } from '../lib/capability-scope.js'
 
 /* ---------------------------------------------------------------------------
  * Fixtures
@@ -234,6 +235,40 @@ test('member allowed for a capability granted by the plan passes through', async
     )
     assert.equal(result.ok, true)
     assert.deepEqual(calls, [['resolve', 'financial.stock.snapshot'], ['invoke', 'financial.stock.snapshot']])
+  } finally {
+    await rm(workspace, { recursive: true, force: true })
+  }
+})
+
+test('member provider scope blocks a resolved provider before invocation', async () => {
+  const workspace = await mkdtemp(join(tmpdir(), 'expert-teams-scope-'))
+  try {
+    const base = planTeam()
+    const members = base.members.map(member => member.id === 'sess-alice'
+      ? {
+          ...member,
+          capabilityScope: createCapabilityScope({
+            expertId: 'alice',
+            role: 'researcher',
+            allowedProviders: ['zyt'],
+          }),
+        }
+      : member)
+    await writeTeamFixture(workspace, 'team1', { ...base, members })
+    const calls = []
+    const tool = registerAndGetTool(fakeService(calls))
+    const result = await tool.execute(
+      { capability: 'financial.stock.snapshot', input: {} },
+      memberExec('sess-alice', workspace),
+    )
+    assert.equal(result.ok, false)
+    assert.equal(result.error.code, 'CAPABILITY_SCOPE_DENIED')
+    assert.equal(result.error.retry, 'never')
+    assert.equal(result.error.details.provider, 'wind')
+    assert.deepEqual(result.error.details.allowedProviders, ['zyt'])
+    // The plan gate permits the capability and resolver binds it; scope is
+    // the final admission boundary before any provider invocation.
+    assert.deepEqual(calls, [['resolve', 'financial.stock.snapshot']])
   } finally {
     await rm(workspace, { recursive: true, force: true })
   }

@@ -16,9 +16,11 @@ import { join } from 'node:path'
 import { deliverToMember } from './members.ts'
 import {
   acknowledgeMailbox,
+  admitTeamMessage,
   appendMailbox,
   beginTaskAttempt,
   createMessage,
+  discardMailbox,
   claimMailboxDelivery,
   findTeamByParticipant,
   readTeam,
@@ -271,27 +273,43 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
         let member = team.members.find(candidate => candidate.name === memberName && candidate.status !== 'removed')
         if (member === undefined || member.id === '' || !isMemberAvailable(ctx, member)) return
 
-        // A mailbox-only fallback is real pending work. Deliver it before a
-        // fresh task and acknowledge only after Harness accepts the follow-up.
-        const unread = await readUnreadMailbox(stateRoot, team.id, member.name)
-        if (unread.length > 0) {
-          await withTeamLock(teamLockKey(stateRoot, team.id), () => (
-            claimMailboxDelivery(stateRoot, team!.id, member!.name, unread.map(message => message.id))
-          ))
+        // A mailbox-only fallback is real pending work. Read the team and
+        // mailbox under the same team lock so admission never evaluates an
+        // outdated task attempt while a concurrent reassign is committing.
+        const mailboxBatch = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
+          const fresh = await readTeam(stateRoot, team!.id)
+          const currentMember = fresh?.members.find(candidate => candidate.name === memberName && candidate.status !== 'removed')
+          if (fresh === undefined || currentMember === undefined || currentMember.id === '' || !isMemberAvailable(ctx, currentMember)) {
+            return undefined
+          }
+          const unread = await readUnreadMailbox(stateRoot, fresh.id, currentMember.name)
+          const decisions = unread.map(message => ({ message, admission: admitTeamMessage(fresh, message) }))
+          const admitted = decisions.filter(item => item.admission.accepted).map(item => item.message)
+          const discarded = decisions.filter(item => !item.admission.accepted)
+          for (const group of new Set(discarded.map(item => item.admission.accepted ? '' : item.admission.reason))) {
+            const ids = discarded.filter(item => !item.admission.accepted && item.admission.reason === group).map(item => item.message.id)
+            await discardMailbox(stateRoot, fresh.id, currentMember.name, ids, group)
+          }
+          if (admitted.length > 0) {
+            await claimMailboxDelivery(stateRoot, fresh.id, currentMember.name, admitted.map(message => message.id))
+          }
+          return { team: fresh, member: currentMember, messages: admitted }
+        })
+        if (mailboxBatch !== undefined && mailboxBatch.messages.length > 0) {
           const accepted = await deliverToMember(
             ctx,
             captain,
-            member.id,
-            fallbackMailboxPrompt(unread),
+            mailboxBatch.member.id,
+            fallbackMailboxPrompt(mailboxBatch.messages),
             new AbortController().signal,
           )
           if (accepted) {
             await withTeamLock(teamLockKey(stateRoot, team.id), () => (
-              acknowledgeMailbox(stateRoot, team!.id, member!.name, unread.map(message => message.id))
+              acknowledgeMailbox(stateRoot, team!.id, mailboxBatch.member.name, mailboxBatch.messages.map(message => message.id))
             ))
           } else {
             await withTeamLock(teamLockKey(stateRoot, team.id), () => (
-              releaseMailboxDelivery(stateRoot, team!.id, member!.name, unread.map(message => message.id))
+              releaseMailboxDelivery(stateRoot, team!.id, mailboxBatch.member.name, mailboxBatch.messages.map(message => message.id))
             ))
           }
           return

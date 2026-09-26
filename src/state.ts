@@ -17,6 +17,8 @@ import { createHash, randomUUID } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { mkdir, open, readFile, readdir, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
+import { restoreCapabilityScope } from './capability-scope.ts'
+import { isQualityRun } from './quality-run.ts'
 import type { TaskArtifact, TaskArtifactRef, TaskProject, TaskStatus, TeamMember, TeamMessage, TeamState, TeamTask } from './types.ts'
 import { TERMINAL_TASK_STATUSES } from './types.ts'
 
@@ -494,9 +496,81 @@ export async function findTeamByParticipant(
   return found
 }
 
+/** Find a durable team materialized from one staged plan during restart recovery. */
+export async function findTeamByPlanId(
+  stateRoot: string,
+  planId: string,
+): Promise<TeamState | undefined> {
+  let entries
+  try {
+    entries = await readdir(stateRoot, { withFileTypes: true })
+  } catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') return undefined
+    throw error
+  }
+  for (const entry of entries) {
+    if (!entry.isDirectory() || entry.name === 'archive' || entry.name === 'plans') continue
+    const team = await readTeam(stateRoot, entry.name)
+    if (team?.planRef?.planId === planId) return team
+  }
+  return undefined
+}
+
 /** Build a fresh message record. */
-export function createMessage(from: string, to: string, content: string): TeamMessage {
-  return { id: randomUUID(), from, to, content, ts: Date.now() }
+export interface MessageProvenance {
+  sourceTaskId?: string
+  sourceAttemptId?: string
+  sourceTaskStatus?: TeamTask['status']
+  sequence?: number
+  idempotencyKey?: string
+}
+
+/** Build a fresh message record. Provenance is additive for legacy callers. */
+export function createMessage(
+  from: string,
+  to: string,
+  content: string,
+  provenance?: MessageProvenance,
+): TeamMessage {
+  return {
+    id: randomUUID(),
+    from,
+    to,
+    content,
+    ts: Date.now(),
+    ...(provenance?.sourceTaskId === undefined ? {} : { sourceTaskId: provenance.sourceTaskId }),
+    ...(provenance?.sourceAttemptId === undefined ? {} : { sourceAttemptId: provenance.sourceAttemptId }),
+    ...(provenance?.sourceTaskStatus === undefined ? {} : { sourceTaskStatus: provenance.sourceTaskStatus }),
+    ...(provenance?.sequence === undefined ? {} : { sequence: provenance.sequence }),
+    ...(provenance?.idempotencyKey === undefined ? {} : { idempotencyKey: provenance.idempotencyKey }),
+  }
+}
+
+/** Result of checking a message against the currently active task generation. */
+export type MessageAdmission =
+  | { readonly accepted: true }
+  | { readonly accepted: false; readonly reason: string }
+
+/**
+ * Check whether a message may be delivered to a live recipient. Messages
+ * without provenance are legacy records and remain admissible. A sourced
+ * message is tied to the task's current attempt; after retry/reassignment the
+ * old attempt is rejected before it can wake a member or alter state.
+ */
+export function admitTeamMessage(team: TeamState, message: TeamMessage): MessageAdmission {
+  if (message.sourceTaskId === undefined) return { accepted: true }
+  const task = team.tasks.find(candidate => candidate.id === message.sourceTaskId)
+  if (task === undefined) return { accepted: false, reason: 'source_task_missing' }
+  if (message.sourceAttemptId !== undefined && task.attemptId !== message.sourceAttemptId) {
+    return { accepted: false, reason: 'stale_attempt' }
+  }
+  // A terminal task has no live capability. Messages emitted by that task
+  // before finalization are therefore stale even when older records omitted
+  // an attempt id.
+  if (TERMINAL_TASK_STATUSES.includes(task.status)) {
+    return { accepted: false, reason: 'terminal_attempt' }
+  }
+  return { accepted: true }
 }
 
 /**
@@ -575,10 +649,10 @@ export async function appendMailbox(
   teamId: string,
   agentKey: string,
   message: TeamMessage,
-): Promise<void> {
+): Promise<TeamMessage> {
   const file = join(stateRoot, teamId, 'inbox', `${sanitizeKey(agentKey)}.jsonl`)
   await mkdir(join(stateRoot, teamId, 'inbox'), { recursive: true })
-  await withMailboxFileLock(file, async () => {
+  return withMailboxFileLock(file, async () => {
     let existing = ''
     try {
       existing = await readFile(file, 'utf8')
@@ -587,8 +661,33 @@ export async function appendMailbox(
         throw error
       }
     }
+    const existingMessages: TeamMessage[] = []
+    for (const rawLine of existing.split('\n')) {
+      if (rawLine.trim() === '') continue
+      try {
+        const value: unknown = JSON.parse(stripLeadingBom(rawLine))
+        if (isTeamMessage(value)) existingMessages.push(value)
+      } catch {
+        // Preserve malformed lines in the file; they remain visible to the
+        // diagnostic reader but must not block a valid append.
+      }
+    }
+    const duplicate = existingMessages.find(candidate => candidate.id === message.id
+      || (message.idempotencyKey !== undefined
+        && candidate.from === message.from
+        && candidate.idempotencyKey === message.idempotencyKey))
+    if (duplicate !== undefined) return duplicate
+    const nextSequence = existingMessages
+      .filter(candidate => candidate.from === message.from)
+      .reduce((max, candidate) => Math.max(max, candidate.sequence ?? 0), 0) + 1
+    if (message.sequence !== undefined && message.sequence < nextSequence) {
+      throw new Error(`stale message sequence for ${message.from}: expected at least ${nextSequence}`)
+    }
+    const sequence = message.sequence ?? nextSequence
+    const persisted: TeamMessage = { ...message, sequence }
     const separator = existing !== '' && !existing.endsWith('\n') ? '\n' : ''
-    await atomicWriteText(file, `${existing}${separator}${JSON.stringify(message)}\n`)
+    await atomicWriteText(file, `${existing}${separator}${JSON.stringify(persisted)}\n`)
+    return persisted
   })
 }
 
@@ -645,7 +744,7 @@ export async function readUnreadMailbox(
 ): Promise<TeamMessage[]> {
   const now = Date.now()
   return (await readMailbox(stateRoot, teamId, agentKey, onMalformedLine))
-    .filter(message => message.readAt === undefined
+    .filter(message => message.readAt === undefined && message.discardedAt === undefined
       && (message.deliveryClaimedAt === undefined
         || now - message.deliveryClaimedAt >= MAILBOX_DELIVERY_LEASE_MS))
 }
@@ -729,6 +828,24 @@ export async function acknowledgeMailbox(
       readAt: message.readAt ?? now,
     }
   })
+}
+
+/** Mark stale or duplicate messages consumed without presenting them again. */
+export async function discardMailbox(
+  stateRoot: string,
+  teamId: string,
+  agentKey: string,
+  messageIds: readonly string[],
+  reason: string,
+): Promise<void> {
+  const now = Date.now()
+  await mutateMailbox(stateRoot, teamId, agentKey, messageIds, (message) => ({
+    ...message,
+    discardedAt: message.discardedAt ?? now,
+    discardReason: message.discardReason ?? reason,
+    readAt: message.readAt ?? now,
+    deliveredAt: message.deliveredAt ?? now,
+  }))
 }
 
 /** Remove the optional UTF-8 BOM some editors prepend to JSON text. */
@@ -862,7 +979,21 @@ function isFiniteNumber(value: unknown): value is number {
 /** Validate one member record at the durable JSON boundary. */
 function isTeamMember(value: unknown): value is TeamMember {
   if (!isRecord(value)) return false
-  return typeof value['id'] === 'string'
+  const scopeValid = value['capabilityScope'] === undefined || (() => {
+    try {
+      // Older team records have no scope. When a partial A5 snapshot is
+      // encountered, restore it with the member identity and fail closed.
+      restoreCapabilityScope(value['capabilityScope'], {
+        expertId: typeof value['name'] === 'string' ? value['name'] : undefined,
+        role: typeof value['role'] === 'string' ? value['role'] : undefined,
+      })
+      return true
+    } catch {
+      return false
+    }
+  })()
+  return scopeValid
+    && typeof value['id'] === 'string'
     && typeof value['name'] === 'string'
     && value['name'].trim() !== ''
     && isOptionalString(value['role'])
@@ -915,6 +1046,7 @@ function isTeamState(value: unknown, expectedId: string): value is TeamState {
     && value['tasks'].every(isTeamTask)
     && Number.isSafeInteger(value['taskSeq'])
     && (value['taskSeq'] as number) >= 0
+    && (value['qualityRun'] === undefined || isQualityRun(value['qualityRun']))
   if (!validShape) return false
 
   const members = value['members'] as TeamMember[]
@@ -983,9 +1115,16 @@ function isTeamMessage(value: unknown): value is TeamMessage {
     && typeof value['to'] === 'string'
     && typeof value['content'] === 'string'
     && isFiniteNumber(value['ts'])
+    && (value['sourceTaskId'] === undefined || typeof value['sourceTaskId'] === 'string')
+    && (value['sourceAttemptId'] === undefined || typeof value['sourceAttemptId'] === 'string')
+    && (value['sourceTaskStatus'] === undefined || (typeof value['sourceTaskStatus'] === 'string' && (TERMINAL_TASK_STATUSES.includes(value['sourceTaskStatus'] as TaskStatus) || ['pending', 'claimed', 'in_progress'].includes(value['sourceTaskStatus'] as string))))
+    && (value['sequence'] === undefined || (Number.isSafeInteger(value['sequence']) && (value['sequence'] as number) >= 1))
+    && (value['idempotencyKey'] === undefined || typeof value['idempotencyKey'] === 'string')
     && (value['deliveryClaimedAt'] === undefined || isFiniteNumber(value['deliveryClaimedAt']))
     && (value['deliveredAt'] === undefined || isFiniteNumber(value['deliveredAt']))
     && (value['readAt'] === undefined || isFiniteNumber(value['readAt']))
+    && (value['discardedAt'] === undefined || isFiniteNumber(value['discardedAt']))
+    && (value['discardReason'] === undefined || typeof value['discardReason'] === 'string')
 }
 
 /**

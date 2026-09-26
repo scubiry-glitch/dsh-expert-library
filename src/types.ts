@@ -8,6 +8,62 @@
  * @module dsh-expert-library/types
  */
 
+import type { ExecutionPlan } from './v2/compiler.ts'
+import type { CapabilityScope } from './capability-scope.ts'
+import type { QualityRun } from './quality-run.ts'
+
+/** Lifecycle of a persisted, human-reviewable execution plan. */
+export type StagedPlanStatus =
+  | 'staged'
+  | 'approved'
+  | 'running'
+  | 'completed'
+  | 'failed'
+  | 'discarded'
+  | 'expired'
+
+/** Runtime values needed to apply a compiled plan after a restart. */
+export interface StagedPlanRuntime {
+  readonly teamName: string
+  readonly description: string
+  readonly interpolations?: Readonly<Record<string, string>>
+  readonly memberOrder?: readonly string[]
+  readonly taskSuffixes?: Readonly<Record<string, string>>
+}
+
+/** One append-only edit entry for a staged plan. */
+export interface StagedPlanEdit {
+  readonly revision: number
+  readonly at: number
+  readonly by: string
+  readonly parentDigest: string
+  readonly digest: string
+  readonly fields: readonly string[]
+}
+
+/** Durable plan record; the compiled plan is immutable between revisions. */
+export interface StagedPlan {
+  /** Durable staged-plan record schema. */
+  readonly schemaVersion: 1
+  readonly planId: string
+  readonly digest: string
+  readonly revision: number
+  readonly status: StagedPlanStatus
+  readonly createdAt: number
+  readonly updatedAt: number
+  readonly expiresAt: number
+  readonly createdBy: string
+  readonly sessionId?: string
+  readonly request: Readonly<Record<string, string | undefined>>
+  readonly runtime: StagedPlanRuntime
+  readonly plan: ExecutionPlan
+  readonly editLog: readonly StagedPlanEdit[]
+  readonly approvedAt?: number
+  readonly approvedBy?: string
+  readonly appliedTeamId?: string
+  readonly failureReason?: string
+}
+
 /** Task lifecycle statuses in progression order. */
 export type TaskStatus =
   | 'pending'
@@ -221,6 +277,8 @@ export interface TeamMember {
   model?: string
   /** Resolved reasoning effort captured from the captain or target model default. */
   reasoningEffort?: string
+  /** Durable A5 capability boundary used at spawn/provider admission. */
+  capabilityScope?: CapabilityScope
   joinedAt: number
   status: MemberStatus
   /** P2.1: 追问回合计数（expert_teams_chat 累计，可追溯；无追问时缺省）。 */
@@ -236,12 +294,26 @@ export interface TeamMessage {
   to: string
   content: string
   ts: number
+  /** Task that produced this message, when the sender was executing one. */
+  sourceTaskId?: string
+  /** Execution generation that produced this message. */
+  sourceAttemptId?: string
+  /** Task status observed by the sender when the message was emitted. */
+  sourceTaskStatus?: TaskStatus
+  /** Monotonic sequence allocated per sender mailbox stream. */
+  sequence?: number
+  /** Caller supplied deduplication key; repeated sends are accepted once. */
+  idempotencyKey?: string
   /** Process-local delivery lease; prevents fallback and direct delivery racing. */
   deliveryClaimedAt?: number
   /** Set after the durable message was accepted by the recipient's live Harness inbox. */
   deliveredAt?: number
   /** Set once the recipient has consumed or been shown the durable fallback. */
   readAt?: number
+  /** Set when admission rejects a stale/duplicate message. */
+  discardedAt?: number
+  /** Machine-readable reason for a discarded message. */
+  discardReason?: string
 }
 
 /** The full durable team record. */
@@ -288,6 +360,8 @@ export interface TeamState {
    * which has no executable gates, so completion behavior is unchanged).
    */
   qualityPlan?: StampedQualityPlan
+  /** Optional structured A4 review/repair/integration state for staged/profile teams. */
+  qualityRun?: QualityRun
   /** Teammates only; the captain is implicit (the owning session). */
   members: TeamMember[]
   tasks: TeamTask[]

@@ -103,6 +103,13 @@ import {
 } from './skills-discovery.ts'
 import type { AssembleContext } from '@deepseek-ai/dsh-system-prompt'
 
+// Data-only profile contract.  Exporting it from the host entry keeps profile
+// catalogs usable by headless callers without importing the runtime/plugin.
+export * from './profiles.ts'
+export * from './quality-run.ts'
+export * from './capability-scope.ts'
+export * from './staged-plan.ts'
+
 /**
  * Structural slice of the web server service, compatible with both the
  * published `dsh-host-webserver@0.0.1-rc.1` (`ctx.httpServer` /
@@ -358,15 +365,23 @@ export const Config: z<Config> = z.object({
 function usageSectionText(toolNames: string, skillInventoryLine: string): string {
   const expertIds = [...BUILTIN_EXPERT_BY_ID.keys()].join(', ')
   const scenarioIds = [...BUILTIN_SCENARIO_BY_ID.keys()].join(', ')
-  return `When the user asks to run something with the Expert Library (e.g. "用专家库审查最近的提交" / "use Expert Teams to research X"), you are the captain of a multi-agent team. Follow this protocol:
-1. Prefer expert_teams_scenario_apply when the goal matches a preset scenario (${scenarioIds}): it creates the team, adds the preset experts with their preset AI model routes, and seeds the task DAG in one call. Pass the concrete target in \`goal\`.
-2. Otherwise call expert_teams_create with a team name and the goal as description. You become the captain and may lead one team at a time.
-3. Call expert_teams_add_member once per role the goal needs. Prefer \`expert=<id>\` from the Expert Library (${expertIds}): each expert brings its own persona, preset AI model route (provider/model/reasoning effort), and knowledge pack guide; do not ask the user to choose models per member. Explicit provider/model/reasoning_effort are only for routes the user explicitly requested. Members are durable subagents: they wait for your messages, then work a full turn.
-4. Break the goal into tasks with expert_teams_create_task and wire dependencies. Assign role-specific work when useful; unassigned ready work belongs to the shared pool. The scheduler automatically claims one ready task for each truly idle member and wakes it, including across later rounds.
-5. Lead by delegation: monitor with expert_teams_status, send guidance with expert_teams_send_message, and let idle teammates execute ready work. Do not duplicate a teammate's work merely because its turn is slow.
-6. If work is blocked, stale, or needs takeover, always call expert_teams_reassign_task first. Reassign to another idle member, or use assignee=captain before doing it yourself. Reassignment revokes the old attempt and waits for that member to quiesce, preventing late results from overwriting the new attempt.
-7. Tasks carry attempt_id capabilities. Members must use the current attempt_id for updates; stale-attempt errors mean ownership changed. Poll status until every required task is terminal and every member is idle/ready.
-8. Present the team's results to the user, then expert_teams_delete the team unless the user wants to keep working with it.
+  return `When the user asks to use the Expert Library (for example, "用专家库审查最近的提交" or "use Expert Teams to research X"), work in GOAL MODE. You are the captain and are responsible for reaching a useful, reviewable outcome, not for merely completing a sequence of tool calls.
+
+Goal contract:
+- Translate the request into one concrete goal, target/audience, constraints, available evidence, and a definition of done. Keep the user's wording when it is already precise.
+- If one material decision is missing, ask one focused question. Otherwise make a reversible assumption, state it briefly, and keep moving.
+- Prefer a direct answer when a team would not add evidence, review, or parallel work. Use a team when the goal needs independent expertise, durable work, external evidence, or a quality review.
+
+Goal-driven execution:
+1. Choose the smallest execution shape that can satisfy the goal. For a preset scenario (${scenarioIds}), call expert_teams_plan_preview, then expert_teams_plan_stage. Preview is read-only; staging is the reviewable plan. Approval is the only action that may create members, tasks, or wakeups. Approve with the exact staged \`digest\` and \`revision\` returned by the plan.
+2. For an open-ended goal, create the team and freeze a small roster. Prefer \`expert=<id>\` from the Expert Library (${expertIds}); preset personas, routes, and knowledge guides are already attached. Do not make the user choose models unless they explicitly ask for that decision.
+3. Turn the definition of done into task outcomes, evidence, acceptance checks, and dependencies. Every task must explain what it will produce and how the captain can verify it. Assign only work that advances the goal; let the scheduler handle ready work.
+4. Drive the loop: inspect status, read artifacts and reports, compare them with the goal and acceptance checks, then send the next highest-value instruction. Keep independent tasks parallel and keep dependent tasks locked until their evidence is available. Do not redo a member's work just because it is slow.
+5. When a task is blocked, identify the concrete missing input or decision. Resolve it from available context when safe; otherwise ask the user one focused question. For stale, failed, or reassigned work, use the current attempt_id and reassign explicitly rather than silently starting a duplicate.
+6. Review the assembled result against the definition of done. A failed review stays blocked, produces a finding and repair, and must pass re-review before downstream work or integration is unlocked. Preserve source paths, numbers, assumptions, and unresolved risks in the final result.
+7. Report progress in terms of goal state (done, in progress, blocked, next decision), not a list of tool calls. Finish only when the goal is met or a specific external decision is required. Present the result and evidence, then delete the team unless the user wants to continue with it.
+
+Use the legacy expert_teams_scenario_apply only when the user explicitly requests immediate legacy execution. Use expert_teams_plan_edit to revise the same staged plan and expert_teams_plan_discard to abandon it; never create a replacement plan merely because the user supplied feedback.
 
 Zhijian (智见点评) review flow — when the user asks 请专家点评 / 让专家看看数据 (real-estate market data):
 0. 先归型、再路由 (mandatory for free-form requests): for a free/ambiguous request (e.g. "贝壳政研通的 BP 优化"), call expert_review_clarify FIRST — it returns candidate topic/scenario options plus the domain pack's 待确认口径 questions (用途受众 / 数据来源 / 城市 / 时段 / 敏感脱敏 / 领域侧重; required items marked). Ask the user these questions one round, then 归型 (pick the intent). When expert_review_route returns clarify_needed, confirm those 口径 with the user before expert_review_apply — never enter a team with unresolved 口径.
@@ -423,6 +438,11 @@ export function apply(ctx: Context, config: Config): void {
 
   const toolNames = [
     'expert_teams_create',
+    'expert_teams_plan_preview',
+    'expert_teams_plan_stage',
+    'expert_teams_plan_edit',
+    'expert_teams_plan_approve',
+    'expert_teams_plan_discard',
     'expert_teams_scenario_apply',
     'expert_teams_add_member',
     'expert_teams_remove_member',

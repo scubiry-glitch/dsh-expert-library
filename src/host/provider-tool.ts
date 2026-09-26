@@ -38,6 +38,7 @@ import { appendTeamEvent, captainSessionOf } from '../events.ts'
 import { findTeamByParticipant } from '../state.ts'
 import type { ExpertTeamsProviderCalledData } from '../event-types.ts'
 import type { TeamState } from '../types.ts'
+import { admitCapability, type CapabilityScope } from '../capability-scope.ts'
 import type { ProviderTransportService } from './provider-service.ts'
 import type { ProviderEnvelope } from '../v2/provider-runtime.ts'
 import {
@@ -180,6 +181,24 @@ export function resolveCapabilityAllowance(team: TeamState | undefined, agentSes
   // assigned plan task yet, or only unlinked tasks) ⇒ nothing constrains.
   if (fromTasks.length === 0) return open
   return { constrained: true, allowed, fromTasks }
+}
+
+/**
+ * Resolve the durable A5 member scope for a provider caller.
+ *
+ * Captains and legacy members without a scope deliberately return undefined:
+ * the former retain captain access and the latter preserve pre-A5 behavior.
+ * Durable team records validate scope shape before reaching this helper.
+ */
+export function resolveMemberCapabilityScope(team: TeamState | undefined, agentSessionId: string | undefined): CapabilityScope | undefined {
+  if (team === undefined || agentSessionId === undefined || team.captainSessionId === agentSessionId) return undefined
+  return team.members.find(member => member.id === agentSessionId && member.status !== 'removed')?.capabilityScope
+}
+
+/** Human correction for a provider denied by the durable member scope. */
+function capabilityScopeCorrection(provider: string, scope: CapabilityScope): string {
+  const allowed = scope.allowedProviders.length === 0 ? '无 provider' : scope.allowedProviders.join('、')
+  return `成员 capability scope 不允许 provider「${provider}」；当前允许：${allowed}`
 }
 
 /** Caller context needed by the capability gate and the audit event. */
@@ -425,6 +444,22 @@ async function executeProviderCall(
   if (resolved.status !== 'bound' || resolved.binding === undefined) {
     const reasons = resolved.rejections.map(rejection => `${rejection.providerId}(${rejection.reason})`).join('; ')
     return fail('CAPABILITY_UNBOUND', `无法绑定能力「${capability}」：${reasons || '无候选 provider'}`, { rejections: resolved.rejections })
+  }
+
+  // A5 member scope gate: resolve the concrete provider first, then enforce
+  // the durable provider allowlist immediately before invocation. This keeps
+  // plan capability admission and resolver diagnostics intact while ensuring
+  // a provider route cannot be used to escape the member's persisted scope.
+  const memberScope = resolveMemberCapabilityScope(caller.team, caller.sessionId)
+  if (memberScope !== undefined) {
+    const admission = admitCapability(memberScope, { provider: resolved.binding.providerId })
+    if (!admission.ok) {
+      return fail('CAPABILITY_SCOPE_DENIED', capabilityScopeCorrection(resolved.binding.providerId, memberScope), {
+        provider: resolved.binding.providerId,
+        denied: admission.denied,
+        allowedProviders: [...memberScope.allowedProviders],
+      })
+    }
   }
 
   let envelope: ProviderEnvelope

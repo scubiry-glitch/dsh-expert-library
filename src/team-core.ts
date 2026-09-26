@@ -48,6 +48,7 @@ import { skillsGuideSection } from './skills-discovery.ts'
 import { zhijianExpertPersona } from './zhijian/persona.ts'
 import { feedbackGuideSection } from './zhijian/evaluations.ts'
 import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
+import { createCapabilityScope } from './capability-scope.ts'
 import { scenarioById } from './zhijian/routing.ts'
 import { expertMemoryGuideSection } from './zhijian/expert-memory.ts'
 import type { ToolExecutionConfig, ToolExecutionMode } from './settings.ts'
@@ -309,6 +310,12 @@ export async function addMemberCore(
       provider: selection.provider,
       model: selection.model,
       reasoningEffort: selection.reasoningEffort,
+      capabilityScope: createCapabilityScope({
+        expertId: expert?.id ?? memberName,
+        role: args.role ?? expert?.role ?? memberName,
+        allowedProviders: [selection.provider],
+        maxDepth: config.memberMaxDepth ?? 0,
+      }),
       joinedAt: Date.now(),
       status: 'idle',
     }

@@ -8,7 +8,8 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-import { appendMailbox, acknowledgeMailbox, readMailbox, readTeam } from '../lib/state.js'
+import { appendMailbox, acknowledgeMailbox, admitTeamMessage, createMessage, discardMailbox, readMailbox, readTeam, readUnreadMailbox } from '../lib/state.js'
+import { createQualityRun } from '../lib/quality-run.js'
 
 /** Build a minimal durable team.json fixture. */
 async function writeTeamFixture(stateRoot, teamId, override) {
@@ -61,6 +62,43 @@ test('acknowledge racing an append does not drop the new message', async () => {
     assert.equal(messages.length, 2)
     assert.equal(messages.find(m => m.id === 'msg-0').readAt !== undefined, true)
     assert.equal(messages.find(m => m.id === 'msg-1').readAt === undefined, true)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('mailbox allocates per-sender sequence and deduplicates idempotency keys', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'expert-teams-mailbox-'))
+  try {
+    const first = await appendMailbox(root, 'team', 'alice', createMessage('captain', 'alice', 'one', { idempotencyKey: 'k1' }))
+    const duplicate = await appendMailbox(root, 'team', 'alice', createMessage('captain', 'alice', 'one-again', { idempotencyKey: 'k1' }))
+    const second = await appendMailbox(root, 'team', 'alice', createMessage('captain', 'alice', 'two'))
+    assert.equal(first.sequence, 1)
+    assert.equal(duplicate.id, first.id)
+    assert.equal(second.sequence, 2)
+    assert.equal((await readMailbox(root, 'team', 'alice')).length, 2)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('stale sourced mail is rejected and discarded without replay', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'expert-teams-mailbox-'))
+  try {
+    const team = {
+      id: 'team', name: 'T', captainSessionId: 'sess-1', createdAt: 1,
+      members: [{ id: 'm1', name: 'alice', joinedAt: 1, status: 'idle' }],
+      tasks: [{ id: 't1', subject: 'a', status: 'in_progress', assignee: 'alice', attempt: 2, attemptId: 'new-attempt', dependencies: [], createdAt: 1, updatedAt: 1 }],
+      taskSeq: 1,
+    }
+    const message = await appendMailbox(root, 'team', 'alice', createMessage('captain', 'alice', 'late', {
+      sourceTaskId: 't1', sourceAttemptId: 'old-attempt', sourceTaskStatus: 'in_progress', idempotencyKey: 'late-1',
+    }))
+    assert.deepEqual(admitTeamMessage(team, message), { accepted: false, reason: 'stale_attempt' })
+    await discardMailbox(root, 'team', 'alice', [message.id], 'stale_attempt')
+    assert.equal((await readUnreadMailbox(root, 'team', 'alice')).length, 0)
+    const stored = (await readMailbox(root, 'team', 'alice'))[0]
+    assert.equal(stored.discardReason, 'stale_attempt')
   } finally {
     await rm(root, { recursive: true, force: true })
   }
@@ -157,6 +195,26 @@ test('a legacy team record without provenance fields reads back unchanged', asyn
     assert.equal(team?.planRef, undefined)
     assert.equal(team?.planProvenance, undefined)
     assert.equal(team?.tasks.every(task => task.planTask === undefined), true)
+  } finally {
+    await rm(root, { recursive: true, force: true })
+  }
+})
+
+test('structured qualityRun survives team restart and malformed runs are rejected', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'expert-teams-state-'))
+  try {
+    const qualityRun = createQualityRun({
+      id: 'contract-1', taskId: 't2', attempt: 1, assignee: 'alice', kind: 'implementation',
+      objective: 'produce the artifact', inScope: ['src/**'], acceptance: [{ id: 'a1', statement: 'it works' }],
+      verify: ['pnpm test'], deliverables: ['artifact'], changedPaths: ['src/out.md'],
+    }, 'quality-1')
+    await writeTeamFixture(root, 'quality-team', { qualityRun })
+    const restored = await readTeam(root, 'quality-team')
+    assert.equal(restored?.qualityRun?.runId, 'quality-1')
+    assert.equal(restored?.qualityRun?.status, 'pending')
+
+    await writeTeamFixture(root, 'bad-quality', { qualityRun: { ...qualityRun, status: 'integrated', events: 'broken' } })
+    await assert.rejects(() => readTeam(root, 'bad-quality'), /invalid Expert Teams state/)
   } finally {
     await rm(root, { recursive: true, force: true })
   }

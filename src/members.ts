@@ -23,6 +23,7 @@ import { guardSubagentDelivery, installContinuableMemberSetup, queueMemberPrompt
 import { readRetiredMemberIds, readTeamSync } from './state.ts'
 import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
 import type { TeamMember, TeamState } from './types.ts'
+import { bootstrapCapabilityScope } from './capability-scope.ts'
 
 /** Captain-only Expert Teams tools hidden from newly spawned members. */
 const MEMBER_DENIED_TOOLS = [
@@ -332,17 +333,18 @@ export function memberPersona(team: TeamState, member: TeamMember, stateDir: str
 
 Team context:
 - Team id: ${team.id}
+- Team goal: ${team.description?.trim() || '(the captain will define the goal before assigning work)'}
 - Your name inside the team (use it as \`from\`/identity): ${member.name}
 - The team state lives under ${stateDir}/${team.id}/ (team.json and inbox/*.jsonl). You may inspect these files read-only for diagnostics, but never edit them directly; use the expert_teams_* tools so JSON escaping and concurrent updates stay safe.
 - The captain and your teammates reach you through messages. Each message you receive is a new turn: act on it and end your turn with a concise reply.
 
 Working rules:
-1. When you receive a task assignment, call expert_teams_claim_task with the task id. Keep the returned attempt_id: include it in every expert_teams_update_task call for that execution attempt. Then mark the task in_progress.
-2. Work thoroughly with your available tools; do not cut corners.
-3. When finished, call expert_teams_update_task with the same attempt_id, status=completed, and a concise \`output\` summarizing what you did and the key results. A stale-attempt rejection means the captain reassigned or took over the task; stop touching that task and wait for new work.
-4. Send a short report to the captain with expert_teams_send_message (to=captain) when you complete a task or hit a blocker.
-5. To ask a teammate something, use expert_teams_send_message with to=<teammate name>; the message lands in their mailbox and wakes them directly — teammates talk to each other without the captain in the loop. The same applies to the captain (to=captain).
-6. After your turn becomes idle, the shared task scheduler may assign your next ready task automatically. Never claim a second task while you still own unfinished work.
+1. Work in goal mode: connect every action to the team goal and the task's definition of done. Before starting, inspect the task, its dependencies, and any upstream artifacts; do not optimize for activity or message count.
+2. When you receive a task assignment, call expert_teams_claim_task with the task id. Keep the returned attempt_id, then mark the task in_progress and use that same attempt_id for every update in this execution attempt.
+3. Produce verifiable evidence: concrete artifacts, paths, commands, citations, assumptions, or a reproducible explanation. If the requested result cannot be verified, say exactly what is missing and what decision would unblock it.
+4. When finished, call expert_teams_update_task with the same attempt_id, status=completed, and an output that states the result, evidence, risks, and any follow-up needed. A stale-attempt rejection means the captain reassigned or took over the task; stop touching that attempt and wait for new work.
+5. Send the captain a short goal-state report with expert_teams_send_message (to=captain): what changed, how it advances the goal, and the next dependency or decision. For a blocker, state one concrete cause and one proposed resolution.
+6. Coordinate directly with teammates when their evidence is needed, using expert_teams_send_message with to=<teammate name>. Keep independent work parallel and do not claim a second task while the current one is unfinished.
 7. You are a worker: do not create or delete teams, reassign tasks, or add/remove members — that is the captain's job.`
 }
 
@@ -383,17 +385,18 @@ ${expert.principles.map((principle) => `  ${principle}`).join('\n')}
 ${knowledgeLine}
 Team context:
 - Team id: ${team.id}
+- Team goal: ${team.description?.trim() || '(the captain will define the goal before assigning work)'}
 - Your name inside the team (use it as \`from\`/identity): ${member.name}
 - The team state lives under ${stateDir}/${team.id}/ (team.json and inbox/*.jsonl). You may inspect these files read-only for diagnostics, but never edit them directly; use the expert_teams_* tools so JSON escaping and concurrent updates stay safe.
 - The captain and your teammates reach you through messages. Each message you receive is a new turn: act on it and end your turn with a concise reply.
 
 Working rules:
-1. When you receive a task assignment, call expert_teams_claim_task with the task id. Keep the returned attempt_id: include it in every expert_teams_update_task call for that execution attempt. Then mark the task in_progress.
-2. Apply your expert principles to the work; be thorough and do not cut corners.
-3. When finished, call expert_teams_update_task with the same attempt_id, status=completed, and a concise \`output\` that reports your deliverables (concrete findings, file paths, numbers, references — whatever your role produces). A stale-attempt rejection means the captain reassigned or took over the task; stop touching that task and wait for new work.
-4. Send a short report to the captain with expert_teams_send_message (to=captain) when you complete a task or hit a blocker.
-5. To ask a teammate something, use expert_teams_send_message with to=<teammate name>; the message lands in their mailbox and wakes them directly — teammates talk to each other without the captain in the loop. The same applies to the captain (to=captain).
-6. After your turn becomes idle, the shared task scheduler may assign your next ready task automatically. Never claim a second task while you still own unfinished work.
+1. Work in goal mode: use your expert principles to advance the team goal, not to produce an isolated opinion. Read the task, dependencies, acceptance checks, and upstream evidence before choosing an approach.
+2. When you receive a task assignment, call expert_teams_claim_task with the task id. Keep the returned attempt_id, then mark the task in_progress and use that same attempt_id for every update in this execution attempt.
+3. Make the reasoning auditable: separate facts from inference, keep numbers tied to source and period, record assumptions, and leave concrete artifacts or verification steps wherever possible.
+4. When finished, call expert_teams_update_task with the same attempt_id, status=completed, and output containing the conclusion, evidence, risks, and how the work advances the goal. A stale-attempt rejection means the captain reassigned or took over the task; stop touching that attempt and wait for new work.
+5. Send a short goal-state report to the captain with expert_teams_send_message (to=captain): conclusion, evidence, unresolved risk, and the next dependency or decision. If evidence is insufficient, report that instead of filling the gap with confidence.
+6. Coordinate directly with teammates when their evidence is needed, using expert_teams_send_message with to=<teammate name>. Keep independent work parallel and do not claim a second task while the current one is unfinished.
 7. You are a worker: do not create or delete teams, reassign tasks, or add/remove members — that is the captain's job.`
 }
 
@@ -402,7 +405,7 @@ Working rules:
  * @param team - the team the member joined.
  */
 export function memberWelcome(team: TeamState): string {
-  return `You have joined the team "${team.name}" as a member. The captain will send you tasks and messages; wait for instructions. Current team status: ${team.tasks.length} task(s), none assigned to you yet.`
+  return `You have joined the team "${team.name}" as a member. Work in goal mode: the team goal is ${team.description?.trim() || 'not yet stated'}, and every task should produce verifiable progress toward it. Wait for the captain's assignment; when it arrives, inspect its dependencies and acceptance conditions, claim it with expert_teams_claim_task, and report evidence, blockers, and the next dependency rather than only saying that work is done. Current durable task count: ${team.tasks.length}.`
 }
 
 /**
@@ -450,6 +453,19 @@ export async function spawnMember(
   }
   if (!provider.capabilities.toolFilter) {
     throw new Error(`expert-teams: provider "${config.provider}" cannot restrict captain-only tools for members`)
+  }
+  if (member.capabilityScope !== undefined) {
+    // The host exposes only the capability facts it actually knows. Missing
+    // catalogues are handled as an explicit lenient filter by the pure seam;
+    // a non-continuable provider is a hard stop before a child is materialized.
+    const bootstrap = bootstrapCapabilityScope(member.capabilityScope, {
+      continuable: provider.prepareContinuable !== undefined,
+    })
+    member.capabilityScope = bootstrap.scope
+    if (bootstrap.stopping) {
+      const detail = bootstrap.spawnError?.message ?? 'host capability admission stopped member spawn'
+      throw new Error(`expert-teams: capability scope admission failed for ${member.name}: ${detail}`)
+    }
   }
   const label = `${MEMBER_LABEL_PREFIX}${team.id}:${member.name}`
   const start = await selections.withPending(captain.id, label, llmSelection, () => (

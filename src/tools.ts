@@ -19,6 +19,7 @@ import { join } from 'node:path'
 import { appendTeamEvent, captainSessionOf } from './events.ts'
 import {
   acknowledgeMailbox,
+  admitTeamMessage,
   appendMailbox,
   archiveTeamDir,
   beginTaskAttempt,
@@ -30,10 +31,12 @@ import {
   finalizeTerminalTask,
   findTeamByCaptain,
   findTeamByParticipant,
+  findTeamByPlanId,
   invalidateTaskAttempt,
   readUnreadMailbox,
   recordRetiredMemberIds,
   releaseMailboxDelivery,
+  discardMailbox,
   publishTaskArtifact,
   readAllowedTaskArtifact,
   readTeam,
@@ -56,7 +59,24 @@ import {
   type MemberRuntimeConfig,
   type MemberSelectionRuntime,
 } from './members.ts'
-import { TERMINAL_TASK_STATUSES, type TeamMember, type TeamState, type TeamTask } from './types.ts'
+import {
+  TERMINAL_TASK_STATUSES,
+  type StagedPlan,
+  type StagedPlanRuntime,
+  type TeamMember,
+  type TeamState,
+  type TeamTask,
+} from './types.ts'
+import {
+  createStagedPlan,
+  editStagedPlan,
+  expireStagedPlan,
+  readStagedPlan,
+  stagedPlanDigest,
+  transitionStagedPlan,
+  withStagedPlanLock,
+  writeStagedPlan,
+} from './staged-plan.ts'
 import { installTeamScheduler, type TeamScheduler } from './scheduler.ts'
 import { resolveLibrary } from './expert-library/registry.ts'
 import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
@@ -66,9 +86,10 @@ import { zhijianExpertPersona } from './zhijian/persona.ts'
 import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
 import { scenarioById } from './zhijian/routing.ts'
 import { normalizeToolMode, toolExecutionOf, type ToolExecutionConfig, type ToolExecutionMode } from './settings.ts'
-import { applyExecutionPlan, compileErrorOf } from './apply.ts'
+import { applyExecutionPlan, compileErrorOf, expandExecutionPlan, type ApplyPlanOptions } from './apply.ts'
 import { evaluateTaskCompletionGates, subjectWithQualityMark, taskGateBlockedError } from './task-gates.ts'
 import { compileV1ScenarioExecutionPlan, builtinLegacyPack } from './v2/compat.ts'
+import type { ExecutionPlan } from './v2/compiler.ts'
 import { resolveManagedRuntimePack } from './host/pack-runtime.ts'
 import {
   addMemberCore,
@@ -107,6 +128,22 @@ function requireCaptain(exec: ToolRunContext): Agent {
 /** Replace scenario task placeholders without exposing credentials or mutable state. */
 function interpolateScenarioTemplate(template: string, values: Record<string, string | undefined>): string {
   return template.replace(/\{(goal|team_name|scenario|data|city|period)\}/g, (_match, key: string) => values[key] ?? '')
+}
+
+/**
+ * The tool registry validates and snapshots canonical results as JSON. The
+ * planner/state types intentionally use readonly arrays and optional fields,
+ * so project them through JSON at this adapter boundary instead of weakening
+ * the durable domain types or relying on a mutable cast.
+ */
+function asToolJsonObject(value: unknown): Record<string, JsonValue> {
+  return JSON.parse(JSON.stringify(value)) as Record<string, JsonValue>
+}
+
+function toolJsonField(value: JsonValue, key: string): JsonValue | undefined {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+    ? (value as Record<string, JsonValue>)[key]
+    : undefined
 }
 
 /**
@@ -301,6 +338,350 @@ export async function scenarioApplyCore(
   }
 }
 
+interface ScenarioPlanArgs {
+  scenario: string
+  team_name?: string
+  goal?: string
+  data?: string
+  city?: string
+  period?: string
+}
+
+/** Canonical mutable JSON object used by the model-facing plan tools. */
+function jsonObject(value: unknown): Record<string, JsonValue> {
+  // Execution plans and staged plans are intentionally deeply readonly. The
+  // tool boundary, however, requires mutable JsonValue arrays/objects. A
+  // detached JSON round-trip both removes readonly containers and enforces the
+  // same lossless shape that the tools registry persists.
+  const snapshot = JSON.parse(JSON.stringify(value)) as unknown
+  if (snapshot === null || typeof snapshot !== 'object' || Array.isArray(snapshot)) {
+    throw new Error('plan tool output must be a JSON object')
+  }
+  return snapshot as Record<string, JsonValue>
+}
+
+interface ScenarioPreviewToolValue {
+  scenario_id: string
+  team_name: string
+  plan_id: string
+  digest: string
+  compiler_digest: string
+  members: string[]
+  tasks: {
+    task_id: string
+    logical_id: string
+    subject: string
+    depends_on: string[]
+    assignee_expert?: string
+  }[]
+}
+
+interface ScenarioPlanDraft {
+  readonly scenarioId: string
+  readonly deliverable: string
+  readonly plan: ExecutionPlan
+  readonly options: ApplyPlanOptions
+  readonly request: Readonly<Record<string, string | undefined>>
+}
+
+function runtimeFromApplyOptions(options: ApplyPlanOptions): StagedPlanRuntime {
+  return {
+    teamName: options.teamName,
+    description: options.description,
+    ...(options.interpolations === undefined ? {} : { interpolations: { ...options.interpolations } }),
+    ...(options.memberOrder === undefined ? {} : { memberOrder: [...options.memberOrder] }),
+    ...(options.taskSuffixes === undefined ? {} : { taskSuffixes: { ...options.taskSuffixes } }),
+  }
+}
+
+function applyOptionsFromRuntime(runtime: StagedPlanRuntime): ApplyPlanOptions {
+  return {
+    teamName: runtime.teamName,
+    description: runtime.description,
+    ...(runtime.interpolations === undefined ? {} : { interpolations: { ...runtime.interpolations } }),
+    ...(runtime.memberOrder === undefined ? {} : { memberOrder: [...runtime.memberOrder] }),
+    ...(runtime.taskSuffixes === undefined ? {} : { taskSuffixes: { ...runtime.taskSuffixes } }),
+  }
+}
+
+/** Compile a scenario for preview/stage without creating a team or a member. */
+async function compileScenarioDraft(
+  ctx: Context,
+  config: ToolsConfig,
+  captain: Agent,
+  args: ScenarioPlanArgs,
+): Promise<ScenarioPlanDraft> {
+  const workspace = workspaceOf(captain)
+  const library = await resolveLibrary(ctx, workspace, config.knowledgeDir)
+  const scenarioId = args.scenario.trim()
+  const scenario = library.scenarios.get(scenarioId)
+  if (scenario === undefined) throw new Error(`unknown scenario "${scenarioId}" — available: ${[...library.scenarios.keys()].join(', ')}`)
+  const expertIds: string[] = []
+  for (const id of [...scenario.experts, ...scenario.tasks.map(task => task.expert).filter((id): id is string => id !== undefined)]) {
+    if (library.experts.get(id) === undefined) throw new Error(`scenario "${scenario.id}" references unknown expert "${id}"`)
+    if (!expertIds.includes(id)) expertIds.push(id)
+  }
+  const teamName = args.team_name?.trim() || scenario.name
+  const templateValues = {
+    goal: args.goal?.trim() || scenario.description,
+    team_name: teamName,
+    scenario: scenario.id,
+    data: args.data,
+    city: args.city,
+    period: args.period,
+  }
+  let skillBlock = ''
+  if (scenario.skill !== undefined) {
+    const resolved = await resolveSkill(ctx, workspace, config.knowledgeDir, scenario.skill.id, scenario.skill.name)
+    skillBlock = `\n\n${skillDescriptionBlock(resolved, scenario.skill.purpose)}`
+  }
+  const runtimePack = (await resolveManagedRuntimePack(ctx, config, builtinLegacyPack())).pack
+  const compiled = compileV1ScenarioExecutionPlan([...library.experts.values()], scenario, runtimePack)
+  if (!compiled.ok) throw compileErrorOf(compiled)
+  const taskSuffixes: Record<string, string> = {}
+  if (scenario.skill !== undefined) {
+    const skillTaskIndex = scenario.skill.appliesToTaskIndex ?? (scenario.tasks.length - 1)
+    const block = skillBlock.trim()
+    if (block !== '') {
+      const template = scenario.tasks[skillTaskIndex]
+      taskSuffixes[`t${skillTaskIndex + 1}`] = template?.description === undefined ? block : `\n\n${block}`
+    }
+  }
+  const options: ApplyPlanOptions = {
+    teamName,
+    description: `${interpolateScenarioTemplate(templateValues.goal, templateValues)}${skillBlock}`,
+    interpolations: {
+      goal: templateValues.goal,
+      team_name: teamName,
+      scenario: scenario.id,
+      data: templateValues.data ?? '',
+      city: templateValues.city ?? '',
+      period: templateValues.period ?? '',
+    },
+    memberOrder: expertIds,
+    taskSuffixes,
+  }
+  return {
+    scenarioId: scenario.id,
+    deliverable: scenario.deliverable,
+    plan: compiled.plan,
+    options,
+    request: {
+      scenario: scenario.id,
+      ...(args.team_name === undefined ? {} : { team_name: args.team_name }),
+      ...(args.goal === undefined ? {} : { goal: args.goal }),
+      ...(args.data === undefined ? {} : { data: args.data }),
+      ...(args.city === undefined ? {} : { city: args.city }),
+      ...(args.period === undefined ? {} : { period: args.period }),
+    },
+  }
+}
+
+export async function scenarioPreviewCore(ctx: Context, config: ToolsConfig, captain: Agent, args: ScenarioPlanArgs) {
+  const draft = await compileScenarioDraft(ctx, config, captain, args)
+  const expanded = expandExecutionPlan(draft.plan, draft.options)
+  const runtime = runtimeFromApplyOptions(draft.options)
+  return {
+    scenario_id: draft.scenarioId,
+    team_name: draft.options.teamName,
+    plan_id: draft.plan.planId,
+    // Preview exposes the same approval digest that stage persists. The
+    // compiler digest remains available for diagnostics, while request and
+    // runtime interpolation changes are included in the CAS digest.
+    digest: stagedPlanDigest(draft.plan.digest, draft.request, runtime),
+    compiler_digest: draft.plan.digest,
+    members: expanded.members.map(member => member.expertId),
+    tasks: expanded.tasks.map(task => ({
+      task_id: task.id,
+      logical_id: task.logicalId,
+      subject: task.subject,
+      depends_on: task.dependsOn,
+      ...(task.assigneeExpertId === undefined ? {} : { assignee_expert: task.assigneeExpertId }),
+    })),
+  }
+}
+
+export async function scenarioStageCore(ctx: Context, config: ToolsConfig, captain: Agent, args: ScenarioPlanArgs): Promise<StagedPlan> {
+  const draft = await compileScenarioDraft(ctx, config, captain, args)
+  const stateRoot = stateRootOf(workspaceOf(captain), config)
+  const existing = await findTeamByParticipant(stateRoot, captain.id)
+  if (existing !== undefined) throw new Error(`you already belong to team "${existing.name}" — finish it before staging another plan`)
+  const staged = createStagedPlan({
+    plan: draft.plan,
+    request: draft.request,
+    runtime: runtimeFromApplyOptions(draft.options),
+    createdBy: captain.id,
+    sessionId: captain.session.id,
+    expiresAt: Date.now() + 24 * 60 * 60 * 1000,
+  })
+  await withStagedPlanLock(stateRoot, staged.planId, async () => writeStagedPlan(stateRoot, staged))
+  return staged
+}
+
+export async function scenarioEditCore(
+  ctx: Context,
+  config: ToolsConfig,
+  captain: Agent,
+  planId: string,
+  patch: Partial<Pick<ScenarioPlanArgs, 'team_name' | 'goal' | 'data' | 'city' | 'period'>>,
+  expectedDigest?: string,
+  expectedRevision?: number,
+): Promise<StagedPlan> {
+  const stateRoot = stateRootOf(workspaceOf(captain), config)
+  return withStagedPlanLock(stateRoot, planId, async () => {
+    const current = await readStagedPlan(stateRoot, planId)
+    if (current === undefined) throw new Error(`staged plan "${planId}" was not found`)
+    if (current.createdBy !== captain.id) throw new Error(`staged plan "${planId}" belongs to another captain`)
+    if (expectedDigest !== undefined && expectedDigest !== current.digest) throw new Error(`staged plan "${planId}" digest is stale`)
+    if (expectedRevision !== undefined && expectedRevision !== current.revision) throw new Error(`staged plan "${planId}" revision is stale`)
+    const live = expireStagedPlan(current)
+    if (live.status !== current.status) {
+      await writeStagedPlan(stateRoot, live)
+      throw new Error(`staged plan "${planId}" has expired`)
+    }
+    const request = { ...current.request, ...patch }
+    const draft = await compileScenarioDraft(ctx, config, captain, request as ScenarioPlanArgs)
+    const updated = editStagedPlan(current, {
+      plan: draft.plan,
+      request: draft.request,
+      runtime: runtimeFromApplyOptions(draft.options),
+      fields: Object.keys(patch),
+      actor: captain.id,
+    })
+    await writeStagedPlan(stateRoot, updated)
+    return updated
+  })
+}
+
+const stagedApprovalInFlight = new Map<string, Promise<StagedPlan>>()
+
+/**
+ * Serialize approvals for one staged plan across concurrent tool calls in the
+ * same process. A second caller must wait for the owner rather than treating
+ * the owner's still-running apply as a crashed plan and marking it failed.
+ * After a process restart this map is empty, so the durable running-state
+ * reconciliation below still handles a genuinely interrupted apply.
+ */
+export async function scenarioApproveCore(
+  ctx: Context,
+  config: ToolsConfig,
+  captain: Agent,
+  planId: string,
+  signal: AbortSignal,
+  core: ExpertToolsCore,
+  expectedDigest?: string,
+  expectedRevision?: number,
+): Promise<StagedPlan> {
+  if (expectedDigest === undefined || expectedDigest.trim() === '') {
+    throw new Error(`staged plan "${planId}" approval requires expected_digest for CAS`)
+  }
+  if (expectedRevision === undefined || !Number.isSafeInteger(expectedRevision) || expectedRevision < 0) {
+    throw new Error(`staged plan "${planId}" approval requires expected_revision for CAS`)
+  }
+  const stateRoot = stateRootOf(workspaceOf(captain), config)
+  // Include caller identity and the caller's CAS token. A stale or foreign
+  // approval must not piggyback on an in-flight owner's promise and bypass
+  // the createdBy/expected_digest/expected_revision checks in the lock.
+  const key = `${stateRoot}\u0000${planId}\u0000${captain.id}\u0000${expectedDigest}\u0000${expectedRevision}`
+  const existing = stagedApprovalInFlight.get(key)
+  if (existing !== undefined) return existing
+  const operation = scenarioApproveCoreOnce(ctx, config, captain, planId, signal, core, expectedDigest, expectedRevision)
+  stagedApprovalInFlight.set(key, operation)
+  try {
+    return await operation
+  } finally {
+    if (stagedApprovalInFlight.get(key) === operation) stagedApprovalInFlight.delete(key)
+  }
+}
+
+async function scenarioApproveCoreOnce(
+  ctx: Context,
+  config: ToolsConfig,
+  captain: Agent,
+  planId: string,
+  signal: AbortSignal,
+  core: ExpertToolsCore,
+  expectedDigest?: string,
+  expectedRevision?: number,
+): Promise<StagedPlan> {
+  const stateRoot = stateRootOf(workspaceOf(captain), config)
+  const reservation = await withStagedPlanLock(stateRoot, planId, async () => {
+    const current = await readStagedPlan(stateRoot, planId)
+    if (current === undefined) throw new Error(`staged plan "${planId}" was not found`)
+    if (current.createdBy !== captain.id) throw new Error(`staged plan "${planId}" belongs to another captain`)
+    if (expectedDigest !== undefined && expectedDigest !== current.digest) throw new Error(`staged plan "${planId}" digest is stale`)
+    if (expectedRevision !== undefined && expectedRevision !== current.revision) throw new Error(`staged plan "${planId}" revision is stale`)
+    const live = expireStagedPlan(current)
+    if (live.status === 'expired') {
+      await writeStagedPlan(stateRoot, live)
+      throw new Error(`staged plan "${planId}" has expired`)
+    }
+    if (live.status === 'completed') return { plan: live, owner: false }
+    if (live.status === 'running') {
+      // A process may have exited after apply created the durable team but
+      // before the staged record was finalized. Reconcile that observable
+      // team before deciding whether another apply is safe.
+      const recovered = await findTeamByPlanId(stateRoot, planId)
+      if (recovered !== undefined) {
+        const completed = transitionStagedPlan(live, 'completed', { appliedTeamId: recovered.id })
+        await writeStagedPlan(stateRoot, completed)
+        return { plan: completed, owner: false, resumeTeamId: recovered.id }
+      }
+      const failed = transitionStagedPlan(live, 'failed', { failureReason: 'approval interrupted before a durable team was materialized' })
+      await writeStagedPlan(stateRoot, failed)
+      throw new Error(`staged plan "${planId}" was interrupted before apply completed`)
+    }
+    if (live.status !== 'staged' && live.status !== 'approved') throw new Error(`staged plan "${planId}" is ${live.status}`)
+    const approved = live.status === 'staged' ? transitionStagedPlan(live, 'approved', { actor: captain.id }) : live
+    const running = transitionStagedPlan(approved, 'running', { actor: captain.id })
+    await writeStagedPlan(stateRoot, running)
+    return { plan: running, owner: true }
+  })
+  if (!reservation.owner) {
+    // If the previous process died after persisting planRef but before the
+    // scheduler kick, recovery completed the plan record but the team still
+    // needs one explicit wake-up. Normal completed replays have no
+    // resumeTeamId and remain idempotent no-ops.
+    if ('resumeTeamId' in reservation && reservation.resumeTeamId !== undefined) {
+      await core.scheduler.kickTeam(workspaceOf(captain), reservation.resumeTeamId, captain)
+    }
+    return reservation.plan
+  }
+  const reserved = reservation.plan
+  try {
+    const applied = await applyExecutionPlan(ctx, config, captain, reserved.plan, applyOptionsFromRuntime(reserved.runtime), signal, core)
+    return withStagedPlanLock(stateRoot, planId, async () => {
+      const current = await readStagedPlan(stateRoot, planId)
+      if (current === undefined) throw new Error(`staged plan "${planId}" disappeared during apply`)
+      const updated = transitionStagedPlan(current, 'completed', {
+        appliedTeamId: applied.team_id,
+      })
+      await writeStagedPlan(stateRoot, updated)
+      return updated
+    })
+  } catch (error: unknown) {
+    await withStagedPlanLock(stateRoot, planId, async () => {
+      const current = await readStagedPlan(stateRoot, planId)
+      if (current?.status === 'running') {
+        await writeStagedPlan(stateRoot, transitionStagedPlan(current, 'failed', { failureReason: error instanceof Error ? error.message : String(error) }))
+      }
+    })
+    throw error
+  }
+}
+
+export async function scenarioDiscardCore(config: ToolsConfig, captain: Agent, planId: string): Promise<StagedPlan> {
+  const stateRoot = stateRootOf(workspaceOf(captain), config)
+  return withStagedPlanLock(stateRoot, planId, async () => {
+    const current = await readStagedPlan(stateRoot, planId)
+    if (current === undefined) throw new Error(`staged plan "${planId}" was not found`)
+    if (current.createdBy !== captain.id) throw new Error(`staged plan "${planId}" belongs to another captain`)
+    const discarded = transitionStagedPlan(current, 'discarded', { actor: captain.id })
+    await writeStagedPlan(stateRoot, discarded)
+    return discarded
+  })
+}
+
 /**
  * Register every `expert_teams_*` tool into the shared tools registry.
  * @param ctx - the plugin context (injects `tools`).
@@ -339,6 +720,119 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         name: args.name,
         ...args.description !== undefined ? { description: args.description } : {},
       }, exec.signal)
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'expert_teams_plan_preview',
+    description: 'Compile an Expert Library scenario into a reviewable plan without writing team state, creating members, creating tasks, or waking agents.',
+    parameters: {
+      scenario: { type: 'string', required: true, description: 'Scenario id.' },
+      team_name: { type: 'string', description: 'Optional team name.' },
+      goal: { type: 'string', description: 'Concrete goal.' },
+      data: { type: 'string', description: 'Optional context data.' },
+      city: { type: 'string', description: 'Optional city.' },
+      period: { type: 'string', description: 'Optional period.' },
+    },
+    output: {
+      schema: { type: 'object', additionalProperties: true },
+      render: (_args, value) => [{
+        type: 'text',
+        text: `Plan preview ${toolJsonField(value, 'plan_id') ?? 'unknown'} (${toolJsonField(value, 'digest') ?? 'unknown'}) for ${toolJsonField(value, 'team_name') ?? 'unknown'}`,
+      }],
+    },
+    async execute(args, exec) {
+      return asToolJsonObject(await scenarioPreviewCore(ctx, config, requireCaptain(exec), args))
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'expert_teams_plan_stage',
+    description: 'Persist a compiled scenario as a staged plan. Staging does not create members, tasks, or live wakeups.',
+    parameters: {
+      scenario: { type: 'string', required: true, description: 'Scenario id.' },
+      team_name: { type: 'string', description: 'Optional team name.' },
+      goal: { type: 'string', description: 'Concrete goal.' },
+      data: { type: 'string', description: 'Optional context data.' },
+      city: { type: 'string', description: 'Optional city.' },
+      period: { type: 'string', description: 'Optional period.' },
+    },
+    output: {
+      schema: { type: 'object', additionalProperties: true },
+      render: (_args, value) => [{
+        type: 'text',
+        text: `Staged plan ${toolJsonField(value, 'planId') ?? 'unknown'} (${toolJsonField(value, 'digest') ?? 'unknown'}) — review before approval.`,
+      }],
+    },
+    async execute(args, exec) {
+      return asToolJsonObject(await scenarioStageCore(ctx, config, requireCaptain(exec), args))
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'expert_teams_plan_edit',
+    description: 'Edit the same staged scenario plan with optimistic digest/revision checks. Only scenario goal, context and team name are editable in this adapter.',
+    parameters: {
+      plan_id: { type: 'string', required: true, description: 'Staged plan id.' },
+      expected_digest: { type: 'string', required: true, description: 'Digest currently shown to the user; approval is compare-and-swap.' },
+      expected_revision: { type: 'number', required: true, description: 'Revision currently shown to the user; approval is compare-and-swap.' },
+      team_name: { type: 'string', description: 'New team name.' },
+      goal: { type: 'string', description: 'New goal.' },
+      data: { type: 'string', description: 'New context data.' },
+      city: { type: 'string', description: 'New city.' },
+      period: { type: 'string', description: 'New period.' },
+    },
+    output: {
+      schema: { type: 'object', additionalProperties: true },
+      render: (_args, value) => [{
+        type: 'text',
+        text: `Plan ${toolJsonField(value, 'planId') ?? 'unknown'} edited to revision ${toolJsonField(value, 'revision') ?? 'unknown'} (${toolJsonField(value, 'digest') ?? 'unknown'}).`,
+      }],
+    },
+    async execute(args, exec) {
+      const patch: Partial<ScenarioPlanArgs> = {}
+      if (args.team_name !== undefined) patch.team_name = args.team_name
+      if (args.goal !== undefined) patch.goal = args.goal
+      if (args.data !== undefined) patch.data = args.data
+      if (args.city !== undefined) patch.city = args.city
+      if (args.period !== undefined) patch.period = args.period
+      return asToolJsonObject(await scenarioEditCore(ctx, config, requireCaptain(exec), args.plan_id, patch, args.expected_digest, args.expected_revision))
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'expert_teams_plan_approve',
+    description: 'Approve and apply one staged plan. The apply bridge is entered exactly once after the plan is reserved as running.',
+    parameters: {
+      plan_id: { type: 'string', required: true, description: 'Staged plan id.' },
+      expected_digest: { type: 'string', description: 'Digest currently shown to the user.' },
+      expected_revision: { type: 'number', description: 'Revision currently shown to the user.' },
+    },
+    output: {
+      schema: { type: 'object', additionalProperties: true },
+      render: (_args, value) => {
+        const appliedTeamId = toolJsonField(value, 'appliedTeamId')
+        return [{
+          type: 'text',
+          text: `Plan ${toolJsonField(value, 'planId') ?? 'unknown'} is ${toolJsonField(value, 'status') ?? 'unknown'}${appliedTeamId === undefined ? '' : ` as team ${appliedTeamId}`}.`,
+        }]
+      },
+    },
+    async execute(args, exec) {
+      return asToolJsonObject(await scenarioApproveCore(ctx, config, requireCaptain(exec), args.plan_id, exec.signal, { memberSelections, scheduler }, args.expected_digest, args.expected_revision))
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'expert_teams_plan_discard',
+    description: 'Discard a staged plan without creating a team. The plan record remains auditable.',
+    parameters: { plan_id: { type: 'string', required: true, description: 'Staged plan id.' } },
+    output: {
+      schema: { type: 'object', additionalProperties: true },
+      render: (_args, value) => [{ type: 'text', text: `Plan ${toolJsonField(value, 'planId') ?? 'unknown'} discarded.` }],
+    },
+    async execute(args, exec) {
+      return asToolJsonObject(await scenarioDiscardCore(config, requireCaptain(exec), args.plan_id))
     },
   }))
 
@@ -938,6 +1432,10 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       to: { type: 'string', required: true, description: 'Recipient: "captain" or a member name.' },
       content: { type: 'string', required: true, description: 'The message text.' },
       from: { type: 'string', description: 'Sender (defaults to the caller: the captain, or the calling member).' },
+      task_id: { type: 'string', description: 'Optional source task. Members may only send for their currently assigned task.' },
+      attempt_id: { type: 'string', description: 'Optional source attempt id; stale attempts are rejected before delivery.' },
+      idempotency_key: { type: 'string', description: 'Optional stable key. Repeated sends with the same key are delivered once.' },
+      sequence: { type: 'number', description: 'Optional sender sequence. Omit to allocate the next mailbox sequence.' },
     },
     output: {
       schema: {
@@ -969,9 +1467,39 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         if (args.from !== undefined && args.from !== from) {
           throw new Error(`expert_teams_send_message: "from" must be your own identity ("${from}"), not "${args.from}"`)
         }
+        const requestedTaskId = args.task_id?.trim() || undefined
+        const sourceTask = requestedTaskId === undefined
+          ? identity.kind === 'member'
+            ? fresh.tasks.find(task => task.assignee === identity.name
+              && (task.status === 'claimed' || task.status === 'in_progress')
+              && task.attemptId !== undefined)
+            : undefined
+          : requireTask(fresh, requestedTaskId)
+        if (sourceTask !== undefined && identity.kind === 'member' && sourceTask.assignee !== identity.name) {
+          throw new Error(`message source task ${sourceTask.id} is assigned to "${sourceTask.assignee ?? 'nobody'}", not you`)
+        }
+        if (args.attempt_id !== undefined) {
+          if (sourceTask === undefined) throw new Error('message attempt_id requires task_id or an active member task')
+          if (sourceTask.attemptId !== args.attempt_id) {
+            throw new Error(`stale attempt for message task ${sourceTask.id}: expected the current attempt_id`)
+          }
+        }
+        const provenance = sourceTask === undefined
+          ? {
+            ...(args.sequence === undefined ? {} : { sequence: args.sequence }),
+            ...(args.idempotency_key === undefined ? {} : { idempotencyKey: args.idempotency_key }),
+          }
+          : {
+            sourceTaskId: sourceTask.id,
+            ...(sourceTask.attemptId === undefined ? {} : { sourceAttemptId: sourceTask.attemptId }),
+            sourceTaskStatus: sourceTask.status,
+            ...(args.sequence === undefined ? {} : { sequence: args.sequence }),
+            ...(args.idempotency_key === undefined ? {} : { idempotencyKey: args.idempotency_key }),
+          }
         if (to === CAPTAIN_KEY) {
-          const message = { ...createMessage(from, CAPTAIN_KEY, args.content), deliveryClaimedAt: Date.now() }
-          await appendMailbox(stateRoot, fresh.id, CAPTAIN_KEY, message)
+          const message = { ...createMessage(from, CAPTAIN_KEY, args.content, provenance), deliveryClaimedAt: Date.now() }
+          const persisted = await appendMailbox(stateRoot, fresh.id, CAPTAIN_KEY, message)
+          if (persisted.id !== message.id) return { kind: 'duplicate' as const, fresh, identity, message: persisted, from }
           appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, caller.session), 'expert-teams/message-sent', {
             teamId: fresh.id,
             messageId: message.id,
@@ -980,11 +1508,12 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             content: args.content,
             ts: message.ts,
           })
-          return { kind: 'captain' as const, fresh, identity, message, from }
+          return { kind: 'captain' as const, fresh, identity, message: persisted, from }
         }
         const recipient = requireMember(fresh, to)
-        const message = { ...createMessage(from, recipient.name, args.content), deliveryClaimedAt: Date.now() }
-        await appendMailbox(stateRoot, fresh.id, recipient.name, message)
+        const message = { ...createMessage(from, recipient.name, args.content, provenance), deliveryClaimedAt: Date.now() }
+        const persisted = await appendMailbox(stateRoot, fresh.id, recipient.name, message)
+        if (persisted.id !== message.id) return { kind: 'duplicate' as const, fresh, identity, message: persisted, from, recipient }
         appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, caller.session), 'expert-teams/message-sent', {
           teamId: fresh.id,
           messageId: message.id,
@@ -993,8 +1522,26 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           content: args.content,
           ts: message.ts,
         })
-        return { kind: 'member' as const, fresh, identity, message, from, recipient }
+        return { kind: 'member' as const, fresh, identity, message: persisted, from, recipient }
       })
+
+      if (prepared.kind === 'duplicate') {
+        return { message_id: prepared.message.id, from: prepared.message.from, to: prepared.message.to, delivered: 'mailbox' as const }
+      }
+
+      // The task may have been reassigned while the durable append lock was
+      // released for live delivery. Re-check the generation before waking a
+      // recipient; stale messages remain auditable but cannot revive old work.
+      const currentTeam = await readTeam(stateRoot, prepared.fresh.id)
+      if (currentTeam !== undefined) {
+        const admission = admitTeamMessage(currentTeam, prepared.message)
+        if (!admission.accepted) {
+          await withTeamLock(teamLockKey(stateRoot, prepared.fresh.id), () => (
+            discardMailbox(stateRoot, prepared.fresh.id, prepared.message.to, [prepared.message.id], admission.reason)
+          ))
+          return { message_id: prepared.message.id, from: prepared.message.from, to: prepared.message.to, delivered: 'mailbox' as const }
+        }
+      }
 
       // Resolve the exact live captain only after releasing the state lock.
       // The plugin mailbox is already durable if live delivery cannot proceed.
