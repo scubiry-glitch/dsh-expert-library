@@ -131,19 +131,24 @@ test('index: a missing skills root yields [] and recovers once the root appears'
 
 // ── 2. Member persona inventory (skillsGuideSection) ─────────────────────────
 
-test('skillsGuideSection lists every installed skill as `- <id>: <name>` with the convention hint', () => {
+test('skillsGuideSection lists workspace and bundled skill files with exact read paths', () => {
   const workspace = makeWorkspace({
     alpha: '---\nname: Alpha Skill\n---\n# A',
     beta: 'no frontmatter here',
   })
   try {
     const section = skillsGuideSection(stubCtx, workspace, 'knowledge')
-    assert.ok(section.includes('Available local skills'), 'section header present')
+    assert.ok(section.includes('Plugin skill files (filesystem discovery)'), 'section identifies filesystem discovery')
     assert.ok(section.includes('GET /plugins/dsh-expert-library/skills'), 'convention hint names the authoritative channel')
     assert.ok(section.includes('- alpha: Alpha Skill'), 'frontmatter name surfaces in the line')
     assert.ok(section.includes('- beta: beta'), 'id fallback surfaces in the line')
+    assert.ok(section.includes(`read ${JSON.stringify(join(workspace, 'knowledge', 'skills', 'alpha', 'SKILL.md'))}`), 'workspace file can be read without path discovery')
+    assert.ok(section.includes('only for names in the current Host session skill catalog'), 'file discovery does not authorize Host skill invocation')
     // Bundled skills ride the union (finesse-ui ships with the plugin).
     assert.ok(section.includes('- finesse-ui: finesse-ui'), 'bundled skills appear too')
+    const bundled = collectSkillEntries(discoverSkillRoots(stubCtx, 'knowledge')).find(entry => entry.id === 'zhijian-report-craft')
+    assert.ok(bundled, 'report craft is bundled')
+    assert.ok(section.includes(`read ${JSON.stringify(bundled.path)}`), 'bundled report craft exposes its actual SKILL.md path')
   } finally {
     invalidateSkillsIndex()
     cleanup(workspace)
@@ -159,7 +164,7 @@ test('skillsGuideSection returns "" when no skill is installed anywhere', () => 
     // because the bundled union is present, and that an empty workspace
     // still yields at least the bundled inventory (never a bare "").
     const section = skillsGuideSection(stubCtx, workspace, 'knowledge')
-    assert.ok(section.startsWith('Available local skills'), 'bundled union keeps the section meaningful')
+    assert.ok(section.startsWith('Plugin skill files (filesystem discovery)'), 'bundled union keeps the section meaningful')
   } finally {
     invalidateSkillsIndex()
     cleanup(workspace)
@@ -205,8 +210,9 @@ test('liveSkillsInventoryLine prefers the initiating agent workspace (per-sessio
   })
   try {
     const line = liveSkillsInventoryLine(ctx, 'knowledge')
-    assert.ok(line.startsWith('当前已安装 skills：'), 'renders the live inventory label')
+    assert.ok(line.startsWith('Plugin skill files (filesystem discovery)'), 'renders the file inventory label')
     assert.ok(line.includes('only-agent'), 'the initiator workspace skills are listed')
+    assert.ok(line.includes(`read ${JSON.stringify(join(agentWorkspace, 'knowledge', 'skills', 'only-agent', 'SKILL.md'))}`), 'captain can read the exact initiating-workspace file')
     assert.ok(!line.includes('only-other'), 'other workspaces are NOT listed when the initiator resolves')
   } finally {
     invalidateSkillsIndex()

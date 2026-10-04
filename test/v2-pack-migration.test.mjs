@@ -1,9 +1,9 @@
 /**
  * zhijian-realestate domain pack migration tests (Phase 1 §7.3).
  *
- * Covers the entity Domain Pack at `domain-packs/zhijian-realestate` (v1.1.0):
- * - the layout is accepted by `loadPackFromDir` with zero diagnostics and the
- *   loaded pack deep-equals the in-memory V2 projection (round-trip);
+ * Covers the complete Domain Pack at `domain-packs/zhijian-realestate` (v1.3.0):
+ * - the layout is accepted by `loadPackFromDir` with zero errors and only the three identified unlicensed-skill warnings;
+ *   its complete composition retains the exact in-memory base projection;
  * - the pack pins both baselines: 1.0.0 = the 2026-08-19 zip (32 experts),
  *   1.1.0 = the 2026-08-20/21 unpacked revision (33 experts, BK-034 陈杰
  *   merged); SOURCE-MANIFEST records both and the upgrade history;
@@ -38,6 +38,7 @@ import { ZHIJIAN_EXPERTS } from '../lib/zhijian/data/experts.generated.js'
 import { ZHIJIAN_EXPERT_BY_ID, ZHIJIAN_ROUTE } from '../lib/zhijian/registry.js'
 import { ROUTE_TOPICS, STANCE_TABLE, SPECIAL_ROUTING, ROUTING_CONSTRAINTS } from '../lib/zhijian/routing.js'
 import { BUILTIN_SCENARIOS } from '../lib/expert-library/builtin-scenarios.js'
+import { canonicalSkillDigest } from '../lib/v2/pack-loader.js'
 import { emitPack, compareTrees, PACK_BASELINES, PACK_UPGRADE_HISTORY } from '../scripts/build-zhijian-pack.mjs'
 
 /** Absolute path of the committed domain pack. */
@@ -48,6 +49,31 @@ const PACK_SOURCE_DIR = join(PACK_DIR, 'source')
 /** Build the same projection the generator uses. */
 function build() {
   return buildZhijianDomainPack({ modelPolicy: ZHIJIAN_ROUTE })
+}
+
+const CRAFT_SKILLS = ['zhijian-designer-render', 'zhijian-report-craft']
+/** The release is the unaltered base projection plus two authored craft skills.
+ * Do not erase the craft fields from the actual pack to fit the old projection.
+ */
+async function buildCompletePack() {
+  const projected = build()
+  const additions = []
+  for (const id of CRAFT_SKILLS) {
+    const manifest = JSON.parse(await readFile(join(PACK_DIR, 'skill-packages', `${id}.json`), 'utf8'))
+    const expected = {
+      id, name: id, version: id === 'zhijian-designer-render' ? '1.1.1' : '1.1.0', schemaVersion: 2,
+      source: { kind: 'workspace', root: `skills/${id}`, digest: await canonicalSkillDigest(join(PACK_DIR, 'skills', id), manifest) },
+      contributions: {}, permissions: { execScripts: ['scripts/check.mjs'], internalOnly: true },
+      craft: { path: `craft/${id}.json` },
+    }
+    assert.deepEqual(manifest, expected, `${id}: complete craft manifest must retain its exact declared contract`)
+    additions.push(expected)
+  }
+  return {
+    ...projected,
+    pack: { ...projected.pack, version: '1.3.1', description: projected.pack.description + ' 1.3.0：领域包闭环多工艺由 AI 选择，计算单位与资金平衡、政策原文证据绑定及独立审核。 1.3.1：可选包内 MD 单源生成与锚点清单，独立审核门禁保持。' },
+    skillPackages: [...projected.skillPackages, ...additions],
+  }
 }
 
 /**
@@ -91,30 +117,32 @@ async function loadCommittedPack() {
 
 // ── 1. layout acceptance + round-trip ───────────────────────────────────────
 
-test('domain-packs/zhijian-realestate loads clean (zero errors; only the documented unlicensed-skill warning)', async () => {
+test('domain-packs/zhijian-realestate loads with zero errors and exactly the three identified unlicensed skills', async () => {
   const loaded = await loadCommittedPack()
   assert.equal(loaded.ok, true)
   assert.equal(loaded.diagnostics.filter(d => d.severity === 'error').length, 0, JSON.stringify(loaded.diagnostics))
-  // The only warning is the §3.7 missing-license note for the bundled
-  // video-shotcraft skill (frontmatter declares no license ⇒ internalOnly +
-  // warning); nothing else may warn.
-  assert.deepEqual(
-    loaded.diagnostics.filter(d => d.severity === 'warning').map(d => d.code),
-    ['missing-license'],
-    JSON.stringify(loaded.diagnostics),
-  )
   assert.ok(loaded.pack !== undefined)
+  const warningSkills = loaded.diagnostics.filter(d => d.severity === 'warning').map(warning => {
+    assert.equal(warning.code, 'missing-license', JSON.stringify(warning))
+    const match = /^pack\.skillPackages\[(\d+)\]\.source\.license$/.exec(warning.path)
+    assert.ok(match, `unexpected warning path: ${warning.path}`)
+    const skill = loaded.pack.skillPackages[Number(match[1])]
+    assert.equal(skill.source.license, undefined, `${skill.id}: do not fabricate a license`)
+    assert.equal(skill.permissions.internalOnly, true, `${skill.id}: unlicensed skills stay internal-only`)
+    return skill.id
+  }).sort()
+  assert.deepEqual(warningSkills, ['video-shotcraft', ...CRAFT_SKILLS].sort())
 })
 
-test('round-trip: loaded pack equals the in-memory V2 projection (content per id)', async () => {
+test('round-trip: complete release equals the exact base projection plus the two authored craft manifests', async () => {
   const loaded = await loadCommittedPack()
-  assert.deepEqual(canonicalPack(loaded.pack), canonicalPack(build()))
+  assert.deepEqual(canonicalPack(loaded.pack), canonicalPack(await buildCompletePack()))
 })
 
 test('pack.json is metadata-only; entity sections live in directories', async () => {
   const packJson = JSON.parse(await readFile(join(PACK_DIR, 'pack.json'), 'utf8'))
   assert.equal(packJson.id, 'zhijian-realestate')
-  assert.equal(packJson.version, '1.1.0')
+  assert.equal(packJson.version, '1.3.1')
   assert.equal(packJson.schemaVersion, 2)
   for (const key of ['experts', 'scenarios', 'teamTemplates', 'outputTemplates', 'qualityPolicies', 'methodPacks']) {
     assert.ok(!(key in packJson), `pack.json must stay metadata-only (no ${key} inline)`)
@@ -301,13 +329,16 @@ test('generator determinism: two fresh emits (no source) are byte-identical', as
 test('generator determinism: full regeneration from the embedded source reproduces the committed pack', async () => {
   const tmp = await mkdtemp(join(tmpdir(), 'zj-pack-src-'))
   try {
-    const result = await emitPack(tmp, { srcDir: PACK_SOURCE_DIR, writeSrc: false })
-    assert.equal(result.ok, true)
+    const { cp } = await import('node:fs/promises')
+    const { buildZhijianWithCraft } = await import('../scripts/build-zhijian-pack-with-craft.mjs')
+    await cp(PACK_DIR, tmp, { recursive: true })
+    const result = await buildZhijianWithCraft({ write: true, packRoot: tmp })
+    assert.equal(result.status, 'PASS')
     const diffs = await compareTrees(PACK_DIR, tmp)
     assert.deepEqual(diffs, [], `re-emission from the embedded source must reproduce the committed pack: ${diffs.join(' | ')}`)
     // the regenerated tree hash matches the committed one
     const committedHash = (await readFile(join(PACK_DIR, 'generated', 'pack.sha256'), 'utf8')).trim()
-    assert.equal(result.hash, committedHash)
+    assert.equal(result.treeDigest, committedHash)
   } finally {
     await rm(tmp, { recursive: true, force: true })
   }
@@ -327,7 +358,7 @@ test('pack tree hash is deterministic and self-excluding (pack.sha256 not part o
 
 test('compiler golden: loaded-pack templates compile to the same ExecutionPlan digest', async () => {
   const loaded = await loadCommittedPack()
-  const inMemory = build()
+  const inMemory = await buildCompletePack()
   const params = {
     selectedExpertIds: ['bk-024', 'bk-004'],
     data: '上海 2026-07 二手住宅市场月度数据（口径见任务说明）',

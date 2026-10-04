@@ -35,6 +35,8 @@ import { ACTION_ART, LEAD_ART, memberArtUrl } from './artwork.ts'
 import { OPEN_PANEL_EVENT } from './AgentTeamsCard.tsx'
 import type { ExpertTeamsOpenPanelDetail } from './AgentTeamsCard.tsx'
 import type { ExpertTeamsCardData } from './agent-teams-card-definition.ts'
+import { fetchTeamWire, mutateTeam, normalizePlan, type TeamWireEnvelope, type TeamWireMutation, type TeamWireMutationResponse } from './team-api.ts'
+import { TeamPlanPanel } from './TeamPlanPanel.tsx'
 import css from './ActivityPanel.module.css'
 
 /** Poll cadence for the host snapshot route. */
@@ -111,6 +113,18 @@ export interface ActivityTeam {
   readonly tasks: readonly ActivityTask[]
   readonly messageCount: number
   readonly captainInbox: readonly ActivityMessage[]
+}
+
+interface ActivityPlan {
+  readonly captainSessionId: string
+  readonly plan: NonNullable<TeamWireEnvelope['plan']>
+}
+
+interface TeamDetailState {
+  readonly envelope?: TeamWireEnvelope
+  readonly loading: boolean
+  readonly error?: string
+  readonly fetchedAt?: number
 }
 
 /** Initial-letter fallback for unmatched roles. */
@@ -496,13 +510,15 @@ function DependencyMap({ tasks }: { readonly tasks: readonly ActivityTask[] }) {
   )
 }
 
-function TeamSection({ team, onNavigate, onOpenDocuments, historic = false }: {
+function TeamSection({ team, onNavigate, onOpenDocuments, historic = false, detail, onMutate }: {
   readonly team: ActivityTeam
   /** Navigate to a member transcript (floater hides immediately). */
   readonly onNavigate: (id: SessionId) => void
   /** Jump to one expert's output documents list. */
   readonly onOpenDocuments: (member: ActivityMember) => void
   readonly historic?: boolean
+  readonly detail?: TeamDetailState
+  readonly onMutate?: (request: Omit<TeamWireMutation, 'captainSessionId' | 'teamId'>) => Promise<TeamWireMutationResponse | void>
 }) {
   const [membersOpen, setMembersOpen] = useState(true)
   const busyCount = team.members.filter((member) => member.activity === 'working').length
@@ -612,6 +628,31 @@ function TeamSection({ team, onNavigate, onOpenDocuments, historic = false }: {
         </div>}
       </section>
 
+      {!historic && onMutate !== undefined && (
+        <TeamPlanPanel
+          team={team}
+          wire={detail?.envelope?.team ?? undefined}
+          plan={detail?.envelope?.plan}
+          archived={detail?.envelope?.archived === true}
+          loading={detail?.loading ?? false}
+          error={detail?.error}
+          stale={detail?.error !== undefined || (detail?.envelope?.plan?.expiresAt !== undefined && new Date(detail.envelope.plan.expiresAt).getTime() <= Date.now())}
+          canMutate={detail?.envelope?.team?.captainSessionId === team.captainSessionId}
+          onMutate={onMutate}
+        />
+      )}
+      {historic && (
+        <TeamPlanPanel
+          team={team}
+          wire={detail?.envelope?.team ?? undefined}
+          plan={detail?.envelope?.plan}
+          archived
+          loading={detail?.loading ?? false}
+          error={detail?.error}
+          canMutate={false}
+          onMutate={async () => { /* historical snapshots are read-only */ }}
+        />
+      )}
       <DependencyMap tasks={team.tasks} />
     </section>
   )
@@ -660,6 +701,9 @@ export function ActivityPanel({ sessionsList, openSession }: {
   }
   const [teams, setTeams] = useState<readonly ActivityTeam[]>([])
   const [archivedTeams, setArchivedTeams] = useState<readonly ActivityTeam[]>([])
+  const [plans, setPlans] = useState<readonly ActivityPlan[]>([])
+  const [teamDetails, setTeamDetails] = useState<ReadonlyMap<string, TeamDetailState>>(new Map())
+  const [planDetails, setPlanDetails] = useState<ReadonlyMap<string, TeamDetailState>>(new Map())
   const [open, setOpen] = useState(false)
   const [openOwner, setOpenOwner] = useState<SessionId | undefined>()
   const [autoOpened, setAutoOpened] = useState(false)
@@ -702,17 +746,21 @@ export function ActivityPanel({ sessionsList, openSession }: {
   useEffect(() => {
     let cancelled = false
     let inFlight = false
+    const controller = new AbortController()
     const tick = async (): Promise<void> => {
       if (inFlight || cancelled) return
       inFlight = true
       try {
         const [liveResponse, archivedResponse] = await Promise.all([
-          fetch(STATE_URL, { cache: 'no-store' }),
-          fetch(`${STATE_URL}?archived=1`, { cache: 'no-store' }),
+          fetch(STATE_URL, { cache: 'no-store', signal: controller.signal }),
+          fetch(`${STATE_URL}?archived=1`, { cache: 'no-store', signal: controller.signal }),
         ])
         if (liveResponse.ok) {
-          const body = (await liveResponse.json()) as { teams?: unknown }
+          const body = (await liveResponse.json()) as { teams?: unknown; plans?: unknown }
           if (!cancelled && Array.isArray(body.teams)) setTeams(body.teams as readonly ActivityTeam[])
+          if (!cancelled && Array.isArray(body.plans)) {
+            setPlans((body.plans as readonly ActivityPlan[]).map((item) => ({ ...item, plan: normalizePlan(item.plan) })))
+          }
         }
         if (archivedResponse.ok) {
           const body = (await archivedResponse.json()) as { teams?: unknown }
@@ -728,6 +776,7 @@ export function ActivityPanel({ sessionsList, openSession }: {
     const timer = setInterval(() => { void tick() }, POLL_MS)
     return () => {
       cancelled = true
+      controller.abort()
       clearInterval(timer)
     }
   }, [])
@@ -788,7 +837,82 @@ export function ActivityPanel({ sessionsList, openSession }: {
     )),
     [archivedTeams, current, teams],
   )
-  const visibleCount = visibleTeams.length + visibleArchived.length + visibleHistoric.length
+  const visiblePlans = useMemo(
+    () => (current === undefined ? [] : plans.filter((item) => item.captainSessionId === current && ![...teams, ...archivedTeams].some(team => team.teamId === item.plan.appliedTeamId && team.captainSessionId === current))),
+    [plans, current, teams, archivedTeams],
+  )
+  const visibleCount = visibleTeams.length + visibleArchived.length + visibleHistoric.length + visiblePlans.length
+  const detailTargets = useMemo(() => [...visibleTeams, ...visibleArchived], [visibleTeams, visibleArchived])
+  const detailTargetSignature = useMemo(() => detailTargets.map((team) => `${team.captainSessionId}:${team.teamId}`).sort().join('|'), [detailTargets])
+  useEffect(() => {
+    let cancelled = false
+    let inFlight = false
+    const controller = new AbortController()
+    const tick = async (): Promise<void> => {
+      if (cancelled || inFlight || detailTargets.length === 0) return
+      inFlight = true
+      const targets = [...detailTargets]
+      setTeamDetails((previous) => {
+        const next = new Map(previous)
+        for (const team of targets) next.set(`${team.captainSessionId}:${team.teamId}`, { ...(previous.get(`${team.captainSessionId}:${team.teamId}`) ?? {}), loading: true })
+        return next
+      })
+      try {
+        const results = await Promise.all(targets.map(async (team) => {
+          try {
+            const envelope = await fetchTeamWire({ captainSessionId: team.captainSessionId, teamId: team.teamId, archived: archivedTeams.some((item) => item.teamId === team.teamId && item.captainSessionId === team.captainSessionId), signal: controller.signal })
+            return { key: `${team.captainSessionId}:${team.teamId}`, value: { envelope, loading: false, fetchedAt: Date.now() } as TeamDetailState }
+          } catch (caught) {
+            return { key: `${team.captainSessionId}:${team.teamId}`, value: { loading: false, fetchedAt: Date.now(), error: caught instanceof Error ? caught.message : '团队状态读取失败' } as TeamDetailState }
+          }
+        }))
+        if (cancelled) return
+        setTeamDetails((previous) => {
+          const next = new Map(previous)
+          for (const result of results) next.set(result.key, result.value)
+          return next
+        })
+      } finally {
+        inFlight = false
+      }
+    }
+    void tick()
+    const timer = setInterval(() => { void tick() }, 1500)
+    return () => { cancelled = true; controller.abort(); clearInterval(timer) }
+    // signature intentionally controls polling target changes; arrays are snapshots.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current, detailTargetSignature])
+
+  const planTargetSignature = useMemo(() => visiblePlans.map((item) => `${item.captainSessionId}:${item.plan.planId}`).sort().join('|'), [visiblePlans])
+  useEffect(() => {
+    let cancelled = false
+    let inFlight = false
+    const controller = new AbortController()
+    const tick = async (): Promise<void> => {
+      if (cancelled || inFlight || visiblePlans.length === 0) return
+      inFlight = true
+      const targets = [...visiblePlans]
+      try {
+        const results = await Promise.all(targets.map(async (item) => {
+          const key = `${item.captainSessionId}:${item.plan.planId}`
+          try {
+            const envelope = await fetchTeamWire({ captainSessionId: item.captainSessionId, planId: item.plan.planId, signal: controller.signal })
+            return { key, value: { envelope, loading: false, fetchedAt: Date.now() } as TeamDetailState }
+          } catch (caught) {
+            return { key, value: { loading: false, fetchedAt: Date.now(), error: caught instanceof Error ? caught.message : '计划状态读取失败' } as TeamDetailState }
+          }
+        }))
+        if (!cancelled) setPlanDetails((previous) => {
+          const next = new Map(previous)
+          for (const result of results) next.set(result.key, result.value)
+          return next
+        })
+      } finally { inFlight = false }
+    }
+    void tick()
+    const timer = setInterval(() => { void tick() }, 1500)
+    return () => { cancelled = true; controller.abort(); clearInterval(timer) }
+  }, [current, planTargetSignature])
 
   // Resolve the docs-focus expert against the current snapshots: the poll
   // replaces team/member objects every tick, so the documents view always
@@ -891,12 +1015,31 @@ export function ActivityPanel({ sessionsList, openSession }: {
               ? <span className={css.emptyHint}>暂无团队活动</span>
               : (
                 <>
+                  {visiblePlans.map((item) => {
+                    const key = `${item.captainSessionId}:${item.plan.planId}`
+                    const detail = planDetails.get(key)
+                    const plan = detail?.envelope?.plan ?? item.plan
+                    return <TeamPlanPanel
+                      key={key}
+                      plan={plan}
+                      wire={detail?.envelope?.team ?? undefined}
+                      loading={detail?.loading ?? false}
+                      error={detail?.error}
+                      stale={detail?.error !== undefined || (plan.expiresAt !== undefined && new Date(plan.expiresAt).getTime() <= Date.now())}
+                      canMutate={item.captainSessionId === current}
+                      onMutate={async (request) => { await mutateTeam({ ...request, captainSessionId: item.captainSessionId, planId: item.plan.planId }) }}
+                    />
+                  })}
                   {visibleTeams.map((team) => (
                     <TeamSection
                       key={team.teamId}
                       team={team}
                       onNavigate={navigateToSession}
                       onOpenDocuments={(member) => { setDocsFocus({ teamId: team.teamId, memberName: member.name }) }}
+                      detail={teamDetails.get(`${team.captainSessionId}:${team.teamId}`)}
+                      onMutate={async (request) => {
+                        await mutateTeam({ ...request, captainSessionId: team.captainSessionId, teamId: team.teamId })
+                      }}
                     />
                   ))}
                   {visibleArchived.map((team) => (
@@ -906,6 +1049,7 @@ export function ActivityPanel({ sessionsList, openSession }: {
                         onNavigate={navigateToSession}
                         onOpenDocuments={(member) => { setDocsFocus({ teamId: team.teamId, memberName: member.name }) }}
                         historic
+                        detail={teamDetails.get(`${team.captainSessionId}:${team.teamId}`)}
                       />
                     </div>
                   ))}

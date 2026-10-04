@@ -502,7 +502,19 @@ export function normalizeBeikeEnvelope(raw: BeikeRawResult, options: BeikeNormal
     caliber: options.caliber,
   }
   const stderr = raw.stderr === undefined ? undefined : raw.stderr.slice(0, BEIKE_STDERR_LIMIT)
-  if (raw.exitCode === 0) {
+  const payload = isRecord(raw.json) ? raw.json : undefined
+  const errorValue = payload?.['error']
+  const errorPayload = isRecord(errorValue) ? errorValue : undefined
+  const errorText = typeof errorValue === 'string' ? stringOrUndefined(errorValue.trim()) : undefined
+  const status = typeof payload?.['status'] === 'string' ? payload['status'].trim().toLowerCase() : undefined
+  const explicitFailure = errorValue === true || errorPayload !== undefined || errorText !== undefined
+    || payload?.['ok'] === false || payload?.['success'] === false
+    || status === 'error' || status === 'failed' || status === 'failure'
+  // The real Beike service also returns this standalone outage sentinel as
+  // ordinary MCP text. Match only the entire scalar, never policy prose or
+  // nested business fields containing the same words.
+  const unavailable = typeof raw.json === 'string' && raw.json.trim().toLowerCase() === 'service temporarily unavailable'
+  if (raw.exitCode === 0 && !explicitFailure && !unavailable) {
     if (raw.json === undefined) {
       return failEnvelope({
         code: 'BEIKE_EMPTY_RESPONSE',
@@ -517,11 +529,12 @@ export function normalizeBeikeEnvelope(raw: BeikeRawResult, options: BeikeNormal
     }
     return okEnvelope(raw.json, provenance, warnings)
   }
-  const payload = isRecord(raw.json) ? raw.json : undefined
-  const errorPayload = payload !== undefined && isRecord(payload['error']) ? payload['error'] as Record<string, unknown> : undefined
-  const code = stringOrUndefined(errorPayload?.['code']) ?? stringOrUndefined(payload?.['code']) ?? 'BEIKE_ERROR'
-  const message = stringOrUndefined(errorPayload?.['message'])
-  const correction = message ?? stringOrUndefined(stderr?.split('\n')[0])
+  const code = stringOrUndefined(errorPayload?.['code']) ?? stringOrUndefined(payload?.['code'])
+    ?? (unavailable ? 'BEIKE_SERVICE_UNAVAILABLE' : 'BEIKE_ERROR')
+  const message = stringOrUndefined(errorPayload?.['message']) ?? errorText
+    ?? (explicitFailure ? stringOrUndefined(payload?.['message']) : undefined)
+    ?? (unavailable ? (raw.json as string).trim() : undefined)
+  const correction = (message ?? stringOrUndefined(stderr?.split('\n')[0]))?.slice(0, BEIKE_STDERR_LIMIT)
   return failEnvelope({
     code,
     retry: 'never',
@@ -530,6 +543,12 @@ export function normalizeBeikeEnvelope(raw: BeikeRawResult, options: BeikeNormal
       exitCode: raw.exitCode,
       ...(stderr === undefined ? {} : { stderr }),
       ...(errorPayload === undefined ? {} : { error: errorPayload }),
+      ...(errorValue === true ? { error: true } : {}),
+      ...(errorText === undefined ? {} : { error: errorText.slice(0, BEIKE_STDERR_LIMIT) }),
+      ...(payload?.['ok'] === false ? { ok: false } : {}),
+      ...(payload?.['success'] === false ? { success: false } : {}),
+      ...(status === undefined || !explicitFailure ? {} : { status }),
+      ...(unavailable ? { response: (raw.json as string).slice(0, BEIKE_STDERR_LIMIT) } : {}),
     },
   }, provenance)
 }

@@ -13,6 +13,10 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import type { Agent } from '@deepseek-ai/dsh-agent'
+import { isReportBundle, reportArtifactCheck, reportCheckDeliverables, reportBundleFromChecks, requireCurrentSkillCraftSelection, requireNewReportCraftSelection, type ReportBundle } from './report-bundle.ts'
+import { resolveSelectedSkillContract } from './skill-craft.ts'
+import type { FrozenSkillCraftContract } from './skill-craft-types.ts'
+import { canonicalDigest } from './v2/digest.ts'
 import type { SessionId } from '@deepseek-ai/dsh-session'
 import { join } from 'node:path'
 import { appendTeamEvent, captainSessionOf } from './events.ts'
@@ -20,6 +24,7 @@ import {
   archiveTeamDir,
   createTeamDir,
   createTaskProject,
+  syncTaskProjectInput,
   findTeamByCaptain,
   findTeamByParticipant,
   invalidateTaskAttempt,
@@ -37,21 +42,28 @@ import {
   resolveMemberLlmSelection,
   spawnMember,
   type MemberRuntimeConfig,
+  type MemberRouteFallback,
   type MemberSelectionRuntime,
 } from './members.ts'
-import type { TeamMember, TeamState, TeamTask } from './types.ts'
+import type { TeamMember, TeamState, TeamTask, TaskArtifactRef, SharedTaskContext } from './types.ts'
+import { requireAuthorizedTeamCreation } from './plan-authorization.ts'
+import type { ExecutionPlan } from './v2/compiler.ts'
+import { captureSharedTaskContext } from './shared-task-context.ts'
 import type { TeamScheduler } from './scheduler.ts'
 import { resolveLibrary } from './expert-library/registry.ts'
 import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
 import { knowledgeGuide } from './knowledge.ts'
 import { skillsGuideSection } from './skills-discovery.ts'
 import { zhijianExpertPersona } from './zhijian/persona.ts'
+import { assertDurableQualityRun } from './quality-runtime.ts'
+import { createQualityRun } from './quality-run.ts'
 import { feedbackGuideSection } from './zhijian/evaluations.ts'
 import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
-import { createCapabilityScope } from './capability-scope.ts'
+import { createCapabilityScope, grantCapabilityTask, memberWorkTools } from './capability-scope.ts'
+import { assertTeamRunnable } from './state.ts'
 import { scenarioById } from './zhijian/routing.ts'
 import { expertMemoryGuideSection } from './zhijian/expert-memory.ts'
-import type { ToolExecutionConfig, ToolExecutionMode } from './settings.ts'
+import type { PackCenterUpdatePolicy, ToolExecutionConfig, ToolExecutionMode } from './settings.ts'
 import type { RuntimeCenterSnapshot } from './v2/runtime-pack.ts'
 
 /** Resolved plugin config consumed by the tools. */
@@ -66,6 +78,8 @@ export interface ToolsConfig {
   memberMaxDepth?: number
   /** Team size cap (members). */
   maxMembers: number
+  /** Maximum concurrently active member inboxes; scheduler defaults to two. */
+  maxActiveMembers?: number
   /** Knowledge pack directory name under the captain's workspace. */
   knowledgeDir: string
   /** Domain pack directory name under each workspace root (read-only preview surface). */
@@ -80,6 +94,8 @@ export interface ToolsConfig {
   /** Remote center origin and deployment-private inventory; changes require restart. */
   packCenterOrigin?: string
   packCenterDir?: string
+  /** 宿主侧半自动更新策略（热生效，见 pack-center-auto-update.ts）。 */
+  packCenterUpdatePolicy?: PackCenterUpdatePolicy
   /** Internal local-state provider; never serialized as a plugin setting. */
   getPackCenterSnapshot?: () => Promise<RuntimeCenterSnapshot>
   /** Locator hosts whose packs install on validation success, without review. */
@@ -140,6 +156,7 @@ export async function requireFreshCaptainTeam(
   if (fresh.captainSessionId !== captainId) {
     throw new Error(`only the captain of team "${fresh.name}" may perform this operation`)
   }
+  assertTeamRunnable(fresh)
   return fresh
 }
 
@@ -192,7 +209,7 @@ export async function createTeamCore(
   ctx: Context,
   config: ToolsConfig,
   captain: Agent,
-  args: { name: string; description?: string; scenarioId?: string },
+  args: { name: string; description?: string; scenarioId?: string; sharedTaskContext?: SharedTaskContext; taskProtocol?: readonly string[]; plannedExecution?: ExecutionPlan },
   _signal: AbortSignal,
 ): Promise<{ team_id: string; team_name: string; state_dir: string }> {
   const workspace = workspaceOf(captain)
@@ -211,10 +228,19 @@ export async function createTeamCore(
       if (existing !== undefined) {
         throw new Error(`team id "${teamId}" is taken by another captain — pick a different team name`)
       }
+      // Lock acquisition can await another operation. Bind the latest admitted
+      // user input only after that wait and before materializing the team.
+      const sharedTaskContext = captureSharedTaskContext(captain, args.sharedTaskContext)
+      if (args.sharedTaskContext !== undefined && sharedTaskContext.sha256 !== args.sharedTaskContext.sha256) {
+        throw new Error('SHARED_TASK_CONTEXT_CHANGED: new direct-user input arrived after this plan was reviewed; edit the staged plan and approve its updated digest before creating members')
+      }
+      await requireAuthorizedTeamCreation(stateRoot, captain.id, sharedTaskContext, args.plannedExecution)
       const state: TeamState = {
         name: teamName,
         id: teamId,
         description: args.description,
+        sharedTaskContext,
+        ...(args.taskProtocol === undefined ? {} : { taskProtocol: [...args.taskProtocol] }),
         captainSessionId: captain.id,
         createdAt: Date.now(),
         ...args.scenarioId !== undefined ? { scenarioId: args.scenarioId } : {},
@@ -246,6 +272,11 @@ export async function addMemberCore(
     model?: string
     reasoning_effort?: string
     expert?: string
+    profileId?: string
+    fallbackRoutes?: readonly MemberRouteFallback[]
+    maxDepth?: number
+    /** Explicit extra Host tools; omission grants the standard work tools. */
+    allowedTools?: readonly string[]
   },
   signal: AbortSignal,
   memberSelections: MemberSelectionRuntime,
@@ -276,6 +307,7 @@ export async function addMemberCore(
 
   const created = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
     const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
+    if (fresh.halted === true) throw new Error(`team "${fresh.name}" is halted; call expert_teams_resume with an explicit reason`)
     const memberName = (args.name ?? expert?.name ?? '').trim()
     if (memberName === '') throw new Error('member name must not be empty')
     const memberKey = sanitizeKey(memberName)
@@ -289,7 +321,7 @@ export async function addMemberCore(
       throw new Error(`team "${fresh.name}" is at its member cap (${config.maxMembers})`)
     }
 
-    // Model route precedence: preset expert route > explicit arguments >
+    // Model route precedence: explicit arguments > preset expert/profile route >
     // plugin memberModel default > captain's current route (see
     // memberRouteRequest — a lone explicit reasoning_effort rides on top of
     // whichever provider/model won instead of being dropped). A settings
@@ -299,7 +331,10 @@ export async function addMemberCore(
     const selection = await resolveMemberLlmSelection(
       ctx,
       captain,
-      memberRouteRequest(args, expertRoute ?? expert?.model, config.memberModel),
+      {
+        ...memberRouteRequest(args, expertRoute ?? expert?.model, config.memberModel),
+        ...(args.fallbackRoutes === undefined ? {} : { fallback: args.fallbackRoutes }),
+      },
       signal,
     )
 
@@ -310,11 +345,18 @@ export async function addMemberCore(
       provider: selection.provider,
       model: selection.model,
       reasoningEffort: selection.reasoningEffort,
+      ...(args.fallbackRoutes === undefined ? {} : { fallbackRoutes: args.fallbackRoutes.map(route => ({ ...route })) }),
       capabilityScope: createCapabilityScope({
         expertId: expert?.id ?? memberName,
         role: args.role ?? expert?.role ?? memberName,
-        allowedProviders: [selection.provider],
-        maxDepth: config.memberMaxDepth ?? 0,
+        allowedTools: memberWorkTools(args.allowedTools),
+        ...(args.profileId === undefined ? {} : { profileId: args.profileId }),
+        // LLM route providers and external/data transport providers are
+        // separate capability namespaces. Data providers are granted by the
+        // task/profile (or remain unconstrained for legacy ad-hoc teams),
+        // while this durable list pins the member's model route.
+        allowedLlmProviders: [selection.provider],
+        maxDepth: args.maxDepth ?? config.memberMaxDepth ?? 0,
       }),
       joinedAt: Date.now(),
       status: 'idle',
@@ -418,7 +460,7 @@ export async function createTaskCore(
   ctx: Context,
   config: ToolsConfig,
   captain: Agent,
-  args: { subject: string; description?: string; dependencies?: string[]; assignee?: string },
+  args: { subject: string; description?: string; dependencies?: string[]; assignee?: string; inputArtifacts?: TaskArtifactRef[]; reportBundle?: ReportBundle; revisesTaskId?: string },
   _signal: AbortSignal,
 ): Promise<{ task_id: string; subject: string; status: string; assignee?: string }> {
   const workspace = workspaceOf(captain)
@@ -428,6 +470,33 @@ export async function createTaskCore(
     const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
     const subject = args.subject.trim()
     if (subject === '') throw new Error('task subject must not be empty')
+    let reportBundle = args.reportBundle
+    let frozenSkillCraftContract: FrozenSkillCraftContract | undefined
+    let inheritedAcceptance: { id: string; statement: string }[] | undefined
+    let inheritedRepairBudget: number | undefined
+    if (reportBundle !== undefined && !isReportBundle(reportBundle)) throw new Error('REPORT_BUNDLE_INVALID: expected exact safe MD/HTML/PDF publication names')
+    if (args.revisesTaskId !== undefined) {
+      const source = fresh.tasks.find(task => task.id === args.revisesTaskId)
+      const sourceRun = source === undefined ? undefined : fresh.qualityRuns?.[source.id] ?? (fresh.qualityRun?.contract.taskId === source.id ? fresh.qualityRun : undefined)
+      if (source?.status !== 'completed' || sourceRun?.status !== 'integrated') throw new Error('REPORT_REVISION_SOURCE_INVALID: revises_task_id must identify completed independently reviewed and integrated work')
+      if (args.inputArtifacts !== undefined) throw new Error('REPORT_REVISION_INPUTS_FIXED: omit input_artifacts for revises_task_id; Host pins the completed source publications automatically')
+      const inherited = reportBundleFromChecks(sourceRun.contract.artifactChecks)
+      if (inherited === undefined) throw new Error('REPORT_REVISION_SOURCE_NOT_REPORT: revises_task_id requires a report with registered checks; ordinary follow-ups use dependencies and input_artifacts with their own acceptance contract')
+      if (inherited !== undefined) {
+        const selected = sourceRun.contract.artifactChecks?.find(check => check.id === 'selected-skill-craft-v1')
+        if (selected?.id === 'selected-skill-craft-v1') frozenSkillCraftContract = structuredClone(selected.selection)
+        if (reportBundle !== undefined && canonicalDigest(reportArtifactCheck(reportBundle, frozenSkillCraftContract)) !== canonicalDigest(reportArtifactCheck(inherited, frozenSkillCraftContract))) throw new Error('REPORT_REVISION_CONTRACT_MISMATCH: a report revision inherits the source publication names and checks')
+        reportBundle = inherited
+        inheritedAcceptance = sourceRun.contract.acceptance.map(item => ({ ...item }))
+        inheritedRepairBudget = Math.max(0, sourceRun.contract.maxRepairRounds - sourceRun.repairRounds)
+      }
+    }
+    if (args.revisesTaskId === undefined) requireNewReportCraftSelection(reportBundle)
+    if (reportBundle?.craft?.version === 3 && frozenSkillCraftContract === undefined) {
+      frozenSkillCraftContract = await resolveSelectedSkillContract(ctx, config, workspace, reportBundle.craft.selections)
+    }
+    await requireCurrentSkillCraftSelection(ctx, config, workspace, reportBundle, frozenSkillCraftContract)
+    if (reportBundle !== undefined && (fresh.planRef?.templateId.startsWith('profile:') !== true || fresh.structuredQualityPolicy?.required !== true)) throw new Error('REPORT_REVIEW_REQUIRED: report_bundle requires a staged profile team with structured independent review enabled')
     // Dependencies: reject duplicates loudly (deduped list is stored, so a
     // caller can never create an ambiguous DAG).
     const rawDependencies = args.dependencies ?? []
@@ -440,12 +509,18 @@ export async function createTaskCore(
       seen.add(dependency)
       dependencies.push(dependency)
     }
+    if (args.revisesTaskId !== undefined && !dependencies.includes(args.revisesTaskId)) dependencies.push(args.revisesTaskId)
     for (const dependency of dependencies) {
       if (!fresh.tasks.some((task) => task.id === dependency)) {
         throw new Error(`dependency "${dependency}" does not exist in team "${fresh.name}"`)
       }
     }
-    if (args.assignee !== undefined) requireMember(fresh, args.assignee)
+    if (args.assignee !== undefined && args.assignee !== CAPTAIN_KEY) requireMember(fresh, args.assignee)
+    for (const ref of args.inputArtifacts ?? []) {
+      if (!dependencies.includes(ref.sourceTaskId)) throw new Error(`artifact source ${ref.sourceTaskId} must be a task dependency`)
+      const source = fresh.tasks.find(task => task.id === ref.sourceTaskId)
+      if (!source?.publishedArtifacts?.some(artifact => artifact.id === ref.artifactId)) throw new Error(`unknown published input artifact ${ref.artifactId}`)
+    }
     const task: TeamTask = {
       id: `t${fresh.taskSeq + 1}`,
       subject,
@@ -453,13 +528,49 @@ export async function createTaskCore(
       status: 'pending',
       assignee: args.assignee,
       dependencies,
+      ...(reportBundle === undefined ? {} : { reportBundle: structuredClone(reportBundle) }),
+      ...(frozenSkillCraftContract === undefined ? {} : { frozenSkillCraftContract: structuredClone(frozenSkillCraftContract) }),
+      ...(args.revisesTaskId === undefined ? {} : { revisesTaskId: args.revisesTaskId }),
+      ...(args.inputArtifacts === undefined ? {} : { inputArtifacts: args.inputArtifacts.map(ref => ({ ...ref })) }),
       attempt: 0,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     }
     fresh.taskSeq += 1
     task.project = await createTaskProject(stateRoot, fresh.id, task)
+    if (task.assignee !== undefined && task.assignee !== CAPTAIN_KEY) {
+      const owner = fresh.members.find(member => member.name === task.assignee)
+      if (owner?.capabilityScope !== undefined) owner.capabilityScope = grantCapabilityTask(owner.capabilityScope, task.id)
+    }
     fresh.tasks.push(task)
+    // Captain profiles intentionally start with an empty DAG. Tasks added
+    // after approval still enter the same structured quality surface as
+    // seeded profile tasks, so dynamic planning cannot bypass review.
+    if (fresh.planRef?.templateId.startsWith('profile:') === true
+      && fresh.structuredQualityPolicy?.required === true) {
+      const check = reportBundle === undefined ? undefined : reportArtifactCheck(reportBundle, frozenSkillCraftContract)
+      const run = createQualityRun({
+        id: `quality-${fresh.planRef.planId}-${task.id}`,
+        taskId: task.id,
+        attempt: Math.max(task.attempt ?? 0, 1),
+        assignee: task.assignee ?? CAPTAIN_KEY,
+        kind: 'implementation',
+        objective: task.description ?? task.subject,
+        inScope: [`${fresh.id}/${task.project?.path ?? `expert-tasks/${task.id}`}/**`],
+        outOfScope: [],
+        acceptance: inheritedAcceptance ?? [{ id: 'output-present', statement: 'the task output is present and reviewable' }],
+        verify: ['true'],
+        deliverables: ['task-output', ...(check === undefined ? [] : reportCheckDeliverables(check))],
+        changedPaths: [`${fresh.id}/${task.project?.path ?? `expert-tasks/${task.id}`}/output/**`, ...(check === undefined ? [] : [`${fresh.id}/${task.project?.path ?? `expert-tasks/${task.id}`}/artifacts/**`])],
+        ...(check === undefined ? {} : { artifactChecks: [check] }),
+        ...(args.revisesTaskId === undefined ? {} : { coverageOf: [args.revisesTaskId] }),
+        maxRepairRounds: inheritedRepairBudget ?? fresh.structuredQualityPolicy?.maxRepairRounds ?? 2,
+      })
+      assertDurableQualityRun(run)
+      fresh.qualityRuns = { ...(fresh.qualityRuns ?? {}), [task.id]: run }
+      if (fresh.qualityRun === undefined) fresh.qualityRun = run
+    }
+    await syncTaskProjectInput(stateRoot, fresh, task)
     await writeTeam(stateRoot, fresh)
     appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, captain.session), 'expert-teams/task-created', {
       teamId: fresh.id,

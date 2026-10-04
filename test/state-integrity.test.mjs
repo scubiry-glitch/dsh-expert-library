@@ -71,10 +71,12 @@ test('mailbox allocates per-sender sequence and deduplicates idempotency keys', 
   const root = await mkdtemp(join(tmpdir(), 'expert-teams-mailbox-'))
   try {
     const first = await appendMailbox(root, 'team', 'alice', createMessage('captain', 'alice', 'one', { idempotencyKey: 'k1' }))
-    const duplicate = await appendMailbox(root, 'team', 'alice', createMessage('captain', 'alice', 'one-again', { idempotencyKey: 'k1' }))
+    await assert.rejects(
+      () => appendMailbox(root, 'team', 'alice', createMessage('captain', 'alice', 'one-again', { idempotencyKey: 'k1' })),
+      /MAILBOX_IDEMPOTENCY_CONFLICT/,
+    )
     const second = await appendMailbox(root, 'team', 'alice', createMessage('captain', 'alice', 'two'))
     assert.equal(first.sequence, 1)
-    assert.equal(duplicate.id, first.id)
     assert.equal(second.sequence, 2)
     assert.equal((await readMailbox(root, 'team', 'alice')).length, 2)
   } finally {

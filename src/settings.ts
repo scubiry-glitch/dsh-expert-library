@@ -92,12 +92,18 @@ export interface ExpertLibrarySettings {
   packCenterOrigin?: string
   /** Private deployment-local storage; defaults under DSH_HOME, never the plugin tree. */
   packCenterDir?: string
+  /** 宿主侧半自动更新策略；manual（默认）永不后台检查。见 {@link PackCenterUpdatePolicy}。 */
+  packCenterUpdatePolicy?: PackCenterUpdatePolicy
   /** Locator hosts whose packs install on validation success, without review. */
   packSourceAllowlist?: string[]
   /** Member subagent provider name (`spawn` or `fork`). */
   memberProvider?: string
   /** Member delegation depth cap; `0` forbids delegation. */
   memberMaxDepth?: number
+  /** Maximum concurrently active team members, including reviewers (default 2). */
+  maxActiveMembers?: number
+  /** Host-local concurrent model streams per provider; absent providers are unlimited. */
+  providerRequestConcurrency?: Record<string, number>
   /** Team size cap in members. */
   maxMembers?: number
   /** Prompt-section order of the usage policy. */
@@ -152,6 +158,13 @@ const providerWindSchema = z.object({ cliPath: z.string() })
 const providerZytSchema = z.object({ baseUrl: z.string(), cliCommand: z.string(), preferCli: z.boolean() })
 const providerBeikeSchema = z.object({ baseUrl: z.string(), cliCommand: z.string(), preferCli: z.boolean() })
 
+/** Loose storage schema (same rationale as the interface); strictness lives in
+ * {@link normalizeUpdatePolicy} at read time. */
+export const PackCenterUpdatePolicySchema: z<PackCenterUpdatePolicy> = z.object({
+  mode: z.string(),
+  perPack: z.dict(z.string()),
+})
+
 /**
  * Schema resolving the expert-library settings namespace. Mirrors the plugin
  * `Config` shape (the entry config is the composition `base` layer); fields are
@@ -164,9 +177,12 @@ export const ExpertLibrarySettingsSchema: z<ExpertLibrarySettings> = z.object({
   vendorPacksDir: z.string(),
   packCenterOrigin: z.string(),
   packCenterDir: z.string(),
+  packCenterUpdatePolicy: PackCenterUpdatePolicySchema,
   packSourceAllowlist: z.array(z.string()),
   memberProvider: z.string(),
   memberMaxDepth: z.natural(),
+  maxActiveMembers: z.natural().min(1),
+  providerRequestConcurrency: z.dict(z.natural().min(1)),
   maxMembers: z.natural(),
   promptSectionOrder: z.natural(),
   announceToAgent: z.boolean(),
@@ -181,6 +197,24 @@ export const ExpertLibrarySettingsSchema: z<ExpertLibrarySettings> = z.object({
     beike: providerBeikeSchema,
   }),
 })
+
+/**
+ * Resolve the effective member model without rejecting legacy or partially
+ * written settings. Empty provider/model routes are treated as absent so a
+ * stale `defaultModel` object cannot mask the legacy `memberModel` route.
+ */
+export function effectiveMemberModel(
+  value: { defaultModel?: ExpertModelRoute; memberModel?: ExpertModelRoute } | undefined,
+): ExpertModelRoute | undefined {
+  const isUsable = (route: ExpertModelRoute | undefined): route is ExpertModelRoute =>
+    typeof route?.provider === 'string'
+    && route.provider.trim() !== ''
+    && typeof route.model === 'string'
+    && route.model.trim() !== ''
+  if (isUsable(value?.defaultModel)) return value.defaultModel
+  if (isUsable(value?.memberModel)) return value.memberModel
+  return undefined
+}
 
 /** Hooks the consumer hands to {@link installExpertLibrarySettings}. */
 export interface ExpertLibrarySettingsHooks {
@@ -223,4 +257,68 @@ export function toolExecutionOf(
   toolId: string,
 ): ToolExecutionConfig | undefined {
   return settings?.toolExecution?.[toolId]
+}
+
+/**
+ * Deployment-local pack-center update policy tiers.
+ *
+ * - `manual`（默认）：现状语义，永不后台检查，更新完全由人工触发。
+ * - `download`：定时检查到新版本时自动下载缓存（install 不激活），启用仍需人工。
+ * - `patch_auto`：在 download 基础上，仅同 major.minor 的补丁升级自动启用。
+ *
+ * The center is never involved in the decision: it is pulled exactly like a
+ * manual check, and no push channel exists.
+ */
+export type PackCenterUpdateMode = 'manual' | 'download' | 'patch_auto'
+export const PACK_CENTER_UPDATE_MODES: readonly PackCenterUpdateMode[] = ['manual', 'download', 'patch_auto']
+
+/**
+ * Stored update policy: a global default plus per-pack overrides. Storage is
+ * deliberately loose (same rationale as `toolExecution.mode` above) — a strict
+ * enum here would let one stale value fail the whole `expert-library` settings
+ * attachment; unknown values normalize to `manual`, the safe downgrade.
+ */
+export interface PackCenterUpdatePolicy {
+  /** Stored global mode; absent/unknown normalizes to `manual`. */
+  mode?: string
+  /** Per-pack mode overrides keyed by pack id; invalid keys are dropped on read. */
+  perPack?: Record<string, string>
+}
+
+/** Valid `perPack` key: the same shape as a pack id, minus prototype-chain and credential-shaped hazards. */
+const packCenterPolicyKey = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/
+
+export function isValidPolicyPackKey(value: unknown): value is string {
+  return typeof value === 'string' && packCenterPolicyKey.test(value) && !value.includes('..')
+    && !['__proto__', 'constructor', 'prototype'].includes(value)
+    && !/^dpc_(?:token|bind)_/.test(value)
+}
+
+/** Normalize a stored update mode; unknown/empty values become `manual`. */
+export function normalizeUpdateMode(value: unknown): PackCenterUpdateMode {
+  return value === 'download' || value === 'patch_auto' ? value : 'manual'
+}
+
+/** Rebuild a policy from untrusted storage, dropping invalid keys and modes. */
+export function normalizeUpdatePolicy(value: unknown): PackCenterUpdatePolicy {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {}
+  const row = value as { mode?: unknown; perPack?: unknown }
+  const perPack: Record<string, PackCenterUpdateMode> = {}
+  if (row.perPack && typeof row.perPack === 'object' && !Array.isArray(row.perPack)) {
+    for (const [key, mode] of Object.entries(row.perPack as Record<string, unknown>)) {
+      if (isValidPolicyPackKey(key)) perPack[key] = normalizeUpdateMode(mode)
+    }
+  }
+  return {
+    ...(row.mode === undefined ? {} : { mode: normalizeUpdateMode(row.mode) }),
+    ...(Object.keys(perPack).length ? { perPack } : {}),
+  }
+}
+
+/** Effective mode for one pack: its override wins over the global default. */
+export function resolveUpdateMode(policy: PackCenterUpdatePolicy | undefined, packId: string): PackCenterUpdateMode {
+  const override = policy?.perPack && Object.hasOwn(policy.perPack, packId)
+    ? normalizeUpdateMode(policy.perPack[packId])
+    : undefined
+  return override ?? normalizeUpdateMode(policy?.mode)
 }

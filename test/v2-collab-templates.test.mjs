@@ -155,9 +155,10 @@ test('ppt: 架构 → 内容供给(fan-out) → 逐页文案 → 渲染和出图
   assert.equal(expanded.tasks[4]?.dependsOn.length, 1)
   assert.equal(expanded.tasks[4]?.dependsOn[0], 't4')
   assert.equal(expanded.tasks[4]?.assigneeExpertId, 'docs-coordinator')
-  assert.ok(expanded.tasks[4]?.description.includes('finesse-ui'), 'render task instructs the finesse craft floor')
-  assert.ok(expanded.tasks[4]?.description.includes('pptfast'), 'render task instructs the pptfast conversion')
-  assert.ok(expanded.tasks[4]?.description.includes('video-shotcraft'), 'render task instructs the video-shotcraft path')
+  assert.ok(expanded.tasks[4]?.description.includes('当前启用领域包'), 'AI discovers available domain craft')
+  assert.ok(expanded.tasks[4]?.description.includes('packId/skillId'), 'records a qualified choice')
+  assert.ok(expanded.tasks[4]?.description.includes('本 PPT 流程未绑定四文件报告门禁'), 'does not misclaim report admission')
+  assert.ok(!expanded.tasks[4]?.description.includes('finesse-ui'), 'Host does not select a particular craft')
   // No template given → no template line, no placeholder leak.
   assert.ok(!expanded.tasks[4]?.description.includes('指定模板：'))
   assert.ok(!expanded.tasks[4]?.description.includes('{templateLine}'))
@@ -189,7 +190,7 @@ test('ppt: the render task threads the template param — provided line present,
   const renderWithout = expandedWithout.tasks[3]?.description ?? ''
   assert.ok(!renderWithout.includes('指定模板：'), `no template line when absent, got: ${renderWithout}`)
   assert.ok(!renderWithout.includes('{templateLine}'), 'no placeholder leak when template is absent')
-  assert.ok(renderWithout.includes('未指定模板时，用 finesse 规范自选并说明理由'))
+  assert.ok(renderWithout.includes('未指定模板时，依据所选工艺自选并说明理由'))
 })
 
 test('ppt: default audience/page-count text when not supplied', () => {
@@ -224,16 +225,17 @@ test('report (multi): 梳理 → 研判(fan-out) → 融合成文 → 渲染与�
   const expanded = expand(result)
   if (!expanded) return
   assert.deepEqual(expanded.tasks.map(task => task.id), ['t1', 't2', 't3', 't4', 't5'])
-  assert.deepEqual(expanded.tasks.map(task => task.subject), ['资料与数据梳理', '专家研判（bk-004）', '专家研判（bk-005）', '融合成文', '渲染与生成（HTML5 → PDF/PPT → 视频）'])
+  assert.deepEqual(expanded.tasks.map(task => task.subject), ['资料与数据梳理', '专家研判（bk-004）', '专家研判（bk-005）', '融合成文', '最终报告与渲染（MD / HTML / PDF）'])
   assert.deepEqual(expanded.tasks.map(task => task.dependsOn), [[], ['t1'], ['t1'], ['t1', 't2', 't3'], ['t4']])
   assert.deepEqual(expanded.tasks.map(task => task.assigneeExpertId), ['researcher', 'bk-004', 'bk-005', 'docs-coordinator', 'docs-coordinator'])
   assert.equal(expanded.tasks[1]?.description, '以本人立场独立研判：核心判断 → 关键事实与分析（数字带口径）→ 展望与不确定性。主题：T\n可用素材/数据（带口径）：\nD')
-  // Render node: three skills + completion checkpoint bound.
+  // The final producer uses only the explicit frozen domain contract.
   const render = expanded.tasks[4]
-  assert.ok(render?.description.includes('finesse-ui'))
-  assert.ok(render?.description.includes('pptfast'))
-  assert.ok(render?.description.includes('video-shotcraft'))
-  assert.ok(render?.description.includes('等待用户确认'))
+  assert.ok(render?.description.includes('领域包 skill 合同'))
+  assert.ok(render?.description.includes('reportBundle'))
+  assert.ok(render?.description.includes('独立审核者'))
+  assert.ok(!render?.description.includes('finesse-ui'))
+  assert.ok(!render?.description.includes('knowledge/skills/'))
 })
 
 test('report (single expert): variant template drops the analyst task entirely', () => {
@@ -243,10 +245,10 @@ test('report (single expert): variant template drops the analyst task entirely',
   )
   const expanded = expand(result)
   if (!expanded) return
-  assert.deepEqual(expanded.tasks.map(task => task.id), ['t1', 't2'])
-  assert.deepEqual(expanded.tasks.map(task => task.subject), ['资料与数据梳理', '融合成文'])
-  assert.deepEqual(expanded.tasks.map(task => task.dependsOn), [[], ['t1']])
-  assert.deepEqual(expanded.tasks.map(task => task.assigneeExpertId), ['researcher', 'docs-coordinator'])
+  assert.deepEqual(expanded.tasks.map(task => task.id), ['t1', 't2', 't3'])
+  assert.deepEqual(expanded.tasks.map(task => task.subject), ['资料与数据梳理', '融合成文', '最终报告与渲染（MD / HTML / PDF）'])
+  assert.deepEqual(expanded.tasks.map(task => task.dependsOn), [[], ['t1'], ['t2']])
+  assert.deepEqual(expanded.tasks.map(task => task.assigneeExpertId), ['researcher', 'docs-coordinator', 'docs-coordinator'])
   assert.equal(result.ok ? result.plan.scenario?.id : undefined, 'research-report')
 })
 

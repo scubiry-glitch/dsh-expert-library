@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "purpose": "A0 baseline fixtures; data-only snapshots used by audit tests and recovery probes.",
+  "teams": {
+    "empty": { "members": [], "tasks": [], "taskSeq": 0 },
+    "staged": { "status": "staged", "revision": 0, "editLog": [] },
+    "dag": { "tasks": [{ "id": "t1", "dependencies": [] }, { "id": "t2", "dependencies": ["t1"] }] },
+    "failedAttempt": { "task": { "id": "t1", "status": "failed", "attempt": 2, "attemptId": "attempt-2" } },
+    "archive": { "archiveDir": "archive/example-team", "preserves": ["team.json", "inbox", "expert-tasks"] },
+    "mailboxBurst": { "messages": 32, "sender": "researcher", "sequences": [1, 2, 3] },
+    "qualityFinding": { "severity": "hard", "code": "artifact_missing", "taskId": "t1", "attempt": 1 }
+  }
+}

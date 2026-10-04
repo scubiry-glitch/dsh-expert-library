@@ -3,12 +3,15 @@ import assert from 'node:assert/strict'
 
 import {
   CapabilityScopeError,
+  admitDataProvider,
   admitCapability,
   bootstrapCapabilityScope,
   createCapabilityScope,
   resolveCapabilityRoute,
   restoreCapabilityScopeWithReport,
   snapshotCapabilityScope,
+  grantCapabilityTask,
+  revokeCapabilityTask,
 } from '../lib/capability-scope.js'
 
 function scope(overrides = {}) {
@@ -102,4 +105,33 @@ test('scope snapshots restore legacy missing fields fail-closed and report migra
   assert.deepEqual(restored.scope.allowedTools, [])
   assert.ok(restored.warnings.length > 0)
   assert.equal(restoreCapabilityScopeWithReport(snapshot).migrated, false)
+})
+
+test('LLM and data provider namespaces stay independent', () => {
+  const value = scope({
+    allowedProviders: [],
+    allowedLlmProviders: ['deepseek-official'],
+    allowedDataProviders: ['wind'],
+  })
+  assert.equal(resolveCapabilityRoute({
+    explicit: { provider: 'deepseek-official', model: 'reasoner' },
+    allowedLlmProviders: value.allowedLlmProviders,
+  }).ok, true)
+  assert.equal(admitDataProvider(value, 'wind').ok, true)
+  assert.equal(admitDataProvider(value, 'zyt').ok, false)
+})
+
+test('an LLM-only scope does not accidentally block external data providers', () => {
+  const value = scope({ allowedProviders: [], allowedLlmProviders: ['deepseek-official'] })
+  assert.equal(admitDataProvider(value, 'wind').ok, true)
+})
+
+test('task grants are durable and revocable without widening other scope fields', () => {
+  const value = scope({ allowedTasks: [] })
+  const granted = grantCapabilityTask(value, 'task-2')
+  assert.deepEqual(granted.allowedTasks, ['task-2'])
+  assert.equal(admitCapability(granted, { task: 'task-2' }).ok, true)
+  const revoked = revokeCapabilityTask(granted, 'task-2')
+  assert.deepEqual(revoked.allowedTasks, [])
+  assert.equal(admitCapability(revoked, { task: 'task-2' }).ok, false)
 })

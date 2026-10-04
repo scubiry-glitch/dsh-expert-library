@@ -24,7 +24,7 @@
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { readdirSync, readFileSync, statSync, realpathSync } from 'node:fs'
 import { stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -37,12 +37,13 @@ export interface SkillEntry {
   readonly id: string
   /** Display name: SKILL.md frontmatter `name:` when cheaply parseable, else the id. */
   readonly name: string
-  /** Absolute path of the skill's SKILL.md (or the skill folder when SKILL.md is missing). */
+  /** Absolute path of the skill's SKILL.md, including candidates whose file is missing. */
   readonly path: string
   /** Size of SKILL.md in bytes (0 when the file is absent/unreadable). */
   readonly sizeBytes: number
   /** Whether the skill folder carries material beyond SKILL.md (references/, template/, …). */
   readonly hasReferences: boolean
+  readonly unavailable?: string
 }
 
 /** Wire body of the skills route. */
@@ -240,7 +241,15 @@ export function collectSkillEntries(roots: readonly string[]): SkillEntry[] {
   const byId = new Map<string, SkillEntry>()
   for (const root of roots) {
     for (const entry of scanSkillsRootIndexed(root)) {
-      if (byId.has(entry.id)) continue
+      const prior = byId.get(entry.id)
+      if (prior !== undefined) {
+        if (['zhijian-report-craft', 'zhijian-designer-render'].includes(entry.id)) {
+          let same = prior.path === entry.path
+          try { same = realpathSync(prior.path) === realpathSync(entry.path) } catch { /* unreadable candidates remain distinct */ }
+          if (!same) byId.set(entry.id, { ...prior, unavailable: `Ambiguous craft skill id ${entry.id}: ${prior.path} and ${entry.path}; resolve the duplicate installation before selecting this skill.` })
+        }
+        continue
+      }
       byId.set(entry.id, entry)
     }
   }
@@ -313,35 +322,43 @@ export function skillsInventoryLine(ids: readonly string[], label: string): stri
 }
 
 /**
- * The Skill discovery block for `usageSectionText`: names the
- * `<workspace>/<knowledgeDir>/skills/<id>/SKILL.md` convention, states that
- * `GET /plugins/dsh-expert-library/skills` exists as the inventory channel in
- * EVERY session, folds in the given live/mount inventory line, and gives the
- * check order + the filesystem-first rule. Pure (testable).
+ * The Skill discovery block for `usageSectionText`: distinguishes the Host
+ * skill catalog from plugin filesystem discovery and gives direct read paths.
  */
 export function skillDiscoveryPromptSection(inventoryLine: string): string {
   return [
-    'Skill discovery — local skills live at <workspace>/<knowledgeDir>/skills/<id>/SKILL.md (session/workspace knowledge dirs) or the plugin\'s bundled knowledge/skills/.',
-    `GET /plugins/dsh-expert-library/skills lists every installed skill (id/name/path/sizeBytes/hasReferences) in every session — the channel always exists, so consult it before concluding a named skill is absent. ${inventoryLine}.`,
-    'Skill reference rule: the authoritative path of a skill is the one returned by GET /plugins/dsh-expert-library/skills (the plugin bundled knowledge/skills/<id>/ when present) — never guess from a relative knowledge/skills/ path, because a subagent cwd\'s knowledge/ may have no skills/ dir; domain-packs/*/skills/ and domain-packs/*/source/skills/ are distribution copies, not lookup roots.',
-    'When a task names a skill, check in order: ① the session skill catalog; ② <knowledgeDir>/skills/ on the filesystem (or GET /plugins/dsh-expert-library/skills); ③ the plugin registry; ④ the marketplace — the first hit wins.',
-    'When the user asserts a skill is installed, run a filesystem search FIRST (list/read the skill folder under <knowledgeDir>/skills/ or ~/.agents/skills/) before concluding it is absent: a skill can exist on disk without being in the session catalog.',
+    'Skill discovery — plugin skill files live at <workspace>/<knowledgeDir>/skills/<id>/SKILL.md or the plugin\'s bundled knowledge/skills/.',
+    SKILL_FILE_READ_GUIDANCE,
+    'GET /plugins/dsh-expert-library/skills lists plugin filesystem candidates (id/name/path/sizeBytes/hasReferences), not the Host skill registry. Consult it for current file paths when a named skill is missing from the list below; check the local skill directories before concluding it is absent.',
+    'Resolve references relative to the SKILL.md directory you read. Use the listed absolute paths; do not guess from cwd-relative knowledge/skills/, unverified pack directories, or stale copies elsewhere on the machine. Verified domain-pack craft skills use the separate scoped catalog and qualified packId/skillId selection.',
+    inventoryLine,
+  ].join('\n')
+}
+
+const SKILL_FILE_READ_GUIDANCE = 'For a plugin skill file listed here, read its exact SKILL.md path with a file-reading tool and follow its instructions. Call the `skill` tool only for names in the current Host session skill catalog; this filesystem list does not establish Host tool availability.'
+
+/** Shared captain/member file inventory; incomplete candidates are marked explicitly. */
+function skillFilesInventory(entries: readonly SkillEntry[]): string {
+  return [
+    'Plugin skill files (filesystem discovery):',
+    ...entries.map(entry => entry.unavailable !== undefined ? `- ${entry.id}: unavailable — ${entry.unavailable}` : entry.sizeBytes > 0
+      ? `- ${entry.id}: ${entry.name} — read ${JSON.stringify(entry.path)}`
+      : `- ${entry.id}: SKILL.md is missing, empty or unreadable at ${JSON.stringify(entry.path)}`),
+    ...(entries.length === 0 ? ['No plugin skill files were discovered.'] : []),
   ].join('\n')
 }
 
 /**
- * The member-persona skills inventory section: one `- <id>: <name>` line per
- * installed local skill (workspace + bundled union, via the shared index) plus
- * the convention hint. Empty string when no skill is installed (the caller
- * omits the section then).
+ * The member-persona file inventory uses the same exact paths and invocation
+ * distinction as the captain usage section. Empty when no candidates exist.
  */
 export function skillsGuideSection(ctx: Context, workspace: string, knowledgeDir: string): string {
   const entries = collectSkillEntries(localSkillRoots(workspace, knowledgeDir))
   if (entries.length === 0) return ''
-  const lines = entries.map(entry => `- ${entry.id}: ${entry.name}`)
   return [
-    'Available local skills (read SKILL.md at the path returned by GET /plugins/dsh-expert-library/skills, or <workspace>/<knowledgeDir>/skills/<id>/SKILL.md / the plugin bundled knowledge/skills/<id>/SKILL.md; never a bare relative knowledge/skills/ guess):',
-    ...lines,
+    skillFilesInventory(entries),
+    SKILL_FILE_READ_GUIDANCE,
+    'Resolve references relative to the SKILL.md directory. GET /plugins/dsh-expert-library/skills refreshes the plugin file inventory.',
   ].join('\n')
 }
 
@@ -399,6 +416,5 @@ export function liveSkillsInventoryLine(ctx: Context, knowledgeDir: string): str
   const roots = workspace === undefined
     ? discoverSkillRoots(ctx, knowledgeDir)
     : localSkillRoots(workspace, knowledgeDir)
-  const ids = collectSkillEntries(roots).map(entry => entry.id)
-  return skillsInventoryLine(ids, '当前已安装 skills')
+  return skillFilesInventory(collectSkillEntries(roots))
 }

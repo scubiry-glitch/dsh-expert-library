@@ -5,6 +5,7 @@ import {
   ProfileValidationError,
   parseProfile,
   resolveProfile,
+  profileToExecutionPlan,
   validateProfile,
 } from '../lib/profiles.js'
 
@@ -61,6 +62,13 @@ test('captain fixed DAG and seed without template/tasks are rejected', () => {
   const seed = validateProfile({ ...base, taskPlanning: 'seed', templateId: undefined, tasks: undefined })
   assert.equal(seed.ok, false)
   if (!seed.ok) assert.ok(seed.issues.some(issue => issue.code === 'seed-dag'))
+
+  // A template id is metadata only at this explicit profile boundary. Until
+  // a catalog resolver hydrates it, allowing it without tasks would silently
+  // compile an empty seed team.
+  const templateOnly = validateProfile({ ...base, taskPlanning: 'seed', tasks: undefined })
+  assert.equal(templateOnly.ok, false)
+  if (!templateOnly.ok) assert.ok(templateOnly.issues.some(issue => issue.code === 'seed-dag'))
 })
 
 test('profile validation rejects unknown fields, duplicate members, cycles and bad routes', () => {
@@ -90,3 +98,25 @@ test('resolveProfile requires an exact explicit id and never fuzzy matches a goa
   assert.throws(() => resolveProfile(catalog, 'research'), ProfileValidationError)
 })
 
+test('profile runtime adapter produces deterministic seed and captain execution plans', () => {
+  const seed = parseProfile({
+    ...base,
+    tasks: [
+      { id: 'research', subject: '梳理资料', owner: 'researcher' },
+      { id: 'write', subject: '融合成文', owner: 'writer', dependsOn: ['research'] },
+    ],
+  })
+  const first = profileToExecutionPlan(seed, { goal: 'G' })
+  const second = profileToExecutionPlan(seed, { goal: 'G' })
+  assert.equal(first.digest, second.digest)
+  assert.deepEqual(first.executionOrder, ['research', 'write'])
+  assert.deepEqual(first.tasks[1].expertIds, ['writer'])
+  assert.equal(first.roster[1].sourceExpertId, 'docs-coordinator')
+  assert.equal(first.roster[0].profileId, seed.id)
+  assert.equal(first.roster[0].fallbackRoutes[0].provider, 'deepseek')
+
+  const captain = parseProfile({ ...base, id: 'captain-plan', taskPlanning: 'captain', templateId: undefined, tasks: undefined })
+  const dynamic = profileToExecutionPlan(captain, { goal: 'G' })
+  assert.deepEqual(dynamic.tasks, [])
+  assert.equal(dynamic.roster.length, captain.members.length)
+})

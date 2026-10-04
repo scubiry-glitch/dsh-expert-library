@@ -7,3 +7,11 @@ node_modules/
 
 # 交付物体量控制：112 MB 客户报告，同类内容仓库已有，不入库
 work/publish/
+
+# Local runs, delivery evidence and rollback copies are not source.
+/work/
+/docs/evidence/
+/.pack-disabled/
+**/__pycache__/
+*.bak
+*.bak-*

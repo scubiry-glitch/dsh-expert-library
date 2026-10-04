@@ -195,6 +195,7 @@ export function ManageCard({ scope }: ManageCardProps) {
   })
   const [routeMessage, setRouteMessage] = useState('')
   const [routeSaving, setRouteSaving] = useState(false)
+  const settingsDirty = useRef(false)
 
   // ── 运行配置（自「专家库运行」分区迁入）──────────────────────────────────
   const [runtimeDraft, setRuntimeDraft] = useState(() => ({
@@ -282,18 +283,20 @@ export function ManageCard({ scope }: ManageCardProps) {
       }
       return merged
     })
-    setRuntimeDraft({
-      stateDir: text(value.stateDir),
-      knowledgeDir: text(value.knowledgeDir),
-      memberProvider: text(value.memberProvider),
-      maxMembers: number(value.maxMembers),
-      memberMaxDepth: number(value.memberMaxDepth),
-      promptSectionOrder: number(value.promptSectionOrder),
-      modelProvider: text(value.defaultModel?.provider),
-      modelName: text(value.defaultModel?.model),
-      reasoningEffort: text(value.defaultModel?.reasoningEffort),
-      announceToAgent: value.announceToAgent ?? true,
-    })
+    if (!settingsDirty.current) {
+      setRuntimeDraft({
+        stateDir: text(value.stateDir),
+        knowledgeDir: text(value.knowledgeDir),
+        memberProvider: text(value.memberProvider),
+        maxMembers: number(value.maxMembers),
+        memberMaxDepth: number(value.memberMaxDepth),
+        promptSectionOrder: number(value.promptSectionOrder),
+        modelProvider: text(value.defaultModel?.provider),
+        modelName: text(value.defaultModel?.model),
+        reasoningEffort: text(value.defaultModel?.reasoningEffort),
+        announceToAgent: value.announceToAgent ?? true,
+      })
+    }
   }, [scope, scope?.getSnapshot().status, scope?.getSnapshot().value])
 
   const filteredRouteExperts = useMemo(() => {
@@ -313,6 +316,7 @@ export function ManageCard({ scope }: ManageCardProps) {
     field: keyof RouteOverrideDraft,
     next: string,
   ): void => {
+    settingsDirty.current = true
     setRouteOverrides(current => {
       const updated = { ...(current[id] ?? {}), [field]: next }
       if (normalizeOverride(updated) === undefined) {
@@ -325,12 +329,17 @@ export function ManageCard({ scope }: ManageCardProps) {
   }
 
   const setRuntime = (field: keyof typeof runtimeDraft, next: string | boolean): void => {
+    settingsDirty.current = true
     setRuntimeDraft(current => ({ ...current, [field]: next }))
     setRuntimeMessage('')
   }
 
   const saveRuntime = async (): Promise<void> => {
-    if (scope === undefined || runtimeSaving) return
+    if (runtimeSaving) return
+    if (scope === undefined || scope.getSnapshot().status !== 'ready' || scope.getSnapshot().writable !== true) {
+      setRuntimeMessage('设置服务不可用:请硬刷新页面后重试')
+      return
+    }
     setRuntimeSaving(true)
     setRuntimeMessage('')
     try {
@@ -347,6 +356,7 @@ export function ManageCard({ scope }: ManageCardProps) {
         if (typeof next === 'string' && next.trim() === '') await scope.unset(field)
         else await scope.set(field, next)
       }
+      settingsDirty.current = false
       setRuntimeMessage('已保存')
     } catch (error) {
       setRuntimeMessage(error instanceof Error ? error.message : '保存失败')
@@ -357,11 +367,20 @@ export function ManageCard({ scope }: ManageCardProps) {
 
   /** 默认模型（模型设置 Tab）。 */
   const saveModel = async (): Promise<void> => {
-    if (scope === undefined || runtimeSaving) return
+    if (runtimeSaving) return
+    if (scope === undefined || scope.getSnapshot().status !== 'ready' || scope.getSnapshot().writable !== true) {
+      setRuntimeMessage('设置服务不可用:请硬刷新页面后重试')
+      return
+    }
     setRuntimeSaving(true)
     setRuntimeMessage('')
     try {
-      await scope.set('defaultModel', { provider: runtimeDraft.modelProvider, model: runtimeDraft.modelName, reasoningEffort: runtimeDraft.reasoningEffort })
+      if (runtimeDraft.modelProvider.trim() === '' && runtimeDraft.modelName.trim() === '') {
+        await scope.unset('defaultModel')
+      } else {
+        await scope.set('defaultModel', { provider: runtimeDraft.modelProvider, model: runtimeDraft.modelName, reasoningEffort: runtimeDraft.reasoningEffort })
+      }
+      settingsDirty.current = false
       setRuntimeMessage('已保存')
     } catch (error) {
       setRuntimeMessage(error instanceof Error ? error.message : '保存失败')
@@ -371,7 +390,11 @@ export function ManageCard({ scope }: ManageCardProps) {
   }
 
   const saveRoutes = async (): Promise<void> => {
-    if (scope === undefined || routeSaving) return
+    if (routeSaving) return
+    if (scope === undefined || scope.getSnapshot().status !== 'ready' || scope.getSnapshot().writable !== true) {
+      setRouteMessage('设置服务不可用:请硬刷新页面后重试')
+      return
+    }
     setRouteSaving(true)
     setRouteMessage('')
     try {
@@ -382,6 +405,7 @@ export function ManageCard({ scope }: ManageCardProps) {
       }
       if (Object.keys(out).length > 0) await scope.set('expertModelOverrides', out)
       else await scope.unset('expertModelOverrides')
+      settingsDirty.current = false
       setRouteMessage('已保存')
     } catch (error) {
       setRouteMessage(error instanceof Error ? error.message : '保存失败')
@@ -690,19 +714,17 @@ export function ManageCard({ scope }: ManageCardProps) {
         {tab === 'model' && (
         <>
         <h3 className={css.sectionTitle}>默认模型</h3>
-        <p className={css.sectionHint}>未单独覆盖路由的成员/专家使用的全局默认模型。</p>
+        <p className={css.sectionHint}>成员未指定模型、没有专家覆盖或专家预设时，使用此默认模型。生成计划时会记录实际模型。</p>
         <label className={css.field}><span className={css.fieldLabel}>默认模型 Provider</span><input className={css.input} value={runtimeDraft.modelProvider} onChange={event => setRuntime('modelProvider', event.target.value)} /></label>
         <label className={css.field}><span className={css.fieldLabel}>默认模型</span><input className={css.input} value={runtimeDraft.modelName} onChange={event => setRuntime('modelName', event.target.value)} /></label>
         <label className={css.field}><span className={css.fieldLabel}>默认推理强度</span><input className={css.input} value={runtimeDraft.reasoningEffort} onChange={event => setRuntime('reasoningEffort', event.target.value)} /></label>
-        {scope !== undefined && (
-          <div className={css.packToolbar}>
-            {runtimeMessage !== '' && <span className={css.message} role="status">{runtimeMessage}</span>}
-            <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={runtimeSaving} onClick={() => void saveModel()}>{runtimeSaving ? '保存中…' : '保存默认模型'}</button>
-          </div>
-        )}
+        <div className={css.packToolbar}>
+          {runtimeMessage !== '' && <span className={css.message} role="status">{runtimeMessage}</span>}
+          <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={runtimeSaving || scope?.getSnapshot().status !== 'ready' || scope?.getSnapshot().writable !== true} onClick={() => void saveModel()}>{runtimeSaving ? '保存中…' : '保存默认模型'}</button>
+        </div>
 
         <h3 className={css.sectionTitle}>专家模型路由</h3>
-        <p className={css.sectionHint}>每位专家的生效模型路由与继承来源：设置覆盖 &gt; 专家预设 &gt; 全局默认。输入 provider/model（可带推理强度）即可为该专家覆盖路由，保存后立即生效。</p>
+        <p className={css.sectionHint}>预置 DAG 的模型优先级：专家设置覆盖 &gt; 专家预设 &gt; 全局默认 &gt; 队长模型。输入 provider/model（可带推理强度）后保存，对新生成的计划生效；已暂存的计划和正在运行的成员保留原模型。AI 计划中显式指定的成员模型以计划为准。</p>
         {scope === undefined && <p className={css.hint}>当前环境未开放设置写入，以下为只读展示。</p>}
         <div className={css.packToolbar}>
           <input
@@ -712,9 +734,7 @@ export function ManageCard({ scope }: ManageCardProps) {
             onChange={event => setRouteFilter(event.target.value)}
           />
           <button className={css.button} type="button" onClick={() => void fetchRouteExperts()}>刷新</button>
-          {scope !== undefined && (
-            <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={routeSaving} onClick={() => void saveRoutes()}>{routeSaving ? '保存中…' : '保存路由覆盖'}</button>
-          )}
+          <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={routeSaving || scope?.getSnapshot().status !== 'ready' || scope?.getSnapshot().writable !== true} onClick={() => void saveRoutes()}>{routeSaving ? '保存中…' : '保存路由覆盖'}</button>
           {routeMessage !== '' && <span className={css.message} role="status">{routeMessage}</span>}
         </div>
         {routeError !== '' && <p className={css.statusError} role="status">{routeError} <button className={css.button} type="button" onClick={() => void fetchRouteExperts()}>重试</button></p>}
@@ -770,12 +790,10 @@ export function ManageCard({ scope }: ManageCardProps) {
         <label className={css.field}><span className={css.fieldLabel}>成员委托深度</span><input className={css.input} type="number" min="0" value={runtimeDraft.memberMaxDepth} onChange={event => setRuntime('memberMaxDepth', event.target.value)} /></label>
         <label className={css.field}><span className={css.fieldLabel}>提示词顺序</span><input className={css.input} type="number" min="0" value={runtimeDraft.promptSectionOrder} onChange={event => setRuntime('promptSectionOrder', event.target.value)} /></label>
         <label className={css.checkRow}><input className={css.checkbox} type="checkbox" checked={runtimeDraft.announceToAgent} onChange={event => setRuntime('announceToAgent', event.target.checked)} /> 向 Agent 注入专家库使用协议</label>
-        {scope !== undefined && (
-          <div className={css.packToolbar}>
-            {runtimeMessage !== '' && <span className={css.message} role="status">{runtimeMessage}</span>}
-            <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={runtimeSaving} onClick={() => void saveRuntime()}>{runtimeSaving ? '保存中…' : '保存运行配置'}</button>
-          </div>
-        )}
+        <div className={css.packToolbar}>
+          {runtimeMessage !== '' && <span className={css.message} role="status">{runtimeMessage}</span>}
+          <button className={`${css.button} ${css.buttonPrimary}`} type="button" disabled={runtimeSaving || scope?.getSnapshot().status !== 'ready' || scope?.getSnapshot().writable !== true} onClick={() => void saveRuntime()}>{runtimeSaving ? '保存中…' : '保存运行配置'}</button>
+        </div>
         </>
         )}
       </div>

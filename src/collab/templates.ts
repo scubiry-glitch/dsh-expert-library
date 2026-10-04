@@ -32,7 +32,7 @@ import { ZHIJIAN_DATA_CAPABILITIES } from '../v2/zhijian-pack.ts'
 import type { Expert } from '../expert-library/types.ts'
 
 /** Version stamp of every collab V2 asset. */
-const COLLAB_VERSION = '1.0.0-collab'
+const COLLAB_VERSION = '1.1.0-collab'
 
 /** Shared output template id referenced by every collab task/deliverable. */
 const COLLAB_OUTPUT_ID = 'collab.output'
@@ -138,7 +138,7 @@ const ppt: TeamTemplate = {
     task('t1', 'role.architect', '内容架构', '确定听众（{audience}）、目标与篇幅（{pageCountText} 页），输出 PPT 大纲：章节结构 + 每页标题与要点。主题：{topic}'),
     task('t2', 'role.content', '内容供给（{expertId}）', '按大纲供给关键数据、结论与案例（数字带口径与来源），标注每页建议引用。主题：{topic}', ['t1']),
     task('t3', 'role.writer', '逐页文案生成', '按大纲与内容产出逐页文案（markdown 内容包）：封面/目录/每页标题+要点（每页≤5 条）/图表建议/演讲备注。主题：{topic}', ['t1', 't2']),
-    task('t4', 'role.writer', '渲染和出图', '将逐页文案渲染为交付成品：① 先按 finesse-ui 技能（SKILL.md 路径以权威渠道 GET /plugins/dsh-expert-library/skills 返回的 path 为准，含 references/）的规范产出高工艺 HTML 幻灯片（product register、craft floor、反 cheapness；需要动效参考 gsap-* 技能，同渠道检索）；② 用 pptfast 技能（~/.agents/skills 或 pptfast CLI）把内容转为 PPTX；③ 需要视频时用 video-shotcraft 技能（SKILL.md 路径以权威渠道返回的 path 为准，Ink Press 模板在 template/ 目录）拍产品视频。技能引用规则：技能存在性以 GET /plugins/dsh-expert-library/skills 为准（永远存在，返回 id/绝对 path）；内容本体在插件 bundled knowledge/skills/<id>/，勿用相对路径 knowledge/skills/ 猜测——子代理 cwd 下的 knowledge/ 无 skills/ 目录；domain-packs/*/skills/ 与 source/skills/ 是分发副本，不是查找基准。{templateLine}\n未指定模板时，用 finesse 规范自选并说明理由。主题：{topic}', ['t3']),
+    task('t4', 'role.writer', '渲染和出图', '按目标受众与交付格式，从当前启用领域包的 skill 目录中由 AI 选择适用的渲染工艺，记录 packId/skillId、选择理由与实际材料路径；按该 skill 及其相对引用读取材料，执行声明适用的检查。模板目录与规范归所属领域包，不假定某个全局 skill 或目录是权威。{templateLine}\n未指定模板时，依据所选工艺自选并说明理由。交付逐页文案、演讲备注及约定的 HTML 幻灯片/PPTX；如约定 PDF 或视频，再选适用工艺。兼容 skill_id 引用仅作辅助参考，本 PPT 流程未绑定四文件报告门禁，不得宣称报告质量验收通过。主题：{topic}', ['t3']),
   ],
   gates: [],
   deliverables: [{ id: 'd1', outputTemplate: COLLAB_OUTPUT_ID, fromTasks: ['t1', 't2', 't3', 't4'] }],
@@ -164,7 +164,7 @@ const report: TeamTemplate = {
     task('t1', 'role.researcher', '资料与数据梳理', '梳理主题相关资料与数据：关键事实、数据口径、时间线、争议点。主题：{topic}{dataLine}'),
     task('t2', 'role.analyst', '专家研判（{expertId}）', '以本人立场独立研判：核心判断 → 关键事实与分析（数字带口径）→ 展望与不确定性。主题：{topic}{dataLine}', ['t1']),
     task('t3', 'role.writer', '融合成文', '整合全部研判输出完整研报（markdown）：标题、摘要、正文（背景/分析/展望）、结论、风险提示、附录（数据与口径）。主题：{topic}{dataLine}。先定主基调 keynote，偏离观点降级为边界条件。', ['t1', 't2']),
-    task('t4', 'role.writer', '渲染与生成（HTML5 → PDF/PPT → 视频）', '把 t3 融合稿渲染成最终交付件，三步走：① 按 finesse-ui 技能（SKILL.md 路径以权威渠道 GET /plugins/dsh-expert-library/skills 返回的 path 为准）产出高工艺 HTML5 视觉稿（product register、craft floor、反 cheapness；报告页配色按主题，需要动效参考 gsap-* 技能，同渠道检索）；② 用 pptfast 技能（~/.agents/skills 或 pptfast CLI）把内容转为可编辑 PPTX，PDF 用 weasyprint（A4、页脚「98wiki ｜ 智见 / 行业研究报告」）；③ 需要视频时用 video-shotcraft 技能（SKILL.md 路径以权威渠道返回的 path 为准，Remotion + 页面截图 + 2.5D 运镜）拍产品视频。技能引用规则：技能存在性以 GET /plugins/dsh-expert-library/skills 为准（永远存在，返回 id/绝对 path）；内容本体在插件 bundled knowledge/skills/<id>/，勿用相对路径 knowledge/skills/ 猜测——子代理 cwd 下的 knowledge/ 无 skills/ 目录；domain-packs/*/skills/ 与 source/skills/ 是分发副本，不是查找基准。完成后渲染检查（截图验证无遮挡/溢出/页脚可见 + 记录 sha256），把交付文件清单写入 output 并向队长汇报、等待用户确认是否继续（渲染是可选增强不是终点）。主题：{topic}', ['t3']),
+    task('t4', 'role.writer', '最终报告与渲染（MD / HTML / PDF）', '以融合稿为输入草稿，按当前任务显式选择且由 Host 冻结的领域包 skill 合同及完整必需材料，校核并生成最终 MD、HTML、PDF 与证据账本。AI 在计划阶段选择适用工艺并记录理由；材料、附件、渲染和审核规则以所选领域包合同为准，不能用全局旧副本替代。四份产物必须按本任务 reportBundle 的精确名称发布；结构、关键计算、真实视觉和 PDF 检查均绑定当前最终文件。提交后由独立审核者先 prepare_only 取得必需材料，再在当前文件上给出定位证据；未验证或失败的必需项不得宣称合格交付。主题：{topic}', ['t3']),
   ],
   gates: [],
   deliverables: [{ id: 'd1', outputTemplate: COLLAB_OUTPUT_ID, fromTasks: ['t1', 't2', 't3', 't4'] }],
@@ -173,7 +173,8 @@ const report: TeamTemplate = {
 /**
  * 研报生成（单研判专家）: the analyst task must not exist when there is no
  * analyst — the compiler cannot drop tasks, so a variant template omits it
- * (t1 梳理 → t2 融合), reproducing the imperative assembler's 1-expert DAG.
+ * (t1 梳理 → t2 融合 → t3 最终报告), with the same explicit report
+ * admission as the multi-expert variant.
  */
 const reportSingle: TeamTemplate = {
   id: 'collab.research-report-single',
@@ -193,9 +194,10 @@ const reportSingle: TeamTemplate = {
   tasks: [
     task('t1', 'role.researcher', '资料与数据梳理', '梳理主题相关资料与数据：关键事实、数据口径、时间线、争议点。主题：{topic}{dataLine}'),
     task('t2', 'role.writer', '融合成文', '整合全部研判输出完整研报（markdown）：标题、摘要、正文（背景/分析/展望）、结论、风险提示、附录（数据与口径）。主题：{topic}{dataLine}。先定主基调 keynote，偏离观点降级为边界条件。', ['t1']),
+    task('t3', 'role.writer', '最终报告与渲染（MD / HTML / PDF）', '以融合稿为输入草稿，按当前任务显式选择且由 Host 冻结的领域包 skill 合同及完整必需材料，校核并生成最终 MD、HTML、PDF 与证据账本。AI 在计划阶段选择适用工艺并记录理由；材料、附件、渲染和审核规则以所选领域包合同为准，不能用全局旧副本替代。四份产物必须按本任务 reportBundle 的精确名称发布；结构、关键计算、真实视觉和 PDF 检查均绑定当前最终文件。提交后由独立审核者先 prepare_only 取得必需材料，再在当前文件上给出定位证据；未验证或失败的必需项不得宣称合格交付。主题：{topic}', ['t2']),
   ],
   gates: [],
-  deliverables: [{ id: 'd1', outputTemplate: COLLAB_OUTPUT_ID, fromTasks: ['t1', 't2'] }],
+  deliverables: [{ id: 'd1', outputTemplate: COLLAB_OUTPUT_ID, fromTasks: ['t1', 't2', 't3'] }],
 }
 
 /** Every collab TeamTemplate (declaration order = compile/test order). */

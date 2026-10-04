@@ -6,7 +6,7 @@ export interface DatasetError { readonly code: 'DATASET_UNKNOWN' | 'DATASET_VERS
 
 export const ZHIJIAN_DATASETS: readonly DatasetDefinition[] = [
   { dataset: 'realestate.indicators.catalog', version: '1.0', description: '政研通指标目录（指标代码 code 的发现入口，供 city.market 等引用）', providerPreference: ['zyt'], capabilities: [{ id: 'realestate.indicators.catalog', schemaVersion: '1' }], requiredFields: [], requiredProvenance: ['source'], readOnly: true, installPolicy: 'never' },
-  { dataset: 'realestate.city.market', version: '1.1', description: '城市房地产指标时序（code=指标代码，先查 realestate.indicators.catalog；period 为查询起点，periodEnd/limit 可选）', providerPreference: ['zyt', 'beike'], capabilities: [{ id: 'realestate.indicators.timeseries', schemaVersion: '1' }, { id: 'realestate.market.snapshot', schemaVersion: '1' }], requiredFields: ['city', 'code'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
+  { dataset: 'realestate.city.market', version: '1.1', description: '城市房地产指标时序（city=城市名称；code=指标代码，先查 realestate.indicators.catalog，不是城市/行政区编码；可选 periodEnd=截止月 YYYY-MM、limit=期数；当前时序路线不支持 metric/period）', providerPreference: ['zyt', 'beike'], capabilities: [{ id: 'realestate.indicators.timeseries', schemaVersion: '1' }, { id: 'realestate.market.snapshot', schemaVersion: '1' }], requiredFields: ['city', 'code'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
   { dataset: 'realestate.city.compare', version: '1.0', description: '多城市房地产指标对比', providerPreference: ['zyt'], capabilities: [{ id: 'realestate.city.compare', schemaVersion: '1' }], requiredFields: ['cities'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
   { dataset: 'realestate.listing.search', version: '1.0', description: '贝壳房源检索', providerPreference: ['beike'], capabilities: [{ id: 'realestate.listing.search', schemaVersion: '1' }], requiredFields: ['city'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
   { dataset: 'realestate.policy', version: '1.0', description: '城市房地产政策检索', providerPreference: ['beike'], capabilities: [{ id: 'realestate.policy.search', schemaVersion: '1' }], requiredFields: ['city', 'topic'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
@@ -17,8 +17,42 @@ export const ZHIJIAN_DATASETS: readonly DatasetDefinition[] = [
 const DATASET_BY_ID = new Map(ZHIJIAN_DATASETS.map(definition => [definition.dataset, definition]))
 export function datasetDefinition(dataset: string): DatasetDefinition | undefined { return DATASET_BY_ID.get(dataset) }
 function datasetError(code: DatasetError['code'], correction: string, details?: Record<string, unknown>): DatasetError { return { code, retry: 'never', correction, ...(details === undefined ? {} : { details }) } }
-export function resolveDatasetRequest(request: DatasetRequest): DatasetResolution | { error: DatasetError } {
-  const definition = datasetDefinition(request.dataset)
+
+/** Minimal localdb registration slice the dynamic dataset resolution needs. */
+export interface LocalDbDatasetSource { readonly id: string; readonly caliber?: string }
+
+/**
+ * Dynamic localdb datasets: `localdb.<id>.query` / `localdb.<id>.schema` are
+ * derived from the databases the host actually registered (plugin config /
+ * `LOCALDB_DATABASES` env / scanDirs discovery) — adding a database needs no
+ * code change. Ids absent from the supplied list fail closed as
+ * DATASET_UNKNOWN (never guessed, never auto-installed).
+ */
+export function resolveLocalDbDataset(dataset: string, localDatabases: readonly LocalDbDatasetSource[] | undefined): DatasetDefinition | undefined {
+  if (localDatabases === undefined || localDatabases.length === 0) return undefined
+  const parts = dataset.split('.')
+  if (parts.length !== 3 || parts[0] !== 'localdb') return undefined
+  const id = parts[1]!
+  const kind = parts[2]!
+  if (kind !== 'query' && kind !== 'schema') return undefined
+  const db = localDatabases.find(candidate => candidate.id === id)
+  if (db === undefined) return undefined
+  const caliber = db.caliber ?? '本地 SQLite 只读查询（以库内字段口径为准）'
+  return {
+    dataset,
+    version: '1.0',
+    description: `本地 SQLite 数据库「${id}」${kind === 'query' ? '只读查询（单条 SELECT/WITH，input.sql）' : '表结构探查（input.table 可选）'}`,
+    providerPreference: ['localdb'],
+    capabilities: [{ id: `localdb.${id}.${kind}`, schemaVersion: '1' }],
+    requiredFields: kind === 'query' ? ['sql'] : [],
+    requiredProvenance: ['source', 'caliber'],
+    readOnly: true,
+    installPolicy: 'never',
+  }
+}
+
+export function resolveDatasetRequest(request: DatasetRequest, localDatabases?: readonly LocalDbDatasetSource[]): DatasetResolution | { error: DatasetError } {
+  const definition = resolveLocalDbDataset(request.dataset, localDatabases) ?? datasetDefinition(request.dataset)
   if (definition === undefined) return { error: datasetError('DATASET_UNKNOWN', `未注册数据集「${request.dataset}」；禁止猜测 capability key 或自动安装`) }
   if (request.version !== undefined && request.version !== definition.version) return { error: datasetError('DATASET_VERSION_UNSUPPORTED', `数据集「${request.dataset}」仅支持版本 ${definition.version}`) }
   const missing = definition.requiredFields.filter(field => { const value = request.input[field]; return value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0) })

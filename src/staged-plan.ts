@@ -7,10 +7,12 @@
  */
 
 import { randomUUID } from 'node:crypto'
-import { mkdir, open, readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { findTeamByPlanId, replaceFileAtomicOrDirect, withTeamLock } from './state.ts'
 import { canonicalDigest } from './v2/digest.ts'
+import { isSharedTaskContext } from './shared-task-context.ts'
+import { isReportBundle, isReportCraftBinding } from './report-bundle.ts'
 import type { ExecutionPlan } from './v2/compiler.ts'
 import type {
   StagedPlan,
@@ -20,6 +22,7 @@ import type {
 } from './types.ts'
 
 export const STAGED_PLAN_DIR = 'plans'
+export const STAGED_PLAN_ARCHIVE_DIR = 'archive'
 export const STAGED_PLAN_SCHEMA_VERSION = 1 as const
 const SAFE_PLAN_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/
 
@@ -41,6 +44,12 @@ export function stagedPlanTransitionError(current: StagedPlanStatus, next: Stage
   return undefined
 }
 
+/** Failed apply may have left children or a partial team even after rollback.
+ * Preserve this receipt; absence of planRef alone never proves zero effects. */
+export function failedPlanRecoveryMessage(plan: StagedPlan): string {
+  return `staged plan "${plan.planId}" is failed; its approval and failure receipt are retained. next_action: inspect expert_teams_status and resolve any existing team before staging again; correct the profile and stage with a new profile.id and team_name (legacy scenarios: use a new team_name/goal). Do not retry approve/edit/discard on this failed receipt. Failure: ${plan.failureReason ?? 'unknown apply outcome'}${plan.appliedTeamId === undefined ? '' : `; appliedTeamId: ${plan.appliedTeamId}`}`
+}
+
 export function stagedPlanPath(stateRoot: string, planId: string): string {
   if (!SAFE_PLAN_ID.test(planId)) throw new Error(`invalid staged plan id "${planId}"`)
   return join(stateRoot, STAGED_PLAN_DIR, `${planId}.json`)
@@ -50,45 +59,17 @@ export function stagedPlanLockKey(stateRoot: string, planId: string): string {
   return `staged-plan:${stateRoot}:${planId}`
 }
 
-const STAGED_LOCK_RETRY_MS = 25
-const STAGED_LOCK_STALE_MS = 120_000
-
-async function acquireStagedPlanFileLock(stateRoot: string, planId: string): Promise<() => Promise<void>> {
-  const plansDir = join(stateRoot, STAGED_PLAN_DIR)
-  await mkdir(plansDir, { recursive: true })
-  const lockPath = join(plansDir, `${planId}.lock`)
-  for (;;) {
-    try {
-      const handle = await open(lockPath, 'wx')
-      await handle.writeFile(JSON.stringify({ pid: process.pid, acquiredAt: Date.now() }), 'utf8')
-      await handle.close()
-      return async () => { await rm(lockPath, { force: true }) }
-    } catch (error: unknown) {
-      if (!(error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'EEXIST')) throw error
-      try {
-        const age = Date.now() - (await stat(lockPath)).mtimeMs
-        if (age > STAGED_LOCK_STALE_MS) {
-          await rm(lockPath, { force: true })
-          continue
-        }
-      } catch {
-        // The owner may have released the lock between stat and cleanup.
-      }
-      await new Promise(resolve => setTimeout(resolve, STAGED_LOCK_RETRY_MS))
-    }
-  }
+export function stagedPlanJournalPath(stateRoot: string, planId: string): string {
+  if (!SAFE_PLAN_ID.test(planId)) throw new Error(`invalid staged plan id "${planId}"`)
+  return join(stateRoot, STAGED_PLAN_DIR, `${planId}.journal.jsonl`)
 }
 
 export async function withStagedPlanLock<T>(stateRoot: string, planId: string, fn: () => Promise<T>): Promise<T> {
   if (!SAFE_PLAN_ID.test(planId)) throw new Error(`invalid staged plan id "${planId}"`)
-  return withTeamLock(stagedPlanLockKey(stateRoot, planId), async () => {
-    const release = await acquireStagedPlanFileLock(stateRoot, planId)
-    try {
-      return await fn()
-    } finally {
-      await release()
-    }
-  })
+  // The shared lock honors both legacy JSON and current nonce/PID records,
+  // verifies ownership on release and bounds every retry. Keep the existing
+  // file path so an older live holder cannot be bypassed during migration.
+  return withTeamLock(stagedPlanLockKey(stateRoot, planId), fn)
 }
 
 async function writeJsonAtomic(file: string, value: unknown): Promise<void> {
@@ -130,6 +111,8 @@ function isRuntime(value: unknown): value is StagedPlanRuntime {
   if (!isRecord(value) || typeof value['teamName'] !== 'string' || typeof value['description'] !== 'string') return false
   if (value['interpolations'] !== undefined && !isStringRecord(value['interpolations'])) return false
   if (value['taskSuffixes'] !== undefined && !isStringRecord(value['taskSuffixes'])) return false
+  if (value['expertDisplay'] !== undefined && (!isRecord(value['expertDisplay']) || !Object.values(value['expertDisplay']).every(item => isRecord(item) && typeof item['name'] === 'string'))) return false
+  if (value['sharedTaskContext'] !== undefined && !isSharedTaskContext(value['sharedTaskContext'])) return false
   if (value['memberOrder'] !== undefined
     && (!Array.isArray(value['memberOrder']) || !value['memberOrder'].every(item => typeof item === 'string'))) return false
   return true
@@ -165,6 +148,8 @@ function normalizeRuntime(runtime: StagedPlanRuntime): StagedPlanRuntime {
     ...(runtime.interpolations === undefined ? {} : { interpolations: { ...runtime.interpolations } }),
     ...(runtime.memberOrder === undefined ? {} : { memberOrder: [...runtime.memberOrder] }),
     ...(runtime.taskSuffixes === undefined ? {} : { taskSuffixes: { ...runtime.taskSuffixes } }),
+    ...(runtime.sharedTaskContext === undefined ? {} : { sharedTaskContext: structuredClone(runtime.sharedTaskContext) }),
+    ...(runtime.expertDisplay === undefined ? {} : { expertDisplay: structuredClone(runtime.expertDisplay) }),
   }
 }
 
@@ -214,20 +199,56 @@ export function isStagedPlan(value: unknown): value is StagedPlan {
     && typeof value['createdBy'] === 'string'
     && SAFE_PLAN_ID.test(value['planId'] as string)
     && value['createdBy'].trim() !== ''
+    && (value['waitingFor'] === undefined || value['waitingFor'] === 'user-confirmation')
+    && (value['goalWait'] === undefined || (isRecord(value['goalWait'])
+      && typeof value['goalWait']['goalId'] === 'string' && value['goalWait']['goalId'].trim() !== ''
+      && Number.isSafeInteger(value['goalWait']['pausedRevision']) && (value['goalWait']['pausedRevision'] as number) >= 0
+      && typeof value['goalWait']['createdAt'] === 'number' && Number.isFinite(value['goalWait']['createdAt'])
+      && (value['goalWait']['sourcePlanId'] === undefined || typeof value['goalWait']['sourcePlanId'] === 'string' && SAFE_PLAN_ID.test(value['goalWait']['sourcePlanId']))))
     && isRequest(request)
     && isRuntime(runtime)
+    && (runtime.sharedTaskContext === undefined || runtime.sharedTaskContext.captainSessionId === value['createdBy'])
     && isRecord(plan)
+    && Array.isArray(plan['tasks']) && plan['tasks'].every(task => isRecord(task)
+      && (task['reportBundle'] === undefined || isReportBundle(task['reportBundle']))
+      && isReportCraftBinding(task['reportBundle'] as import('./report-bundle.ts').ReportBundle | undefined, task['frozenSkillCraftContract']))
     && plan['planId'] === value['planId']
     && typeof plan['digest'] === 'string'
     && plan['digest'].trim() !== ''
     && value['digest'] === stagedPlanDigest(plan['digest'], request, runtime)
     && isEditLog(value['editLog'], value['revision'] as number, value['digest'] as string)
+    && (value['approval'] === undefined || (
+      isRecord(value['approval'])
+      && value['approval']['digest'] === value['digest']
+      && value['approval']['revision'] === value['revision']
+      && typeof value['approval']['approvedAt'] === 'number'
+      && Number.isFinite(value['approval']['approvedAt'])
+      && typeof value['approval']['approvedBy'] === 'string'
+      && value['approval']['approvedBy'].trim() !== ''
+    ))
 }
 
 export async function writeStagedPlan(stateRoot: string, plan: StagedPlan): Promise<void> {
   if (!isStagedPlan(plan)) throw new Error('invalid staged plan')
   await mkdir(join(stateRoot, STAGED_PLAN_DIR), { recursive: true })
   await writeJsonAtomic(stagedPlanPath(stateRoot, plan.planId), plan)
+  await appendFile(stagedPlanJournalPath(stateRoot, plan.planId), `${JSON.stringify({
+    planId: plan.planId,
+    status: plan.status,
+    revision: plan.revision,
+    digest: plan.digest,
+    updatedAt: plan.updatedAt,
+    ...(plan.appliedTeamId === undefined ? {} : { appliedTeamId: plan.appliedTeamId }),
+    ...(plan.failureReason === undefined ? {} : { failureReason: plan.failureReason }),
+  })}\n`, 'utf8')
+}
+
+/** Keep a completed/discarded/failed receipt in an append-only audit area. */
+export async function archiveStagedPlan(stateRoot: string, plan: StagedPlan): Promise<void> {
+  if (!isStagedPlan(plan)) throw new Error('invalid staged plan')
+  const dir = join(stateRoot, STAGED_PLAN_DIR, STAGED_PLAN_ARCHIVE_DIR)
+  await mkdir(dir, { recursive: true })
+  await writeJsonAtomic(join(dir, `${plan.planId}.json`), plan)
 }
 
 export async function readStagedPlan(stateRoot: string, planId: string): Promise<StagedPlan | undefined> {
@@ -337,18 +358,34 @@ export function transitionStagedPlan(
   opts: {
     now?: number
     actor?: string
+    approvalSource?: NonNullable<StagedPlan['approval']>['source']
+    authorizationRequestId?: string
+    contextSha256?: string
     appliedTeamId?: string
     failureReason?: string
   } = {},
 ): StagedPlan {
+  if (plan.status === 'failed') throw new Error(failedPlanRecoveryMessage(plan))
   const error = stagedPlanTransitionError(plan.status, next)
   if (error !== undefined) throw new Error(error)
   const now = opts.now ?? Date.now()
+  const { waitingFor: _waitingFor, ...withoutWait } = plan
   return {
-    ...plan,
+    ...(next === 'staged' ? plan : withoutWait),
     status: next,
     updatedAt: now,
     ...(next === 'approved' ? { approvedAt: now, approvedBy: opts.actor ?? plan.createdBy } : {}),
+    ...(next === 'approved' ? {
+      approval: {
+        digest: plan.digest,
+        revision: plan.revision,
+        approvedAt: now,
+        approvedBy: opts.actor ?? plan.createdBy,
+        ...(opts.approvalSource === undefined ? {} : { source: opts.approvalSource }),
+        ...(opts.authorizationRequestId === undefined ? {} : { authorizationRequestId: opts.authorizationRequestId }),
+        ...(opts.contextSha256 === undefined ? {} : { contextSha256: opts.contextSha256 }),
+      },
+    } : {}),
     ...(opts.appliedTeamId === undefined ? {} : { appliedTeamId: opts.appliedTeamId }),
     ...(opts.failureReason === undefined ? {} : { failureReason: opts.failureReason }),
   }
@@ -365,6 +402,7 @@ export function editStagedPlan(
     now?: number
   },
 ): StagedPlan {
+  if (plan.status === 'failed') throw new Error(failedPlanRecoveryMessage(plan))
   if (plan.status !== 'staged') throw new Error(`only staged plans can be edited; current status is "${plan.status}"`)
   const now = input.now ?? Date.now()
   const stagedDigest = stagedPlanDigest(input.plan.digest, input.request, input.runtime)

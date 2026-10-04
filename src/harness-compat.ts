@@ -18,9 +18,132 @@ const legacyQueuePrompt = Symbol.for('dsh.subagent.queuePrompt')
 
 /** One fresh or cold-resumed child setup; returns the installation's teardown. */
 export type ContinuableSetup = (childCtx: Context) => () => void
+export const MEMBER_SETUP_TIMEOUT_MS = 10_000
 
 type SubagentsLike = Context['subagents']
 type Host = Record<PropertyKey, unknown>
+
+export interface MemberContinuableDescriptor {
+  readonly mode: 'continuable'
+  readonly label: string
+  readonly agentProvider?: string
+  readonly agentModel?: string
+}
+
+/**
+ * Read the two tested descriptor cohorts without importing a version-pinned
+ * fold from a different peer installation. rc.8 accepts only v2; rc.1 writes
+ * v3 (adding agentReasoningEffort). Its fold would silently ignore the other
+ * version, skipping every member boundary. Unknown member versions fail shut.
+ */
+export function memberContinuableDescriptor(
+  events: readonly unknown[],
+  labelPrefix: string,
+): MemberContinuableDescriptor | undefined {
+  const record = (value: unknown): value is Record<string, unknown> =>
+    value !== null && typeof value === 'object' && !Array.isArray(value)
+  const event = events.find(value => record(value) && value.type === 'subagent/descriptor')
+  if (!record(event) || !record(event.data)) return undefined
+  const data = event.data
+  if (typeof data.label !== 'string' || !data.label.startsWith(labelPrefix)) return undefined
+  const fail = (detail: string): never => { throw new Error(`expert-teams: unsupported member descriptor (${detail})`) }
+  if (data.version !== 2 && data.version !== 3) return fail('expected tested version 2 or 3')
+  if (data.mode !== 'continuable' || typeof data.provider !== 'string') return fail('invalid member identity')
+  const keys = new Set(['version', 'mode', 'provider', 'label', 'agentProvider', 'agentModel', 'persona', 'toolFilter',
+    ...(data.version === 3 ? ['agentReasoningEffort'] : [])])
+  if (Object.keys(data).some(key => !keys.has(key))) return fail('unknown composition field')
+  for (const key of ['agentProvider', 'agentModel', 'agentReasoningEffort', 'persona']) {
+    if (Object.hasOwn(data, key) && typeof data[key] !== 'string') return fail(`invalid ${key}`)
+  }
+  if (Object.hasOwn(data, 'toolFilter')) {
+    const filter = data.toolFilter
+    if (!record(filter) || Object.keys(filter).some(key => key !== 'allow' && key !== 'deny')
+      || (!Object.hasOwn(filter, 'allow') && !Object.hasOwn(filter, 'deny'))) return fail('invalid toolFilter')
+    for (const key of ['allow', 'deny']) {
+      if (Object.hasOwn(filter, key) && (!Array.isArray(filter[key]) || !filter[key].every(item => typeof item === 'string'))) return fail(`invalid toolFilter.${key}`)
+    }
+  }
+  return {
+    mode: 'continuable', label: data.label,
+    ...(typeof data.agentProvider === 'string' ? { agentProvider: data.agentProvider } : {}),
+    ...(typeof data.agentModel === 'string' ? { agentModel: data.agentModel } : {}),
+  }
+}
+
+/** A host-only provisioning message, consumed before a model step is entered. */
+export function memberBootstrapPrompt(childId: string): string {
+  return `[expert-teams:initialize-idle-member:${childId}]`
+}
+
+/**
+ * startContinuable has no create-idle variant in either supported Harness.
+ * Consume only our identity-bound provisioning message through the official
+ * pre-step seam. Returning an empty entered step closes normally without a
+ * request; later assignment/review messages still enter the ordinary inbox.
+ */
+export function installIdleMemberBootstrap(
+  ctx: Context,
+  childId: string,
+  lifecycle?: { idle(): void; working(): void },
+): () => void {
+  const marker = memberBootstrapPrompt(childId)
+  return ctx.on('agent/pre-step', async ({ messages }, next) => {
+    const isBootstrap = (message: (typeof messages)[number]): boolean =>
+      message.content.some(block => block.type === 'text' && block.text === marker)
+    if (!messages.some(isBootstrap)) {
+      if (messages.length > 0) lifecycle?.working()
+      return next()
+    }
+    // The Host may append its own return guidance to the bootstrap message.
+    // Discard that whole message, but never discard a coalesced real task.
+    if (messages.every(isBootstrap)) {
+      lifecycle?.idle()
+      return { kind: 'enter', messages: [] }
+    }
+    lifecycle?.working()
+    const decision = await next()
+    return decision.kind === 'reject' ? decision : {
+      ...decision,
+      messages: decision.messages.filter(message => !isBootstrap(message)),
+    }
+  })
+}
+
+/**
+ * Tool restrictions alone do not cover a child's own scoped registrations.
+ * Filter the authoritative model assembly and install the Host's monotonic
+ * final execution guard, which also covers code transport sub-dispatches.
+ * These are per-agent effects and are reinstalled on every cold activation.
+ */
+export function installMemberToolBoundary(
+  ctx: Context,
+  filter: { readonly allow?: readonly string[]; readonly deny: readonly string[] },
+  noDelegation: boolean,
+): () => void {
+  const allowed = filter.allow === undefined ? undefined : new Set(filter.allow)
+  const denied = new Set(filter.deny)
+  const reason = (name: string): string | undefined => {
+    if (noDelegation && (name === 'subagent' || name === 'list_subagent_models')) {
+      return 'expert-teams: this member has no nested delegation budget'
+    }
+    if (denied.has(name) || (allowed !== undefined && !allowed.has(name))) {
+      return `expert-teams: tool "${name}" is outside this member's capability scope`
+    }
+    return undefined
+  }
+  if (typeof ctx.tools.guard !== 'function') return unsupported('missing monotonic tools.guard for member capability enforcement')
+  const unguard = ctx.tools.guard(execution => reason(execution.name))
+  try {
+    const unassemble = ctx.on('system-prompt/assemble', async (_assembly, _context, next) => {
+      const assembly = await next()
+      return { ...assembly, tools: assembly.tools.filter(tool => reason(tool.name) === undefined) }
+    })
+    return () => { unassemble(); unguard() }
+  } catch (error) {
+    unguard()
+    throw error
+  }
+}
 
 function unsupported(detail: string): never {
   throw new Error(
@@ -44,37 +167,93 @@ export function sessionOwnEvents(session: Agent['session']): readonly unknown[] 
  * (0.1.0); otherwise hooks session start (0.1.5), which upstream owns for
  * lifetime — the child's own ctx effect disposes the installation.
  */
-export function installContinuableMemberSetup(ctx: Context, setup: ContinuableSetup): void {
-  const runtime = ctx.subagents as unknown as { registerContinuableSetup?: (setup: ContinuableSetup) => void }
+export function installContinuableMemberSetup(ctx: Context, setup: ContinuableSetup): () => void {
+  const runtime = ctx.subagents as unknown as { registerContinuableSetup?: (setup: ContinuableSetup) => (() => void) | void }
   if (typeof runtime.registerContinuableSetup === 'function') {
     // Cordis resolves the method's this to the accessing plugin, so its
     // disposal revokes the installation with the plugin's lifetime.
-    runtime.registerContinuableSetup.call(ctx.subagents, setup)
-    return
+    const dispose = runtime.registerContinuableSetup.call(ctx.subagents, setup)
+    if (typeof dispose !== 'function') return unsupported('continuable setup registration has no disposer')
+    return dispose
   }
   const installed = new WeakSet<object>()
   const active = new Set<() => void>()
-  ctx.effect(() => {
-    const stop = ctx.on('agent/session-start', function (this: unknown, { agent }: { agent: Agent }) {
-      // rc.1 binds the listener's this to the agent's plugin-injected scoped
-      // context (Scoped<Agent>). The raw `agent.ctx` payload object is
-      // unwrapped — every service read on it throws "without inject".
-      // `Scoped<Agent>` is a branded marker type declared in dsh-scope, which
-      // is only a transitive dependency here, so `this` stays `unknown` and
-      // the service reads below take the Context view of the same object.
-      const childCtx = this as Context
+  return ctx.effect(() => {
+    const stop = ctx.on('agent/session-start', ({ agent }: { agent: Agent }) => {
+      // `this` is a routing-only Scoped<Agent> carrier, never a Context. Reuse
+      // the actual Host-created scope through its official inject API. This
+      // also avoids importing a second dsh-scope copy: its scope tag is a
+      // module-local Symbol, so a peer-mismatched createScope would not be
+      // recognized by the Host's tool guards or event dispatcher.
       if (installed.has(agent)) return
-      // Deliberately synchronous: awaiting here loses the first-request race.
-      let teardown: () => void
+      const ownEvents = sessionOwnEvents(agent.session)
+      // Do not install member lifecycle gates on the captain or unrelated
+      // Agents. A future/invalid member descriptor still reaches setup and
+      // fails closed, rather than silently executing without its boundary.
+      const isMember = ownEvents.some(event => {
+        if (event === null || typeof event !== 'object') return false
+        const row = event as { type?: unknown; data?: { label?: unknown } }
+        return row.type === 'subagent/descriptor' && typeof row.data?.label === 'string'
+          && row.data.label.startsWith('expert-teams:')
+      })
+      if (!isMember) return
+      let ready = false
+      let initializedCtx: Context | undefined
+      let initializationError: Error | undefined
+      let fiber: ReturnType<Context['inject']> | undefined
+      let resolveReady!: () => void
+      let rejectReady!: (error: Error) => void
+      const initialization = new Promise<void>((resolve, reject) => { resolveReady = resolve; rejectReady = reject })
+      // A failed mount may precede the first assembly; retain its rejection
+      // for that boundary without emitting an unhandled Promise rejection.
+      void initialization.catch(() => undefined)
+      const fail = (cause: unknown): void => {
+        if (ready || initializationError !== undefined) return
+        initializationError = new Error(`expert-teams: member initialization failed: ${String(cause)}`, { cause })
+        clearTimeout(timer)
+        rejectReady(initializationError)
+      }
+      const timer = setTimeout(() => fail(new Error('member scoped setup timed out')), MEMBER_SETUP_TIMEOUT_MS)
+      timer.unref()
+      // Host order is assemble -> pre-step -> request. Wait at assembly,
+      // before pre-step snapshots the freshly installed bootstrap listener.
+      const unassemble = agent.ctx.on('system-prompt/assemble', async (_assembly, context, next) => {
+        const wasReady = ready
+        const signal = context.signal
+        if (signal?.aborted) throw signal.reason
+        let onAbort: (() => void) | undefined
+        try {
+          await Promise.race([initialization, new Promise<never>((_resolve, reject) => {
+            if (signal === undefined) return
+            onAbort = () => reject(signal.reason)
+            signal.addEventListener('abort', onAbort, { once: true })
+          })])
+        } finally {
+          if (onAbort !== undefined) signal!.removeEventListener('abort', onAbort)
+        }
+        // A waterfall snapshots listeners at dispatch. If setup completed
+        // while it waited, recompute exactly once so the first request also
+        // receives its new schema/model hooks. The inner call sees ready=true.
+        return wasReady ? next() : initializedCtx!.systemPrompt.assemble(context)
+      })
       try {
-        teardown = setup(childCtx)
+        fiber = agent.ctx.inject(['tools', 'llm', 'systemPrompt', 'subagents', 'agents'], runtimeCtx => {
+          if (initializationError !== undefined) return
+          try {
+            // Current Host contexts do not publish ctx.agent. Preserve the
+            // old setup interface using the identity carried by the event.
+            const dispose = setup(runtimeCtx.extend({ agent }))
+            runtimeCtx.effect(() => dispose, 'expert-teams: scoped member setup')
+            initializedCtx = runtimeCtx
+            ready = true
+            clearTimeout(timer)
+            resolveReady()
+          } catch (error) {
+            fail(error)
+          }
+        })
       } catch (error: unknown) {
-        // session-start is a notification: Harness logs a thrown listener and
-        // still admits the first prompt. Reject request assembly explicitly so
-        // a malformed saved route cannot silently execute on a default model.
-        const failure = new Error(`expert-teams: member initialization failed: ${String(error)}`, { cause: error })
-        ctx.logger.warn(failure.message)
-        teardown = agent.ctx.on('agent/request', () => { throw failure })
+        fail(error)
       }
       installed.add(agent)
       let disposed = false
@@ -83,7 +262,10 @@ export function installContinuableMemberSetup(ctx: Context, setup: ContinuableSe
         disposed = true
         active.delete(dispose)
         installed.delete(agent)
-        teardown()
+        unassemble()
+        fail(new Error('member scope was disposed before setup completed'))
+        clearTimeout(timer)
+        if (fiber !== undefined) void Promise.resolve(fiber.dispose()).catch(error => ctx.logger.warn(`expert-teams: member scope disposal failed: ${String(error)}`))
       }
       active.add(dispose)
       // Listeners contributed to agent.ctx already follow its lifetime. Also

@@ -101,7 +101,7 @@ export function parseExpert(value: unknown): Expert | undefined {
  */
 export function parseScenario(value: unknown): Scenario | undefined {
   if (!isRecord(value)) return undefined
-  const { id, name, description, experts, tasks, deliverable, knowledge, skill } = value
+  const { id, name, description, experts, tasks, deliverable, knowledge, skill, reportTaskIndex } = value
   if (typeof id !== 'string' || !isSafeKnowledgeId(id)) return undefined
   if (typeof name !== 'string' || name === '') return undefined
   if (typeof description !== 'string') return undefined
@@ -136,6 +136,7 @@ export function parseScenario(value: unknown): Scenario | undefined {
     }
   })
   if (taskList.some((task) => task === undefined)) return undefined
+  if (reportTaskIndex !== undefined && (typeof reportTaskIndex !== 'number' || !Number.isSafeInteger(reportTaskIndex) || reportTaskIndex < 0 || reportTaskIndex >= tasks.length)) return undefined
   const skillBinding = parseScenarioSkill(skill, tasks.length)
   if (skill !== undefined && skillBinding === undefined) return undefined
   return {
@@ -143,6 +144,7 @@ export function parseScenario(value: unknown): Scenario | undefined {
     experts: expertsList,
     tasks: taskList as Scenario['tasks'],
     deliverable: typeof deliverable === 'string' ? deliverable : '',
+    ...(reportTaskIndex === undefined ? {} : { reportTaskIndex: reportTaskIndex as number }),
     ...(typeof knowledge === 'string' ? { knowledge } : {}),
     ...(skillBinding === undefined ? {} : { skill: skillBinding }),
   }

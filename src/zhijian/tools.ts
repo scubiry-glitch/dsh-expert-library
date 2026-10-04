@@ -19,8 +19,10 @@ import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
 import { createUserMessage } from '@deepseek-ai/dsh-llm'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type { ExpertToolsCore, ToolsConfig } from '../tools.ts'
-import { steerCaptainReport } from '../tools.ts'
-import { applyExecutionPlan, compileErrorOf } from '../apply.ts'
+import { steerCaptainReport, stageCompiledPlanCore, scenarioApproveCore } from '../tools.ts'
+import { compileErrorOf } from '../apply.ts'
+import { readTeam } from '../state.ts'
+import { stateRootOf, workspaceOf } from '../team-core.ts'
 import { compileExecutionPlan } from '../v2/compiler.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
 import { resolveManagedRuntimePack } from '../host/pack-runtime.ts'
@@ -266,7 +268,8 @@ export function registerZhijianTools(
         type: 'object',
         additionalProperties: false,
         properties: {
-          team_id: { type: 'string', required: true },
+          team_id: { type: 'string' },
+          status: { type: 'string' }, plan_id: { type: 'string' }, digest: { type: 'string' }, revision: { type: 'number' },
           team_name: { type: 'string', required: true },
           framework: { type: 'string', required: true },
           members: {
@@ -292,7 +295,7 @@ export function registerZhijianTools(
       },
       render: (_args, value) => [{
         type: 'text',
-        text: `智见点评团队已组建：${value.team_name}（${value.team_id}），框架 ${value.framework}。\n成员：${value.members.join('、')}\n任务：${value.tasks.map(t => `${t.task_id}${t.assignee ? `(${t.assignee})` : ''} ${t.subject}`).join('；')}${value.note !== undefined ? `\n注意：${value.note}` : ''}`,
+        text: value.status === 'waiting_user' ? `研究计划 ${value.plan_id} 已保存，等待用户在研究计划面板确认。尚未创建团队或成员；请结束本回合，不要重复批准或绕过计划。` : `智见点评团队已组建：${value.team_name}（${value.team_id}），框架 ${value.framework}。\n成员：${value.members.join('、')}\n任务：${value.tasks.map(t => `${t.task_id}${t.assignee ? `(${t.assignee})` : ''} ${t.subject}`).join('；')}${value.note !== undefined ? `\n注意：${value.note}` : ''}`,
       }],
     },
     async execute(args, exec) {
@@ -374,7 +377,7 @@ export function registerZhijianTools(
       for (const meta of metas) {
         expertDisplay.set(meta!.id, { name: meta!.name, field: meta!.field, initials: meta!.initials })
       }
-      const applied = await applyExecutionPlan(ctx, config, captain, compiled.plan, {
+      const staged = await stageCompiledPlanCore(ctx, config, captain, compiled.plan, {
         teamName,
         description: [
           `智见点评任务：${args.topic_type}（框架 ${framework.name}）`,
@@ -383,7 +386,19 @@ export function registerZhijianTools(
           `基调融合：先定主基调 keynote（据数据事实判定；用户指定基调则严格跟随），偏离观点降级为边界条件/风险提示。`,
         ].join('\n\n'),
         expertDisplay,
-      }, signal, core)
+      }, { compiled_source: 'expert_review_apply', preset_args: JSON.stringify(args), team_name: teamName, goal: `智见点评任务：${args.topic_type}（框架 ${framework.name}）` })
+      const approved = await scenarioApproveCore(ctx, config, captain, staged.planId, signal, core, staged.digest, staged.revision)
+      if (approved.appliedTeamId === undefined) {
+        exec.concludeTurn?.()
+        return { status: 'waiting_user', plan_id: approved.planId, digest: approved.digest, revision: approved.revision,
+          team_name: teamName, framework: framework.id, members: [], tasks: [] }
+      }
+      const team = await readTeam(stateRootOf(workspaceOf(captain), config), approved.appliedTeamId)
+      if (team === undefined) throw new Error('approved team not found')
+      const applied = { team_id: team.id, team_name: team.name,
+        members: team.members.map(member => ({ member_name: member.name })),
+        tasks: team.tasks.map(task => ({ task_id: task.id, subject: task.subject, ...(task.assignee === undefined ? {} : { assignee: task.assignee }) })),
+      }
 
       // Direct the first expert to start (parallelism seed, best effort).
       if (applied.members.length > 0) {

@@ -106,7 +106,7 @@ test('providerCallToolEligible gates registration on a live service with provide
 test('read-op passthrough: resolves with credentials + readOnly:false, forwards meta, preserves provenance/warnings/data', async () => {
   const envelope = okEnvelope(
     { data: { columns: ['windcode', 'close'], rows: [['600519.SH', 1521.5]], unit: '元' } },
-    { provider: 'wind', operation: 'financial.stock.snapshot', transportId: 'cli', caliber: 'wind 实时行情口径', unit: '元' },
+    { provider: 'wind', operation: 'financial.stock.snapshot', transportId: 'cli', source: 'fixture://wind/snapshot', caliber: 'wind 实时行情口径', unit: '元' },
     [{ code: 'wind.cli-meta.warning', message: '分页截断', severity: 'warning' }],
   )
   const seen = []
@@ -147,6 +147,24 @@ test('read-op passthrough: resolves with credentials + readOnly:false, forwards 
   assert.deepEqual(seen.map(s => s[0]), ['resolve', 'invoke'])
 })
 
+test('optional undefined provenance is omitted from the Host JSON result without losing data', async () => {
+  const envelope = okEnvelope({ close: 1521.5 }, {
+    provider: 'wind', operation: 'financial.stock.snapshot', transportId: 'cli',
+  })
+  const service = fakeService({
+    resolve: () => ({ capability: readBinding.capability, status: 'bound', binding: readBinding, rejections: [] }),
+    invoke: async () => envelope,
+  })
+  const result = await registerAndGetTool(service).execute({ capability: readBinding.capability, input: {} }, exec)
+  assert.equal(result.ok, true)
+  assert.equal(Object.hasOwn(result.provenance, 'source'), false)
+  assert.equal(result.provenance.provider, 'wind')
+  assert.equal(result.provenance.operation, readBinding.operation)
+  assert.equal(result.provenance.fetchedAt, envelope.provenance.fetchedAt)
+  assert.deepEqual(result.data, { close: 1521.5 })
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), result, 'result must satisfy the Host lossless-JSON contract')
+})
+
 test('unknown capability returns CAPABILITY_UNBOUND with rejections and never invokes', async () => {
   let invoked = false
   const service = fakeService({
@@ -182,7 +200,7 @@ test('service unavailable at execute time fails closed with PROVIDER_SERVICE_UNA
 test('failure envelopes pass through with error/provenance/warnings intact', async () => {
   const envelope = failEnvelope(
     { code: 'USAGE_ERROR', retry: 'never', correction: '检查调用参数格式', details: { usage: 'call …' } },
-    { provider: 'wind', operation: 'financial.stock.snapshot', transportId: 'cli' },
+    { provider: 'wind', operation: 'financial.stock.snapshot', transportId: 'cli', source: 'fixture://wind/snapshot' },
     [{ code: 'wind.agent-action', message: '停止后续批量调用', severity: 'info' }],
   )
   const service = fakeService({
@@ -201,7 +219,7 @@ test('oversized data is truncated with a marker while provenance stays intact', 
   const bigRows = Array.from({ length: 3000 }, (_, i) => [i, `x${'y'.repeat(30)}`])
   const envelope = okEnvelope(
     { data: { columns: ['idx', 'pad'], rows: bigRows, unit: '条' } },
-    { provider: 'wind', operation: 'financial.stock.snapshot', transportId: 'cli', unit: '条' },
+    { provider: 'wind', operation: 'financial.stock.snapshot', transportId: 'cli', source: 'fixture://wind/snapshot', unit: '条' },
   )
   const service = fakeService({
     resolve: () => ({ capability: 'financial.stock.snapshot', status: 'bound', binding: readBinding, rejections: [] }),

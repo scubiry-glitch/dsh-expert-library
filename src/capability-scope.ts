@@ -11,6 +11,16 @@
 
 export const CAPABILITY_SCOPE_SCHEMA_VERSION = 1 as const
 
+/** Explicit work-tool grant for newly provisioned general-purpose members. */
+export const DEFAULT_MEMBER_WORK_TOOLS: readonly string[] = Object.freeze([
+  'bash', 'read', 'read_image', 'write', 'edit', 'glob', 'grep',
+])
+
+/** Omission selects the creation default; an explicit empty list stays empty. */
+export function memberWorkTools(allowedTools?: readonly string[]): readonly string[] {
+  return [...(allowedTools ?? DEFAULT_MEMBER_WORK_TOOLS)]
+}
+
 export type ScopeAllowlistKind = 'provider' | 'tool' | 'knowledge' | 'task'
 
 export interface CapabilityScopeBootstrapSummary {
@@ -27,7 +37,12 @@ export interface CapabilityScope {
   readonly schemaVersion: typeof CAPABILITY_SCOPE_SCHEMA_VERSION
   readonly expertId: string
   readonly role: string
+  /** Legacy provider namespace. New scopes should use the explicit fields below. */
   readonly allowedProviders: readonly string[]
+  /** Provider ids used by the host LLM route. Kept separate from data providers. */
+  readonly allowedLlmProviders?: readonly string[]
+  /** External/data transport provider ids. Undefined means no data-provider constraint. */
+  readonly allowedDataProviders?: readonly string[]
   readonly allowedTools: readonly string[]
   readonly allowedKnowledge: readonly string[]
   readonly allowedTasks: readonly string[]
@@ -41,6 +56,8 @@ export interface CapabilityScopeInput {
   readonly expertId: string
   readonly role: string
   readonly allowedProviders?: readonly string[]
+  readonly allowedLlmProviders?: readonly string[]
+  readonly allowedDataProviders?: readonly string[]
   readonly allowedTools?: readonly string[]
   readonly allowedKnowledge?: readonly string[]
   readonly allowedTasks?: readonly string[]
@@ -106,6 +123,8 @@ export interface RouteResolutionInput {
   readonly available?: readonly RouteCompatibility[]
   /** Scope provider allowlist; an absent list means this seam adds no restriction. */
   readonly allowedProviders?: readonly string[]
+  /** New namespace-specific LLM provider allowlist. */
+  readonly allowedLlmProviders?: readonly string[]
 }
 
 export interface RouteAttempt {
@@ -133,6 +152,8 @@ export type RouteResolutionResult =
 
 export interface HostCapabilitySnapshot {
   readonly providers?: readonly string[]
+  /** External provider ids, when the host exposes a separate catalogue. */
+  readonly dataProviders?: readonly string[]
   readonly tools?: readonly string[]
   readonly knowledge?: readonly string[]
   /** Whether the host can materialize a continuable child session. */
@@ -141,6 +162,7 @@ export interface HostCapabilitySnapshot {
 
 export interface ScopeFilteredCapabilities {
   readonly providers: readonly string[]
+  readonly dataProviders?: readonly string[]
   readonly tools: readonly string[]
   readonly knowledge: readonly string[]
 }
@@ -215,6 +237,12 @@ export function createCapabilityScope(input: CapabilityScopeInput): CapabilitySc
     expertId: input.expertId.trim(),
     role: input.role.trim(),
     allowedProviders: uniqueIds(input.allowedProviders, 'allowedProviders'),
+    ...(input.allowedLlmProviders === undefined
+      ? {}
+      : { allowedLlmProviders: uniqueIds(input.allowedLlmProviders, 'allowedLlmProviders') }),
+    ...(input.allowedDataProviders === undefined
+      ? {}
+      : { allowedDataProviders: uniqueIds(input.allowedDataProviders, 'allowedDataProviders') }),
     allowedTools: uniqueIds(input.allowedTools, 'allowedTools'),
     allowedKnowledge: uniqueIds(input.allowedKnowledge, 'allowedKnowledge'),
     allowedTasks: uniqueIds(input.allowedTasks, 'allowedTasks'),
@@ -245,6 +273,52 @@ function allowed(scope: CapabilityScope, kind: ScopeAllowlistKind, id: string): 
         ? scope.allowedKnowledge
         : scope.allowedTasks
   return list.includes(id)
+}
+
+/**
+ * Admit an external/data provider.  `allowedProviders` was the original A5
+ * field and is retained as a compatibility alias for old team files.  New
+ * scopes use `allowedDataProviders`, so an LLM route such as
+ * `deepseek-official` can never accidentally deny a data transport such as
+ * `wind`.
+ */
+export function admitDataProvider(scope: CapabilityScope, provider: string): ScopeAdmissionResult {
+  const id = typeof provider === 'string' ? provider.trim() : ''
+  if (id === '') {
+    return { ok: false, scope, denied: [{ kind: 'provider', id, code: 'invalid-request', reason: 'provider id must be a non-empty string' }] }
+  }
+  if (scope.allowedDataProviders !== undefined) {
+    return scope.allowedDataProviders.includes(id)
+      ? { ok: true, scope }
+      : { ok: false, scope, denied: [{ kind: 'provider', id, code: 'scope-denied', reason: `data provider "${id}" is outside the member capability scope` }] }
+  }
+  // Legacy snapshots with a non-empty allowlist used provider ids for data
+  // transports. Only treat values that are recognisable data providers as
+  // that old namespace; otherwise they are LLM route ids and do not constrain
+  // this gate. Explicit `allowedDataProviders: []` remains deny-all.
+  const legacyData = (scope.allowedProviders ?? []).filter(isKnownDataProvider)
+  if (legacyData.length > 0 && !legacyData.includes(id)) {
+    return { ok: false, scope, denied: [{ kind: 'provider', id, code: 'scope-denied', reason: `data provider "${id}" is outside the member capability scope` }] }
+  }
+  return { ok: true, scope }
+}
+
+/** Return a durable scope with one task explicitly granted. */
+export function grantCapabilityTask(scope: CapabilityScope, taskId: string): CapabilityScope {
+  if (!text(taskId)) throw new CapabilityScopeError('task id must be a non-empty string')
+  return createCapabilityScope({ ...scope, allowedTasks: [...scope.allowedTasks, taskId.trim()] })
+}
+
+/** Return a durable scope with one task explicitly revoked. */
+export function revokeCapabilityTask(scope: CapabilityScope, taskId: string): CapabilityScope {
+  if (!text(taskId)) throw new CapabilityScopeError('task id must be a non-empty string')
+  return createCapabilityScope({ ...scope, allowedTasks: scope.allowedTasks.filter((id) => id !== taskId.trim()) })
+}
+
+function isKnownDataProvider(value: string): boolean {
+  const id = value.toLowerCase()
+  return id === 'wind' || id === 'zyt' || id === 'beike' || id === 'rongcheng'
+    || id.startsWith('wind-') || id.startsWith('zyt-') || id.startsWith('beike-') || id.startsWith('rongcheng-')
 }
 
 /** Check one or more provider/tool/knowledge/task references and delegation depth. */
@@ -308,10 +382,12 @@ export function resolveCapabilityRoute(input: RouteResolutionInput): RouteResolu
     const model = typeof candidate.model === 'string' ? candidate.model.trim() : ''
     if (provider === '' || model === '') {
       attempts.push({ source, provider: provider || undefined, model: model || undefined, accepted: false, reason: 'provider and model are required' })
-      if (source !== 'fallback') return { ok: false, code: 'route-invalid', message: 'member route requires a provider and model', attempts }
       continue
     }
-    if (input.allowedProviders !== undefined && !input.allowedProviders.includes(provider)) {
+    const routeProviders = input.allowedLlmProviders !== undefined
+      ? input.allowedLlmProviders
+      : input.allowedProviders
+    if (routeProviders !== undefined && !routeProviders.includes(provider)) {
       attempts.push({ source, provider, model, accepted: false, reason: `provider "${provider}" is outside the capability scope` })
       continue
     }
@@ -322,7 +398,6 @@ export function resolveCapabilityRoute(input: RouteResolutionInput): RouteResolu
     }
     if (candidate.reasoningEffort !== undefined && typeof candidate.reasoningEffort !== 'string') {
       attempts.push({ source, provider, model, accepted: false, reason: 'reasoningEffort must be a string' })
-      if (source !== 'fallback') return { ok: false, code: 'route-invalid', message: 'reasoningEffort must be a string', attempts }
       continue
     }
     const effort = candidate.reasoningEffort === undefined || candidate.reasoningEffort === 'default'
@@ -330,7 +405,6 @@ export function resolveCapabilityRoute(input: RouteResolutionInput): RouteResolu
       : candidate.reasoningEffort.trim()
     if (candidate.reasoningEffort !== undefined && effort === '') {
       attempts.push({ source, provider, model, accepted: false, reason: 'reasoningEffort must not be empty' })
-      if (source !== 'fallback') return { ok: false, code: 'route-invalid', message: 'reasoningEffort must not be empty', attempts }
       continue
     }
     if (effort !== undefined && compatibility?.supportedEfforts !== undefined && !compatibility.supportedEfforts.includes(effort)) {
@@ -343,9 +417,10 @@ export function resolveCapabilityRoute(input: RouteResolutionInput): RouteResolu
   }
   const last = attempts.at(-1)
   const incompatible = last?.reason?.includes('available') || last?.reason?.includes('unsupported')
+  const invalid = attempts.some((attempt) => attempt.reason?.includes('required') || attempt.reason?.includes('must be'))
   return {
     ok: false,
-    code: incompatible ? 'route-incompatible' : 'provider-denied',
+    code: invalid ? 'route-invalid' : incompatible ? 'route-incompatible' : 'provider-denied',
     message: last?.reason ?? 'no compatible member route was found',
     attempts,
   }
@@ -363,17 +438,36 @@ function intersectScopeList(
 
 /** Filter scope against host capability facts without ever widening permissions. */
 export function bootstrapCapabilityScope(scope: CapabilityScope, host: HostCapabilitySnapshot): ScopeBootstrapResult {
-  const providers = intersectScopeList(scope.allowedProviders, host.providers)
+  // A cold-resumed pre-A5 record can reach this seam before the state reader
+  // has had a chance to rewrite it. Normalize missing namespace fields here as
+  // a second defensive boundary; this never widens an old allowlist.
+  const hasLlmNamespace = Object.prototype.hasOwnProperty.call(scope, 'allowedLlmProviders')
+  const normalized = scope.allowedLlmProviders === undefined
+    ? createCapabilityScope({ ...scope, allowedLlmProviders: [] })
+    : scope
+  scope = normalized
+  // Before the namespace split, `allowedProviders` represented the host LLM
+  // catalogue. Preserve that behaviour for old snapshots; new snapshots use
+  // `allowedLlmProviders` and leave data providers to their own catalogue.
+  const legacyProviders = !hasLlmNamespace && scope.allowedDataProviders === undefined
+  const providers = legacyProviders
+    ? intersectScopeList(scope.allowedProviders, host.providers)
+    : intersectScopeList(scope.allowedLlmProviders ?? [], host.providers)
+  const dataProviders = scope.allowedDataProviders === undefined
+    ? { values: [...scope.allowedProviders], removed: [], lenient: true }
+    : intersectScopeList(scope.allowedDataProviders, host.dataProviders)
   const tools = intersectScopeList(scope.allowedTools, host.tools)
   const knowledge = intersectScopeList(scope.allowedKnowledge, host.knowledge)
   const missing = [
     ...providers.removed.map(id => `provider:${id}`),
+    ...dataProviders.removed.map(id => `data-provider:${id}`),
     ...tools.removed.map(id => `tool:${id}`),
     ...knowledge.removed.map(id => `knowledge:${id}`),
   ]
-  const lenient = providers.lenient || tools.lenient || knowledge.lenient || host.continuable === undefined
+  const lenient = providers.lenient || dataProviders.lenient || tools.lenient || knowledge.lenient || host.continuable === undefined
   const emptyAfterFilter = [
-    ...(scope.allowedProviders.length > 0 && providers.values.length === 0 ? ['provider'] : []),
+    ...(legacyProviders && scope.allowedProviders.length > 0 && providers.values.length === 0 ? ['provider'] : []),
+    ...(scope.allowedDataProviders !== undefined && scope.allowedDataProviders.length > 0 && dataProviders.values.length === 0 ? ['data-provider'] : []),
     ...(scope.allowedTools.length > 0 && tools.values.length === 0 ? ['tool'] : []),
     ...(scope.allowedKnowledge.length > 0 && knowledge.values.length === 0 ? ['knowledge'] : []),
   ]
@@ -395,6 +489,7 @@ export function bootstrapCapabilityScope(scope: CapabilityScope, host: HostCapab
   const stopping = spawnError !== undefined
   const filtered: ScopeFilteredCapabilities = {
     providers: providers.removed,
+    ...(scope.allowedDataProviders === undefined ? {} : { dataProviders: dataProviders.removed }),
     tools: tools.removed,
     knowledge: knowledge.removed,
   }
@@ -403,12 +498,18 @@ export function bootstrapCapabilityScope(scope: CapabilityScope, host: HostCapab
     : `host filtered ${missing.join(', ')}`
   const bootstrapped = createCapabilityScope({
     ...scope,
-    allowedProviders: providers.values,
+    allowedProviders: legacyProviders ? providers.values : scope.allowedProviders,
+    allowedLlmProviders: legacyProviders ? [] : providers.values,
+    ...(scope.allowedDataProviders === undefined
+      ? {}
+      : { allowedDataProviders: dataProviders.values }),
     allowedTools: tools.values,
     allowedKnowledge: knowledge.values,
     bootstrap: {
       ...(scope.bootstrap ?? {}),
-      ...(host.providers === undefined && host.tools === undefined && host.knowledge === undefined ? {} : { hostCapabilities: [...new Set([...host.providers ?? [], ...host.tools ?? [], ...host.knowledge ?? []])] }),
+      ...(host.providers === undefined && host.dataProviders === undefined && host.tools === undefined && host.knowledge === undefined
+        ? {}
+        : { hostCapabilities: [...new Set([...host.providers ?? [], ...host.dataProviders ?? [], ...host.tools ?? [], ...host.knowledge ?? []])] }),
       ...(summary === undefined ? {} : { summary }),
     },
   })
@@ -450,6 +551,8 @@ export function restoreCapabilityScopeWithReport(value: unknown, identity?: { ex
     expertId,
     role,
     allowedProviders: value.allowedProviders as readonly string[] | undefined,
+    allowedLlmProviders: value.allowedLlmProviders as readonly string[] | undefined,
+    ...(value.allowedDataProviders === undefined ? {} : { allowedDataProviders: value.allowedDataProviders as readonly string[] }),
     allowedTools: value.allowedTools as readonly string[] | undefined,
     allowedKnowledge: value.allowedKnowledge as readonly string[] | undefined,
     allowedTasks: value.allowedTasks as readonly string[] | undefined,

@@ -185,7 +185,22 @@ export interface CompileInput {
 export interface CompiledMember {
   readonly slotId: string
   readonly expertId: string
+  /** Original library expert id for profile-backed members, when present. */
+  readonly sourceExpertId?: string
+  /** Explicit profile id that supplied this roster slot, when applicable. */
+  readonly profileId?: string
   readonly modelPolicy?: ModelPolicy
+  /** Source and exact route resolved by the Host before approval. */
+  readonly modelRouteSource?: 'profile-member' | 'profile-default' | 'expert-override' | 'expert-preset' | 'plugin-default' | 'captain'
+  readonly modelRouteFrozen?: boolean
+  readonly modelRouteFallbackIndex?: number
+  /** Ordered fallback routes declared by an explicit profile. */
+  readonly fallbackRoutes?: readonly ModelPolicy[]
+  /** Optional profile metadata carried through the execution adapter. */
+  readonly displayName?: string
+  readonly role?: string
+  readonly capabilities?: readonly string[]
+  readonly maxDepth?: number
   /** `user-signoff` when the slot requires a user approval gate pre-assembly. */
   readonly approval: 'none' | 'user-signoff'
 }
@@ -227,6 +242,13 @@ export interface CompiledTask {
   readonly retryPolicy: 'never' | 'provider-only' | 'quality-repair'
   readonly subject?: string
   readonly description?: string
+  /** Explicit profile acceptance statements retained through task materialization. */
+  readonly acceptance?: readonly string[]
+  readonly reportBundle?: import('../report-bundle.ts').ReportBundle
+  /** Host-resolved at stage/edit; never accepted in model-submitted profiles. */
+  readonly frozenSkillCraftContract?: import('../skill-craft-types.ts').FrozenSkillCraftContract
+  /** Explicit captain ownership in a profile; omission retains shared-pool semantics. */
+  readonly owner?: 'captain'
 }
 
 /** A gate bound into the plan, with its deterministic position in the chain. */
@@ -317,6 +339,14 @@ export interface ExecutionPlan {
   readonly gates: readonly CompiledGate[]
   readonly deliverables: readonly CompiledDeliverable[]
   readonly bindings: ExecutionBindings
+  /** Explicit profile protocol; task guidance, never an authority grant. */
+  readonly protocol?: readonly string[]
+  /** Optional explicit profile review policy carried into the runtime adapter. */
+  readonly reviewPolicy?: {
+    readonly required?: boolean
+    readonly maxRepairRounds?: number
+    readonly hardGateIds?: readonly string[]
+  }
   /** Deterministic decision trail (roster picks, provider binds, fallbacks). */
   readonly provenance: readonly CompileRecord[]
 }

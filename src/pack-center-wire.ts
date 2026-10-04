@@ -63,6 +63,22 @@ export interface CenterOperationView {
   result?: { generation: number; outcome: 'succeeded' | 'installed_not_enabled'; releaseId?: string; packId?: string; activated?: boolean; errorCode?: string }
   errorCode?: string
 }
+/** One observed host-scheduler action (or deliberate skip), newest last. */
+export interface CenterAutoActionView {
+  packId: string; releaseId: string; version: string
+  kind: 'install' | 'update_enable'; operationKey: string; at: string
+  outcome: 'enqueued' | 'succeeded' | 'failed' | 'skipped'; errorCode?: string; detail?: string
+}
+/** Effective update policy plus scheduler liveness; safe for the browser. */
+export interface CenterUpdatePolicyView {
+  mode: 'manual' | 'download' | 'patch_auto'
+  perPack: Record<string, 'manual' | 'download' | 'patch_auto'>
+  timerRunning: boolean; tickInFlight: boolean
+  intervalMs: number | null; nextCheckAt: string | null
+  lastCheckAt: string | null; lastCheckErrorCode?: string
+  lastApplyAt: string | null
+  recent: CenterAutoActionView[]
+}
 export interface CenterBindInput {
   bindingCode: string; expectedRevision: number; expectedCenterId: string
   trustedSigningKeys: Record<string, string>

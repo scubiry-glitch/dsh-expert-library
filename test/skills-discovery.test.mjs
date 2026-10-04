@@ -183,9 +183,9 @@ test('skillDiscoveryPromptSection: names the convention + the channel + the inve
   assert.ok(withIds.includes('<workspace>/<knowledgeDir>/skills/<id>/SKILL.md'), 'names the knowledge/skills convention')
   assert.ok(withIds.includes('GET /plugins/dsh-expert-library/skills'), 'names the inventory channel explicitly')
   assert.ok(withIds.includes(inventoryLine), 'folds in the given inventory line')
-  assert.ok(withIds.includes('① the session skill catalog'), 'keeps the check order')
-  assert.ok(withIds.includes('④ the marketplace'), 'keeps the full check order')
-  assert.ok(withIds.includes('filesystem search FIRST'), 'keeps the filesystem-first rule')
+  assert.ok(withIds.includes('only for names in the current Host session skill catalog'), 'Host invocation is governed by the Host catalog')
+  assert.ok(withIds.includes('read its exact SKILL.md path with a file-reading tool'), 'file entries give a direct supported action')
+  assert.ok(withIds.includes('check the local skill directories before concluding it is absent'), 'keeps the filesystem fallback')
 })
 
 test('skillDiscoveryPromptSection: without a resolvable inventory the mechanism is still named', () => {

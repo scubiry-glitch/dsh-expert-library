@@ -64,7 +64,11 @@ export const WIND_OPERATION_ROUTES: Readonly<Record<string, { readonly serverTyp
   'financial.index.snapshot': { serverType: 'index_data', toolName: 'get_index_price_indicators' },
   'financial.index.quote': { serverType: 'index_data', toolName: 'get_index_quote' },
   'financial.bond.valuation': { serverType: 'bond_data', toolName: 'get_bond_market_data' },
-  'financial.macro.query': { serverType: 'economic_data', toolName: 'natural_language_get_edb_data' },
+  // 修复 2026-09-29：natural_language_get_edb_data 不属于 economic_data
+  // server_type（ROUTE_ERROR 实测）；EDB 数值序列统一走 query_economic_indicator_data
+  //（必填 beginDate/endDate 或 observation，二选一）。指标检索另有
+  // search_economic_indicator（可按需增补 financial.macro.search 能力）。
+  'financial.macro.query': { serverType: 'economic_data', toolName: 'query_economic_indicator_data' },
   'financial.docs.search': { serverType: 'financial_docs', toolName: 'get_financial_news' },
 }
 

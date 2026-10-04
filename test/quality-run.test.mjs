@@ -6,8 +6,11 @@ import { createHash } from 'node:crypto'
 import {
   createQualityContract,
   createQualityRun,
+  amendQualityRun,
+  forkQualityRun,
   hasQualityEvent,
   integrateQualityRun,
+  isQualityRun,
   QualityRunError,
   requestQualityRepair,
   reviewQualityRun,
@@ -207,4 +210,103 @@ test('event ids make duplicate reviews safe after a JSON restart', () => {
   })
   assert.equal(replay.applied, false)
   assert.deepEqual(replay.run, restored)
+})
+
+test('contract amendments are audited before review and frozen afterward', () => {
+  let run = createQualityRun(contract(), 'run-amend')
+  const amended = amendQualityRun(run, {
+    eventId: 'amend-1', actor: 'captain', reason: 'clarify deliverable',
+    contract: contract({ objective: 'produce the final report' }), at: 900,
+  })
+  assert.equal(amended.applied, true)
+  run = amended.run
+  assert.equal(run.amendments.length, 1)
+  const replay = amendQualityRun(run, {
+    eventId: 'amend-1', actor: 'captain', reason: 'clarify deliverable',
+    contract: contract({ objective: 'produce the final report' }), at: 900,
+  })
+  assert.equal(replay.applied, false)
+  run = review(run, 'review-amend', 'pass').run
+  assert.ok(run.contractFrozenAt)
+  assert.throws(() => amendQualityRun(run, {
+    eventId: 'amend-2', actor: 'captain', reason: 'late change', contract: contract({ objective: 'late' }),
+  }), error => error instanceof QualityRunError && error.code === 'contract_frozen')
+})
+
+test('reopening integrated work preserves its audit evidence and requires a fresh review', () => {
+  const passed = review(createQualityRun(contract(), 'run-revision'), 'review-original').run
+  const old = integrateQualityRun(passed, { eventId: 'integrate-original', actor: 'captain' }).run
+  const snapshot = structuredClone(old)
+  const input = { eventId: 'reopen-1', actor: 'captain', reason: 'correct the deliverable', assignee: 'replacement', attempt: 3, at: 3000 }
+  const next = forkQualityRun(old, input).run
+  assert.deepEqual(old, snapshot)
+  assert.notEqual(next.runId, old.runId)
+  assert.notEqual(next.contract.id, old.contract.id)
+  assert.equal(next.contract.assignee, 'replacement')
+  assert.equal(next.attempt, 3)
+  assert.equal(next.contract.maxRepairRounds, 1)
+  assert.equal(next.status, 'pending')
+  assert.equal(next.latestEvidence, undefined)
+  assert.equal(next.contractFrozenAt, undefined)
+  assert.deepEqual(next.evidenceHistory, [])
+  assert.equal(next.revision.parentRunId, old.runId)
+  assert.equal(next.revision.budgetCharged, 1)
+  assert.deepEqual(next.contract.acceptance, old.contract.acceptance)
+  assert.deepEqual(next.contract.verify, old.contract.verify)
+  assert.equal(isQualityRun(JSON.parse(JSON.stringify(next))), true)
+  assert.throws(() => integrateQualityRun(next, { eventId: 'integrate-unreviewed', actor: 'captain' }), error => error.code === 'integration_blocked')
+  const rereviewed = review(next, 'review-revision').run
+  assert.equal(integrateQualityRun(rereviewed, { eventId: 'integrate-revision', actor: 'captain' }).run.status, 'integrated')
+})
+
+test('revision replay is idempotent after persistence and rejects changed requests', () => {
+  const old = review(createQualityRun(contract(), 'run-replay-revision'), 'review-original').run
+  const input = { eventId: 'reopen-1', actor: 'captain', reason: 'correct the deliverable', assignee: 'worker', attempt: 1, at: 3000 }
+  const next = JSON.parse(JSON.stringify(forkQualityRun(old, input).run))
+  assert.deepEqual(JSON.parse(JSON.stringify(forkQualityRun(old, input).run)), next)
+  assert.equal(forkQualityRun(next, { ...input, at: 4000 }).applied, false)
+  assert.throws(() => forkQualityRun(next, { ...input, reason: 'different request' }), error => error.code === 'idempotency_conflict')
+  assert.throws(() => forkQualityRun(old, { ...input, eventId: 'review-original' }), error => error.code === 'idempotency_conflict')
+})
+
+test('repairs and revisions share one cumulative budget across new runs', () => {
+  let run = createQualityRun(contract(), 'run-combined-budget')
+  run = review(run, 'review-1', 'reject', [finding(run)]).run
+  run = requestQualityRepair(run, { eventId: 'repair-1', actor: 'captain' }).run
+  run = review(run, 'review-2', 'reject', [finding(run)]).run
+  run = forkQualityRun(run, { eventId: 'reopen-1', actor: 'captain', reason: 'repair after handoff', assignee: 'worker', attempt: 3 }).run
+  assert.equal(run.contract.maxRepairRounds, 0)
+  assert.equal(run.revision.budgetCharged, 2)
+  assert.throws(() => amendQualityRun(run, {
+    eventId: 'restore-budget', actor: 'captain', reason: 'try to reset the limit', contract: { ...run.contract, maxRepairRounds: 2 },
+  }), error => error.code === 'repair_budget_exhausted')
+  run = review(run, 'review-3', 'reject', [finding(run)]).run
+  assert.equal(run.status, 'escalated')
+  assert.throws(() => forkQualityRun(run, {
+    eventId: 'reopen-2', actor: 'captain', reason: 'try another owner', assignee: 'replacement', attempt: 4,
+  }), error => error.code === 'repair_budget_exhausted')
+})
+
+test('repeated passing revisions cannot reset the revision limit', () => {
+  let run = review(createQualityRun(contract(), 'run-revision-budget'), 'review-1').run
+  for (let index = 1; index <= 2; index += 1) {
+    run = forkQualityRun(run, { eventId: `reopen-${index}`, actor: 'captain', reason: 'correct output', assignee: 'worker', attempt: index + 1 }).run
+    assert.equal(run.contract.maxRepairRounds, 2 - index)
+    run = review(run, `review-${index + 1}`).run
+  }
+  assert.throws(() => forkQualityRun(run, {
+    eventId: 'reopen-3', actor: 'captain', reason: 'correct output', assignee: 'worker', attempt: 4,
+  }), error => error.code === 'repair_budget_exhausted')
+})
+
+test('unreviewed assignment migration preserves the budget but never moves attempts backward', () => {
+  const old = createQualityRun(contract({ maxRepairRounds: 0 }), 'run-assignment')
+  const input = { eventId: 'assign-1', actor: 'captain', reason: 'assign the task', assignee: 'replacement', attempt: 2 }
+  const next = forkQualityRun(old, input).run
+  assert.equal(next.contract.maxRepairRounds, 0)
+  assert.equal(next.revision.budgetCharged, 0)
+  assert.throws(() => forkQualityRun(next, { ...input, eventId: 'backward', attempt: 1 }), error => error.code === 'stale_attempt')
+  assert.throws(() => forkQualityRun(old, { ...input, assignee: 'worker', attempt: 1 }), error => error.code === 'invalid_transition')
+  assert.throws(() => forkQualityRun(old, { ...input, reason: ' ' }), error => error.code === 'invalid_revision')
+  assert.equal(isQualityRun({ ...next, revision: { ...next.revision, budgetCharged: -1 } }), false)
 })

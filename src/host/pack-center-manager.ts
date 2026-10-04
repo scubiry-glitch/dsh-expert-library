@@ -1,4 +1,7 @@
-/** Deployment-local management service; network is only used by explicit admin actions. */
+/** Deployment-local management service; network is used by explicit admin
+ * actions and, when the deployment administrator opts in, by the host-side
+ * scheduled update check (see pack-center-auto-update.ts). This manager itself
+ * stays policy-free and never schedules anything. */
 import { readdir } from 'node:fs/promises'
 import { isAbsolute, join, parse, resolve } from 'node:path'
 import { homedir } from 'node:os'

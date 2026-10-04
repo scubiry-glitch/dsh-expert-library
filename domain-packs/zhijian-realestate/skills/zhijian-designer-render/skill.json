@@ -1,0 +1,21 @@
+{
+  "id": "zhijian-designer-render",
+  "name": "zhijian-designer-render",
+  "version": "1.1.1",
+  "schemaVersion": 2,
+  "source": {
+    "kind": "workspace",
+    "root": "skills/zhijian-designer-render",
+    "digest": "0ad519b461be005fe44bd7a0534f19b5fc9cdf73abaddd1f2b9719b357c6746c"
+  },
+  "contributions": {},
+  "permissions": {
+    "execScripts": [
+      "scripts/check.mjs"
+    ],
+    "internalOnly": true
+  },
+  "craft": {
+    "path": "craft/zhijian-designer-render.json"
+  }
+}

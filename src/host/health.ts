@@ -36,10 +36,10 @@ import { createNodeFetchRunner, type FetchFn } from './provider-transports.ts'
  * ------------------------------------------------------------------ */
 
 /** Probe targets accepted by the health route. */
-export type HealthProbeTarget = 'wind' | 'zyt' | 'beike' | 'packs' | 'all'
+export type HealthProbeTarget = 'wind' | 'zyt' | 'beike' | 'localdb' | 'packs' | 'all'
 
 /** Every valid probe target (route input validation). */
-export const HEALTH_PROBE_TARGETS: readonly HealthProbeTarget[] = ['wind', 'zyt', 'beike', 'packs', 'all']
+export const HEALTH_PROBE_TARGETS: readonly HealthProbeTarget[] = ['wind', 'zyt', 'beike', 'localdb', 'packs', 'all']
 
 /** Wind probe result (filesystem-only; no network, no CLI execution). */
 export interface WindHealth {
@@ -66,6 +66,21 @@ export interface ZytHealth {
   readonly reachable?: boolean
   readonly latencyMs?: number
   readonly identity?: ZytIdentity
+  readonly detail?: string
+}
+
+/** One registered localdb database row of the health report. */
+export interface LocalDbDatabaseHealth {
+  readonly id: string
+  readonly path: string
+  readonly exists: boolean
+  readonly sensitivity: 'public' | 'internal'
+}
+
+/** localdb probe result (filesystem-only; no runner execution). */
+export interface LocalDbHealth {
+  readonly registered: boolean
+  readonly databases: readonly LocalDbDatabaseHealth[]
   readonly detail?: string
 }
 
@@ -103,6 +118,7 @@ export interface HealthReport {
     readonly wind: WindHealth
     readonly zyt: ZytHealth
     readonly beike: BeikeHealth
+    readonly localdb: LocalDbHealth
   }
   readonly packs: readonly PackHealth[]
 }
@@ -447,6 +463,8 @@ export interface HealthProbeInput {
     readonly wind?: { readonly cliPath?: string }
     readonly zyt?: { readonly baseUrl: string }
     readonly beike?: { readonly baseUrl: string }
+    /** Registered database list (id/path/sensitivity only — no secrets exist here). */
+    readonly localdb?: { readonly databases: readonly { readonly id: string; readonly path: string; readonly sensitivity?: string }[] }
   }
   /** Provider ids currently registered by the ProviderTransportService. */
   readonly registered: readonly string[]
@@ -502,9 +520,25 @@ export async function runHealthProbe(target: HealthProbeTarget, input: HealthPro
     ? await Promise.all((input.packDirs ?? []).map((pack) => probePackHealth(pack.dir)))
     : []
 
+  const localdbDatabases = (input.providers.localdb?.databases ?? []).map(db => ({
+    id: db.id,
+    path: db.path,
+    exists: seams.exists(db.path),
+    sensitivity: db.sensitivity === 'internal' ? 'internal' as const : 'public' as const,
+  }))
+  const localdb: LocalDbHealth = {
+    registered: registered.has('localdb'),
+    databases: localdbDatabases,
+    ...(localdbDatabases.length === 0
+      ? { detail: registered.has('localdb') ? '已注册但无数据库条目' : '未配置数据库（providers.localdb.databases / LOCALDB_DATABASES / scanDirs）' }
+      : localdbDatabases.some(db => !db.exists)
+        ? { detail: '部分数据库文件不存在（这些库在 provider 注册时已被跳过）' }
+        : {}),
+  }
+
   return {
     checkedAt: new Date().toISOString(),
-    providers: { wind, zyt, beike },
+    providers: { wind, zyt, beike, localdb },
     packs,
   }
 }

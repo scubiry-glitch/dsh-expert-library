@@ -350,6 +350,9 @@ ${experts.length} 位房地产领域专家基线（${first} ~ ${last}，五大�
  * Deterministic: the output tree is byte-identical for the same source + lib.
  */
 export async function emitPack(outDir, options = {}) {
+  if (await fileExists(join(outDir, 'craft', 'zhijian-report-craft.json'))) {
+    throw new Error('Existing report-craft domain pack requires the complete build: npm run build:pack (or npm run check:pack); base emit refuses to overwrite authored craft.')
+  }
   const { srcDir, writeSrc = true } = options
   let parsed = null
 
@@ -519,6 +522,11 @@ async function main() {
   }
 
   try {
+    // The legacy projection cannot preserve authored craft extensions. Refuse
+    // before emitPack cleans generated directories, including explicit --out.
+    if (await fileExists(join(args.out, 'craft', 'zhijian-report-craft.json'))) {
+      throw new Error('Existing report-craft domain pack requires the complete build: npm run build:pack (or npm run check:pack). Legacy generation is allowed only for a separate base-pack --out directory.')
+    }
     if (args.check) {
       // A complete check re-emits from the pack's own embedded source (when
       // present) so the comparison covers source/ assets, not just entities.

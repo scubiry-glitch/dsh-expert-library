@@ -2,17 +2,19 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import type {
   CenterBindInput, CenterCatalogView, CenterConnectionView, CenterInstalledRelease, CenterInstallationsView,
-  CenterOperationInput, CenterOperationView, CenterReleaseDetail, CenterReleaseSummary, CenterUpdatesView,
+  CenterOperationInput, CenterOperationView, CenterReleaseDetail, CenterReleaseSummary, CenterUpdatePolicyView, CenterUpdatesView,
 } from '../pack-center-wire.ts'
 import { centerUiErrorCode, createPackCenterApi, isOlderCenterVersion, type PackCenterApi } from './pack-center-api.ts'
 import css from './pack-center-card.module.css'
 import { PackValidationPanel } from './domain-packs-card.tsx'
 import { PackLocalPanel } from './pack-local-panel.tsx'
-import type { ExpertLibrarySettingsScope } from './settings-shared.ts'
+import { UPDATE_MODE_LABEL, type ExpertLibrarySettingsScope } from './settings-shared.ts'
 
 const TABS = ['领域包目录', '本地校验', '本地来源', '已安装', '更新', '来源设置'] as const
 type Tab = typeof TABS[number]
-type ReadKey = 'connection' | 'catalog' | 'installed' | 'updates' | 'operations' | 'detail'
+type ReadKey = 'connection' | 'catalog' | 'installed' | 'updates' | 'operations' | 'policy' | 'detail'
+type UpdateMode = 'manual' | 'download' | 'patch_auto'
+const UPDATE_MODES: readonly UpdateMode[] = ['manual', 'download', 'patch_auto']
 type PendingAction = { input: CenterOperationInput; title: string; description: string; uncertain?: boolean }
 const PHASES: Record<string, string> = {
   queued: '排队等待', preparing: '准备目标', authorizing: '申请下载授权', downloading: '下载归档', verifying: '校验签名与内容',
@@ -38,6 +40,7 @@ const ERROR_HELP: Record<string, string> = {
   REQUEST_TIMEOUT: '请求超时，结果尚未确认。写操作不会自动重试。',
   REQUEST_FAILED: '请求未完成；请检查本地服务与管理权限。',
   INVALID_RESPONSE: '本地服务返回了无法识别的响应；未采用该响应。',
+  CENTER_OPERATION_KEY_RESERVED: '该操作键为宿主自动更新保留，不能从页面提交；请更换操作键。',
 }
 const date = (value: string | null | undefined): string => {
   if (!value) return '尚未检查'
@@ -48,6 +51,16 @@ const digest = (release: CenterReleaseSummary) => ({
   manifestSha256: release.manifestSha256, artifactSha256: release.artifactSha256, contentTreeSha256: release.contentTreeSha256,
 })
 const busyOperation = (operation: CenterOperationView) => operation.status === 'queued' || operation.status === 'running'
+/** 卡片颗粒度统一为领域包本身；版本是包内二级内容，用下拉选择。 */
+function groupByPack<T extends { packId: string }>(items: T[]): Array<[string, T[]]> {
+  const groups = new Map<string, T[]>()
+  for (const item of items) {
+    const list = groups.get(item.packId)
+    if (list) list.push(item)
+    else groups.set(item.packId, [item])
+  }
+  return [...groups.entries()]
+}
 
 function ErrorNotice({ code, label }: { code?: string; label?: string }) {
   if (!code) return null
@@ -60,6 +73,34 @@ function SnapshotNotice({ snapshot, label }: { snapshot: { checkedAt: string | n
     {!snapshot.hasSnapshot && <span>尚不能判断目录是否为空或是否已是最新版本。</span>}
     <ErrorNotice code={snapshot.errorCode} />
   </div>
+}
+
+const UPDATE_POLICY_HINT: Record<UpdateMode, string> = {
+  manual: '完全手动：只有点「检查更新」时才会访问中心。',
+  download: '定时自动检查，新版本只下载到本地缓存；启用仍需你在「已安装」页确认。',
+  patch_auto: '在自动下载之上，同一次版本号内的补丁更新会自动下载并启用；次版本及以上仍需人工确认。',
+}
+
+function UpdatePolicySection({ view, disabled, saving, onSave }: {
+  view: CenterUpdatePolicyView | null; disabled: boolean; saving: boolean
+  onSave: (mode: UpdateMode, perPack: Record<string, string>) => void
+}) {
+  const prefix = useId()
+  const current = view?.mode ?? 'manual'
+  return <section className={css.box} aria-label="更新策略">
+    <h3>更新策略（仅本机生效，中心不推送）</h3>
+    <div role="radiogroup" aria-label="更新策略档位">
+      {UPDATE_MODES.map(mode => <label className={css.check} key={mode}>
+        <input type="radio" name={`${prefix}-update-policy`} value={mode} checked={current === mode}
+          disabled={disabled || saving} onChange={() => onSave(mode, { ...(view?.perPack ?? {}) })} />
+        {UPDATE_MODE_LABEL[mode]}<span className={css.hint}>{UPDATE_POLICY_HINT[mode]}</span>
+      </label>)}
+    </div>
+    {current !== 'manual' && <p className={css.warning} role="status">已开启后台自动检查：插件进程将每约 6 小时（±随机抖动）访问一次中心目录；失败按指数退避，最长 24 小时。这是本插件唯一的周期性网络行为，中心侧没有任何推送。自动动作使用与手动操作完全相同的验签与确认链路，全部留有持久操作记录。</p>}
+    {view?.lastCheckErrorCode && view.timerRunning && <p className={css.error} role="alert">最近一次自动检查未成功：<code>{view.lastCheckErrorCode}</code>；将按退避节奏自动重试。</p>}
+    <p className={css.hint}>最近自动检查：{date(view?.lastCheckAt ?? null)}{view?.nextCheckAt && view.timerRunning ? ` · 下次约 ${date(view.nextCheckAt)}` : ' · 自动检查未启用'}</p>
+    {disabled && <p className={css.hint}>设置服务不可用或不可写，无法在此修改更新策略；管理员仍可在插件配置文件的 packCenterUpdatePolicy 中设置。</p>}
+  </section>
 }
 
 function ReleaseDetail({ value, close }: { value: CenterReleaseDetail; close: () => void }) {
@@ -151,11 +192,14 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
   const [catalog, setCatalog] = useState<CenterCatalogView | null>(null)
   const [installed, setInstalled] = useState<CenterInstallationsView | null>(null)
   const [updates, setUpdates] = useState<CenterUpdatesView | null>(null)
+  const [policy, setPolicy] = useState<CenterUpdatePolicyView | null>(null)
   const [operations, setOperations] = useState<CenterOperationView[]>([])
   const [detail, setDetail] = useState<CenterReleaseDetail | null>(null)
   const [search, setSearch] = useState('')
   const [loadedSearch, setLoadedSearch] = useState('')
   const [rollbackTargets, setRollbackTargets] = useState<Record<string, string>>({})
+  const [catalogSelection, setCatalogSelection] = useState<Record<string, string>>({})
+  const [installedSelection, setInstalledSelection] = useState<Record<string, string>>({})
   const [errors, setErrors] = useState<Partial<Record<ReadKey | 'write', string>>>({})
   const [loading, setLoading] = useState<Partial<Record<ReadKey, boolean>>>({})
   const [writing, setWriting] = useState(false)
@@ -174,9 +218,10 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
     client.close(); apiRef.current = createPackCenterApi(token)
     sequences.current = {}; connectionRevisionRef.current = null
     writingRef.current = false; setWriting(false); setLoading({})
-    setConnection(null); setCatalog(null); setInstalled(null); setUpdates(null); setOperations([]); setDetail(null)
+    setConnection(null); setCatalog(null); setInstalled(null); setUpdates(null); setPolicy(null); setOperations([]); setDetail(null)
     setPendingAction(null); setUnbindRevision(null); setErrors({ connection: errorCode })
     setNotice('本地管理权限未通过。旧权限下的内容已清空，请重新应用有效令牌。')
+    setCatalogSelection({}); setInstalledSelection({})
   }
 
   async function read<T>(key: ReadKey, client: PackCenterApi, request: () => Promise<T>, commit: (value: T) => void): Promise<void> {
@@ -226,6 +271,7 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
     loadInstalled(client)
     loadOperations(client)
     void read('updates', client, client.updates, setUpdates)
+    void read('policy', client, client.updatePolicy, setPolicy)
     void read('catalog', client, () => client.catalog({ limit: 20 }), setCatalog)
   }
   function resetAfterBinding(value: CenterConnectionView): void {
@@ -234,9 +280,10 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
     apiRef.current = client
     sequences.current = {}
     requestedInstalledGeneration.current = 0
-    setCatalog(null); setInstalled(null); setUpdates(null); setOperations([]); setDetail(null)
+    setCatalog(null); setInstalled(null); setUpdates(null); setPolicy(null); setOperations([]); setDetail(null)
     setPendingAction(null); setUnbindRevision(null); setErrors({}); setLoading({}); setRollbackTargets({})
     setSearch(''); setLoadedSearch('')
+    setCatalogSelection({}); setInstalledSelection({})
     bootstrap(client, value)
   }
   useEffect(() => {
@@ -357,6 +404,29 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
     if (!client || writingRef.current || loading.updates || restartRequired) return
     void read('updates', client, client.checkUpdates, setUpdates)
   }
+  function loadPolicy(): void {
+    const client = apiRef.current
+    if (client) void read('policy', client, client.updatePolicy, setPolicy)
+  }
+  // Whole-dictionary write, mirroring the expertModelOverrides flow: the host
+  // re-normalizes on read, and an empty policy unsets the field entirely so
+  // the entry config stays the clean fallback.
+  const policyEditable = scope !== undefined && scope.getSnapshot().status === 'ready' && scope.getSnapshot().writable === true
+  const [savingPolicy, setSavingPolicy] = useState(false)
+  async function saveUpdatePolicy(mode: UpdateMode, perPack: Record<string, string>): Promise<void> {
+    if (!scope || !policyEditable || savingPolicy) return
+    setSavingPolicy(true)
+    try {
+      const next: { mode?: string; perPack?: Record<string, string> } = {}
+      if (mode !== 'manual') next.mode = mode
+      const overrides = Object.fromEntries(Object.entries(perPack).filter(([, value]) => value !== 'manual'))
+      if (Object.keys(overrides).length) next.perPack = overrides
+      if (Object.keys(next).length) await scope.set('packCenterUpdatePolicy', next)
+      else await scope.unset('packCenterUpdatePolicy')
+      loadPolicy()
+    } catch (error) { setErrors(previous => ({ ...previous, write: centerUiErrorCode(error) })) }
+    finally { setSavingPolicy(false) }
+  }
   function tabKeys(event: KeyboardEvent<HTMLButtonElement>): void {
     const index = TABS.indexOf(tab)
     const next = event.key === 'ArrowRight' ? (index + 1) % TABS.length : event.key === 'ArrowLeft' ? (index + TABS.length - 1) % TABS.length
@@ -396,14 +466,23 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
         </form>
         <SnapshotNotice snapshot={catalog && (errors.catalog ? { ...catalog, stale: true } : catalog)} label="目录" /><ErrorNotice code={errors.catalog} label="目录读取" />
         {!errors.catalog && catalog?.hasSnapshot && !catalog.stale && catalog.items.length === 0 && <p className={css.hint}>当前凭据与筛选范围内没有可见发布。</p>}
-        <ul className={css.cards}>{catalog?.items.map(item => <li key={item.releaseId} className={css.box}>
-          <div className={css.row}><h3>{item.name || item.packId}</h3><span className={css.pill}>{item.version}</span></div>
-          <p className={css.meta}>{item.packId} · {item.ownerOrgId} · {date(item.publishedAt)}</p>
-          {!item.compatibility.compatible && <p className={css.warning}>不兼容：{item.compatibility.reasons.join('；')}</p>}
-          {!item.downloadAvailability.available && <p className={css.warning}>暂不可下载 <code>{item.downloadAvailability.code}</code></p>}
-          <div className={css.actions}><button className={css.button} type="button" disabled={loading.detail} onClick={() => loadDetail(item.releaseId)}>查看详情</button>
-            <button className={css.primaryButton} type="button" disabled={cannotMutate || !connection?.connection?.bound || catalogStale || !item.compatibility.compatible || !item.downloadAvailability.available} onClick={() => chooseRemote(item, 'install')}>安装到缓存</button></div>
-        </li>)}</ul>
+        <ul className={css.cards}>{catalog && groupByPack(catalog.items).map(([packId, releases]) => {
+          const selected = releases.find(item => item.releaseId === catalogSelection[packId]) ?? releases[0]!
+          return <li key={packId} className={css.box}>
+          <div className={css.row}>
+            <h3>{selected.name || packId}</h3>
+            <label className={css.field} htmlFor={`${prefix}-catalog-version-${packId}`}>版本
+              <select className={css.input} id={`${prefix}-catalog-version-${packId}`} value={selected.releaseId} onChange={event => setCatalogSelection(value => ({ ...value, [packId]: event.target.value }))}>
+                {releases.map(item => <option key={item.releaseId} value={item.releaseId}>{item.version}</option>)}
+              </select>
+            </label>
+          </div>
+          <p className={css.meta}>{packId} · {selected.ownerOrgId} · {date(selected.publishedAt)} · 共 {releases.length} 个可见版本</p>
+          {!selected.compatibility.compatible && <p className={css.warning}>所选版本不兼容：{selected.compatibility.reasons.join('；')}</p>}
+          {!selected.downloadAvailability.available && <p className={css.warning}>所选版本暂不可下载 <code>{selected.downloadAvailability.code}</code></p>}
+          <div className={css.actions}><button className={css.button} type="button" disabled={loading.detail} onClick={() => loadDetail(selected.releaseId)}>查看所选版本详情</button>
+            <button className={css.primaryButton} type="button" disabled={cannotMutate || !connection?.connection?.bound || catalogStale || !selected.compatibility.compatible || !selected.downloadAvailability.available} onClick={() => chooseRemote(selected, 'install')}>安装所选版本到缓存</button></div>
+        </li>})}</ul>
         {catalog?.nextCursor && <button className={css.button} type="button" disabled={loading.catalog || catalogStale} onClick={() => loadCatalog(loadedSearch, catalog.nextCursor!)}>加载更多发布</button>}
         <ErrorNotice code={errors.detail} label="发布详情" />{loading.detail && <p role="status">正在读取发布详情…</p>}
         {detail && <ReleaseDetail value={detail} close={() => setDetail(null)} />}
@@ -415,14 +494,23 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
         <p className={css.hint}>安装只缓存；启用、停用、回滚均需单独确认。中心离线时仍可管理已验证的本地版本。</p>
         <ErrorNotice code={errors.installed} label="本地状态" />
         {!errors.installed && installed?.items.length === 0 && <p className={css.hint}>尚无中心管理的本地安装版本。原有领域包预览入口保持不变。</p>}
-        <ul className={css.cards}>{installed?.items.map(item => {
+        <ul className={css.cards}>{installed && groupByPack(installed.items).map(([packId, releases]) => {
+          const item = releases.find(candidate => candidate.releaseId === installedSelection[packId])
+            ?? releases.find(candidate => candidate.active) ?? releases[0]!
           const previous = installed.items.filter(candidate => candidate.releaseId !== item.releaseId && candidate.packId === item.packId && candidate.source === item.source
             && candidate.centerId === item.centerId && candidate.ownerOrgId === item.ownerOrgId && candidate.integrity === 'verified'
             && (isOlderCenterVersion(candidate.version, item.version) || candidate.releaseId === item.previousReleaseId))
           const target = previous.find(candidate => candidate.releaseId === rollbackTargets[item.releaseId]) ?? previous.find(candidate => candidate.releaseId === item.previousReleaseId) ?? previous[0]
-          return <li className={css.box} key={item.releaseId}>
-            <div className={css.row}><h3>{item.packId}@{item.version}</h3><span className={css.pill} data-good={item.active}>{item.active ? '已启用' : '已缓存 / 未启用'}</span><span className={css.pill}>{item.source === 'legacy' ? '接管的旧来源' : '中心包'}</span></div>
-            <p className={css.meta}>发布 ID <code>{item.releaseId}</code> · 安装于 {date(item.installedAt)}</p>
+          return <li className={css.box} key={packId}>
+            <div className={css.row}><h3>{packId}</h3>
+              <span className={css.pill} data-good={item.active}>{item.active ? '已启用' : '已缓存 / 未启用'}</span><span className={css.pill}>{item.source === 'legacy' ? '接管的旧来源' : '中心包'}</span>
+              <label className={css.field} htmlFor={`${prefix}-installed-version-${packId}`}>版本
+                <select className={css.input} id={`${prefix}-installed-version-${packId}`} value={item.releaseId} onChange={event => setInstalledSelection(value => ({ ...value, [packId]: event.target.value }))}>
+                  {releases.map(candidate => <option key={candidate.releaseId} value={candidate.releaseId}>{candidate.version}{candidate.active ? ' · 已启用' : ''}{candidate.source === 'legacy' ? ' · 旧来源' : ''}</option>)}
+                </select>
+              </label>
+            </div>
+            <p className={css.meta}>发布 ID <code>{item.releaseId}</code> · 安装于 {date(item.installedAt)} · 共 {releases.length} 个本地版本</p>
             {item.source === 'legacy' && <p className={css.hint}>此处只读展示旧来源。接管、恢复和卸载请继续使用原有管理流程。</p>}
             {item.integrity !== 'verified' && <p className={css.warning}>本地完整性不可用，不能启用或回滚至此版本。<code> {item.errorCode}</code></p>}
             <div className={css.actions}>
@@ -438,12 +526,29 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
         })}</ul>
       </div>}
       {tab === '更新' && <div className={css.stack}>
+        <UpdatePolicySection view={policy} disabled={!policyEditable} saving={savingPolicy}
+          onSave={(mode, perPack) => void saveUpdatePolicy(mode, perPack)} />
         <div className={css.row}><h3>已安装包更新</h3><button className={css.button} type="button" disabled={loading.updates || writing || restartRequired || !connection?.connection?.bound} onClick={checkUpdates}>{loading.updates ? '检查中…' : '检查更新'}</button></div>
-        <p className={css.hint}>检查不会自动安装。仅显示当前凭据可见的稳定发布；权限、兼容性与依赖阻断会单独列出。</p>
+        <p className={css.hint}>手动检查不会自动安装。自动策略的动作会以「自动」标记出现在下方操作进度中；非激活包不会被自动策略改动。</p>
         <SnapshotNotice snapshot={updates && (errors.updates ? { ...updates, stale: true } : updates)} label="更新检查" /><ErrorNotice code={errors.updates} label="更新检查" />
         {!errors.updates && updates?.hasSnapshot && !updates.stale && updates.items.length === 0 && <p className={css.hint}>没有需要检查的中心安装包。</p>}
         <ul className={css.cards}>{updates?.items.map(item => <li className={css.box} key={item.packId}>
-          <h3>{item.packId}</h3><p>当前 {item.current.version} · {item.current.active ? '已启用' : '未启用'}{item.latestVisible ? ` · 最新可见 ${item.latestVisible.version}` : ''}</p>
+          <div className={css.row}><h3>{item.packId}</h3>
+            <label className={css.field} htmlFor={`${prefix}-policy-${item.packId}`}>本包策略
+              <select className={css.input} id={`${prefix}-policy-${item.packId}`} disabled={!policyEditable || savingPolicy}
+                value={policy?.perPack?.[item.packId] ?? 'inherit'}
+                onChange={event => {
+                  const next: Record<string, string> = { ...(policy?.perPack ?? {}) }
+                  if (event.target.value === 'inherit') delete next[item.packId]
+                  else next[item.packId] = event.target.value
+                  void saveUpdatePolicy((policy?.mode ?? 'manual') as UpdateMode, next)
+                }}>
+                <option value="inherit">跟随全局</option>
+                {UPDATE_MODES.map(mode => <option key={mode} value={mode}>{UPDATE_MODE_LABEL[mode]}</option>)}
+              </select>
+            </label>
+          </div>
+          <p>当前 {item.current.version} · {item.current.active ? '已启用' : '未启用'}{item.latestVisible ? ` · 最新可见 ${item.latestVisible.version}` : ''}</p>
           {item.status === 'up_to_date' && <p className={updatesStale ? css.warning : css.hint}>{updatesStale ? '上次检查无可用更新；当前尚未确认。' : '当前可见范围内无可用更新。'}</p>}
           {item.status === 'no_stable_release' && <p className={css.warning}>当前可见范围没有可用稳定发布，不能断言已是最新。</p>}
           {item.status === 'blocked' && <p className={css.warning}>较新发布存在阻断，尚不能更新。</p>}
@@ -464,7 +569,9 @@ function CenterSession({ token, scope }: { token: string; scope?: ExpertLibraryS
       {errors.operations && hasPendingOperations && <p className={css.warning}>进度查询已暂停，不能据此认定任务失败。请手动刷新；不会重新提交安装。</p>}
       {!errors.operations && operations.length === 0 && <p className={css.hint}>暂无持久化操作记录。</p>}
       <ol className={css.cards}>{operations.map(item => <li className={css.operation} key={item.operationId} aria-busy={busyOperation(item)}>
-        <div className={css.row}><strong>{KINDS[item.request.kind]} · {item.request.packId ?? item.request.releaseId}</strong><span className={css.pill} data-good={item.status === 'succeeded' && item.result?.outcome !== 'installed_not_enabled'}>{item.result?.outcome === 'installed_not_enabled' ? '已安装但未启用' : STATUS[item.status]}</span></div>
+        <div className={css.row}><strong>{KINDS[item.request.kind]} · {item.request.packId ?? item.request.releaseId}</strong>
+          {item.request.operationKey.startsWith('auto-') && <span className={css.pill}>自动策略</span>}
+          <span className={css.pill} data-good={item.status === 'succeeded' && item.result?.outcome !== 'installed_not_enabled'}>{item.result?.outcome === 'installed_not_enabled' ? '已安装但未启用' : STATUS[item.status]}</span></div>
         <p role="status">阶段：{PHASES[item.phase] ?? '等待明确阶段'} · 更新于 {date(item.updatedAt)}</p>
         {item.result?.outcome === 'installed_not_enabled' && <p className={css.warning}>目标已缓存，但启用未成功；原启用版本保持不变。请检查错误后重新选择本地启用操作。</p>}
         <p className={css.meta}>操作 ID <code>{item.operationId}</code> · 固定操作键 <code>{item.request.operationKey}</code></p>
@@ -483,7 +590,7 @@ export function PackCenterCard({ close, scope }: { close: () => void; scope?: Ex
   const prefix = useId()
   return <section className={css.card}>
     <header className={css.head}><div className={css.row}><h2>领域包版本管理</h2><button className={css.button} type="button" onClick={close}>关闭</button></div>
-      <p className={css.hint}>独立中心负责发布与审核；本机负责可信下载、缓存、启用和回滚。不会自动升级正在运行的领域包。</p>
+      <p className={css.hint}>独立中心负责发布与审核；本机负责可信下载、缓存、启用和回滚。默认不会自动升级正在运行的领域包；如已在「更新」页签开启自动策略，也仅限下载缓存或补丁级启用，且每一步都留有操作记录。</p>
       <details className={css.auth}><summary>本地管理权限{session.token ? ' · 已设置页面内令牌' : ''}</summary>
         <form className={css.stack} autoComplete="off" onSubmit={event => { event.preventDefault(); const token = tokenDraft.trim(); setTokenDraft(''); setSession(previous => ({ token, revision: previous.revision + 1 })) }}>
           <label className={css.field} htmlFor={`${prefix}-token`}>本地管理令牌（可选）<input id={`${prefix}-token`} className={css.input} type="password" value={tokenDraft} maxLength={4096} autoComplete="new-password" spellCheck={false} onChange={event => setTokenDraft(event.target.value)} /></label>

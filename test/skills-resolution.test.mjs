@@ -66,7 +66,7 @@ test('(c) scenario skill-binding path: the embedded block (with purpose) carries
   // resolved, scenario.skill.purpose)}` — same propagation, purpose line on.
   const workspace = makeWorkspace({ alpha: '# alpha', beta: '# beta' })
   try {
-    const resolved = await resolveSkill(ctx, workspace, 'knowledge', 'video-shotcraft', 'video-shotcraft')
+    const resolved = await resolveSkill(ctx, workspace, 'knowledge', 'missing-scenario-fixture', 'missing-scenario-fixture')
     const block = skillDescriptionBlock(resolved, '可选增强：产品视频')
     assert.ok(block.includes('（用途：可选增强：产品视频）'), 'scenario path passes the skill purpose')
     assert.ok(block.includes('alpha') && block.includes('beta'), `scenario skill hint must suggest the live ids, got: ${block}`)

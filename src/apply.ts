@@ -24,10 +24,9 @@
  *   `opts.interpolations` + per-expert derived keys (`{expertId}`,
  *   `{expertName}`, `{expertField}`, `{expertInitials}`) + `{dependencies}`;
  *   unknown `{key}` tokens are left verbatim;
- * - members are added with `{ expert }` only — the plan's `modelPolicy` is
- *   advisory (recorded, never passed as route args), so the documented route
- *   precedence (preset expert route > explicit > memberModel > captain) is
- *   untouched;
+ * - profile-backed members carry route and fallback metadata through the
+ *   normal member admission path, while legacy scenario members retain the
+ *   preset expert route precedence;
  * - every assembly step (create / members / tasks / kick / provenance write)
  *   sits inside one try block: any failure rolls the team back via
  *   `rollbackTeamAssembly`, so a half-built team can never wedge the
@@ -49,7 +48,9 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import type { Agent } from '@deepseek-ai/dsh-agent'
-import { readTeam, withTeamLock, writeTeam } from './state.ts'
+import { CAPTAIN_KEY, readTeam, withTeamLock, writeTeam, syncTaskProjectInput } from './state.ts'
+import type { SharedTaskContext } from './types.ts'
+import { reportArtifactCheck, reportCheckDeliverables, isReportCraftBinding, requireCurrentSkillCraftSelection, requireNewReportCraftSelection } from './report-bundle.ts'
 import {
   addMemberCore,
   createTaskCore,
@@ -64,6 +65,9 @@ import {
 import type { CompileFailure, ExecutionPlan } from './v2/compiler.ts'
 import type { ModelPolicy } from './v2/types.ts'
 import { stampQualityPlan } from './task-gates.ts'
+import { assertDurableQualityRun } from './quality-runtime.ts'
+import { createQualityRun } from './quality-run.ts'
+import { validateFrozenPlanModelRoutes } from './plan-models.ts'
 
 /** Runtime assembly metadata supplied by the thin adapters. */
 export interface ApplyPlanOptions {
@@ -81,6 +85,9 @@ export interface ApplyPlanOptions {
   taskSuffixes?: Readonly<Record<string, string>>
   /** Kick once after the full DAG is seeded (default true). */
   kick?: boolean
+  /** New staged/profile plans get an independent structured quality run. */
+  structuredQuality?: boolean
+  sharedTaskContext?: SharedTaskContext
 }
 
 /** One physical task of the expanded team DAG. */
@@ -89,6 +96,8 @@ export interface PhysicalTask {
   readonly id: string
   /** CompiledTask id it derives from. */
   readonly logicalId: string
+  /** Explicit captain ownership; unassigned legacy tasks remain shared. */
+  readonly assignee?: 'captain'
   /** Position among the logical task's expertIds (fan-out), when expanded. */
   readonly fanOutIndex?: number
   /** Interpolated subject. */
@@ -112,7 +121,18 @@ export interface PlanRef {
 
 /** Pure expansion: plan → roster members + physical tasks + plan ref. */
 export interface ExpandedPlan {
-  readonly members: readonly { slotId: string; expertId: string; modelPolicy?: ModelPolicy }[]
+  readonly members: readonly {
+    slotId: string
+    expertId: string
+    sourceExpertId?: string
+    profileId?: string
+    displayName?: string
+    role?: string
+    capabilities?: readonly string[]
+    maxDepth?: number
+    modelPolicy?: ModelPolicy
+    fallbackRoutes?: readonly ModelPolicy[]
+  }[]
   readonly tasks: readonly PhysicalTask[]
   readonly planRef: PlanRef
 }
@@ -185,16 +205,26 @@ function buildDescription(
  * the same `ExpandedPlan` (golden property).
  */
 export function expandExecutionPlan(plan: ExecutionPlan, opts: ApplyPlanOptions): ExpandedPlan {
+  for (const task of plan.tasks) {
+    if (!isReportCraftBinding(task.reportBundle, task.frozenSkillCraftContract)) throw new Error('SKILL_CRAFT_CONTRACT_MISMATCH: compiled task selections require a matching Host-frozen contract')
+  }
   // 1. Roster → members, deduped by expertId (first occurrence wins).
   const seen = new Set<string>()
-  const rosterMembers: { slotId: string; expertId: string; modelPolicy?: ModelPolicy }[] = []
+  const rosterMembers: { slotId: string; expertId: string; sourceExpertId?: string; profileId?: string; displayName?: string; role?: string; capabilities?: readonly string[]; maxDepth?: number; modelPolicy?: ModelPolicy; fallbackRoutes?: readonly ModelPolicy[] }[] = []
   for (const member of plan.roster) {
     if (seen.has(member.expertId)) continue
     seen.add(member.expertId)
     rosterMembers.push({
       slotId: member.slotId,
       expertId: member.expertId,
+      ...(member.sourceExpertId === undefined ? {} : { sourceExpertId: member.sourceExpertId }),
+      ...(member.profileId === undefined ? {} : { profileId: member.profileId }),
+      ...(member.displayName === undefined ? {} : { displayName: member.displayName }),
+      ...(member.role === undefined ? {} : { role: member.role }),
+      ...(member.capabilities === undefined ? {} : { capabilities: [...member.capabilities] }),
+      ...(member.maxDepth === undefined ? {} : { maxDepth: member.maxDepth }),
       ...(member.modelPolicy === undefined ? {} : { modelPolicy: { ...member.modelPolicy } }),
+      ...(member.fallbackRoutes === undefined || member.modelRouteFrozen === true ? {} : { fallbackRoutes: member.fallbackRoutes.map(route => ({ ...route })) }),
     })
   }
   let members = rosterMembers
@@ -236,6 +266,7 @@ export function expandExecutionPlan(plan: ExecutionPlan, opts: ApplyPlanOptions)
       tasks.push({
         id,
         logicalId: logical.id,
+        ...(logical.owner === 'captain' ? { assignee: CAPTAIN_KEY } : {}),
         subject: interpolate(logical.subject ?? '', values),
         ...buildDescription(logical.description, values, opts.taskSuffixes?.[id]),
         dependsOn: [...deps],
@@ -287,22 +318,47 @@ export async function applyExecutionPlan(
   signal: AbortSignal,
   core: ExpertToolsCore,
 ): Promise<ApplyPlanResult> {
+  if (plan.tasks.some(task => task.reportBundle !== undefined)
+    && (opts.structuredQuality !== true || plan.reviewPolicy?.required === false)) throw new Error('REPORT_REVIEW_REQUIRED: explicitly selected report checks require structured independent review')
   const workspace = workspaceOf(captain)
+  for (const task of plan.tasks) {
+    requireNewReportCraftSelection(task.reportBundle)
+    await requireCurrentSkillCraftSelection(ctx, config, workspace, task.reportBundle, task.frozenSkillCraftContract)
+  }
   const expanded = expandExecutionPlan(plan, opts)
+  await validateFrozenPlanModelRoutes(ctx, captain, plan, signal)
   const team = await createTeamCore(ctx, config, captain, {
+    plannedExecution: plan,
     name: opts.teamName,
     description: opts.description,
+    ...(opts.sharedTaskContext === undefined ? {} : { sharedTaskContext: opts.sharedTaskContext }),
+    ...(plan.protocol === undefined ? {} : { taskProtocol: plan.protocol }),
     ...(plan.scenario?.id === undefined ? {} : { scenarioId: plan.scenario.id }),
   }, signal)
 
   try {
-    // Members: one per distinct rostered expert, route resolved by the live
-    // library (preset expert route wins) — the plan's modelPolicy is never
-    // passed as a route override.
+    // Members: one per distinct rostered expert. Profile-backed route and
+    // fallback metadata enter the same admission path as direct members.
     const memberNameByExpert = new Map<string, string>()
     const members: ApplyPlanResult['members'] = []
     for (const member of expanded.members) {
-      const added = await addMemberCore(ctx, config, captain, { expert: member.expertId }, signal, core.memberSelections)
+      const added = await addMemberCore(ctx, config, captain, {
+        // Template-compiled members carry only expertId (compiler `memberOf`
+        // never sets sourceExpertId); profile-backed members carry the library
+        // id separately. Fall back to expertId so both paths resolve an expert.
+        ...(member.sourceExpertId !== undefined ? { expert: member.sourceExpertId }
+          : member.profileId === undefined ? { expert: member.expertId } : {}),
+        ...(member.profileId === undefined ? {} : { profileId: member.profileId }),
+        ...(member.displayName === undefined ? {} : { name: member.displayName }),
+        ...(member.role === undefined ? {} : { role: member.role }),
+        ...(member.maxDepth === undefined ? {} : { maxDepth: member.maxDepth }),
+        ...(member.modelPolicy === undefined ? {} : {
+          provider: member.modelPolicy.provider,
+          model: member.modelPolicy.model,
+          ...(member.modelPolicy.reasoningEffort === undefined ? {} : { reasoning_effort: member.modelPolicy.reasoningEffort }),
+        }),
+        ...(member.fallbackRoutes === undefined ? {} : { fallbackRoutes: member.fallbackRoutes.map(route => ({ ...route })) }),
+      }, signal, core.memberSelections)
       memberNameByExpert.set(member.expertId, added.member_name)
       members.push({
         expert_id: member.expertId,
@@ -314,7 +370,7 @@ export async function applyExecutionPlan(
     // Tasks: physical DAG in creation order; assignee by member name.
     const tasks: ApplyPlanResult['tasks'] = []
     for (const task of expanded.tasks) {
-      const assignee = task.assigneeExpertId === undefined ? undefined : memberNameByExpert.get(task.assigneeExpertId)
+      const assignee = task.assignee ?? (task.assigneeExpertId === undefined ? undefined : memberNameByExpert.get(task.assigneeExpertId))
       const created = await createTaskCore(ctx, config, captain, {
         subject: task.subject,
         ...task.description === undefined ? {} : { description: task.description },
@@ -349,9 +405,55 @@ export async function applyExecutionPlan(
       // re-reading the pack or recompiling. Ad-hoc teams never carry this
       // field, so completion behavior is unchanged for them.
       fresh.qualityPlan = stampQualityPlan(plan)
+      if (opts.structuredQuality === true) {
+        const structuredQualityPolicy = {
+          required: plan.reviewPolicy?.required !== false,
+          maxRepairRounds: Math.min(plan.reviewPolicy?.maxRepairRounds ?? 2, 2),
+        }
+        fresh.structuredQualityPolicy = structuredQualityPolicy
+      }
+      if (opts.structuredQuality === true && fresh.structuredQualityPolicy?.required !== false && fresh.tasks.length > 0) {
+        const qualityRuns: Record<string, ReturnType<typeof createQualityRun>> = {}
+        for (const task of fresh.tasks) {
+          const projectRoot = task.project?.path ?? `expert-tasks/${task.id}`
+          const compiledTask = plan.tasks.find(logical => logical.id === taskPlanMap.get(task.id)?.logicalId)
+          const reportBundle = compiledTask?.reportBundle
+          const check = reportBundle === undefined ? undefined : reportArtifactCheck(reportBundle, compiledTask?.frozenSkillCraftContract)
+          if (reportBundle !== undefined) task.reportBundle = structuredClone(reportBundle)
+          if (compiledTask?.frozenSkillCraftContract !== undefined) task.frozenSkillCraftContract = structuredClone(compiledTask.frozenSkillCraftContract)
+          const run = createQualityRun({
+            id: `quality-${plan.planId}-${task.id}`,
+            taskId: task.id,
+            // Task records start at attempt 0 and become generation 1 on the
+            // first claim; quality contracts use the positive execution
+            // generation rather than the pre-claim sentinel.
+            attempt: Math.max(task.attempt ?? 0, 1),
+            assignee: task.assignee ?? CAPTAIN_KEY,
+            kind: 'implementation',
+            objective: task.description ?? task.subject,
+            inScope: [`${team.team_id}/${projectRoot}/**`],
+            outOfScope: [],
+            acceptance: [
+              { id: 'output-present', statement: 'the task output is present and reviewable' },
+              ...(plan.tasks.find(logical => logical.id === taskPlanMap.get(task.id)?.logicalId)?.acceptance ?? [])
+                .map((statement, index) => ({ id: `profile-acceptance-${index + 1}`, statement })),
+            ],
+            verify: ['true'],
+            deliverables: ['task-output', ...(check === undefined ? [] : reportCheckDeliverables(check))],
+            changedPaths: [`${team.team_id}/${projectRoot}/output/**`, ...(check === undefined ? [] : [`${team.team_id}/${projectRoot}/artifacts/**`])],
+            ...(check === undefined ? {} : { artifactChecks: [check] }),
+            maxRepairRounds: fresh.structuredQualityPolicy?.maxRepairRounds ?? 2,
+          })
+          assertDurableQualityRun(run)
+          qualityRuns[task.id] = run
+        }
+        fresh.qualityRuns = qualityRuns
+        fresh.qualityRun = qualityRuns[fresh.tasks[0]!.id]
+      }
       for (const task of fresh.tasks) {
         const planTask = taskPlanMap.get(task.id)
         if (planTask !== undefined) task.planTask = planTask
+        await syncTaskProjectInput(stateRoot, fresh, task)
       }
       await writeTeam(stateRoot, fresh)
     })

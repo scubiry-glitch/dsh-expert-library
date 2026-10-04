@@ -84,16 +84,17 @@ test('explicit provider/model keep the defaultModel hint and the explicit effort
   })
 })
 
-test('the preset expert route wins over explicit arguments and config', () => {
+test('explicit member route wins over preset expert route and config', () => {
   const request = memberRouteRequest(
     { provider: 'other', model: 'm1', reasoning_effort: 'high' },
     { provider: 'expert-provider', model: 'expert-model', reasoningEffort: 'low' },
     configModel,
   )
   assert.deepEqual(request, {
-    provider: 'expert-provider',
-    model: 'expert-model',
-    reasoningEffort: 'low',
+    provider: 'other',
+    model: 'm1',
+    defaultModel: 'deepseek-v4-flash',
+    reasoningEffort: 'high',
   })
 })
 

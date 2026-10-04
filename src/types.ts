@@ -12,6 +12,17 @@ import type { ExecutionPlan } from './v2/compiler.ts'
 import type { CapabilityScope } from './capability-scope.ts'
 import type { QualityRun } from './quality-run.ts'
 
+/** Exact, bounded direct-user input admitted by this captain's own session.
+ * This is task context, not a grant of filesystem/tool permissions. */
+export interface SharedTaskContext {
+  readonly schemaVersion: 1
+  readonly status: 'captured' | 'unavailable'
+  readonly captainSessionId: string
+  readonly messages: readonly { readonly id: string; readonly seq: number; readonly text: string }[]
+  readonly sha256: string
+  readonly unavailableReason?: string
+}
+
 /** Lifecycle of a persisted, human-reviewable execution plan. */
 export type StagedPlanStatus =
   | 'staged'
@@ -29,6 +40,8 @@ export interface StagedPlanRuntime {
   readonly interpolations?: Readonly<Record<string, string>>
   readonly memberOrder?: readonly string[]
   readonly taskSuffixes?: Readonly<Record<string, string>>
+  readonly sharedTaskContext?: SharedTaskContext
+  readonly expertDisplay?: Readonly<Record<string, { name: string; field?: string; initials?: string }>>
 }
 
 /** One append-only edit entry for a staged plan. */
@@ -58,6 +71,19 @@ export interface StagedPlan {
   readonly runtime: StagedPlanRuntime
   readonly plan: ExecutionPlan
   readonly editLog: readonly StagedPlanEdit[]
+  readonly waitingFor?: 'user-confirmation'
+  readonly goalWait?: { readonly goalId: string; readonly pausedRevision: number; readonly createdAt: number; readonly sourcePlanId?: string }
+  /** Durable approval receipt. Kept when the plan advances to running so a
+   * restart can prove who approved the exact CAS revision. */
+  readonly approval?: {
+    readonly digest: string
+    readonly revision: number
+    readonly approvedAt: number
+    readonly approvedBy: string
+    readonly source?: 'authenticated-host-user' | 'delegated-host-authorization'
+    readonly authorizationRequestId?: string
+    readonly contextSha256?: string
+  }
   readonly approvedAt?: number
   readonly approvedBy?: string
   readonly appliedTeamId?: string
@@ -93,6 +119,8 @@ export interface TaskProject {
 /** A published artifact owned by one task attempt. */
 export interface TaskArtifact {
   readonly id: string
+  /** Stable logical deliverable identity across immutable published versions. */
+  readonly reviewId?: string
   readonly taskId: string
   readonly attempt: number
   /** Path relative to the task Project's artifacts directory. */
@@ -109,6 +137,15 @@ export interface TaskArtifactRef {
   readonly artifactId: string
   readonly sourceTaskId: string
   readonly purpose?: string
+}
+
+export interface TaskInputManifest {
+  readonly sourceTaskId: string
+  readonly artifactId: string
+  readonly reviewArtifactId?: string
+  readonly attempt: number
+  readonly sha256: string
+  readonly versionPath: string
 }
 
 /**
@@ -166,8 +203,8 @@ export interface StampedQualityPlan {
   readonly deliverables: ReadonlyArray<{ readonly id: string; readonly fromTasks: readonly string[] }>
   /**
    * Repair-round budget honored across completion attempts (design cap
-   * {@link MAX_REPAIR_ROUNDS} = 2): after this many hard-gate blocks the next
-   * completion may proceed with a recorded warning. Resolved from the bound
+   * {@link MAX_REPAIR_ROUNDS} = 2): after this many hard-gate blocks the failure
+   * requires escalation; budget exhaustion never authorizes completion. Resolved from the bound
    * policy's `maxRepairRounds` at apply time, defaulting to the design cap.
    */
   readonly maxRepairRounds: number
@@ -202,7 +239,22 @@ export interface TeamTask {
   subject: string
   /** What needs to be done. */
   description?: string
+  /** Explicit report workflow; ordinary tasks omit this field. */
+  reportBundle?: import('./report-bundle.ts').ReportBundle
+  frozenSkillCraftContract?: import('./skill-craft-types.ts').FrozenSkillCraftContract
+  craftDeliveries?: import('./report-craft-delivery.ts').CraftDeliveryReceipt[]
+  craftReviewPreparations?: import('./report-craft-delivery.ts').CraftReviewPreparation[]
+  /** A new task revising an integrated source; source remains immutable. */
+  revisesTaskId?: string
   status: TaskStatus
+  /** Durable execution intent. Waiting is not a lost turn and must not be redispatched. */
+  executionState?: 'active' | 'awaiting_review' | 'blocked_external' | 'interrupted'
+  /** Concrete review/external condition that must change before work resumes. */
+  waitReason?: string
+  /** Terminal Host failure bound to this exact session, turn and attempt. */
+  runtimeBlock?: RuntimeBlock
+  /** Last dispatch intent, persisted before delivery and confirmed with the same identity. */
+  dispatch?: { attemptId: string; id: string; dispatchedAt: number; acceptedAt?: number; failureCount?: number; nextRetryAt?: number }
   /** Member name (or `captain`) the task is assigned to; unassigned tasks await a claim. */
   assignee?: string
   /** Task ids that must reach `completed` before this task can be claimed. */
@@ -215,10 +267,18 @@ export interface TeamTask {
   publishedArtifacts?: TaskArtifact[]
   /** Upstream artifacts this task is explicitly allowed to read. */
   inputArtifacts?: TaskArtifactRef[]
+  /** Omission selects reviewed dependency publications; explicit [] selects none.
+   * An automatic selection may change only for an explicit new consumer attempt. */
+  inputArtifactBinding?: { mode: 'dependency-default'; consumerAttempt: number; legacyUnpinnedSources?: string[]; reviewDisabled?: true }
+  /** Verified immutable input identities, persisted for cold/retry consistency. */
+  inputArtifactManifest?: TaskInputManifest[]
   /** Monotonic execution generation. Reassignment/retry invalidates every older attempt. */
   attempt?: number
   /** Capability for the current claimed/in-progress attempt. Members must present it when updating. */
   attemptId?: string
+  /** Capability id retired when the task became terminal; retained so a completion message
+   * emitted just before finalization can still be admitted without reviving the task. */
+  finalizedAttemptId?: string
   /** Opaque generation for a revocation/handoff that has not started its next attempt yet. */
   handoffId?: string
   /** A handoff is quiescing the old owner; the scheduler must not dispatch it yet. */
@@ -233,13 +293,12 @@ export interface TeamTask {
   /**
    * Hard-gate blocks this task accumulated (repair-round budget accounting):
    * each blocked completion increments it; once it reaches the plan policy's
-   * `maxRepairRounds` the next completion may proceed with a recorded warning.
+   * `maxRepairRounds`, unresolved hard failures require escalation.
    * Absent on tasks that never hit a hard gate.
    */
   gateFailCount?: number
   /**
-   * Quality-gate warnings attached when the task completed: soft-gate issues,
-   * or hard-gate failures waived because the repair budget ran out.
+   * Non-blocking quality-gate warnings attached when the task completed.
    */
   gateWarnings?: readonly string[]
   /**
@@ -263,6 +322,26 @@ export interface TeamTask {
 /** Member lifecycle status. */
 export type MemberStatus = 'idle' | 'working' | 'removed'
 
+export interface RuntimeBlock {
+  id: string
+  sessionId: string
+  turn: number
+  code: string
+  status?: number
+  message: string
+  at: number
+  attemptId?: string
+}
+
+export interface MemberActivation {
+  id: string
+  sessionId: string
+  reservedAt: number
+  acceptedAt?: number
+  turn?: number
+  taskAttempts: { taskId: string; attemptId: string }[]
+}
+
 /** One team member: a continuable subagent plus its team-side record. */
 export interface TeamMember {
   /** Durable continuable subagent session id (empty until spawned). */
@@ -277,10 +356,20 @@ export interface TeamMember {
   model?: string
   /** Resolved reasoning effort captured from the captain or target model default. */
   reasoningEffort?: string
+  /** Ordered fallback routes declared by the member/profile; actual route is provider/model above. */
+  fallbackRoutes?: readonly { provider: string; model: string; reasoningEffort?: string }[]
   /** Durable A5 capability boundary used at spawn/provider admission. */
   capabilityScope?: CapabilityScope
   joinedAt: number
   status: MemberStatus
+  /** A durable concurrency reservation covering assignment and mailbox turns. */
+  activation?: MemberActivation
+  /** Last observed Host turn; excludes stale terminal events after resume. */
+  runtimeTurn?: { turn: number; taskAttempts: { taskId: string; attemptId: string }[] }
+  runtimeBlock?: RuntimeBlock
+  runtimeResumedAt?: number
+  runtimeResolvedThroughTurn?: number
+  runtimeResumeReason?: string
   /** P2.1: 追问回合计数（expert_teams_chat 累计，可追溯；无追问时缺省）。 */
   chatRounds?: number
 }
@@ -304,12 +393,14 @@ export interface TeamMessage {
   sequence?: number
   /** Caller supplied deduplication key; repeated sends are accepted once. */
   idempotencyKey?: string
-  /** Process-local delivery lease; prevents fallback and direct delivery racing. */
+  /** Durable delivery lease; prevents fallback and direct delivery racing across processes. */
   deliveryClaimedAt?: number
   /** Set after the durable message was accepted by the recipient's live Harness inbox. */
   deliveredAt?: number
   /** Set once the recipient has consumed or been shown the durable fallback. */
   readAt?: number
+  /** Set once the recipient consumer has revalidated provenance and consumed the message. */
+  consumedAt?: number
   /** Set when admission rejects a stale/duplicate message. */
   discardedAt?: number
   /** Machine-readable reason for a discarded message. */
@@ -324,8 +415,20 @@ export interface TeamState {
   id: string
   /** Team purpose/goal. */
   description?: string
+  /** Immutable source-bound user context; missing only on legacy records. */
+  sharedTaskContext?: SharedTaskContext
+  /** Captain-authored protocol, subordinate to the original user request. */
+  taskProtocol?: readonly string[]
   /** Session id of the captain agent that owns this team. */
   captainSessionId: string
+  captainRuntimeBlock?: RuntimeBlock
+  captainRuntimeResolvedThroughTurn?: number
+  /** Hard scheduler cap shared by ordinary work and independent review turns. */
+  maxActiveMembers?: number
+  /** Explicit event waits; ordinary idle recovery must not wake these sessions. */
+  runtimeWaits?: Record<string, { reason: string; taskIds: string[]; since: number }>
+  /** Exact goal pauses owned by event waiting, separate from scheduler wait cleanup. */
+  goalWaits?: Record<string, { goalId: string; pausedRevision: number; createdAt: number }>
   createdAt: number
   /** Scenario id this team was assembled from (Expert Library), when any. */
   scenarioId?: string
@@ -362,6 +465,12 @@ export interface TeamState {
   qualityPlan?: StampedQualityPlan
   /** Optional structured A4 review/repair/integration state for staged/profile teams. */
   qualityRun?: QualityRun
+  /** Per-task structured quality runs. `qualityRun` remains the root-run alias for compatibility. */
+  qualityRuns?: Record<string, QualityRun>
+  /** Superseded review versions; preserved when a task is revised or reassigned. */
+  qualityRunHistory?: Record<string, QualityRun[]>
+  /** Profile review requirement/budget used for dynamically added tasks. */
+  structuredQualityPolicy?: { required: boolean; maxRepairRounds: number }
   /** Teammates only; the captain is implicit (the owning session). */
   members: TeamMember[]
   tasks: TeamTask[]
@@ -369,4 +478,11 @@ export interface TeamState {
   taskSeq: number
   /** Set after the scheduler emits the one-time all-tasks-terminal notice. */
   completionNotifiedAt?: number
+  /** Explicit operator pause. Ordinary scheduling and task creation must preserve this state. */
+  halted?: boolean
+  /** Human/machine-readable reason for an explicit halt. */
+  haltReason?: string
+  haltedAt?: number
+  resumedAt?: number
+  resumeReason?: string
 }

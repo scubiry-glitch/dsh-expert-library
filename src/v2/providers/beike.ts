@@ -124,11 +124,14 @@ export interface BeikeManifestOptions {
  * An optional `cli` transport is added when a binary is configured.
  */
 export function buildBeikeManifest(options: BeikeManifestOptions = {}): ToolProviderManifest {
-  const { baseUrl = 'https://building.ke.com/mcp', cliCommand, preferCli = false, version = '0.2.24', timeoutMs = 60_000 } = options
+  const { baseUrl = 'https://building.ke.com/mcp', cliCommand, preferCli = false, version = '0.2.26', timeoutMs = 60_000 } = options
   const auth = { credentialRef: 'BEIKE_MCP_API_KEY', source: 'file', hint: '~/.beike/BEIKE_MCP_API_KEY' } as const
+  // 服务端按 initialize.clientInfo 识别客户端版本（旧身份 dsh-expert-library/0.1.0
+  // 会被判「未检测到 CLI 版本」拒收），故声明为 CLI 同款身份。修复 2026-09-28。
+  const clientInfo = { name: 'beike-mcp-proxy', version: '0.2.26' } as const
   const transports: ToolTransport[] = [
-    { kind: 'mcp-http', id: 'mcp-http', endpoint: baseUrl, timeoutMs, readOnly: true, auth },
-    { kind: 'mcp-http', id: 'mcp-http-write', endpoint: baseUrl, timeoutMs, readOnly: false, auth },
+    { kind: 'mcp-http', id: 'mcp-http', endpoint: baseUrl, timeoutMs, readOnly: true, auth, clientInfo },
+    { kind: 'mcp-http', id: 'mcp-http-write', endpoint: baseUrl, timeoutMs, readOnly: false, auth, clientInfo },
   ]
   if (cliCommand !== undefined && cliCommand !== '') {
     transports.push({
@@ -141,7 +144,11 @@ export function buildBeikeManifest(options: BeikeManifestOptions = {}): ToolProv
       auth: { credentialRef: 'BEIKE_MCP_API_KEY', source: 'env' },
     })
   }
-  const readBind = preferCli && cliCommand !== undefined && cliCommand !== '' ? 'cli' : 'mcp-http'
+  // 读取绑定固定走 mcp-http：能力表里的工具名（house_search/rent_house_search
+  // 等）是贝壳 MCP 服务端工具名，不是 CLI 子命令；local-cli transport 的全局
+  // `--json` 拼装会被 CLI 拒绝（unexpected argument '--json'）。修复
+  // 2026-09-28（上海租赁报告 v5 回填实测：cli 绑定全部报 BEIKE_ERROR）。
+  const readBind = 'mcp-http'
   const capabilities: ToolCapability[] = [
     ...Object.entries(BEIKE_READ_OPERATIONS).map(([capability, tool]) => ({
       capability,
@@ -271,7 +278,7 @@ export function normalizeBeikeCliOutput(raw: BeikeCliResult, options: BeikeNorma
  * {@link normalizeBeikeEnvelope} so `unit`/caliber metadata survives.
  */
 export function normalizeBeikeMCPHttpOutput(raw: BeikeMCPHttpResult, options: BeikeNormalizeOptions): ProviderEnvelope {
-  if (raw.status >= 400) {
+  if (raw.status < 200 || raw.status >= 300) {
     return failEnvelope({
       code: 'BEIKE_HTTP_ERROR',
       retry: 'never',
@@ -302,6 +309,20 @@ export function normalizeBeikeMCPHttpOutput(raw: BeikeMCPHttpResult, options: Be
     }, provenanceOf(options))
   }
   const result = payload['result']
+  // MCP tool failures are carried inside a successful JSON-RPC/HTTP reply.
+  // Check the protocol flag before discarding the content wrapper.
+  if (isRecord(result) && result['isError'] === true) {
+    const response = JSON.stringify(result).slice(0, BEIKE_BODY_LIMIT)
+    const messages = Array.isArray(result['content'])
+      ? result['content'].flatMap(item => isRecord(item) && item['type'] === 'text' && typeof item['text'] === 'string' ? [item['text']] : [])
+      : []
+    return failEnvelope({
+      code: 'BEIKE_MCP_TOOL_ERROR',
+      retry: 'never',
+      ...(messages.length === 0 ? {} : { correction: messages.join('\n').slice(0, BEIKE_BODY_LIMIT) }),
+      details: { isError: true, response },
+    }, provenanceOf(options))
+  }
   let json: unknown = result
   if (isRecord(result) && Array.isArray(result['content'])) {
     const textItem = result['content'].find(item => isRecord(item) && item['type'] === 'text' && typeof item['text'] === 'string')

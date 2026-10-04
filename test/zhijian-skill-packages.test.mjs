@@ -6,7 +6,7 @@
  * Covers: 10 bundled skill-package entities (finesse-ui, 8× GSAP, video-
  * shotcraft) with id/name/version/source-root convention; validator-clean
  * (fields checked by `validateDomainPack`); the real generated pack dir loads
- * with 10 entities; deterministic rebuild; and `--check` stays clean after
+ * with 10 base entities plus 2 authored craft skills; deterministic rebuild; and `--check` stays clean after
  * regeneration. All offline. Runs against the built `lib/` output.
  */
 import test from 'node:test'
@@ -94,23 +94,28 @@ test('two builds are byte-identical (deterministic inventory)', () => {
  * Generated pack dir
  * ------------------------------------------------------------------------- */
 
-test('the generated domain-packs/zhijian-realestate loads with 10 skill packages', async () => {
+test('the generated domain-packs/zhijian-realestate preserves 10 base skills and both authored craft skills', async () => {
   const loaded = await loadPackFromDir(join(REPO_ROOT, 'domain-packs', 'zhijian-realestate'))
   assert.equal(loaded.ok, true, JSON.stringify(loaded.diagnostics.filter(d => d.severity === 'error')))
-  assert.equal(loaded.pack?.skillPackages.length, 10)
-  assert.deepEqual(loaded.pack?.skillPackages.map(entity => entity.id), EXPECTED_SKILL_IDS)
+  assert.equal(loaded.pack?.skillPackages.length, 12)
+  assert.deepEqual(loaded.pack?.skillPackages.map(entity => entity.id), [...EXPECTED_SKILL_IDS, 'zhijian-designer-render', 'zhijian-report-craft'])
 })
 
 /* ---------------------------------------------------------------------------
  * Generator --check
  * ------------------------------------------------------------------------- */
 
-test('scripts/build-zhijian-pack.mjs --check stays clean after regeneration', async () => {
+test('complete domain-pack builder --check preserves the authored craft closure', async () => {
   const result = await new Promise((resolve) => {
-    execFile(process.execPath, [join(REPO_ROOT, 'scripts', 'build-zhijian-pack.mjs'), '--check'], { cwd: REPO_ROOT, timeout: 180_000 }, (error, stdout, stderr) => {
+    execFile(process.execPath, [join(REPO_ROOT, 'scripts', 'build-zhijian-pack-with-craft.mjs'), '--check'], { cwd: REPO_ROOT, timeout: 180_000 }, (error, stdout, stderr) => {
       resolve({ error, stdout, stderr })
     })
   })
   assert.equal(result.error, null, `--check failed: ${result.stderr || result.stdout}`)
-  assert.match(result.stdout, /CHECK CLEAN/)
+  const receipt = JSON.parse(result.stdout.trim().split('\n').at(-1))
+  assert.equal(receipt.status, 'PASS')
+  assert.equal(receipt.packId, 'zhijian-realestate')
+  assert.equal(receipt.version, '1.3.1')
+  assert.deepEqual(receipt.craftSkillIds, ['zhijian-designer-render', 'zhijian-report-craft'])
+  assert.match(receipt.treeDigest, /^[a-f0-9]{64}$/)
 })

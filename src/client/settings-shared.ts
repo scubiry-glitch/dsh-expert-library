@@ -16,6 +16,8 @@ export const PACKS_URL = '/plugins/dsh-expert-library/packs'
 export const EXPERTS_URL = '/plugins/dsh-expert-library/experts'
 
 export type ProviderId = 'wind' | 'zyt' | 'beike'
+/** Health probe targets: the three editable providers + read-only localdb. */
+export type HealthProbeId = ProviderId | 'localdb'
 
 /** Tool ids whose execution mode is user-configurable (provider id = tool id). */
 export const TOOL_IDS: readonly ProviderId[] = ['wind', 'zyt', 'beike']
@@ -30,6 +32,14 @@ export const MODE_LABEL: Record<string, string> = {
   api: 'API',
   cli: 'CLI',
   auto: '自动',
+}
+
+/** Pack-center update policy tiers. Labels live here because the client bundle
+ * must not value-import host or settings modules (type-only import is fine). */
+export const UPDATE_MODE_LABEL: Record<string, string> = {
+  manual: '手动（默认）',
+  download: '自动下载到缓存',
+  patch_auto: '自动补丁升级',
 }
 
 export const SOURCE_LABEL: Record<string, string> = {
@@ -78,6 +88,18 @@ export interface BeikeHealthWire {
   readonly detail?: string
 }
 
+/** localdb (本地 SQLite) health row: registration + per-database file presence. */
+export interface LocalDbHealthWire {
+  readonly registered: boolean
+  readonly databases: readonly {
+    readonly id: string
+    readonly path: string
+    readonly exists: boolean
+    readonly sensitivity: 'public' | 'internal'
+  }[]
+  readonly detail?: string
+}
+
 export interface PackHealthWire {
   readonly id: string
   readonly version: string
@@ -93,6 +115,7 @@ export interface HealthWire {
     readonly wind: WindHealthWire
     readonly zyt: ZytHealthWire
     readonly beike: BeikeHealthWire
+    readonly localdb?: LocalDbHealthWire
   }
   readonly packs: readonly PackHealthWire[]
 }
@@ -159,12 +182,20 @@ export function isExpertRouteWire(body: unknown): body is { experts?: unknown } 
 }
 
 /** Status dot + label + color key for one provider's health row. */
-export function providerStatus(provider: ProviderId, health: HealthWire | null): {
+export function providerStatus(provider: HealthProbeId, health: HealthWire | null): {
   readonly dot: string
   readonly label: string
   readonly key: 'ok' | 'warn' | 'error' | 'idle'
 } {
   if (health === null) return { dot: '⚪', label: '未探测', key: 'idle' }
+  if (provider === 'localdb') {
+    const localdb = health.providers.localdb
+    if (localdb === undefined) return { dot: '⚪', label: '未探测', key: 'idle' }
+    if (!localdb.registered) return { dot: '⚪', label: '未注册', key: 'idle' }
+    if (localdb.databases.length === 0) return { dot: '🟠', label: '未配置数据库', key: 'warn' }
+    if (localdb.databases.some(db => !db.exists)) return { dot: '🔴', label: '数据库文件缺失', key: 'error' }
+    return { dot: '🟢', label: `就绪 · ${localdb.databases.length} 个库`, key: 'ok' }
+  }
   const entry = health.providers[provider]
   if (!entry.registered) return { dot: '⚪', label: '未注册', key: 'idle' }
   if (!entry.keyPresent) return { dot: '🟠', label: '未配置凭据', key: 'warn' }
@@ -180,8 +211,18 @@ export function providerStatus(provider: ProviderId, health: HealthWire | null):
 }
 
 /** Inline result line of the latest 检测 for one provider. */
-export function probeResultLine(provider: ProviderId, health: HealthWire | null): string {
+export function probeResultLine(provider: HealthProbeId, health: HealthWire | null): string {
   if (health === null) return ''
+  if (provider === 'localdb') {
+    const localdb = health.providers.localdb
+    if (localdb === undefined) return ''
+    const parts: string[] = []
+    if (localdb.detail !== undefined) parts.push(localdb.detail)
+    for (const db of localdb.databases) {
+      parts.push(`${db.id}（${db.exists ? '就绪' : '文件缺失'}${db.sensitivity === 'internal' ? ' · 行内材料' : ''}）`)
+    }
+    return parts.filter(part => part !== '').join('；')
+  }
   const entry = health.providers[provider]
   const parts: string[] = []
   const probed = entry as ZytHealthWire | BeikeHealthWire

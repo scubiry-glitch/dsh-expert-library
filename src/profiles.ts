@@ -10,6 +10,12 @@
  * @module dsh-expert-library/profiles
  */
 
+import { canonicalDigest } from './v2/digest.ts'
+import type { ExecutionPlan } from './v2/compiler.ts'
+import type { ModelPolicy } from './v2/types.ts'
+import { PROFILE_STAGE_EXAMPLE } from './profile-schema.ts'
+import { isReportBundle, type ReportBundle } from './report-bundle.ts'
+
 export const PROFILE_SCHEMA_VERSION = 1 as const
 
 export type ProfileTaskPlanning = 'captain' | 'seed'
@@ -58,6 +64,7 @@ export interface ProfileSeedTask {
   readonly owner?: string
   readonly dependsOn: readonly string[]
   readonly acceptance?: readonly string[]
+  readonly reportBundle?: ReportBundle
 }
 
 /** JSON-safe profile definition. */
@@ -107,7 +114,7 @@ export class ProfileValidationError extends Error {
   readonly issues: readonly ProfileValidationIssue[]
 
   constructor(issues: readonly ProfileValidationIssue[]) {
-    super(issues.map(issue => `${issue.path}: ${issue.message}`).join('; ') || 'invalid profile')
+    super(`${issues.slice(0, 12).map(issue => `${issue.path}: ${issue.message}`).join('; ') || 'invalid profile'}${issues.length > 12 ? `; ${issues.length - 12} more issue(s)` : ''}. Valid captain call shape (routes omitted to inherit configuration): ${JSON.stringify(PROFILE_STAGE_EXAMPLE)}`)
     this.name = 'ProfileValidationError'
     this.issues = issues
   }
@@ -120,7 +127,7 @@ const PROFILE_KEYS = new Set([
 const ROUTE_KEYS = new Set(['provider', 'model', 'reasoningEffort', 'reason'])
 const MEMBER_KEYS = new Set(['id', 'name', 'role', 'expert', 'route', 'provider', 'model', 'reasoningEffort', 'capabilities', 'maxDepth'])
 const REVIEW_KEYS = new Set(['required', 'maxRepairRounds', 'hardGateIds'])
-const TASK_KEYS = new Set(['id', 'subject', 'description', 'owner', 'dependsOn', 'acceptance'])
+const TASK_KEYS = new Set(['id', 'subject', 'description', 'owner', 'dependsOn', 'dependencies', 'acceptance', 'reportBundle'])
 const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -138,7 +145,12 @@ function addUnknownKeys(
   issues: ProfileValidationIssue[],
 ): void {
   for (const key of Object.keys(value)) {
-    if (!allowed.has(key)) issues.push({ code: 'unknown-key', path: `${path}.${key}`, message: 'unknown profile field' })
+    if (!allowed.has(key)) {
+      const aliases: Record<string, string> = { roster: 'members', reviewPolicy: 'review', dependencies: 'dependsOn', assignee: 'owner' }
+      const replacement = aliases[key]
+      issues.push({ code: 'unknown-key', path: path ? `${path}.${key}` : key,
+        message: `unknown profile field${replacement !== undefined && allowed.has(replacement) ? `; use ${replacement} instead of ${key}` : ''}; allowed fields: ${[...allowed].join(', ')}` })
+    }
   }
 }
 
@@ -179,7 +191,10 @@ function parseRoute(
   if (allowReason && value.reason !== undefined && !text(value.reason)) {
     issues.push({ code: 'invalid-value', path: `${path}.reason`, message: 'reason must be a non-empty string when present' })
   }
-  if (!provider || !model) return undefined
+  if (!provider || !model) {
+    issues.push({ code: 'invalid-value', path, message: 'route requires both provider and model inside the same object: route: { provider: <configured provider>, model: <configured model> }; do not move model to the member level' })
+    return undefined
+  }
   const reasoningEffort = text(value.reasoningEffort) ? value.reasoningEffort.trim() : undefined
   const reason = allowReason && text(value.reason) ? value.reason.trim() : undefined
   return {
@@ -256,13 +271,29 @@ function parseTask(value: unknown, index: number, issues: ProfileValidationIssue
   const id = idIssue(value.id, `${path}.id`, issues, 'task id')
   const subjectValue = value.subject
   const subject = requiredText(subjectValue, `${path}.subject`, issues, 'task subject')
-  const dependsOn = value.dependsOn === undefined ? [] : parseStringList(value.dependsOn, `${path}.dependsOn`, issues, 'dependsOn')
+  // Validate both spellings before choosing the canonical representation.
+  // An empty canonical field must never silently erase a nonempty alias.
+  const canonicalDependencies = value.dependsOn === undefined ? undefined : parseStringList(value.dependsOn, `${path}.dependsOn`, issues, 'dependsOn')
+  const aliasDependencies = value.dependencies === undefined ? undefined : parseStringList(value.dependencies, `${path}.dependencies`, issues, 'dependencies')
+  if (canonicalDependencies !== undefined && aliasDependencies !== undefined) {
+    const canonicalSet = new Set(canonicalDependencies)
+    const aliasSet = new Set(aliasDependencies)
+    if (canonicalSet.size !== aliasSet.size || [...canonicalSet].some(id => !aliasSet.has(id))) {
+      issues.push({ code: 'invalid-value', path: `${path}.dependencies`, message: 'dependsOn and dependencies conflict; supply one field or the same task-id set in both. Preserve the intended prerequisites; the fields are never merged.' })
+    }
+  }
+  const dependsOn = canonicalDependencies ?? aliasDependencies ?? []
   const acceptance = value.acceptance === undefined ? undefined : parseStringList(value.acceptance, `${path}.acceptance`, issues, 'acceptance')
+  if (value.reportBundle !== undefined && !isReportBundle(value.reportBundle)) {
+    issues.push({ code: 'invalid-value', path: `${path}.reportBundle`, message: 'reportBundle requires exact safe publication filenames {md:"report.md",html:"report.html",pdf:"report.pdf"}' })
+  }
   if (value.description !== undefined && !text(value.description)) issues.push({ code: 'invalid-value', path: `${path}.description`, message: 'description must be a non-empty string when present' })
   if (value.owner !== undefined && !text(value.owner)) issues.push({ code: 'invalid-value', path: `${path}.owner`, message: 'owner must be a non-empty string when present' })
   const description = text(value.description) ? value.description.trim() : undefined
   const owner = text(value.owner) ? value.owner.trim() : undefined
-  if (!id || !subject || dependsOn === undefined) return undefined
+  if (!id || !subject
+    || (value.dependsOn !== undefined && canonicalDependencies === undefined)
+    || (value.dependencies !== undefined && aliasDependencies === undefined)) return undefined
   return {
     id: value.id as string,
     subject: (subjectValue as string).trim(),
@@ -270,6 +301,7 @@ function parseTask(value: unknown, index: number, issues: ProfileValidationIssue
     ...(owner === undefined ? {} : { owner }),
     dependsOn,
     ...(acceptance === undefined ? {} : { acceptance }),
+    ...(isReportBundle(value.reportBundle) ? { reportBundle: structuredClone(value.reportBundle) } : {}),
   }
 }
 
@@ -378,12 +410,17 @@ export function validateProfile(value: unknown): ProfileValidationResult {
     }
   }
   if (taskPlanning === 'captain' && (templateId !== undefined || value.tasks !== undefined)) {
-    issues.push({ code: 'captain-dag', path: 'taskPlanning', message: 'captain profiles must not carry a fixed templateId or task DAG' })
+    issues.push({ code: 'captain-dag', path: 'taskPlanning', message: 'captain profiles must not carry a fixed templateId or task DAG; place generated tasks at tool top level, outside profile' })
   }
-  if (taskPlanning === 'seed' && templateId === undefined && tasks.length === 0) {
-    issues.push({ code: 'seed-dag', path: 'taskPlanning', message: 'seed profiles require templateId or at least one task' })
+  // The explicit profile tool has no template catalog resolver: accepting a
+  // templateId without a materialized task DAG would therefore compile an
+  // empty team while claiming to be a fixed seed plan. Keep this boundary
+  // fail-closed until a real template hydration path exists.
+  if (taskPlanning === 'seed' && tasks.length === 0) {
+    issues.push({ code: 'seed-dag', path: 'tasks', message: 'seed profiles require at least one task; templateId alone cannot materialize a DAG' })
   }
   if (tasks.length > 0) validateDag(tasks, members, issues)
+  if (review?.required === false && tasks.some(task => task.reportBundle !== undefined)) issues.push({ code: 'invalid-value', path: 'review.required', message: 'reportBundle requires structured independent review; required cannot be false' })
   if (issues.length > 0 || !id || !version || !description || protocol === undefined || taskPlanning === undefined) return { ok: false, issues }
   return {
     ok: true,
@@ -444,4 +481,97 @@ export function resolveProfile(catalog: ProfileCatalog, requestedId: string): Ex
   const profile = parseProfile(raw)
   if (profile.id !== requestedId) throw new ProfileValidationError([{ code: 'invalid-value', path: 'profile', message: `catalog entry "${requestedId}" has profile id "${profile.id}"` }])
   return profile
+}
+
+/**
+ * Turn a validated profile into the same immutable execution-plan shape used
+ * by scenario compilation. This is intentionally a small, dependency-free
+ * adapter: seed profiles provide their declared DAG, while captain profiles
+ * provide only the roster and leave the task list empty for a later staged
+ * edit. No team or member is created here.
+ */
+export function profileToExecutionPlan(
+  profile: ExpertTeamProfile,
+  params: Readonly<Record<string, unknown>> = {},
+): ExecutionPlan {
+  const memberByName = new Map<string, ProfileMember>()
+  const roster = profile.members.map(member => {
+    memberByName.set(member.name, member)
+    memberByName.set(member.id, member)
+    const model = member.route ?? profile.route
+    return {
+      slotId: member.id,
+      expertId: member.id,
+      ...(member.expert === undefined ? {} : { sourceExpertId: member.expert }),
+      profileId: profile.id,
+      ...(model === undefined ? {} : { modelPolicy: { ...model }, modelRouteSource: member.route === undefined ? 'profile-default' as const : 'profile-member' as const }),
+      ...(profile.fallback === undefined ? {} : { fallbackRoutes: profile.fallback.map(route => ({
+        provider: route.provider,
+        model: route.model,
+        ...(route.reasoningEffort === undefined ? {} : { reasoningEffort: route.reasoningEffort }),
+      })) as readonly ModelPolicy[] }),
+      displayName: member.name,
+      ...(member.role === undefined ? {} : { role: member.role }),
+      ...(member.capabilities === undefined ? {} : { capabilities: [...member.capabilities] }),
+      ...(member.maxDepth === undefined ? {} : { maxDepth: member.maxDepth }),
+      approval: 'none' as const,
+    }
+  })
+  const declaredTasks = profile.tasks ?? []
+  const taskById = new Map(declaredTasks.map(task => [task.id, task]))
+  const executionOrder: string[] = []
+  const remaining = new Set(declaredTasks.map(task => task.id))
+  while (remaining.size > 0) {
+    const ready = [...remaining]
+      .filter(id => (taskById.get(id)?.dependsOn ?? []).every(dep => executionOrder.includes(dep)))
+      .sort()
+    if (ready.length === 0) throw new ProfileValidationError([{ code: 'dependency-cycle', path: 'tasks', message: 'profile task graph cannot be topologically sorted' }])
+    executionOrder.push(...ready)
+    for (const id of ready) remaining.delete(id)
+  }
+  const tasks = declaredTasks.map(task => {
+    const owner = task.owner === undefined || task.owner === 'captain' ? undefined : memberByName.get(task.owner)
+    return {
+      id: task.id,
+      role: task.owner ?? 'captain',
+      expertIds: owner === undefined ? [] : [owner.id],
+      ...(task.owner === 'captain' ? { owner: 'captain' as const } : {}),
+      dependsOn: [...task.dependsOn],
+      inputs: [],
+      allowedCapabilities: owner?.capabilities === undefined ? [] : [...owner.capabilities],
+      outputSchema: 'text',
+      retryPolicy: 'quality-repair' as const,
+      subject: task.subject,
+      ...(task.acceptance === undefined ? {} : { acceptance: [...task.acceptance] }),
+      ...(task.reportBundle === undefined ? {} : { reportBundle: structuredClone(task.reportBundle) }),
+      ...(task.description === undefined ? {} : { description: task.description }),
+    }
+  })
+  const template = { id: `profile:${profile.id}`, version: profile.version }
+  const scenario = { id: profile.id, version: profile.version }
+  const core = {
+    schemaVersion: 2 as const,
+    template,
+    scenario,
+    params,
+    roster,
+    tasks,
+    executionOrder,
+    gates: [],
+    deliverables: [],
+    bindings: { tool: [], knowledge: [], outputTemplates: [], qualityPolicies: [] },
+    protocol: [...profile.protocol],
+    ...(profile.review === undefined ? {} : { reviewPolicy: { ...profile.review, ...(profile.review.hardGateIds === undefined ? {} : { hardGateIds: [...profile.review.hardGateIds] }) } }),
+  }
+  const digest = canonicalDigest(core)
+  return {
+    ...core,
+    planId: `ep-${digest.slice(0, 16)}`,
+    digest,
+    provenance: [
+      { step: 'profile', detail: `${profile.id}@${profile.version}` },
+      { step: 'task-planning', detail: profile.taskPlanning },
+      ...(profile.review === undefined ? [] : [{ step: 'review-policy', detail: JSON.stringify(profile.review) }]),
+    ],
+  }
 }

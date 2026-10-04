@@ -84,14 +84,19 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig.client.json && tsdown",
+    "build": "npm run check:craft && tsc -p tsconfig.json && tsc -p tsconfig.client.json && npm run check:report-domain && tsdown",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
-    "build:pack": "node scripts/build-zhijian-pack.mjs",
-    "check:pack": "node scripts/build-zhijian-pack.mjs --check",
+    "build:pack": "node scripts/build-zhijian-pack-with-craft.mjs --write",
+    "check:pack": "node scripts/build-zhijian-pack-with-craft.mjs --check",
     "build:builtin": "node scripts/build-builtin-pack.mjs",
     "check:builtin": "node scripts/build-builtin-pack.mjs --check",
     "test": "pnpm build && node --test --test-concurrency=1 'test/**/*.test.mjs'",
-    "test:pack-center": "pnpm build && node --test --test-concurrency=1 packages/pack-contract/test/*.test.mjs packages/pack-artifact/test/*.test.mjs test/host-pack-source.test.mjs test/v2-runtime-pack.test.mjs test/v2-no-network.test.mjs"
+    "test:pack-center": "pnpm build && node --test --test-concurrency=1 packages/pack-contract/test/*.test.mjs packages/pack-artifact/test/*.test.mjs test/host-pack-source.test.mjs test/v2-runtime-pack.test.mjs test/v2-no-network.test.mjs test/update-policy-schema.test.mjs test/pack-center-update-policy.test.mjs test/host-pack-center-auto-update.test.mjs test/host-pack-center-routes-policy.test.mjs",
+    "check:craft": "node knowledge/skills/zhijian-report-craft/scripts/build-materials.mjs --check",
+    "build:craft": "node knowledge/skills/zhijian-report-craft/scripts/build-materials.mjs --write",
+    "prepack": "npm run check:craft && npm run check:report-domain",
+    "build:report-domain": "node scripts/build-zhijian-report-craft.mjs --write",
+    "check:report-domain": "node scripts/build-zhijian-report-craft.mjs --check"
   },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1-rc.1",
@@ -162,5 +167,8 @@
     "tsdown": "0.22.2",
     "typescript": "^5.9.3",
     "unrun": "^0.3.1"
+  },
+  "dependencies": {
+    "mdast-util-from-markdown": "2.0.3"
   }
 }

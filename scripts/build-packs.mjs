@@ -84,6 +84,12 @@ async function main() {
     const { dir, emit } = PACKS[id]
     const outDir = resolve(dir)
     try {
+      if (id === 'zhijian-realestate' && await stat(join(outDir, 'craft', 'zhijian-report-craft.json')).then(s => s.isFile()).catch(e => { if (e.code === 'ENOENT') return false; throw e })) {
+        const { buildZhijianWithCraft } = await import('./build-zhijian-pack-with-craft.mjs')
+        const result = await buildZhijianWithCraft({ write: !check, packRoot: outDir })
+        console.log(`[${id}] complete craft ${check ? 'check' : 'build'}: ${JSON.stringify(result)}`)
+        continue
+      }
       if (check) {
         // Drift-check re-emits from the pack's own embedded source (when
         // present) so the comparison covers source/ assets, not just entities.

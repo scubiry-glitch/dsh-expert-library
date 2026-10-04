@@ -596,6 +596,11 @@ function isSafeRelativeRoot(root: string): boolean {
 /** Validate one skill package manifest (§3.7, local-only sources). */
 function validateSkillPackage(diags: Diagnostics, value: Record<string, unknown>, path: string): string | undefined {
   const { id } = validateEntityHeader(diags, value, path, 'skill package')
+  const craft = value['craft']
+  if (craft !== undefined && (!isRecord(craft) || Object.keys(craft).length !== 1
+    || typeof craft['path'] !== 'string' || craft['path'].includes('\\') || !isSafeRelativeRoot(craft['path']))) {
+    diags.add('invalid-field', `${path}.craft`, 'craft must contain only a safe pack-relative path')
+  }
   const source = value['source']
   if (!isRecord(source)) {
     diags.add('invalid-field', `${path}.source`, 'skill package source must record kind/root/digest (local-only)')

@@ -1,3 +1,5 @@
+import { craftSessionContext } from './report-craft-delivery.ts'
+import { scopedSkillCraftDiscovery } from './skill-craft-discovery.ts'
 /**
  * Expert Library for DeepSeek Harness — an Expert Teams-based expert system.
  *
@@ -32,24 +34,36 @@ import type {} from '@deepseek-ai/dsh-llm'
 import type {} from '@deepseek-ai/dsh-subagent'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 import type { WorkspaceRegistry } from '@deepseek-ai/dsh-workspace'
+import type { SessionId } from '@deepseek-ai/dsh-session'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { registerExpertTeamsTools, type ToolsConfig } from './tools.ts'
+import { registerExpertTeamsTools, scenarioApproveFromHost, scenarioDiscardCore, scenarioEditCore, type ToolsConfig } from './tools.ts'
 import { registerZhijianTools } from './zhijian/tools.ts'
 import { registerCollabTools } from './collab/tools.ts'
+import { registerTeamWaitTool } from './team-wait.ts'
 import { BUILTIN_EXPERT_BY_ID } from './expert-library/builtin-experts.ts'
 import { BUILTIN_SCENARIO_BY_ID } from './expert-library/builtin-scenarios.ts'
 import { ZHIJIAN_EXPERT_BY_ID, ALL_EXPERT_METAS, zhijianMetaById } from './zhijian/registry.ts'
 import { readFile, readdir, stat } from 'node:fs/promises'
-import { basename, join, resolve as resolvePath, sep } from 'node:path'
+import { basename, dirname, join, resolve as resolvePath, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { collectArchivedTeamsActivity, collectTeamsActivity } from './snapshot.ts'
-import { readTeam } from './state.ts'
+import { archiveTeamDir, findTeamByCaptain, haltTeam, listArchivedTeamIds, readArchivedTeam, readTeam, resumeTeam, recordRetiredMemberIds, writeTeam, withTeamLock } from './state.ts'
 import type { TeamState } from './types.ts'
 import { droppedSessionEvents } from './events.ts'
 import { handleManage } from './host/manage.ts'
 import { authorizeManageRequest, resolveManageToken } from './host/auth.ts'
 import { createPackCenterHost } from './host/pack-center-host.ts'
 import { createPackCenterRouteHandler } from './host/pack-center-routes.ts'
+import { listStagedPlanIds, readStagedPlan, recoverStagedPlans } from './staged-plan.ts'
+import { authorizePlanExecution, revokePlanExecution, readPlanExecutionAuthorization, PLAN_AUTHORIZATION_SCOPE } from './plan-authorization.ts'
+import { captureSharedTaskContext } from './shared-task-context.ts'
+import { captainGoalRules } from './goal-prompts.ts'
+import { installProviderRequestQueue } from './provider-request-queue.ts'
+import { handleTeamRoutes, type TeamRouteRequest, type TeamRouteTarget } from './host/team-routes.ts'
+import { planToWire, teamToWire, type TeamWireResponse } from './team-wire.ts'
+import { teamLockKey, workspaceOf, stateRootOf } from './team-core.ts'
+import { interruptMember } from './members.ts'
+import { waitForMemberIdle } from './team-core.ts'
 
 /**
  * Resolve the vendored-pack root. Deliberately not under the plugin module
@@ -64,10 +78,15 @@ function resolveVendorPacksDir(configured: string | undefined): string {
   return home === undefined || home === '' ? '' : join(home, 'vendor-packs')
 }
 import {
+  effectiveMemberModel,
   installExpertLibrarySettings,
+  normalizeUpdatePolicy,
+  PackCenterUpdatePolicySchema,
   type ExpertLibrarySettings,
+  type PackCenterUpdatePolicy,
   type ToolExecutionConfig,
 } from './settings.ts'
+import { createPackCenterAutoUpdate } from './host/pack-center-auto-update.ts'
 import {
   ProviderTransportService,
   resolveProviderServiceOptions,
@@ -99,7 +118,6 @@ import {
   discoverSkillRoots,
   liveSkillsInventoryLine,
   skillDiscoveryPromptSection,
-  skillsInventoryLine,
 } from './skills-discovery.ts'
 import type { AssembleContext } from '@deepseek-ai/dsh-system-prompt'
 
@@ -160,6 +178,25 @@ function discoverStateRoots(ctx: Context, runtimeConfig: ToolsConfig): { workspa
   return [...rootByState].map(([stateRoot, title]) => ({
     workspace: title,
     stateRoot,
+  }))
+}
+
+/** Reconcile staged plans at plugin startup, before a new tool request can
+ * observe a stale running record. The scan is deliberately best effort per
+ * workspace: a malformed plan must be reported without preventing the host
+ * plugin from loading for other workspaces. */
+async function recoverStagedPlanRoots(ctx: Context, runtimeConfig: ToolsConfig): Promise<void> {
+  const roots = discoverStateRoots(ctx, runtimeConfig)
+  const fallbackRoot = join(process.cwd(), runtimeConfig.stateDir)
+  const allRoots = roots.some(root => root.stateRoot === fallbackRoot)
+    ? roots
+    : [...roots, { workspace: process.cwd(), stateRoot: fallbackRoot }]
+  await Promise.all(allRoots.map(async ({ stateRoot }) => {
+    try {
+      await recoverStagedPlans(stateRoot)
+    } catch (error: unknown) {
+      ctx.logger.warn(`expert-library: staged plan recovery failed for ${stateRoot}: ${String(error)}`)
+    }
   }))
 }
 
@@ -243,8 +280,12 @@ export interface Config {
   memberProvider?: string
   /** Optional default AI model route applied to every member without a preset expert route. */
   memberModel?: { provider: string; model: string; reasoningEffort?: string }
-  /** Member delegation depth cap (default `1`; `0` forbids delegation entirely). */
+  /** Member delegation depth cap (default `0`; `0` forbids delegation entirely). */
   memberMaxDepth?: number
+  /** Maximum concurrently active team members, including independent review (default `2`). */
+  maxActiveMembers?: number
+  /** Host-local provider stream limits, shared by captain, members and auxiliary calls. */
+  providerRequestConcurrency?: Record<string, number>
   /** Team size cap in members (default `8`). */
   maxMembers?: number
   /** Knowledge pack directory name under the captain's workspace (default `knowledge`). */
@@ -266,6 +307,11 @@ export interface Config {
   /** HTTPS center origin and private storage. Changes require plugin restart. */
   packCenterOrigin?: string
   packCenterDir?: string
+  /**
+   * 宿主侧半自动更新策略（三档：manual/download/patch_auto），热生效、无需重启。
+   * manual（默认）保持零周期网络；见 src/host/pack-center-auto-update.ts。
+   */
+  packCenterUpdatePolicy?: PackCenterUpdatePolicy
   /** Locator hosts whose packs install on validation success, without review. */
   packSourceAllowlist?: string[]
   /** Prompt-section order for the usage policy (default `117`, after delegation policy). */
@@ -284,7 +330,7 @@ export interface Config {
   toolExecution?: Record<string, ToolExecutionConfig>
   /** Tool ids to exclude from this preset's model-facing tool catalog (e.g. `expert_teams_claim_task`); absent/empty = register everything. Host-layer tools registered by `index.ts` (e.g. `render_publish`) are NOT affected. */
   disabledTools?: string[]
-  /** Provider path/endpoint configuration (wind/zyt/beike); env/probe defaults apply when absent. */
+  /** Provider path/endpoint configuration (wind/zyt/beike/localdb); env/probe defaults apply when absent. */
   providers?: {
     /** Wind skill CLI path (`scripts/cli.mjs`); default probes `~/.agents/skills/wind-mcp-skill/scripts/cli.mjs` / `WIND_SKILL_CLI`. */
     wind?: { cliPath?: string }
@@ -292,6 +338,11 @@ export interface Config {
     zyt?: { baseUrl?: string; cliCommand?: string; preferCli?: boolean }
     /** beike MCP endpoint + optional CLI binary; defaults `https://building.ke.com/mcp` / `BEIKE_MCP_BASE_URL` / `BEIKE_CLI`. */
     beike?: { baseUrl?: string; cliCommand?: string; preferCli?: boolean }
+    /** 本地 SQLite 数据库灵活注册：显式列表 + 目录扫描；无效 id / 不存在的文件一律跳过（fail-closed）。 */
+    localdb?: {
+      databases?: { id: string; path: string; description?: string; caliber?: string; sensitivity?: string }[]
+      scanDirs?: string[]
+    }
   }
 }
 
@@ -333,11 +384,26 @@ const providerBeikeSchema = z.object({
   preferCli: z.boolean(),
 })
 
+const providerLocalDbDatabaseSchema = z.object({
+  id: z.string(),
+  path: z.string(),
+  description: z.string(),
+  caliber: z.string(),
+  sensitivity: z.string(),
+})
+
+const providerLocalDbSchema = z.object({
+  databases: z.array(providerLocalDbDatabaseSchema),
+  scanDirs: z.array(z.string()),
+})
+
 export const Config: z<Config> = z.object({
   stateDir: z.string().default('expert-teams'),
   memberProvider: z.string().default('spawn'),
   memberModel: memberModelSchema,
-  memberMaxDepth: z.natural().default(1),
+  memberMaxDepth: z.natural().default(0),
+  maxActiveMembers: z.natural().min(1).default(2),
+  providerRequestConcurrency: z.dict(z.natural().min(1)),
   maxMembers: z.natural().min(1).default(8),
   knowledgeDir: z.string().default('knowledge'),
   packsDir: z.string().default('domain-packs'),
@@ -345,6 +411,7 @@ export const Config: z<Config> = z.object({
   vendorPacksDir: z.string().default(''),
   packCenterOrigin: z.string().default(''),
   packCenterDir: z.string().default(''),
+  packCenterUpdatePolicy: PackCenterUpdatePolicySchema,
   packSourceAllowlist: z.array(z.string()).default([]),
   promptSectionOrder: z.natural().default(117),
   announceToAgent: z.boolean().default(true),
@@ -358,6 +425,7 @@ export const Config: z<Config> = z.object({
     wind: providerWindSchema,
     zyt: providerZytSchema,
     beike: providerBeikeSchema,
+    localdb: providerLocalDbSchema,
   }),
 })
 
@@ -365,28 +433,12 @@ export const Config: z<Config> = z.object({
 function usageSectionText(toolNames: string, skillInventoryLine: string): string {
   const expertIds = [...BUILTIN_EXPERT_BY_ID.keys()].join(', ')
   const scenarioIds = [...BUILTIN_SCENARIO_BY_ID.keys()].join(', ')
-  return `When the user asks to use the Expert Library (for example, "用专家库审查最近的提交" or "use Expert Teams to research X"), work in GOAL MODE. You are the captain and are responsible for reaching a useful, reviewable outcome, not for merely completing a sequence of tool calls.
-
-Goal contract:
-- Translate the request into one concrete goal, target/audience, constraints, available evidence, and a definition of done. Keep the user's wording when it is already precise.
-- If one material decision is missing, ask one focused question. Otherwise make a reversible assumption, state it briefly, and keep moving.
-- Prefer a direct answer when a team would not add evidence, review, or parallel work. Use a team when the goal needs independent expertise, durable work, external evidence, or a quality review.
-
-Goal-driven execution:
-1. Choose the smallest execution shape that can satisfy the goal. For a preset scenario (${scenarioIds}), call expert_teams_plan_preview, then expert_teams_plan_stage. Preview is read-only; staging is the reviewable plan. Approval is the only action that may create members, tasks, or wakeups. Approve with the exact staged \`digest\` and \`revision\` returned by the plan.
-2. For an open-ended goal, create the team and freeze a small roster. Prefer \`expert=<id>\` from the Expert Library (${expertIds}); preset personas, routes, and knowledge guides are already attached. Do not make the user choose models unless they explicitly ask for that decision.
-3. Turn the definition of done into task outcomes, evidence, acceptance checks, and dependencies. Every task must explain what it will produce and how the captain can verify it. Assign only work that advances the goal; let the scheduler handle ready work.
-4. Drive the loop: inspect status, read artifacts and reports, compare them with the goal and acceptance checks, then send the next highest-value instruction. Keep independent tasks parallel and keep dependent tasks locked until their evidence is available. Do not redo a member's work just because it is slow.
-5. When a task is blocked, identify the concrete missing input or decision. Resolve it from available context when safe; otherwise ask the user one focused question. For stale, failed, or reassigned work, use the current attempt_id and reassign explicitly rather than silently starting a duplicate.
-6. Review the assembled result against the definition of done. A failed review stays blocked, produces a finding and repair, and must pass re-review before downstream work or integration is unlocked. Preserve source paths, numbers, assumptions, and unresolved risks in the final result.
-7. Report progress in terms of goal state (done, in progress, blocked, next decision), not a list of tool calls. Finish only when the goal is met or a specific external decision is required. Present the result and evidence, then delete the team unless the user wants to continue with it.
-
-Use the legacy expert_teams_scenario_apply only when the user explicitly requests immediate legacy execution. Use expert_teams_plan_edit to revise the same staged plan and expert_teams_plan_discard to abandon it; never create a replacement plan merely because the user supplied feedback.
+  return `${captainGoalRules({ scenarioIds, expertIds })}
 
 Zhijian (智见点评) review flow — when the user asks 请专家点评 / 让专家看看数据 (real-estate market data):
-0. 先归型、再路由 (mandatory for free-form requests): for a free/ambiguous request (e.g. "贝壳政研通的 BP 优化"), call expert_review_clarify FIRST — it returns candidate topic/scenario options plus the domain pack's 待确认口径 questions (用途受众 / 数据来源 / 城市 / 时段 / 敏感脱敏 / 领域侧重; required items marked). Ask the user these questions one round, then 归型 (pick the intent). When expert_review_route returns clarify_needed, confirm those 口径 with the user before expert_review_apply — never enter a team with unresolved 口径.
+0. 先归型、再路由 (mandatory for free-form requests): for a free/ambiguous request (e.g. "贝壳政研通的 BP 优化"), call expert_review_clarify FIRST — it returns candidate topic/scenario options plus the domain pack's 待确认口径 questions (用途受众 / 数据来源 / 城市 / 时段 / 敏感脱敏 / 领域侧重; required items marked). Reuse confirmed answers; ask only unresolved material questions in one round, then 归型 (pick the intent). When expert_review_route returns clarify_needed, confirm those 口径 with the user before expert_review_apply — never enter a team with unresolved 口径.
 1. Call expert_review_route with the question/topic: it returns the output framework (A 五维 / B 四段 / C 用户视角五层 / D 多分类融合 / E 顾问式), the primary field, and 3-5 candidate experts (anonymized BK·领域·首字母).
-2. Present the candidates to the USER for sign-off — never auto-select. For 同题对比 prefer one 乐观/底部派 + one 风险揭示派 from the stance table.
+2. Use the experts already selected by the user; otherwise present the candidates for sign-off. Do not ask again for an unchanged selection. For 同题对比 prefer one 乐观/底部派 + one 风险揭示派 from the stance table.
 3. If the data 口径 (source/city/period) is missing, ask the user first — never generate a review without it.
 4. Dataset-first data fetch: when route returns required_data and user-supplied data is insufficient, call expert_provider_call with the \`dataset\` parameter (e.g. realestate.city.market) — it maps to the version-pinned capability and validates required 口径 automatically. NEVER guess raw capability keys, NEVER reinstall skills/providers to fix a data error: unknown dataset (DATASET_UNKNOWN), missing caliber (CALIBER_MISSING), missing credentials (CREDENTIAL_MISSING) and bad input (INPUT_INVALID) each demand a targeted fix, not a reinstall. Every successful fetch must carry provenance (source/caliber/unit) and a request signature pinning city/period — a DATA_QUALITY_INVALID result must not be cited in any review.
 5. Call expert_review_apply with the user's selected experts, framework and data: it builds the team (Profile-baked personas) and the framework task DAG (parallel expert reviews → fusion under the keynote → anonymized render).
@@ -414,8 +466,9 @@ export function apply(ctx: Context, config: Config): void {
   const runtimeConfig: ToolsConfig = {
     stateDir: config.stateDir ?? 'expert-teams',
     memberProvider: config.memberProvider ?? 'spawn',
-    memberModel: config.defaultModel ?? config.memberModel,
-    memberMaxDepth: config.memberMaxDepth ?? 1,
+    memberModel: effectiveMemberModel(config),
+    memberMaxDepth: config.memberMaxDepth ?? 0,
+    maxActiveMembers: config.maxActiveMembers ?? 2,
     maxMembers: config.maxMembers ?? 8,
     knowledgeDir: config.knowledgeDir ?? 'knowledge',
     packsDir: config.packsDir ?? 'domain-packs',
@@ -423,6 +476,7 @@ export function apply(ctx: Context, config: Config): void {
     vendorPacksDir: resolveVendorPacksDir(config.vendorPacksDir),
     packCenterOrigin: config.packCenterOrigin,
     packCenterDir: config.packCenterDir,
+    packCenterUpdatePolicy: normalizeUpdatePolicy(config.packCenterUpdatePolicy),
     packSourceAllowlist: config.packSourceAllowlist ?? [],
     enabledPacks: config.enabledPacks,
     packPriority: config.packPriority,
@@ -447,11 +501,22 @@ export function apply(ctx: Context, config: Config): void {
     'expert_teams_add_member',
     'expert_teams_remove_member',
     'expert_teams_create_task',
+    'expert_teams_publish_artifact',
+    'expert_teams_read_artifact',
     'expert_teams_reassign_task',
     'expert_teams_claim_task',
     'expert_teams_update_task',
     'expert_teams_send_message',
+    'expert_teams_halt',
+    'expert_teams_resume',
+    'expert_teams_quality_review',
+    'expert_teams_quality_repair',
+    'expert_teams_quality_reopen',
+    'expert_teams_quality_integrate',
+    'expert_teams_resume_task',
     'expert_teams_status',
+    'expert_teams_wait',
+    'expert_library_doctor',
     'expert_teams_delete',
     'expert_teams_chat',
     'expert_review_route',
@@ -465,6 +530,20 @@ export function apply(ctx: Context, config: Config): void {
   ].join(', ')
 
   const core = registerExpertTeamsTools(ctx, runtimeConfig)
+  registerTeamWaitTool(ctx, runtimeConfig, core)
+  void recoverStagedPlanRoots(ctx, runtimeConfig)
+  const recoveryWorkspaces = [...new Set([
+    // `workspace` is a display title; scheduler recovery needs the actual
+    // filesystem parent of the durable state root.
+    ...discoverStateRoots(ctx, runtimeConfig).map(root => dirname(root.stateRoot)),
+    process.cwd(),
+  ])]
+  void Promise.all(recoveryWorkspaces.map((workspace) => (
+    core.scheduler.recoverWorkspace(workspace).catch((error: unknown) => {
+      ctx.logger.warn(`expert-library: team recovery failed for ${workspace}: ${String(error)}`)
+      return undefined
+    })
+  )))
   registerZhijianTools(ctx, runtimeConfig, core)
   registerCollabTools(ctx, runtimeConfig, core)
   // render_publish: 通用基础设施工具（HTML5 产物 → 公网链接，无鉴权直出），
@@ -513,7 +592,7 @@ export function apply(ctx: Context, config: Config): void {
   let providerToolRegistered = false
   const syncProviderTool = (): void => {
     if (providerToolRegistered || !providerCallToolEligible(providerService)) return
-    registerProviderCallTool(ctx)
+    registerProviderCallTool(ctx, { stateDir: runtimeConfig.stateDir })
     providerToolRegistered = true
   }
 
@@ -537,12 +616,47 @@ export function apply(ctx: Context, config: Config): void {
     try {
       return usageSectionText(toolNames, liveSkillsInventoryLine(ctx, runtimeConfig.knowledgeDir))
     } catch (error: unknown) {
-      // A prompt provider must never break assembly: degrade to the static
-      // bundled inventory and the mechanism lines.
+      // A prompt provider must never break assembly. Preserve the discovery
+      // mechanism without claiming an unreadable file inventory is empty.
       ctx.logger.warn(`expert-library: dynamic skill inventory failed: ${String(error)}`)
-      return usageSectionText(toolNames, skillsInventoryLine([], '插件自带 skills（挂载时）'))
+      return usageSectionText(toolNames, 'Plugin material context unavailable: ' + String(error) + '. Report work requiring frozen craft materials must stop until full current materials can be delivered; consult the discovery route for file paths.')
     }
   }
+  // Async catalog discovery is scoped to the actual driving session. No process-global
+  // "last catalog" cache or cross-workspace fallback may choose another tenant's pack.
+  ctx.on('system-prompt/assemble', async (_assembly, _context, next) => {
+    const agent = ctx.agents.currentInitiator()
+    const workspace = agent?.session.header.cwd
+    const assembly = await next()
+    if (workspace === undefined || !(current().announceToAgent ?? true)) return assembly
+    let text: string
+    try {
+      const found = await scopedSkillCraftDiscovery(ctx, runtimeConfig, workspace)
+      text = found.text
+      if (found.catalog.length) {
+        const ownedIds = new Set(found.catalog.map(row => row.skillId))
+        const legacyInventory = liveSkillsInventoryLine(ctx, runtimeConfig.knowledgeDir)
+          .split('\n').filter(line => ![...ownedIds].some(id => line.startsWith(`- ${id}:`))).join('\n')
+        const usage = assembly.sections.find(section => section.name === 'expert-library:usage')
+        if (usage !== undefined) usage.text = usageSectionText(toolNames, legacyInventory)
+      }
+    } catch (error: unknown) {
+      text = 'DOMAIN_SKILL_DISCOVERY_UNAVAILABLE: ' + String(error).slice(0, 1500)
+        + '. Resolve the scoped pack inventory before selecting a new craft; no fallback to a global same-name copy.'
+    }
+    const name = 'expert-library:domain-craft-catalog'
+    assembly.sections = [...assembly.sections.filter(section => section.name !== name), { name, text }]
+    return assembly
+  })
+  // Required materials survive compaction independently from optional inventory announcements.
+  ctx.effect(() => ctx.systemPrompt.section({
+    name: 'expert-library:report-craft-materials', order: 118,
+    text: () => {
+      const agent = ctx.agents.currentInitiator()
+      return agent?.session.header.cwd === undefined ? ''
+        : craftSessionContext(resolvePath(agent.session.header.cwd, runtimeConfig.stateDir), agent.id)
+    },
+  }))
   let disposeSection: (() => void) | undefined
   const syncAnnounce = (): void => {
     const value = current()
@@ -560,13 +674,15 @@ export function apply(ctx: Context, config: Config): void {
   }
 
   let current: () => Config = () => config
+  installProviderRequestQueue(ctx, () => current().providerRequestConcurrency)
   const applySource = (source: () => Config): void => {
     current = source
     const value = current()
     runtimeConfig.stateDir = value.stateDir ?? 'expert-teams'
     runtimeConfig.memberProvider = value.memberProvider ?? 'spawn'
-    runtimeConfig.memberModel = value.defaultModel ?? value.memberModel
-    runtimeConfig.memberMaxDepth = value.memberMaxDepth ?? 1
+    runtimeConfig.memberModel = effectiveMemberModel(value)
+    runtimeConfig.memberMaxDepth = value.memberMaxDepth ?? 0
+    runtimeConfig.maxActiveMembers = value.maxActiveMembers ?? 2
     runtimeConfig.maxMembers = value.maxMembers ?? 8
     runtimeConfig.knowledgeDir = value.knowledgeDir ?? 'knowledge'
     runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
@@ -574,6 +690,7 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.vendorPacksDir = resolveVendorPacksDir(value.vendorPacksDir)
     runtimeConfig.packCenterOrigin = value.packCenterOrigin
     runtimeConfig.packCenterDir = value.packCenterDir
+    runtimeConfig.packCenterUpdatePolicy = normalizeUpdatePolicy(value.packCenterUpdatePolicy)
     runtimeConfig.packSourceAllowlist = value.packSourceAllowlist ?? []
     runtimeConfig.enabledPacks = value.enabledPacks
     runtimeConfig.packPriority = value.packPriority
@@ -588,7 +705,14 @@ export function apply(ctx: Context, config: Config): void {
     invalidateRuntimePack()
     syncAnnounce()
     syncProviders()
+    // 更新策略热生效：调度器按新策略 arm/disarm（下一跳生效，不打断进行中的批次）。
+    autoUpdate?.sync()
   }
+
+  // Assigned once createPackCenterHost returns below; declared here because
+  // applySource may run earlier (first invocation happens before host creation)
+  // and must tolerate the scheduler not existing yet.
+  let autoUpdate: ReturnType<typeof createPackCenterAutoUpdate> | undefined
 
   // Optional settings wiring: while a settings service exists, the
   // `expert-library` namespace overrides the entry config; otherwise the entry
@@ -607,13 +731,22 @@ export function apply(ctx: Context, config: Config): void {
     const registry = (ctx.get(WORKSPACE_KEYS[0]) ?? ctx.get(WORKSPACE_KEYS[1])) as WorkspaceRegistry | undefined
     return registry?.list().map(workspace => workspace.path) ?? []
   })
+  autoUpdate = packCenter.autoUpdate
   runtimeConfig.getPackCenterSnapshot = () => packCenter.activeSnapshot()
   const handlePackCenter = createPackCenterRouteHandler({ service: packCenter.service,
-    getManageToken: () => resolveManageToken(runtimeConfig.manageToken) })
-  // No network on startup; resumes persisted jobs and verifies local receipts.
-  // Fixed log text only: configuration/transport errors must not print secrets.
+    getManageToken: () => resolveManageToken(runtimeConfig.manageToken), updatePolicy: packCenter.updatePolicy })
+  // No network on startup: startup only resumes persisted jobs and verifies
+  // local receipts. The update scheduler arms itself below purely on an
+  // explicit deployment opt-in (non-manual policy + configured origin); with
+  // the default `manual` policy this host makes no periodic network calls at
+  // all. Fixed log text only: configuration/transport errors must not print
+  // secrets.
   void packCenter.service.start().catch(() => ctx.logger.warn('expert-library: pack-center local startup needs administrator attention'))
-  ctx.effect(() => () => { void packCenter.service.close().catch(() => {}) }, 'expert-library: pack-center local manager')
+  packCenter.autoUpdate.sync()
+  ctx.effect(() => () => {
+    void packCenter.autoUpdate.close()
+    void packCenter.service.close().catch(() => {})
+  }, 'expert-library: pack-center local manager')
 
   // The activity panel data/artwork routes need the Web server and the
   // workspace registry, which headless profiles do not mount; under
@@ -628,6 +761,162 @@ export function apply(ctx: Context, config: Config): void {
     if (webServer === undefined || workspaceRegistry === undefined) return
     webRegistered = true
 
+    // The host connection service owns the signed browser cookie and the
+    // trusted Host/Origin fence. Plugin routes must use that predicate rather
+    // than treating a durable captain session id as browser identity.
+    const nativeHostAuth = (req: IncomingMessage): number | undefined => {
+      // The web route can bind before Connection finishes activating. Resolve
+      // the service for every request instead of capturing an early `undefined`
+      // and turning every authenticated browser call into a false 401.
+      const connection = ctx.get('connection') as { requestRejection?: (request: IncomingMessage) => number | undefined } | undefined
+      if (connection?.requestRejection === undefined) return 401
+      return connection.requestRejection(req)
+    }
+
+    // Versioned team wire surface used by the activity panel. Reads are
+    // projected from durable state and never kick the scheduler or consume
+    // mail. Writes resolve the live captain agent before delegating to the
+    // existing CAS/state cores, so the browser cannot become a second owner.
+    const resolveTeamRouteTarget = async (captainSessionId: string, teamId?: string, planId?: string): Promise<TeamRouteTarget | undefined> => {
+      const targets: TeamRouteTarget[] = []
+      for (const root of discoverStateRoots(ctx, runtimeConfig)) {
+        if (teamId !== undefined) {
+          const live = await readTeam(root.stateRoot, teamId)
+          // Native HostConnection auth has already established the browser
+          // identity. Durable state remains readable after a DSH restart.
+          if (live?.captainSessionId === captainSessionId && (planId === undefined || live.planRef?.planId === planId)) targets.push({ stateRoot: root.stateRoot, teamId: live.id, planId: live.planRef?.planId, captainSessionId, archived: false })
+          for (const archivedId of await listArchivedTeamIds(root.stateRoot)) {
+            if (archivedId !== teamId) continue
+            const archived = await readArchivedTeam(root.stateRoot, archivedId)
+            if (archived?.captainSessionId === captainSessionId && (planId === undefined || archived.planRef?.planId === planId)) targets.push({ stateRoot: root.stateRoot, teamId: archived.id, planId: archived.planRef?.planId, captainSessionId, archived: true })
+          }
+          continue
+        }
+        // A staged plan is a first-class review target before approval has
+        // materialized a team. The plan's createdBy binds it to the captain
+        // session; native HostConnection authentication protects the request.
+        if (planId !== undefined) {
+          const plan = await readStagedPlan(root.stateRoot, planId)
+          if (plan?.createdBy === captainSessionId) targets.push({ stateRoot: root.stateRoot, planId, captainSessionId, archived: false })
+          continue
+        }
+        const live = await findTeamByCaptain(root.stateRoot, captainSessionId)
+        if (live !== undefined) targets.push({ stateRoot: root.stateRoot, teamId: live.id, planId: live.planRef?.planId, captainSessionId, archived: false })
+        for (const archivedId of await listArchivedTeamIds(root.stateRoot)) {
+          const archived = await readArchivedTeam(root.stateRoot, archivedId)
+          if (archived?.captainSessionId === captainSessionId) targets.push({ stateRoot: root.stateRoot, teamId: archived.id, captainSessionId, archived: true })
+        }
+      }
+      return targets.length === 1 ? targets[0] : undefined
+    }
+    const readTeamRouteResponse = async (target: TeamRouteTarget): Promise<TeamWireResponse> => {
+      if (target.teamId === undefined) {
+        if (target.planId === undefined) throw new Error('team or plan is required')
+        const staged = await readStagedPlan(target.stateRoot, target.planId)
+        if (staged === undefined || staged.createdBy !== target.captainSessionId) throw new Error('plan not found')
+        return { version: 1, team: null, plan: planToWire(staged), archived: false }
+      }
+      const team = target.archived
+        ? await readArchivedTeam(target.stateRoot, target.teamId)
+        : await readTeam(target.stateRoot, target.teamId)
+      if (team === undefined || team.captainSessionId !== target.captainSessionId) throw new Error('team not found')
+      const plan = (target.planId ?? team.planRef?.planId) === undefined ? undefined : await readStagedPlan(target.stateRoot, target.planId ?? team.planRef?.planId as string)
+      return { version: 1, team: teamToWire(team, target.archived), ...(plan === undefined ? { plan: null } : { plan: planToWire(plan) }), archived: target.archived }
+    }
+    const actionTeamRoute = async (target: TeamRouteTarget, request: TeamRouteRequest): Promise<TeamWireResponse> => {
+      if (target.archived) throw new Error('archived team is read-only')
+      const captain = ctx.agents.get(target.captainSessionId as SessionId)
+      if (captain === undefined) throw new Error('captain session is not live')
+      const current = target.teamId === undefined ? undefined : await readTeam(target.stateRoot, target.teamId)
+      if (target.teamId !== undefined && (current === undefined || current.captainSessionId !== captain.id)) throw new Error('team not found')
+      const planId = request.planId ?? target.planId ?? current?.planRef?.planId
+      let approvedTeamId: string | undefined
+      if (request.action === 'edit') {
+        if (planId === undefined) throw new Error('team has no staged plan')
+        await scenarioEditCore(ctx, runtimeConfig, captain, planId, (request.patch ?? {}) as never, request.expectedDigest, request.expectedRevision)
+      } else if (request.action === 'approve') {
+        if (planId === undefined) throw new Error('team has no staged plan')
+        const approved = await scenarioApproveFromHost(ctx, runtimeConfig, captain, planId, new AbortController().signal, core, request.expectedDigest, request.expectedRevision)
+        approvedTeamId = approved.appliedTeamId
+      } else if (request.action === 'discard') {
+        if (planId === undefined) throw new Error('team has no staged plan')
+        await scenarioDiscardCore(runtimeConfig, captain, planId, request.expectedDigest, request.expectedRevision)
+      } else if (request.action === 'halt') {
+        if (current === undefined) throw new Error('team not found')
+        await haltTeam(target.stateRoot, current.id, request.reason?.trim() || 'paused from activity panel')
+      } else if (request.action === 'resume') {
+        if (current === undefined) throw new Error('team not found')
+        const resumed = await resumeTeam(target.stateRoot, current.id, request.reason?.trim() || 'resumed from activity panel')
+        await core.scheduler.kickTeam(workspaceOf(captain), resumed.id, captain)
+      } else if (request.action === 'archive') {
+        if (current === undefined) throw new Error('team not found')
+        if (!current.tasks.every(task => ['completed', 'failed', 'cancelled'].includes(task.status))) throw new Error('archive requires all tasks to be terminal')
+        // Archive is a lifecycle mutation: retire every child under the team
+        // lock, persist the deny-list before interruption, wait for quiescence,
+        // then move the durable directory under the same lock. This prevents a
+        // late member message from racing the archive and avoids silent live
+        // children after the UI reports success.
+        const roster = await withTeamLock(teamLockKey(target.stateRoot, current.id), async () => {
+          const fresh = await readTeam(target.stateRoot, current.id)
+          if (fresh === undefined || fresh.captainSessionId !== captain.id) throw new Error('team not found')
+          const members = fresh.members.map(member => ({ ...member }))
+          for (const member of fresh.members) member.status = 'removed'
+          await writeTeam(target.stateRoot, fresh)
+          return members
+        })
+        await recordRetiredMemberIds(target.stateRoot, roster.map(member => member.id))
+        for (const member of roster) if (member.id !== '') interruptMember(ctx, captain, member.id)
+        const stopController = new AbortController()
+        const stopTimer = setTimeout(() => stopController.abort(new Error('archive quiescence timeout')), 10_000)
+        try {
+          await Promise.allSettled(roster.map(member => waitForMemberIdle(ctx, member, stopController.signal)))
+        } finally {
+          clearTimeout(stopTimer)
+        }
+        await withTeamLock(teamLockKey(target.stateRoot, current.id), async () => {
+          const fresh = await readTeam(target.stateRoot, current.id)
+          if (fresh === undefined || fresh.captainSessionId !== captain.id) throw new Error('team changed during archive')
+          await archiveTeamDir(target.stateRoot, current.id)
+        })
+      }
+      const next = planId !== undefined && request.action === 'approve'
+        ? await resolveTeamRouteTarget(captain.id, undefined, planId)
+        : await resolveTeamRouteTarget(captain.id, target.teamId, planId)
+      // Approval normally creates a team and archives the staged plan. Re-
+      // resolve the durable team by the returned applied id.
+      const applied = approvedTeamId === undefined ? next : await resolveTeamRouteTarget(captain.id, approvedTeamId)
+      if (applied === undefined) throw new Error('team or plan disappeared after action')
+      return readTeamRouteResponse(applied)
+    }
+    ctx.effect(() => webServer.register({
+      kind: 'exact',
+      path: '/plugins/dsh-expert-library/teams',
+      handler: async (req, res) => {
+        const url = new URL(req.url ?? '/', 'http://x')
+        await handleTeamRoutes(req, res, url, {
+          getToken: () => resolveManageToken(runtimeConfig.manageToken),
+          hostAuth: nativeHostAuth,
+          resolve: resolveTeamRouteTarget,
+          read: readTeamRouteResponse,
+          action: actionTeamRoute,
+          authorization: async (sessionId, action, input) => {
+            const captain = ctx.agents.get(sessionId as SessionId)
+            if (captain === undefined || captain.session.header.origin === 'subagent') throw new Error('PLAN_AUTHORIZATION_CAPTAIN_NOT_FOUND')
+            const stateRoot = stateRootOf(workspaceOf(captain), runtimeConfig)
+            if (action === 'read') return readPlanExecutionAuthorization(stateRoot, sessionId)
+            if (typeof input?.requestId !== 'string') throw new Error('PLAN_AUTHORIZATION_INVALID_INPUT')
+            if (action === 'revoke') return revokePlanExecution(stateRoot, sessionId, input.requestId)
+            if (input.scope !== PLAN_AUTHORIZATION_SCOPE || typeof input.expectedInputSha256 !== 'string' || typeof input.reason !== 'string') throw new Error('PLAN_AUTHORIZATION_INVALID_INPUT')
+            if (input.requireReviewedReport !== undefined && input.requireReviewedReport !== true) throw new Error('PLAN_AUTHORIZATION_INVALID_INPUT')
+            return authorizePlanExecution(stateRoot, sessionId, captureSharedTaskContext(captain), {
+              requestId: input.requestId, expectedInputSha256: input.expectedInputSha256, reason: input.reason, scope: input.scope,
+              ...(input.requireReviewedReport === true ? { requireReviewedReport: true as const } : {}),
+            })
+          },
+        })
+      },
+    }), 'expert-teams: versioned team wire route')
+
     // Activity panel data route: the browser floater polls this for team
     // snapshots (disk truth + live subagent activity). Mirrors the Claude
     // Code desktop watcher's server-side snapshot pattern.
@@ -635,13 +924,34 @@ export function apply(ctx: Context, config: Config): void {
     kind: 'exact',
     path: '/plugins/dsh-expert-library/state',
     handler: async (req, res) => {
+      const rejection = nativeHostAuth(req)
+      if (rejection !== undefined) {
+        res.writeHead(rejection, { 'cache-control': 'no-store' })
+        res.end(rejection === 403 ? 'forbidden' : 'unauthorized')
+        return
+      }
       const url = new URL(req.url ?? '/', 'http://x')
       const roots = discoverStateRoots(ctx, runtimeConfig)
       // ?archived=1 serves teams moved to archive/ (post-delete review).
       const snapshots = url.searchParams.get('archived') === '1'
         ? await collectArchivedTeamsActivity(ctx, roots)
         : await collectTeamsActivity(ctx, roots)
-      const body = JSON.stringify({ teams: snapshots })
+      const plans = url.searchParams.get('archived') === '1' ? [] : (await Promise.all(roots.flatMap(root =>
+        listStagedPlanIds(root.stateRoot).then(async ids => {
+          const rows: Array<{ captainSessionId: string; plan: ReturnType<typeof planToWire> }> = []
+          for (const planId of ids) {
+            try {
+              const plan = await readStagedPlan(root.stateRoot, planId)
+              if (plan !== undefined && !['discarded', 'expired'].includes(plan.status)) rows.push({ captainSessionId: plan.createdBy, plan: planToWire(plan) })
+            } catch {
+              // A malformed draft is surfaced by expert_library_doctor; the
+              // activity route remains available for other teams/plans.
+            }
+          }
+          return rows
+        }),
+      ))).flat()
+      const body = JSON.stringify({ teams: snapshots, plans })
       res.writeHead(200, {
         'content-type': 'application/json; charset=utf-8',
         'cache-control': 'no-store',
@@ -673,6 +983,33 @@ export function apply(ctx: Context, config: Config): void {
       res.end(body)
     },
   }), 'expert-teams: skills discovery route')
+
+  // Domain craft catalogs require a known session, so an unscoped HTTP request
+  // cannot obtain a union of unrelated workspaces or choose an arbitrary path.
+  ctx.effect(() => webServer.register({
+    kind: 'exact',
+    path: '/plugins/dsh-expert-library/craft-skills',
+    handler: async (req, res) => {
+      const reply = (status: number, value: unknown): void => {
+        res.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' })
+        res.end(JSON.stringify(value))
+      }
+      const rejection = nativeHostAuth(req)
+      if (rejection !== undefined) return reply(rejection, { error: 'unauthorized' })
+      if (req.method !== 'GET') return reply(405, { error: 'method_not_allowed' })
+      const url = new URL(req.url ?? '/', 'http://x')
+      const sessionId = url.searchParams.get('session_id')
+      if (!sessionId || sessionId.length > 256) return reply(400, { error: 'session_id_required' })
+      const workspace = sessionCwdOf(ctx, sessionId)
+      if (workspace === undefined) return reply(404, { error: 'session_not_found' })
+      try {
+        const found = await scopedSkillCraftDiscovery(ctx, runtimeConfig, workspace)
+        reply(200, { sessionId, skills: found.catalog })
+      } catch {
+        reply(409, { error: 'scoped_craft_catalog_unavailable', message: 'Resolve installed pack integrity, enablement or conflicts before selecting a craft.' })
+      }
+    },
+  }), 'expert-teams: scoped domain craft discovery route')
 
   // Whale mascot artwork: serve the packaged role/action images to the
   // activity panel. An explicit allowlist guards the route (no path
@@ -1120,6 +1457,17 @@ export function apply(ctx: Context, config: Config): void {
             wind: { cliPath: windCliPathCandidate(value as ProviderConfigInput) },
             ...(options.zyt !== undefined ? { zyt: { baseUrl: options.zyt.baseUrl } } : {}),
             ...(options.beike !== undefined ? { beike: { baseUrl: options.beike.baseUrl } } : {}),
+            ...(options.localdb !== undefined
+              ? {
+                localdb: {
+                  databases: options.localdb.databases.map(db => ({
+                    id: db.id,
+                    path: db.path,
+                    ...(db.sensitivity !== undefined ? { sensitivity: db.sensitivity } : {}),
+                  })),
+                },
+              }
+              : {}),
           },
           registered: providerService?.providers ?? [],
           packDirs,

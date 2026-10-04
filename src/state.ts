@@ -1,3 +1,4 @@
+import { isCraftDeliveryReceipt, isCraftReviewPreparation } from './report-craft-delivery.ts'
 /**
  * Team state persistence and pure team-logic rules.
  *
@@ -14,26 +15,195 @@
  */
 
 import { createHash, randomUUID } from 'node:crypto'
+import { isReportBundle, isReportCraftBinding, REPORT_BUNDLE_GUIDANCE } from './report-bundle.ts'
 import { readFileSync } from 'node:fs'
-import { mkdir, open, readFile, readdir, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import { restoreCapabilityScope } from './capability-scope.ts'
+import { link, mkdir, open, readFile, readdir, realpath, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
+import { isAbsolute, join, relative, resolve, sep } from 'node:path'
+import { restoreCapabilityScope, restoreCapabilityScopeWithReport } from './capability-scope.ts'
 import { isQualityRun } from './quality-run.ts'
 import type { TaskArtifact, TaskArtifactRef, TaskProject, TaskStatus, TeamMember, TeamMessage, TeamState, TeamTask } from './types.ts'
 import { TERMINAL_TASK_STATUSES } from './types.ts'
+import { isSharedTaskContext } from './shared-task-context.ts'
+import { taskRepairFeedback } from './repair-feedback.ts'
 
 /** Mailbox key of the captain. */
 export const CAPTAIN_KEY = 'captain'
 /** A crashed live-delivery attempt becomes retryable after this interval. */
-const MAILBOX_DELIVERY_LEASE_MS = 60_000
+export const MAILBOX_DELIVERY_LEASE_MS = 60_000
 /** Durable deny-list for Expert Teams members that must never be resumed. */
 const RETIRED_MEMBERS_FILE = 'retired-members.json'
 
 /** In-process per-team mutation queues (promise chains). */
 const locks = new Map<string, Promise<unknown>>()
 
+/** Cross-process team lock settings. Unlike mailbox locks, timeout is fatal: a
+ * team mutation must never continue with a stale read-modify-write snapshot. */
+const TEAM_LOCK_TIMEOUT_MS = 120_000
+const TEAM_LOCK_POLL_MS = 25
+/** Only actual orphan recovery creates claims: at most eight per orphan identity. */
+const TEAM_LOCK_RECOVERY_GENERATIONS = 8
+const ownedRecoveryClaims = new Set<string>()
+
+interface TeamFileLock {
+  path: string
+  content: string
+  dev: number
+  ino: number
+}
+
+async function readLockIdentity(path: string): Promise<TeamFileLock | undefined> {
+  let handle
+  try {
+    handle = await open(path, 'r')
+    const content = await handle.readFile('utf8')
+    const held = await handle.stat()
+    const current = await stat(path)
+    if (held.dev !== current.dev || held.ino !== current.ino) return undefined
+    return { path, content, dev: held.dev, ino: held.ino }
+  } catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') return undefined
+    throw error
+  } finally {
+    await handle?.close().catch(() => undefined)
+  }
+}
+
+function sameLock(a: TeamFileLock, b: TeamFileLock | undefined): boolean {
+  return b !== undefined && a.dev === b.dev && a.ino === b.ino && a.content === b.content
+}
+
+/** Only ESRCH for an exact positive PID proves an owner dead. EPERM fails closed. */
+function lockOwnerDead(lock: TeamFileLock): boolean {
+  const first = lock.content.split('\n', 1)[0] ?? ''
+  let owner: number
+  if (/^[1-9]\d*$/.test(first)) owner = Number(first)
+  else {
+    // Older staged-plan locks used JSON. Keep their path and honor their
+    // actual owner while migrating to the same bounded locking protocol.
+    try {
+      const legacy = JSON.parse(lock.content) as { pid?: unknown } | null
+      if (legacy === null || typeof legacy !== 'object' || typeof legacy.pid !== 'number') return false
+      owner = legacy.pid
+    } catch { return false }
+  }
+  if (!Number.isSafeInteger(owner) || owner <= 0) return false
+  try { process.kill(owner, 0); return false } catch (error: unknown) {
+    return error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ESRCH'
+  }
+}
+
 /**
- * Serialize mutations of one team across the whole process.
+ * Elect one reaper for the exact orphan inode and contents. Publishing a fully
+ * written claim through hard-link creation is atomic, so a competing reaper
+ * never observes an empty claim-in-construction. Claims survive as small audit
+ * records; normal acquisition creates none. If a reaper also crashes, the next
+ * election includes its claim identity, up to eight generations per orphan.
+ * A live/unknown reaper is never displaced. This serializes cooperating reapers
+ * across processes; arbitrary external lock-file replacement is unsupported.
+ */
+async function electedOrphanReaper(orphan: TeamFileLock): Promise<boolean> {
+  const directory = join(orphan.path, '..', '.recovery')
+  await mkdir(directory, { recursive: true })
+  let identity = JSON.stringify([orphan.dev, orphan.ino, orphan.content])
+  for (let generation = 0; generation < TEAM_LOCK_RECOVERY_GENERATIONS; generation++) {
+    const digest = createHash('sha256').update(identity).digest('hex')
+    const claimPath = join(directory, `${digest}.claim`)
+    if (ownedRecoveryClaims.has(claimPath)) return true
+    const temporary = join(directory, `${process.pid}-${randomUUID()}.tmp`)
+    try {
+      await writeFile(temporary, `${process.pid}\n${Date.now()}\n${randomUUID()}\n`, { flag: 'wx' })
+      try {
+        await link(temporary, claimPath)
+        ownedRecoveryClaims.add(claimPath)
+        return true
+      } catch (error: unknown) {
+        if (!(error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'EEXIST')) throw error
+      }
+    } finally {
+      await unlink(temporary).catch(() => undefined)
+    }
+    const previous = await readLockIdentity(claimPath)
+    if (previous === undefined || !lockOwnerDead(previous)) return false
+    identity += JSON.stringify([previous.dev, previous.ino, previous.content])
+  }
+  throw new Error('TEAM_LOCK_RECOVERY_EXHAUSTED: eight orphan-reaper generations require operator inspection')
+}
+
+async function releaseOwnedTeamFileLock(lock: TeamFileLock): Promise<void> {
+  if (sameLock(lock, await readLockIdentity(lock.path))) await removeLockFile(lock.path)
+}
+
+async function removeLockFile(path: string): Promise<void> {
+  try { await unlink(path) } catch (error: unknown) {
+    if (!(error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT')) throw error
+  }
+}
+
+function teamLockPath(key: string): string | undefined {
+  if (key.startsWith('staged-plan:')) {
+    const value = key.slice('staged-plan:'.length)
+    const separator = value.lastIndexOf(':')
+    if (separator <= 0) throw new Error('invalid staged-plan lock key')
+    const planId = value.slice(separator + 1)
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(planId)) throw new Error('invalid staged-plan lock id')
+    return join(value.slice(0, separator), 'plans', `${planId}.lock`)
+  }
+  if (!key.startsWith('team:')) return undefined
+  const value = key.slice('team:'.length)
+  const separator = value.lastIndexOf(':')
+  if (separator <= 0 || separator === value.length - 1) return undefined
+  const stateRoot = value.slice(0, separator)
+  const teamId = sanitizeKey(value.slice(separator + 1))
+  // Keep locks outside the team directory: archive/remove may rename that
+  // directory while the mutation lock is still held. A sibling lock remains
+  // stable across the rename and prevents a concurrent recreate from racing
+  // the archival operation.
+  return join(stateRoot, '.locks', `${teamId}.lock`)
+}
+
+async function acquireTeamFileLock(key: string): Promise<TeamFileLock | undefined> {
+  const lockFile = teamLockPath(key)
+  if (lockFile === undefined) return undefined
+  await mkdir(join(lockFile, '..'), { recursive: true })
+  const deadline = Date.now() + TEAM_LOCK_TIMEOUT_MS
+  while (true) {
+    if (Date.now() >= deadline) throw new Error(`TEAM_LOCK_TIMEOUT: timed out waiting for ${key}`)
+    try {
+      const handle = await open(lockFile, 'wx')
+      try {
+        const content = `${process.pid}\n${Date.now()}\n${randomUUID()}\n`
+        await handle.writeFile(content, 'utf8')
+        const identity = await handle.stat()
+        return { path: lockFile, content, dev: identity.dev, ino: identity.ino }
+      } finally {
+        await handle.close().catch(() => undefined)
+      }
+    } catch (error: unknown) {
+      if (!(error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'EEXIST')) throw error
+      try {
+        const orphan = await readLockIdentity(lockFile)
+        if (orphan === undefined) continue
+        if (lockOwnerDead(orphan) && await electedOrphanReaper(orphan)) {
+          // Only the elected reaper removes this exact orphan. Re-read both
+          // inode and nonce/content before removal to reject a replacement.
+          if (sameLock(orphan, await readLockIdentity(lockFile)) && lockOwnerDead(orphan)) {
+            await removeLockFile(lockFile)
+          }
+          continue
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') continue
+        throw error
+      }
+      await sleep(TEAM_LOCK_POLL_MS)
+    }
+  }
+}
+
+/**
+ * Serialize mutations of one team across the process and DSH workers. Team
+ * keys additionally acquire a durable sibling lock file; non-team scopes
+ * retain the in-process queue used by retired-member and staged-plan helpers.
  * @param key - the team id (or any mutation scope).
  * @param fn - the mutation to run exclusively.
  * @returns the mutation's result.
@@ -42,12 +212,20 @@ export async function withTeamLock<T>(key: string, fn: () => Promise<T>): Promis
   const previous = locks.get(key) ?? Promise.resolve()
   let release!: () => void
   const gate = new Promise<void>((resolve) => { release = resolve })
-  locks.set(key, previous.then(() => gate))
+  const tail = previous.then(() => gate)
+  locks.set(key, tail)
   await previous
+  let durable: TeamFileLock | undefined
   try {
+    durable = await acquireTeamFileLock(key)
     return await fn()
   } finally {
-    release()
+    try {
+      if (durable !== undefined) await releaseOwnedTeamFileLock(durable)
+    } finally {
+      release()
+      if (locks.get(key) === tail) locks.delete(key)
+    }
   }
 }
 
@@ -128,15 +306,27 @@ export function transitionError(current: TaskStatus, next: TaskStatus): string |
   return undefined
 }
 
+/** Guard all explicit task mutations as well as scheduler dispatch. */
+export function assertTeamRunnable(team: TeamState): void {
+  if (team.halted === true) {
+    throw new Error(`TEAM_HALTED: team "${team.name}" is halted${team.haltReason === undefined ? '' : ` (${team.haltReason})`}; resume explicitly before mutating tasks`)
+  }
+}
+
 /** Activate the task's current generation for one owner and return its capability id. */
 export function activateTaskAttempt(task: TeamTask, assignee: string): string {
   const attemptId = randomUUID()
   task.status = 'claimed'
   task.assignee = assignee
   task.attemptId = attemptId
+  task.finalizedAttemptId = undefined
   task.handoffId = undefined
   task.reassigning = false
   task.output = undefined
+  task.executionState = 'active'
+  task.runtimeBlock = undefined
+  task.waitReason = undefined
+  task.dispatch = undefined
   task.updatedAt = Date.now()
   return attemptId
 }
@@ -158,8 +348,17 @@ export function beginTaskAttempt(task: TeamTask, assignee: string): string {
  */
 export function finalizeTerminalTask(task: TeamTask): void {
   if (TERMINAL_TASK_STATUSES.includes(task.status)) {
+    // Keep the just-retired capability as a bounded provenance token. A worker
+    // can have emitted a completion message before this commit; clearing the
+    // only token made that legitimate message indistinguishable from a forged
+    // message and caused it to be discarded as `missing_attempt`.
+    task.finalizedAttemptId = task.attemptId
     task.attemptId = undefined
     task.reassigning = false
+    task.executionState = undefined
+    task.runtimeBlock = undefined
+    task.waitReason = undefined
+    task.dispatch = undefined
     task.updatedAt = Date.now()
   }
 }
@@ -174,11 +373,16 @@ export function invalidateTaskAttempt(
   reassigning = false,
 ): void {
   task.attemptId = undefined
+  task.finalizedAttemptId = undefined
   task.handoffId = randomUUID()
   task.status = 'pending'
   task.assignee = nextAssignee
   task.reassigning = reassigning
   task.output = undefined
+  task.executionState = undefined
+  task.runtimeBlock = undefined
+  task.waitReason = undefined
+  task.dispatch = undefined
   task.updatedAt = Date.now()
 }
 
@@ -191,7 +395,7 @@ export function invalidateTaskAttempt(
 export async function createTaskProject(
   stateRoot: string,
   teamId: string,
-  task: Pick<TeamTask, 'id' | 'subject' | 'description' | 'dependencies' | 'createdAt'>,
+  task: Pick<TeamTask, 'id' | 'subject' | 'description' | 'dependencies' | 'createdAt' | 'inputArtifacts'>,
 ): Promise<TaskProject> {
   const relative = join('expert-tasks', sanitizeKey(task.id))
   const dir = join(stateRoot, teamId, relative)
@@ -200,8 +404,43 @@ export async function createTaskProject(
   await mkdir(join(dir, 'output'), { recursive: true })
   await mkdir(join(dir, 'artifacts'), { recursive: true })
   await atomicWriteText(join(dir, 'project.json'), JSON.stringify({ ...project, taskId: task.id, status: 'pending', updatedAt: Date.now() }, null, 2))
-  await atomicWriteText(join(stateRoot, teamId, project.inputPath), JSON.stringify({ taskId: task.id, subject: task.subject, description: task.description, dependencies: task.dependencies, createdAt: task.createdAt }, null, 2))
+  await atomicWriteText(join(stateRoot, teamId, project.inputPath), JSON.stringify({ taskId: task.id, subject: task.subject, description: task.description, dependencies: task.dependencies, inputArtifacts: task.inputArtifacts, createdAt: task.createdAt }, null, 2))
   return project
+}
+
+/** Refresh the durable handoff before any first, repair or recovered dispatch.
+ * The project is addressed from its real workspace, not an assumed child cwd. */
+export function taskInputWarnings(task: TeamTask): string[] {
+  return [
+    ...(task.inputArtifactBinding?.reviewDisabled === true && task.dependencies.length > 0
+      ? [`Quality review is explicitly disabled by the team policy. Dependencies ${task.dependencies.join(', ')} were not automatically pinned as reviewed versions. This workflow has no reviewed-version guarantee; explicitly declared input_artifacts still require dependency, publication and hash validation.`] : []),
+    ...(task.inputArtifactBinding?.legacyUnpinnedSources ?? []).map(id =>
+      `Legacy manually reviewed dependency ${id} has no immutable publication pin. Its recorded review evidence is retained under the existing workflow; current working files are not guaranteed to be that reviewed version. Do not claim a version-fixed handoff; use a new task with published, pinned inputs when that guarantee is required.`),
+  ]
+}
+
+export async function syncTaskProjectInput(stateRoot: string, team: TeamState, task: TeamTask): Promise<void> {
+  if (task.project === undefined) return
+  const root = resolve(stateRoot, team.id)
+  const run = team.qualityRuns?.[task.id] ?? (team.qualityRun?.contract.taskId === task.id ? team.qualityRun : undefined)
+  await atomicWriteText(join(root, task.project.inputPath), JSON.stringify({
+    taskId: task.id, subject: task.subject, description: task.description,
+    dependencies: task.dependencies, inputArtifacts: task.inputArtifacts, createdAt: task.createdAt,
+    inputArtifactBinding: task.inputArtifactBinding, inputArtifactManifest: task.inputArtifactManifest,
+    inputArtifactWarnings: taskInputWarnings(task),
+    attempt: task.attempt, attemptId: task.attemptId,
+    project: { path: resolve(root, task.project.path), inputPath: resolve(root, task.project.inputPath),
+      outputPath: resolve(root, task.project.outputPath), artifactsPath: resolve(root, task.project.artifactsPath) },
+    sharedTaskContext: team.sharedTaskContext,
+    taskProtocol: team.taskProtocol,
+    acceptance: run?.contract.acceptance,
+    repairFeedback: taskRepairFeedback(team, task),
+    craftDeliveries: task.craftDeliveries,
+    reportBundle: task.reportBundle, revisesTaskId: task.revisesTaskId,
+    frozenSkillCraftContract: task.frozenSkillCraftContract,
+    artifactChecks: run?.contract.artifactChecks,
+    ...(task.reportBundle === undefined ? {} : { reportCheckGuidance: REPORT_BUNDLE_GUIDANCE, requiredPublications: run?.contract.deliverables.filter(id => id.startsWith('published:')) }),
+  }, null, 2))
 }
 
 /** Publish an artifact into the task Project and update its manifest. */
@@ -209,16 +448,30 @@ export async function publishTaskArtifact(
   stateRoot: string,
   team: TeamState,
   task: TeamTask,
-  input: { name: string; content: string; mediaType?: string; description?: string },
+  input: { name: string; content: string | Uint8Array; mediaType?: string; description?: string },
 ): Promise<TaskArtifact> {
   if (task.project === undefined) throw new Error('task has no Project; legacy tasks cannot publish artifacts')
   const safeName = input.name.trim().replace(/[^a-zA-Z0-9._-]/g, '-')
   if (safeName === '' || safeName === '.' || safeName === '..' || safeName.includes('..')) throw new Error('invalid artifact name')
-  const bytes = Buffer.from(input.content, 'utf8')
-  const artifact: TaskArtifact = { id: randomUUID(), taskId: task.id, attempt: task.attempt ?? 0, relativePath: safeName, ...(input.mediaType === undefined ? {} : { mediaType: input.mediaType }), ...(input.description === undefined ? {} : { description: input.description }), sha256: createHash('sha256').update(bytes).digest('hex'), sizeBytes: bytes.byteLength, createdAt: Date.now() }
-  const dir = join(stateRoot, team.id, task.project.path, 'artifacts')
-  await mkdir(dir, { recursive: true })
-  await atomicWriteText(join(dir, safeName), input.content)
+  const cleanPath = (path: string): boolean => !isAbsolute(path) && !/^[A-Za-z]:/.test(path)
+    && !path.includes('\0') && path.replaceAll('\\', '/').split('/').every(part => part !== '' && part !== '.' && part !== '..')
+  if (!cleanPath(team.id) || team.id.includes('/') || team.id.includes('\\')
+    || !cleanPath(task.project.path) || !cleanPath(task.project.artifactsPath)) throw new Error('unsafe artifact project path')
+  const root = await realpath(resolve(stateRoot))
+  const project = await realpath(join(root, team.id, task.project.path))
+  const dir = await realpath(join(root, team.id, task.project.artifactsPath))
+  const rootRelative = relative(root, project)
+  const projectRelative = relative(project, dir)
+  if (rootRelative === '..' || rootRelative.startsWith(`..${sep}`) || isAbsolute(rootRelative)
+    || projectRelative === '' || projectRelative === '..' || projectRelative.startsWith(`..${sep}`) || isAbsolute(projectRelative)) throw new Error('artifact project symlink escapes its allowed directory')
+  const bytes = typeof input.content === 'string' ? Buffer.from(input.content, 'utf8') : Buffer.from(input.content)
+  const id = randomUUID()
+  const versionDir = `attempt-${task.attempt ?? 0}-${id}`
+  const artifact: TaskArtifact = { id, reviewId: `published:${safeName}`, taskId: task.id, attempt: task.attempt ?? 0, relativePath: `${versionDir}/${safeName}`, ...(input.mediaType === undefined ? {} : { mediaType: input.mediaType }), ...(input.description === undefined ? {} : { description: input.description }), sha256: createHash('sha256').update(bytes).digest('hex'), sizeBytes: bytes.byteLength, createdAt: Date.now() }
+  // New publication identities always own new paths. A failed team commit may
+  // leave an unreferenced version, but cannot overwrite an already pinned one.
+  await mkdir(join(dir, versionDir))
+  await writeFile(join(dir, artifact.relativePath), bytes, { flag: 'wx' })
   await atomicWriteText(join(dir, 'manifest.json'), JSON.stringify([...(task.publishedArtifacts ?? []), artifact], null, 2))
   return artifact
 }
@@ -229,20 +482,52 @@ export function resolveAllowedArtifact(team: TeamState, task: TeamTask, ref: Tas
   if (!(task.inputArtifacts ?? []).some(candidate => candidate.artifactId === ref.artifactId && candidate.sourceTaskId === ref.sourceTaskId)) throw new Error(`artifact "${ref.artifactId}" was not explicitly allowlisted for task "${task.id}"`)
   const source = team.tasks.find(candidate => candidate.id === ref.sourceTaskId)
   if (source === undefined || source.status !== 'completed') throw new Error(`source task "${ref.sourceTaskId}" is not completed`)
-  const artifact = source.publishedArtifacts?.find(candidate => candidate.id === ref.artifactId)
+  const matches = source.publishedArtifacts?.filter(candidate => candidate.id === ref.artifactId) ?? []
+  const artifact = matches[0]
   if (artifact === undefined) throw new Error(`artifact "${ref.artifactId}" is not published by source task "${ref.sourceTaskId}"`)
+  if (matches.length !== 1 || artifact.taskId !== source.id) throw new Error(`artifact "${ref.artifactId}" has an ambiguous publication identity`)
+  const path = artifact.relativePath.replaceAll('\\', '/')
+  if (isAbsolute(path) || /^[A-Za-z]:/.test(path) || path.includes('\0')
+    || path.split('/').some(part => part === '' || part === '.' || part === '..')
+    || (artifact.reviewId !== undefined && !/^published:[a-zA-Z0-9._-]+$/.test(artifact.reviewId))
+    || !/^[a-f0-9]{64}$/i.test(artifact.sha256)
+    || !Number.isSafeInteger(artifact.sizeBytes) || artifact.sizeBytes < 0) throw new Error(`artifact "${ref.artifactId}" has an invalid manifest`)
   return { source, artifact }
 }
 
 
 /** Read an allowlisted artifact and verify its manifest hash. */
-export async function readAllowedTaskArtifact(stateRoot: string, team: TeamState, task: TeamTask, ref: TaskArtifactRef): Promise<{ artifact: TaskArtifact; content: string }> {
+export async function readAllowedTaskArtifact(stateRoot: string, team: TeamState, task: TeamTask, ref: TaskArtifactRef): Promise<{ artifact: TaskArtifact; content: string; encoding?: 'base64' }> {
   const resolved = resolveAllowedArtifact(team, task, ref)
   if (resolved.source.project === undefined) throw new Error('source task has no Project')
-  const content = await readFile(join(stateRoot, team.id, resolved.source.project.artifactsPath, resolved.artifact.relativePath), 'utf8')
-  const hash = createHash('sha256').update(content).digest('hex')
-  if (hash !== resolved.artifact.sha256) throw new Error(`artifact ${resolved.artifact.id} hash mismatch`)
-  return { artifact: resolved.artifact, content }
+  const cleanPath = (path: string): boolean => !isAbsolute(path) && !/^[A-Za-z]:/.test(path)
+    && !path.includes('\0') && path.replaceAll('\\', '/').split('/').every(part => part !== '' && part !== '.' && part !== '..')
+  if (!cleanPath(team.id) || team.id.includes('/') || team.id.includes('\\')
+    || !cleanPath(resolved.source.project.path) || !cleanPath(resolved.source.project.artifactsPath)) throw new Error('unsafe artifact project path')
+  const root = await realpath(resolve(stateRoot))
+  const project = await realpath(join(root, team.id, resolved.source.project.path))
+  const dir = await realpath(join(root, team.id, resolved.source.project.artifactsPath))
+  const path = await realpath(join(dir, resolved.artifact.relativePath.replaceAll('\\', '/')))
+  for (const [base, candidate] of [[root, project], [project, dir], [dir, path]] as const) {
+    const rel = relative(base, candidate)
+    if (rel === '' || rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error('artifact path or symlink escapes its allowed directory')
+  }
+  if (task.inputArtifactManifest !== undefined) {
+    const fixed = task.inputArtifactManifest.filter(item => item.sourceTaskId === ref.sourceTaskId && item.artifactId === ref.artifactId)
+    const entry = fixed[0]
+    if (fixed.length !== 1 || entry === undefined || entry.attempt !== resolved.artifact.attempt
+      || entry.sha256 !== resolved.artifact.sha256 || entry.reviewArtifactId !== resolved.artifact.reviewId || entry.versionPath !== path) {
+      throw new Error(`INPUT_VERSION_CHANGED: artifact ${ref.artifactId} differs from the consumer's fixed publication manifest`)
+    }
+  }
+  if (!(await stat(path)).isFile()) throw new Error('artifact is not a regular file')
+  const bytes = await readFile(path)
+  const hash = createHash('sha256').update(bytes).digest('hex')
+  if (hash !== resolved.artifact.sha256 || bytes.byteLength !== resolved.artifact.sizeBytes) throw new Error(`artifact ${resolved.artifact.id} hash mismatch`)
+  const content = bytes.toString('utf8')
+  return Buffer.from(content, 'utf8').equals(bytes)
+    ? { artifact: resolved.artifact, content }
+    : { artifact: resolved.artifact, content: bytes.toString('base64'), encoding: 'base64' }
 }
 /** Update the isolated project output and status without replacing team state. */
 export async function writeTaskProjectOutput(
@@ -260,6 +545,8 @@ export async function writeTaskProjectOutput(
     status: task.status,
     attempt: task.attempt ?? 0,
     output: task.output,
+    executionState: task.executionState,
+    waitReason: task.waitReason,
     qualityScore: task.qualityScore ?? null,
     repairCount: task.repairCount ?? 0,
     updatedAt: task.updatedAt,
@@ -321,6 +608,21 @@ export async function createTeamDir(stateRoot: string, state: TeamState): Promis
   await atomicWriteText(join(dir, 'team.json'), JSON.stringify(state, null, 2))
 }
 
+/** Normalize legacy/partial A5 scopes at every read boundary. Validation must
+ * not merely inspect a partial object and then hand that same object to the
+ * provider gate: missing allowlists would otherwise become undefined and
+ * either throw or bypass the intended deny-all defaults. */
+function normalizeMemberScopes(state: TeamState): void {
+  for (const member of state.members) {
+    if (member.capabilityScope === undefined) continue
+    const restored = restoreCapabilityScopeWithReport(member.capabilityScope, {
+      expertId: member.name,
+      role: member.role ?? 'member',
+    })
+    member.capabilityScope = restored.scope
+  }
+}
+
 /**
  * Read one team record; `undefined` when absent.
  * @param stateRoot - resolved absolute state root directory.
@@ -333,6 +635,7 @@ export async function readTeam(stateRoot: string, teamId: string): Promise<TeamS
     if (!isTeamState(value, teamId)) {
       throw new Error(`invalid Expert Teams state in team "${teamId}"`)
     }
+    normalizeMemberScopes(value)
     return value
   } catch (error: unknown) {
     if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -358,6 +661,7 @@ export function readTeamSync(stateRoot: string, teamId: string): TeamState | und
     if (!isTeamState(value, teamId)) {
       throw new Error(`invalid Expert Teams state in team "${teamId}"`)
     }
+    normalizeMemberScopes(value)
     return value
   } catch (error: unknown) {
     if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -374,6 +678,74 @@ export function readTeamSync(stateRoot: string, teamId: string): TeamState | und
  */
 export async function writeTeam(stateRoot: string, state: TeamState): Promise<void> {
   await atomicWriteText(join(stateRoot, state.id, 'team.json'), JSON.stringify(state, null, 2))
+}
+
+/** Explicitly pause a team. This is durable and cannot be cleared by a
+ * scheduler kick or ordinary task creation. */
+export async function haltTeam(stateRoot: string, teamId: string, reason: string): Promise<TeamState> {
+  return withTeamLock(`team:${stateRoot}:${teamId}`, async () => {
+    const team = await readTeam(stateRoot, teamId)
+    if (team === undefined) throw new Error(`team "${teamId}" was not found`)
+    const trimmed = reason.trim()
+    if (trimmed === '') throw new Error('halt reason must not be empty')
+    team.halted = true
+    team.haltReason = trimmed
+    team.haltedAt = Date.now()
+    await writeTeam(stateRoot, team)
+    return team
+  })
+}
+
+/** Explicitly resume a halted team. A reason is required for auditability. */
+export async function resumeTeam(stateRoot: string, teamId: string, reason: string): Promise<TeamState> {
+  return withTeamLock(`team:${stateRoot}:${teamId}`, async () => {
+    const team = await readTeam(stateRoot, teamId)
+    if (team === undefined) throw new Error(`team "${teamId}" was not found`)
+    const trimmed = reason.trim()
+    if (trimmed === '') throw new Error('resume reason must not be empty')
+    team.halted = false
+    team.resumedAt = Date.now()
+    team.resumeReason = trimmed
+    await writeTeam(stateRoot, team)
+    return team
+  })
+}
+
+/** Explicitly release one failed member route. Caller owns the team lock/write. */
+export function resumeRuntimeMember(team: TeamState, sessionId: string, reason: string, expectedBlockId?: string): boolean {
+  if (reason.trim() === '') throw new Error('runtime resume reason must not be empty')
+  if (team.captainSessionId === sessionId) {
+    const block = team.captainRuntimeBlock
+    if (expectedBlockId !== undefined && block?.id !== expectedBlockId) throw new Error(`RUNTIME_BLOCK_STALE: no state changed. Current captain runtime_block.id=${JSON.stringify(block?.id ?? null)}. Copy the entire opaque ID, including every prefix; resume only after the cause has changed.`)
+    if (block === undefined) return false
+    team.captainRuntimeResolvedThroughTurn = Math.max(team.captainRuntimeResolvedThroughTurn ?? -1, block.turn)
+    team.captainRuntimeBlock = undefined
+    if (team.runtimeWaits !== undefined) delete team.runtimeWaits[sessionId]
+    return true
+  }
+  const member = team.members.find(item => item.id === sessionId && item.status !== 'removed')
+  if (member === undefined) throw new Error(`runtime member session ${sessionId} was not found`)
+  if (expectedBlockId !== undefined && member.runtimeBlock?.id !== expectedBlockId) throw new Error(`RUNTIME_BLOCK_STALE: no state changed. Current member runtime_block.id=${JSON.stringify(member.runtimeBlock?.id ?? null)}. Copy the entire opaque ID, including every prefix; resume only after the cause has changed.`)
+  const block = member.runtimeBlock
+  if (block === undefined) return false
+  member.runtimeResolvedThroughTurn = Math.max(member.runtimeResolvedThroughTurn ?? -1, block.turn)
+  member.runtimeBlock = undefined
+  member.activation = undefined
+  member.runtimeResumedAt = Date.now()
+  member.runtimeResumeReason = reason.trim()
+  if (team.runtimeWaits !== undefined) delete team.runtimeWaits[sessionId]
+  for (const task of team.tasks) {
+    if (task.runtimeBlock?.id !== block.id || task.runtimeBlock.sessionId !== sessionId
+      || task.runtimeBlock.attemptId !== task.attemptId || task.assignee !== member.name) continue
+    task.runtimeBlock = undefined
+    if (task.executionState === 'blocked_external' && task.waitReason?.startsWith('RUNTIME_')) {
+      task.executionState = 'active'
+      task.waitReason = undefined
+      task.dispatch = undefined
+    }
+    task.updatedAt = Date.now()
+  }
+  return true
 }
 
 /**
@@ -555,20 +927,33 @@ export type MessageAdmission =
  * Check whether a message may be delivered to a live recipient. Messages
  * without provenance are legacy records and remain admissible. A sourced
  * message is tied to the task's current attempt; after retry/reassignment the
- * old attempt is rejected before it can wake a member or alter state.
+ * old attempt is rejected before it can wake a member or alter state. A
+ * terminal task admits only the exact generation token retired at finalization
+ * so a completion report already in flight is not mistaken for stale mail.
  */
 export function admitTeamMessage(team: TeamState, message: TeamMessage): MessageAdmission {
   if (message.sourceTaskId === undefined) return { accepted: true }
   const task = team.tasks.find(candidate => candidate.id === message.sourceTaskId)
   if (task === undefined) return { accepted: false, reason: 'source_task_missing' }
+  // A terminal task has no live capability, but a message emitted by its
+  // final generation may still be waiting in the mailbox. Admit only the
+  // exact capability retired at finalization; missing or older ids remain
+  // rejected. The status recorded at emission may legitimately be the
+  // pre-finalization status, so do not apply the live-status comparison here.
+  if (TERMINAL_TASK_STATUSES.includes(task.status)) {
+    if (message.sourceAttemptId === undefined) return { accepted: false, reason: 'missing_attempt' }
+    if (task.finalizedAttemptId === undefined || message.sourceAttemptId !== task.finalizedAttemptId) {
+      return { accepted: false, reason: 'stale_attempt' }
+    }
+    return { accepted: true }
+  }
+  // Legacy sourced messages may omit the generation token. Preserve their
+  // historical admission while rejecting any explicit stale token.
   if (message.sourceAttemptId !== undefined && task.attemptId !== message.sourceAttemptId) {
     return { accepted: false, reason: 'stale_attempt' }
   }
-  // A terminal task has no live capability. Messages emitted by that task
-  // before finalization are therefore stale even when older records omitted
-  // an attempt id.
-  if (TERMINAL_TASK_STATUSES.includes(task.status)) {
-    return { accepted: false, reason: 'terminal_attempt' }
+  if (message.sourceTaskStatus !== undefined && message.sourceTaskStatus !== task.status) {
+    return { accepted: false, reason: 'stale_task_status' }
   }
   return { accepted: true }
 }
@@ -599,9 +984,8 @@ const MAILBOX_LOCK_POLL_MS = 25
  * - acquisition is `open(lock, 'wx')`, atomic on POSIX and Windows;
  * - a lock whose file is older than {@link MAILBOX_LOCK_STALE_MS} belonged to
  *   a crashed holder and is taken over (stale locks never wedge the mailbox);
- * - after {@link MAILBOX_LOCK_TIMEOUT_MS} the mutation degrades to running
- *   unlocked rather than failing the team flow — identical to the previous
- *   behavior, so the lock can only help, never break delivery.
+ * - after {@link MAILBOX_LOCK_TIMEOUT_MS} the mutation fails closed. Continuing
+ *   unlocked would permit concurrent read-modify-write calls to lose mail.
  */
 async function withMailboxFileLock<T>(file: string, fn: () => Promise<T>): Promise<T> {
   const lockFile = `${file}.lock`
@@ -634,8 +1018,7 @@ async function withMailboxFileLock<T>(file: string, fn: () => Promise<T>): Promi
     }
   }
   if (!locked) {
-    // Degraded path: timed out waiting. Run unlocked (pre-lock behavior).
-    return await fn()
+    throw new Error(`MAILBOX_LOCK_TIMEOUT: timed out waiting for ${file}`)
   }
   try {
     return await fn()
@@ -676,12 +1059,18 @@ export async function appendMailbox(
       || (message.idempotencyKey !== undefined
         && candidate.from === message.from
         && candidate.idempotencyKey === message.idempotencyKey))
-    if (duplicate !== undefined) return duplicate
+    if (duplicate !== undefined) {
+      if (duplicate.from !== message.from || duplicate.to !== message.to || duplicate.content !== message.content
+        || duplicate.sourceTaskId !== message.sourceTaskId || duplicate.sourceAttemptId !== message.sourceAttemptId) {
+        throw new Error(`MAILBOX_IDEMPOTENCY_CONFLICT: duplicate message key ${message.idempotencyKey ?? message.id}`)
+      }
+      return duplicate
+    }
     const nextSequence = existingMessages
       .filter(candidate => candidate.from === message.from)
       .reduce((max, candidate) => Math.max(max, candidate.sequence ?? 0), 0) + 1
-    if (message.sequence !== undefined && message.sequence < nextSequence) {
-      throw new Error(`stale message sequence for ${message.from}: expected at least ${nextSequence}`)
+    if (message.sequence !== undefined && message.sequence !== nextSequence) {
+      throw new Error(`MESSAGE_SEQUENCE_CONFLICT: expected ${nextSequence} for ${message.from}, got ${message.sequence}`)
     }
     const sequence = message.sequence ?? nextSequence
     const persisted: TeamMessage = { ...message, sequence }
@@ -754,7 +1143,7 @@ async function mutateMailbox(
   teamId: string,
   agentKey: string,
   messageIds: readonly string[],
-  mutate: (message: TeamMessage) => TeamMessage,
+  mutate: (message: TeamMessage) => TeamMessage | Promise<TeamMessage>,
 ): Promise<void> {
   if (messageIds.length === 0) return
   const file = join(stateRoot, teamId, 'inbox', `${sanitizeKey(agentKey)}.jsonl`)
@@ -767,17 +1156,20 @@ async function mutateMailbox(
       throw error
     }
     const selected = new Set(messageIds)
-    const lines = raw.split('\n').map((rawLine) => {
+    const lines: string[] = []
+    for (const rawLine of raw.split('\n')) {
       const line = stripLeadingBom(rawLine)
-      if (line.trim() === '') return rawLine
+      if (line.trim() === '') { lines.push(rawLine); continue }
+      let value: unknown
       try {
-        const value: unknown = JSON.parse(line)
-        if (!isTeamMessage(value) || !selected.has(value.id)) return rawLine
-        return JSON.stringify(mutate(value))
+        value = JSON.parse(line)
       } catch {
-        return rawLine
+        lines.push(rawLine)
+        continue
       }
-    })
+      if (!isTeamMessage(value) || !selected.has(value.id)) { lines.push(rawLine); continue }
+      lines.push(JSON.stringify(await mutate(value)))
+    }
     await atomicWriteText(file, lines.join('\n'))
   })
 }
@@ -788,12 +1180,18 @@ export async function claimMailboxDelivery(
   teamId: string,
   agentKey: string,
   messageIds: readonly string[],
-): Promise<void> {
+): Promise<string[]> {
   const now = Date.now()
+  const claimed = new Set<string>()
   await mutateMailbox(stateRoot, teamId, agentKey, messageIds, message => ({
     ...message,
-    deliveryClaimedAt: now,
+    ...(message.readAt !== undefined || message.discardedAt !== undefined
+      ? {}
+      : message.deliveryClaimedAt !== undefined && now - message.deliveryClaimedAt < MAILBOX_DELIVERY_LEASE_MS
+        ? {}
+        : (claimed.add(message.id), { deliveryClaimedAt: now })),
   }))
+  return [...claimed]
 }
 
 /** Release a failed delivery lease so the scheduler can retry it later. */
@@ -820,12 +1218,32 @@ export async function acknowledgeMailbox(
   messageIds: readonly string[],
 ): Promise<void> {
   const now = Date.now()
-  await mutateMailbox(stateRoot, teamId, agentKey, messageIds, (message) => {
+  await mutateMailbox(stateRoot, teamId, agentKey, messageIds, async (message) => {
+    // Revalidate provenance at the consumption boundary. A message can be
+    // admitted and leased, then reassign can commit before the live prompt is
+    // consumed; acknowledging it blindly would mark stale work delivered.
+    if (message.sourceTaskId !== undefined) {
+      const team = await readTeam(stateRoot, teamId)
+      const admission = team === undefined
+        ? { accepted: false as const, reason: 'team_missing' }
+        : admitTeamMessage(team, message)
+      if (!admission.accepted) {
+        return {
+          ...message,
+          discardedAt: message.discardedAt ?? now,
+          discardReason: message.discardReason ?? admission.reason,
+          deliveredAt: message.deliveredAt ?? now,
+          readAt: message.readAt ?? now,
+          consumedAt: now,
+        }
+      }
+    }
     const { deliveryClaimedAt: _claimed, ...rest } = message
     return {
       ...rest,
       deliveredAt: message.deliveredAt ?? now,
       readAt: message.readAt ?? now,
+      consumedAt: now,
     }
   })
 }
@@ -977,15 +1395,32 @@ function isFiniteNumber(value: unknown): value is number {
 }
 
 /** Validate one member record at the durable JSON boundary. */
+function isRuntimeBlock(value: unknown): boolean {
+  return isRecord(value) && typeof value['id'] === 'string' && typeof value['sessionId'] === 'string'
+    && Number.isSafeInteger(value['turn']) && (value['turn'] as number) >= 0
+    && typeof value['code'] === 'string' && typeof value['message'] === 'string' && isFiniteNumber(value['at'])
+    && (value['status'] === undefined || Number.isSafeInteger(value['status'])) && isOptionalString(value['attemptId'])
+}
+function isRuntimeAttempts(value: unknown): boolean {
+  return Array.isArray(value) && value.every(item => isRecord(item)
+    && typeof item['taskId'] === 'string' && typeof item['attemptId'] === 'string')
+}
 function isTeamMember(value: unknown): value is TeamMember {
   if (!isRecord(value)) return false
+  const fallbackRoutesValid = value['fallbackRoutes'] === undefined || (
+    Array.isArray(value['fallbackRoutes'])
+    && value['fallbackRoutes'].every(route => isRecord(route)
+      && typeof route['provider'] === 'string' && route['provider'].trim() !== ''
+      && typeof route['model'] === 'string' && route['model'].trim() !== ''
+      && isOptionalString(route['reasoningEffort']))
+  )
   const scopeValid = value['capabilityScope'] === undefined || (() => {
     try {
       // Older team records have no scope. When a partial A5 snapshot is
       // encountered, restore it with the member identity and fail closed.
       restoreCapabilityScope(value['capabilityScope'], {
         expertId: typeof value['name'] === 'string' ? value['name'] : undefined,
-        role: typeof value['role'] === 'string' ? value['role'] : undefined,
+        role: typeof value['role'] === 'string' ? value['role'] : 'member',
       })
       return true
     } catch {
@@ -993,6 +1428,7 @@ function isTeamMember(value: unknown): value is TeamMember {
     }
   })()
   return scopeValid
+    && fallbackRoutesValid
     && typeof value['id'] === 'string'
     && typeof value['name'] === 'string'
     && value['name'].trim() !== ''
@@ -1001,6 +1437,14 @@ function isTeamMember(value: unknown): value is TeamMember {
     && isOptionalString(value['model'])
     && isOptionalString(value['reasoningEffort'])
     && isFiniteNumber(value['joinedAt'])
+    && (value['runtimeBlock'] === undefined || isRuntimeBlock(value['runtimeBlock']))
+    && (value['runtimeTurn'] === undefined || (isRecord(value['runtimeTurn'])
+      && Number.isSafeInteger(value['runtimeTurn']['turn']) && isRuntimeAttempts(value['runtimeTurn']['taskAttempts'])))
+    && (value['activation'] === undefined || (isRecord(value['activation'])
+      && typeof value['activation']['id'] === 'string' && value['activation']['sessionId'] === value['id']
+      && isFiniteNumber(value['activation']['reservedAt']) && isRuntimeAttempts(value['activation']['taskAttempts'])
+      && (value['activation']['acceptedAt'] === undefined || isFiniteNumber(value['activation']['acceptedAt']))
+      && (value['activation']['turn'] === undefined || Number.isSafeInteger(value['activation']['turn']))))
     && (value['status'] === 'idle' || value['status'] === 'working' || value['status'] === 'removed')
 }
 
@@ -1017,12 +1461,41 @@ function isTeamTask(value: unknown): value is TeamTask {
       || value['status'] === 'failed'
       || value['status'] === 'cancelled')
     && isOptionalString(value['assignee'])
+    && (value['reportBundle'] === undefined || isReportBundle(value['reportBundle']))
+    && isReportCraftBinding(value['reportBundle'] as TeamTask['reportBundle'], value['frozenSkillCraftContract'])
+    && (value['craftDeliveries'] === undefined || Array.isArray(value['craftDeliveries']) && value['craftDeliveries'].every(isCraftDeliveryReceipt))
+    && (value['craftReviewPreparations'] === undefined || Array.isArray(value['craftReviewPreparations']) && value['craftReviewPreparations'].every(isCraftReviewPreparation))
+    && isOptionalString(value['revisesTaskId'])
     && Array.isArray(value['dependencies'])
     && value['dependencies'].every((dependency) => typeof dependency === 'string')
     && isOptionalString(value['output'])
+    && (value['inputArtifactBinding'] === undefined || (isRecord(value['inputArtifactBinding'])
+      && value['inputArtifactBinding']['mode'] === 'dependency-default'
+      && Number.isSafeInteger(value['inputArtifactBinding']['consumerAttempt']) && (value['inputArtifactBinding']['consumerAttempt'] as number) >= 1
+      && Array.isArray(value['inputArtifacts'])
+      && (value['inputArtifactBinding']['reviewDisabled'] === undefined || value['inputArtifactBinding']['reviewDisabled'] === true)
+      && (value['inputArtifactBinding']['legacyUnpinnedSources'] === undefined || (Array.isArray(value['inputArtifactBinding']['legacyUnpinnedSources'])
+        && value['inputArtifactBinding']['legacyUnpinnedSources'].every(id => typeof id === 'string')))))
+    && (value['inputArtifactManifest'] === undefined || (Array.isArray(value['inputArtifactManifest'])
+      && value['inputArtifactManifest'].every(item => isRecord(item) && typeof item['sourceTaskId'] === 'string'
+        && typeof item['artifactId'] === 'string' && isOptionalString(item['reviewArtifactId'])
+        && Number.isSafeInteger(item['attempt']) && (item['attempt'] as number) >= 0
+        && typeof item['sha256'] === 'string' && /^[a-f0-9]{64}$/i.test(item['sha256'])
+        && typeof item['versionPath'] === 'string' && isAbsolute(item['versionPath']))))
+    && (value['executionState'] === undefined || ['active', 'awaiting_review', 'blocked_external', 'interrupted'].includes(value['executionState'] as string))
+    && isOptionalString(value['waitReason'])
+    && (value['runtimeBlock'] === undefined || isRuntimeBlock(value['runtimeBlock']))
+    && (value['dispatch'] === undefined || (isRecord(value['dispatch'])
+      && typeof value['dispatch']['attemptId'] === 'string'
+      && typeof value['dispatch']['id'] === 'string'
+      && isFiniteNumber(value['dispatch']['dispatchedAt'])
+      && (value['dispatch']['acceptedAt'] === undefined || isFiniteNumber(value['dispatch']['acceptedAt']))
+      && (value['dispatch']['nextRetryAt'] === undefined || isFiniteNumber(value['dispatch']['nextRetryAt']))
+      && (value['dispatch']['failureCount'] === undefined || (Number.isSafeInteger(value['dispatch']['failureCount']) && (value['dispatch']['failureCount'] as number) >= 0))))
     && (value['attempt'] === undefined
       || (Number.isSafeInteger(value['attempt']) && (value['attempt'] as number) >= 0))
     && isOptionalString(value['attemptId'])
+    && isOptionalString(value['finalizedAttemptId'])
     && isOptionalString(value['handoffId'])
     && (value['reassigning'] === undefined || typeof value['reassigning'] === 'boolean')
     && isFiniteNumber(value['createdAt'])
@@ -1036,6 +1509,9 @@ function isTeamState(value: unknown, expectedId: string): value is TeamState {
     && typeof value['name'] === 'string'
     && value['name'].trim() !== ''
     && isOptionalString(value['description'])
+    && (value['sharedTaskContext'] === undefined || (isSharedTaskContext(value['sharedTaskContext'])
+      && value['sharedTaskContext'].captainSessionId === value['captainSessionId']))
+    && (value['taskProtocol'] === undefined || (Array.isArray(value['taskProtocol']) && value['taskProtocol'].every(item => typeof item === 'string')))
     && typeof value['captainSessionId'] === 'string'
     && value['captainSessionId'] !== ''
     && isOptionalString(value['scenarioId'])
@@ -1046,7 +1522,34 @@ function isTeamState(value: unknown, expectedId: string): value is TeamState {
     && value['tasks'].every(isTeamTask)
     && Number.isSafeInteger(value['taskSeq'])
     && (value['taskSeq'] as number) >= 0
+    && (value['halted'] === undefined || typeof value['halted'] === 'boolean')
+    && (value['maxActiveMembers'] === undefined || (Number.isSafeInteger(value['maxActiveMembers']) && (value['maxActiveMembers'] as number) >= 1))
+    && (value['captainRuntimeBlock'] === undefined || isRuntimeBlock(value['captainRuntimeBlock']))
+    && (value['runtimeWaits'] === undefined || (isRecord(value['runtimeWaits']) && Object.values(value['runtimeWaits']).every(wait =>
+      isRecord(wait) && typeof wait['reason'] === 'string' && isFiniteNumber(wait['since'])
+      && Array.isArray(wait['taskIds']) && wait['taskIds'].every(id => typeof id === 'string'))))
+    && (value['goalWaits'] === undefined || (isRecord(value['goalWaits']) && Object.values(value['goalWaits']).every(wait =>
+      isRecord(wait) && typeof wait['goalId'] === 'string' && wait['goalId'] !== ''
+      && Number.isSafeInteger(wait['pausedRevision']) && (wait['pausedRevision'] as number) >= 1
+      && isFiniteNumber(wait['createdAt']))))
+    && isOptionalString(value['haltReason'])
+    && (value['haltedAt'] === undefined || isFiniteNumber(value['haltedAt']))
+    && (value['resumedAt'] === undefined || isFiniteNumber(value['resumedAt']))
+    && isOptionalString(value['resumeReason'])
     && (value['qualityRun'] === undefined || isQualityRun(value['qualityRun']))
+    && (value['qualityRuns'] === undefined || (
+      isRecord(value['qualityRuns']) && Object.values(value['qualityRuns']).every(isQualityRun)
+    ))
+    && (value['qualityRunHistory'] === undefined || (
+      isRecord(value['qualityRunHistory']) && Object.values(value['qualityRunHistory']).every(history => Array.isArray(history) && history.every(isQualityRun))
+    ))
+    && (value['structuredQualityPolicy'] === undefined || (
+      isRecord(value['structuredQualityPolicy'])
+      && typeof value['structuredQualityPolicy']['required'] === 'boolean'
+      && Number.isSafeInteger(value['structuredQualityPolicy']['maxRepairRounds'])
+      && (value['structuredQualityPolicy']['maxRepairRounds'] as number) >= 0
+      && (value['structuredQualityPolicy']['maxRepairRounds'] as number) <= 2
+    ))
   if (!validShape) return false
 
   const members = value['members'] as TeamMember[]
@@ -1123,6 +1626,7 @@ function isTeamMessage(value: unknown): value is TeamMessage {
     && (value['deliveryClaimedAt'] === undefined || isFiniteNumber(value['deliveryClaimedAt']))
     && (value['deliveredAt'] === undefined || isFiniteNumber(value['deliveredAt']))
     && (value['readAt'] === undefined || isFiniteNumber(value['readAt']))
+    && (value['consumedAt'] === undefined || isFiniteNumber(value['consumedAt']))
     && (value['discardedAt'] === undefined || isFiniteNumber(value['discardedAt']))
     && (value['discardReason'] === undefined || typeof value['discardReason'] === 'string')
 }

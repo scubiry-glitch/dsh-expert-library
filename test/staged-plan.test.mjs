@@ -49,6 +49,12 @@ test('staged plan lifecycle is single-direction and edit records a new revision'
   const approved = transitionStagedPlan(original, 'approved', { actor: 'captain', now: 2 })
   const running = transitionStagedPlan(approved, 'running', { actor: 'captain', now: 3 })
   assert.equal(running.status, 'running')
+  assert.deepEqual(running.approval, {
+    digest: original.digest,
+    revision: original.revision,
+    approvedAt: 2,
+    approvedBy: 'captain',
+  })
   const edited = editStagedPlan(original, {
     plan: plan('digest-2'),
     request: { scenario: 'demo', goal: 'updated' },

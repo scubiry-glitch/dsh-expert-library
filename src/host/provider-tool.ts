@@ -38,7 +38,7 @@ import { appendTeamEvent, captainSessionOf } from '../events.ts'
 import { findTeamByParticipant } from '../state.ts'
 import type { ExpertTeamsProviderCalledData } from '../event-types.ts'
 import type { TeamState } from '../types.ts'
-import { admitCapability, type CapabilityScope } from '../capability-scope.ts'
+import { admitCapability, admitDataProvider, type CapabilityScope } from '../capability-scope.ts'
 import type { ProviderTransportService } from './provider-service.ts'
 import type { ProviderEnvelope } from '../v2/provider-runtime.ts'
 import {
@@ -47,6 +47,7 @@ import {
   ZHIJIAN_DATASETS,
   type DatasetDefinition,
   type DatasetError,
+  type LocalDbDatasetSource,
 } from './dataset-registry.ts'
 
 /** Max serialized chars of `data` kept in the model-facing result. */
@@ -92,12 +93,14 @@ const PROVIDER_CALL_OUTPUT_SCHEMA = {
 type ProviderCallOutput = InferValue<typeof PROVIDER_CALL_OUTPUT_SCHEMA>
 
 const TOOL_DESCRIPTION = [
-  '调用专家库 provider 能力层（Wind 金融 / 政研通 zyt / 贝壳 beike）获取数据或执行受控操作。',
-  '优先 dataset-first 调用：传 dataset（已注册数据集 id，如 realestate.city.market、realestate.listing.search、realestate.policy、realestate.rent.market、financial.stock.quote、financial.macro），系统自动映射到版本钉扎的 capability 并校验必填口径；未注册 dataset、缺口径、凭据缺失、参数错误都不会触发安装或 key 猜测，只会返回结构化修正错误。',
+  '调用专家库 provider 能力层（Wind 金融 / 政研通 zyt / 贝壳 beike / 本地 SQLite localdb）获取数据或执行受控操作。',
+  '优先 dataset-first 调用：传 dataset（已注册数据集 id，如 realestate.city.market、realestate.listing.search、realestate.policy、realestate.rent.market、financial.stock.quote、financial.macro，以及本地库 localdb.<库名>.query / localdb.<库名>.schema——动态注册，以 health/schema 列表为准），系统自动映射到版本钉扎的 capability 并校验必填口径；未注册 dataset、缺口径、凭据缺失、参数错误都不会触发安装或 key 猜测，只会返回结构化修正错误。',
   '直接传 capability 仍兼容（如 financial.stock.snapshot、realestate.indicators.timeseries、realestate.city.compare），但新增业务应优先走 dataset。',
   'input 为对应能力契约的参数 JSON 对象（字段以该能力契约为准，如 windcode/city/code）。',
   '写/敏感操作（realestate.rent.appoint、realestate.sell.list、realestate.agent.contact 等）必须获得用户审批（allowed-once）后才执行；审批不可用或未批准时失败关闭（write-requires-approval / APPROVAL_REJECTED）。',
   '返回信封：ok / capability / dataset / provenance（含 caliber、unit）/ warnings / error；data 过大时截断并带 truncated 标记，provenance/warnings/error 完整保留。',
+  '错误分流（retry:never 表示改参数重试而非原样重发）：DATASET_UNKNOWN=数据集 id 拼错；CALIBER_MISSING=调用前参数校验未通过，按 error.missing 补必填口径（请求未发出，不能据此判断通道健康）；CREDENTIAL_MISSING=配凭据不重装；INPUT_INVALID=修参数类型；DATA_QUALITY_INVALID=provenance 不全，结果禁止引用。',
+  '降级路由：若本工具连续返回传输层失败（非口径/参数类错误），改用原生 CLI 等效取数——Wind 指标走 wind-mcp-skill 的 economic_data（search 拿 code → query 带 beginDate/endDate），房源/板块走 beike CLI 的 rent/buy search+plate（行情工具未开放时用检索召回数=供给量，展示样本租金须标「估算·小样本」）。两源冲突不静默择优；引用必须带 provenance（source/caliber/unit）+ 截止日；失败三态=报错/待补/空序列，编数字比不回答更严重。完整 playbook：98wiki knowledge/shared/data-channels-playbook.md。',
 ].join('\n')
 
 /* ------------------------------------------------------------------ *
@@ -197,7 +200,11 @@ export function resolveMemberCapabilityScope(team: TeamState | undefined, agentS
 
 /** Human correction for a provider denied by the durable member scope. */
 function capabilityScopeCorrection(provider: string, scope: CapabilityScope): string {
-  const allowed = scope.allowedProviders.length === 0 ? '无 provider' : scope.allowedProviders.join('、')
+  const values = scope.allowedDataProviders ?? (scope.allowedProviders ?? []).filter((value) => (
+    value === 'wind' || value === 'zyt' || value === 'beike' || value === 'rongcheng'
+      || value.startsWith('wind-') || value.startsWith('zyt-') || value.startsWith('beike-') || value.startsWith('rongcheng-')
+  ))
+  const allowed = values.length === 0 ? '无 provider' : values.join('、')
   return `成员 capability scope 不允许 provider「${provider}」；当前允许：${allowed}`
 }
 
@@ -209,23 +216,39 @@ export interface ProviderCallerContext {
   readonly workspace: string
   /** The team the caller belongs to, when resolvable (undefined ⇒ no constraint). */
   readonly team: TeamState | undefined
+  /** State lookup failed for a session that may be a team member. Fail closed. */
+  readonly lookupError?: string
 }
 
 /**
  * Resolve the caller's session + team. A missing session or any team-lookup
- * failure yields an unconstrained context (the gate stays open) so the lookup
- * can never break provider calls.
+ * A missing state root means the caller is outside Expert Teams and remains
+ * unconstrained. A malformed existing team record returns a lookup error so
+ * the execute path fails closed instead of silently widening access.
  */
-export async function resolveProviderCallerContext(ctx: Context, exec: { agent?: unknown }): Promise<ProviderCallerContext> {
+export async function resolveProviderCallerContext(
+  ctx: Context,
+  exec: { agent?: unknown },
+  stateDir = 'expert-teams',
+): Promise<ProviderCallerContext> {
   const session = (exec.agent as { session?: { id?: string; header?: { cwd?: string } } } | undefined)?.session
   if (session === undefined || session.id === undefined) return { sessionId: undefined, workspace: process.cwd(), team: undefined }
   const sessionId = session.id
   const workspace = session.header?.cwd ?? process.cwd()
   try {
-    const team = await findTeamByParticipant(join(workspace, 'expert-teams'), sessionId)
+    const team = await findTeamByParticipant(join(workspace, stateDir), sessionId)
     return { sessionId, workspace, team }
-  } catch {
-    return { sessionId, workspace, team: undefined }
+  } catch (error: unknown) {
+    // A malformed team record must never turn a scoped member into an
+    // unconstrained provider caller. The execute path returns a stable error;
+    // callers outside a team still get the legacy open context when no state
+    // exists (findTeamByParticipant returns undefined for ENOENT).
+    return {
+      sessionId,
+      workspace,
+      team: undefined,
+      lookupError: error instanceof Error ? error.message : String(error),
+    }
   }
 }
 
@@ -363,7 +386,10 @@ export type DatasetGateResult =
  * Pure: resolve raw `{ capability?, dataset?, version?, input? }` args into a
  * bound capability (+ dataset metadata) or a structured dataset error.
  */
-export function applyDatasetRequest(args: { readonly capability?: string; readonly dataset?: string; readonly version?: string; readonly input?: unknown }): DatasetGateResult {
+export function applyDatasetRequest(
+  args: { readonly capability?: string; readonly dataset?: string; readonly version?: string; readonly input?: unknown },
+  localDatabases?: readonly LocalDbDatasetSource[],
+): DatasetGateResult {
   const input = args.input
   if (args.dataset === undefined) {
     if (typeof args.capability !== 'string' || args.capability === '') {
@@ -377,7 +403,7 @@ export function applyDatasetRequest(args: { readonly capability?: string; readon
   if (input === undefined || !isRecord(input)) {
     return { ok: false, error: { code: 'INPUT_INVALID', retry: 'never', correction: `dataset 调用必须提供 input 参数对象（字段见数据集契约）` } }
   }
-  const resolved = resolveDatasetRequest({ dataset: args.dataset, input, ...(args.version === undefined ? {} : { version: args.version }) })
+  const resolved = resolveDatasetRequest({ dataset: args.dataset, input, ...(args.version === undefined ? {} : { version: args.version }) }, localDatabases)
   if ('error' in resolved) return { ok: false, error: resolved.error }
   // A dataset call that ALSO names a capability must agree with the pinned
   // mapping — contradictions fail closed instead of silently rebinding.
@@ -399,10 +425,23 @@ export function applyDatasetRequest(args: { readonly capability?: string; readon
   }
 }
 
+/**
+ * Admit dynamically registered localdb databases into the dataset gate by id,
+ * so a newly registered SQLite file is callable without any code change.
+ * Duck-typed on purpose: legacy/fake service stand-ins without
+ * `localDbDatabases` simply contribute no dynamic datasets.
+ */
+function resolveLocalDbGateSources(ctx: Context): readonly LocalDbDatasetSource[] {
+  const service = ctx.get('providerTransport') as ProviderTransportService | undefined
+  const databases = typeof service?.localDbDatabases === 'function' ? service.localDbDatabases() : []
+  return databases.map(db => ({ id: db.id, ...(db.caliber !== undefined ? { caliber: db.caliber } : {}) }))
+}
+
 async function executeProviderCall(
   ctx: Context,
   args: { capability?: string; dataset?: string; version?: string; input?: unknown; context?: string },
   exec: { agent?: unknown; signal?: AbortSignal },
+  stateDir = 'expert-teams',
 ): Promise<ProviderCallResult> {
   const fail = (code: string, correction: string, details?: unknown): ProviderCallResult => ({
     ok: false,
@@ -412,7 +451,9 @@ async function executeProviderCall(
   })
 
   // Dataset gate first: contract errors are independent of provider uptime.
-  const gated = applyDatasetRequest(args)
+  // Dynamically registered localdb databases are admitted by id here, so a
+  // newly registered SQLite file is callable without any code change.
+  const gated = applyDatasetRequest(args, resolveLocalDbGateSources(ctx))
   if (!gated.ok) {
     return fail(gated.error.code, gated.error.correction, gated.error.details)
   }
@@ -427,7 +468,12 @@ async function executeProviderCall(
   // Plan capability gate (architecture gap #3): BEFORE capability resolution,
   // so the write-approval flow below is untouched. Members of a plan team may
   // only invoke capabilities granted by their plan-linked tasks.
-  const caller = await resolveProviderCallerContext(ctx, exec)
+  const caller = await resolveProviderCallerContext(ctx, exec, stateDir)
+  if (caller.lookupError !== undefined) {
+    return fail('CAPABILITY_SCOPE_UNAVAILABLE', '无法安全读取成员 capability scope；已拒绝 provider 调用，请修复损坏的团队状态', {
+      reason: caller.lookupError,
+    })
+  }
   const allowance = resolveCapabilityAllowance(caller.team, caller.sessionId)
   if (allowance.constrained && !allowance.allowed.includes(capability)) {
     return fail('CAPABILITY_NOT_ALLOWED', capabilityCorrection(capability, allowance), {
@@ -452,12 +498,26 @@ async function executeProviderCall(
   // a provider route cannot be used to escape the member's persisted scope.
   const memberScope = resolveMemberCapabilityScope(caller.team, caller.sessionId)
   if (memberScope !== undefined) {
-    const admission = admitCapability(memberScope, { provider: resolved.binding.providerId })
+    const member = caller.team?.members.find(candidate => candidate.id === caller.sessionId && candidate.status !== 'removed')
+    const activeTask = member === undefined
+      ? undefined
+      : caller.team?.tasks.find(task => task.assignee === member.name && (task.status === 'claimed' || task.status === 'in_progress'))
+    const admission = admitDataProvider(memberScope, resolved.binding.providerId)
     if (!admission.ok) {
       return fail('CAPABILITY_SCOPE_DENIED', capabilityScopeCorrection(resolved.binding.providerId, memberScope), {
         provider: resolved.binding.providerId,
         denied: admission.denied,
-        allowedProviders: [...memberScope.allowedProviders],
+        allowedProviders: [...(memberScope.allowedDataProviders ?? memberScope.allowedProviders)],
+      })
+    }
+    // A scoped member must hold a live task capability for provider work;
+    // an empty task allowlist is deny-all, while legacy callers never reach
+    // this branch because they have no durable capability scope.
+    const taskAdmission = admitCapability(memberScope, { task: activeTask?.id })
+    if (!taskAdmission.ok) {
+      return fail('CAPABILITY_TASK_DENIED', '成员只能在其当前 durable task scope 内调用 provider', {
+        denied: taskAdmission.denied,
+        allowedTasks: [...memberScope.allowedTasks],
       })
     }
   }
@@ -469,7 +529,14 @@ async function executeProviderCall(
       { agent: exec.agent, signal: exec.signal },
     )
   } catch (error) {
-    return fail('PROVIDER_CALL_ERROR', error instanceof Error ? error.message : String(error))
+    // 传输层失败（非口径/参数类）：信封内置降级路由提示，保证成员在调用点
+    // 即可看到等效的原生 CLI 路径，而不是只能靠记忆或 playbook。
+    return fail('PROVIDER_CALL_ERROR', error instanceof Error ? error.message : String(error), {
+      fallback:
+        'Wind 指标改走 wind-mcp-skill economic_data（search 拿 code → query 带 beginDate/endDate）；' +
+        '房源/板块改走 beike CLI rent/buy search+plate（检索召回数=供给量，样本租金标「估算·小样本」）。' +
+        '完整降级链见 98wiki knowledge/shared/data-channels-playbook.md。',
+    })
   }
   const result = summarizeEnvelope(envelope, capability)
   if (datasetInfo !== undefined) {
@@ -510,7 +577,17 @@ async function executeProviderCall(
   } catch {
     // 事件埋点失败不阻断调用结果返回。
   }
-  return result
+  // 防御性 lossless-JSON 归一化：宿主对工具返回值做严格快照校验，任何显式
+  // undefined / 非 plain 原型都会整体拒绝（INVALID_TOOL_OUTPUT，表现为
+  // "value is not lossless JSON"）。JSON round-trip 一次性剥离所有不可
+  // 序列化残留（Date/BigInt 副产物、readonly 容器等），结构与语义不受影响。
+  // 修复 2026-09-27 上海租赁报告 dataset 层批量拒收（原热修只打在 lib 上，
+  // 重建即丢，故回填源码——2026-09-28）。
+  try {
+    return JSON.parse(JSON.stringify(result)) as typeof result
+  } catch {
+    return result
+  }
 }
 
 /**
@@ -562,19 +639,19 @@ async function emitProviderCallEvent(ctx: Context, agent: unknown, result: Provi
  * Callers (the host plugin apply path) MUST gate this on
  * {@link providerCallToolEligible} so webless/headless profiles skip it.
  */
-export function registerProviderCallTool(ctx: Context): void {
+export function registerProviderCallTool(ctx: Context, options?: { readonly stateDir?: string }): void {
   ctx.tools.register(defineTool({
     name: 'expert_provider_call',
     description: TOOL_DESCRIPTION,
     parameters: {
-      dataset: { type: 'string', description: `已注册数据集 id（首选入口；自动映射版本钉扎的 capability 并校验口径）：${ZHIJIAN_DATASETS.map(definition => definition.dataset).join('、')}。` },
+      dataset: { type: 'string', description: `已注册数据集 id（首选入口；自动映射版本钉扎的 capability 并校验 input 必填口径）：\n${ZHIJIAN_DATASETS.map(definition => `${definition.dataset}：${definition.description}；必填 ${definition.requiredFields.join('/') || '无'}。`).join('\n')}` },
       version: { type: 'string', description: '数据集契约版本（可选；缺省取注册表当前版本）。' },
       capability: { type: 'string', description: 'provider 能力 id（兼容入口；与 dataset 同传时必须与映射一致）。如 financial.stock.snapshot、realestate.indicators.timeseries、realestate.listing.search。' },
       input: {
         type: 'object',
         required: true,
         additionalProperties: true,
-        description: '该能力契约的参数 JSON 对象（如 {"windcode":"600519.SH"} / {"city":"杭州","period":"2025-01","metric":"成交量"}）。',
+        description: '对应 dataset/capability 的参数 JSON 对象。时序示例：先用 realestate.indicators.catalog + {} 查指标目录，再用 realestate.city.market + {"city":"北京","code":"<目录返回的指标代码>","periodEnd":"2026-09","limit":6}（code 占位符必须替换；不是城市编码，metric/period 不适用于此路线）。股票示例：financial.stock.quote + {"windcode":"600519.SH"}。',
       },
       context: { type: 'string', description: '审计上下文（任务/计划 id），透传给 provider 调用记录。' },
     },
@@ -583,7 +660,7 @@ export function registerProviderCallTool(ctx: Context): void {
       render: (args, value) => [{ type: 'text', text: renderProviderCallText(value as unknown as ProviderCallResult) }],
     },
     async execute(args, exec) {
-      return executeProviderCall(ctx, args, exec) as unknown as ProviderCallOutput
+      return executeProviderCall(ctx, args, exec, options?.stateDir ?? 'expert-teams') as unknown as ProviderCallOutput
     },
   }))
 }

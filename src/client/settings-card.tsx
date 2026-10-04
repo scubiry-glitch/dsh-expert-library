@@ -31,6 +31,7 @@ import {
   text,
   type HealthWire,
   type ProviderId,
+  type HealthProbeId,
   type ToolExecutionDraft,
   type ExpertLibrarySettingsScope,
 } from './settings-shared.ts'
@@ -77,7 +78,7 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
   // 数据源 health state (read-only host probes).
   const [health, setHealth] = useState<HealthWire | null>(null)
   const [healthError, setHealthError] = useState('')
-  const [checking, setChecking] = useState<ProviderId | null>(null)
+  const [checking, setChecking] = useState<HealthProbeId | null>(null)
 
   useEffect(() => {
     if (snapshot.status !== 'ready' || value === undefined) return
@@ -101,7 +102,7 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
     })
   }, [snapshot.status, value])
 
-  const fetchHealth = async (probe: ProviderId | 'all'): Promise<void> => {
+  const fetchHealth = async (probe: HealthProbeId | 'all'): Promise<void> => {
     setChecking(probe === 'all' ? null : probe)
     setHealthError('')
     try {
@@ -115,7 +116,7 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
         if (probe === 'all' || current === null) return body
         return {
           ...body,
-          providers: { ...current.providers, [probe]: body.providers[probe] },
+          providers: { ...current.providers, [probe]: body.providers[probe as keyof typeof body.providers] },
           packs: current.packs,
         }
       })
@@ -213,15 +214,50 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
     )
   }
 
+  // localdb（本地 SQLite）：注册来自组合层配置 / 环境变量 / 目录扫描，
+  // 此页只读展示——数据库列表不在这里编辑（敏感级口径由注册时声明）。
+  const renderLocalDbRow = () => {
+    const status = providerStatus('localdb', health)
+    const result = probeResultLine('localdb', health)
+    const databases = health?.providers.localdb?.databases ?? []
+    return (
+      <div className={css.provider}>
+        <div className={css.providerHead}>
+          <span className={css.statusDot} data-status={status.key} role="img" aria-label={status.label}>{status.dot}</span>
+          <strong className={css.providerName}>本地数据库 localdb</strong>
+          <span className={css.statusLabel} data-status={status.key}>{status.label}</span>
+          <button
+            className={css.button}
+            type="button"
+            disabled={checking !== null}
+            onClick={() => void fetchHealth('localdb')}
+          >
+            {checking === 'localdb' ? '检测中…' : '检测'}
+          </button>
+        </div>
+        <div className={css.fields}>
+          {databases.length === 0
+            ? <span className={css.fieldLabel}>未注册数据库（providers.localdb.databases / LOCALDB_DATABASES / scanDirs）</span>
+            : databases.map(db => (
+              <span className={css.fieldLabel} key={db.id}>
+                localdb.{db.id} — {db.path}{db.sensitivity === 'internal' ? '（行内材料·勿外发）' : ''}
+              </span>
+            ))}
+        </div>
+        {result !== '' && <p className={css.probeResult} role="status">{result}</p>}
+      </div>
+    )
+  }
+
   return <section className={css.card}>
     <header className={css.head}>
       <h2 className={css.title}>智见数据</h2>
-      <span className={css.subtitle}>外部数据源（Wind / 政研通 / 贝壳）的注册与连通状态，以及工具执行模式。留空表示继承默认配置；API Key 等秘密不会显示或写入此处。</span>
+      <span className={css.subtitle}>外部数据源（Wind / 政研通 / 贝壳 / 本地 SQLite）的注册与连通状态，以及工具执行模式。留空表示继承默认配置；API Key 等秘密不会显示或写入此处。</span>
     </header>
 
     <div className={css.body}>
       <h3 className={css.sectionTitle}>数据源</h3>
-      <p className={css.sectionHint}>三个外部数据源（Wind / 政研通 / 贝壳）的注册与连通状态。留空表示继承默认配置。</p>
+      <p className={css.sectionHint}>外部数据源（Wind / 政研通 / 贝壳）与本地 SQLite（localdb，只读）的注册与连通状态。留空表示继承默认配置。</p>
       {healthError !== '' && <p className={css.statusError} role="status">{healthError} <button className={css.button} type="button" onClick={() => void fetchHealth('all')}>重试</button></p>}
       {renderProviderRow('wind', 'Wind（行情 CLI）', (
         <label className={css.field}><span className={css.fieldLabel}>CLI 路径</span><input className={css.input} placeholder="~/.agents/skills/wind-mcp-skill/scripts/cli.mjs" value={draft.windCliPath} onChange={event => set('windCliPath', event.target.value)} /></label>
@@ -238,6 +274,7 @@ export function ExpertLibrarySettingsCard({ close, scope }: ExpertLibrarySetting
           <label className={css.checkRow}><input className={css.checkbox} type="checkbox" checked={draft.beikePreferCli} onChange={event => set('beikePreferCli', event.target.checked)} /> 优先使用 CLI</label>
         </>
       ))}
+      {renderLocalDbRow()}
 
       <h3 className={css.sectionTitle}>工具执行模式</h3>
       <p className={css.sectionHint}>外部工具的执行方式：API（结构化 HTTP）、CLI（受控本地命令）或自动（先探测 API 再回退 CLI）。「自动」+ 非只读 = 继承默认策略。</p>

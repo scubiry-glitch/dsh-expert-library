@@ -1474,3 +1474,388 @@
     padding-left: 45px;
   }
 }
+
+/* A6 plan and lifecycle controls stay inside the existing panel rhythm. The
+   dense review rows intentionally use wrapping so long CJK/route names never
+   widen the floater or hide the acceptance evidence. */
+.teamControls {
+  min-width: 0;
+  padding-top: 9px;
+  border-top: 1px solid var(--dsw-alias-line-normal);
+}
+
+.controlsHead {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.controlsToggle {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--dsw-alias-bg-module-platform);
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.controlsToggle:hover {
+  background: var(--dsw-alias-bg-fill-neutral);
+}
+
+.controlsMeta {
+  overflow: hidden;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 9.5px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.controlState {
+  flex: none;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--dsw-alias-bg-fill-neutral);
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 9px;
+  line-height: 14px;
+}
+
+.controlState[data-state='blocked'] {
+  background: color-mix(in srgb, var(--dsw-alias-state-warning) 13%, var(--dsw-alias-bg-module));
+  color: var(--dsw-alias-state-warning);
+}
+
+.controlsBody {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 8px 2px 1px;
+}
+
+.controlError,
+.controlNotice {
+  padding: 6px 8px;
+  border-radius: 7px;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 10px;
+  line-height: 15px;
+  overflow-wrap: anywhere;
+}
+
+.controlError {
+  background: color-mix(in srgb, var(--dsw-alias-state-danger) 10%, var(--dsw-alias-bg-module));
+  color: var(--dsw-alias-state-danger);
+}
+
+.controlNotice[data-state='stale'],
+.controlNotice[data-state='forbidden'] {
+  background: color-mix(in srgb, var(--dsw-alias-state-warning) 10%, var(--dsw-alias-bg-module));
+  color: var(--dsw-alias-state-warning);
+}
+
+.planEditor,
+.rosterSection,
+.taskReview,
+.qualitySection,
+.pauseSection {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--dsw-alias-line-normal);
+  border-radius: 9px;
+  background: var(--dsw-alias-bg-module-platform);
+}
+
+.planHeader,
+.subsectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 15px;
+}
+
+.planTitle {
+  color: var(--dsw-alias-label-primary);
+}
+
+.planIdentity,
+.subsectionHeader > span {
+  overflow: hidden;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 9px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.planFields {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.planFields label,
+.pauseSection label {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 9.5px;
+  line-height: 14px;
+}
+
+.planFields input,
+.planFields textarea,
+.pauseSection input {
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--dsw-alias-line-normal);
+  border-radius: 6px;
+  padding: 5px 6px;
+  background: var(--dsw-alias-bg-module);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
+  font-size: 10px;
+  line-height: 14px;
+  resize: vertical;
+}
+
+.planFields input:focus-visible,
+.planFields textarea:focus-visible,
+.pauseSection input:focus-visible {
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 1px;
+}
+
+.planFields input:disabled,
+.planFields textarea:disabled,
+.pauseSection input:disabled {
+  cursor: not-allowed;
+  opacity: .58;
+}
+
+.planFieldGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.planActions,
+.lifecycleActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.planActions button,
+.lifecycleActions button {
+  min-height: 26px;
+  padding: 3px 7px;
+  border: 1px solid var(--dsw-alias-line-normal);
+  border-radius: 6px;
+  background: var(--dsw-alias-bg-module);
+  color: var(--dsw-alias-label-secondary);
+  font: inherit;
+  font-size: 9.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.planActions button:hover:not(:disabled),
+.lifecycleActions button:hover:not(:disabled) {
+  border-color: var(--dsw-alias-state-business-primary);
+  color: var(--dsw-alias-state-business-primary);
+}
+
+.planActions button:disabled,
+.lifecycleActions button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+.planActions .primaryAction {
+  border-color: color-mix(in srgb, var(--dsw-alias-state-business-primary) 45%, var(--dsw-alias-line-normal));
+  background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 10%, var(--dsw-alias-bg-module));
+  color: var(--dsw-alias-state-business-primary);
+}
+
+.planActions .dangerAction,
+.lifecycleActions .dangerAction {
+  color: var(--dsw-alias-state-danger);
+}
+
+.planFacts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 9px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 9px;
+  line-height: 13px;
+  overflow-wrap: anywhere;
+}
+
+.planFacts code,
+.taskReviewTop code,
+.qualityRow code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 9px;
+}
+
+.rosterList,
+.taskReviewList,
+.qualityList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rosterRow,
+.taskReviewRow,
+.qualityRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 5px 6px;
+  border-radius: 6px;
+  background: var(--dsw-alias-bg-module);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 9.5px;
+  line-height: 14px;
+  overflow-wrap: anywhere;
+}
+
+.rosterRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) auto;
+  align-items: center;
+  gap: 5px;
+}
+
+.rosterName {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--dsw-alias-label-primary);
+  font-weight: 600;
+}
+
+.rosterName small {
+  overflow: hidden;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 8.5px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rosterRoute,
+.rosterStatus,
+.taskReviewMeta,
+.qualityEvidence {
+  overflow: hidden;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 8.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rosterStatus[data-state='working'],
+.rosterStatus[data-state='in_progress'] {
+  color: var(--dsw-alias-state-business-primary);
+}
+
+.taskReviewTop {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 5px;
+  align-items: baseline;
+  min-width: 0;
+}
+
+.taskReviewTop > span {
+  overflow: hidden;
+  color: var(--dsw-alias-label-primary);
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.taskReviewTop b {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 8.5px;
+  font-weight: 600;
+}
+
+.taskReviewTop b[data-state='completed'] { color: var(--dsw-alias-state-success); }
+.taskReviewTop b[data-state='failed'] { color: var(--dsw-alias-state-danger); }
+.taskReviewTop b[data-state='in_progress'] { color: var(--dsw-alias-state-business-primary); }
+
+.acceptanceList {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 8.5px;
+  line-height: 13px;
+}
+
+.acceptanceList > span[data-passed='true'] { color: var(--dsw-alias-state-success); }
+
+.qualityRow[data-state='failed'] { background: color-mix(in srgb, var(--dsw-alias-state-danger) 8%, var(--dsw-alias-bg-module)); }
+.qualityRow[data-state='completed'] { background: color-mix(in srgb, var(--dsw-alias-state-success) 8%, var(--dsw-alias-bg-module)); }
+.qualityRow[data-state='running'] { background: color-mix(in srgb, var(--dsw-alias-state-business-primary) 7%, var(--dsw-alias-bg-module)); }
+
+.emptyControl {
+  color: var(--dsw-alias-label-tertiary);
+  font-size: 9.5px;
+  line-height: 14px;
+}
+
+@media (max-width: 460px) {
+  .planFieldGrid { grid-template-columns: 1fr; }
+  .rosterRow { grid-template-columns: minmax(0, 1fr) auto; }
+  .rosterRoute { grid-column: 1 / -1; }
+}
+
+.qualityFinding {
+  overflow: hidden;
+  color: var(--dsw-alias-state-warning);
+  font-size: 8.5px;
+  line-height: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.planTaskPreview {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+  padding-top: 2px;
+}

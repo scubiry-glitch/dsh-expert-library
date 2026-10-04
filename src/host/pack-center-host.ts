@@ -4,12 +4,14 @@ import { readFile } from 'node:fs/promises'
 import { isAbsolute, join, parse, resolve } from 'node:path'
 import { homedir } from 'node:os'
 import type { ToolsConfig } from '../team-core.ts'
-import type { CenterManageService } from '../pack-center-wire.ts'
+import type { CenterManageService, CenterUpdatePolicyView } from '../pack-center-wire.ts'
+import { normalizeUpdatePolicy } from '../settings.ts'
 import { builtinLegacyPack } from '../v2/compat.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
 import { buildCollabDomainPack } from '../collab/templates.ts'
 import { resolveLibrary } from '../expert-library/registry.ts'
 import { preflightManagedActivation } from './pack-runtime.ts'
+import { createPackCenterAutoUpdate } from './pack-center-auto-update.ts'
 import { createPackCenterManager } from './pack-center-manager.ts'
 import { PackCenterClientError } from './pack-center-client.ts'
 import { sanitizePackOperationError } from './pack-center-operations.ts'
@@ -84,6 +86,12 @@ export function createPackCenterHost(ctx: Context, config: ToolsConfig, workspac
     const action = manager[key] as (...input: Parameters<CenterManageService[K]>) => ReturnType<CenterManageService[K]>
     return await action(...args) as Awaited<ReturnType<CenterManageService[K]>>
   }
+  // Opt-in semi-automatic updates. The scheduler reads the policy thunk on
+  // every sync/tick — settings commits mutate `config` in place, so a policy
+  // change takes effect without a restart (deliberately OUTSIDE the
+  // `configured()` restart fence above). With the default `manual` policy the
+  // scheduler never arms and the host makes no periodic network calls.
+  const updatePolicy = (): CenterUpdatePolicyView => autoUpdate.status()
   const service: CenterManageService = {
     async connection() {
       const manager = await get()
@@ -101,7 +109,12 @@ export function createPackCenterHost(ctx: Context, config: ToolsConfig, workspac
     async start() { const manager = await get(); if (manager) await manager.start() },
     async close() { closed = true; const manager = await instance; if (manager) await manager.close() },
   }
-  return { service, async activeSnapshot() {
+  const autoUpdate = createPackCenterAutoUpdate({
+    service,
+    policy: () => normalizeUpdatePolicy(config.packCenterUpdatePolicy),
+    originConfigured: () => Boolean(config.packCenterOrigin?.trim()),
+  })
+  return { service, autoUpdate, updatePolicy, async activeSnapshot() {
     const manager = await get()
     return manager ? manager.activeSnapshot() : { generation: 0, mode: 'normal' as const, packs: [], suppressedLegacyPaths: [] }
   } }

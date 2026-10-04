@@ -8,9 +8,11 @@
  */
 import { Config } from './index.ts'
 import type { Context } from '@deepseek-ai/cordis'
-import { registerExpertTeamsTools, type ToolsConfig } from './tools.ts'
+import { registerExpertTeamsTools } from './tools.ts'
 import { registerZhijianTools } from './zhijian/tools.ts'
 import { registerCollabTools } from './collab/tools.ts'
+import { presetToolsConfig } from './preset-settings.ts'
+import { installStructuredToolFailureGuard } from './structured-tool-failure.ts'
 
 export { Config }
 
@@ -26,6 +28,7 @@ export function apply(ctx: Context, config: Config): void {
   // a listed tool id is never registered, so it costs no context window and
   // cannot be routed to. Tools registered by the host entry (web routes,
   // provider transport, `render_publish`) are untouched.
+  installStructuredToolFailureGuard(ctx)
   const disabled = new Set(config.disabledTools ?? [])
   const scopedRegister: typeof ctx.tools.register = ((definition: Parameters<typeof ctx.tools.register>[0]) => {
     if (disabled.has(definition.name)) return
@@ -44,16 +47,7 @@ export function apply(ctx: Context, config: Config): void {
       return Reflect.get(target, prop, receiver)
     },
   })
-  const runtimeConfig: ToolsConfig = {
-    stateDir: config.stateDir ?? 'expert-teams',
-    memberProvider: config.memberProvider ?? 'spawn',
-    memberModel: config.defaultModel ?? config.memberModel,
-    memberMaxDepth: config.memberMaxDepth ?? 1,
-    maxMembers: config.maxMembers ?? 8,
-    knowledgeDir: config.knowledgeDir ?? 'knowledge',
-    packsDir: config.packsDir ?? 'domain-packs',
-    toolExecution: config.toolExecution,
-  }
+  const runtimeConfig = presetToolsConfig(ctx, config)
   const core = registerExpertTeamsTools(scopedCtx, runtimeConfig)
   registerZhijianTools(scopedCtx, runtimeConfig, core)
   registerCollabTools(scopedCtx, runtimeConfig, core)

@@ -90,6 +90,8 @@ export interface Scenario {
   readonly experts: readonly string[]
   /** Preset task DAG; dependencies reference indexes in this array. */
   readonly tasks: readonly ScenarioTaskTemplate[]
+  /** Explicit zero-based final report producer; callers must choose its v3 report bundle. */
+  readonly reportTaskIndex?: number
   /** Final deliverable spec appended to the captain's protocol. */
   readonly deliverable: string
   /** Extra knowledge pack folder name under `<knowledgeDir>/scenarios/`. */

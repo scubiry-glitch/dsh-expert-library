@@ -70,9 +70,9 @@ function legacyTeam(override = {}) {
 }
 
 /** Write one team record under a fresh temp workspace state root. */
-async function writeTeamFixture(workspace, teamId, team) {
-  await mkdir(join(workspace, 'expert-teams', teamId), { recursive: true })
-  await writeFile(join(workspace, 'expert-teams', teamId, 'team.json'), JSON.stringify({ ...team, id: teamId }))
+async function writeTeamFixture(workspace, teamId, team, stateDir = 'expert-teams') {
+  await mkdir(join(workspace, stateDir, teamId), { recursive: true })
+  await writeFile(join(workspace, stateDir, teamId, 'team.json'), JSON.stringify({ ...team, id: teamId }))
 }
 
 /** Session-shaped exec for the tool; `cwd` points at the temp workspace. */
@@ -114,13 +114,13 @@ function fakeService(calls) {
   }
 }
 
-function registerAndGetTool(service) {
+function registerAndGetTool(service, stateDir) {
   let registered = null
   const ctx = {
     tools: { register: (tool) => { registered = tool } },
     get: (name) => name === 'providerTransport' ? service : undefined,
   }
-  registerProviderCallTool(ctx)
+  registerProviderCallTool(ctx, stateDir === undefined ? undefined : { stateDir })
   assert.ok(registered, 'tool must be registered')
   return registered
 }
@@ -269,6 +269,43 @@ test('member provider scope blocks a resolved provider before invocation', async
     // The plan gate permits the capability and resolver binds it; scope is
     // the final admission boundary before any provider invocation.
     assert.deepEqual(calls, [['resolve', 'financial.stock.snapshot']])
+  } finally {
+    await rm(workspace, { recursive: true, force: true })
+  }
+})
+
+test('provider caller context honors a configured state directory', async () => {
+  const workspace = await mkdtemp(join(tmpdir(), 'expert-teams-custom-state-'))
+  try {
+    await writeTeamFixture(workspace, 'team1', planTeam({ planTaskCapabilities: { t1: [] } }), 'custom-state')
+    const calls = []
+    const tool = registerAndGetTool(fakeService(calls), 'custom-state')
+    const result = await tool.execute(
+      { capability: 'financial.stock.snapshot', input: {} },
+      memberExec('sess-alice', workspace),
+    )
+    assert.equal(result.ok, false)
+    assert.equal(result.error.code, 'CAPABILITY_NOT_ALLOWED')
+    assert.deepEqual(calls, [])
+  } finally {
+    await rm(workspace, { recursive: true, force: true })
+  }
+})
+
+test('malformed team state fails closed before provider resolution', async () => {
+  const workspace = await mkdtemp(join(tmpdir(), 'expert-teams-malformed-state-'))
+  try {
+    await mkdir(join(workspace, 'expert-teams', 'broken'), { recursive: true })
+    await writeFile(join(workspace, 'expert-teams', 'broken', 'team.json'), '{broken-json')
+    const calls = []
+    const tool = registerAndGetTool(fakeService(calls))
+    const result = await tool.execute(
+      { capability: 'financial.stock.snapshot', input: {} },
+      memberExec('sess-alice', workspace),
+    )
+    assert.equal(result.ok, false)
+    assert.equal(result.error.code, 'CAPABILITY_SCOPE_UNAVAILABLE')
+    assert.deepEqual(calls, [])
   } finally {
     await rm(workspace, { recursive: true, force: true })
   }

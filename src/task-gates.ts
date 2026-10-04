@@ -21,8 +21,8 @@
  *   member fixes the output and retries. The task stays claimed/in_progress.
  * - **Repair budget (≤2 rounds)** — each block is recorded on the task
  *   (`TeamTask.gateFailCount`). Once the plan policy's `maxRepairRounds`
- *   (design cap `MAX_REPAIR_ROUNDS = 2`) is spent, the next completion may
- *   proceed with a recorded warning instead of blocking forever.
+ *   (design cap `MAX_REPAIR_ROUNDS = 2`) is spent, the task requires escalation;
+ *   hard failures continue blocking completion.
  * - **Soft gates** — warnings are attached to the task result
  *   (`TeamTask.gateWarnings`) and returned to the caller.
  * - **Aggregate score + subject marker** — every gated run derives a
@@ -387,11 +387,11 @@ export interface TaskGateBlock {
 
 /** Result of evaluating the quality chain for one completion attempt. */
 export interface TaskGateResult {
-  /** Present when a hard gate failed and the repair budget is not yet spent. */
+  /** Present whenever a hard gate failed, including when repair budget is spent. */
   readonly blocked?: TaskGateBlock
-  /** Soft-gate warnings, or hard failures waived by budget exhaustion. */
+  /** Non-blocking soft-gate warnings. Hard failures are never waived by a budget. */
   readonly warnings: readonly string[]
-  /** True when hard failures were waived because the budget ran out. */
+  /** True when a hard failure needs escalation instead of another automatic retry. */
   readonly budgetExhausted: boolean
   /** Derived 0–100 aggregate score of the final round. */
   readonly score: number
@@ -525,12 +525,11 @@ export function subjectWithQualityMark(subject: string, score: number, blocked: 
  * policy, or no gate targets this task) — the caller then behaves exactly as
  * before. Otherwise:
  *
- * - `blocked` — a hard gate failed and the repair budget is not spent; the
+ * - `blocked` — a hard gate failed; the
  *   caller must persist `budgetUsed` as the task's `gateFailCount`, then
  *   reject the completion with `taskGateBlockedError`.
- * - allowed with `budgetExhausted` — hard gates still fail but the policy's
- *   repair budget (≤2 rounds) is spent; the completion may proceed with a
- *   recorded warning.
+ * - `budgetExhausted` — automatic repair must stop and the unresolved hard
+ *   failure requires escalation; completion remains blocked.
  * - allowed otherwise — pass (with soft-gate `warnings` when any).
  */
 export function evaluateTaskCompletionGates(
@@ -621,24 +620,16 @@ export function evaluateTaskCompletionGates(
   const { gateId, reason, corrections } = buildBlock(task.id, result)
   const used = task.gateFailCount ?? 0
   const score = deriveQualityScore(result, severityById)
-  if (budget === 0 || used < budget) {
-    // Hard gate failed and the repair budget still has room (or the policy
-    // grants no repair rounds at all): block the completion.
-    return {
-      blocked: { taskId: task.id, gateId, reason, corrections, budgetUsed: used + 1, budgetTotal: budget, score },
-      warnings: [],
-      budgetExhausted: false,
-      score,
-      result,
-    }
-  }
-  // Budget spent: the completion may proceed, with a recorded warning.
+  const budgetExhausted = budget === 0 || used >= budget
+  // A spending limit stops automatic repair; it cannot authorize invalid work.
   return {
-    warnings: [
-      ...collectWarnings(result),
-      `${gateId}: hard gate still failing after ${budget} blocked attempt(s) — repair budget exhausted, completion proceeds with this warning\n${reason}`,
-    ],
-    budgetExhausted: true,
+    blocked: {
+      taskId: task.id, gateId,
+      reason: budgetExhausted ? `Repair budget exhausted; resolve or escalate the hard failure before completion.\n${reason}` : reason,
+      corrections, budgetUsed: budgetExhausted ? used : used + 1, budgetTotal: budget, score,
+    },
+    warnings: collectWarnings(result),
+    budgetExhausted,
     score,
     result,
   }
@@ -651,7 +642,9 @@ export function evaluateTaskCompletionGates(
  */
 export function taskGateBlockedError(block: TaskGateBlock): Error {
   const relief = block.budgetTotal > 0
-    ? `Fix the output and retry expert_teams_update_task with the corrected output; after ${block.budgetTotal} blocked attempt(s) the next completion may proceed with a recorded warning.`
+    ? block.budgetUsed >= block.budgetTotal
+      ? 'The automatic repair budget is exhausted. Escalate the unresolved hard failure; it must be corrected before completion can pass.'
+      : 'Fix the output and retry expert_teams_update_task with the corrected output. Exhausting the repair budget will require escalation, not automatic acceptance.'
     : `This policy grants no repair rounds; fix the output and retry expert_teams_update_task with the corrected output.`
   const lines = [
     `task ${block.taskId} completion blocked by quality gate "${block.gateId}" (hard, attempt ${block.budgetUsed}/${block.budgetTotal})`,

@@ -21,7 +21,7 @@
  */
 
 import type { Context } from '@deepseek-ai/cordis'
-import { existsSync, statSync } from 'node:fs'
+import { existsSync, readdirSync, statSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import {
@@ -65,6 +65,15 @@ import {
   DEFAULT_RONGCHENG_ENGINE_URL,
 } from '../v2/providers/rongcheng.ts'
 import {
+  buildLocalDbManifest,
+  defaultLocalDbRunnerPath,
+  isValidLocalDbId,
+  localDbCallPlan,
+  normalizeLocalDbCliOutput,
+  caliberOf,
+  type LocalDbDatabase,
+} from '../v2/providers/localdb.ts'
+import {
   ProviderTransports,
   TransportError,
   createCredentialResolver,
@@ -87,6 +96,8 @@ export interface ProviderServiceOptions {
   readonly zyt?: { readonly baseUrl: string; readonly cliCommand?: string; readonly preferCli?: boolean }
   readonly beike?: { readonly baseUrl: string; readonly cliCommand?: string; readonly preferCli?: boolean }
   readonly rongcheng?: { readonly adapterBaseUrl: string; readonly engineBaseUrl: string }
+  /** Local SQLite databases (validated + deduped by {@link resolveProviderServiceOptions}). */
+  readonly localdb?: { readonly databases: readonly LocalDbDatabase[]; readonly runnerPath: string }
   /** `toolExecution` settings overlays, keyed by provider id. */
   readonly overlays?: Readonly<Record<string, ToolExecutionConfig>>
   /** Injectable seams (tests substitute fakes; defaults are the real runners). */
@@ -111,6 +122,17 @@ export interface ProviderConfigInput {
     readonly zyt?: { readonly baseUrl?: string; readonly cliCommand?: string; readonly preferCli?: boolean }
     readonly beike?: { readonly baseUrl?: string; readonly cliCommand?: string; readonly preferCli?: boolean }
     readonly rongcheng?: { readonly adapterBaseUrl?: string; readonly engineBaseUrl?: string }
+    /** 本地 SQLite 数据库灵活注册：显式列表 + 目录扫描（缺省关）。 */
+    readonly localdb?: {
+      readonly databases?: readonly {
+        readonly id: string
+        readonly path: string
+        readonly description?: string
+        readonly caliber?: string
+        readonly sensitivity?: 'public' | 'internal'
+      }[]
+      readonly scanDirs?: readonly string[]
+    }
   }
   readonly toolExecution?: Readonly<Record<string, ToolExecutionConfig>>
 }
@@ -187,7 +209,78 @@ export function resolveProviderServiceOptions(input: ProviderConfigInput): Provi
       input.providers?.rongcheng?.engineBaseUrl ?? process.env.RONGCHENG_ENGINE_URL ?? DEFAULT_RONGCHENG_ENGINE_URL,
   }
 
-  return { wind, zyt, beike, rongcheng, overlays: input.toolExecution }
+  // 本地 SQLite 灵活注册：config `providers.localdb.databases` > env
+  // `LOCALDB_DATABASES`（同构 JSON）+ `scanDirs` 目录扫描（*.db/*.sqlite/
+  // *.sqlite3，id 取文件名去扩展名）。无效 id / 不存在的文件一律跳过
+  // （fail-closed，绝不虚构数据库）；重复 id 以先出现的注册为准。
+  const localdbDatabases = new Map<string, LocalDbDatabase>()
+  const admitDb = (candidate: LocalDbDatabase): void => {
+    if (localdbDatabases.has(candidate.id)) return
+    localdbDatabases.set(candidate.id, candidate)
+  }
+  const rawDatabases = [
+    ...(input.providers?.localdb?.databases ?? []),
+    ...parseLocalDbEnv(),
+  ]
+  for (const raw of rawDatabases) {
+    if (raw === null || typeof raw !== 'object') continue
+    const record = raw as Record<string, unknown>
+    const id = typeof record['id'] === 'string' ? record['id'] : ''
+    const path = typeof record['path'] === 'string' ? expandHome(record['path']) : ''
+    if (!isValidLocalDbId(id) || path === '' || !existsSync(path)) continue
+    admitDb({
+      id,
+      path,
+      ...(typeof record['description'] === 'string' ? { description: record['description'] } : {}),
+      ...(typeof record['caliber'] === 'string' ? { caliber: record['caliber'] } : {}),
+      ...(record['sensitivity'] === 'internal' ? { sensitivity: 'internal' as const } : {}),
+    })
+  }
+  for (const dir of input.providers?.localdb?.scanDirs ?? []) {
+    for (const found of scanLocalDbDir(expandHome(dir))) admitDb(found)
+  }
+  const localdb: ProviderServiceOptions['localdb'] = localdbDatabases.size > 0
+    ? { databases: [...localdbDatabases.values()], runnerPath: defaultLocalDbRunnerPath(import.meta.url) }
+    : undefined
+
+  return { wind, zyt, beike, rongcheng, localdb, overlays: input.toolExecution }
+}
+
+/** Parse the optional `LOCALDB_DATABASES` env JSON (same shape as config). */
+function parseLocalDbEnv(): unknown[] {
+  const raw = process.env.LOCALDB_DATABASES
+  if (raw === undefined || raw === '') return []
+  try {
+    const parsed: unknown = JSON.parse(raw)
+    return Array.isArray(parsed) ? parsed : []
+  } catch {
+    return []
+  }
+}
+
+/** Scan one directory for SQLite files; id = filename minus extension. */
+function scanLocalDbDir(dir: string): LocalDbDatabase[] {
+  let names: string[] = []
+  try {
+    names = readdirSync(dir)
+  } catch {
+    return []
+  }
+  const found: LocalDbDatabase[] = []
+  for (const name of names) {
+    if (name.startsWith('.')) continue
+    if (!/\.(db|sqlite|sqlite3)$/i.test(name)) continue
+    const path = join(dir, name)
+    try {
+      if (!statSync(path).isFile()) continue
+    } catch {
+      continue
+    }
+    const id = name.replace(/\.(db|sqlite|sqlite3)$/i, '').toLowerCase().replace(/[^a-z0-9-]+/g, '-')
+    if (!isValidLocalDbId(id)) continue
+    found.push({ id, path })
+  }
+  return found
 }
 
 /* ------------------------------------------------------------------ *
@@ -297,6 +390,8 @@ function transportError(error: unknown, provenance: ProvenanceInput): ProviderEn
           correction: `可执行文件不可用（${JSON.stringify(error.details)}），provider 未就绪，失败关闭`,
           details: error.details,
         }, provenance)
+      case 'TRANSPORT_INVALID_RESPONSE':
+        return failEnvelope({ code: error.code, retry: 'never', correction: 'MCP initialization returned an invalid response; no business tool was invoked', details: error.details }, provenance)
       case 'TRANSPORT_UNSUPPORTED':
         return failEnvelope({ code: 'TRANSPORT_UNSUPPORTED', retry: 'never', correction: `transport 类型暂不支持：${JSON.stringify(error.details)}`, details: error.details }, provenance)
       default:
@@ -417,7 +512,13 @@ function createBeikeInvoker(manifest: ToolProviderManifest, transports: Provider
         if (transport.kind === 'mcp-http') {
           const call = beikeMCPCallParams(request.operation, request.input)
           const input: Record<string, unknown> = { method: call.method, params: call.params }
-          if (key !== undefined) input['headers'] = { Authorization: `Bearer ${key}` }
+          const beikeHeaders: Record<string, string> = {}
+          if (key !== undefined) beikeHeaders['Authorization'] = `Bearer ${key}`
+          // 服务端按 X-Beike-Cli-Version 做 CLI 版本门禁（缺失即
+          // CLI_UPGRADE_REQUIRED，连 tools/list 都拒绝）；manifest.version
+          // 即 CLI 版本钉扎值。修复 2026-09-28（上海租赁报告 v5 回填实测）。
+          beikeHeaders['X-Beike-Cli-Version'] = manifest.version
+          input['headers'] = beikeHeaders
           const raw = await transports.run(transport, { operation: request.operation, input, signal: request.signal, context: request.context })
           return normalizeBeikeMCPHttpOutput({ status: raw.status ?? 0, body: raw.body ?? '' }, options)
         }
@@ -477,6 +578,47 @@ function isRequestBody(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
+function createLocalDbInvoker(manifest: ToolProviderManifest, databases: readonly LocalDbDatabase[], transports: ProviderTransports): ProviderInvoker {
+  const byId = new Map(databases.map(db => [db.id, db]))
+  return {
+    providerId: 'localdb',
+    async invoke(request: InvokeAdapterRequest): Promise<ProviderEnvelope> {
+      const transport = transportOf(manifest, request.transportId)
+      const parsed = parseLocalDbOperationForInvoker(request.operation)
+      const db = parsed === undefined ? undefined : byId.get(parsed.id)
+      if (db === undefined) {
+        return failEnvelope({
+          code: 'capability_unknown',
+          retry: 'never',
+          correction: `localdb provider 未注册该数据库操作：${request.operation}；可用库以 schema/health 注册表为准`,
+        }, { provider: 'localdb', operation: request.operation, transportId: transport.id })
+      }
+      const provenance = provenanceOf('localdb', request.operation, transport.id, db.path)
+      let plan
+      try {
+        plan = localDbCallPlan(db, request.operation, request.input)
+      } catch (error) {
+        return planError(error, provenance)
+      }
+      try {
+        const raw = await transports.run(transport, { operation: request.operation, input: { args: plan.args }, signal: request.signal, context: request.context })
+        return normalizeLocalDbCliOutput(
+          { exitCode: raw.exitCode ?? 1, stdout: raw.stdout ?? '', stderr: raw.stderr },
+          { operation: request.operation, transportId: transport.id, source: db.path, caliber: caliberOf(db) },
+        )
+      } catch (error) {
+        return transportError(error, provenance)
+      }
+    },
+  }
+}
+
+function parseLocalDbOperationForInvoker(operation: string): { id: string } | undefined {
+  const parts = operation.split('.')
+  if (parts.length !== 3 || parts[0] !== 'localdb') return undefined
+  return { id: parts[1]! }
+}
+
 /* ------------------------------------------------------------------ *
  *  Service.
  * ------------------------------------------------------------------ */
@@ -520,6 +662,11 @@ export class ProviderTransportService {
   /** Provider ids currently registered and invocable. */
   get providers(): readonly string[] {
     return [...this.enabled]
+  }
+
+  /** Currently registered localdb databases (dataset gate uses the ids). */
+  localDbDatabases(): readonly LocalDbDatabase[] {
+    return this.options.localdb?.databases ?? []
   }
 
   /** Rebuild registry + invokers from fresh options (settings change). */
@@ -658,6 +805,14 @@ export class ProviderTransportService {
       )
       register(manifest, createRongchengInvoker(manifest, this.transports))
     }
+    if (this.options.localdb !== undefined && this.options.localdb.databases.length > 0) {
+      const opts = this.options.localdb
+      const manifest = applyToolExecutionOverlay(
+        buildLocalDbManifest(opts.databases, { runnerPath: opts.runnerPath }),
+        overlay('localdb'),
+      )
+      register(manifest, createLocalDbInvoker(manifest, opts.databases, this.transports))
+    }
     this.registry_ = registry
     this.resolver_ = resolver
     this.enabled = enabled
@@ -669,3 +824,4 @@ export class ProviderTransportService {
 
 /** Narrow type re-export for callers needing the binding shape. */
 export type { CapabilityBinding }
+export type { LocalDbDatabase } from '../v2/providers/localdb.ts'

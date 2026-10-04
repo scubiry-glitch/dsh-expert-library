@@ -20,7 +20,7 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import { readFile, realpath, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { isSafeKnowledgeId } from './knowledge.ts'
 import { collectSkillEntries, localSkillRoots } from './skills-discovery.ts'
 
@@ -114,8 +114,10 @@ export async function resolveSkill(
     }
   }
 
-  const skillsRoot = join(workspace, knowledgeDir, SKILLS_DIR)
-  const file = join(skillsRoot, skillId, 'SKILL.md')
+  const candidate = collectSkillEntries(localSkillRoots(workspace, knowledgeDir)).find(entry => entry.id === skillId)
+  if (candidate?.unavailable !== undefined) return { id: skillId, name, unavailable: candidate.unavailable }
+  const file = candidate?.path ?? join(workspace, knowledgeDir, SKILLS_DIR, skillId, 'SKILL.md')
+  const skillsRoot = dirname(dirname(file))
 
   try {
     // Real-path containment: a symlinked skill folder (or SKILL.md) that

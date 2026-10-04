@@ -12,7 +12,7 @@
  * - ad-hoc teams (no plan, no scenario) and legacy-scenario teams (empty legacy policy)
  *   are unaffected — the evaluation returns undefined, i.e. today's behavior;
  * - the repair-round budget is honored across attempts (0→blocked, 1→blocked, 2→
- *   allowed with a recorded warning, per the zhijian policy's maxRepairRounds = 2);
+ *   blocked with escalation, per the zhijian policy's maxRepairRounds = 2);
  * - the blocked error message carries the gate id and the correction text;
  * - deliverable-targeted gates compose every source task output once all sources
  *   are complete;
@@ -715,10 +715,10 @@ test('legacy scenario team (empty legacy quality policy) is unaffected', () => {
 })
 
 /* ---------------------------------------------------------------------------
- * Repair-round budget (≤2 rounds, third completion may proceed with warning)
+ * Repair-round budget (≤2 rounds, unresolved failures remain blocked)
  * ------------------------------------------------------------------------- */
 
-test('repair budget honored: two blocks, then the third completion proceeds with a recorded warning', () => {
+test('repair budget exhaustion preserves hard failure and requires escalation', () => {
   const team = teamFixture(zhijianPlan())
   // Attempt 1: no prior failures → blocked, budgetUsed 1.
   const first = evaluateTaskCompletionGates(team, fusionTask({ gateFailCount: 0 }), COMPLIANCE_LEAK)
@@ -729,16 +729,14 @@ test('repair budget honored: two blocks, then the third completion proceeds with
   const second = evaluateTaskCompletionGates(team, fusionTask({ gateFailCount: 1 }), COMPLIANCE_LEAK)
   assert.ok(second?.blocked !== undefined)
   assert.equal(second.blocked.budgetUsed, 2)
-  // Attempt 3: two prior blocks (budget spent) → completion proceeds with a warning.
+  // Spending limits must never turn a hard failure into accepted work.
   const third = evaluateTaskCompletionGates(team, fusionTask({ gateFailCount: 2 }), COMPLIANCE_LEAK)
-  assert.ok(third !== undefined)
-  assert.equal(third.blocked, undefined, 'third attempt must not block once the budget is spent')
+  assert.ok(third?.blocked)
   assert.equal(third.budgetExhausted, true)
-  assert.ok(third.warnings.length > 0, 'the waived hard failure must be recorded as a warning')
-  const joined = third.warnings.join('\n')
-  assert.ok(joined.includes('compliance-anonymization'), `warning must name the failing gate: ${joined}`)
-  assert.ok(joined.includes('repair budget exhausted'), 'warning must explain the waiver')
-  assert.ok(joined.includes('顾云昌'), 'warning must keep the underlying evidence')
+  assert.equal(third.blocked.budgetUsed, 2, 'repeated exhausted retries cannot grow the repair count')
+  assert.match(third.blocked.reason, /Repair budget exhausted/)
+  assert.match(third.blocked.reason, /顾云昌/)
+  assert.equal(third.blocked.gateId.includes('compliance-anonymization'), true)
 })
 
 test('policy granting no repair rounds blocks forever (budget 0)', () => {
@@ -869,7 +867,7 @@ function registerAndGetUpdateTaskTool() {
     tools: { register: (tool) => { tools.set(tool.name, tool) } },
     logger: { debug() {}, warn() {}, info() {} },
     subagents: {
-      registerContinuableSetup() {},
+      registerContinuableSetup() { return () => undefined },
       list: () => [],
       listChildren: async () => [],
       listDescendants: async () => [],

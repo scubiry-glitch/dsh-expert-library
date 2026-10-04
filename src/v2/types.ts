@@ -287,6 +287,9 @@ export interface McpHttpTransport extends ToolTransportBase {
   readonly kind: 'mcp-http'
   /** MCP endpoint URL. */
   readonly endpoint: string
+  /** Optional client identity advertised in the MCP initialize handshake
+   *  (some servers — e.g. beike — gate tool calls on the advertised version). */
+  readonly clientInfo?: { readonly name: string; readonly version: string }
 }
 
 /** Plain HTTP API backend (e.g. zyt `/openapi/v1/*`). */
@@ -724,6 +727,8 @@ export interface SkillPackageManifest {
   readonly name?: string
   readonly version: VersionString
   readonly schemaVersion: typeof SCHEMA_VERSION
+  /** Optional domain-owned craft declaration, relative to the owning pack root. */
+  readonly craft?: { readonly path: string }
   readonly source: {
     /** Where the skill is installed locally. */
     readonly kind: 'builtin' | 'workspace'

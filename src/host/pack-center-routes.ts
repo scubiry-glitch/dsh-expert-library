@@ -1,7 +1,7 @@
 /** Private host API. Harness browser authentication does not protect plugin routes. */
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type {
-  CenterBindInput, CenterManageService, CenterOperationInput,
+  CenterBindInput, CenterManageService, CenterOperationInput, CenterUpdatePolicyView,
 } from '../pack-center-wire.ts'
 import { authorizeManageRequest } from './auth.ts'
 
@@ -40,6 +40,7 @@ const safeCodes = new Set([
   'OPERATION_INVALID_RESULT', 'OPERATION_FAILED', 'OPERATION_LIMIT', 'OPERATION_CLOSED',
   'OPERATION_STORAGE_UNSAFE', 'OPERATION_STORAGE_CORRUPT',
   'PACK_NOT_ACTIVE', 'PACK_OWNER_CONFLICT', 'RELEASE_ACTIVE', 'RELEASE_NOT_INSTALLED',
+  'CENTER_OPERATION_KEY_RESERVED', 'AUTO_WAIT_TIMEOUT',
 ])
 const sensitiveHeaders = new Set([
   'host', 'origin', 'authorization', 'cookie', 'x-expert-library-manage-token', 'x-pack-center-ui',
@@ -204,12 +205,42 @@ function updates(value: unknown) {
       }) }
   }) }
 }
+function updatePolicy(value: unknown) {
+  const row = record(value)
+  const modes = ['manual', 'download', 'patch_auto'] as const
+  const perPack = record(row.perPack)
+  if (Object.keys(perPack).length > 100) fail()
+  const overrides: Record<string, (typeof modes)[number]> = Object.create(null)
+  for (const [key, entry] of Object.entries(perPack)) overrides[id(key)] = enumeration(entry, modes)
+  return {
+    mode: enumeration(row.mode, modes), perPack: overrides,
+    timerRunning: bool(row.timerRunning), tickInFlight: bool(row.tickInFlight),
+    intervalMs: row.intervalMs === null ? null : integer(row.intervalMs),
+    nextCheckAt: row.nextCheckAt === null ? null : date(row.nextCheckAt),
+    lastCheckAt: row.lastCheckAt === null ? null : date(row.lastCheckAt),
+    ...optionalError(row, 'lastCheckErrorCode'),
+    lastApplyAt: row.lastApplyAt === null ? null : date(row.lastApplyAt),
+    recent: list(row.recent, 20).map(entry => {
+      const action = record(entry)
+      return { packId: id(action.packId), releaseId: id(action.releaseId), version: plainText(action.version, 128),
+        kind: enumeration(action.kind, ['install', 'update_enable']), operationKey: id(action.operationKey, true),
+        at: date(action.at), outcome: enumeration(action.outcome, ['enqueued', 'succeeded', 'failed', 'skipped']),
+        ...optionalError(action), ...(action.detail === undefined ? {} : { detail: plainText(action.detail, 128) }) }
+    }),
+  }
+}
 function operationInput(value: unknown, strict = true): CenterOperationInput {
   const row = record(value)
   const kind = enumeration(row.kind, ['install', 'update_enable', 'enable', 'disable', 'rollback', 'uninstall'])
   const fields = kind === 'install' || kind === 'update_enable' ? ['releaseId', 'connectionRevision', 'target']
     : kind === 'rollback' ? ['releaseId', 'packId'] : kind === 'disable' ? ['packId'] : ['releaseId']
   if (strict) exact(row, ['operationKey', 'kind', 'expectedGeneration', ...fields])
+  // `auto-` keys are reserved for the host scheduler; a browser must never be
+  // able to mint an operation that looks host-generated. Projection of stored
+  // requests (strict=false) must still accept them.
+  if (strict && typeof row.operationKey === 'string' && row.operationKey.startsWith('auto-')) {
+    fail('CENTER_OPERATION_KEY_RESERVED', 403)
+  }
   const result: CenterOperationInput = { operationKey: id(row.operationKey, true), kind, expectedGeneration: integer(row.expectedGeneration) }
   if (fields.includes('packId')) result.packId = id(row.packId)
   if (fields.includes('releaseId')) result.releaseId = id(row.releaseId)
@@ -353,6 +384,8 @@ function statusFor(code: string): number {
 
 export function createPackCenterRouteHandler(options: {
   service: CenterManageService; getManageToken: () => string | undefined
+  /** Live scheduler/policy view; absent (tests, unwired hosts) the route 404s. */
+  updatePolicy?: () => CenterUpdatePolicyView
   /** Bounded body deadline; overriding it is useful for HTTP timeout tests. */
   bodyTimeoutMs?: number
 }): (req: IncomingMessage, res: ServerResponse) => Promise<boolean> {
@@ -393,6 +426,13 @@ export function createPackCenterRouteHandler(options: {
           action = () => service.catalog(input); project = catalog
         } else if (path === '/installations') { action = () => service.installations(); project = installations }
         else if (path === '/updates') { action = () => service.updates(); project = updates }
+        else if (path === '/update-policy') {
+          // Renderable even while unbound or unconfigured — deliberately not
+          // part of the revision/generation-fenced updates view.
+          const supplier = options.updatePolicy
+          if (!supplier) fail('CENTER_ROUTE_NOT_FOUND', 404)
+          action = () => Promise.resolve(supplier()); project = updatePolicy
+        }
         else if (path === '/operations') { action = () => service.operations(); project = value => list(value).map(operation) }
         else {
           const match = /^\/(releases|operations)\/([^/]+)$/.exec(path)

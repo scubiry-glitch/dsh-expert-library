@@ -1,7 +1,7 @@
 /** Same-origin management client. Secrets are held in closures, never storage or URLs. */
 import type {
   CenterBindInput, CenterCatalogView, CenterConnectionView, CenterInstallationsView,
-  CenterOperationInput, CenterOperationView, CenterReleaseDetail, CenterUpdatesView,
+  CenterOperationInput, CenterOperationView, CenterReleaseDetail, CenterUpdatePolicyView, CenterUpdatesView,
 } from '../pack-center-wire.ts'
 
 export const PACK_CENTER_MANAGE_URL = '/plugins/dsh-expert-library/manage/center'
@@ -90,6 +90,18 @@ const detail = (value: unknown): boolean => summary(value) && record(value)
   && fields(value, ['sourceCommit', 'notes', 'license']) && record(value.validation) && boolean(value.validation.valid)
   && array(value.validation.diagnostics, item => record(item) && fields(item, ['severity', 'code', 'message']))
   && record(value.diff) && boolean(value.diff.available) && string(value.diff.text) && optionalFields(value.diff, ['code'])
+const modes = ['manual', 'download', 'patch_auto']
+const updateMode = (value: unknown): boolean => modes.includes(String(value))
+const updatePolicy = (value: unknown): boolean => record(value) && updateMode(value.mode)
+  && record(value.perPack) && Object.values(value.perPack).every(updateMode)
+  && boolean(value.timerRunning) && boolean(value.tickInFlight)
+  && (value.intervalMs === null || integer(value.intervalMs))
+  && nullableString(value.nextCheckAt) && nullableString(value.lastCheckAt) && nullableString(value.lastApplyAt)
+  && optionalFields(value, ['lastCheckErrorCode'])
+  && array(value.recent, action => record(action) && fields(action, ['packId', 'releaseId', 'version', 'operationKey', 'at'])
+    && ['install', 'update_enable'].includes(String(action.kind))
+    && ['enqueued', 'succeeded', 'failed', 'skipped'].includes(String(action.outcome))
+    && optionalFields(action, ['errorCode', 'detail']))
 
 async function boundedJson(response: Response): Promise<unknown> {
   if (!response.body) throw new CenterUiError('INVALID_RESPONSE')
@@ -162,6 +174,7 @@ export function createPackCenterApi(manageToken = '', fetcher: typeof fetch = fe
     release: (id: string) => request<CenterReleaseDetail>(`/releases/${encodeURIComponent(id)}`, detail),
     installations: () => request<CenterInstallationsView>('/installations', installations),
     updates: () => request<CenterUpdatesView>('/updates', updates),
+    updatePolicy: () => request<CenterUpdatePolicyView>('/update-policy', updatePolicy),
     checkUpdates: () => request<CenterUpdatesView>('/check-updates', updates, {}),
     enqueue: (input: CenterOperationInput) => request<CenterOperationView>('/operations', operation, input),
     operations: () => request<CenterOperationView[]>('/operations', value => array(value, operation)),

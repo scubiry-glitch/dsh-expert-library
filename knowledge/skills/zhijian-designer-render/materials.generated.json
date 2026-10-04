@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "materialPackId": "zhijian-report-craft-v2",
+  "entries": [
+    {
+      "id": "zhijian.designer.render.md",
+      "path": "SKILL.md",
+      "bytes": 1699,
+      "sha256": "347e5b47f541b3c0fda94c7f45050f9972bd930c46f6b8536b00c2d700061178"
+    },
+    {
+      "id": "zhijian.designer.render.assets.base.v2.css",
+      "path": "assets/base-v2.css",
+      "bytes": 3373,
+      "sha256": "b7028763a88657add093acab6779a2e616a288df25556eddb9e6d689039a2f81"
+    },
+    {
+      "id": "zhijian.designer.render.assets.components.v2.html",
+      "path": "assets/components-v2.html",
+      "bytes": 2046,
+      "sha256": "6ddb19b65f8f4e25836b5a04b5a47319b3c8da4dfd1fde0f6c360013435edbe2"
+    },
+    {
+      "id": "zhijian.designer.render.assets.credit.policy.v2.css",
+      "path": "assets/credit-policy-v2.css",
+      "bytes": 281,
+      "sha256": "75122576d6cfbbbb9041bdd06fb1c6ce362fc781c3c6906988362f1db6751a8c"
+    },
+    {
+      "id": "zhijian.designer.render.assets.designer.paper.v2.css",
+      "path": "assets/designer-paper-v2.css",
+      "bytes": 290,
+      "sha256": "3679634906466bc3faa8d9a32c9ba2498f9bb7d3d1ac0de34bf8da650b8f5c74"
+    },
+    {
+      "id": "zhijian.designer.render.assets.document.shell.v2.html",
+      "path": "assets/document-shell-v2.html",
+      "bytes": 684,
+      "sha256": "4d022e04d325d565f92ed3d6407fe19954ecfe1fbaec51c5efb2255e1a7ced07"
+    },
+    {
+      "id": "zhijian.designer.render.chart.templates.html",
+      "path": "chart-templates.html",
+      "bytes": 2046,
+      "sha256": "6ddb19b65f8f4e25836b5a04b5a47319b3c8da4dfd1fde0f6c360013435edbe2"
+    },
+    {
+      "id": "zhijian.designer.render.craft.density.check.py",
+      "path": "craft_density_check.py",
+      "bytes": 253,
+      "sha256": "64f95a97a259e74f2a1b185cd98f5357142047edf5186997b9a705e31c3db3b8"
+    },
+    {
+      "id": "zhijian.designer.render.craft.gate.report.sh",
+      "path": "craft_gate_report.sh",
+      "bytes": 206,
+      "sha256": "a937e8266cef7f2b042ff6a1f43469e6cee3dfe42c99d9e16933fcc5405a250a"
+    },
+    {
+      "id": "zhijian.designer.render.references.acceptance.v2.md",
+      "path": "references/acceptance-v2.md",
+      "bytes": 1945,
+      "sha256": "90d150ece37375abf86cd5aac5bb4c866f5ea79d669bec5e60cc270710e31265"
+    },
+    {
+      "id": "zhijian.designer.render.references.components.base.v2.css",
+      "path": "references/components/base-v2.css",
+      "bytes": 3373,
+      "sha256": "b7028763a88657add093acab6779a2e616a288df25556eddb9e6d689039a2f81"
+    },
+    {
+      "id": "zhijian.designer.render.references.components.components.v2.html",
+      "path": "references/components/components-v2.html",
+      "bytes": 2046,
+      "sha256": "6ddb19b65f8f4e25836b5a04b5a47319b3c8da4dfd1fde0f6c360013435edbe2"
+    },
+    {
+      "id": "zhijian.designer.render.references.components.credit.policy.v2.css",
+      "path": "references/components/credit-policy-v2.css",
+      "bytes": 281,
+      "sha256": "75122576d6cfbbbb9041bdd06fb1c6ce362fc781c3c6906988362f1db6751a8c"
+    },
+    {
+      "id": "zhijian.designer.render.references.components.designer.paper.v2.css",
+      "path": "references/components/designer-paper-v2.css",
+      "bytes": 290,
+      "sha256": "3679634906466bc3faa8d9a32c9ba2498f9bb7d3d1ac0de34bf8da650b8f5c74"
+    },
+    {
+      "id": "zhijian.designer.render.references.components.document.shell.v2.html",
+      "path": "references/components/document-shell-v2.html",
+      "bytes": 684,
+      "sha256": "4d022e04d325d565f92ed3d6407fe19954ecfe1fbaec51c5efb2255e1a7ced07"
+    },
+    {
+      "id": "zhijian.designer.render.references.core.v2.md",
+      "path": "references/core-v2.md",
+      "bytes": 1698,
+      "sha256": "c8512ce82f292ab9d83f63302b551fff47d8d098f5a025bdab55a3711c82399d"
+    },
+    {
+      "id": "zhijian.designer.render.references.credit.policy.v1.html",
+      "path": "references/credit-policy-v1.html",
+      "bytes": 150306,
+      "sha256": "d145f887cfd918dfa7e021029feb109211871fd8adfeddfd2715060b148f5f86"
+    },
+    {
+      "id": "zhijian.designer.render.references.data.v2.md",
+      "path": "references/data-v2.md",
+      "bytes": 1765,
+      "sha256": "06bea4300ae9efbe11b0eb23d717d26e870d9a0afeeb7395faa29e985cd66281"
+    },
+    {
+      "id": "zhijian.designer.render.references.designer.v1.html",
+      "path": "references/designer-v1.html",
+      "bytes": 69759,
+      "sha256": "b25f9db892c52a78555f4016ad534714216ba2dd80c2966a40d0498106c3d408"
+    },
+    {
+      "id": "zhijian.designer.render.references.evidence.ledger.v2.md",
+      "path": "references/evidence-ledger-v2.md",
+      "bytes": 1903,
+      "sha256": "157b5c310f932c740ab1562b61eb242f388094c52c8dcb90f60fdfe28afefe42"
+    },
+    {
+      "id": "zhijian.designer.render.references.render.v2.md",
+      "path": "references/render-v2.md",
+      "bytes": 2303,
+      "sha256": "08ac9a4ee0f7a6a398dabe4527359c5422032203b11bd9d1fe4b1da41ec6e770"
+    },
+    {
+      "id": "zhijian.designer.render.references.report.template.fivepiece.v1.md",
+      "path": "references/report-template-fivepiece-v1.md",
+      "bytes": 658,
+      "sha256": "8b16f098b1a82623fb67afe8107795ea0a92f25efc1d0e0499dc7f001e199f29"
+    },
+    {
+      "id": "zhijian.designer.render.references.review.v2.md",
+      "path": "references/review-v2.md",
+      "bytes": 1960,
+      "sha256": "37769a9a08fec0ad5ed68487c2fcbb4768da0f869a521866b3c65c0c793412cf"
+    },
+    {
+      "id": "zhijian.designer.render.references.source.archives.credit.policy.20261003.raw.html",
+      "path": "references/source-archives/credit-policy-20261003.raw.html",
+      "bytes": 150673,
+      "sha256": "2ac612b02abc2ac48a53d1c05b4c72ae7f910a1c4df2c1999c33236d07fdc3bf"
+    },
+    {
+      "id": "zhijian.designer.render.references.source.archives.designer.paper.20261003.raw.html",
+      "path": "references/source-archives/designer-paper-20261003.raw.html",
+      "bytes": 70126,
+      "sha256": "93965f1c53b5e8dc98fdfee85328fd4e0f1b883a064dd18626431f06e8a865ab"
+    },
+    {
+      "id": "zhijian.designer.render.references.source.provenance.v2.json",
+      "path": "references/source-provenance-v2.json",
+      "bytes": 2195,
+      "sha256": "1cde5fe4c65b9fd7cb682ed22cdae47b10dcc937464b8b19c44ac90ebdce23b4"
+    },
+    {
+      "id": "zhijian.designer.render.references.style.credit.policy.v2.md",
+      "path": "references/style-credit-policy-v2.md",
+      "bytes": 934,
+      "sha256": "0a13bcad3b1370586ebc48c9ad4d42b2c359b5746a765810bb4d9ad385d0fd45"
+    },
+    {
+      "id": "zhijian.designer.render.references.style.designer.paper.v2.md",
+      "path": "references/style-designer-paper-v2.md",
+      "bytes": 941,
+      "sha256": "251007e254256cb76454841b68d4b896f23c67fcad6d71dbbd5e154f061283eb"
+    },
+    {
+      "id": "zhijian.designer.render.references.writing.v2.md",
+      "path": "references/writing-v2.md",
+      "bytes": 1810,
+      "sha256": "44489b68150f4dc250fc255f08340d307e52252b767e36305e8d8f3e89410523"
+    },
+    {
+      "id": "zhijian.designer.render.references.zhijian.credit.policy.v1.html",
+      "path": "references/zhijian-credit-policy-v1.html",
+      "bytes": 150306,
+      "sha256": "d145f887cfd918dfa7e021029feb109211871fd8adfeddfd2715060b148f5f86"
+    },
+    {
+      "id": "zhijian.designer.render.references.zhijian.designer.v1.html",
+      "path": "references/zhijian-designer-v1.html",
+      "bytes": 69759,
+      "sha256": "b25f9db892c52a78555f4016ad534714216ba2dd80c2966a40d0498106c3d408"
+    },
+    {
+      "id": "zhijian.designer.render.reviewer.prompt.md",
+      "path": "reviewer-prompt.md",
+      "bytes": 698,
+      "sha256": "ecdb6cdb99bb20bcbb022beba1ddd03c80371628730666b646be66aaeb50bbc4"
+    },
+    {
+      "id": "zhijian.designer.render.scripts.html.preflight.py",
+      "path": "scripts/html_preflight.py",
+      "bytes": 3265,
+      "sha256": "f87d62a74a90454ef807bef201b51c9338b91314ff4f69218b0f25ae95552f85"
+    },
+    {
+      "id": "zhijian.designer.render.scripts.preflight.report.mjs",
+      "path": "scripts/preflight-report.mjs",
+      "bytes": 7430,
+      "sha256": "04fe596c28560f9d9ff532020c6b66668d419bcacd40b7572a5953f0e261e7ca"
+    },
+    {
+      "id": "zhijian.designer.render.scripts.verify.material.copy.py",
+      "path": "scripts/verify_material_copy.py",
+      "bytes": 1774,
+      "sha256": "320522d1f0e23289a4cfd6d53f0a9d458ce08694067186a37807903b486367a9"
+    }
+  ]
+}

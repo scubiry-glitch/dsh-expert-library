@@ -40,6 +40,7 @@ export type TransportErrorCode =
   | 'TRANSPORT_MISSING_BINARY'
   | 'TRANSPORT_MISSING_CREDENTIAL'
   | 'TRANSPORT_UNSUPPORTED'
+  | 'TRANSPORT_INVALID_RESPONSE'
   | 'TRANSPORT_IO'
 
 /** Classified transport failure; adapters map it to a never/backoff envelope. */
@@ -87,6 +88,8 @@ export interface FetchResult {
   readonly status: number
   readonly body: string
   readonly truncated: boolean
+  /** Lower-cased response headers (subset; used e.g. for MCP session echo). */
+  readonly responseHeaders?: Readonly<Record<string, string>>
 }
 
 export interface FetchOptions {
@@ -250,7 +253,9 @@ export function createNodeFetchRunner(options: { readonly maxBodyBytes?: number 
         truncated = true
       }
     }
-    return { status: response.status, body: text, truncated }
+    const responseHeaders: Record<string, string> = {}
+    response.headers.forEach((value, key) => { responseHeaders[key.toLowerCase()] = value })
+    return { status: response.status, body: text, truncated, responseHeaders }
   }
 }
 
@@ -491,11 +496,17 @@ export class ProviderTransports {
     const method = typeof input['method'] === 'string' ? input['method'] : 'tools/call'
     const params = input['params']
     const jsonrpcHeaders: Record<string, string> = { ...MCP_JSONRPC_HEADERS, ...headers }
-    const call = async (mcpMethod: string, mcpParams: unknown): Promise<string> => {
+    // Streamable-HTTP MCP session: the initialize response may carry
+    // `Mcp-Session-Id`; every later call must echo it or the server treats
+    // the client as unidentified (beike answers 「未检测到 CLI 版本」).
+    let sessionId: string | undefined
+    const call = async (mcpMethod: string, mcpParams: unknown): Promise<FetchResult> => {
+      const callHeaders: Record<string, string> = { ...jsonrpcHeaders }
+      if (sessionId !== undefined) callHeaders['mcp-session-id'] = sessionId
       const response = await this.fetchFn({
         url: transport.endpoint,
         method: 'POST',
-        headers: jsonrpcHeaders,
+        headers: callHeaders,
         body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method: mcpMethod, params: mcpParams }),
         timeoutMs,
         signal: fused,
@@ -503,15 +514,37 @@ export class ProviderTransports {
       })
       if (isTimedOut()) throw new TransportError('TRANSPORT_TIMEOUT', { timeoutMs })
       if (request.signal?.aborted) throw new TransportError('TRANSPORT_CANCELLED')
-      return response.body
+      const returnedSession = response.responseHeaders?.['mcp-session-id']
+      if (returnedSession !== undefined && returnedSession !== '') sessionId = returnedSession
+      return { ...response, body: parseMaybeSSE(response.body) }
     }
     // MCP handshake: initialize (2025-03-26), then the requested method.
-    await call('initialize', {
+    // Transport may declare a client identity (e.g. beike gates on version);
+    // UA mirrors it so servers sniffing user-agent see the same identity.
+    const clientInfo = transport.clientInfo ?? { name: 'dsh-expert-library', version: '0.1.0' }
+    if (transport.clientInfo !== undefined) {
+      jsonrpcHeaders['user-agent'] = `${transport.clientInfo.name}/${transport.clientInfo.version}`
+    }
+    const initialized = await call('initialize', {
       protocolVersion: '2025-03-26',
       capabilities: {},
-      clientInfo: { name: 'dsh-expert-library', version: '0.1.0' },
+      clientInfo,
     })
-    const body = await call(method, params)
-    return { status: 200, body: parseMaybeSSE(body), durationMs: Math.round(performance.now() - started) }
+    // Failed initialization cannot authorize a business tools/call. Preserve
+    // its response so the provider applies its normal HTTP/JSON-RPC error
+    // mapping, instead of manufacturing HTTP 200 or invoking twice.
+    const resultOf = (response: FetchResult): RawTransportResult => ({ status: response.status, body: response.body, durationMs: Math.round(performance.now() - started) })
+    if (initialized.status < 200 || initialized.status >= 300) return resultOf(initialized)
+    let payload: unknown
+    try {
+      payload = JSON.parse(initialized.body)
+    } catch {
+      throw new TransportError('TRANSPORT_INVALID_RESPONSE', { phase: 'initialize', status: initialized.status, response: initialized.body.slice(0, 2000) })
+    }
+    if (isRecord(payload) && payload['error'] !== undefined) return resultOf(initialized)
+    if (!isRecord(payload) || !isRecord(payload['result'])) {
+      throw new TransportError('TRANSPORT_INVALID_RESPONSE', { phase: 'initialize', status: initialized.status, response: initialized.body.slice(0, 2000) })
+    }
+    return resultOf(await call(method, params))
   }
 }
