@@ -21,8 +21,8 @@ export async function buildZhijianWithCraft({ write = false, packRoot = root } =
     await emitPack(staged, { srcDir: join(packRoot, 'source'), writeSrc: false })
     for (const path of CRAFT_PATHS) await cp(join(temp, 'craft-source', path), join(staged, path), { recursive: true })
     const meta = JSON.parse(await readFile(join(staged, 'pack.json'), 'utf8'))
-    meta.version = '1.3.1'
-    meta.description += ' 1.3.0：领域包闭环多工艺由 AI 选择，计算单位与资金平衡、政策原文证据绑定及独立审核。 1.3.1：可选包内 MD 单源生成与锚点清单，独立审核门禁保持。'
+    meta.version = '1.5.0'
+    meta.description += '1.5.0：为深度研究图文报告增加已审点睛图层的 SHA256、逐章顺序与 HTML 原样嵌入验证；F4 对 MD 正文层和图层分型比较，对完整 HTML 与 PDF 继续全文比较；schemaVersion 2 仍保留无图报告语义。'
     await writeFile(join(staged, 'pack.json'), JSON.stringify(meta, null, 2) + '\n')
     await writeFile(join(staged, 'README.md'), (await readFile(join(staged, 'README.md'), 'utf8'))
       + '\n## 报告工艺\n\n本包提供多个可选择的工艺 skill，参考源、组件、检查和审核要求一并分发；见 [REPORT-CRAFT.md](REPORT-CRAFT.md)。\n')

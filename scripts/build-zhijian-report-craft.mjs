@@ -19,7 +19,7 @@ export async function buildReportDomainPack(write = false, packRoot = root) {
   }
   for (const id of ['zhijian-report-craft', 'zhijian-designer-render']) {
     const manifest = {
-      id, name: id, version: id === 'zhijian-designer-render' ? '1.1.1' : '1.1.0', schemaVersion: 2,
+      id, name: id, version: id === 'zhijian-designer-render' ? '1.2.0' : '1.1.0', schemaVersion: 2,
       source: { kind: 'workspace', root: `skills/${id}`, digest: '' },
       contributions: {}, permissions: { execScripts: ['scripts/check.mjs'], internalOnly: true },
       craft: { path: `craft/${id}.json` },
