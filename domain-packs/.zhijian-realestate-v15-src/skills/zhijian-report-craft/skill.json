@@ -1,0 +1,21 @@
+{
+  "id": "zhijian-report-craft",
+  "name": "zhijian-report-craft",
+  "version": "1.1.0",
+  "schemaVersion": 2,
+  "source": {
+    "kind": "workspace",
+    "root": "skills/zhijian-report-craft",
+    "digest": "8bb5f790f554af6c595bcd149b371bfb0c2258379176e42137990aa6f889cc1a"
+  },
+  "contributions": {},
+  "permissions": {
+    "execScripts": [
+      "scripts/check.mjs"
+    ],
+    "internalOnly": true
+  },
+  "craft": {
+    "path": "craft/zhijian-report-craft.json"
+  }
+}
