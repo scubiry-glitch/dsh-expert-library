@@ -1,0 +1,79 @@
+{
+  "fixture": {
+    "sourceUrl": "https://git.fixture.invalid:8443/fixture.git",
+    "bareRepo": "/tmp/p2-20260923/t25/fixture/fixture.git",
+    "commits": {
+      "b1": "520f7aa97beea57c64bbf9f6afe1815e045d2fa9",
+      "b2": "411b98476dfeb5581f1423abb97d9052ab5bbb45",
+      "a1": "433fd6c7a4355ba6499b2c70496e7413ee7006b8",
+      "a2": "3da8cf79c775e797192cb89c160a8506de92f45e"
+    },
+    "versions": {
+      "b1": "2.0.0",
+      "b2": "2.1.0",
+      "a1": "2.0.0",
+      "a2": "2.1.0"
+    },
+    "packs": {
+      "a": "phase2-dep-a",
+      "b": "phase2-dep-b"
+    },
+    "builtAt": "2026-09-24T01:45:27.163Z",
+    "validator": "lib/pack-validator.js"
+  },
+  "releases": {
+    "b1": {
+      "submissionId": "e66feb52-9847-47bf-bc8f-ac045582552b",
+      "reviewerId": null,
+      "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+      "snapshotId": "c35288b3-1926-46b4-a42e-2b27c75bc04b",
+      "packId": "phase2-dep-b",
+      "version": "2.0.0",
+      "sourceCommit": "520f7aa97beea57c64bbf9f6afe1815e045d2fa9",
+      "artifactSha256": "1c87aa7d78343f6ad5da1c0411a9f11ca21ffde562627ae64cd8f2333627485f",
+      "contentTreeSha256": "cc0600895f2cd546cd3d6068ab837371f15b120978e5a8c9f5bcb2cc4950b0f8",
+      "reportSha256": "211e5a349fd683cc3719398516aca184ff746b829da8520643fc5933b36380af"
+    },
+    "a1": {
+      "submissionId": "b7284556-8a48-4d5c-a29a-eb6fb78151cb",
+      "reviewerId": null,
+      "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+      "snapshotId": "6548e576-e38d-4c65-9048-adce0ffaa518",
+      "packId": "phase2-dep-a",
+      "version": "2.0.0",
+      "sourceCommit": "433fd6c7a4355ba6499b2c70496e7413ee7006b8",
+      "artifactSha256": "575f875f769a9ea39efe537b38c1ab9bc1d0bef3893f9f11d0155ee1e2a78537",
+      "contentTreeSha256": "650f14cfde251b47251dddda85fd42e4371a25e36851b8f1d143e0d08f77ba42",
+      "reportSha256": "211e5a349fd683cc3719398516aca184ff746b829da8520643fc5933b36380af"
+    },
+    "b2": {
+      "submissionId": "35b1ba6f-24dc-43c5-9f24-cbc784d201e1",
+      "reviewerId": null,
+      "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+      "snapshotId": "5208c58c-6e26-4890-b5bf-cdc951ecdbaf",
+      "packId": "phase2-dep-b",
+      "version": "2.1.0",
+      "sourceCommit": "411b98476dfeb5581f1423abb97d9052ab5bbb45",
+      "artifactSha256": "00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69",
+      "contentTreeSha256": "4b359fa7dbe9b5719db3fe89269ccd69f0a004e2d0988f47e5a1f244fd227696",
+      "reportSha256": "211e5a349fd683cc3719398516aca184ff746b829da8520643fc5933b36380af"
+    },
+    "a2": {
+      "submissionId": "f72e3003-3694-4df6-b70f-126ec8ec3b61",
+      "reviewerId": null,
+      "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+      "snapshotId": "3a153d56-8df0-478f-808d-02d583b50125",
+      "packId": "phase2-dep-a",
+      "version": "2.1.0",
+      "sourceCommit": "3da8cf79c775e797192cb89c160a8506de92f45e",
+      "artifactSha256": "b8647eeb833c7b63e265e93469706efd3a7bdaf07fac8856a11c78b3ec7ce9f2",
+      "contentTreeSha256": "76e1ea6658fc70acf24bba9c5301f78938b64224e8c1b4df37764bd8729b4ad1",
+      "reportSha256": "211e5a349fd683cc3719398516aca184ff746b829da8520643fc5933b36380af"
+    }
+  },
+  "center": {
+    "origin": "https://127.0.0.1:18431",
+    "centerId": "phase2-center-20260923",
+    "sourceUrl": "https://git.fixture.invalid:8443/fixture.git"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "screenshots": 14,
+  "entries": [
+    {
+      "path": "artifacts/pack-center/p3-web/01-login.png",
+      "sha256": "083dfb57b148c150bdc7aba611e74faae4aea0e2f9bcbfd96b560e71524e023a",
+      "width": 1440,
+      "height": 1050
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/02-organization-members.png",
+      "sha256": "55f5f9297c7ccac60ad9ba38343839a7b2e76acacc0d758f5daeab076786fd16",
+      "width": 1440,
+      "height": 3023
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/03-empty-submissions.png",
+      "sha256": "685375f2e9ecf99f625933726df813d84298d72d8467bcd9d4c7503ac7540abb",
+      "width": 1440,
+      "height": 1050
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/04-unconfirmed-network-error.png",
+      "sha256": "55f98b07036e9f46412149f5bc9f2a829759275ebdf06b71a0c633ba4fffa2a4",
+      "width": 1440,
+      "height": 1753
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/05-persistent-draft.png",
+      "sha256": "c6dc3a6af68815a694d1f7df17cf7fc4afc3f64ac94ba7cc90969fd02d10f2e3",
+      "width": 1440,
+      "height": 2909
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/06-fixed-validation-report.png",
+      "sha256": "e82f59d0ffbe9413c6e70a2f89b7b227f9022f7d6a4749ebafc879a2efff1eaa",
+      "width": 1440,
+      "height": 3437
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/07-independent-revision-request.png",
+      "sha256": "706a1d1af488042094692827ad2f2edb791b9695de298abb95c901c8386a7c58",
+      "width": 1440,
+      "height": 3632
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/08-approved-published-revision.png",
+      "sha256": "e8065caf0093b11c269886b27fd75e6fdd0b4dcf3d188adb0f9fb6cb4e4ce950",
+      "width": 1440,
+      "height": 4153
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/09-release-directory.png",
+      "sha256": "9d3c1aced0c7e69e4d187d7344ebeaa475cfd51272f6cdf6232fe74365634251",
+      "width": 1440,
+      "height": 1050
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/10-release-management.png",
+      "sha256": "f554d21caffd6694d7b2aafa627b734f14c189d6a931e907c7707236ecf23f24",
+      "width": 1440,
+      "height": 2042
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/11-deployment-a-revoked.png",
+      "sha256": "587b1e8fd7fdd7874d9d0c7f6f7ccbe8a9d4f2d347432a28bf8ae9ccbcfb091e",
+      "width": 1440,
+      "height": 1699
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/12-deployment-b-revoked.png",
+      "sha256": "e2f9112f6de9f3f449438832659acc287fc6c775f0a8a27fced274aea8eab421",
+      "width": 1440,
+      "height": 1699
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/13-mobile-login.png",
+      "sha256": "323af047fd164d3b126e05ad12121460240d29ef10c53728ec7810e72d90edae",
+      "width": 390,
+      "height": 1013
+    },
+    {
+      "path": "artifacts/pack-center/p3-web/14-mobile-submissions.png",
+      "sha256": "3a51ec1f390a0b3885c566238c4c93438c6d8165383f7dc2584bb89572da2679",
+      "width": 390,
+      "height": 844
+    }
+  ]
+}

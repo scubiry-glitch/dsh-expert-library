@@ -1,0 +1,70 @@
+{
+  "node": "G4.4",
+  "passed": true,
+  "instance": "C",
+  "port": 18283,
+  "pid": 718902,
+  "paths": {
+    "DSH_HOME": "/tmp/p2-20260923/dsh-c",
+    "workspace": "/tmp/p2-20260923/workspace-c",
+    "packCenterDir": "/tmp/p2-20260923/pack-center-c"
+  },
+  "summary": {
+    "negative": {
+      "attempt": {
+        "exitCode": 1,
+        "signal": null,
+        "stderrTail": "file:///usr/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js:831\n\tthrow new Error(`${binName}: cannot resolve profile bundle ${JSON.stringify(packageName)} from the dsh installation or ${profileDir}; run 'dsh plugin --profile ${basename(profileDir)} install' if its dependency is not installed`);\n\t      ^\n\nError: dsh: cannot resolve profile bundle \"@zhijian/dsh-"
+      },
+      "inventory": {
+        "items": [
+          {
+            "path": "src/host/pack-runtime.ts",
+            "role": "preflightManagedActivation — plugin-owned runtime preflight before a managed activation is committed",
+            "exists": true
+          },
+          {
+            "path": "src/host/pack-center-host.ts",
+            "role": "plugin lifecycle preflight: origin/storage changes force a restart and never swap an active local source for an empty directory",
+            "exists": true
+          },
+          {
+            "path": "src/host/pack-store.ts",
+            "role": "activation preflight of the builtin/workspace merge before switching (no network)",
+            "exists": true
+          },
+          {
+            "path": "scripts/phase2/run-ab-instances.mjs",
+            "role": "host-runner start preflight pattern: local TCP bind check + plugin symlink containment before child launch",
+            "exists": true
+          }
+        ],
+        "deployCheckScript": null,
+        "note": "no standalone plugin deploy-check script in scripts/; start-up bundle resolution is the deploy preflight exercised here"
+      }
+    },
+    "positive": {
+      "pid": 718901,
+      "pids": [
+        718902
+      ],
+      "port": 18283,
+      "paths": {
+        "DSH_HOME": "/tmp/p2-20260923/dsh-c",
+        "workspace": "/tmp/p2-20260923/workspace-c",
+        "packCenterDir": "/tmp/p2-20260923/pack-center-c",
+        "vendorPacks": "/tmp/p2-20260923/dsh-c/vendor-packs",
+        "profile": "/tmp/p2-20260923/dsh-c/profiles/p2-c",
+        "pluginLink": "/tmp/p2-20260923/dsh-c/profiles/p2-c/node_modules/@zhijian/dsh-expert-library",
+        "resolvedPluginLoadPath": "/root/zhijian/dsh-pack-center-dev.ZGtty5"
+      }
+    },
+    "registration": {
+      "deploymentId": "b2d40c7b-1c23-4a14-a72c-4b25630887e6",
+      "connection": {
+        "revision": 1
+      },
+      "catalogItems": 2
+    }
+  }
+}

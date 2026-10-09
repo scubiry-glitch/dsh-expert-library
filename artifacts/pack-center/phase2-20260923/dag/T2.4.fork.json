@@ -1,0 +1,788 @@
+{
+  "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+  "publishSnapshot": {
+    "capturedAt": "2026-09-24T00:52:55.986Z",
+    "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+    "A": {
+      "generation": 5,
+      "active": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "installations": [
+        {
+          "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "version": "2.2.0",
+          "active": true
+        }
+      ]
+    },
+    "B": {
+      "generation": 5,
+      "active": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "installations": [
+        {
+          "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "version": "2.2.0",
+          "active": true
+        }
+      ]
+    }
+  },
+  "A": {
+    "beforePublish": {
+      "generation": 5,
+      "active": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "installations": [
+        {
+          "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "version": "2.2.0",
+          "active": true
+        }
+      ]
+    },
+    "before": {
+      "generation": 7,
+      "active": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+      "installedV2": {
+        "installedV2": true,
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "fileCount": 27,
+        "bytes": 126296,
+        "files": [
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/.gitignore",
+            "size": 345,
+            "sha256": "16aa4240da827a9bbf971c4cc52fabb6e6b88bbc5ac96508317f6d5453114711"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/data-contracts/capability-contract.csv",
+            "size": 727,
+            "sha256": "77cb977292e242e8b8dfd4789661a08f5b410170ae2f49005fb2e6bd52888ab3"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/domain-knowledge/macro-capital-analyst-kb.json",
+            "size": 5055,
+            "sha256": "10baebeb9b9bc3c2cb5212b0ae908e7db39ea5325abfa85ae27e8e6c82e2a9d2"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/experts/macro-capital-analyst.json",
+            "size": 16194,
+            "sha256": "891893195e852cb580028414d885d97d3ce71d4b216de005f3eb6c13b2159e87"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/knowledge-providers/macro-capital-analyst-library.json",
+            "size": 488,
+            "sha256": "05f4891f9254a68b9d84235ca498d3f6b8f52950bf0900f2694589ca409d8f4c"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/knowledge/experts/macro-capital-analyst/README.md",
+            "size": 892,
+            "sha256": "a3cb22cec60b3b9627b88b04a2252ae8926d87e21e025d6847cef87b9e46e22b"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/LICENSE",
+            "size": 1076,
+            "sha256": "281c6d7cb03d7dc84726256a35060d56756d1fd56971d673bb0a2173454f08a3"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/dual-gates.json",
+            "size": 4683,
+            "sha256": "c8e9f00a03be1e76c6593f6c1e6e457d8af217a209b8c6c8380798bfc5fa1ade"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/nine-layer-framework.json",
+            "size": 6632,
+            "sha256": "85ab30a1b08f4a7c3999e9b601d348b61f98dfb5e3c2da5e6da65c30d29ee787"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/six-step-internalization.json",
+            "size": 3816,
+            "sha256": "9fe6a68e6d24eefcf3cce1892edd9ebcd92815bd98195325c7d4e26cd919c263"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/output-templates/a-share-outlook.json",
+            "size": 3690,
+            "sha256": "61eddd7f5a109b04d3a982a4868f55c03c942d7442c8dc0223ff3fe31d3d9ddd"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/output-templates/cycle-positioning.json",
+            "size": 3275,
+            "sha256": "ea1126ba78c656b51ac98290eeac0d6f8059effeb2200e8fdc333bc85690ec9b"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/pack.json",
+            "size": 954,
+            "sha256": "97b14e5e411806d1c1e848ed04209f6898ff121d65d173fa44090d99c32436ee"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/quality-policies/baseline.json",
+            "size": 7280,
+            "sha256": "53508a7303ec8360c8e28f3fb911048f261150b65ee9f5e90b9bb36971ea41ea"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/README.md",
+            "size": 11949,
+            "sha256": "2b07237170933bb991210682ab7946e6e0c81dcc0123d91118b319cc8bb5de77"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scenarios/a-share-outlook.json",
+            "size": 3240,
+            "sha256": "0c32f28bd560b309c43fd7b56322f236318371bade30cec9fef89cfcd21d4fa0"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scenarios/cycle-positioning.json",
+            "size": 3167,
+            "sha256": "53a1e9f17302b779d72fa134d8f697722ae100d2f6b06390cbd5850de0daaf57"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scripts/check-pack.mjs",
+            "size": 11401,
+            "sha256": "daecb2017bbbca0320630c95e7ab4c3319fdaa1bc2528e7d5259014ee3bfebe5"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skill-packages/macro-capital-framework.json",
+            "size": 1094,
+            "sha256": "3008f9a076febb194839c9d2022c73f4dc463fc7d2d660b6bce1098a0ce164ff"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/references/checklist-template.md",
+            "size": 1337,
+            "sha256": "8f375a04d0865cc0ace661c2938ba88149dc06dfaeb44a068fefd5a2565f59a5"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/references/scripts/i1_collision_check.py",
+            "size": 4374,
+            "sha256": "428600a9f02aef12a904f4b6e8f6dc8cc7fc51e22b87e1810856202ee914fa22"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/SKILL.md",
+            "size": 7345,
+            "sha256": "72a9a48e31799435852aead63473322e1700ffd172de9153554d167d9bf2cc20"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/source/SOURCE-MANIFEST.json",
+            "size": 18131,
+            "sha256": "a13d5730ea568ee5590757a7506b8ecacbcf40b29cd38387f86c27da4c2355b7"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/SUBMISSION-CHECKLIST.md",
+            "size": 1733,
+            "sha256": "4caa529da15374aa5f063a67e591d61dc1b70c519609848f3d82a693d30eae93"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/team-templates/a-share-outlook-team.json",
+            "size": 3160,
+            "sha256": "d53d00a37c6af5cc17976e73d1923db73c1a7cb8752f175e6cf119be655687ad"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/team-templates/cycle-positioning-team.json",
+            "size": 3430,
+            "sha256": "7e711b363bff4dde3f785a4b2a1e419711a1d5f52ea80f83ebfe25bb41e47146"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/tool-providers/macro-capital-tools.json",
+            "size": 828,
+            "sha256": "15b2893cb0f8d873c2303d5579766129a600c23769d7f4b35702e491f183eeb6"
+          }
+        ]
+      }
+    },
+    "install": {
+      "operationId": "skipped-already-cached",
+      "generationBefore": 7,
+      "generationAfter": 7,
+      "cached": {
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "version": "2.3.0",
+        "active": true
+      },
+      "inventory": {
+        "installedV2": true,
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "fileCount": 27,
+        "bytes": 126296,
+        "files": [
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/.gitignore",
+            "size": 345,
+            "sha256": "16aa4240da827a9bbf971c4cc52fabb6e6b88bbc5ac96508317f6d5453114711"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/data-contracts/capability-contract.csv",
+            "size": 727,
+            "sha256": "77cb977292e242e8b8dfd4789661a08f5b410170ae2f49005fb2e6bd52888ab3"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/domain-knowledge/macro-capital-analyst-kb.json",
+            "size": 5055,
+            "sha256": "10baebeb9b9bc3c2cb5212b0ae908e7db39ea5325abfa85ae27e8e6c82e2a9d2"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/experts/macro-capital-analyst.json",
+            "size": 16194,
+            "sha256": "891893195e852cb580028414d885d97d3ce71d4b216de005f3eb6c13b2159e87"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/knowledge-providers/macro-capital-analyst-library.json",
+            "size": 488,
+            "sha256": "05f4891f9254a68b9d84235ca498d3f6b8f52950bf0900f2694589ca409d8f4c"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/knowledge/experts/macro-capital-analyst/README.md",
+            "size": 892,
+            "sha256": "a3cb22cec60b3b9627b88b04a2252ae8926d87e21e025d6847cef87b9e46e22b"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/LICENSE",
+            "size": 1076,
+            "sha256": "281c6d7cb03d7dc84726256a35060d56756d1fd56971d673bb0a2173454f08a3"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/dual-gates.json",
+            "size": 4683,
+            "sha256": "c8e9f00a03be1e76c6593f6c1e6e457d8af217a209b8c6c8380798bfc5fa1ade"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/nine-layer-framework.json",
+            "size": 6632,
+            "sha256": "85ab30a1b08f4a7c3999e9b601d348b61f98dfb5e3c2da5e6da65c30d29ee787"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/six-step-internalization.json",
+            "size": 3816,
+            "sha256": "9fe6a68e6d24eefcf3cce1892edd9ebcd92815bd98195325c7d4e26cd919c263"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/output-templates/a-share-outlook.json",
+            "size": 3690,
+            "sha256": "61eddd7f5a109b04d3a982a4868f55c03c942d7442c8dc0223ff3fe31d3d9ddd"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/output-templates/cycle-positioning.json",
+            "size": 3275,
+            "sha256": "ea1126ba78c656b51ac98290eeac0d6f8059effeb2200e8fdc333bc85690ec9b"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/pack.json",
+            "size": 954,
+            "sha256": "97b14e5e411806d1c1e848ed04209f6898ff121d65d173fa44090d99c32436ee"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/quality-policies/baseline.json",
+            "size": 7280,
+            "sha256": "53508a7303ec8360c8e28f3fb911048f261150b65ee9f5e90b9bb36971ea41ea"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/README.md",
+            "size": 11949,
+            "sha256": "2b07237170933bb991210682ab7946e6e0c81dcc0123d91118b319cc8bb5de77"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scenarios/a-share-outlook.json",
+            "size": 3240,
+            "sha256": "0c32f28bd560b309c43fd7b56322f236318371bade30cec9fef89cfcd21d4fa0"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scenarios/cycle-positioning.json",
+            "size": 3167,
+            "sha256": "53a1e9f17302b779d72fa134d8f697722ae100d2f6b06390cbd5850de0daaf57"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scripts/check-pack.mjs",
+            "size": 11401,
+            "sha256": "daecb2017bbbca0320630c95e7ab4c3319fdaa1bc2528e7d5259014ee3bfebe5"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skill-packages/macro-capital-framework.json",
+            "size": 1094,
+            "sha256": "3008f9a076febb194839c9d2022c73f4dc463fc7d2d660b6bce1098a0ce164ff"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/references/checklist-template.md",
+            "size": 1337,
+            "sha256": "8f375a04d0865cc0ace661c2938ba88149dc06dfaeb44a068fefd5a2565f59a5"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/references/scripts/i1_collision_check.py",
+            "size": 4374,
+            "sha256": "428600a9f02aef12a904f4b6e8f6dc8cc7fc51e22b87e1810856202ee914fa22"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/SKILL.md",
+            "size": 7345,
+            "sha256": "72a9a48e31799435852aead63473322e1700ffd172de9153554d167d9bf2cc20"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/source/SOURCE-MANIFEST.json",
+            "size": 18131,
+            "sha256": "a13d5730ea568ee5590757a7506b8ecacbcf40b29cd38387f86c27da4c2355b7"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/SUBMISSION-CHECKLIST.md",
+            "size": 1733,
+            "sha256": "4caa529da15374aa5f063a67e591d61dc1b70c519609848f3d82a693d30eae93"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/team-templates/a-share-outlook-team.json",
+            "size": 3160,
+            "sha256": "d53d00a37c6af5cc17976e73d1923db73c1a7cb8752f175e6cf119be655687ad"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/team-templates/cycle-positioning-team.json",
+            "size": 3430,
+            "sha256": "7e711b363bff4dde3f785a4b2a1e419711a1d5f52ea80f83ebfe25bb41e47146"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/tool-providers/macro-capital-tools.json",
+            "size": 828,
+            "sha256": "15b2893cb0f8d873c2303d5579766129a600c23769d7f4b35702e491f183eeb6"
+          }
+        ]
+      }
+    },
+    "updateEnable": {
+      "operationId": "skipped-already-active",
+      "generationBefore": 7,
+      "generationAfter": 7,
+      "active": {
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "version": "2.3.0"
+      },
+      "inventoryBefore": {
+        "installedV2": true,
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "fileCount": 27,
+        "bytes": 126296,
+        "files": [
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/.gitignore",
+            "size": 345,
+            "sha256": "16aa4240da827a9bbf971c4cc52fabb6e6b88bbc5ac96508317f6d5453114711"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/data-contracts/capability-contract.csv",
+            "size": 727,
+            "sha256": "77cb977292e242e8b8dfd4789661a08f5b410170ae2f49005fb2e6bd52888ab3"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/domain-knowledge/macro-capital-analyst-kb.json",
+            "size": 5055,
+            "sha256": "10baebeb9b9bc3c2cb5212b0ae908e7db39ea5325abfa85ae27e8e6c82e2a9d2"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/experts/macro-capital-analyst.json",
+            "size": 16194,
+            "sha256": "891893195e852cb580028414d885d97d3ce71d4b216de005f3eb6c13b2159e87"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/knowledge-providers/macro-capital-analyst-library.json",
+            "size": 488,
+            "sha256": "05f4891f9254a68b9d84235ca498d3f6b8f52950bf0900f2694589ca409d8f4c"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/knowledge/experts/macro-capital-analyst/README.md",
+            "size": 892,
+            "sha256": "a3cb22cec60b3b9627b88b04a2252ae8926d87e21e025d6847cef87b9e46e22b"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/LICENSE",
+            "size": 1076,
+            "sha256": "281c6d7cb03d7dc84726256a35060d56756d1fd56971d673bb0a2173454f08a3"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/dual-gates.json",
+            "size": 4683,
+            "sha256": "c8e9f00a03be1e76c6593f6c1e6e457d8af217a209b8c6c8380798bfc5fa1ade"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/nine-layer-framework.json",
+            "size": 6632,
+            "sha256": "85ab30a1b08f4a7c3999e9b601d348b61f98dfb5e3c2da5e6da65c30d29ee787"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/six-step-internalization.json",
+            "size": 3816,
+            "sha256": "9fe6a68e6d24eefcf3cce1892edd9ebcd92815bd98195325c7d4e26cd919c263"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/output-templates/a-share-outlook.json",
+            "size": 3690,
+            "sha256": "61eddd7f5a109b04d3a982a4868f55c03c942d7442c8dc0223ff3fe31d3d9ddd"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/output-templates/cycle-positioning.json",
+            "size": 3275,
+            "sha256": "ea1126ba78c656b51ac98290eeac0d6f8059effeb2200e8fdc333bc85690ec9b"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/pack.json",
+            "size": 954,
+            "sha256": "97b14e5e411806d1c1e848ed04209f6898ff121d65d173fa44090d99c32436ee"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/quality-policies/baseline.json",
+            "size": 7280,
+            "sha256": "53508a7303ec8360c8e28f3fb911048f261150b65ee9f5e90b9bb36971ea41ea"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/README.md",
+            "size": 11949,
+            "sha256": "2b07237170933bb991210682ab7946e6e0c81dcc0123d91118b319cc8bb5de77"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scenarios/a-share-outlook.json",
+            "size": 3240,
+            "sha256": "0c32f28bd560b309c43fd7b56322f236318371bade30cec9fef89cfcd21d4fa0"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scenarios/cycle-positioning.json",
+            "size": 3167,
+            "sha256": "53a1e9f17302b779d72fa134d8f697722ae100d2f6b06390cbd5850de0daaf57"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scripts/check-pack.mjs",
+            "size": 11401,
+            "sha256": "daecb2017bbbca0320630c95e7ab4c3319fdaa1bc2528e7d5259014ee3bfebe5"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skill-packages/macro-capital-framework.json",
+            "size": 1094,
+            "sha256": "3008f9a076febb194839c9d2022c73f4dc463fc7d2d660b6bce1098a0ce164ff"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/references/checklist-template.md",
+            "size": 1337,
+            "sha256": "8f375a04d0865cc0ace661c2938ba88149dc06dfaeb44a068fefd5a2565f59a5"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/references/scripts/i1_collision_check.py",
+            "size": 4374,
+            "sha256": "428600a9f02aef12a904f4b6e8f6dc8cc7fc51e22b87e1810856202ee914fa22"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/SKILL.md",
+            "size": 7345,
+            "sha256": "72a9a48e31799435852aead63473322e1700ffd172de9153554d167d9bf2cc20"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/source/SOURCE-MANIFEST.json",
+            "size": 18131,
+            "sha256": "a13d5730ea568ee5590757a7506b8ecacbcf40b29cd38387f86c27da4c2355b7"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/SUBMISSION-CHECKLIST.md",
+            "size": 1733,
+            "sha256": "4caa529da15374aa5f063a67e591d61dc1b70c519609848f3d82a693d30eae93"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/team-templates/a-share-outlook-team.json",
+            "size": 3160,
+            "sha256": "d53d00a37c6af5cc17976e73d1923db73c1a7cb8752f175e6cf119be655687ad"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/team-templates/cycle-positioning-team.json",
+            "size": 3430,
+            "sha256": "7e711b363bff4dde3f785a4b2a1e419711a1d5f52ea80f83ebfe25bb41e47146"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/tool-providers/macro-capital-tools.json",
+            "size": 828,
+            "sha256": "15b2893cb0f8d873c2303d5579766129a600c23769d7f4b35702e491f183eeb6"
+          }
+        ]
+      },
+      "inventoryAfter": {
+        "installedV2": true,
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "fileCount": 27,
+        "bytes": 126296,
+        "files": [
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/.gitignore",
+            "size": 345,
+            "sha256": "16aa4240da827a9bbf971c4cc52fabb6e6b88bbc5ac96508317f6d5453114711"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/data-contracts/capability-contract.csv",
+            "size": 727,
+            "sha256": "77cb977292e242e8b8dfd4789661a08f5b410170ae2f49005fb2e6bd52888ab3"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/domain-knowledge/macro-capital-analyst-kb.json",
+            "size": 5055,
+            "sha256": "10baebeb9b9bc3c2cb5212b0ae908e7db39ea5325abfa85ae27e8e6c82e2a9d2"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/experts/macro-capital-analyst.json",
+            "size": 16194,
+            "sha256": "891893195e852cb580028414d885d97d3ce71d4b216de005f3eb6c13b2159e87"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/knowledge-providers/macro-capital-analyst-library.json",
+            "size": 488,
+            "sha256": "05f4891f9254a68b9d84235ca498d3f6b8f52950bf0900f2694589ca409d8f4c"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/knowledge/experts/macro-capital-analyst/README.md",
+            "size": 892,
+            "sha256": "a3cb22cec60b3b9627b88b04a2252ae8926d87e21e025d6847cef87b9e46e22b"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/LICENSE",
+            "size": 1076,
+            "sha256": "281c6d7cb03d7dc84726256a35060d56756d1fd56971d673bb0a2173454f08a3"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/dual-gates.json",
+            "size": 4683,
+            "sha256": "c8e9f00a03be1e76c6593f6c1e6e457d8af217a209b8c6c8380798bfc5fa1ade"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/nine-layer-framework.json",
+            "size": 6632,
+            "sha256": "85ab30a1b08f4a7c3999e9b601d348b61f98dfb5e3c2da5e6da65c30d29ee787"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/method-packs/six-step-internalization.json",
+            "size": 3816,
+            "sha256": "9fe6a68e6d24eefcf3cce1892edd9ebcd92815bd98195325c7d4e26cd919c263"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/output-templates/a-share-outlook.json",
+            "size": 3690,
+            "sha256": "61eddd7f5a109b04d3a982a4868f55c03c942d7442c8dc0223ff3fe31d3d9ddd"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/output-templates/cycle-positioning.json",
+            "size": 3275,
+            "sha256": "ea1126ba78c656b51ac98290eeac0d6f8059effeb2200e8fdc333bc85690ec9b"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/pack.json",
+            "size": 954,
+            "sha256": "97b14e5e411806d1c1e848ed04209f6898ff121d65d173fa44090d99c32436ee"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/quality-policies/baseline.json",
+            "size": 7280,
+            "sha256": "53508a7303ec8360c8e28f3fb911048f261150b65ee9f5e90b9bb36971ea41ea"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/README.md",
+            "size": 11949,
+            "sha256": "2b07237170933bb991210682ab7946e6e0c81dcc0123d91118b319cc8bb5de77"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scenarios/a-share-outlook.json",
+            "size": 3240,
+            "sha256": "0c32f28bd560b309c43fd7b56322f236318371bade30cec9fef89cfcd21d4fa0"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scenarios/cycle-positioning.json",
+            "size": 3167,
+            "sha256": "53a1e9f17302b779d72fa134d8f697722ae100d2f6b06390cbd5850de0daaf57"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/scripts/check-pack.mjs",
+            "size": 11401,
+            "sha256": "daecb2017bbbca0320630c95e7ab4c3319fdaa1bc2528e7d5259014ee3bfebe5"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skill-packages/macro-capital-framework.json",
+            "size": 1094,
+            "sha256": "3008f9a076febb194839c9d2022c73f4dc463fc7d2d660b6bce1098a0ce164ff"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/references/checklist-template.md",
+            "size": 1337,
+            "sha256": "8f375a04d0865cc0ace661c2938ba88149dc06dfaeb44a068fefd5a2565f59a5"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/references/scripts/i1_collision_check.py",
+            "size": 4374,
+            "sha256": "428600a9f02aef12a904f4b6e8f6dc8cc7fc51e22b87e1810856202ee914fa22"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/skills/macro-capital-framework/SKILL.md",
+            "size": 7345,
+            "sha256": "72a9a48e31799435852aead63473322e1700ffd172de9153554d167d9bf2cc20"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/source/SOURCE-MANIFEST.json",
+            "size": 18131,
+            "sha256": "a13d5730ea568ee5590757a7506b8ecacbcf40b29cd38387f86c27da4c2355b7"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/SUBMISSION-CHECKLIST.md",
+            "size": 1733,
+            "sha256": "4caa529da15374aa5f063a67e591d61dc1b70c519609848f3d82a693d30eae93"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/team-templates/a-share-outlook-team.json",
+            "size": 3160,
+            "sha256": "d53d00a37c6af5cc17976e73d1923db73c1a7cb8752f175e6cf119be655687ad"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/team-templates/cycle-positioning-team.json",
+            "size": 3430,
+            "sha256": "7e711b363bff4dde3f785a4b2a1e419711a1d5f52ea80f83ebfe25bb41e47146"
+          },
+          {
+            "path": "83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/tool-providers/macro-capital-tools.json",
+            "size": 828,
+            "sha256": "15b2893cb0f8d873c2303d5579766129a600c23769d7f4b35702e491f183eeb6"
+          }
+        ]
+      }
+    },
+    "rollbackTarget": {
+      "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "version": "2.2.0",
+      "installed": true
+    },
+    "runtime": {
+      "at": "2026-09-24T00:58:23.041Z",
+      "activeVersion": "2.3.0",
+      "activeReleaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+      "generation": 7,
+      "installations": [
+        {
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "version": "2.3.0",
+          "active": true,
+          "integrity": "verified"
+        },
+        {
+          "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "version": "2.2.0",
+          "active": false,
+          "integrity": "verified"
+        }
+      ],
+      "runtimePacks": []
+    },
+    "rerun": true
+  },
+  "B": {
+    "before": {
+      "generation": 5,
+      "active": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "inventory": {
+        "installedV2": false,
+        "releaseId": null,
+        "fileCount": 0,
+        "bytes": 0,
+        "files": []
+      }
+    },
+    "after": {
+      "generation": 5,
+      "active": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "inventory": {
+        "installedV2": false,
+        "releaseId": null,
+        "fileCount": 0,
+        "bytes": 0,
+        "files": []
+      }
+    },
+    "check": {
+      "current": {
+        "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+        "packId": "macro-capital-analyst",
+        "version": "2.2.0",
+        "source": "center",
+        "installedAt": "2026-09-23T19:42:40.418Z",
+        "active": true,
+        "centerId": "phase2-center-20260923",
+        "ownerOrgId": "phase2",
+        "artifactSha256": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+        "contentTreeSha256": "22b71f525cd339683947de438842edf12f5c794aa3c2a7a228fcf56a3305734b",
+        "manifestSha256": "e29d14fc306f801b44f6e6a45b9d91200cb770692ef3b7dcb8cf42e5a4d80526",
+        "integrity": "verified"
+      },
+      "latestVisible": {
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "packId": "macro-capital-analyst",
+        "version": "2.3.0",
+        "ownerOrgId": "phase2",
+        "name": "Macro Capital Analyst",
+        "publishedAt": "2026-09-24T00:52:55.000Z",
+        "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+        "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+        "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696",
+        "compatibility": {
+          "compatible": true,
+          "reasons": []
+        },
+        "downloadAvailability": {
+          "available": true
+        },
+        "dependencies": []
+      },
+      "candidate": {
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "packId": "macro-capital-analyst",
+        "version": "2.3.0",
+        "ownerOrgId": "phase2",
+        "name": "Macro Capital Analyst",
+        "publishedAt": "2026-09-24T00:52:55.000Z",
+        "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+        "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+        "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696",
+        "compatibility": {
+          "compatible": true,
+          "reasons": []
+        },
+        "downloadAvailability": {
+          "available": true
+        },
+        "dependencies": []
+      },
+      "candidateCached": false,
+      "status": "update_available",
+      "blockedReasons": []
+    },
+    "runtime": {
+      "at": "2026-09-24T00:58:23.286Z",
+      "activeVersion": "2.2.0",
+      "activeReleaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "generation": 5,
+      "installations": [
+        {
+          "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "version": "2.2.0",
+          "active": true,
+          "integrity": "verified"
+        }
+      ],
+      "runtimePacks": []
+    }
+  },
+  "finalStates": {
+    "A": {
+      "capturedAt": "2026-09-24T00:58:23.290Z",
+      "generation": 7,
+      "active": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+      "installed": [
+        {
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "version": "2.3.0"
+        },
+        {
+          "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "version": "2.2.0"
+        }
+      ]
+    },
+    "B": {
+      "capturedAt": "2026-09-24T00:58:23.296Z",
+      "generation": 5,
+      "active": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "installed": [
+        {
+          "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "version": "2.2.0"
+        }
+      ]
+    }
+  }
+}

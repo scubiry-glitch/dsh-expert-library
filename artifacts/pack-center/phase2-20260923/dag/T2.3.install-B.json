@@ -1,0 +1,116 @@
+{
+  "catalogEntry": {
+    "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+    "packId": "macro-capital-analyst",
+    "version": "2.2.0",
+    "ownerOrgId": "phase2",
+    "name": "Macro Capital Analyst",
+    "publishedAt": "2026-09-23T19:38:29.640Z",
+    "manifestSha256": "e29d14fc306f801b44f6e6a45b9d91200cb770692ef3b7dcb8cf42e5a4d80526",
+    "artifactSha256": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+    "contentTreeSha256": "22b71f525cd339683947de438842edf12f5c794aa3c2a7a228fcf56a3305734b",
+    "compatibility": {
+      "compatible": true,
+      "reasons": []
+    },
+    "downloadAvailability": {
+      "available": true
+    },
+    "dependencies": []
+  },
+  "operationIds": {
+    "install": "op_14318ad0a2fa0d6c7a5c52d8edb938095ebddb352f47ab43da9547a1a8482524",
+    "enable": "op_0a6ede66fa6be6ef226a46198f667e6d06bebc9d06526653f903b917eec96ecc",
+    "disable": "op_7a4c0d21f63dc8ffa74787624047b60a95d09fe0d1775137073a376f8cd9a813",
+    "disableAll": [
+      "op_b65f192ef692fd3661b096e6c67a72a620a032c7dc944182d84e3482a2199fd8"
+    ],
+    "finalEnable": "op_c41aebe80dab43a12e5e18f6f77571f753e3ea79ae38fe15a5dce3aabb589f28"
+  },
+  "state": {
+    "installedReleaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+    "artifactSha256": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+    "contentTreeSha256": "22b71f525cd339683947de438842edf12f5c794aa3c2a7a228fcf56a3305734b",
+    "manifestSha256": "e29d14fc306f801b44f6e6a45b9d91200cb770692ef3b7dcb8cf42e5a4d80526",
+    "generationAfterInstall": 1,
+    "generationAfterEnable": 2,
+    "generationFinal": 5
+  },
+  "enabledFlags": {
+    "beforeInstall": false,
+    "afterInstall": false,
+    "afterEnable": true,
+    "afterDisable": false,
+    "afterDisableAll": false,
+    "final": true
+  },
+  "disableAll": {
+    "operationIds": [
+      "op_b65f192ef692fd3661b096e6c67a72a620a032c7dc944182d84e3482a2199fd8"
+    ],
+    "noneActive": true
+  },
+  "signature": {
+    "verified": true,
+    "signingKeyId": "phase2-key"
+  },
+  "builtinWorkspace": {
+    "before": [
+      {
+        "id": "zhijian-realestate",
+        "version": "1.1.0",
+        "schemaVersion": 2,
+        "name": "智见点评·房地产领域包",
+        "description": "33 位房地产领域专家基线（bk-002~bk-034，五大领域）。V2 投影源为 src/zhijian/data/experts.generated.ts + routing/frameworks 表；V1 视图与运行行为不变。1.1.0：新增陈杰 bk-034，并投影完整 Profile 细节（persona/method/emm/constraints/output_schema）。",
+        "layer": "builtin",
+        "label": "builtin/zhijian-realestate",
+        "snapshot": "zhijian-v1-2026-08-21",
+        "ok": true,
+        "errorCount": 0,
+        "warningCount": 1,
+        "counts": {
+          "experts": 33,
+          "scenarios": 8,
+          "teamTemplates": 4,
+          "outputTemplates": 5,
+          "qualityPolicies": 1,
+          "toolProviders": 0,
+          "knowledgeProviders": 2,
+          "domainKnowledge": 1,
+          "methodPacks": 6,
+          "skillPackages": 10
+        }
+      }
+    ],
+    "after": [
+      {
+        "id": "zhijian-realestate",
+        "version": "1.1.0",
+        "schemaVersion": 2,
+        "name": "智见点评·房地产领域包",
+        "description": "33 位房地产领域专家基线（bk-002~bk-034，五大领域）。V2 投影源为 src/zhijian/data/experts.generated.ts + routing/frameworks 表；V1 视图与运行行为不变。1.1.0：新增陈杰 bk-034，并投影完整 Profile 细节（persona/method/emm/constraints/output_schema）。",
+        "layer": "builtin",
+        "label": "builtin/zhijian-realestate",
+        "snapshot": "zhijian-v1-2026-08-21",
+        "ok": true,
+        "errorCount": 0,
+        "warningCount": 1,
+        "counts": {
+          "experts": 33,
+          "scenarios": 8,
+          "teamTemplates": 4,
+          "outputTemplates": 5,
+          "qualityPolicies": 1,
+          "toolProviders": 0,
+          "knowledgeProviders": 2,
+          "domainKnowledge": 1,
+          "methodPacks": 6,
+          "skillPackages": 10
+        }
+      }
+    ],
+    "beforeHash": "976ccec1cdf7059ec56ef9f175e4889bda3086c007248fc88e1d05e25b6bc8e1",
+    "afterHash": "976ccec1cdf7059ec56ef9f175e4889bda3086c007248fc88e1d05e25b6bc8e1",
+    "unchanged": true
+  }
+}

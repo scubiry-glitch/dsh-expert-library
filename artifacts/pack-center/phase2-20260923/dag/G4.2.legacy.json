@@ -1,0 +1,1345 @@
+{
+  "node": "G4.2",
+  "passed": true,
+  "summary": {
+    "before": {
+      "vendorRootFiles": [
+        "phase2-legacy-demo"
+      ],
+      "packId": "phase2-legacy-demo",
+      "version": "1.0.0",
+      "schemaVersion": 2,
+      "observedHow": "vendor dir listing + local lib/pack-validator V2 validation; GET /manage/packs/registry lists only ledgered onboarded packs, not raw legacy vendor dirs; A state has no legacy entry yet",
+      "registryEntries": [],
+      "aStateLegacySuppressions": [],
+      "aCenterActiveBefore": {
+        "macro-capital-analyst": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+        "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+        "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583"
+      }
+    },
+    "releaseId": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+    "receiptPath": "/tmp/p2-20260923/pack-center-a/inventory/legacy/c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08/legacy.json",
+    "receiptSha256": "b7f446057ed69877889add256cfc7df99d0df8f2c64492be8fa24f94ca3ef1de",
+    "finalActive": {
+      "macro-capital-analyst": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+      "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583"
+    }
+  },
+  "log": [
+    {
+      "at": "2026-09-24T03:13:44.493Z",
+      "stage": "seed",
+      "message": "seed-reuse",
+      "vendorPath": "/tmp/p2-20260923/dsh-a/vendor-packs/phase2-legacy-demo"
+    },
+    {
+      "at": "2026-09-24T03:13:44.695Z",
+      "stage": "discovery-before",
+      "message": "discovery-before",
+      "packId": "phase2-legacy-demo"
+    },
+    {
+      "at": "2026-09-24T03:13:44.736Z",
+      "stage": "route-probe",
+      "message": "route-probe",
+      "status": 400,
+      "code": "CENTER_INVALID_INPUT",
+      "conclusion": "takeover/restore are not exposed via the manage API; using the plugin pack-store SDK helpers directly"
+    },
+    {
+      "at": "2026-09-24T03:13:45.224Z",
+      "stage": "takeover",
+      "message": "takeover-result",
+      "state": {
+        "acceptedReleases": {
+          "3f041d24-df04-4186-bba0-ecd9dfc83d5b": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+            "ownerOrgId": "phase2",
+            "packId": "macro-capital-analyst",
+            "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "version": "2.3.0"
+          },
+          "543f6c96-4d89-4654-a46d-0e84944f5979": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "a7903afe18b87179d38b843ef6fbb67212eb14a1719a996e6ae64d00a0902ccd",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "releaseId": "543f6c96-4d89-4654-a46d-0e84944f5979",
+            "version": "1.0.0"
+          },
+          "5cb74a39-0999-4174-8443-e99a5a5a8a19": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "cccae591ee5ff2a27af1423d169b2621f5dc6199a032c33bed890ea1b38b158d",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "version": "2.0.0"
+          },
+          "793121e6-bc0a-40e7-b5de-7c357f529e97": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "7bc07d9f91cec2565af54b03c87443fbd5c0f9f2f38acb6924020b65f38ec858",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+            "version": "2.1.0"
+          },
+          "a2f5a09f-88ee-4f77-aba8-1c463f4970fe": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "a24bbad9b34485201ac2d0ce109d98c1ed71c9b10ce133d973f8080215a19503",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "releaseId": "a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+            "version": "1.0.0"
+          },
+          "c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "e29d14fc306f801b44f6e6a45b9d91200cb770692ef3b7dcb8cf42e5a4d80526",
+            "ownerOrgId": "phase2",
+            "packId": "macro-capital-analyst",
+            "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "version": "2.2.0"
+          },
+          "ce39c201-67b4-43a0-84b0-ea975c2b30a5": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "2757d5bfeb8d0a5f0fdbce709ce346c6b31b2c3118a554009d0a8ef553956b47",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+            "version": "2.0.0"
+          },
+          "d0d46d0e-1a25-4a52-b086-060c5c630583": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "0454f9cf332fb0d94f157532c8da8ce95bc0a81e9b7ffd81c458286da5d19c64",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+            "version": "2.1.0"
+          }
+        },
+        "active": {
+          "macro-capital-analyst": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+          "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+          "phase2-legacy-demo": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08"
+        },
+        "generation": 35,
+        "installed": {
+          "3f041d24-df04-4186-bba0-ecd9dfc83d5b": {
+            "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696",
+            "installedAt": "2026-09-24T00:56:04.796Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "macro-capital-analyst",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content",
+            "previousReleaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "source": "center",
+            "version": "2.3.0"
+          },
+          "5cb74a39-0999-4174-8443-e99a5a5a8a19": {
+            "artifactSha256": "1c87aa7d78343f6ad5da1c0411a9f11ca21ffde562627ae64cd8f2333627485f",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "cc0600895f2cd546cd3d6068ab837371f15b120978e5a8c9f5bcb2cc4950b0f8",
+            "installedAt": "2026-09-24T01:45:45.163Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/69e0341a610ceea1e16689f3934e37c8032002d4a8e52ed3f37c52f178765d7f/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/69e0341a610ceea1e16689f3934e37c8032002d4a8e52ed3f37c52f178765d7f/content",
+            "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "source": "center",
+            "version": "2.0.0"
+          },
+          "793121e6-bc0a-40e7-b5de-7c357f529e97": {
+            "artifactSha256": "b8647eeb833c7b63e265e93469706efd3a7bdaf07fac8856a11c78b3ec7ce9f2",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "76e1ea6658fc70acf24bba9c5301f78938b64224e8c1b4df37764bd8729b4ad1",
+            "installedAt": "2026-09-24T01:48:11.017Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/ffffd436b8cedd083688eb29c665beb2fa240a8f6088a41db3657a26e56f0923/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/ffffd436b8cedd083688eb29c665beb2fa240a8f6088a41db3657a26e56f0923/content",
+            "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+            "source": "center",
+            "version": "2.1.0"
+          },
+          "c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "artifactSha256": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "22b71f525cd339683947de438842edf12f5c794aa3c2a7a228fcf56a3305734b",
+            "installedAt": "2026-09-23T19:41:10.901Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/fe32bc4549f6f0c5d2c94f4a6ae97d9745aeae63d838d9736ab3b8660de8c503/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "macro-capital-analyst",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/fe32bc4549f6f0c5d2c94f4a6ae97d9745aeae63d838d9736ab3b8660de8c503/content",
+            "previousReleaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "source": "center",
+            "version": "2.2.0"
+          },
+          "ce39c201-67b4-43a0-84b0-ea975c2b30a5": {
+            "artifactSha256": "575f875f769a9ea39efe537b38c1ab9bc1d0bef3893f9f11d0155ee1e2a78537",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "650f14cfde251b47251dddda85fd42e4371a25e36851b8f1d143e0d08f77ba42",
+            "installedAt": "2026-09-24T01:45:51.499Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/62ed7e0ecf7427cb10b9121cca861980ce3f6668662e9bdc023cb424eefbb266/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/62ed7e0ecf7427cb10b9121cca861980ce3f6668662e9bdc023cb424eefbb266/content",
+            "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+            "source": "center",
+            "version": "2.0.0"
+          },
+          "d0d46d0e-1a25-4a52-b086-060c5c630583": {
+            "artifactSha256": "00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "4b359fa7dbe9b5719db3fe89269ccd69f0a004e2d0988f47e5a1f244fd227696",
+            "installedAt": "2026-09-24T01:46:32.599Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/1e7ffcb689ce3a1211f4f15c6c9a1276bc42a76ea409d4fa6721324059835d49/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/1e7ffcb689ce3a1211f4f15c6c9a1276bc42a76ea409d4fa6721324059835d49/content",
+            "previousReleaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+            "source": "center",
+            "version": "2.1.0"
+          },
+          "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08": {
+            "artifactSha256": "b2e3c0da4bd1f64cdadca1b63d62e8216fad6c0bc2f983c686e4d8d2a2f5eed2",
+            "contentTreeSha256": "c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+            "installedAt": "2026-09-24T03:13:44.978Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/legacy/c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08/legacy.json",
+            "packId": "phase2-legacy-demo",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/legacy/c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08/content",
+            "releaseId": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+            "source": "legacy",
+            "version": "1.0.0"
+          }
+        },
+        "legacySuppressions": {
+          "/tmp/p2-20260923/dsh-a/vendor-packs/phase2-legacy-demo": {
+            "backupPath": "/tmp/p2-20260923/pack-center-a/inventory/legacy/c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08/content",
+            "contentTreeSha256": "c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+            "packId": "phase2-legacy-demo",
+            "releaseId": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+            "suppressedAt": "2026-09-24T03:13:44.978Z"
+          }
+        },
+        "operations": {
+          "manual-cleanup-dep-a": {
+            "committedAt": "2026-09-24T01:44:09.825Z",
+            "committedGeneration": 12,
+            "expectedGeneration": 11,
+            "operationKey": "manual-cleanup-dep-a",
+            "requestFingerprint": "9e38420727d64487032dbbc5b11898566b2c642a3b5f2a7801b3c842edee25f3",
+            "result": {
+              "releaseId": "a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+              "retainedFiles": true
+            }
+          },
+          "manual-cleanup-dep-b-disable": {
+            "committedAt": "2026-09-24T01:45:10.029Z",
+            "committedGeneration": 13,
+            "expectedGeneration": 12,
+            "operationKey": "manual-cleanup-dep-b-disable",
+            "requestFingerprint": "2bf64b1e0b789b33410ab3d33017174c1ceb162577e4d867aae1c4cbd901c5ce",
+            "result": {
+              "activated": false,
+              "packId": "phase2-dep-b"
+            }
+          },
+          "manual-cleanup-dep-b2": {
+            "committedAt": "2026-09-24T01:45:11.443Z",
+            "committedGeneration": 14,
+            "expectedGeneration": 13,
+            "operationKey": "manual-cleanup-dep-b2",
+            "requestFingerprint": "9cd91a1b73baa96924ae8224f509d1dcdec07abf6da8746952bf73e530377925",
+            "result": {
+              "releaseId": "543f6c96-4d89-4654-a46d-0e84944f5979",
+              "retainedFiles": true
+            }
+          },
+          "r31-A-rollback-v1": {
+            "committedAt": "2026-09-24T01:52:52.894Z",
+            "committedGeneration": 24,
+            "expectedGeneration": 23,
+            "operationKey": "r31-A-rollback-v1",
+            "requestFingerprint": "f19933e9defd42ed95e3bfe5197d4ccfae2fdfd64ea20ef0715bd13f9de2e5c3",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r33-A-restore-v1-25": {
+            "committedAt": "2026-09-24T02:17:40.642Z",
+            "committedGeneration": 26,
+            "expectedGeneration": 25,
+            "operationKey": "r33-A-restore-v1-25",
+            "requestFingerprint": "b0629048e2b7c1a2640258c689b512109b0f469378a933b5ab5fbe603f4e37f0",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r33-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b-24": {
+            "committedAt": "2026-09-24T02:17:15.278Z",
+            "committedGeneration": 25,
+            "expectedGeneration": 24,
+            "operationKey": "r33-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b-24",
+            "requestFingerprint": "6cceebe0e01a0adc36faef65db7256559da64984b8ac6c5b95571921d0939306",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-A-between-crashes-31": {
+            "committedAt": "2026-09-24T02:24:20.678Z",
+            "committedGeneration": 32,
+            "expectedGeneration": 31,
+            "operationKey": "r34-A-between-crashes-31",
+            "requestFingerprint": "6b47e1276f40f5256bce164ecfa27b3915429fe74749b144e6bc218a94e48813",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r34-A-final-v1-33": {
+            "committedAt": "2026-09-24T02:24:57.443Z",
+            "committedGeneration": 34,
+            "expectedGeneration": 33,
+            "operationKey": "r34-A-final-v1-33",
+            "requestFingerprint": "8c37a7702357e1c0b8f3e26c30a6fa62d1e6b90923492b2461048d230b32b3ad",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r34-A-postcommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-32": {
+            "committedAt": "2026-09-24T02:24:22.155Z",
+            "committedGeneration": 33,
+            "expectedGeneration": 32,
+            "operationKey": "r34-A-postcommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-32",
+            "requestFingerprint": "05566eba4a0dba221a051a540f63e7463ea4e426d6e093e998b5a999f6851af9",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-26": {
+            "committedAt": "2026-09-24T02:20:37.825Z",
+            "committedGeneration": 27,
+            "expectedGeneration": 26,
+            "operationKey": "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-26",
+            "requestFingerprint": "c63785916491d39fdbd55e81fbb919a3fe362cf12b81793689dcea54e56065f1",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-28": {
+            "committedAt": "2026-09-24T02:23:07.486Z",
+            "committedGeneration": 29,
+            "expectedGeneration": 28,
+            "operationKey": "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-28",
+            "requestFingerprint": "75c5a5039155444665e9eb411e689c8b834d1ac50a6d8f2933b9f32eea48decf",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-30": {
+            "committedAt": "2026-09-24T02:24:18.176Z",
+            "committedGeneration": 31,
+            "expectedGeneration": 30,
+            "operationKey": "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-30",
+            "requestFingerprint": "4ffe593eb859c71f533a6d52f8d3a27056979241802e13f951971a0617f5cb33",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-prep-v1": {
+            "committedAt": "2026-09-24T02:21:34.735Z",
+            "committedGeneration": 28,
+            "expectedGeneration": 27,
+            "operationKey": "r34-prep-v1",
+            "requestFingerprint": "6ab52ce9563085505f90f2bf153b77f075988119220a3a1245ad7133bb48c194",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r34-prep-v1b": {
+            "committedAt": "2026-09-24T02:23:35.293Z",
+            "committedGeneration": 30,
+            "expectedGeneration": 29,
+            "operationKey": "r34-prep-v1b",
+            "requestFingerprint": "102dcef9a41d4ee9c9ec3fdd390bd724f440601b3a559ce39651c2f110b5366e",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "t23-A-disable-all-macro-capital-analyst": {
+            "committedAt": "2026-09-23T19:42:38.334Z",
+            "committedGeneration": 4,
+            "expectedGeneration": 3,
+            "operationKey": "t23-A-disable-all-macro-capital-analyst",
+            "requestFingerprint": "425081254b8d62f9a0fcec54bb78a1393596bdeea06c5c56290f04d445e5278f",
+            "result": {
+              "activated": false,
+              "packId": "macro-capital-analyst"
+            }
+          },
+          "t23-A-disable-c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "committedAt": "2026-09-23T19:42:37.511Z",
+            "committedGeneration": 3,
+            "expectedGeneration": 2,
+            "operationKey": "t23-A-disable-c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "requestFingerprint": "02b71315d9650d17baa4c0329904ea949766fdab9a80483879ec341f50c80da4",
+            "result": {
+              "activated": false,
+              "packId": "macro-capital-analyst"
+            }
+          },
+          "t23-A-enable-c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "committedAt": "2026-09-23T19:42:36.466Z",
+            "committedGeneration": 2,
+            "expectedGeneration": 1,
+            "operationKey": "t23-A-enable-c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "requestFingerprint": "6aa902ca9c884fd6b213d9b9bdbdddbc3537292395fc48c1bb3545ec08e7669a",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "t23-A-final-enable-c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "committedAt": "2026-09-23T19:42:39.096Z",
+            "committedGeneration": 5,
+            "expectedGeneration": 4,
+            "operationKey": "t23-A-final-enable-c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "requestFingerprint": "a8ecde14d8b06132fc5f530fa6ec9791c2f00f686d08fd6a715ea5d15d386129",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "t23-A-install-c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "committedAt": "2026-09-23T19:41:10.902Z",
+            "committedGeneration": 1,
+            "expectedGeneration": 0,
+            "operationKey": "t23-A-install-c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "requestFingerprint": "5f7bd969ead7435295ea476b3d456a3135666f233c0ae31244e818653ded2f88",
+            "result": {
+              "activated": false,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+              "status": "succeeded"
+            }
+          },
+          "t24-A-install-3f041d24-df04-4186-bba0-ecd9dfc83d5b": {
+            "committedAt": "2026-09-24T00:56:04.796Z",
+            "committedGeneration": 6,
+            "expectedGeneration": 5,
+            "operationKey": "t24-A-install-3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "requestFingerprint": "f301de32aa32f4521c83d4c163dc683891084e03e82d02efadedae226a8b2a22",
+            "result": {
+              "activated": false,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "t24-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b": {
+            "committedAt": "2026-09-24T00:56:06.690Z",
+            "committedGeneration": 7,
+            "expectedGeneration": 6,
+            "operationKey": "t24-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "requestFingerprint": "e978d4bad6378b9839c45bda40bd420d0c243a439625e7625df8ea9f5887802a",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-a1-enable-a2f5a09f-88ee-4f77-aba8-1c463f4970fe": {
+            "committedAt": "2026-09-24T01:40:12.673Z",
+            "committedGeneration": 11,
+            "expectedGeneration": 10,
+            "operationKey": "t25-A-a1-enable-a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+            "requestFingerprint": "6337e0e9d956dd4c66c8b6c2820be79390c2542b2b4d00f3c5beefce35c9c6be",
+            "result": {
+              "activated": false,
+              "activationError": {
+                "code": "ENTITY_CONFLICT",
+                "message": "Center packs cannot silently replace another pack’s entities"
+              },
+              "previousActiveReleaseId": null,
+              "releaseId": "a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+              "status": "installed_not_enabled"
+            }
+          },
+          "t25-A-a1-enable-ce39c201-67b4-43a0-84b0-ea975c2b30a5": {
+            "committedAt": "2026-09-24T01:45:54.404Z",
+            "committedGeneration": 18,
+            "expectedGeneration": 17,
+            "operationKey": "t25-A-a1-enable-ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+            "requestFingerprint": "e6f2dddc8fd4b10caf2031baebee9ffa4aa5079c9c3916ce36a5b607c6d60f88",
+            "result": {
+              "activated": true,
+              "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-a1-install-a2f5a09f-88ee-4f77-aba8-1c463f4970fe": {
+            "committedAt": "2026-09-24T01:40:10.151Z",
+            "committedGeneration": 10,
+            "expectedGeneration": 9,
+            "operationKey": "t25-A-a1-install-a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+            "requestFingerprint": "f9684a020b00c0c379565007986c320d99a90f904834f1f00e49ff6f974b0cbe",
+            "result": {
+              "activated": false,
+              "releaseId": "a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-a1-install-ce39c201-67b4-43a0-84b0-ea975c2b30a5": {
+            "committedAt": "2026-09-24T01:45:51.500Z",
+            "committedGeneration": 17,
+            "expectedGeneration": 16,
+            "operationKey": "t25-A-a1-install-ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+            "requestFingerprint": "17f526454864dd5dc73fd62993427e487d5a3557900688053750e7caf4fdb323",
+            "result": {
+              "activated": false,
+              "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-b1-enable-543f6c96-4d89-4654-a46d-0e84944f5979": {
+            "committedAt": "2026-09-24T01:40:06.514Z",
+            "committedGeneration": 9,
+            "expectedGeneration": 8,
+            "operationKey": "t25-A-b1-enable-543f6c96-4d89-4654-a46d-0e84944f5979",
+            "requestFingerprint": "e3dacfd5aaf15236b07193a55d6e34fe9641bee0fac129f32e3d5774db593aab",
+            "result": {
+              "activated": true,
+              "releaseId": "543f6c96-4d89-4654-a46d-0e84944f5979",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-b1-enable-5cb74a39-0999-4174-8443-e99a5a5a8a19": {
+            "committedAt": "2026-09-24T01:45:48.418Z",
+            "committedGeneration": 16,
+            "expectedGeneration": 15,
+            "operationKey": "t25-A-b1-enable-5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "requestFingerprint": "a22da0fe56e05bea7db3b4cf969115eae9edad3a0d2685a3a4d5e05597b6c191",
+            "result": {
+              "activated": true,
+              "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-b1-install-543f6c96-4d89-4654-a46d-0e84944f5979": {
+            "committedAt": "2026-09-24T01:40:01.178Z",
+            "committedGeneration": 8,
+            "expectedGeneration": 7,
+            "operationKey": "t25-A-b1-install-543f6c96-4d89-4654-a46d-0e84944f5979",
+            "requestFingerprint": "111a8d8370f0a2a4e68737b4bd6bfcba4c1b51e6343311c1220362f85c07a266",
+            "result": {
+              "activated": false,
+              "releaseId": "543f6c96-4d89-4654-a46d-0e84944f5979",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-b1-install-5cb74a39-0999-4174-8443-e99a5a5a8a19": {
+            "committedAt": "2026-09-24T01:45:45.164Z",
+            "committedGeneration": 15,
+            "expectedGeneration": 14,
+            "operationKey": "t25-A-b1-install-5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "requestFingerprint": "f68a0c09ec21022a4c7dd1ad3e081e0677513e64343be31bd73cb4642d688e9b",
+            "result": {
+              "activated": false,
+              "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-block-1-update_enable": {
+            "committedAt": "2026-09-24T01:46:33.172Z",
+            "committedGeneration": 19,
+            "expectedGeneration": 18,
+            "operationKey": "t25-A-block-1-update_enable",
+            "requestFingerprint": "482ed0c24f8f3a9bbddffa94f770e222f86ee055cfaccc0533aca21bd000a928",
+            "result": {
+              "activated": false,
+              "activationError": {
+                "code": "DEPENDENCY_BLOCKED",
+                "message": "Active pack requires a different exact dependency release"
+              },
+              "previousActiveReleaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+              "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+              "status": "installed_not_enabled"
+            }
+          },
+          "t25-A-recovery-disable-a1": {
+            "committedAt": "2026-09-24T01:48:16.129Z",
+            "committedGeneration": 21,
+            "expectedGeneration": 20,
+            "operationKey": "t25-A-recovery-disable-a1",
+            "requestFingerprint": "e6d839909dd865cdea8cc6d7c4a76d21ff056460f637b95e83b43a8c18141766",
+            "result": {
+              "activated": false,
+              "packId": "phase2-dep-a"
+            }
+          },
+          "t25-A-recovery-enable-793121e6-bc0a-40e7-b5de-7c357f529e97": {
+            "committedAt": "2026-09-24T01:48:22.594Z",
+            "committedGeneration": 23,
+            "expectedGeneration": 22,
+            "operationKey": "t25-A-recovery-enable-793121e6-bc0a-40e7-b5de-7c357f529e97",
+            "requestFingerprint": "6247082d180907b0f9c75e2509c9dbe05151550957e2765f567a2183f3092a52",
+            "result": {
+              "activated": true,
+              "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-recovery-enable-d0d46d0e-1a25-4a52-b086-060c5c630583": {
+            "committedAt": "2026-09-24T01:48:19.451Z",
+            "committedGeneration": 22,
+            "expectedGeneration": 21,
+            "operationKey": "t25-A-recovery-enable-d0d46d0e-1a25-4a52-b086-060c5c630583",
+            "requestFingerprint": "1612562ef46312dfb43760a9e64b6f63234741f32cfb9493084d742dadc21b24",
+            "result": {
+              "activated": true,
+              "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-recovery-install-793121e6-bc0a-40e7-b5de-7c357f529e97": {
+            "committedAt": "2026-09-24T01:48:11.019Z",
+            "committedGeneration": 20,
+            "expectedGeneration": 19,
+            "operationKey": "t25-A-recovery-install-793121e6-bc0a-40e7-b5de-7c357f529e97",
+            "requestFingerprint": "086322dbf24d784e78981f3b331853a58615b34bea27d1a4543be6030503cdd3",
+            "result": {
+              "activated": false,
+              "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+              "status": "succeeded"
+            }
+          },
+          "g42-A-takeover-c1436272e046": {
+            "operationKey": "g42-A-takeover-c1436272e046",
+            "requestFingerprint": "db4d63b78eab7d5a97e87f9ac5ce51ee9ed0ccf719f9b7f81f7875133acb0263",
+            "expectedGeneration": 34,
+            "committedGeneration": 35,
+            "committedAt": "2026-09-24T03:13:45.157Z",
+            "result": {
+              "activated": true,
+              "releaseId": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+              "source": "legacy",
+              "status": "succeeded",
+              "suppressedPath": "/tmp/p2-20260923/dsh-a/vendor-packs/phase2-legacy-demo"
+            }
+          }
+        },
+        "schemaVersion": 1
+      },
+      "operation": {
+        "operationKey": "g42-A-takeover-c1436272e046",
+        "requestFingerprint": "db4d63b78eab7d5a97e87f9ac5ce51ee9ed0ccf719f9b7f81f7875133acb0263",
+        "expectedGeneration": 34,
+        "committedGeneration": 35,
+        "committedAt": "2026-09-24T03:13:45.157Z",
+        "result": {
+          "activated": true,
+          "releaseId": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+          "source": "legacy",
+          "status": "succeeded",
+          "suppressedPath": "/tmp/p2-20260923/dsh-a/vendor-packs/phase2-legacy-demo"
+        }
+      },
+      "replayed": false
+    },
+    {
+      "at": "2026-09-24T03:13:45.915Z",
+      "stage": "takeover",
+      "message": "backup-receipt",
+      "path": "/tmp/p2-20260923/pack-center-a/inventory/legacy/c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08/legacy.json",
+      "sha256": "b7f446057ed69877889add256cfc7df99d0df8f2c64492be8fa24f94ca3ef1de",
+      "releaseId": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+      "area": "pack-center-a inventory legacy/<contentTreeSha256>/ (local backup, not a center signature)"
+    },
+    {
+      "at": "2026-09-24T03:13:46.580Z",
+      "stage": "disable",
+      "message": "disable-done",
+      "packId": "phase2-legacy-demo"
+    },
+    {
+      "at": "2026-09-24T03:13:47.100Z",
+      "stage": "restore",
+      "message": "restore-result",
+      "state": {
+        "acceptedReleases": {
+          "3f041d24-df04-4186-bba0-ecd9dfc83d5b": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+            "ownerOrgId": "phase2",
+            "packId": "macro-capital-analyst",
+            "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "version": "2.3.0"
+          },
+          "543f6c96-4d89-4654-a46d-0e84944f5979": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "a7903afe18b87179d38b843ef6fbb67212eb14a1719a996e6ae64d00a0902ccd",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "releaseId": "543f6c96-4d89-4654-a46d-0e84944f5979",
+            "version": "1.0.0"
+          },
+          "5cb74a39-0999-4174-8443-e99a5a5a8a19": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "cccae591ee5ff2a27af1423d169b2621f5dc6199a032c33bed890ea1b38b158d",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "version": "2.0.0"
+          },
+          "793121e6-bc0a-40e7-b5de-7c357f529e97": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "7bc07d9f91cec2565af54b03c87443fbd5c0f9f2f38acb6924020b65f38ec858",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+            "version": "2.1.0"
+          },
+          "a2f5a09f-88ee-4f77-aba8-1c463f4970fe": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "a24bbad9b34485201ac2d0ce109d98c1ed71c9b10ce133d973f8080215a19503",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "releaseId": "a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+            "version": "1.0.0"
+          },
+          "c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "e29d14fc306f801b44f6e6a45b9d91200cb770692ef3b7dcb8cf42e5a4d80526",
+            "ownerOrgId": "phase2",
+            "packId": "macro-capital-analyst",
+            "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "version": "2.2.0"
+          },
+          "ce39c201-67b4-43a0-84b0-ea975c2b30a5": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "2757d5bfeb8d0a5f0fdbce709ce346c6b31b2c3118a554009d0a8ef553956b47",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+            "version": "2.0.0"
+          },
+          "d0d46d0e-1a25-4a52-b086-060c5c630583": {
+            "centerId": "phase2-center-20260923",
+            "manifestSha256": "0454f9cf332fb0d94f157532c8da8ce95bc0a81e9b7ffd81c458286da5d19c64",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+            "version": "2.1.0"
+          }
+        },
+        "active": {
+          "macro-capital-analyst": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+          "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+          "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583"
+        },
+        "generation": 37,
+        "installed": {
+          "3f041d24-df04-4186-bba0-ecd9dfc83d5b": {
+            "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696",
+            "installedAt": "2026-09-24T00:56:04.796Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "macro-capital-analyst",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content",
+            "previousReleaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "source": "center",
+            "version": "2.3.0"
+          },
+          "5cb74a39-0999-4174-8443-e99a5a5a8a19": {
+            "artifactSha256": "1c87aa7d78343f6ad5da1c0411a9f11ca21ffde562627ae64cd8f2333627485f",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "cc0600895f2cd546cd3d6068ab837371f15b120978e5a8c9f5bcb2cc4950b0f8",
+            "installedAt": "2026-09-24T01:45:45.163Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/69e0341a610ceea1e16689f3934e37c8032002d4a8e52ed3f37c52f178765d7f/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/69e0341a610ceea1e16689f3934e37c8032002d4a8e52ed3f37c52f178765d7f/content",
+            "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "source": "center",
+            "version": "2.0.0"
+          },
+          "793121e6-bc0a-40e7-b5de-7c357f529e97": {
+            "artifactSha256": "b8647eeb833c7b63e265e93469706efd3a7bdaf07fac8856a11c78b3ec7ce9f2",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "76e1ea6658fc70acf24bba9c5301f78938b64224e8c1b4df37764bd8729b4ad1",
+            "installedAt": "2026-09-24T01:48:11.017Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/ffffd436b8cedd083688eb29c665beb2fa240a8f6088a41db3657a26e56f0923/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/ffffd436b8cedd083688eb29c665beb2fa240a8f6088a41db3657a26e56f0923/content",
+            "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+            "source": "center",
+            "version": "2.1.0"
+          },
+          "c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "artifactSha256": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "22b71f525cd339683947de438842edf12f5c794aa3c2a7a228fcf56a3305734b",
+            "installedAt": "2026-09-23T19:41:10.901Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/fe32bc4549f6f0c5d2c94f4a6ae97d9745aeae63d838d9736ab3b8660de8c503/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "macro-capital-analyst",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/fe32bc4549f6f0c5d2c94f4a6ae97d9745aeae63d838d9736ab3b8660de8c503/content",
+            "previousReleaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "source": "center",
+            "version": "2.2.0"
+          },
+          "ce39c201-67b4-43a0-84b0-ea975c2b30a5": {
+            "artifactSha256": "575f875f769a9ea39efe537b38c1ab9bc1d0bef3893f9f11d0155ee1e2a78537",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "650f14cfde251b47251dddda85fd42e4371a25e36851b8f1d143e0d08f77ba42",
+            "installedAt": "2026-09-24T01:45:51.499Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/62ed7e0ecf7427cb10b9121cca861980ce3f6668662e9bdc023cb424eefbb266/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-a",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/62ed7e0ecf7427cb10b9121cca861980ce3f6668662e9bdc023cb424eefbb266/content",
+            "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+            "source": "center",
+            "version": "2.0.0"
+          },
+          "d0d46d0e-1a25-4a52-b086-060c5c630583": {
+            "artifactSha256": "00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69",
+            "centerId": "phase2-center-20260923",
+            "contentTreeSha256": "4b359fa7dbe9b5719db3fe89269ccd69f0a004e2d0988f47e5a1f244fd227696",
+            "installedAt": "2026-09-24T01:46:32.599Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/1e7ffcb689ce3a1211f4f15c6c9a1276bc42a76ea409d4fa6721324059835d49/release.json",
+            "ownerOrgId": "phase2",
+            "packId": "phase2-dep-b",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/1e7ffcb689ce3a1211f4f15c6c9a1276bc42a76ea409d4fa6721324059835d49/content",
+            "previousReleaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+            "source": "center",
+            "version": "2.1.0"
+          },
+          "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08": {
+            "artifactSha256": "b2e3c0da4bd1f64cdadca1b63d62e8216fad6c0bc2f983c686e4d8d2a2f5eed2",
+            "contentTreeSha256": "c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+            "installedAt": "2026-09-24T03:13:44.978Z",
+            "manifestPath": "/tmp/p2-20260923/pack-center-a/inventory/legacy/c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08/legacy.json",
+            "packId": "phase2-legacy-demo",
+            "packPath": "/tmp/p2-20260923/pack-center-a/inventory/legacy/c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08/content",
+            "releaseId": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+            "source": "legacy",
+            "version": "1.0.0"
+          }
+        },
+        "legacySuppressions": {},
+        "operations": {
+          "g42-A-disable-legacy": {
+            "committedAt": "2026-09-24T03:13:46.547Z",
+            "committedGeneration": 36,
+            "expectedGeneration": 35,
+            "operationKey": "g42-A-disable-legacy",
+            "requestFingerprint": "91b396697a859ad60036fa0bdaf87ed00513b1981af87340afaae495afea8a91",
+            "result": {
+              "activated": false,
+              "packId": "phase2-legacy-demo"
+            }
+          },
+          "g42-A-takeover-c1436272e046": {
+            "committedAt": "2026-09-24T03:13:45.157Z",
+            "committedGeneration": 35,
+            "expectedGeneration": 34,
+            "operationKey": "g42-A-takeover-c1436272e046",
+            "requestFingerprint": "db4d63b78eab7d5a97e87f9ac5ce51ee9ed0ccf719f9b7f81f7875133acb0263",
+            "result": {
+              "activated": true,
+              "releaseId": "legacy.c1436272e046fd9cd2861b496f0a0d1e32a8e68678049778d6fceb7953f2ec08",
+              "source": "legacy",
+              "status": "succeeded",
+              "suppressedPath": "/tmp/p2-20260923/dsh-a/vendor-packs/phase2-legacy-demo"
+            }
+          },
+          "manual-cleanup-dep-a": {
+            "committedAt": "2026-09-24T01:44:09.825Z",
+            "committedGeneration": 12,
+            "expectedGeneration": 11,
+            "operationKey": "manual-cleanup-dep-a",
+            "requestFingerprint": "9e38420727d64487032dbbc5b11898566b2c642a3b5f2a7801b3c842edee25f3",
+            "result": {
+              "releaseId": "a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+              "retainedFiles": true
+            }
+          },
+          "manual-cleanup-dep-b-disable": {
+            "committedAt": "2026-09-24T01:45:10.029Z",
+            "committedGeneration": 13,
+            "expectedGeneration": 12,
+            "operationKey": "manual-cleanup-dep-b-disable",
+            "requestFingerprint": "2bf64b1e0b789b33410ab3d33017174c1ceb162577e4d867aae1c4cbd901c5ce",
+            "result": {
+              "activated": false,
+              "packId": "phase2-dep-b"
+            }
+          },
+          "manual-cleanup-dep-b2": {
+            "committedAt": "2026-09-24T01:45:11.443Z",
+            "committedGeneration": 14,
+            "expectedGeneration": 13,
+            "operationKey": "manual-cleanup-dep-b2",
+            "requestFingerprint": "9cd91a1b73baa96924ae8224f509d1dcdec07abf6da8746952bf73e530377925",
+            "result": {
+              "releaseId": "543f6c96-4d89-4654-a46d-0e84944f5979",
+              "retainedFiles": true
+            }
+          },
+          "r31-A-rollback-v1": {
+            "committedAt": "2026-09-24T01:52:52.894Z",
+            "committedGeneration": 24,
+            "expectedGeneration": 23,
+            "operationKey": "r31-A-rollback-v1",
+            "requestFingerprint": "f19933e9defd42ed95e3bfe5197d4ccfae2fdfd64ea20ef0715bd13f9de2e5c3",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r33-A-restore-v1-25": {
+            "committedAt": "2026-09-24T02:17:40.642Z",
+            "committedGeneration": 26,
+            "expectedGeneration": 25,
+            "operationKey": "r33-A-restore-v1-25",
+            "requestFingerprint": "b0629048e2b7c1a2640258c689b512109b0f469378a933b5ab5fbe603f4e37f0",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r33-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b-24": {
+            "committedAt": "2026-09-24T02:17:15.278Z",
+            "committedGeneration": 25,
+            "expectedGeneration": 24,
+            "operationKey": "r33-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b-24",
+            "requestFingerprint": "6cceebe0e01a0adc36faef65db7256559da64984b8ac6c5b95571921d0939306",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-A-between-crashes-31": {
+            "committedAt": "2026-09-24T02:24:20.678Z",
+            "committedGeneration": 32,
+            "expectedGeneration": 31,
+            "operationKey": "r34-A-between-crashes-31",
+            "requestFingerprint": "6b47e1276f40f5256bce164ecfa27b3915429fe74749b144e6bc218a94e48813",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r34-A-final-v1-33": {
+            "committedAt": "2026-09-24T02:24:57.443Z",
+            "committedGeneration": 34,
+            "expectedGeneration": 33,
+            "operationKey": "r34-A-final-v1-33",
+            "requestFingerprint": "8c37a7702357e1c0b8f3e26c30a6fa62d1e6b90923492b2461048d230b32b3ad",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r34-A-postcommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-32": {
+            "committedAt": "2026-09-24T02:24:22.155Z",
+            "committedGeneration": 33,
+            "expectedGeneration": 32,
+            "operationKey": "r34-A-postcommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-32",
+            "requestFingerprint": "05566eba4a0dba221a051a540f63e7463ea4e426d6e093e998b5a999f6851af9",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-26": {
+            "committedAt": "2026-09-24T02:20:37.825Z",
+            "committedGeneration": 27,
+            "expectedGeneration": 26,
+            "operationKey": "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-26",
+            "requestFingerprint": "c63785916491d39fdbd55e81fbb919a3fe362cf12b81793689dcea54e56065f1",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-28": {
+            "committedAt": "2026-09-24T02:23:07.486Z",
+            "committedGeneration": 29,
+            "expectedGeneration": 28,
+            "operationKey": "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-28",
+            "requestFingerprint": "75c5a5039155444665e9eb411e689c8b834d1ac50a6d8f2933b9f32eea48decf",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-30": {
+            "committedAt": "2026-09-24T02:24:18.176Z",
+            "committedGeneration": 31,
+            "expectedGeneration": 30,
+            "operationKey": "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-30",
+            "requestFingerprint": "4ffe593eb859c71f533a6d52f8d3a27056979241802e13f951971a0617f5cb33",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "r34-prep-v1": {
+            "committedAt": "2026-09-24T02:21:34.735Z",
+            "committedGeneration": 28,
+            "expectedGeneration": 27,
+            "operationKey": "r34-prep-v1",
+            "requestFingerprint": "6ab52ce9563085505f90f2bf153b77f075988119220a3a1245ad7133bb48c194",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "r34-prep-v1b": {
+            "committedAt": "2026-09-24T02:23:35.293Z",
+            "committedGeneration": 30,
+            "expectedGeneration": 29,
+            "operationKey": "r34-prep-v1b",
+            "requestFingerprint": "102dcef9a41d4ee9c9ec3fdd390bd724f440601b3a559ce39651c2f110b5366e",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "t23-A-disable-all-macro-capital-analyst": {
+            "committedAt": "2026-09-23T19:42:38.334Z",
+            "committedGeneration": 4,
+            "expectedGeneration": 3,
+            "operationKey": "t23-A-disable-all-macro-capital-analyst",
+            "requestFingerprint": "425081254b8d62f9a0fcec54bb78a1393596bdeea06c5c56290f04d445e5278f",
+            "result": {
+              "activated": false,
+              "packId": "macro-capital-analyst"
+            }
+          },
+          "t23-A-disable-c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "committedAt": "2026-09-23T19:42:37.511Z",
+            "committedGeneration": 3,
+            "expectedGeneration": 2,
+            "operationKey": "t23-A-disable-c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "requestFingerprint": "02b71315d9650d17baa4c0329904ea949766fdab9a80483879ec341f50c80da4",
+            "result": {
+              "activated": false,
+              "packId": "macro-capital-analyst"
+            }
+          },
+          "t23-A-enable-c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "committedAt": "2026-09-23T19:42:36.466Z",
+            "committedGeneration": 2,
+            "expectedGeneration": 1,
+            "operationKey": "t23-A-enable-c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "requestFingerprint": "6aa902ca9c884fd6b213d9b9bdbdddbc3537292395fc48c1bb3545ec08e7669a",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "t23-A-final-enable-c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "committedAt": "2026-09-23T19:42:39.096Z",
+            "committedGeneration": 5,
+            "expectedGeneration": 4,
+            "operationKey": "t23-A-final-enable-c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "requestFingerprint": "a8ecde14d8b06132fc5f530fa6ec9791c2f00f686d08fd6a715ea5d15d386129",
+            "result": {
+              "activated": true,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+            }
+          },
+          "t23-A-install-c95d8b85-6a2f-4fbc-9310-3d28c903f834": {
+            "committedAt": "2026-09-23T19:41:10.902Z",
+            "committedGeneration": 1,
+            "expectedGeneration": 0,
+            "operationKey": "t23-A-install-c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+            "requestFingerprint": "5f7bd969ead7435295ea476b3d456a3135666f233c0ae31244e818653ded2f88",
+            "result": {
+              "activated": false,
+              "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+              "status": "succeeded"
+            }
+          },
+          "t24-A-install-3f041d24-df04-4186-bba0-ecd9dfc83d5b": {
+            "committedAt": "2026-09-24T00:56:04.796Z",
+            "committedGeneration": 6,
+            "expectedGeneration": 5,
+            "operationKey": "t24-A-install-3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "requestFingerprint": "f301de32aa32f4521c83d4c163dc683891084e03e82d02efadedae226a8b2a22",
+            "result": {
+              "activated": false,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "t24-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b": {
+            "committedAt": "2026-09-24T00:56:06.690Z",
+            "committedGeneration": 7,
+            "expectedGeneration": 6,
+            "operationKey": "t24-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "requestFingerprint": "e978d4bad6378b9839c45bda40bd420d0c243a439625e7625df8ea9f5887802a",
+            "result": {
+              "activated": true,
+              "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-a1-enable-a2f5a09f-88ee-4f77-aba8-1c463f4970fe": {
+            "committedAt": "2026-09-24T01:40:12.673Z",
+            "committedGeneration": 11,
+            "expectedGeneration": 10,
+            "operationKey": "t25-A-a1-enable-a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+            "requestFingerprint": "6337e0e9d956dd4c66c8b6c2820be79390c2542b2b4d00f3c5beefce35c9c6be",
+            "result": {
+              "activated": false,
+              "activationError": {
+                "code": "ENTITY_CONFLICT",
+                "message": "Center packs cannot silently replace another pack’s entities"
+              },
+              "previousActiveReleaseId": null,
+              "releaseId": "a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+              "status": "installed_not_enabled"
+            }
+          },
+          "t25-A-a1-enable-ce39c201-67b4-43a0-84b0-ea975c2b30a5": {
+            "committedAt": "2026-09-24T01:45:54.404Z",
+            "committedGeneration": 18,
+            "expectedGeneration": 17,
+            "operationKey": "t25-A-a1-enable-ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+            "requestFingerprint": "e6f2dddc8fd4b10caf2031baebee9ffa4aa5079c9c3916ce36a5b607c6d60f88",
+            "result": {
+              "activated": true,
+              "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-a1-install-a2f5a09f-88ee-4f77-aba8-1c463f4970fe": {
+            "committedAt": "2026-09-24T01:40:10.151Z",
+            "committedGeneration": 10,
+            "expectedGeneration": 9,
+            "operationKey": "t25-A-a1-install-a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+            "requestFingerprint": "f9684a020b00c0c379565007986c320d99a90f904834f1f00e49ff6f974b0cbe",
+            "result": {
+              "activated": false,
+              "releaseId": "a2f5a09f-88ee-4f77-aba8-1c463f4970fe",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-a1-install-ce39c201-67b4-43a0-84b0-ea975c2b30a5": {
+            "committedAt": "2026-09-24T01:45:51.500Z",
+            "committedGeneration": 17,
+            "expectedGeneration": 16,
+            "operationKey": "t25-A-a1-install-ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+            "requestFingerprint": "17f526454864dd5dc73fd62993427e487d5a3557900688053750e7caf4fdb323",
+            "result": {
+              "activated": false,
+              "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-b1-enable-543f6c96-4d89-4654-a46d-0e84944f5979": {
+            "committedAt": "2026-09-24T01:40:06.514Z",
+            "committedGeneration": 9,
+            "expectedGeneration": 8,
+            "operationKey": "t25-A-b1-enable-543f6c96-4d89-4654-a46d-0e84944f5979",
+            "requestFingerprint": "e3dacfd5aaf15236b07193a55d6e34fe9641bee0fac129f32e3d5774db593aab",
+            "result": {
+              "activated": true,
+              "releaseId": "543f6c96-4d89-4654-a46d-0e84944f5979",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-b1-enable-5cb74a39-0999-4174-8443-e99a5a5a8a19": {
+            "committedAt": "2026-09-24T01:45:48.418Z",
+            "committedGeneration": 16,
+            "expectedGeneration": 15,
+            "operationKey": "t25-A-b1-enable-5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "requestFingerprint": "a22da0fe56e05bea7db3b4cf969115eae9edad3a0d2685a3a4d5e05597b6c191",
+            "result": {
+              "activated": true,
+              "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-b1-install-543f6c96-4d89-4654-a46d-0e84944f5979": {
+            "committedAt": "2026-09-24T01:40:01.178Z",
+            "committedGeneration": 8,
+            "expectedGeneration": 7,
+            "operationKey": "t25-A-b1-install-543f6c96-4d89-4654-a46d-0e84944f5979",
+            "requestFingerprint": "111a8d8370f0a2a4e68737b4bd6bfcba4c1b51e6343311c1220362f85c07a266",
+            "result": {
+              "activated": false,
+              "releaseId": "543f6c96-4d89-4654-a46d-0e84944f5979",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-b1-install-5cb74a39-0999-4174-8443-e99a5a5a8a19": {
+            "committedAt": "2026-09-24T01:45:45.164Z",
+            "committedGeneration": 15,
+            "expectedGeneration": 14,
+            "operationKey": "t25-A-b1-install-5cb74a39-0999-4174-8443-e99a5a5a8a19",
+            "requestFingerprint": "f68a0c09ec21022a4c7dd1ad3e081e0677513e64343be31bd73cb4642d688e9b",
+            "result": {
+              "activated": false,
+              "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-block-1-update_enable": {
+            "committedAt": "2026-09-24T01:46:33.172Z",
+            "committedGeneration": 19,
+            "expectedGeneration": 18,
+            "operationKey": "t25-A-block-1-update_enable",
+            "requestFingerprint": "482ed0c24f8f3a9bbddffa94f770e222f86ee055cfaccc0533aca21bd000a928",
+            "result": {
+              "activated": false,
+              "activationError": {
+                "code": "DEPENDENCY_BLOCKED",
+                "message": "Active pack requires a different exact dependency release"
+              },
+              "previousActiveReleaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+              "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+              "status": "installed_not_enabled"
+            }
+          },
+          "t25-A-recovery-disable-a1": {
+            "committedAt": "2026-09-24T01:48:16.129Z",
+            "committedGeneration": 21,
+            "expectedGeneration": 20,
+            "operationKey": "t25-A-recovery-disable-a1",
+            "requestFingerprint": "e6d839909dd865cdea8cc6d7c4a76d21ff056460f637b95e83b43a8c18141766",
+            "result": {
+              "activated": false,
+              "packId": "phase2-dep-a"
+            }
+          },
+          "t25-A-recovery-enable-793121e6-bc0a-40e7-b5de-7c357f529e97": {
+            "committedAt": "2026-09-24T01:48:22.594Z",
+            "committedGeneration": 23,
+            "expectedGeneration": 22,
+            "operationKey": "t25-A-recovery-enable-793121e6-bc0a-40e7-b5de-7c357f529e97",
+            "requestFingerprint": "6247082d180907b0f9c75e2509c9dbe05151550957e2765f567a2183f3092a52",
+            "result": {
+              "activated": true,
+              "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-recovery-enable-d0d46d0e-1a25-4a52-b086-060c5c630583": {
+            "committedAt": "2026-09-24T01:48:19.451Z",
+            "committedGeneration": 22,
+            "expectedGeneration": 21,
+            "operationKey": "t25-A-recovery-enable-d0d46d0e-1a25-4a52-b086-060c5c630583",
+            "requestFingerprint": "1612562ef46312dfb43760a9e64b6f63234741f32cfb9493084d742dadc21b24",
+            "result": {
+              "activated": true,
+              "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+              "status": "succeeded"
+            }
+          },
+          "t25-A-recovery-install-793121e6-bc0a-40e7-b5de-7c357f529e97": {
+            "committedAt": "2026-09-24T01:48:11.019Z",
+            "committedGeneration": 20,
+            "expectedGeneration": 19,
+            "operationKey": "t25-A-recovery-install-793121e6-bc0a-40e7-b5de-7c357f529e97",
+            "requestFingerprint": "086322dbf24d784e78981f3b331853a58615b34bea27d1a4543be6030503cdd3",
+            "result": {
+              "activated": false,
+              "releaseId": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+              "status": "succeeded"
+            }
+          },
+          "g42-A-restore-legacy": {
+            "operationKey": "g42-A-restore-legacy",
+            "requestFingerprint": "93f4d62ccbc456cc8786c762ca9501e221a31e4b53067699149a92085c4e3728",
+            "expectedGeneration": 36,
+            "committedGeneration": 37,
+            "committedAt": "2026-09-24T03:13:47.073Z",
+            "result": {
+              "packId": "phase2-legacy-demo",
+              "restoredPath": "/tmp/p2-20260923/dsh-a/vendor-packs/phase2-legacy-demo",
+              "retainedBackup": true,
+              "status": "succeeded"
+            }
+          }
+        },
+        "schemaVersion": 1
+      },
+      "operation": {
+        "operationKey": "g42-A-restore-legacy",
+        "requestFingerprint": "93f4d62ccbc456cc8786c762ca9501e221a31e4b53067699149a92085c4e3728",
+        "expectedGeneration": 36,
+        "committedGeneration": 37,
+        "committedAt": "2026-09-24T03:13:47.073Z",
+        "result": {
+          "packId": "phase2-legacy-demo",
+          "restoredPath": "/tmp/p2-20260923/dsh-a/vendor-packs/phase2-legacy-demo",
+          "retainedBackup": true,
+          "status": "succeeded"
+        }
+      },
+      "replayed": false
+    },
+    {
+      "at": "2026-09-24T03:13:47.494Z",
+      "stage": "aftermath",
+      "message": "final",
+      "active": {
+        "macro-capital-analyst": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+        "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+        "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583"
+      },
+      "legacyActive": null,
+      "suppressions": []
+    }
+  ],
+  "events": [
+    {
+      "actor": "A",
+      "method": "GET",
+      "path": "/connection",
+      "status": 200
+    },
+    {
+      "actor": "A",
+      "method": "GET",
+      "path": "/connection",
+      "status": 200
+    }
+  ]
+}

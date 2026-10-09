@@ -1,0 +1,77 @@
+{
+  "node": "G4.5",
+  "passed": true,
+  "summary": {
+    "storage": {
+      "s3AdapterImplemented": false,
+      "s3ClientPresent": false,
+      "exercisedAdapter": "LocalArtifactStore (local content-addressed store)",
+      "honestGap": "adapter space: storage.ts implements only LocalArtifactStore (\"this is not S3\" per its own doc comment); no S3 endpoint exists in the isolated env, so no S3-compatible adapter is exercised and none is faked"
+    },
+    "limits": {
+      "values": {
+        "timeoutMs": "120000",
+        "maxFiles": "5000",
+        "maxFileBytes": "8 * 1024 * 1024",
+        "maxTotalBytes": "64 * 1024 * 1024",
+        "maxArchiveBytes": "80 * 1024 * 1024",
+        "maxGitBytes": "128 * 1024 * 1024",
+        "maxObjects": "20000",
+        "maxLogBytes": "64 * 1024",
+        "maxTreeBytes": "4 * 1024 * 1024",
+        "maxPathDepth": "32",
+        "maxPreviewBytes": "512 * 1024"
+      },
+      "workerWiring": {
+        "workerLimitsOverride": "none (main.ts passes no limits; defaults apply)",
+        "source": "apps/pack-center/src/main.ts"
+      }
+    },
+    "jobs": {
+      "missingRef": {
+        "submissionId": "0a84af0e-aeb2-4840-b6f8-49965873af56",
+        "codes": [
+          "GIT_FETCH_FAILED"
+        ],
+        "status": "validation_failed"
+      },
+      "tooBig": {
+        "submissionId": "ea580321-408e-4394-8f92-246431c56c1c",
+        "codes": [
+          "GIT_CONTENT_LIMIT"
+        ],
+        "status": "validation_failed"
+      },
+      "tooDeep": {
+        "submissionId": "73230681-d013-4bab-82ce-88d40e4ac463",
+        "codes": [
+          "GIT_PATH_REJECTED"
+        ],
+        "status": "validation_failed"
+      },
+      "valid": {
+        "submissionId": "616d555b-8cca-4e98-a2ee-cff7dfc10d8f",
+        "status": "validated"
+      }
+    },
+    "reclaim": {
+      "sizes": {
+        "scratchRootKiB": "0 KiB",
+        "artifactsKiB": "396 KiB"
+      },
+      "leftoverSnapshotStaging": []
+    },
+    "workerAlive": {
+      "after": {
+        "validate": [
+          711573
+        ],
+        "publish": [
+          711580
+        ]
+      },
+      "recovered": true,
+      "evidence": "valid small submission validated after the two limit rejections by the same validate-worker"
+    }
+  }
+}

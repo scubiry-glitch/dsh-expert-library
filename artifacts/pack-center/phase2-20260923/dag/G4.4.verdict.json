@@ -1,0 +1,104 @@
+{
+  "node": "G4.4",
+  "passed": true,
+  "reasons": [
+    {
+      "at": "2026-09-24T03:31:20.171Z",
+      "stage": "preflight-negative",
+      "message": "preflight-negative-passed",
+      "howItSurfaces": "dsh exits non-zero during profile bundle resolution before any listener is bound; port stays closed; A/B untouched (block before stopping the old process)",
+      "exitCode": 1,
+      "signal": null,
+      "stderrTail": "file:///usr/lib/node_modules/@deepseek-ai/dsh/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js:831\n\tthrow new Error(`${binName}: cannot resolve profile bundle ${JSON.stringify(packageName)} from the dsh installation or ${profileDir}; run 'dsh plugin --profile ${basename(profileDir)} install' if its dependency is not installed`);\n\t      ^\n\nError: dsh: cannot resolve profile bundle \"@zhijian/dsh-",
+      "preflightInventory": {
+        "items": [
+          {
+            "path": "src/host/pack-runtime.ts",
+            "role": "preflightManagedActivation — plugin-owned runtime preflight before a managed activation is committed",
+            "exists": true
+          },
+          {
+            "path": "src/host/pack-center-host.ts",
+            "role": "plugin lifecycle preflight: origin/storage changes force a restart and never swap an active local source for an empty directory",
+            "exists": true
+          },
+          {
+            "path": "src/host/pack-store.ts",
+            "role": "activation preflight of the builtin/workspace merge before switching (no network)",
+            "exists": true
+          },
+          {
+            "path": "scripts/phase2/run-ab-instances.mjs",
+            "role": "host-runner start preflight pattern: local TCP bind check + plugin symlink containment before child launch",
+            "exists": true
+          }
+        ],
+        "deployCheckScript": null,
+        "note": "no standalone plugin deploy-check script in scripts/; start-up bundle resolution is the deploy preflight exercised here"
+      }
+    },
+    {
+      "at": "2026-09-24T03:31:47.691Z",
+      "stage": "preflight-positive",
+      "message": "preflight-positive-passed",
+      "spawnPid": 718901,
+      "pids": [
+        718902
+      ],
+      "port": 18283,
+      "DSH_HOME": "/tmp/p2-20260923/dsh-c",
+      "workspace": "/tmp/p2-20260923/workspace-c",
+      "packCenterDir": "/tmp/p2-20260923/pack-center-c",
+      "vendorPacks": "/tmp/p2-20260923/dsh-c/vendor-packs",
+      "profile": "/tmp/p2-20260923/dsh-c/profiles/p2-c",
+      "pluginLink": "/tmp/p2-20260923/dsh-c/profiles/p2-c/node_modules/@zhijian/dsh-expert-library",
+      "resolvedPluginLoadPath": "/root/zhijian/dsh-pack-center-dev.ZGtty5",
+      "disjoint": {
+        "fromA": {
+          "home": "/tmp/p2-20260923/dsh-a",
+          "port": 18281
+        },
+        "fromB": {
+          "home": "/tmp/p2-20260923/dsh-b",
+          "port": 18282
+        }
+      }
+    },
+    {
+      "at": "2026-09-24T03:31:48.572Z",
+      "stage": "center-registration",
+      "message": "deployment-ready",
+      "deploymentId": "b2d40c7b-1c23-4a14-a72c-4b25630887e6",
+      "reused": false
+    },
+    {
+      "at": "2026-09-24T03:31:48.901Z",
+      "stage": "center-registration",
+      "message": "bind-result",
+      "ok": true,
+      "status": 200
+    },
+    {
+      "at": "2026-09-24T03:31:49.134Z",
+      "stage": "center-registration",
+      "message": "c-registered",
+      "connection": {
+        "revision": 1,
+        "centerId": "phase2-center-20260923"
+      },
+      "catalogItems": 2,
+      "sample": [
+        {
+          "packId": "macro-capital-analyst",
+          "version": "2.2.0",
+          "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+        },
+        {
+          "packId": "macro-capital-analyst",
+          "version": "2.3.0",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b"
+        }
+      ]
+    }
+  ]
+}

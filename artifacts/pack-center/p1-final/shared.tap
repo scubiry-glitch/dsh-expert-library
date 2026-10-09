@@ -1,0 +1,528 @@
+TAP version 13
+# (node:458528) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: real demo-v1 roundtrip matches pack-contract hashes
+ok 1 - real demo-v1 roundtrip matches pack-contract hashes
+  ---
+  duration_ms: 195.175119
+  type: 'test'
+  ...
+# Subtest: real demo-v2 roundtrip matches pack-contract hashes
+ok 2 - real demo-v2 roundtrip matches pack-contract hashes
+  ---
+  duration_ms: 123.147934
+  type: 'test'
+  ...
+# Subtest: deterministic bytes ignore source mode, time, creation order; UTF-8 and empty directories survive
+ok 3 - deterministic bytes ignore source mode, time, creation order; UTF-8 and empty directories survive
+  ---
+  duration_ms: 295.617167
+  type: 'test'
+  ...
+# Subtest: empty tree has valid two-block tar and canonical empty hash
+ok 4 - empty tree has valid two-block tar and canonical empty hash
+  ---
+  duration_ms: 66.492943
+  type: 'test'
+  ...
+# Subtest: ustar prefix supports long paths without truncating
+ok 5 - ustar prefix supports long paths without truncating
+  ---
+  duration_ms: 85.920957
+  type: 'test'
+  ...
+# Subtest: rejects paths that cannot fit ustar rather than truncate
+ok 6 - rejects paths that cannot fit ustar rather than truncate
+  ---
+  duration_ms: 43.173929
+  type: 'test'
+  ...
+# Subtest: no overwrite or implicit parent creation; output cannot be inside input
+ok 7 - no overwrite or implicit parent creation; output cannot be inside input
+  ---
+  duration_ms: 36.497561
+  type: 'test'
+  ...
+# Subtest: concurrent extraction to one destination has a single winner
+ok 8 - concurrent extraction to one destination has a single winner
+  ---
+  duration_ms: 57.152881
+  type: 'test'
+  ...
+# Subtest: raw-byte tamper, signed size/tree/count mismatch never publish a partial tree
+ok 9 - raw-byte tamper, signed size/tree/count mismatch never publish a partial tree
+  ---
+  duration_ms: 63.132918
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "../escape"
+ok 10 - reject unsafe tar path "../escape"
+  ---
+  duration_ms: 22.008114
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "/absolute"
+ok 11 - reject unsafe tar path "/absolute"
+  ---
+  duration_ms: 18.020943
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "a/../../escape"
+ok 12 - reject unsafe tar path "a/../../escape"
+  ---
+  duration_ms: 16.396439
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "a\\\\b"
+ok 13 - reject unsafe tar path "a\\\\b"
+  ---
+  duration_ms: 48.438248
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "C:escape"
+ok 14 - reject unsafe tar path "C:escape"
+  ---
+  duration_ms: 5.135454
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path ".git/config"
+ok 15 - reject unsafe tar path ".git/config"
+  ---
+  duration_ms: 5.872982
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "a/.GIT/config"
+ok 16 - reject unsafe tar path "a/.GIT/config"
+  ---
+  duration_ms: 5.239873
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "a//b"
+ok 17 - reject unsafe tar path "a//b"
+  ---
+  duration_ms: 6.54114
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "./relative"
+ok 18 - reject unsafe tar path "./relative"
+  ---
+  duration_ms: 4.711501
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "a/./b"
+ok 19 - reject unsafe tar path "a/./b"
+  ---
+  duration_ms: 4.311679
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "café.txt"
+ok 20 - reject unsafe tar path "café.txt"
+  ---
+  duration_ms: 4.143696
+  type: 'test'
+  ...
+# Subtest: reject unsafe tar path "a\\nb"
+ok 21 - reject unsafe tar path "a\\nb"
+  ---
+  duration_ms: 4.668276
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type 1
+ok 22 - reject tar link/special/extension type 1
+  ---
+  duration_ms: 8.134238
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type 2
+ok 23 - reject tar link/special/extension type 2
+  ---
+  duration_ms: 4.899932
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type 3
+ok 24 - reject tar link/special/extension type 3
+  ---
+  duration_ms: 11.426998
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type 4
+ok 25 - reject tar link/special/extension type 4
+  ---
+  duration_ms: 5.658419
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type 6
+ok 26 - reject tar link/special/extension type 6
+  ---
+  duration_ms: 6.918031
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type 7
+ok 27 - reject tar link/special/extension type 7
+  ---
+  duration_ms: 6.177961
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type x
+ok 28 - reject tar link/special/extension type x
+  ---
+  duration_ms: 4.528995
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type g
+ok 29 - reject tar link/special/extension type g
+  ---
+  duration_ms: 5.700353
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type L
+ok 30 - reject tar link/special/extension type L
+  ---
+  duration_ms: 5.489804
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type K
+ok 31 - reject tar link/special/extension type K
+  ---
+  duration_ms: 4.588674
+  type: 'test'
+  ...
+# Subtest: reject tar link/special/extension type S
+ok 32 - reject tar link/special/extension type S
+  ---
+  duration_ms: 5.437163
+  type: 'test'
+  ...
+# Subtest: rejects duplicate file names
+ok 33 - rejects duplicate file names
+  ---
+  duration_ms: 17.211269
+  type: 'test'
+  ...
+# Subtest: rejects duplicate directory names
+ok 34 - rejects duplicate directory names
+  ---
+  duration_ms: 38.891621
+  type: 'test'
+  ...
+# Subtest: rejects file ancestor followed by descendant
+ok 35 - rejects file ancestor followed by descendant
+  ---
+  duration_ms: 64.698016
+  type: 'test'
+  ...
+# Subtest: rejects descendant followed by file ancestor
+ok 36 - rejects descendant followed by file ancestor
+  ---
+  duration_ms: 70.609506
+  type: 'test'
+  ...
+# Subtest: rejects file/directory collision
+ok 37 - rejects file/directory collision
+  ---
+  duration_ms: 43.970068
+  type: 'test'
+  ...
+# Subtest: accepts explicit directory after implicit parent without treating it as a duplicate
+ok 38 - accepts explicit directory after implicit parent without treating it as a duplicate
+  ---
+  duration_ms: 43.61374
+  type: 'test'
+  ...
+# Subtest: rejects invalid UTF-8 header name and hidden bytes after NUL
+ok 39 - rejects invalid UTF-8 header name and hidden bytes after NUL
+  ---
+  duration_ms: 98.693422
+  type: 'test'
+  ...
+# Subtest: rejects header checksum, malformed octal, oversized values and non-ustar format
+ok 40 - rejects header checksum, malformed octal, oversized values and non-ustar format
+  ---
+  duration_ms: 121.565942
+  type: 'test'
+  ...
+# Subtest: rejects directory data and forbidden link name even on ordinary file
+ok 41 - rejects directory data and forbidden link name even on ordinary file
+  ---
+  duration_ms: 55.34451
+  type: 'test'
+  ...
+# Subtest: rejects truncation, nonzero file padding, missing second end block and concatenated tar
+ok 42 - rejects truncation, nonzero file padding, missing second end block and concatenated tar
+  ---
+  duration_ms: 143.750402
+  type: 'test'
+  ...
+# Subtest: packing refuses symlink
+ok 43 - packing refuses symlink
+  ---
+  duration_ms: 28.672669
+  type: 'test'
+  ...
+# Subtest: packing refuses directory symlink
+ok 44 - packing refuses directory symlink
+  ---
+  duration_ms: 21.044166
+  type: 'test'
+  ...
+# Subtest: packing refuses hardlink
+ok 45 - packing refuses hardlink
+  ---
+  duration_ms: 22.807125
+  type: 'test'
+  ...
+# Subtest: packing refuses Git metadata
+ok 46 - packing refuses Git metadata
+  ---
+  duration_ms: 11.847554
+  type: 'test'
+  ...
+# Subtest: packing refuses invalid filename UTF-8
+ok 47 - packing refuses invalid filename UTF-8
+  ---
+  duration_ms: 12.824364
+  type: 'test'
+  ...
+# Subtest: archive symlinks, input root links and output parent links are refused
+ok 48 - archive symlinks, input root links and output parent links are refused
+  ---
+  duration_ms: 65.393962
+  type: 'test'
+  ...
+# Subtest: limits are enforced for both writer and reader without residual output
+ok 49 - limits are enforced for both writer and reader without residual output
+  ---
+  duration_ms: 170.19019
+  type: 'test'
+  ...
+# Subtest: script files are passive content and never executed or granted executable mode
+ok 50 - script files are passive content and never executed or granted executable mode
+  ---
+  duration_ms: 91.590985
+  type: 'test'
+  ...
+# (node:458570) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: canonical JSON fixes UTF-8 key order, nested keys, ordered arrays and exact UTF-8 bytes
+ok 51 - canonical JSON fixes UTF-8 key order, nested keys, ordered arrays and exact UTF-8 bytes
+  ---
+  duration_ms: 13.41783
+  type: 'test'
+  ...
+# Subtest: canonical JSON rejects ambiguous or non-JSON values, including array symbols
+ok 52 - canonical JSON rejects ambiguous or non-JSON values, including array symbols
+  ---
+  duration_ms: 3.815748
+  type: 'test'
+  ...
+# Subtest: SHA-256 and normalized tree digest match fixed independent vectors and ignore entry input order
+ok 53 - SHA-256 and normalized tree digest match fixed independent vectors and ignore entry input order
+  ---
+  duration_ms: 9.123125
+  type: 'test'
+  ...
+# Subtest: tree ordering is UTF-8 byte order and covers generated files without boundary collisions
+ok 54 - tree ordering is UTF-8 byte order and covers generated files without boundary collisions
+  ---
+  duration_ms: 3.675419
+  type: 'test'
+  ...
+# Subtest: unsafe, non-normalized and colliding paths are rejected before content hashing
+ok 55 - unsafe, non-normalized and colliding paths are rejected before content hashing
+  ---
+  duration_ms: 4.569123
+  type: 'test'
+  ...
+# Subtest: filesystem hashing matches transport entries, keeps generated content and ignores mode, time and empty dirs
+ok 56 - filesystem hashing matches transport entries, keeps generated content and ignores mode, time and empty dirs
+  ---
+  duration_ms: 72.505288
+  type: 'test'
+  ...
+# Subtest: filesystem hashing rejects links, git metadata, linked roots and non-directory roots
+ok 57 - filesystem hashing rejects links, git metadata, linked roots and non-directory roots
+  ---
+  duration_ms: 35.434955
+  type: 'test'
+  ...
+# Subtest: Ed25519 signatures cover canonical manifest bytes and verify with pinned public keys
+ok 58 - Ed25519 signatures cover canonical manifest bytes and verify with pinned public keys
+  ---
+  duration_ms: 20.8497
+  type: 'test'
+  ...
+# Subtest: all identity, compatibility, dependency and digest changes invalidate a signed release
+ok 59 - all identity, compatibility, dependency and digest changes invalidate a signed release
+  ---
+  duration_ms: 22.379474
+  type: 'test'
+  ...
+# Subtest: verification rejects unknown keys, wrong keys, extra envelope data and malformed signature encodings
+ok 60 - verification rejects unknown keys, wrong keys, extra envelope data and malformed signature encodings
+  ---
+  duration_ms: 5.633587
+  type: 'test'
+  ...
+# Subtest: actual KeyObject algorithms are checked: a 64-byte RSA512 signature cannot impersonate Ed25519
+ok 61 - actual KeyObject algorithms are checked: a 64-byte RSA512 signature cannot impersonate Ed25519
+  ---
+  duration_ms: 20.56805
+  type: 'test'
+  ...
+# Subtest: unsupported algorithms and protocols are rejected before signing or verification
+ok 62 - unsupported algorithms and protocols are rejected before signing or verification
+  ---
+  duration_ms: 2.576403
+  type: 'test'
+  ...
+# (node:458627) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: release schemas retain exact identity, fixed dependencies and complete digest metadata
+ok 63 - release schemas retain exact identity, fixed dependencies and complete digest metadata
+  ---
+  duration_ms: 9.071313
+  type: 'test'
+  ...
+# Subtest: every release field is required and unknown fields are rejected at every nesting boundary
+ok 64 - every release field is required and unknown fields are rejected at every nesting boundary
+  ---
+  duration_ms: 6.579498
+  type: 'test'
+  ...
+# Subtest: schema discriminators distinguish unsupported versions from malformed values
+ok 65 - schema discriminators distinguish unsupported versions from malformed values
+  ---
+  duration_ms: 9.894991
+  type: 'test'
+  ...
+# Subtest: IDs, digests, commits, versions and safe counters fail closed without coercion
+ok 66 - IDs, digests, commits, versions and safe counters fail closed without coercion
+  ---
+  duration_ms: 16.317777
+  type: 'test'
+  ...
+# Subtest: dependency locks reject self references, duplicate packs and empty version intervals
+ok 67 - dependency locks reject self references, duplicate packs and empty version intervals
+  ---
+  duration_ms: 5.226716
+  type: 'test'
+  ...
+# Subtest: submission validation requires a fixed snapshot from validated through terminal review states
+ok 68 - submission validation requires a fixed snapshot from validated through terminal review states
+  ---
+  duration_ms: 6.968532
+  type: 'test'
+  ...
+# Subtest: distribution scope is explicit and selected recipients are nonempty and unique
+ok 69 - distribution scope is explicit and selected recipients are nonempty and unique
+  ---
+  duration_ms: 0.475252
+  type: 'test'
+  ...
+# Subtest: human and machine principal contracts prevent mixing administrator roles and download scopes
+ok 70 - human and machine principal contracts prevent mixing administrator roles and download scopes
+  ---
+  duration_ms: 1.151385
+  type: 'test'
+  ...
+# Subtest: validation reports cannot claim success alongside errors and script paths are content declarations
+ok 71 - validation reports cannot claim success alongside errors and script paths are content declarations
+  ---
+  duration_ms: 3.113714
+  type: 'test'
+  ...
+# Subtest: operations retain fixed targets, result generations and stable failure codes
+ok 72 - operations retain fixed targets, result generations and stable failure codes
+  ---
+  duration_ms: 5.031046
+  type: 'test'
+  ...
+# Subtest: contracts reject sparse arrays, non-JSON keys and custom object prototypes
+ok 73 - contracts reject sparse arrays, non-JSON keys and custom object prototypes
+  ---
+  duration_ms: 2.364333
+  type: 'test'
+  ...
+# Subtest: assertContract preserves structured errors and rejects unsupported contract kinds
+ok 74 - assertContract preserves structured errors and rejects unsupported contract kinds
+  ---
+  duration_ms: 1.907158
+  type: 'test'
+  ...
+# Subtest: state transitions permit only the audited lifecycle and frozen transition data cannot be expanded
+ok 75 - state transitions permit only the audited lifecycle and frozen transition data cannot be expanded
+  ---
+  duration_ms: 5.055326
+  type: 'test'
+  ...
+# (node:458660) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: strict SemVer accepts legal prerelease/build fields and rejects loose or coerced versions
+ok 76 - strict SemVer accepts legal prerelease/build fields and rejects loose or coerced versions
+  ---
+  duration_ms: 21.941125
+  type: 'test'
+  ...
+# Subtest: SemVer precedence handles 1.9/1.10, prereleases, build metadata and unbounded numeric fields exactly
+ok 77 - SemVer precedence handles 1.9/1.10, prereleases, build metadata and unbounded numeric fields exactly
+  ---
+  duration_ms: 1.106613
+  type: 'test'
+  ...
+# Subtest: compatibility checks both plugin interval endpoints and supported pack schemas
+ok 78 - compatibility checks both plugin interval endpoints and supported pack schemas
+  ---
+  duration_ms: 7.175567
+  type: 'test'
+  ...
+# Subtest: update selection preserves current state, reports latest visible separately and finds compatible cached candidate
+ok 79 - update selection preserves current state, reports latest visible separately and finds compatible cached candidate
+  ---
+  duration_ms: 5.498383
+  type: 'test'
+  ...
+# Subtest: unsupported future protocol/schema/algorithm versions remain visible but cannot become install candidates
+ok 80 - unsupported future protocol/schema/algorithm versions remain visible but cannot become install candidates
+  ---
+  duration_ms: 16.725071
+  type: 'test'
+  ...
+# Subtest: selection rejects malformed future metadata rather than treating it as a harmless incompatible version
+ok 81 - selection rejects malformed future metadata rather than treating it as a harmless incompatible version
+  ---
+  duration_ms: 1.362395
+  type: 'test'
+  ...
+# Subtest: same release ID or exact version forbids any canonical manifest change, not just artifact digest changes
+ok 82 - same release ID or exact version forbids any canonical manifest change, not just artifact digest changes
+  ---
+  duration_ms: 38.876021
+  type: 'test'
+  ...
+# Subtest: mixed center, owning organization or pack IDs cannot be compared as an update
+ok 83 - mixed center, owning organization or pack IDs cannot be compared as an update
+  ---
+  duration_ms: 1.363195
+  type: 'test'
+  ...
+# Subtest: empty/prerelease catalogs, lower compatible versions and build metadata never manufacture updates
+ok 84 - empty/prerelease catalogs, lower compatible versions and build metadata never manufacture updates
+  ---
+  duration_ms: 8.328695
+  type: 'test'
+  ...
+# Subtest: equal SemVer precedence has deterministic release ID ordering without using input order
+ok 85 - equal SemVer precedence has deterministic release ID ordering without using input order
+  ---
+  duration_ms: 1.625495
+  type: 'test'
+  ...
+1..85
+# tests 85
+# suites 0
+# pass 85
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4302.051093

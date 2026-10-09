@@ -1,0 +1,19 @@
+{
+ "gate": "W2-GATE",
+ "passed": true,
+ "checks": {
+  "T2.1_verdict_passed": true,
+  "T2.2_verdict_passed": true,
+  "T2.3_verdict_passed": true,
+  "T2.4_verdict_passed": true,
+  "T2.5_verdict_passed": true,
+  "A_active_versions": {
+   "macro-capital-analyst": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+   "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+   "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583"
+  },
+  "B_active_versions": {
+   "macro-capital-analyst": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+  }
+ }
+}

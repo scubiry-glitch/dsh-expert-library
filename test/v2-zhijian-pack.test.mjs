@@ -17,6 +17,9 @@ import {
   REVIEW_CAPABILITY,
   FIELD_DOMAINS,
   TAG_CAPABILITIES,
+  ZHIJIAN_PIPELINE_COMPATIBILITY,
+  ZHIJIAN_PIPELINE_COMPATIBILITY_EVIDENCE,
+  ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES,
 } from '../lib/v2/index.js'
 import { ZHIJIAN_EXPERTS } from '../lib/zhijian/data/experts.generated.js'
 import { ZHIJIAN_EXPERT_IDS, ZHIJIAN_EXPERT_BY_ID } from '../lib/zhijian/registry.js'
@@ -84,6 +87,7 @@ test('capabilities derive only from roster-asserted field/tags, proficiency is t
     REVIEW_CAPABILITY,
     ...Object.values(FIELD_DOMAINS).map(domain => `${domain}.review`),
     ...Object.values(TAG_CAPABILITIES),
+    ...ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES,
   ])
   for (const expert of build().experts) {
     assert.ok(expert.capabilities.length > 0)
@@ -91,9 +95,32 @@ test('capabilities derive only from roster-asserted field/tags, proficiency is t
       assert.ok(allowed.has(claim.capability), `unexpected capability ${claim.capability} on ${expert.id}`)
       assert.equal(claim.proficiency, 1, 'metas assert membership, not level — floor 1 only')
       assert.ok(claim.coverage === 'high' || claim.coverage === 'medium' || claim.coverage === 'low')
-      assert.deepEqual(claim.evidenceRefs, ['zhijian:roster'])
+      const compatibility = ZHIJIAN_PIPELINE_COMPATIBILITY[expert.id]
+      const expectedEvidence = compatibility?.capabilities.includes(claim.capability)
+        ? [ZHIJIAN_PIPELINE_COMPATIBILITY_EVIDENCE]
+        : ['zhijian:roster']
+      assert.deepEqual(claim.evidenceRefs, expectedEvidence)
       assert.equal(claim.legacySource, undefined)
     }
+  }
+})
+
+test('pipeline review compatibility is an explicit narrow overlay, not a roster/profile claim', () => {
+  assert.deepEqual(Object.keys(ZHIJIAN_PIPELINE_COMPATIBILITY).sort(), ['bk-011', 'bk-024', 'bk-025'])
+  for (const [expertId, declaration] of Object.entries(ZHIJIAN_PIPELINE_COMPATIBILITY)) {
+    assert.deepEqual(declaration.capabilities, ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES)
+    assert.equal(declaration.coverage, 'high')
+    assert.deepEqual(declaration.evidenceRefs, [ZHIJIAN_PIPELINE_COMPATIBILITY_EVIDENCE])
+    const expert = build().experts.find(item => item.id === expertId)
+    assert.ok(expert)
+    for (const capability of ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES) {
+      assert.deepEqual(expert.capabilities.find(item => item.capability === capability), {
+        capability, proficiency: 1, coverage: 'high', evidenceRefs: [ZHIJIAN_PIPELINE_COMPATIBILITY_EVIDENCE],
+      })
+    }
+  }
+  for (const expert of build().experts.filter(item => !Object.hasOwn(ZHIJIAN_PIPELINE_COMPATIBILITY, item.id))) {
+    assert.equal(expert.capabilities.some(item => ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES.includes(item.capability)), false)
   }
 })
 

@@ -1,0 +1,23 @@
+You are executing DAG node T2.4: check-updates and version fork (A=v2, B stays v1).
+
+Workspace: /root/zhijian/dsh-pack-center-dev.ZGtty5
+EXECUTION MODEL: your sandbox has NO loopback TCP/docker. WRITE one idempotent host-runner script scripts/phase2/t24-update-fork.mjs (Node 22 ESM) for the orchestrator to run. Read source for exact API shapes. Validate syntax with `node --check`.
+
+Running state:
+- Center https://127.0.0.1:18431 (NODE_EXTRA_CA_CERTS=/tmp/p2-20260923/t22/ca.pem), plain http://127.0.0.1:18430. Admin/developer/reviewer login helpers: copy the working patterns from scripts/phase2/t22-bind.mjs and t23-install-v1.mjs (t23 has a working developer+independent-reviewer publish flow you can reuse: org phase2, submissions API, review-scope, etc).
+- v1 (macro-capital-analyst 2.2.0, release c95d8b85-6a2f-4fbc-9310-3d28c903f834) installed AND active on both A (:18281) and B (:18282), generation 5.
+- Local state files: /tmp/p2-20260923/pack-center-{a,b}/inventory/state.json. Local manage prefix /plugins/dsh-expert-library/manage/center, header X-Pack-Center-UI: 1.
+- IMPORTANT conventions (bugs already fixed in t23 — follow them): local() must prefix paths with /plugins/dsh-expert-library/manage/center unless they start with /plugins/; state.json lives under inventory/; make re-runs idempotent by checking current state before enqueuing operations (same operationKey with a different expectedGeneration returns IDEMPOTENCY_CONFLICT).
+- v2 = 2.3.0 at commit f42bf4c8068294726ab7c780fe23ad121d72f34e; expected digests in artifacts/pack-center/phase1-20260924-final/public-sample-versions.json.
+
+Script stages:
+1. publish-v2: same real submission → validate → independent reviewer approve → publish for 2.3.0; cross-check all three digests against phase1 json. Record releaseId.
+2. check-updates (both A and B): POST /check-updates (metadata only). Assert: response marks update available to 2.3.0; assert local state.json generation UNCHANGED after the check and no new downloads occurred (compare state + downloads count before/after; center-side: compare served download/grant count for v2 stays 0 — read apps/pack-center source for where download counts/audit live, e.g. release metadata or audit events; if an exact counter is unavailable, assert zero new artifact bytes under the center artifact root for v2 and record that method).
+3. A fork: A caches v2 via install operation (download but no activate — kind 'install'), then explicit 'update_enable' operation. Assert A: active version 2.3.0, 2.2.0 still installed (rollback target), generation increments recorded; no duplicate re-download for the cached copy (downloads count for A v2 artifacts increments exactly once across cache+enable — assert via state/duplicate-download evidence; if the center counts grants, record both).
+4. B stays: assert B still active 2.2.0, v2 not installed (or cached? per design B must remain on v1; do NOT install on B). GET /check-updates on B shows the update available but B state unchanged.
+5. center-publish-no-auto-change: record A/B state immediately after publish-v2 and again after all operations; include timestamps proving no automatic switch happened at publish time (B never moved; A moved only after explicit operation).
+6. Runtime evidence: after A's update, GET the plugin's local runtime/installed views on A and B (endpoints under the manage prefix and /plugins/dsh-expert-library/packs) recording active version per point.
+7. Browser capture: reuse scripts/phase2/t22-capture.mjs pattern to capture A's 更新 tab and B's 已安装 tab HTML+PNG (name them T2.4.updates-A.html/png, T2.4.installed-B.html/png). If the capture script requires a session token from the instance log, replicate what t22-capture.mjs does (read it).
+Evidence (dag/, 0600, no secrets): T2.4.publish.json, T2.4.check-updates.json (per instance: current/visible/candidate + generation before/after + download-count method+values), T2.4.fork.json (A operations+generations, B unchanged, runtime versions), T2.4.verdict.json {"node":"T2.4","passed":bool,"reasons":[...]}, raw logs.
+Boundaries: same as before (no DSH core/production/public-repo changes; no git commit/push; only /tmp/p2-20260923, scripts/phase2/, artifacts/pack-center/phase2-20260923/; do not stop A/B or center services).
+Print final: {"node":"T2.4","scriptReady":true}.

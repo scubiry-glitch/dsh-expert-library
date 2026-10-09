@@ -1,0 +1,275 @@
+TAP version 13
+# \# Isolated auth PostgreSQL container: 060cad053c2e2f14fe3ef002b236647e302c71f1e20aa74ca0300352ba78dd59
+# Subtest: OIDC requires HTTPS unless explicitly loopback; no arbitrary HTTP issuer/callback
+ok 1 - OIDC requires HTTPS unless explicitly loopback; no arbitrary HTTP issuer/callback
+  ---
+  duration_ms: 14868.798803
+  type: 'test'
+  ...
+# Subtest: bootstrap is explicit issuer+subject, first uninvited login cannot create user/admin, and invite consumption is atomic
+ok 2 - bootstrap is explicit issuer+subject, first uninvited login cannot create user/admin, and invite consumption is atomic
+  ---
+  duration_ms: 3967.855121
+  type: 'test'
+  ...
+# Subtest: login is browser-bound, one-shot and encrypted; invalid cookie cannot consume a legitimate flow
+ok 3 - login is browser-bound, one-shot and encrypted; invalid cookie cannot consume a legitimate flow
+  ---
+  duration_ms: 3420.720842
+  type: 'test'
+  ...
+# Subtest: OIDC checks issuer, audience, nonce, expiry, signature and PKCE with real token requests
+ok 4 - OIDC checks issuer, audience, nonce, expiry, signature and PKCE with real token requests
+  ---
+  duration_ms: 3028.979102
+  type: 'test'
+  ...
+# Subtest: callback origin/path, login expiry and encrypted-envelope tampering are rejected without new sessions
+ok 5 - callback origin/path, login expiry and encrypted-envelope tampering are rejected without new sessions
+  ---
+  duration_ms: 2380.520797
+  type: 'test'
+  ...
+# Subtest: sessions and CSRF are hashed, revoked/expired accounts rejected, no cleartext audit/idempotency
+ok 6 - sessions and CSRF are hashed, revoked/expired accounts rejected, no cleartext audit/idempotency
+  ---
+  duration_ms: 1987.235583
+  type: 'test'
+  ...
+# Subtest: organization roles are live, emails do not identify accounts, review needs assigned scope and prohibits self-review
+ok 7 - organization roles are live, emails do not identify accounts, review needs assigned scope and prohibits self-review
+  ---
+  duration_ms: 3554.477274
+  type: 'test'
+  ...
+# Subtest: invitation revocation/expiry and disabled organization take effect before callback membership admission
+ok 8 - invitation revocation/expiry and disabled organization take effect before callback membership admission
+  ---
+  duration_ms: 3063.944742
+  type: 'test'
+  ...
+# Subtest: transactional permission locks prevent revoke racing a business commit; next request denies immediately
+ok 9 - transactional permission locks prevent revoke racing a business commit; next request denies immediately
+  ---
+  duration_ms: 2219.899708
+  type: 'test'
+  ...
+# Subtest: member/invitation lists respect tenant roles and redact secrets; organization disable invalidates access
+ok 10 - member/invitation lists respect tenant roles and redact secrets; organization disable invalidates access
+  ---
+  duration_ms: 1966.776932
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: 060cad053c2e2f14fe3ef002b236647e302c71f1e20aa74ca0300352ba78dd59
+# \# Isolated deployments PostgreSQL container: a7439acbd8fa63129b99c2f1cfdc25959a6488ff9c9491b0aef58b9c90be6b23
+# Subtest: creation uses current administrator permission; concurrent idempotency creates exactly one deployment
+ok 11 - creation uses current administrator permission; concurrent idempotency creates exactly one deployment
+  ---
+  duration_ms: 10383.893217
+  type: 'test'
+  ...
+# Subtest: cross-tenant administrators, developers and machine principals cannot manage deployments
+ok 12 - cross-tenant administrators, developers and machine principals cannot manage deployments
+  ---
+  duration_ms: 1754.555294
+  type: 'test'
+  ...
+# Subtest: unauthorized deployment management cannot distinguish existing foreign IDs from unknown IDs
+ok 13 - unauthorized deployment management cannot distinguish existing foreign IDs from unknown IDs
+  ---
+  duration_ms: 1586.974357
+  type: 'test'
+  ...
+# Subtest: binding exchange is atomically one-shot; secrets are hashed, never audited, listed or cached for replay
+ok 14 - binding exchange is atomically one-shot; secrets are hashed, never audited, listed or cached for replay
+  ---
+  duration_ms: 1685.517624
+  type: 'test'
+  ...
+# Subtest: issuing a replacement code cancels unconsumed predecessors; expiry and explicit cancellation fail closed
+ok 15 - issuing a replacement code cancels unconsumed predecessors; expiry and explicit cancellation fail closed
+  ---
+  duration_ms: 1572.375729
+  type: 'test'
+  ...
+# Subtest: machine capabilities are service-issued, immutable, current and scoped only to catalog/download
+ok 16 - machine capabilities are service-issued, immutable, current and scoped only to catalog/download
+  ---
+  duration_ms: 1780.543587
+  type: 'test'
+  ...
+# Subtest: credential revocation is idempotent, immediate for old principals and does not revoke unrelated points
+ok 17 - credential revocation is idempotent, immediate for old principals and does not revoke unrelated points
+  ---
+  duration_ms: 1318.260335
+  type: 'test'
+  ...
+# Subtest: credential expiry and organization disable reject both token authentication and already-issued principals
+ok 18 - credential expiry and organization disable reject both token authentication and already-issued principals
+  ---
+  duration_ms: 1689.212387
+  type: 'test'
+  ...
+# Subtest: deployment disable revokes all credentials/codes; optimistic re-enable never resurrects old secrets
+ok 19 - deployment disable revokes all credentials/codes; optimistic re-enable never resurrects old secrets
+  ---
+  duration_ms: 1559.592283
+  type: 'test'
+  ...
+# Subtest: concurrent status updates produce one new state version, not last-writer-wins
+ok 20 - concurrent status updates produce one new state version, not last-writer-wins
+  ---
+  duration_ms: 1225.804544
+  type: 'test'
+  ...
+# Subtest: live administrator/session revocation blocks previously authorized management and idempotent replay
+ok 21 - live administrator/session revocation blocks previously authorized management and idempotent replay
+  ---
+  duration_ms: 1263.527084
+  type: 'test'
+  ...
+# Subtest: authorized transaction fences revocation until commit; following request immediately denies
+ok 22 - authorized transaction fences revocation until commit; following request immediately denies
+  ---
+  duration_ms: 1521.069428
+  type: 'test'
+  ...
+# Subtest: concurrent binding exchange and deployment disable cannot leave a usable credential
+ok 23 - concurrent binding exchange and deployment disable cannot leave a usable credential
+  ---
+  duration_ms: 1406.368798
+  type: 'test'
+  ...
+# Subtest: deployment identity is immutable in PostgreSQL and version increments cannot be skipped
+ok 24 - deployment identity is immutable in PostgreSQL and version increments cannot be skipped
+  ---
+  duration_ms: 1329.220352
+  type: 'test'
+  ...
+# Subtest: list pagination is bounded, tenant-filtered and metadata-only
+ok 25 - list pagination is bounded, tenant-filtered and metadata-only
+  ---
+  duration_ms: 1161.913336
+  type: 'test'
+  ...
+# Subtest: invalid identifiers, bounds, scope-injection and malformed secrets are rejected before any credential mint
+ok 26 - invalid identifiers, bounds, scope-injection and malformed secrets are rejected before any credential mint
+  ---
+  duration_ms: 1210.056462
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: a7439acbd8fa63129b99c2f1cfdc25959a6488ff9c9491b0aef58b9c90be6b23
+# \# Isolated governance PostgreSQL container: bf0d24726c9896b4bcd56dddf006b52903ab788e88660adf577754f91f27c28d
+# Subtest: organization management lists every release state with stable pagination, independently of download scope
+ok 27 - organization management lists every release state with stable pagination, independently of download scope
+  ---
+  duration_ms: 8467.923497
+  type: 'test'
+  ...
+# Subtest: organization release management checks live human privileges even for empty pages and rejects unsafe pagination
+ok 28 - organization release management checks live human privileges even for empty pages and rejects unsafe pagination
+  ---
+  duration_ms: 2226.064629
+  type: 'test'
+  ...
+# Subtest: distribution requests do not publish scopes; independent approval changes only scope metadata
+ok 29 - distribution requests do not publish scopes; independent approval changes only scope metadata
+  ---
+  duration_ms: 2080.17851
+  type: 'test'
+  ...
+# Subtest: org-admin request, assigned independent reviewer, live authorization and human-only enforcement
+ok 30 - org-admin request, assigned independent reviewer, live authorization and human-only enforcement
+  ---
+  duration_ms: 2262.369063
+  type: 'test'
+  ...
+# Subtest: idempotent retries return committed results only after current authorization; conflicting payload fails
+ok 31 - idempotent retries return committed results only after current authorization; conflicting payload fails
+  ---
+  duration_ms: 1759.822702
+  type: 'test'
+  ...
+# Subtest: concurrent duplicate requests and decisions commit once; stale competing approvals do not broaden scope
+ok 32 - concurrent duplicate requests and decisions commit once; stale competing approvals do not broaden scope
+  ---
+  duration_ms: 2466.79901
+  type: 'test'
+  ...
+# Subtest: concurrent same-request decisions produce one immutable terminal review
+ok 33 - concurrent same-request decisions produce one immutable terminal review
+  ---
+  duration_ms: 1769.705077
+  type: 'test'
+  ...
+# Subtest: operation-key lock precedes release rows, so reused keys cannot deadlock fixed dependency traversal
+ok 34 - operation-key lock precedes release rows, so reused keys cannot deadlock fixed dependency traversal
+  ---
+  duration_ms: 2304.988861
+  type: 'test'
+  ...
+# Subtest: rejected requests preserve scope and cannot be edited or subsequently approved
+ok 35 - rejected requests preserve scope and cannot be edited or subsequently approved
+  ---
+  duration_ms: 1825.239649
+  type: 'test'
+  ...
+# Subtest: selected recipient existence and active status checked both on request and approval
+ok 36 - selected recipient existence and active status checked both on request and approval
+  ---
+  duration_ms: 1707.70765
+  type: 'test'
+  ...
+# Subtest: fixed direct and transitive dependency scopes prevent broadening beyond authorized recipients
+ok 37 - fixed direct and transitive dependency scopes prevent broadening beyond authorized recipients
+  ---
+  duration_ms: 2302.247567
+  type: 'test'
+  ...
+# Subtest: approval rechecks the current locked dependency graph, not request-time scopes or floating versions
+ok 38 - approval rechecks the current locked dependency graph, not request-time scopes or floating versions
+  ---
+  duration_ms: 1829.476103
+  type: 'test'
+  ...
+# Subtest: yanked fixed dependency prevents a previously valid scope approval
+ok 39 - yanked fixed dependency prevents a previously valid scope approval
+  ---
+  duration_ms: 1829.953999
+  type: 'test'
+  ...
+# Subtest: yank is owner-admin/platform-admin only, versioned, irreversible and retains fixed signed content
+ok 40 - yank is owner-admin/platform-admin only, versioned, irreversible and retains fixed signed content
+  ---
+  duration_ms: 2568.747833
+  type: 'test'
+  ...
+# Subtest: yank blocks new scope changes/approvals but permits explicit rejection of an obsolete request
+ok 41 - yank blocks new scope changes/approvals but permits explicit rejection of an obsolete request
+  ---
+  duration_ms: 1683.341207
+  type: 'test'
+  ...
+# Subtest: management reads and review queue expose no credentials and enforce current org/scope isolation
+ok 42 - management reads and review queue expose no credentials and enforce current org/scope isolation
+  ---
+  duration_ms: 2482.410521
+  type: 'test'
+  ...
+# Subtest: inputs are strict and detached before awaits; invalid proposals leave no state
+ok 43 - inputs are strict and detached before awaits; invalid proposals leave no state
+  ---
+  duration_ms: 1869.00577
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: bf0d24726c9896b4bcd56dddf006b52903ab788e88660adf577754f91f27c28d
+1..43
+# tests 43
+# suites 0
+# pass 43
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 122114.851635
+exit=0

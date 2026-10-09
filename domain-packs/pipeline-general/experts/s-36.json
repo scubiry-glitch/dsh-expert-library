@@ -43,6 +43,22 @@
       "evidenceRefs": [
         "zhijian:roster"
       ]
+    },
+    {
+      "capability": "pipeline-general.review",
+      "proficiency": 1,
+      "coverage": "high",
+      "evidenceRefs": [
+        "zhijian:roster"
+      ]
+    },
+    {
+      "capability": "pipeline.general.review",
+      "proficiency": 1,
+      "coverage": "high",
+      "evidenceRefs": [
+        "zhijian:roster"
+      ]
     }
   ],
   "persona": {

@@ -1,0 +1,20 @@
+TAP version 13
+# \# Isolated browser PostgreSQL container: 698d5ec7f001576ae93aed0ce7983d32239695a41d9463f197c924b43990c051
+# \# Removed owned test container and anonymous volume: 698d5ec7f001576ae93aed0ce7983d32239695a41d9463f197c924b43990c051
+# Subtest: Chromium completes invited author → immutable Git review revision → independent publication and administration
+ok 1 - Chromium completes invited author → immutable Git review revision → independent publication and administration
+  ---
+  duration_ms: 61677.667917
+  type: 'test'
+  ...
+# {"browser":"140.0.7339.16","realOidc":true,"realPostgreSql":true,"realHttpsGit":true,"reviewRevision":true,"independentApproval":true,"signedPublication":true,"twoDeploymentManagement":true,"noBrowserMachineToken":true,"screenshots":"/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/p3-web/"}
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 64080.6676
+exit=0

@@ -1,0 +1,452 @@
+# command: ["node", "--test", "test/center-flow.test.mjs", "test/submissions.test.mjs", "test/validation-worker.test.mjs", "test/publisher.test.mjs", "test/distribution-http.test.mjs", "test/git-snapshot.test.mjs"]
+# cwd: /root/zhijian/dsh-pack-center-dev.ZGtty5/apps/pack-center
+# startedAt: 2026-09-23T16:52:24.844862+00:00
+TAP version 13
+# \# Isolated center-flow PostgreSQL container: e4201a53c6144154117649395497a2c02a8bc4aabacb23398cabe2484b67e49c
+# \# Removed owned test container and anonymous volume: e4201a53c6144154117649395497a2c02a8bc4aabacb23398cabe2484b67e49c
+# Subtest: HTTP submission, independent review and two machine identities distribute only the approved Git snapshot after the branch moves
+ok 1 - HTTP submission, independent review and two machine identities distribute only the approved Git snapshot after the branch moves
+  ---
+  duration_ms: 12697.257044
+  type: 'test'
+  ...
+# {"approvedCommit":"8c788a20befd76d697001c16b2e676d8907e9b43","movedBranchCommit":"a79c3b2a64304760acb913c2e42134d1459438be","artifactSha256":"c4b3e156d108df3a4ce56aed9937523640920bff2649a6ca1746dcb60986cd1f","contentTreeSha256":"46b911cffc02b1e4288d283c33b3ac63db080c1a030dbcced24afc8b9136f596","reportSha256":"211e5a349fd683cc3719398516aca184ff746b829da8520643fc5933b36380af","releaseId":"69ea3f10-e010-4e08-b4c9-b08de90cc6f8","duplicatePublicationUnchanged":true,"authenticatedHttpDownload":true,"twoMachineIdentityIsolation":true,"oldGrantRejectedAfterYank":true}
+# \# Isolated distribution-http PostgreSQL container: be628383c19908eb600f9ef408e9bddaf062a2399ed143e3c5a10a3385f02593
+# Subtest: HTTP admin binds two real host identities, returns credentials only to hosts and refuses browser exchange
+ok 2 - HTTP admin binds two real host identities, returns credentials only to hosts and refuses browser exchange
+  ---
+  duration_ms: 9726.366447
+  type: 'test'
+  ...
+# Subtest: HTTP authorized catalogue and fixed download bytes isolate deployments and reject machine human-mutations
+ok 3 - HTTP authorized catalogue and fixed download bytes isolate deployments and reject machine human-mutations
+  ---
+  duration_ms: 3961.535532
+  type: 'test'
+  ...
+# Subtest: HTTP selected deployment scope hides a release from a same-organization second host
+ok 4 - HTTP selected deployment scope hides a release from a same-organization second host
+  ---
+  duration_ms: 2735.651373
+  type: 'test'
+  ...
+# Subtest: HTTP organization release management is human-only, separately authorized and retains yanked records
+ok 5 - HTTP organization release management is human-only, separately authorized and retains yanked records
+  ---
+  duration_ms: 3014.055952
+  type: 'test'
+  ...
+# Subtest: HTTP scope review and yank invalidate old download grants without changing the signed bytes
+ok 6 - HTTP scope review and yank invalidate old download grants without changing the signed bytes
+  ---
+  duration_ms: 3560.304265
+  type: 'test'
+  ...
+# Subtest: HTTP transport rejects ambiguous auth, browser Bearer, URL grants, range and conditional requests
+ok 7 - HTTP transport rejects ambiguous auth, browser Bearer, URL grants, range and conditional requests
+  ---
+  duration_ms: 2614.801922
+  type: 'test'
+  ...
+# Subtest: HTTP short-lived grants require their original current identity and expiry is enforced
+ok 8 - HTTP short-lived grants require their original current identity and expiry is enforced
+  ---
+  duration_ms: 3464.588605
+  type: 'test'
+  ...
+# Subtest: HTTP fails closed on damaged artifact bytes without leaking private storage paths or grant material
+ok 9 - HTTP fails closed on damaged artifact bytes without leaking private storage paths or grant material
+  ---
+  duration_ms: 2408.102261
+  type: 'test'
+  ...
+# Subtest: HTTP stream read failure destroys transport and source without recording raw exception secrets
+ok 10 - HTTP stream read failure destroys transport and source without recording raw exception secrets
+  ---
+  duration_ms: 2687.852371
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: be628383c19908eb600f9ef408e9bddaf062a2399ed143e3c5a10a3385f02593
+# Subtest: production source gate rejects SSRF variants, credential-bearing URLs and nonliteral refs
+ok 11 - production source gate rejects SSRF variants, credential-bearing URLs and nonliteral refs
+  ---
+  duration_ms: 48.127329
+  type: 'test'
+  ...
+# Subtest: snapshot archive producer cannot exceed publisher/client reader limits, including directory entries
+ok 12 - snapshot archive producer cannot exceed publisher/client reader limits, including directory entries
+  ---
+  duration_ms: 4.984694
+  type: 'test'
+  ...
+# Subtest: all resolved addresses must be public; private DNS answers never spawn a process
+ok 13 - all resolved addresses must be public; private DNS answers never spawn a process
+  ---
+  duration_ms: 908.280537
+  type: 'test'
+  ...
+# Subtest: real pinned TLS Git transfer freezes raw files, commit, deterministic tar and report; moving ref does not rewrite old snapshot
+ok 14 - real pinned TLS Git transfer freezes raw files, commit, deterministic tar and report; moving ref does not rewrite old snapshot
+  ---
+  duration_ms: 3442.822951
+  type: 'test'
+  ...
+# Subtest: Git subprocesses cannot inherit production secrets, proxies, config, hooks or credential helpers
+ok 15 - Git subprocesses cannot inherit production secrets, proxies, config, hooks or credential helpers
+  ---
+  duration_ms: 2308.565829
+  type: 'test'
+  ...
+# Subtest: an HTTPS redirect is rejected without contacting its target
+ok 16 - an HTTPS redirect is rejected without contacting its target
+  ---
+  duration_ms: 860.906367
+  type: 'test'
+  ...
+# Subtest: dumb HTTP fallback is rejected before it can follow object alternates
+ok 17 - dumb HTTP fallback is rejected before it can follow object alternates
+  ---
+  duration_ms: 1826.532726
+  type: 'test'
+  ...
+# Subtest: invalid V2 content is frozen for diagnostics but cannot be treated as a valid release
+ok 18 - invalid V2 content is frozen for diagnostics but cannot be treated as a valid release
+  ---
+  duration_ms: 1777.170788
+  type: 'test'
+  ...
+# Subtest: script declarations and internal-only license restrictions are surfaced without execution
+ok 19 - script declarations and internal-only license restrictions are surfaced without execution
+  ---
+  duration_ms: 4003.728605
+  type: 'test'
+  ...
+# Subtest: tracked symlinks and submodule entries are rejected without publication leftovers
+    # Subtest: symlink
+    ok 1 - symlink
+      ---
+      duration_ms: 4257.011665
+      type: 'test'
+      ...
+    # Subtest: submodule
+    ok 2 - submodule
+      ---
+      duration_ms: 2751.178597
+      type: 'test'
+      ...
+    1..2
+ok 20 - tracked symlinks and submodule entries are rejected without publication leftovers
+  ---
+  duration_ms: 7009.188648
+  type: 'test'
+  ...
+# Subtest: Git filenames must meet the same safe NFC path contract as release archives
+    # Subtest: unsafe:name.txt
+    ok 1 - unsafe:name.txt
+      ---
+      duration_ms: 7451.236457
+      type: 'test'
+      ...
+    # Subtest: é.txt
+    ok 2 - é.txt
+      ---
+      duration_ms: 3854.416371
+      type: 'test'
+      ...
+    1..2
+ok 21 - Git filenames must meet the same safe NFC path contract as release archives
+  ---
+  duration_ms: 11306.378852
+  type: 'test'
+  ...
+# Subtest: preview byte bounds preserve complete UTF-8 code points
+ok 22 - preview byte bounds preserve complete UTF-8 code points
+  ---
+  duration_ms: 2430.399142
+  type: 'test'
+  ...
+# Subtest: file count/bytes, object expansion, diagnostic output and wall time limits fail closed
+ok 23 - file count/bytes, object expansion, diagnostic output and wall time limits fail closed
+  ---
+  duration_ms: 8766.955114
+  type: 'test'
+  ...
+# \# Isolated publisher PostgreSQL container: 66242635435c5b475b8ba3925f5352a077acf9dfa1fd22e6fd1638d6875901c2
+# Subtest: publisher signs approved fixed archive/report without fetching its unreachable Git source
+ok 24 - publisher signs approved fixed archive/report without fetching its unreachable Git source
+  ---
+  duration_ms: 6460.350517
+  type: 'test'
+  ...
+# Subtest: concurrent publishers lease one job and duplicate authorized jobs preserve exact signature and one audit
+ok 25 - concurrent publishers lease one job and duplicate authorized jobs preserve exact signature and one audit
+  ---
+  duration_ms: 2085.320697
+  type: 'test'
+  ...
+# Subtest: publisher rejects missing delivery, invalid reports, wrong pack identity/version and inconsistent tree
+ok 26 - publisher rejects missing delivery, invalid reports, wrong pack identity/version and inconsistent tree
+  ---
+  duration_ms: 8466.941677
+  type: 'test'
+  ...
+# Subtest: CAS archive/report tampering fails closed before a signature is frozen
+ok 27 - CAS archive/report tampering fails closed before a signature is frozen
+  ---
+  duration_ms: 2703.794026
+  type: 'test'
+  ...
+# Subtest: direct dependency must still be published and available to every approved recipient
+ok 28 - direct dependency must still be published and available to every approved recipient
+  ---
+  duration_ms: 5981.853612
+  type: 'test'
+  ...
+# Subtest: a dependency yanked after signature freeze blocks final publication without changing the frozen envelope
+ok 29 - a dependency yanked after signature freeze blocks final publication without changing the frozen envelope
+  ---
+  duration_ms: 1980.695746
+  type: 'test'
+  ...
+# Subtest: transitive dependency narrowing blocks its parent release and builtins require the trusted inventory
+ok 30 - transitive dependency narrowing blocks its parent release and builtins require the trusted inventory
+  ---
+  duration_ms: 4608.898475
+  type: 'test'
+  ...
+# Subtest: frozen envelope survives manifest-store failure and retry cannot rotate key or signature
+ok 31 - frozen envelope survives manifest-store failure and retry cannot rotate key or signature
+  ---
+  duration_ms: 1183.283725
+  type: 'test'
+  ...
+# Subtest: actual process exits after freeze and CAS write resume the identical signature after lease expiry
+ok 32 - actual process exits after freeze and CAS write resume the identical signature after lease expiry
+  ---
+  duration_ms: 8054.813025
+  type: 'test'
+  ...
+# Subtest: publisher uses its explicit private scratch root and refuses an unsafe parent instead of system tmp fallback
+ok 33 - publisher uses its explicit private scratch root and refuses an unsafe parent instead of system tmp fallback
+  ---
+  duration_ms: 2822.498116
+  type: 'test'
+  ...
+# Subtest: a deterministic final-transaction lease fence rolls back publication and its success audit
+ok 34 - a deterministic final-transaction lease fence rolls back publication and its success audit
+  ---
+  duration_ms: 1386.886174
+  type: 'test'
+  ...
+# Subtest: exhausted crashed last attempt reconciles to publish_failed and an authorized new job can recover
+ok 35 - exhausted crashed last attempt reconciles to publish_failed and an authorized new job can recover
+  ---
+  duration_ms: 2461.734087
+  type: 'test'
+  ...
+# Subtest: replayed jobs never undo a yanked release or enlarge its distribution
+ok 36 - replayed jobs never undo a yanked release or enlarge its distribution
+  ---
+  duration_ms: 1588.24247
+  type: 'test'
+  ...
+# Subtest: signing configuration rejects RSA and invalid identifiers without claiming work
+ok 37 - signing configuration rejects RSA and invalid identifiers without claiming work
+  ---
+  duration_ms: 1359.988209
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: 66242635435c5b475b8ba3925f5352a077acf9dfa1fd22e6fd1638d6875901c2
+# \# Isolated submissions PostgreSQL container: ddbe73ec94e98b35be5bc01189cecfbb842d5b1cff9dc314d8a774931c6296f1
+# Subtest: create detaches input, enforces ownership, validates source and deduplicates retries
+ok 38 - create detaches input, enforces ownership, validates source and deduplicates retries
+  ---
+  duration_ms: 9306.918295
+  type: 'test'
+  ...
+# Subtest: draft editing is versioned; validation atomically enqueues once and freezes reviewed fields
+ok 39 - draft editing is versioned; validation atomically enqueues once and freezes reviewed fields
+  ---
+  duration_ms: 3932.477322
+  type: 'test'
+  ...
+# Subtest: private read/list isolation, cross-org scoped review queue and live revocation
+ok 40 - private read/list isolation, cross-org scoped review queue and live revocation
+  ---
+  duration_ms: 3245.554151
+  type: 'test'
+  ...
+# Subtest: invalid or digest-mismatched reports cannot be submitted, even if database status says validated
+ok 41 - invalid or digest-mismatched reports cannot be submitted, even if database status says validated
+  ---
+  duration_ms: 2519.39056
+  type: 'test'
+  ...
+# Subtest: self-review and machine/forged principals are rejected; stale version/digest never reserve releases
+ok 42 - self-review and machine/forged principals are rejected; stale version/digest never reserve releases
+  ---
+  duration_ms: 3477.131666
+  type: 'test'
+  ...
+# Subtest: concurrent reviewers produce exactly one decision/release/outbox; retry returns the same immutable target
+ok 43 - concurrent reviewers produce exactly one decision/release/outbox; retry returns the same immutable target
+  ---
+  duration_ms: 3206.818976
+  type: 'test'
+  ...
+# Subtest: two approved candidates for one version roll the losing review back; later version creates a fresh immutable revision
+ok 44 - two approved candidates for one version roll the losing review back; later version creates a fresh immutable revision
+  ---
+  duration_ms: 3040.932682
+  type: 'test'
+  ...
+# Subtest: changes requested and withdrawal retain fixed snapshots and comments; rework is a separate submission
+ok 45 - changes requested and withdrawal retain fixed snapshots and comments; rework is a separate submission
+  ---
+  duration_ms: 3470.076602
+  type: 'test'
+  ...
+# Subtest: publication failures are visible and only authorized reviewers/admins can retry the exact approved snapshot once
+ok 46 - publication failures are visible and only authorized reviewers/admins can retry the exact approved snapshot once
+  ---
+  duration_ms: 3382.056402
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: ddbe73ec94e98b35be5bc01189cecfbb842d5b1cff9dc314d8a774931c6296f1
+# \# Isolated validation-worker PostgreSQL container: e8a1bc02eb17176f075a4bc82ca1fe3a7da2fb0e84e7591e455fa2cbaf17ce8b
+# Subtest: real Git -> verified CAS -> immutable PostgreSQL snapshot; no further fetch after completion
+ok 47 - real Git -> verified CAS -> immutable PostgreSQL snapshot; no further fetch after completion
+  ---
+  duration_ms: 12574.164902
+  type: 'test'
+  ...
+# Subtest: invalid content and mismatched version retain diagnostic archive but never become validated
+    # Subtest: invalid
+    ok 1 - invalid
+      ---
+      duration_ms: 6057.135784
+      type: 'test'
+      ...
+    # Subtest: identity
+    ok 2 - identity
+      ---
+      duration_ms: 3606.160323
+      type: 'test'
+      ...
+    1..2
+ok 48 - invalid content and mismatched version retain diagnostic archive but never become validated
+  ---
+  duration_ms: 9675.360762
+  type: 'test'
+  ...
+# Subtest: fixed dependency graph and exact built-in inventory are recorded before review
+ok 49 - fixed dependency graph and exact built-in inventory are recorded before review
+  ---
+  duration_ms: 2916.197447
+  type: 'test'
+  ...
+# Subtest: dependency visibility, scope expansion, missing declarations and unconfigured built-ins fail validation
+    # Subtest: scope-expansion
+    ok 1 - scope-expansion
+      ---
+      duration_ms: 2965.495998
+      type: 'test'
+      ...
+    # Subtest: private-dependency
+    ok 2 - private-dependency
+      ---
+      duration_ms: 2383.001626
+      type: 'test'
+      ...
+    # Subtest: missing-lock
+    ok 3 - missing-lock
+      ---
+      duration_ms: 3077.200884
+      type: 'test'
+      ...
+    # Subtest: builtin-unknown
+    ok 4 - builtin-unknown
+      ---
+      duration_ms: 6186.961344
+      type: 'test'
+      ...
+    1..4
+ok 50 - dependency visibility, scope expansion, missing declarations and unconfigured built-ins fail validation
+  ---
+  duration_ms: 14616.675463
+  type: 'test'
+  ...
+# Subtest: transitive dependency cycles and conflicting versions cannot become a frozen lock
+ok 51 - transitive dependency cycles and conflicting versions cannot become a frozen lock
+  ---
+  duration_ms: 3698.376466
+  type: 'test'
+  ...
+# Subtest: selected recipients are checked as exact deployment/org sets, not inferred owner access
+ok 52 - selected recipients are checked as exact deployment/org sets, not inferred owner access
+  ---
+  duration_ms: 3754.357746
+  type: 'test'
+  ...
+# Subtest: two workers claim once while heartbeat prevents a slow active fetch from being stolen
+ok 53 - two workers claim once while heartbeat prevents a slow active fetch from being stolen
+  ---
+  duration_ms: 2806.95582
+  type: 'test'
+  ...
+# Subtest: stale worker cannot commit after a newer claim has obtained the fence
+ok 54 - stale worker cannot commit after a newer claim has obtained the fence
+  ---
+  duration_ms: 2694.223557
+  type: 'test'
+  ...
+# Subtest: CAS write failure cannot attach a missing snapshot; errors are sanitized and final crash is reconciled
+ok 55 - CAS write failure cannot attach a missing snapshot; errors are sanitized and final crash is reconciled
+  ---
+  duration_ms: 3066.307246
+  type: 'test'
+  ...
+# Subtest: review diff uses last published snapshot for changed/removed files and entity removals
+ok 56 - review diff uses last published snapshot for changed/removed files and entity removals
+  ---
+  duration_ms: 3448.078594
+  type: 'test'
+  ...
+# Subtest: historical snapshots without an entity inventory are unverified, not empty or unchanged
+    # Subtest: missing
+    ok 1 - missing
+      ---
+      duration_ms: 2283.324917
+      type: 'test'
+      ...
+    # Subtest: []
+    ok 2 - []
+      ---
+      duration_ms: 2212.477621
+      type: 'test'
+      ...
+    # Subtest: {"experts":"not-an-array"}
+    ok 3 - {"experts":"not-an-array"}
+      ---
+      duration_ms: 3728.053742
+      type: 'test'
+      ...
+    1..3
+ok 57 - historical snapshots without an entity inventory are unverified, not empty or unchanged
+  ---
+  duration_ms: 8224.947908
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: e8a1bc02eb17176f075a4bc82ca1fe3a7da2fb0e84e7591e455fa2cbaf17ce8b
+1..57
+# tests 70
+# suites 0
+# pass 70
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 253596.484367
+
+# finishedAt: 2026-09-23T16:56:38.669272+00:00
+# commandExitCode: 0

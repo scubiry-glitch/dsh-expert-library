@@ -1,0 +1,11 @@
+{
+ "gate": "W4-GATE",
+ "passed": true,
+ "checks": {
+  "G4.1": true,
+  "G4.2": true,
+  "G4.3": true,
+  "G4.4": true,
+  "G4.5": true
+ }
+}

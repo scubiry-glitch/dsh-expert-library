@@ -1,0 +1,295 @@
+{
+  "node": "T2.2",
+  "capturedAt": "2026-09-23T19:07:33.839Z",
+  "center": {
+    "origin": "https://127.0.0.1:18431",
+    "centerId": "phase2-center-20260923",
+    "container": {
+      "id": "d0888866c6623e3a578167618be1ea7c3b2bef482dda4611b82aab37325b2c96",
+      "name": "dsh.pack-center.phase2-20260923-t22",
+      "label": {
+        "dsh.pack-center.phase2": "20260923-T2.2"
+      },
+      "image": "postgres@sha256:f02121de6f74d30d8a94cd1d9584125e2178d7e6c377d8130112d4e52d867995",
+      "port": "32796",
+      "cleanup": "Verify ID and labels, then docker rm -f -v d0888866c6623e3a578167618be1ea7c3b2bef482dda4611b82aab37325b2c96"
+    },
+    "pubkeyFingerprint": "d69b6390b5fd9ab779b55acc74ee648c57d92e6b8097f38a67b913f7961da5f9",
+    "processes": {
+      "oidc": {
+        "pid": 438644,
+        "log": "/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.2.center-oidc.log",
+        "args": [
+          "/root/zhijian/dsh-pack-center-dev.ZGtty5/scripts/phase2/t22-oidc.mjs"
+        ]
+      },
+      "api": {
+        "pid": 438691,
+        "log": "/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.2.center-api.log",
+        "args": [
+          "dist/main.js",
+          "api"
+        ]
+      },
+      "validate-worker": {
+        "pid": 438692,
+        "log": "/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.2.center-validate-worker.log",
+        "args": [
+          "dist/main.js",
+          "validate-worker"
+        ]
+      },
+      "publish-worker": {
+        "pid": 438693,
+        "log": "/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.2.center-publish-worker.log",
+        "args": [
+          "dist/main.js",
+          "publish-worker"
+        ]
+      }
+    },
+    "issuer": "http://127.0.0.1:35531/"
+  },
+  "instances": [
+    {
+      "id": "A",
+      "deploymentId": "40187cbf-ece2-4065-b797-157fadfe5be4",
+      "expectedCenterId": "phase2-center-20260923",
+      "http": {
+        "before": {
+          "status": 200,
+          "body": {
+            "ok": true,
+            "data": {
+              "configured": true,
+              "configuredOrigin": "https://127.0.0.1:18431",
+              "activationAvailable": true,
+              "revision": 0,
+              "connection": null
+            }
+          }
+        },
+        "bind": {
+          "status": 200,
+          "body": {
+            "ok": true,
+            "data": {
+              "configured": true,
+              "configuredOrigin": "https://127.0.0.1:18431",
+              "activationAvailable": true,
+              "revision": 1,
+              "connection": {
+                "origin": "https://127.0.0.1:18431",
+                "centerId": "phase2-center-20260923",
+                "organizationId": "phase2",
+                "deploymentId": "40187cbf-ece2-4065-b797-157fadfe5be4",
+                "credentialId": "39e15a5b-2c09-4d47-af3c-e61b3b002c01",
+                "credentialExpiresAt": "2026-10-23T19:07:36.541Z",
+                "boundAt": "2026-09-23T19:07:36.555Z",
+                "bound": true,
+                "signingKeyFingerprints": {
+                  "phase2-key": "d69b6390b5fd9ab779b55acc74ee648c57d92e6b8097f38a67b913f7961da5f9"
+                }
+              }
+            }
+          }
+        },
+        "after": {
+          "status": 200,
+          "body": {
+            "ok": true,
+            "data": {
+              "configured": true,
+              "configuredOrigin": "https://127.0.0.1:18431",
+              "activationAvailable": true,
+              "revision": 1,
+              "connection": {
+                "origin": "https://127.0.0.1:18431",
+                "centerId": "phase2-center-20260923",
+                "organizationId": "phase2",
+                "deploymentId": "40187cbf-ece2-4065-b797-157fadfe5be4",
+                "credentialId": "39e15a5b-2c09-4d47-af3c-e61b3b002c01",
+                "credentialExpiresAt": "2026-10-23T19:07:36.541Z",
+                "boundAt": "2026-09-23T19:07:36.555Z",
+                "bound": true,
+                "signingKeyFingerprints": {
+                  "phase2-key": "d69b6390b5fd9ab779b55acc74ee648c57d92e6b8097f38a67b913f7961da5f9"
+                }
+              }
+            }
+          }
+        },
+        "centerMetadata": {
+          "deployment": {
+            "id": "40187cbf-ece2-4065-b797-157fadfe5be4",
+            "organizationId": "phase2",
+            "name": "DSH A",
+            "status": "active",
+            "stateVersion": 1,
+            "createdBy": "d221fabf-155c-4ac3-b875-b92019b69f53",
+            "createdAt": "2026-09-23T19:07:36.269Z",
+            "updatedAt": "2026-09-23T19:07:36.269Z"
+          },
+          "credentials": [
+            {
+              "id": "39e15a5b-2c09-4d47-af3c-e61b3b002c01",
+              "scopes": [
+                "catalog:read",
+                "release:download"
+              ],
+              "expiresAt": "2026-10-23T19:07:36.541Z",
+              "revokedAt": null,
+              "createdAt": "2026-09-23T19:07:36.541Z"
+            }
+          ],
+          "bindingCodes": [
+            {
+              "id": "d5218782-79eb-4b09-94b8-7f32798c18fa",
+              "expiresAt": "2026-09-23T19:17:36.463Z",
+              "consumedAt": "2026-09-23T19:07:36.542Z",
+              "revokedAt": null,
+              "createdAt": "2026-09-23T19:07:36.463Z"
+            }
+          ]
+        },
+        "catalog": {
+          "status": 200,
+          "body": {
+            "ok": true,
+            "data": {
+              "items": [],
+              "nextCursor": null,
+              "checkedAt": "2026-09-23T19:07:36.734Z",
+              "hasSnapshot": true,
+              "stale": false
+            }
+          }
+        }
+      },
+      "centerId": "phase2-center-20260923",
+      "pubkeyFingerprint": "d69b6390b5fd9ab779b55acc74ee648c57d92e6b8097f38a67b913f7961da5f9",
+      "credentialExpiresAt": "2026-10-23T19:07:36.541Z",
+      "credentialId": "39e15a5b-2c09-4d47-af3c-e61b3b002c01"
+    },
+    {
+      "id": "B",
+      "deploymentId": "db111d76-8d83-4c1e-bdf9-363b26465ea7",
+      "expectedCenterId": "phase2-center-20260923",
+      "http": {
+        "before": {
+          "status": 200,
+          "body": {
+            "ok": true,
+            "data": {
+              "configured": true,
+              "configuredOrigin": "https://127.0.0.1:18431",
+              "activationAvailable": true,
+              "revision": 0,
+              "connection": null
+            }
+          }
+        },
+        "bind": {
+          "status": 200,
+          "body": {
+            "ok": true,
+            "data": {
+              "configured": true,
+              "configuredOrigin": "https://127.0.0.1:18431",
+              "activationAvailable": true,
+              "revision": 1,
+              "connection": {
+                "origin": "https://127.0.0.1:18431",
+                "centerId": "phase2-center-20260923",
+                "organizationId": "phase2",
+                "deploymentId": "db111d76-8d83-4c1e-bdf9-363b26465ea7",
+                "credentialId": "a53e999d-6d89-4298-9a14-de6880921043",
+                "credentialExpiresAt": "2026-10-23T19:07:36.862Z",
+                "boundAt": "2026-09-23T19:07:36.877Z",
+                "bound": true,
+                "signingKeyFingerprints": {
+                  "phase2-key": "d69b6390b5fd9ab779b55acc74ee648c57d92e6b8097f38a67b913f7961da5f9"
+                }
+              }
+            }
+          }
+        },
+        "after": {
+          "status": 200,
+          "body": {
+            "ok": true,
+            "data": {
+              "configured": true,
+              "configuredOrigin": "https://127.0.0.1:18431",
+              "activationAvailable": true,
+              "revision": 1,
+              "connection": {
+                "origin": "https://127.0.0.1:18431",
+                "centerId": "phase2-center-20260923",
+                "organizationId": "phase2",
+                "deploymentId": "db111d76-8d83-4c1e-bdf9-363b26465ea7",
+                "credentialId": "a53e999d-6d89-4298-9a14-de6880921043",
+                "credentialExpiresAt": "2026-10-23T19:07:36.862Z",
+                "boundAt": "2026-09-23T19:07:36.877Z",
+                "bound": true,
+                "signingKeyFingerprints": {
+                  "phase2-key": "d69b6390b5fd9ab779b55acc74ee648c57d92e6b8097f38a67b913f7961da5f9"
+                }
+              }
+            }
+          }
+        },
+        "centerMetadata": {
+          "deployment": {
+            "id": "db111d76-8d83-4c1e-bdf9-363b26465ea7",
+            "organizationId": "phase2",
+            "name": "DSH B",
+            "status": "active",
+            "stateVersion": 1,
+            "createdBy": "d221fabf-155c-4ac3-b875-b92019b69f53",
+            "createdAt": "2026-09-23T19:07:36.298Z",
+            "updatedAt": "2026-09-23T19:07:36.298Z"
+          },
+          "credentials": [
+            {
+              "id": "a53e999d-6d89-4298-9a14-de6880921043",
+              "scopes": [
+                "catalog:read",
+                "release:download"
+              ],
+              "expiresAt": "2026-10-23T19:07:36.862Z",
+              "revokedAt": null,
+              "createdAt": "2026-09-23T19:07:36.862Z"
+            }
+          ],
+          "bindingCodes": [
+            {
+              "id": "c0064f13-cf02-4e1a-a193-e118502c53e8",
+              "expiresAt": "2026-09-23T19:17:36.782Z",
+              "consumedAt": "2026-09-23T19:07:36.863Z",
+              "revokedAt": null,
+              "createdAt": "2026-09-23T19:07:36.782Z"
+            }
+          ]
+        },
+        "catalog": {
+          "status": 200,
+          "body": {
+            "ok": true,
+            "data": {
+              "items": [],
+              "nextCursor": null,
+              "checkedAt": "2026-09-23T19:07:37.016Z",
+              "hasSnapshot": true,
+              "stale": false
+            }
+          }
+        }
+      },
+      "centerId": "phase2-center-20260923",
+      "pubkeyFingerprint": "d69b6390b5fd9ab779b55acc74ee648c57d92e6b8097f38a67b913f7961da5f9",
+      "credentialExpiresAt": "2026-10-23T19:07:36.862Z",
+      "credentialId": "a53e999d-6d89-4298-9a14-de6880921043"
+    }
+  ]
+}

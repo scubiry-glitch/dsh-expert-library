@@ -1,0 +1,246 @@
+{
+  "files": 60,
+  "sourceSetSha256": "fbf01e04e6b558cad5181c2035fb772de5a58cc753b84a093dcdd2f40785e8fe",
+  "entries": [
+    {
+      "path": "apps/pack-center/migrations/001_core.sql",
+      "sha256": "feb6c2e63ddbc640b3f80ed067ea56ee9e63ae9cd57961723b629155469f2a52"
+    },
+    {
+      "path": "apps/pack-center/migrations/002_identity.sql",
+      "sha256": "a1ab99c985b0e7f58bb1b63eb4dc94b488f2e885d83b119a9c6b9e42103c0e56"
+    },
+    {
+      "path": "apps/pack-center/migrations/003_submission_requirements.sql",
+      "sha256": "764a7f296835f544d54c72f268706c1c029eba34e94db552b6363e0d53c1dafc"
+    },
+    {
+      "path": "apps/pack-center/migrations/004_deployments.sql",
+      "sha256": "12beaa99d50265eeb5d51ecf0de837ac0658fc40708a7bef2a7a053855d0847f"
+    },
+    {
+      "path": "apps/pack-center/migrations/005_governance.sql",
+      "sha256": "1c8b8ee58a58cdd3dcbb6e7ef9e10ca5a2c64cc09a00643611504f212191e707"
+    },
+    {
+      "path": "apps/pack-center/migrations/006_download_grants.sql",
+      "sha256": "a6a7262556b3a3d73a9011afe6b2b3af6e336b60ec4498b0d1d637380542eb41"
+    },
+    {
+      "path": "apps/pack-center/package-lock.json",
+      "sha256": "694b2b506fb1dedafcd7bd063633d6fffb7aa711a0bcb0869240bc8b43484ac1"
+    },
+    {
+      "path": "apps/pack-center/package.json",
+      "sha256": "cbed5ad1d3c0c1aa19889ddc4ecd00adf52c8d127af5f400d38f5ec9f340a38c"
+    },
+    {
+      "path": "apps/pack-center/src/auth.ts",
+      "sha256": "7dbc57d8162db2128695c0632888f76781cc95243bb1a5aa2fe1cb040ec7b976"
+    },
+    {
+      "path": "apps/pack-center/src/catalog.ts",
+      "sha256": "6b40843c5cb6da26f169b5d56ca3d270904a47ef426aa0eead5e448217a43519"
+    },
+    {
+      "path": "apps/pack-center/src/config.ts",
+      "sha256": "ecc893083cc5ac0416ce69744909e000b27cec5187e870221ef9ca344a0953d3"
+    },
+    {
+      "path": "apps/pack-center/src/database.ts",
+      "sha256": "5fcd5bc1fa7035fbde7f05aab1901667d31cbbfaa6189fcab6842288235d67d1"
+    },
+    {
+      "path": "apps/pack-center/src/deployments.ts",
+      "sha256": "b9bfe8c62fdc7d5585d9caa1aaa9f076da311bc5037dd1e5d8f918b9b37af3e0"
+    },
+    {
+      "path": "apps/pack-center/src/distribution-http.ts",
+      "sha256": "5c518390932b20f4641d50204af95e9153d551bfd4139b01e6e947f0214fbf2a"
+    },
+    {
+      "path": "apps/pack-center/src/fixture-transport.ts",
+      "sha256": "2cc391adf9245af71749fd191e772ea0f911573ef66debcf0cad6c92a1699e6e"
+    },
+    {
+      "path": "apps/pack-center/src/git-snapshot.ts",
+      "sha256": "2a50c78519a615ddd07cde1982bfb8f7a9e7de1484c63d451b8d4351a4d0f1b3"
+    },
+    {
+      "path": "apps/pack-center/src/main.ts",
+      "sha256": "19b1904a244fe281e057ac624db974dae97ccf9d130124a2e957334f4d376f1e"
+    },
+    {
+      "path": "apps/pack-center/src/oidc.ts",
+      "sha256": "84befdb805fdf0defbdf0dc55a4a2a1a4d094ac9a696ae9b96496d4d0b69ff54"
+    },
+    {
+      "path": "apps/pack-center/src/publisher.ts",
+      "sha256": "db90e83c7f35d04485d6d9fc4c3c85d0e91da0751d5247c76af3bc30e694bd75"
+    },
+    {
+      "path": "apps/pack-center/src/release-governance.ts",
+      "sha256": "e13b02b7b0a68069bd27e3107e8e57875b8e60529754016250f89a246b114730"
+    },
+    {
+      "path": "apps/pack-center/src/runtime-config.ts",
+      "sha256": "6b62b3847d859612aaf0e15cbb90e95bf3e8827b586987c4cbd9df028adc0750"
+    },
+    {
+      "path": "apps/pack-center/src/server.ts",
+      "sha256": "665a488cc29a0538e9e3be768e68c1b1042580a76bc078c7d1585856f3779ee7"
+    },
+    {
+      "path": "apps/pack-center/src/storage.ts",
+      "sha256": "5709a789f3ecd943506527cfcceec1e61db630827b21550c3e803d6c9c4bfe57"
+    },
+    {
+      "path": "apps/pack-center/src/submissions.ts",
+      "sha256": "f6d9e6aa7cb991bb6bc0230687ee7243101bd00f7c1828d0cab493399ada5eda"
+    },
+    {
+      "path": "apps/pack-center/src/validation-worker.ts",
+      "sha256": "3d02497fdb355bb84240e6bd22142cf40e8dff3854a6ca933c65da1613ab4e38"
+    },
+    {
+      "path": "apps/pack-center/src/web.ts",
+      "sha256": "0bac4554e8bf00ecb396e0f953750987da1d3906e8825b21f7d9535b81efa64a"
+    },
+    {
+      "path": "apps/pack-center/test/auth.test.mjs",
+      "sha256": "61b90df669559bb7d6b15fdd603df7db41c8ed5646ed8481daf3e72f984d87bc"
+    },
+    {
+      "path": "apps/pack-center/test/browser/center-ui.test.mjs",
+      "sha256": "83eca9c5911fb6692d0c3e019e70684cb76c7d1f20e459bf881d2f8d7c9b1186"
+    },
+    {
+      "path": "apps/pack-center/test/browser/host-ui.test.mjs",
+      "sha256": "ea25332f3b27af886f60ba3725c6d67366bfad2a4289731c0a7b1729f67e0ce0"
+    },
+    {
+      "path": "apps/pack-center/test/browser/phase1-github-ui.test.mjs",
+      "sha256": "dde19ff511e4cd575d4508d879d95d21ed8e383c8d05bfbdc507ff0eed214052"
+    },
+    {
+      "path": "apps/pack-center/test/catalog.test.mjs",
+      "sha256": "12f08fec71010d97a09fa00539e2fac3569d269302f95003c8046d915135a715"
+    },
+    {
+      "path": "apps/pack-center/test/center-flow.test.mjs",
+      "sha256": "beba0407513b041a3eebd2f0f33d5895d6c6b918d7c0c69b5c859cb525bb8bc3"
+    },
+    {
+      "path": "apps/pack-center/test/database.test.mjs",
+      "sha256": "7c2fd4a2b43e619a9f142bb1c4ea97caddb633af6a1453d544d9fc7ad4b30132"
+    },
+    {
+      "path": "apps/pack-center/test/deployments.test.mjs",
+      "sha256": "4d2212055090d735435da15030d12576d0196fedad0c113b1acda27f4ce065ab"
+    },
+    {
+      "path": "apps/pack-center/test/distribution-http.test.mjs",
+      "sha256": "6f4b6d1602cc30b62f55d44557aead10d26fe853ee914db15bd5f36eb0bffe47"
+    },
+    {
+      "path": "apps/pack-center/test/git-snapshot.test.mjs",
+      "sha256": "3c6da7b1323599ae593a535b47947626764d858b77b8de73b152f971955ed2ef"
+    },
+    {
+      "path": "apps/pack-center/test/host-client-flow.test.mjs",
+      "sha256": "3f83101b375ea0cb0629ec8c5475d5b95d80a3909fb36c9c90e8460c9c44ace0"
+    },
+    {
+      "path": "apps/pack-center/test/operation-locks.test.mjs",
+      "sha256": "ac60806725d23a5cefb604e60f83e327f378366f882e443aa04e8aaab2c876ea"
+    },
+    {
+      "path": "apps/pack-center/test/phase1-github-flow.test.mjs",
+      "sha256": "7d3d3f92fb4ae9c3eda2813614d03c98835456c165138f149c9a4a793a9d34ec"
+    },
+    {
+      "path": "apps/pack-center/test/publisher.test.mjs",
+      "sha256": "0c4fae1d4c0e88ce14542759868a4e1cfdb5990c7826c9315910af16ae7e2501"
+    },
+    {
+      "path": "apps/pack-center/test/release-governance.test.mjs",
+      "sha256": "0311f8ac33353e74e1299bc3e3b20ce9df27675453d58266870179f65f5d7058"
+    },
+    {
+      "path": "apps/pack-center/test/runtime-config.test.mjs",
+      "sha256": "45dcc5524ac8add6f7a6538374ff49d5022ba91c31534246f283680270cad041"
+    },
+    {
+      "path": "apps/pack-center/test/server.test.mjs",
+      "sha256": "4c9d6709b5ab6b300cf07876c7deee715fea00562a5591b8f961bbcdcc88420d"
+    },
+    {
+      "path": "apps/pack-center/test/storage.test.mjs",
+      "sha256": "7d0176b52ffa5592d36676879ff053a1d8ac881296cc7b8684642eef1b781aac"
+    },
+    {
+      "path": "apps/pack-center/test/submissions.test.mjs",
+      "sha256": "c6a50b74fb3d253460d803e430b5c58065ebe02e7b67a4c00499ada677e94543"
+    },
+    {
+      "path": "apps/pack-center/test/support/browser-fixture.mjs",
+      "sha256": "fae68f8da0584f10e4f050d25c5cead0e50d603257ed6c823e9b0eca4880364c"
+    },
+    {
+      "path": "apps/pack-center/test/support/catalog-fixture.mjs",
+      "sha256": "01438566859760f43c0681c93c69a9840800d2b1e07393af1499f9a35c73596b"
+    },
+    {
+      "path": "apps/pack-center/test/support/database-fixture.mjs",
+      "sha256": "2a4114b8dfc3d7be2baae549bd999d65c23ddddffd2a73851252dbda17a43cbc"
+    },
+    {
+      "path": "apps/pack-center/test/support/git-fixture.mjs",
+      "sha256": "074f233f53a7294b1f7c0736b2fc4e82d25bed607ac5e46279a6f3ecae2d544b"
+    },
+    {
+      "path": "apps/pack-center/test/support/host-browser-fixture.mjs",
+      "sha256": "39b29567d11c059caad74baf2e9de826660ca9257b1a52078e1605d4cbc10194"
+    },
+    {
+      "path": "apps/pack-center/test/support/identity-fixture.mjs",
+      "sha256": "6bede45c65e01c62ea9e9ee7f9b745b1f214c7bfcbb0b5f001d67b0b591c0772"
+    },
+    {
+      "path": "apps/pack-center/test/validation-worker.test.mjs",
+      "sha256": "6acb29bb2b35d3f90aae506b1941a42965811d52ba08c829ce222d18eec5f971"
+    },
+    {
+      "path": "apps/pack-center/test/web.test.mjs",
+      "sha256": "96445f308ea2f3c977aa56c2fd0a3e9cde29ef1fab28f370260253faf7beffcb"
+    },
+    {
+      "path": "apps/pack-center/tsconfig.json",
+      "sha256": "1eb356f0c9a61042b03f782a5bd7868cb41cc32abc79bb5dd76caff20e2f5f4d"
+    },
+    {
+      "path": "apps/pack-center/web/admin.js",
+      "sha256": "49333dcba316df49b64b2a34f80d41681f6aa5ae2b131a76022f52115080b7ec"
+    },
+    {
+      "path": "apps/pack-center/web/app.js",
+      "sha256": "128b8cb1021b2a4c44fb018bd1f8da7d2cfd7cf9e85e8b6048bebe138835caec"
+    },
+    {
+      "path": "apps/pack-center/web/index.html",
+      "sha256": "39c4947ddc5b0ae6bcc1da410fdf2791ee7b7a65eb3b5f81d264dd850256d1c9"
+    },
+    {
+      "path": "apps/pack-center/web/shared.js",
+      "sha256": "b31fd1c4c62068f704f1b686c8fc57b87bdcecbdc17fdf675795259a9b2e025d"
+    },
+    {
+      "path": "apps/pack-center/web/style.css",
+      "sha256": "19a779a881923648d81e73c93aa7ad8a81064632aa14cad9d3dafcf62777ad01"
+    },
+    {
+      "path": "apps/pack-center/web/submissions.js",
+      "sha256": "5a65e25880b8c2269b28cfb7f27cb3395a84a857139062c3f3b6cf620b4da64d"
+    }
+  ]
+}

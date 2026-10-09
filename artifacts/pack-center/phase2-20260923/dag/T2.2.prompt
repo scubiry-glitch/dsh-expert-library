@@ -1,0 +1,25 @@
+You are executing DAG node T2.2: bind the two isolated DSH instances A/B (already RUNNING) to a real isolated pack center.
+
+Workspace: /root/zhijian/dsh-pack-center-dev.ZGtty5  (work only here + /tmp/p2-20260923)
+
+Facts:
+- Instance A: http://127.0.0.1:18281 (pid 427372), DSH_HOME=/tmp/p2-20260923/dsh-a, packCenterRoot=/tmp/p2-20260923/pack-center-a.
+- Instance B: http://127.0.0.1:18282 (pid 427898), DSH_HOME=/tmp/p2-20260923/dsh-b, packCenterRoot=/tmp/p2-20260923/pack-center-b.
+- Plugin local manage API (requires header `X-Pack-Center-UI: 1`): GET .../plugins/dsh-expert-library/manage/center/connection currently returns configured=false. Binding route: POST /plugins/dsh-expert-library/manage/center/bind (see PACK-CENTER-HOST-CLIENT.md and src/host/pack-center-routes.ts for the exact request shape; read the source, do not guess).
+- Center app: apps/pack-center — explicit processes: `node dist/main.js migrate|bootstrap-admin|api|validate-worker|publish-worker`. Env: PACK_CENTER_DATABASE_URL/SCHEMA, PACK_CENTER_ID, PACK_CENTER_PUBLIC_ORIGIN (HTTP loopback allowed), PACK_CENTER_LISTEN_PORT (default 4310 — pick a fresh port like 18430 to avoid clashes). Docker is available; use the pinned postgres image sha256:f02121de6f74d30d8a94cd1d9584125e2178d7e6c377d8130112d4e52d867995, port bound to 127.0.0.1 only, unique container name/tag `dsh.pack-center.phase2`. OIDC: the tests spin a loopback OIDC issuer; reuse the test support code (apps/pack-center/test/support) to run a real loopback OIDC for admin login if needed for deployment registration — or use the machine/admin APIs directly if the deployment registration only needs an admin session/bootstrap admin.
+- Your sandbox may deny TCP LISTEN; if a command fails with EPERM on bind, write the exact script and run it via the ORCHESTRATOR note: create scripts/phase2/t22-*.mjs scripts that are idempotent, and they will be executed host-side. But FIRST try running everything yourself.
+
+Steps:
+1. Start an isolated PostgreSQL container (pinned image), run `node dist/main.js migrate` and `bootstrap-admin` against a dedicated schema `pack_center_phase2`.
+2. Start the center API (and validate/publish workers) as background processes with logs under artifacts/pack-center/phase2-20260923/dag/T2.2.center-*.log. Keep them RUNNING.
+3. As center admin, register deployments for A and B (distinct deploymentIds), generate ONE-TIME binding codes for each.
+4. Through each DSH instance's local bind route, exchange the binding code (center origin http://127.0.0.1:18430). Verify: GET connection on each returns its own deploymentId, same centerId, the signing public key fingerprint, and credential expiry; records differ between A and B.
+5. Secret hygiene: capture center + local logs and the connection page HTML; grep them for the machine credential/secret values and record that they do NOT appear (T2.2.secret-scan.txt).
+6. Evidence (all under artifacts/pack-center/phase2-20260923/dag/):
+   - T2.2.bind.json (per instance: deploymentId, centerId, pubkeyFingerprint, credentialExpiresAt, http results; NO secrets)
+   - T2.2.secret-scan.txt (scan commands + results)
+   - T2.2.verdict.json {"node":"T2.2","passed":bool,"reasons":[...]}
+   Keep raw command logs T2.2.*.log. Never print or store the machine credentials or DB password in evidence; store them only in /tmp/p2-20260923/secrets/ (chmod 600) if needed for later nodes.
+
+Boundaries: do not modify DSH core, production services/DNS/credentials, public repos; do not git commit/push; only touch apps/pack-center runtime state via its own APIs, /tmp, scripts/phase2/, and artifacts/pack-center/phase2-20260923/. Do not stop instances A/B. Clean up only resources you created (document container id + tag in evidence for later cleanup).
+Final line: {"node":"T2.2","passed":<bool>}.

@@ -1,0 +1,30 @@
+[
+  {
+    "version": "2.2.0",
+    "requestedCommit": "96548f280d7bdeab8f5167a6c21b429d1a7153f3",
+    "sourceCommit": "96548f280d7bdeab8f5167a6c21b429d1a7153f3",
+    "packId": "macro-capital-analyst",
+    "packVersion": "2.2.0",
+    "schemaVersion": 2,
+    "valid": true,
+    "reportSha256": "77279e79e1417b8277f32d2e99303c054e88f78529ec7e481c20d2fac0f51821",
+    "contentTreeSha256": "22b71f525cd339683947de438842edf12f5c794aa3c2a7a228fcf56a3305734b",
+    "artifactSha256": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+    "fileCount": 22,
+    "sizeBytes": 113664
+  },
+  {
+    "version": "2.3.0",
+    "requestedCommit": "f42bf4c8068294726ab7c780fe23ad121d72f34e",
+    "sourceCommit": "f42bf4c8068294726ab7c780fe23ad121d72f34e",
+    "packId": "macro-capital-analyst",
+    "packVersion": "2.3.0",
+    "schemaVersion": 2,
+    "valid": true,
+    "reportSha256": "889366b441f09a30511c3ffaa7d1306402b5911751e996f9b7b5ce132a5c3382",
+    "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696",
+    "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+    "fileCount": 27,
+    "sizeBytes": 158720
+  }
+]

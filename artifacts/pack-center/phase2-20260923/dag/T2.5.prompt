@@ -1,0 +1,26 @@
+You are executing DAG node T2.5: forward/reverse dependency constraints.
+
+Workspace: /root/zhijian/dsh-pack-center-dev.ZGtty5
+EXECUTION MODEL: your sandbox has NO loopback TCP/docker. Author ONE idempotent host-runner script scripts/phase2/t25-dependency.mjs (Node 22 ESM) plus a fixture-pack builder if needed. Validate with `node --check`. The orchestrator runs it with NODE_EXTRA_CA_CERTS=/tmp/p2-20260923/t22/ca.pem.
+
+Running state (verified healthy):
+- Center https://127.0.0.1:18431, OIDC pinned issuer http://127.0.0.1:35531/ (script scripts/phase2/t22-oidc-fixed.mjs, RUNNING). Working admin/developer/reviewer session + publish flow: copy from scripts/phase2/t24-update-fork.mjs (its publish stage works end-to-end incl. review-scope and independent reviewer).
+- DSH A http://127.0.0.1:18281 active 2.3.0 (+2.2.0 cached), gen 7; DSH B http://127.0.0.1:18282 active 2.2.0, gen 5. Local manage prefix /plugins/dsh-expert-library/manage/center, header X-Pack-Center-UI: 1. State at /tmp/p2-20260923/pack-center-{a,b}/inventory/state.json.
+- Center API source: apps/pack-center/src (dependencyLock semantics in git-snapshot.ts / submissions.ts / publisher.ts). Plugin dependency checks: src/host/pack-center-manager.ts (validateActivation / preflightManagedActivation) and src/host/pack-runtime.ts.
+
+GOAL: prove that when an installed+enabled pack P-A pins dependency P-B to an OLD release, the following operations on P-B are BLOCKED with the affected package listed, without automatic cascading: (1) update P-B to a newer release, (2) rollback/switch P-B, (3) disable P-B, (4) uninstall P-B. After re-pointing P-A's dependency selection to the new P-B release (a new P-A version published with updated dependencyLock), the previously blocked operation succeeds.
+
+Steps for the runner:
+1. Build TWO minimal valid V2 packs as an isolated local Git fixture (bare repo under /tmp/p2-20260923/t25/fixture.git served via file:// or local path the center worker accepts — check the worker's allowed sources; if only https is allowed, use a local smart-HTTP git server like apps/pack-center tests do, bound to 127.0.0.1 only): pack `phase2-dep-b` versions 1.0.0 and 1.1.0 (observable difference), pack `phase2-dep-a` version 1.0.0 whose manifest declares dependsOn phase2-dep-b pinned to 1.0.0 (read packages/pack-contract schema for the exact dependencyLock shape). Validate locally with ./pack-validator before committing.
+2. Publish via the center: dep-b 1.0.0, dep-a 1.0.0 (dependencyLock pinned to dep-b 1.0.0's release digest/id), then dep-b 1.1.0. All with real validation + independent reviewer. Record releaseIds/digests.
+3. On A: install+enable dep-b 1.0.0 first, then dep-a 1.0.0 (dependency satisfied). Assert both active.
+4. Block matrix on A (each attempt must FAIL with a dependency/affected-package error listing phase2-dep-a; record operationId, errorCode, affected packages from the error/result):
+   a. install/update_enable dep-b 1.1.0
+   b. disable dep-b
+   c. uninstall dep-b
+   d. (rollback semantics: switching dep-b release is covered by a) — if the manager exposes a distinct rollback path, exercise it too)
+   Assert NO automatic cascade: after all failed attempts, dep-a AND dep-b 1.0.0 are still active, generation changed only by nothing (all operations rejected pre-commit).
+5. Recover: publish dep-a 1.1.0 with dependencyLock updated to dep-b 1.1.0; on A install+enable dep-a 1.1.0; NOW enable dep-b 1.1.0 (or update_enable) succeeds; assert final state.
+6. Evidence (dag/, 0600, no secrets): T2.5.packs.json (fixture commits/releases/digests), T2.5.matrix.json (each blocked attempt: request, errorCode, affectedList, pre/post state digests), T2.5.recovery.json, T2.5.verdict.json {"node":"T2.5","passed":bool,"reasons":[...]}, logs T2.5.*.log.
+Boundaries: no DSH core/production/public-repo changes; no git push; fixture Git is local-only; only /tmp/p2-20260923, scripts/phase2/, artifacts/pack-center/phase2-20260923/; do not disturb existing macro-capital-analyst installation on A/B (assert it remains active at the end).
+Print final {"node":"T2.5","scriptReady":true}.

@@ -1,0 +1,1 @@
+{"node":"T2.3","scriptReady":true,"howToRun":"NODE_EXTRA_CA_CERTS=... node scripts/phase2/t23-install-v1.mjs"}

@@ -1,0 +1,168 @@
+{
+  "node": "R3.2",
+  "passed": true,
+  "reasons": [
+    {
+      "at": "2026-09-24T02:16:51.424Z",
+      "message": "baseline",
+      "stateDigest": "7624867088c72a77ddf9574817343f5de575c434eebfad8a17a4483a8bd9966f",
+      "generation": 24,
+      "active": {
+        "macro-capital-analyst": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+        "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+        "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583"
+      },
+      "v2": {
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "version": "2.3.0",
+        "releaseDir": "/tmp/p2-20260923/pack-center-a/inventory/releases/83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c",
+        "contentPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content/.gitignore"
+      }
+    },
+    {
+      "at": "2026-09-24T02:16:52.423Z",
+      "message": "injection-failed",
+      "label": "tampered-archive-enable",
+      "request": {
+        "kind": "enable",
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "expectedGeneration": 24
+      },
+      "enqueueStatus": 202,
+      "enqueueErrorCode": null,
+      "operationId": "op_0efc04b2c24285c3f65c42c9ec935cffb18f66ef4caedc06ada34306aa79f13d",
+      "status": "failed",
+      "errorCode": "CONTENT_DIGEST_MISMATCH"
+    },
+    {
+      "at": "2026-09-24T02:16:52.423Z",
+      "message": "tampered-archive-observed",
+      "tamperedContentDigest": "b3360be67a3e6662c2dfa2fe5fd988a6b5661d2b9b8184a249fb867852a8342f",
+      "installations": {
+        "integrity": "unavailable",
+        "errorCode": "CONTENT_DIGEST_MISMATCH"
+      },
+      "operation": {
+        "label": "tampered-archive-enable",
+        "request": {
+          "kind": "enable",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "expectedGeneration": 24
+        },
+        "enqueueStatus": 202,
+        "enqueueErrorCode": null,
+        "operationId": "op_0efc04b2c24285c3f65c42c9ec935cffb18f66ef4caedc06ada34306aa79f13d",
+        "status": "failed",
+        "errorCode": "CONTENT_DIGEST_MISMATCH"
+      }
+    },
+    {
+      "at": "2026-09-24T02:16:53.981Z",
+      "message": "injection-failed",
+      "label": "tampered-manifest-enable",
+      "request": {
+        "kind": "enable",
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "expectedGeneration": 24
+      },
+      "enqueueStatus": 202,
+      "enqueueErrorCode": null,
+      "operationId": "op_23690d359c7f6c944ecec5f8d5662ccae20a8516b408186a1a4117f3745ee4d5",
+      "status": "failed",
+      "errorCode": "CENTER_REQUEST_FAILED"
+    },
+    {
+      "at": "2026-09-24T02:16:53.981Z",
+      "message": "tampered-manifest-observed",
+      "tamperedManifestDigest": "df2c2045bf4ccc49f1a65a7223bdb67b62983d08c2b4f2bd040218a0b19bdbf1",
+      "installations": {
+        "integrity": "unavailable",
+        "errorCode": "CENTER_REQUEST_FAILED"
+      },
+      "operation": {
+        "label": "tampered-manifest-enable",
+        "request": {
+          "kind": "enable",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "expectedGeneration": 24
+        },
+        "enqueueStatus": 202,
+        "enqueueErrorCode": null,
+        "operationId": "op_23690d359c7f6c944ecec5f8d5662ccae20a8516b408186a1a4117f3745ee4d5",
+        "status": "failed",
+        "errorCode": "CENTER_REQUEST_FAILED"
+      }
+    },
+    {
+      "at": "2026-09-24T02:16:58.010Z",
+      "message": "tampered-inventory-observed",
+      "corruptedStateDigest": "2337d884047703c9efe4106733babcf7cf396d320cf4f2838ea05659e81914e7",
+      "mode": "recovered-read-only",
+      "code": "STATE_CORRUPT",
+      "restoredMode": "normal"
+    },
+    {
+      "at": "2026-09-24T02:16:58.641Z",
+      "message": "injection-failed",
+      "label": "unknown-protocol-enable",
+      "request": {
+        "kind": "enable",
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "expectedGeneration": 24
+      },
+      "enqueueStatus": 202,
+      "enqueueErrorCode": null,
+      "operationId": "op_22ebfcaa900d84287aa2c7c54bb00043f39f4012f3f41ee1f53811538870070d",
+      "status": "failed",
+      "errorCode": "OPERATION_FAILED"
+    },
+    {
+      "at": "2026-09-24T02:16:58.642Z",
+      "message": "unknown-protocol-observed",
+      "exercised": "release envelope manifest.protocolVersion=9; transport protocol selection is not exposed by local manage API",
+      "tamperedManifestDigest": "c94edbe556b4f0b9acc58eced01397a03f12f09235f80eae9bb212b8553c80d2",
+      "operation": {
+        "label": "unknown-protocol-enable",
+        "request": {
+          "kind": "enable",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "expectedGeneration": 24
+        },
+        "enqueueStatus": 202,
+        "enqueueErrorCode": null,
+        "operationId": "op_22ebfcaa900d84287aa2c7c54bb00043f39f4012f3f41ee1f53811538870070d",
+        "status": "failed",
+        "errorCode": "OPERATION_FAILED"
+      }
+    },
+    {
+      "at": "2026-09-24T02:16:58.928Z",
+      "message": "injection-failed-at-enqueue",
+      "label": "stale-generation-enable-v1",
+      "request": {
+        "kind": "enable",
+        "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+        "expectedGeneration": 23
+      },
+      "enqueueStatus": 409,
+      "enqueueErrorCode": "GENERATION_CONFLICT",
+      "status": "rejected",
+      "errorCode": "GENERATION_CONFLICT"
+    },
+    {
+      "at": "2026-09-24T02:16:58.928Z",
+      "message": "stale-generation-observed",
+      "label": "stale-generation-enable-v1",
+      "request": {
+        "kind": "enable",
+        "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+        "expectedGeneration": 23
+      },
+      "enqueueStatus": 409,
+      "enqueueErrorCode": "GENERATION_CONFLICT",
+      "status": "rejected",
+      "errorCode": "GENERATION_CONFLICT"
+    }
+  ],
+  "failure": null
+}

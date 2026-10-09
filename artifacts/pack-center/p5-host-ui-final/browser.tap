@@ -1,0 +1,31 @@
+TAP version 13
+# (node:754981) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated browser PostgreSQL container: 8e4d67e44f7e33a32019c05882227ecaedba7df06f0235a4b01a480fa785c535
+# \# Removed owned test container and anonymous volume: 8e4d67e44f7e33a32019c05882227ecaedba7df06f0235a4b01a480fa785c535
+# Subtest: Chromium completes invited author → immutable Git review revision → independent publication and administration
+ok 1 - Chromium completes invited author → immutable Git review revision → independent publication and administration
+  ---
+  duration_ms: 93161.772435
+  type: 'test'
+  ...
+# {"browser":"140.0.7339.16","realOidc":true,"realPostgreSql":true,"realHttpsGit":true,"reviewRevision":true,"independentApproval":true,"signedPublication":true,"twoDeploymentManagement":true,"noBrowserMachineToken":true,"screenshots":"/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/p5-host-ui-final/center-screenshots"}
+# (node:757330) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated browser PostgreSQL container: 94138dfde9e22f2a3a820b8a097f4701eb955b585fdff39a120fb0d456eb1160
+# \# Removed owned test container and anonymous volume: 94138dfde9e22f2a3a820b8a097f4701eb955b585fdff39a120fb0d456eb1160
+# Subtest: Chromium manages a real signed release through four protected host tabs and persistent operation progress
+ok 2 - Chromium manages a real signed release through four protected host tabs and persistent operation progress
+  ---
+  duration_ms: 66016.975891
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 172936.484541

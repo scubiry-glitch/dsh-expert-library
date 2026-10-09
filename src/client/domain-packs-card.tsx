@@ -146,7 +146,8 @@ function PreviewResult({ preview }: { readonly preview: ClientDomainPackPreview 
   )
 }
 
-/** Read-only Domain Pack preview and validation page. */
+/** Read-only Domain Pack preview and validation page. Tenant version management
+ * is exposed by the separate settings section labelled 「领域包」. */
 export function DomainPacksCard({ close }: DomainPacksCardProps) {
   const [packs, setPacks] = useState<readonly ClientPackSummary[] | null>(null)
   const [listLoading, setListLoading] = useState(true)
@@ -200,7 +201,7 @@ export function DomainPacksCard({ close }: DomainPacksCardProps) {
   return (
     <section className={css.card}>
       <header className={css.head}>
-        <h2 className={css.title}>领域包</h2>
+        <h2 className={css.title}>领域包校验</h2>
         <p className={css.subtitle}>Domain Pack 只读预览与校验结果：内置 zhijian-realestate 包与各工作区 <code className={css.mono}>domain-packs/</code> 目录下的包；此处仅读取并重新校验，不修改任何文件。</p>
       </header>
       <div className={css.body}>

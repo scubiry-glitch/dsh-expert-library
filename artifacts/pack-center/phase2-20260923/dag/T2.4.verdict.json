@@ -1,0 +1,11 @@
+{
+  "node": "T2.4",
+  "passed": true,
+  "reasons": [
+    "v2 was published from the pinned commit with validation and independent reviewer approval; all three phase1 digests match",
+    "A check-updates reported 2.3.0 without changing generation/state or downloading bytes",
+    "A cached v2 install remained default-disabled, then explicit update_enable activated v2 while retaining v1 for rollback and without a second download",
+    "B reported the same update but remained active on and installed with v1; publication caused no automatic state change",
+    "runtime and browser evidence captured both requested tabs"
+  ]
+}

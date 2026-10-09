@@ -1,0 +1,16 @@
+{
+  "source_archive": "dsh-pack-center-dev.ZGtty5-20261009.tar.gz",
+  "source_branch": "codex/pack-center-ZGtty5",
+  "source_commit": "784a6ac07b96a67c89b8516664172c0973f98079",
+  "purpose": "Preserve the archived development worktree before deleting the local tar backup. This is an archival snapshot, not a tested release.",
+  "preserved": "Tracked content, uncommitted source changes, new source/tests/docs, and non-ignored acceptance evidence. Deletions reflect the source archive.",
+  "excluded": [
+    ".git worktree pointer",
+    "untracked node_modules dependencies",
+    "lib build output",
+    "apps/pack-center/dist build output",
+    "artifacts/dsh-two-probe runtime sandbox including credentials",
+    "47 ignored *.log files"
+  ],
+  "validation": "Compared archive tracked contents to the source commit; scanned newly preserved text for common credential formats. The private-key marker in test/host-pack-center-routes.test.mjs is a deliberately invalid test fixture. No application tests were run for this archival operation."
+}

@@ -1,5 +1,6 @@
-node_modules/
+node_modules
 /lib/
+/apps/pack-center/dist/
 *.log
 .expert-teams/
 .dsh-filess/

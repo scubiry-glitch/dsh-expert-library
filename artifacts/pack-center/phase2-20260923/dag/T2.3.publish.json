@@ -1,0 +1,22 @@
+{
+  "submissionId": "3973c52f-860d-4a21-87d3-f1cf2bca74cd",
+  "snapshotId": "f26a28cd-69c4-4557-91fe-053a6710da10",
+  "releaseId": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+  "status": "published",
+  "sourceCommit": "96548f280d7bdeab8f5167a6c21b429d1a7153f3",
+  "artifactSha256": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+  "contentTreeSha256": "22b71f525cd339683947de438842edf12f5c794aa3c2a7a228fcf56a3305734b",
+  "reportSha256": "77279e79e1417b8277f32d2e99303c054e88f78529ec7e481c20d2fac0f51821",
+  "signingKeyId": "phase2-key",
+  "artifactDigestCrossCheck": {
+    "expectedPhase1": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+    "actual": "63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff",
+    "matched": true
+  },
+  "phase1DigestCrossCheck": {
+    "artifactSha256": true,
+    "contentTreeSha256": true,
+    "reportSha256": true
+  },
+  "reviewerId": "00cfdfb9-2957-4768-a18e-67f806113bc5"
+}

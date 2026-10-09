@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>租户接入配置向导 · 智见合作伙伴中心</title>
+<style>
+:root{
+  --ink:#182a26; --ink-2:#3d5450; --ink-3:#6b807b;
+  --teal:#0e6a55; --teal-deep:#0a4a3c; --teal-soft:#e3f0ec;
+  --host:#5b4a9e; --host-bg:#edeafa;
+  --tenant:#0e6a55; --tenant-bg:#e3f0ec;
+  --center:#a9741f; --center-bg:#f6ecd9;
+  --line:#d7e2de; --bg:#f6f9f8;
+  --warn:#8a5a00; --warn-bg:#fdf3e0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;padding:32px 16px}
+.wrap{max-width:900px;margin:0 auto}
+header.hero{background:linear-gradient(135deg,#0e6a55,#0a5040);color:#fff;border-radius:14px;padding:34px 34px 28px;margin-bottom:22px}
+header.hero .eyebrow{font-size:13px;letter-spacing:.2em;opacity:.85}
+header.hero h1{font-size:27px;margin:10px 0 8px}
+header.hero p{opacity:.92;font-size:15px}
+.roles{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 20px;align-items:center}
+.roles strong{font-size:14px;margin-right:4px}
+.role{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;padding:3px 12px;border-radius:99px;white-space:nowrap}
+.role.host{background:var(--host-bg);color:var(--host)}
+.role.tenant{background:var(--tenant-bg);color:var(--teal-deep)}
+.role.center{background:var(--center-bg);color:var(--center)}
+.roles .desc{font-size:12.5px;color:var(--ink-3);flex-basis:100%}
+.step{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.step>summary{cursor:pointer;list-style:none;display:flex;gap:12px;align-items:flex-start;padding:16px 20px;font-weight:600;font-size:15.5px;flex-wrap:wrap}
+.step>summary::-webkit-details-marker{display:none}
+.step>summary .no{flex:0 0 32px;height:32px;border-radius:50%;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14.5px}
+.step>summary .who{margin-left:auto}
+.step[open]>summary{border-bottom:1px solid var(--line);background:var(--teal-soft)}
+.step .body{padding:18px 22px 22px;font-size:14px;color:var(--ink-2)}
+.step .body h3{color:var(--ink);font-size:14.5px;margin:16px 0 6px}
+.step .body h3:first-child{margin-top:0}
+.step .body ol,.step .body ul{padding-left:22px;margin:6px 0}
+.step .body li{margin:5px 0}
+code,pre{font-family:"SF Mono",Consolas,monospace;font-size:12.5px}
+code{background:var(--teal-soft);color:var(--teal-deep);padding:1px 6px;border-radius:4px}
+pre{background:#122b25;color:#d9efe8;padding:13px 15px;border-radius:8px;overflow-x:auto;margin:8px 0}
+pre .c{color:#7fa89b}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);padding:9px 13px;border-radius:0 8px 8px 0;margin:10px 0;font-size:13px}
+.warn{border-left-color:var(--warn);background:var(--warn-bg)}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+th,td{border:1px solid var(--line);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--teal-soft);color:var(--teal-deep);white-space:nowrap}
+.checklist{list-style:none;padding-left:0}
+.checklist li{padding-left:26px;position:relative;margin:6px 0}
+.checklist li::before{content:"☐";position:absolute;left:0;color:var(--teal);font-size:15px}
+a{color:var(--teal)}
+details.cli{border:1px dashed var(--host);border-radius:8px;margin:10px 0;background:var(--host-bg)}
+details.cli>summary{cursor:pointer;padding:8px 14px;font-size:13px;font-weight:700;color:var(--host);list-style:none}
+details.cli>summary::before{content:"▸ "}
+details.cli[open]>summary::before{content:"▾ "}
+details.cli .clipad{padding:4px 14px 12px}
+footer{margin-top:26px;font-size:12.5px;color:var(--ink-3);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">智见合作伙伴中心 · 分发轴线</div>
+  <h1>租户接入配置向导</h1>
+  <p>六步走完，让本租户安全地安装、启用领域包。<strong>全程只有第 1 步和第 5 步的备选批量路径需要宿主 CLI</strong>，其余都在 Web 界面上完成。</p>
+</header>
+
+<div class="roles">
+  <strong>本向导涉及三个角色：</strong>
+  <span class="role center">🏢 中心平台管理员</span>
+  <span class="role tenant">🧑‍💼 租户管理员（你）</span>
+  <span class="role host">🖥️ 宿主操作者</span>
+  <span class="desc">🏢 在 packs.meizu.life 操作（签发绑定码、可见性授权）；🧑‍💼 代表租户做审批与授权决定；🖥️ 管理租户那台 DSH 服务器的人（改配置、重启服务）——小团队里 🧑‍💼 和 🖥️ 常是同一人，但<strong>操作位置不同：一个在中心网站，一个在租户自己的 DSH Web 界面</strong>。</span>
+</div>
+
+<details class="step" open>
+<summary><span class="no">1</span>开通租户 <span class="role host who">🖥️ 宿主操作者 · 一次性</span></summary>
+<div class="body">
+  <p>这是唯一必须动宿主命令行的一步（租户根目录、成员映射是宿主级操作，Web 界面没有暴露）。把下面两条交给管理 DSH 服务器的人执行：</p>
+  <pre><span class="c"># 创建租户（生成租户 work 根 $DSH_HOME/tenants/&lt;tid&gt;/work/）</span>
+dsh-tenant tenant add --id acme --name "ACME 咨询"
+
+<span class="c"># 把你的账号映射进租户并授予 admin 角色</span>
+dsh-tenant member add --tenant acme --user alice --role admin</pre>
+  <div class="note">执行完这步，之后所有审批、授权、安装都在 Web 界面完成。隔离由沙箱 <code>workspace-write</code> 硬约束兜底，不靠自觉。</div>
+</div>
+</details>
+
+<details class="step">
+<summary><span class="no">2</span>成员与设备审批 <span class="role tenant who">🧑‍💼 租户管理员 · Web 界面</span></summary>
+<div class="body">
+  <ol>
+    <li>成员用既有账号正常登录主站（yy.meizu.life）。</li>
+    <li>新设备首次登录会进入「待审批」状态，成员自己会看到等待页。</li>
+    <li>你在设备管理里放行或拦截（宿主 Web 设置页的租户管理区，或让 🖥️ 执行）：</li>
+  </ol>
+  <details class="cli"><summary>🖥️ 命令行方式（可选）</summary><div class="clipad">
+  <pre>dsh-tenant device list    --tenant acme
+dsh-tenant device approve --tenant acme --device &lt;deviceId&gt;
+dsh-tenant device block   --tenant acme --device &lt;deviceId&gt;  <span class="c"># 拦截即杀死该设备全部会话</span></pre>
+  </div></details>
+  <div class="note warn">租户策略 <code>devicePolicy: strict</code> 时，未审批设备一律拒绝；<code>bind</code> 时新设备待审批后放行。</div>
+</div>
+</details>
+
+<details class="step">
+<summary><span class="no">3</span>租户策略基线 <span class="role tenant who">🧑‍💼 租户管理员 · 核对即可</span></summary>
+<div class="body">
+  <p>默认策略已经安全（<code>workspace-write</code> 沙箱），你只需要<strong>核对三项</strong>，通常不用改：</p>
+  <table>
+    <tr><th>策略项</th><th>默认值</th><th>什么时候改</th></tr>
+    <tr><td><code>permissionPreset</code></td><td><code>workspace-write</code>（写仅限租户 work 根）</td><td>保持默认；<code>danger-full-access</code> 只应给 admin 角色成员</td></tr>
+    <tr><td><code>pluginAllowlist</code> / <code>rpcAllow/Deny</code></td><td>租户可见插件面</td><td>需要收紧可用插件集合时</td></tr>
+    <tr><td><code>ipAllow</code>（CIDR）</td><td>不限</td><td>要锁定办公网出口时</td></tr>
+  </table>
+  <details class="cli"><summary>🖥️ 命令行方式（可选）</summary><div class="clipad">
+  <pre>dsh-tenant policy set --tenant acme --permission-preset workspace-write
+dsh-tenant audit tail --tenant acme   <span class="c"># 越权尝试、设备事件全在审计里</span></pre>
+  </div></details>
+</div>
+</details>
+
+<details class="step">
+<summary><span class="no">4</span>创建部署点并签发绑定码 <span class="role center who">🏢 中心平台管理员 · packs.meizu.life</span></summary>
+<div class="body">
+  <p>部署点（Deployment）= 租户那台运行中的 DSH 宿主在中心登记的身份。</p>
+  <ol>
+    <li>🏢 登录 <a href="https://packs.meizu.life/" target="_blank" rel="noopener">packs.meizu.life</a> → 左侧「分发 · 租户 × 可见性」→ <strong>部署点</strong> → 新建，命名建议与租户 id 一致（如 <code>acme-prod</code>）。</li>
+    <li>进入部署点详情 → 签发<strong>一次性宿主绑定码</strong>（<code>dpc_bind_…</code>，带时效，明文只显示一次）。</li>
+    <li>🏢 把三样东西通过<strong>独立渠道</strong>（不要和绑定码走同一通道）交给 🖥️ 宿主操作者：
+      <ul>
+        <li>一次性绑定码</li>
+        <li>中心 ID（如 <code>pack-center-prod</code>）</li>
+        <li>中心 Ed25519 公钥（PUBLIC KEY PEM，部署点详情页可见）</li>
+      </ul>
+    </li>
+  </ol>
+  <div class="note warn">绑定码是一次性的、有时效；作废或泄露就撤销重签。凭据与绑定码明文中心侧不留存，只留元数据。</div>
+</div>
+</details>
+
+<details class="step">
+<summary><span class="no">5</span>宿主侧绑定连接 <span class="role host who">🖥️ 宿主操作者 · 租户的 DSH Web 界面</span></summary>
+<div class="body">
+  <p>这一步<strong>全程在浏览器里点</strong>，不需要命令行。操作位置是<strong>租户自己的 DSH Web 界面</strong>（不是 packs.meizu.life）：</p>
+  <h3>① 确认包中心入口已开启</h3>
+  <p>🖥️ 检查宿主配置 <code>profiles/web/cordis.patch.yml</code> 里有：</p>
+  <pre>packCenterOrigin: "https://packs.meizu.life"</pre>
+  <p>改过配置需重启 dsh web。之后打开 DSH Web → 设置 → 专家库 → <strong>「包中心」卡片</strong>，四页签：<code>领域包目录 / 已安装 / 更新 / 来源设置</code>。未绑定时显示「尚未绑定中心；已有本地包不受影响」。</p>
+  <h3>② 填绑定表单（三样东西来自第 4 步）</h3>
+  <ol>
+    <li><strong>独立核对的中心 ID</strong>：填 <code>pack-center-prod</code>。「独立核对」的意思是：这个值必须来自第 4 步的独立渠道，<em>而不是</em>页面或下载内容里出现的值——防止中心身份被掉包。</li>
+    <li><strong>一次性绑定码</strong>：粘贴 <code>dpc_bind_…</code>。每个码只能用一次，失败即作废，回第 4 步重签。</li>
+    <li><strong>可信公钥</strong>：逐条填「公钥 ID + PUBLIC KEY PEM」（必须以 <code>-----BEGIN PUBLIC KEY-----</code> 开头，私钥会被拒收）。系统<strong>从不自动信任中心返回的未知公钥</strong>——这是防中间人的关键设计。</li>
+  </ol>
+  <h3>③ 点击绑定，验证结果</h3>
+  <ul>
+    <li>成功后卡片显示：绑定状态「已绑定」、中心 ID、组织、<strong>凭据到期时间（约 30 天）</strong>、绑定时间。</li>
+    <li>本地落盘 <code>pack-center/private/connection.json</code>（含机器凭据与钉扎公钥，勿外传）。</li>
+    <li>到「领域包目录」页签能看到授权范围内的包即通。</li>
+  </ul>
+  <h3>④ 日常维护（都在这个卡片里）</h3>
+  <ul>
+    <li><strong>凭据到期前</strong>：卡片上有「重新绑定 / 轮换机器凭据」入口，重走 ②（让 🏢 重签绑定码）；绑定后让 🏢 撤销旧凭据。</li>
+    <li><strong>安装 / 启用</strong>：目录页签选包 → 安装 → 启用；更新<strong>永远不会自动发生</strong>，都在「更新」页签手动决定。</li>
+    <li><strong>常见报错</strong>：<code>CONNECTION_REVISION_CONFLICT</code> = 绑定信息已变化，刷新后重新核对；绑定码无效/过期 = 回第 4 步重签。</li>
+    <li><strong>解绑</strong>：只移除本地机器凭据，已安装包与可信公钥保留；中心侧凭据需 🏢 在部署点详情另行撤销。</li>
+  </ul>
+  <details class="cli"><summary>🖥️ 无人值守/批量部署才需要 CLI</summary><div class="clipad">
+  <p>批量部署多台宿主时可用脚本走相同的绑定接口（参数同表单：bindingCode / expectedCenterId / trustedSigningKeys）。单台部署用 Web 界面即可。</p>
+  </div></details>
+</div>
+</details>
+
+<details class="step">
+<summary><span class="no">6</span>可见性授权与验收 <span class="role center who">🏢 授权</span> <span class="role tenant who">🧑‍💼 验收</span></summary>
+<div class="body">
+  <ol>
+    <li><span class="role center">🏢</span> 中心「分发」→ <strong>可见性授权</strong>：为本组织选 <code>全部已发布包</code> 或 <code>白名单（逐包列出）</code>，并圈定可见的部署点集合；新包分发走「分发审核」由独立审核员复核。</li>
+    <li><span class="role tenant">🧑‍💼</span> 按下面清单验收：</li>
+  </ol>
+  <ul class="checklist">
+    <li>成员在审批过的设备上可登录，会话列表只含本租户内容</li>
+    <li>写操作被沙箱限制在租户 work 根内（越界被拒且有审计）</li>
+    <li>包中心卡片显示「已绑定」，凭据未过期，目录里能看到授权的包</li>
+    <li>安装一个包并启用成功；更新页签不会自动变化</li>
+    <li>越权/拒绝事件能在审计（<code>dsh-tenant audit tail</code>，🖥️ 执行）中看到</li>
+  </ul>
+</div>
+</details>
+
+<footer>智见合作伙伴中心 · 租户接入配置向导 v1.1 ｜ 伙伴开发能力参见 <a href="/guides/partner-devdoc" target="_blank" rel="noopener">合作伙伴开放能力开发文档</a> · 样例包参见 <a href="/guides/partner-sample-pack" target="_blank" rel="noopener">样例包下载</a></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+You are executing DAG node T2.3: A/B install v1 from the real center, verify signatures, keep default-disabled, then explicit enable/disable flows.
+
+Workspace: /root/zhijian/dsh-pack-center-dev.ZGtty5
+
+IMPORTANT EXECUTION MODEL: your sandbox has NO loopback TCP and NO docker. So: WRITE complete, idempotent host-runner scripts under scripts/phase2/ (Node 22, ESM, .mjs) and DO NOT try to curl/fetch the running services yourself. The orchestrator will run them. You MAY read any source files to learn exact API shapes.
+
+Existing state (all running):
+- Center origin https://127.0.0.1:18431 (real cert under isolated CA /tmp/p2-20260923/t22/ca.pem; host runners must set NODE_EXTRA_CA_CERTS=/tmp/p2-20260923/t22/ca.pem). Direct plain HTTP: http://127.0.0.1:18430.
+- Center admin session: re-login the same way t22-bind.mjs does (scripts/phase2/t22-bind.mjs 'real-oidc-login' stage) — reuse its helper approach. Secrets under /tmp/p2-20260923/secrets/.
+- Org 'phase2' exists; deployments exist for A and B. No release published yet in THIS center.
+- DSH A: http://127.0.0.1:18281, B: http://127.0.0.1:18282; both bound (see dag/T2.2.bind.json). Local manage API prefix /plugins/dsh-expert-library/manage/center, header X-Pack-Center-UI: 1.
+- v1 = macro-capital-analyst 2.2.0 at commit 96548f280d7bdeab8f5167a6c21b429d1a7153f3; v2 = 2.3.0 at commit f42bf4c8068294726ab7c780fe23ad121d72f34e (both from https://github.com/weixkcornell/macro-capital-analyst.git; digests recorded in artifacts/pack-center/phase1-20260924-final/public-sample-versions.json).
+
+Write ONE host runner scripts/phase2/t23-install-v1.mjs that (host will run it with NODE_EXTRA_CA_CERTS set; never print secrets):
+STAGE publish-v1 (setup, not W1 re-acceptance):
+  1. As developer: create a submission in org phase2 for pack macro-capital-analyst version 2.2.0, gitUrl https://github.com/weixkcornell/macro-capital-analyst.git, ref fixed to commit 96548f280d7bdeab8f5167a6c21b429d1a7153f3 (read apps/pack-center/src + test/center-flow.test.mjs to get exact API shapes: POST /api/v1/submissions, validate, submit, reviews, publish). Trigger async validation; poll the job until snapshot valid.
+  2. As independent reviewer account (bootstrap a second admin/subject e.g. 'phase2-reviewer' via bootstrap-admin with PACK_CENTER_BOOTSTRAP_SUBJECT=phase2-reviewer if the API requires a distinct reviewer; else use admin), approve; wait for publish worker; record releaseId, artifactSha256, contentTreeSha256, reportSha256, signingKeyId. Cross-check artifact digest equals the phase1 recorded 63279f9fe60412169806ababfddf026c0d473190ce1bbfdb930e40ef2b72b8ff.
+STAGE install-v1 (per instance A then B):
+  3. GET /catalog (machine auth via local route) — the release must be visible.
+  4. Create install operation (POST /operations; read src/host/pack-center-routes.ts + manager for exact DTO and operation polling GET /operations/:id). Wait until installed. Assert local state (pack-center root /tmp/p2-20260923/pack-center-{a,b}) records release digest and that the pack is NOT enabled (default disabled).
+  5. Explicit enable; query runtime/installed view to confirm active version 2.2.0 and generation increment. Then disable; confirm inactive. Then disable ALL center packs; confirm none active. Then enable again (leave enabled for A; leave ENABLED for B too — version split happens in T2.4).
+  6. builtin/workspace unchanged: GET the plugin's local inventory/preflight view (or installed listing) and confirm builtin entries still present and untouched; record before/after listing.
+Evidence (dag/, mode 600, no secrets):
+  - T2.3.publish.json (submission/snapshot/release ids + digests + cross-check result)
+  - T2.3.install-{A,B}.json (catalog entry, operation ids, state digest/generation, enabled-flag before/after, disable-all result, builtin listing hash)
+  - T2.3.verdict.json {"node":"T2.3","passed":bool,"reasons":[...]}
+  - raw logs T2.3.*.log
+Boundaries: no DSH core/production changes; no git commit/push; only /tmp/p2-20260923, scripts/phase2/, artifacts/pack-center/phase2-20260923/; do not stop A/B or the center. You may run `node --check` on your scripts to validate syntax, and you may run read-only git/ls commands.
+Final: print {"node":"T2.3","scriptReady":true,"howToRun":"NODE_EXTRA_CA_CERTS=... node scripts/phase2/t23-install-v1.mjs"}.

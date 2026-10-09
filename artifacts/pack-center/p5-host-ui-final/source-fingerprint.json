@@ -1,0 +1,4010 @@
+{
+  "files": 1001,
+  "sourceSetSha256": "52616c55999c7219636f8a6cd3dfaa7516089a5efc7f8e74fea07f3ea1d48651",
+  "entries": [
+    {
+      "path": "apps/pack-center/migrations/001_core.sql",
+      "sha256": "feb6c2e63ddbc640b3f80ed067ea56ee9e63ae9cd57961723b629155469f2a52"
+    },
+    {
+      "path": "apps/pack-center/migrations/002_identity.sql",
+      "sha256": "a1ab99c985b0e7f58bb1b63eb4dc94b488f2e885d83b119a9c6b9e42103c0e56"
+    },
+    {
+      "path": "apps/pack-center/migrations/003_submission_requirements.sql",
+      "sha256": "764a7f296835f544d54c72f268706c1c029eba34e94db552b6363e0d53c1dafc"
+    },
+    {
+      "path": "apps/pack-center/migrations/004_deployments.sql",
+      "sha256": "12beaa99d50265eeb5d51ecf0de837ac0658fc40708a7bef2a7a053855d0847f"
+    },
+    {
+      "path": "apps/pack-center/migrations/005_governance.sql",
+      "sha256": "1c8b8ee58a58cdd3dcbb6e7ef9e10ca5a2c64cc09a00643611504f212191e707"
+    },
+    {
+      "path": "apps/pack-center/migrations/006_download_grants.sql",
+      "sha256": "a6a7262556b3a3d73a9011afe6b2b3af6e336b60ec4498b0d1d637380542eb41"
+    },
+    {
+      "path": "apps/pack-center/package-lock.json",
+      "sha256": "694b2b506fb1dedafcd7bd063633d6fffb7aa711a0bcb0869240bc8b43484ac1"
+    },
+    {
+      "path": "apps/pack-center/package.json",
+      "sha256": "cbed5ad1d3c0c1aa19889ddc4ecd00adf52c8d127af5f400d38f5ec9f340a38c"
+    },
+    {
+      "path": "apps/pack-center/src/auth.ts",
+      "sha256": "7dbc57d8162db2128695c0632888f76781cc95243bb1a5aa2fe1cb040ec7b976"
+    },
+    {
+      "path": "apps/pack-center/src/catalog.ts",
+      "sha256": "6b40843c5cb6da26f169b5d56ca3d270904a47ef426aa0eead5e448217a43519"
+    },
+    {
+      "path": "apps/pack-center/src/config.ts",
+      "sha256": "ecc893083cc5ac0416ce69744909e000b27cec5187e870221ef9ca344a0953d3"
+    },
+    {
+      "path": "apps/pack-center/src/database.ts",
+      "sha256": "5fcd5bc1fa7035fbde7f05aab1901667d31cbbfaa6189fcab6842288235d67d1"
+    },
+    {
+      "path": "apps/pack-center/src/deployments.ts",
+      "sha256": "b9bfe8c62fdc7d5585d9caa1aaa9f076da311bc5037dd1e5d8f918b9b37af3e0"
+    },
+    {
+      "path": "apps/pack-center/src/distribution-http.ts",
+      "sha256": "5c518390932b20f4641d50204af95e9153d551bfd4139b01e6e947f0214fbf2a"
+    },
+    {
+      "path": "apps/pack-center/src/git-snapshot.ts",
+      "sha256": "3c4ebf3081196ebec39389a677eaf359afcf7d50c401ea276fe55ab0d78a66f4"
+    },
+    {
+      "path": "apps/pack-center/src/main.ts",
+      "sha256": "88946edfc25b479292e815cad53ce5a600f4488108f25cb418d272cecd1058e0"
+    },
+    {
+      "path": "apps/pack-center/src/oidc.ts",
+      "sha256": "84befdb805fdf0defbdf0dc55a4a2a1a4d094ac9a696ae9b96496d4d0b69ff54"
+    },
+    {
+      "path": "apps/pack-center/src/publisher.ts",
+      "sha256": "db90e83c7f35d04485d6d9fc4c3c85d0e91da0751d5247c76af3bc30e694bd75"
+    },
+    {
+      "path": "apps/pack-center/src/release-governance.ts",
+      "sha256": "e13b02b7b0a68069bd27e3107e8e57875b8e60529754016250f89a246b114730"
+    },
+    {
+      "path": "apps/pack-center/src/runtime-config.ts",
+      "sha256": "6b62b3847d859612aaf0e15cbb90e95bf3e8827b586987c4cbd9df028adc0750"
+    },
+    {
+      "path": "apps/pack-center/src/server.ts",
+      "sha256": "665a488cc29a0538e9e3be768e68c1b1042580a76bc078c7d1585856f3779ee7"
+    },
+    {
+      "path": "apps/pack-center/src/storage.ts",
+      "sha256": "5709a789f3ecd943506527cfcceec1e61db630827b21550c3e803d6c9c4bfe57"
+    },
+    {
+      "path": "apps/pack-center/src/submissions.ts",
+      "sha256": "7b99c5c1c74473374e6becd528036d92974c49b8ed0880192e653d8a0bf3e38e"
+    },
+    {
+      "path": "apps/pack-center/src/validation-worker.ts",
+      "sha256": "3d02497fdb355bb84240e6bd22142cf40e8dff3854a6ca933c65da1613ab4e38"
+    },
+    {
+      "path": "apps/pack-center/src/web.ts",
+      "sha256": "0bac4554e8bf00ecb396e0f953750987da1d3906e8825b21f7d9535b81efa64a"
+    },
+    {
+      "path": "apps/pack-center/test/auth.test.mjs",
+      "sha256": "61b90df669559bb7d6b15fdd603df7db41c8ed5646ed8481daf3e72f984d87bc"
+    },
+    {
+      "path": "apps/pack-center/test/browser/center-ui.test.mjs",
+      "sha256": "83eca9c5911fb6692d0c3e019e70684cb76c7d1f20e459bf881d2f8d7c9b1186"
+    },
+    {
+      "path": "apps/pack-center/test/browser/host-ui.test.mjs",
+      "sha256": "ea25332f3b27af886f60ba3725c6d67366bfad2a4289731c0a7b1729f67e0ce0"
+    },
+    {
+      "path": "apps/pack-center/test/catalog.test.mjs",
+      "sha256": "12f08fec71010d97a09fa00539e2fac3569d269302f95003c8046d915135a715"
+    },
+    {
+      "path": "apps/pack-center/test/center-flow.test.mjs",
+      "sha256": "beba0407513b041a3eebd2f0f33d5895d6c6b918d7c0c69b5c859cb525bb8bc3"
+    },
+    {
+      "path": "apps/pack-center/test/database.test.mjs",
+      "sha256": "7c2fd4a2b43e619a9f142bb1c4ea97caddb633af6a1453d544d9fc7ad4b30132"
+    },
+    {
+      "path": "apps/pack-center/test/deployments.test.mjs",
+      "sha256": "4d2212055090d735435da15030d12576d0196fedad0c113b1acda27f4ce065ab"
+    },
+    {
+      "path": "apps/pack-center/test/distribution-http.test.mjs",
+      "sha256": "6f4b6d1602cc30b62f55d44557aead10d26fe853ee914db15bd5f36eb0bffe47"
+    },
+    {
+      "path": "apps/pack-center/test/git-snapshot.test.mjs",
+      "sha256": "3c6da7b1323599ae593a535b47947626764d858b77b8de73b152f971955ed2ef"
+    },
+    {
+      "path": "apps/pack-center/test/host-client-flow.test.mjs",
+      "sha256": "3f83101b375ea0cb0629ec8c5475d5b95d80a3909fb36c9c90e8460c9c44ace0"
+    },
+    {
+      "path": "apps/pack-center/test/operation-locks.test.mjs",
+      "sha256": "ac60806725d23a5cefb604e60f83e327f378366f882e443aa04e8aaab2c876ea"
+    },
+    {
+      "path": "apps/pack-center/test/publisher.test.mjs",
+      "sha256": "0c4fae1d4c0e88ce14542759868a4e1cfdb5990c7826c9315910af16ae7e2501"
+    },
+    {
+      "path": "apps/pack-center/test/release-governance.test.mjs",
+      "sha256": "0311f8ac33353e74e1299bc3e3b20ce9df27675453d58266870179f65f5d7058"
+    },
+    {
+      "path": "apps/pack-center/test/runtime-config.test.mjs",
+      "sha256": "45dcc5524ac8add6f7a6538374ff49d5022ba91c31534246f283680270cad041"
+    },
+    {
+      "path": "apps/pack-center/test/server.test.mjs",
+      "sha256": "4c9d6709b5ab6b300cf07876c7deee715fea00562a5591b8f961bbcdcc88420d"
+    },
+    {
+      "path": "apps/pack-center/test/storage.test.mjs",
+      "sha256": "7d0176b52ffa5592d36676879ff053a1d8ac881296cc7b8684642eef1b781aac"
+    },
+    {
+      "path": "apps/pack-center/test/submissions.test.mjs",
+      "sha256": "caf3fa9c81168e28a22c2f04334e21338523ec053f9f5c0b9e1ecb091e23b85e"
+    },
+    {
+      "path": "apps/pack-center/test/support/browser-fixture.mjs",
+      "sha256": "ca1f9a81659b743afbbaf00ded378c69017ec52402cec22fbdd4b5e206f74e43"
+    },
+    {
+      "path": "apps/pack-center/test/support/catalog-fixture.mjs",
+      "sha256": "01438566859760f43c0681c93c69a9840800d2b1e07393af1499f9a35c73596b"
+    },
+    {
+      "path": "apps/pack-center/test/support/database-fixture.mjs",
+      "sha256": "2a4114b8dfc3d7be2baae549bd999d65c23ddddffd2a73851252dbda17a43cbc"
+    },
+    {
+      "path": "apps/pack-center/test/support/git-fixture.md",
+      "sha256": "8b45516f078ef98af618c85bf82ef3b9531617acd5e28363b16d6d6df63aa1ad"
+    },
+    {
+      "path": "apps/pack-center/test/support/git-fixture.mjs",
+      "sha256": "074f233f53a7294b1f7c0736b2fc4e82d25bed607ac5e46279a6f3ecae2d544b"
+    },
+    {
+      "path": "apps/pack-center/test/support/host-browser-entry.tsx",
+      "sha256": "29e3f2ba27c62d3b8412f7ab9b1a42aa44efb2846fcb6a9193a3fe8d32a223a9"
+    },
+    {
+      "path": "apps/pack-center/test/support/host-browser-fixture.mjs",
+      "sha256": "39b29567d11c059caad74baf2e9de826660ca9257b1a52078e1605d4cbc10194"
+    },
+    {
+      "path": "apps/pack-center/test/support/identity-fixture.mjs",
+      "sha256": "6bede45c65e01c62ea9e9ee7f9b745b1f214c7bfcbb0b5f001d67b0b591c0772"
+    },
+    {
+      "path": "apps/pack-center/test/validation-worker.test.mjs",
+      "sha256": "6acb29bb2b35d3f90aae506b1941a42965811d52ba08c829ce222d18eec5f971"
+    },
+    {
+      "path": "apps/pack-center/test/web.test.mjs",
+      "sha256": "96445f308ea2f3c977aa56c2fd0a3e9cde29ef1fab28f370260253faf7beffcb"
+    },
+    {
+      "path": "apps/pack-center/tsconfig.json",
+      "sha256": "1eb356f0c9a61042b03f782a5bd7868cb41cc32abc79bb5dd76caff20e2f5f4d"
+    },
+    {
+      "path": "apps/pack-center/web/admin.js",
+      "sha256": "49333dcba316df49b64b2a34f80d41681f6aa5ae2b131a76022f52115080b7ec"
+    },
+    {
+      "path": "apps/pack-center/web/app.js",
+      "sha256": "128b8cb1021b2a4c44fb018bd1f8da7d2cfd7cf9e85e8b6048bebe138835caec"
+    },
+    {
+      "path": "apps/pack-center/web/index.html",
+      "sha256": "39c4947ddc5b0ae6bcc1da410fdf2791ee7b7a65eb3b5f81d264dd850256d1c9"
+    },
+    {
+      "path": "apps/pack-center/web/shared.js",
+      "sha256": "b31fd1c4c62068f704f1b686c8fc57b87bdcecbdc17fdf675795259a9b2e025d"
+    },
+    {
+      "path": "apps/pack-center/web/style.css",
+      "sha256": "19a779a881923648d81e73c93aa7ad8a81064632aa14cad9d3dafcf62777ad01"
+    },
+    {
+      "path": "apps/pack-center/web/submissions.js",
+      "sha256": "8786a366208797c75d0fd4489917cb8292509107c8cd63cc72453e02628944c8"
+    },
+    {
+      "path": "domain-packs/MATERIAL-CROSSCHECK.md",
+      "sha256": "c881ac6c0c401a53ef1c86cf3a9dd08581af1cefa380181e7131114d9c4cd156"
+    },
+    {
+      "path": "domain-packs/MATERIAL-INVENTORY.md",
+      "sha256": "a80d3b1ea65781197f08e610a0cd1806f7f926f51783015d59227ee5f95bc3ae"
+    },
+    {
+      "path": "domain-packs/PIPELINE-REMAINING-EXPERTS.md",
+      "sha256": "34e1a2928507309516e563f47f8a9f7c4cff63af5dd5486d8e42ad098033f8d3"
+    },
+    {
+      "path": "domain-packs/bank-finance/README.md",
+      "sha256": "4dcd3a471221cf431b27d4ccfee02603355ef2d7715f20a4f747501131aad154"
+    },
+    {
+      "path": "domain-packs/bank-finance/domain-knowledge/bank.99wiki.json",
+      "sha256": "53cd6da621966938993235050b698e40b16c969560ae4cea3b50c097c910359f"
+    },
+    {
+      "path": "domain-packs/bank-finance/domain-knowledge/bank.analytics.json",
+      "sha256": "4b8318410ab606240d7aee78ef9872a976aa913917abfbfc89cedf8494c52e5b"
+    },
+    {
+      "path": "domain-packs/bank-finance/domain-knowledge/bank.brand.json",
+      "sha256": "ef981e6581279a8eaaf9e7b6bf42943d3ac8f2ce9f6aecaeffbf954f9e6815cd"
+    },
+    {
+      "path": "domain-packs/bank-finance/domain-knowledge/bank.expert-memory.json",
+      "sha256": "bf05a7b11ee7f4633fac5b19b99abfc0e854ef0803b8b42faef21fb0806123a5"
+    },
+    {
+      "path": "domain-packs/bank-finance/experts/bank-09.json",
+      "sha256": "d977a490b63f891e7bc4fc13a6bb049011a818a8c4973fb7e0b1c6d62b4d8031"
+    },
+    {
+      "path": "domain-packs/bank-finance/experts/bank-10.json",
+      "sha256": "c1ffed7a0107d7ef029333a5bfa98ebd6f8dd41efc7086142dab2f8b1d1e45a1"
+    },
+    {
+      "path": "domain-packs/bank-finance/experts/bank-11.json",
+      "sha256": "5f13acbc27554141e5b398b5c8d6ddb42df9a9486271fdb51bf0778b854d8668"
+    },
+    {
+      "path": "domain-packs/bank-finance/experts/e13-01.json",
+      "sha256": "f0b33d0dabcca7410c25e566d75aa4f6061960d489006df569cd5be446c2e95c"
+    },
+    {
+      "path": "domain-packs/bank-finance/experts/e13-02.json",
+      "sha256": "6a56af8b502afad01a269f858ad424ad0283780cb0c12c8a274cf01c2a58a0b8"
+    },
+    {
+      "path": "domain-packs/bank-finance/experts/e13-03.json",
+      "sha256": "0a141f0827b96d4a290cc98be7b9f93ab93f6839e0d74bc50f7c0e98cad814cb"
+    },
+    {
+      "path": "domain-packs/bank-finance/generated/pack.sha256",
+      "sha256": "0f0dd6e3147b83163bcaf7c717b454654d25777d0ee9722b0a4a629ade089cd8"
+    },
+    {
+      "path": "domain-packs/bank-finance/generated/verify.json",
+      "sha256": "5da158a05b8d92930831559feab94422db2d454881489806962c8512593a6088"
+    },
+    {
+      "path": "domain-packs/bank-finance/knowledge-providers/bank-99wiki.json",
+      "sha256": "0899d4c2361dff63121d85e067c64d7b28b8b411eb5bf067860a492b63a29d29"
+    },
+    {
+      "path": "domain-packs/bank-finance/knowledge-providers/bank-analytics.json",
+      "sha256": "e7dbf9807679fb5e2a78f758cb2d3660bda5fd3a46b6cfd03b79c969ef380dd2"
+    },
+    {
+      "path": "domain-packs/bank-finance/knowledge-providers/bank-expert-memory.json",
+      "sha256": "53ceb561302715863ef5a8e53f889700a091824bfad24fda00a83dc5b8e9e6ef"
+    },
+    {
+      "path": "domain-packs/bank-finance/knowledge-providers/local-knowledge.json",
+      "sha256": "ed7801dc3e9bb88cc1f58c5ee08bbaa7ef2d075ff5bab1b8c819b60b7c0dccb4"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.attribution.json",
+      "sha256": "c508ae434fa4e23ff94407ed2d95bfa1b8a9b537355110e3d6bdc2f228eaf6e8"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.caliber-restore.json",
+      "sha256": "a0d598b30759b889a3ef1973a7881cd08f11b365607e43afbba4d18b5cc1d86c"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.customer-tiering.json",
+      "sha256": "f6a57addd1ab31ffe7f9ceeb65aada357c4a6447877e2950e48f4d68da3cccbd"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.framework-b.json",
+      "sha256": "632a12096920133aa40ba7209db617952354ab7b657e6aebac34fa646fe1e266"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.incentive-governance.json",
+      "sha256": "ba4411005140d8c3bbd91aa45d12d13efaeabe51f995fec3d44c1fef100fe1a8"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.partnership-diligence.json",
+      "sha256": "bdd8e9d70e92185bee982998f73f3429663a49711051fa9aaa866760f6eb697b"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.retail-ops.json",
+      "sha256": "c708baa30ed1d8557a3fabccd553435e3dac91a475874c239878d21bb6295aa5"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.threshold-calc.json",
+      "sha256": "16eb4add9302368b05fb66271b2561ae5f5bdea450448029545e7d61707d9b35"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.tiered-pnl.json",
+      "sha256": "5560fb90ce608947ff7ccabfd496e36e657fed90d193e8cd9ba65e56027174ce"
+    },
+    {
+      "path": "domain-packs/bank-finance/method-packs/bank.method.work-chains.json",
+      "sha256": "6d5f51d10159efd64ebdd799cc70f0087d22393295c7329cf124abd3479766f9"
+    },
+    {
+      "path": "domain-packs/bank-finance/output-templates/bank.output.B.json",
+      "sha256": "d9aead2937d2f2c7f68da82b717b0620da53ddc1e2e0845e817640d06ea638de"
+    },
+    {
+      "path": "domain-packs/bank-finance/output-templates/bank.output.caliber-table.json",
+      "sha256": "61b66c208eaacadba987adb163811457615ce397eb41c12c733253ed05d0d84a"
+    },
+    {
+      "path": "domain-packs/bank-finance/output-templates/bank.output.method-record.json",
+      "sha256": "5ffa1447ad71e94b650e034695323efffc2a4f1f9be8eeed2432e0a947a0081c"
+    },
+    {
+      "path": "domain-packs/bank-finance/pack.json",
+      "sha256": "1fe552f1f3110e318f76fba42b35df648921b3103ab260e849b176adb2a63799"
+    },
+    {
+      "path": "domain-packs/bank-finance/quality-policies/bank.quality.json",
+      "sha256": "b8afa0b257db53390f433dc6b91478759feefdd5ad90a70b18fd3b82daf4b556"
+    },
+    {
+      "path": "domain-packs/bank-finance/routing/routing.json",
+      "sha256": "72c9f1be1f83e7842db1106628f7d64d3b40431d241768b0c254510701f532c0"
+    },
+    {
+      "path": "domain-packs/bank-finance/scenarios/bank-credit-card.json",
+      "sha256": "ceda3ab3e45523e0f050bcea0e55ffc04691850d74d65cd662360bcae065f53f"
+    },
+    {
+      "path": "domain-packs/bank-finance/scenarios/bank-retail.json",
+      "sha256": "dc80a1b40bb5b7f55a3ca5ced39537389b1dd48bf66e1b0bd7a521def2e7ce4b"
+    },
+    {
+      "path": "domain-packs/bank-finance/scenarios/bank-strategy.json",
+      "sha256": "98afc0052a2509b7061a2e4036c75c9e778c2b1ca43c4bb2c81d89192a203bf3"
+    },
+    {
+      "path": "domain-packs/bank-finance/skill-packages/bank-activity-eval.json",
+      "sha256": "a8ff57b55f24b918a110bfb3d26b0eaa75044aee5b2f62583e4494fc353c3451"
+    },
+    {
+      "path": "domain-packs/bank-finance/skill-packages/bank-retail-finance-analysis.json",
+      "sha256": "15fe4b3705f0c79bdf811aa7eb29cf2a481ef17cde9ae2befec06b8cf9a149d8"
+    },
+    {
+      "path": "domain-packs/bank-finance/skill-packages/finesse-ui.json",
+      "sha256": "bfeac9fdd7e963aa94a1bc1446c26a8eee38d0ca443f6b23597acaf2acd38296"
+    },
+    {
+      "path": "domain-packs/bank-finance/skill-packages/gsap-core.json",
+      "sha256": "60ba1fd92e95a1c8272d4e9a2be43d80be5a6fa1486ee2daf771719b60280cbb"
+    },
+    {
+      "path": "domain-packs/bank-finance/skill-packages/gsap-scrolltrigger.json",
+      "sha256": "2e7a041acb7e3dc934129552b52e59935eea9192e7f644130b3786cbee293646"
+    },
+    {
+      "path": "domain-packs/bank-finance/skill-packages/gsap-timeline.json",
+      "sha256": "87ba7a75c1cfbafc62a6ec69b649637ad00dd305bf222c22134e829180bdc365"
+    },
+    {
+      "path": "domain-packs/bank-finance/skill-packages/strategy-consulting.json",
+      "sha256": "6c57c08b04bf5ead6cbfe53adb283f00aaf91744a0975a9b1390480e8f153944"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/bank-activity-eval/SKILL.md",
+      "sha256": "40c2f91ab7a48316f0b50259ec95e5c738edd3cca2645a39c98e88f528c511a5"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/bank-retail-finance-analysis/SKILL.md",
+      "sha256": "c260871eba2e34097cc3bbec29384578759c5aab520ace308846dd60e6fb5d39"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/bank-retail-finance-analysis/references/analysis-templates.md",
+      "sha256": "e81824ef75e472856ee43c1d4238c76e67f89a87aeee5ecff424f4e293ceac93"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/SKILL.md",
+      "sha256": "b3c95a871163a8fbed75dca16a6530170c6311627c577dd12e05242e412a2b8c"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/agents/openai.yaml",
+      "sha256": "fec0353b964130bb25a65db8dc0f36e908724a7dff9c34f70d256b203860fd13"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/EXAMPLES.md",
+      "sha256": "d4ff553f55b42894e0061bef016a9f6a8da54848db1a5274dfde4ffc1d421bb5"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/acru-financial-dashboard.html",
+      "sha256": "68aa46e1879d25d062aed7fcbe5edde60ea18b64567281ef49cf34fe0b7a14c1"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/aether-cinematic-tech.html",
+      "sha256": "27f77e1ca2e2305018276d20dc0d74f8d95f4a2c9888add82610eb4263afbe8b"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/buildly-growth-dashboard.html",
+      "sha256": "f4ae0e205ec0d1ddb575b06bd0a859d7c988b93e25ef5fbfc68b8f7850254a09"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/caliber-precision-horology.html",
+      "sha256": "20a63413387a60f1e02d038184a74306175b32f6e182a2387bd134df6368d6c1"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/flux-fluid-simulation.html",
+      "sha256": "609685d8371e29ceb3f6bc4ef60b6486ba6f3d727acb22dff0751cecf062e24e"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/h5-brew-mobile-pdp.html",
+      "sha256": "d7c245958899622a392bdb40e5b426fab4e8fd6f2f531f4b85b56b64b6a767d5"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/h5-fern-meal-desk.html",
+      "sha256": "e847d9b69d285f10a2097a9853b7a5d857ee4b075308430bb15d1bbb9c2f2b28"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/h5-pawpal-app-shell.html",
+      "sha256": "465c4b61d5932d5e915530f48ccf07adafaf21704019737faf938fd04ebbeb83"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/h5-peach-daily-desk.html",
+      "sha256": "6b014632ea451e02a739df01260d1da67e0b13efff1fb46142c776d1c31aa63a"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/huddle-team-workspace.html",
+      "sha256": "5b30afa90a9f8154717d3493a85f81b108accf4210f5d0a483249010060bff07"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/inkline-publishing-cms.html",
+      "sha256": "76ad8d234918e6727b1d3640ff6f1ebc4cd50c8fa0f20e6465064604eaae6a0c"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/ledgerio-treasury-console.html",
+      "sha256": "aeddcd893407d416f1ba30bfaa2eecf5e9f4fadd5e55b0268ae48b0b39a7987f"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/lib/ScrollTrigger.min.js",
+      "sha256": "308219390e5e3b84cda0c481e70caa9820883ae10bda44e6e9a149a81aac4b3f"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/lib/gsap.min.js",
+      "sha256": "96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/morph-variable-type.html",
+      "sha256": "acb90a523a7203d777d383174d9506cde9125718ed3aa0a0563079a2d623680b"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/nodeflux-api-console.html",
+      "sha256": "e108f7b6036688cb4690512881c86aee9b5f52f6b80ca9efce12a95588e9695e"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/nova-brutal-typographic.html",
+      "sha256": "83628f33923931299b9585ea8a41519853c401c66edfb08a266b6d22fb459656"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/offscreen-editorial.html",
+      "sha256": "4936a4643b686ebcbad041561db79fa17605275f07091a87c41df2488fb9a7ab"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/pawcare-adaptive-health.html",
+      "sha256": "5b6aa2367866d74b7e9a0bd4fb4da8aabab35644c56d5695a3e72c9d50c85952"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/relay-agent-console.html",
+      "sha256": "71af321b8a962ecb9125f8a8f2373f017f2abddafde7a2174a9091ab36f89e04"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/signal-phosphor-terminal.html",
+      "sha256": "0d18265fd3a93d88b2884ffdbb36383e4b79ededc67505277ac9221fe2c4d9d7"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/sparkcraft-bauhaus-geometric.html",
+      "sha256": "d264d5a94a18e0c66733f793a89cdfc278f9f6b83595d56b02df31d9fe1d21e3"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/stakent-monitoring-dashboard.html",
+      "sha256": "5b806167efdf615c65f229f1a44395fb929911413f4f85d2b5432eebcb8e8392"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/examples/studio-quiet-luxury.html",
+      "sha256": "a51f9cbdc6d3c400b9065ab8cca20b905f0636fd2ea7d2b0c976924e0240c5b5"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/3d-effects.md",
+      "sha256": "ab5c8eeb2fb1afc7fc75c4866b5ebdaf856ae0dfd5a97fa7759db8459cd2c612"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/ai-console.md",
+      "sha256": "8914beb7a4c953713d35dac6cc60204ef6dd5a4f5d5504e75579037fdb1cb3af"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/anti-cheap.md",
+      "sha256": "d4688f17e823ab13628d3a56df4bda8e08bd21a62df1757ea8bea977da217467"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/asset-sourcing.md",
+      "sha256": "9b526b3e83b219be37f915773076a152770701f247bc935d5b3c81485d15fb43"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/audit.md",
+      "sha256": "10e8a14601b90ebac14d27f593115353cfad290fad5eff30c7ff0875cb8d058b"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/chart-crafting.md",
+      "sha256": "151cc990741c11c3f0256c9730026da70f6b9a77dec48f5b628993c92d405276"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/commerce-ui.md",
+      "sha256": "c6a0a5e02c40e95b883fb004008a1a9d28524b79a34a49753d417a5c0c4621f3"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/component-scope.md",
+      "sha256": "9721dffd207817721ebf846002828bdecfeff49f8886a4a45fbd460ec8502485"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/dataviz.md",
+      "sha256": "c09046ff7c404ca886262c05a951eceb9babc45b83d527f8448319cc5c9ba05f"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/design-dna.md",
+      "sha256": "ed52ffd04b72bc1ab3dbdcb7510fb246943d3df403a6495b127977f692e1bffe"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/design-model.md",
+      "sha256": "96c2e84d27c1cba221efef787efe1b1579cce8739fdb19d4ad5cbc93736b5a76"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/divergence.md",
+      "sha256": "867797ea63430db0a3a192d15421db5b33117b11c73fbaccfaaab1cab30b1181"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/document.md",
+      "sha256": "1c1a84b18c8f1f481c82cde450b1974f742a0510b4a4e4dcb8ac069e7631b33e"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/h5-mobile.md",
+      "sha256": "12e9fbbc7829ee4424ba4f86efddd5fcd060832c8d111b6458eeabc74dfe7137"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/hero-engines.md",
+      "sha256": "27b40984aed27f9dd9796fe3862919d8c7e8303197c55d8d1d8e6cd093d68390"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/init.md",
+      "sha256": "f036e5bb20c4c0f53f9524ad595aac5e235875f8b4ac4c27dc47c4de9529f8e2"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/inspiration-catalog.md",
+      "sha256": "f0549a198fc1f60dd8a2ede0fe0643d105c13f2c0223a59daf2a2f42c6960a15"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/mobile-floor.md",
+      "sha256": "3df080bbcdc8a94c86e54a8faec692231ed502f740a49ae1e90d339ce9b92ffb"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/motion.md",
+      "sha256": "04fd6ee3d018e0bfa42bb777d137ec3901f488c29e5a54e34d8e73c9b1da1ede"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/page-crafting.md",
+      "sha256": "d3c11728f093f12589412f5d2c20eb6e639556556cf68203c0548c93a2cff42d"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/plain-words.md",
+      "sha256": "8bf6660db40128612300d7431e8dae788784f827803717ece6072558a8a776e2"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/preflight.md",
+      "sha256": "1139d493b309c55844e498492b01f8eb10d079d5868e372254934d974e3df019"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/product-palettes.md",
+      "sha256": "cb13e76707bb21c7ce42fc8a97a90543735c52af54e0b95b9040c28b017e4a38"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/product-ui.md",
+      "sha256": "7120c76be6c1a35872d2c2dec21dd06c663c75b0f98c77e575f66b717561473b"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/redesign-mode.md",
+      "sha256": "22cdf3234080e90859bf22ba3f4739a52cb9d76c376bf92e372385a0cf4c0671"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/style-personas.md",
+      "sha256": "dc02da1d025ad987fed11ae8505f79c9f24dff0dd41792eccf1d008f92cbbdde"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/theming.md",
+      "sha256": "23dd20cd296edd0a0f861e179d59a2387d176f798d646c28777444e3719b616c"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/references/workflow-ui.md",
+      "sha256": "c7210c38844f9afe7243ddb8ea8aeda7a1a86cf08cf0cfb35ebcd12af0b38ce8"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/finesse-ui/scripts/detect.mjs",
+      "sha256": "e66d90a975e37b421a167a19dc5f3b094eb27c5075f5040b2c0b8704b3d64024"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/gsap-core/SKILL.md",
+      "sha256": "3887b47e050ab5afbe2a9a820f23d39fa02ab785e06a343be44c6f91d84d12b3"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/gsap-scrolltrigger/SKILL.md",
+      "sha256": "9351b6666a4749c0740406ea363aaccb99a087ff45cc5e8b99a0f367facf3ef4"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/gsap-timeline/SKILL.md",
+      "sha256": "1a8b0f39cc4be3ed3d834b89672e4ae2f151b901dc3450bebf10bbc45379fe02"
+    },
+    {
+      "path": "domain-packs/bank-finance/skills/strategy-consulting/SKILL.md",
+      "sha256": "4caefff0f4a63cf2313d17bbb36b94431b66f860e1d2c3df05053bb35bbfdb9f"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/SOURCE-MANIFEST.json",
+      "sha256": "72b416b80098d9cf01f732571abef9cb2cc07ab5fda6101bba5c54bbe36b24d0"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/docs/专家总表.md",
+      "sha256": "02f65153568975fb5166898c7ed84c9f1eb27e4b2547e8ed0b42da1962371f9b"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/docs/信用卡方法论提取摘要.md",
+      "sha256": "ec9fac65ddf48721ffc0fa1beda82ad6953b4d39a2e35d05e1d3ef678e0a131f"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/raw-profiles/一一_专家Profile_BANK-10.json",
+      "sha256": "1eae1f4cc9305d002d53a19b52a4dfea0030a35aa79ae16cb8fca618bbeab5a0"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/raw-profiles/信贷舵手_专家Profile_BANK-09.json",
+      "sha256": "2fd158b75e5a02ca19309efc6a6370957d02a4e2bba5273adf60e9f95e5bf279"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/raw-profiles/息差账房_专家Profile_E13-02.json",
+      "sha256": "106155ae4bd986f972f42d025a771ee386b124d0d0fce26af4d652fce1ae5bdb"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/raw-profiles/战略沙盘官_专家Profile_E13-01.json",
+      "sha256": "cf516933510ac30b5610b338afcc2599f9a4e496c31a0637398d3b9c8bd80acf"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/raw-profiles/琉_专家Profile_BANK-11.json",
+      "sha256": "c3874f2ff05b5dcbecf1af75cdc87a2a2c9422c1dbf5d15f6275256423692e43"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/raw-profiles/风控守门员_专家Profile_E13-03.json",
+      "sha256": "2ce33989b7c68c6051044ba8f191be11d48a315ffa881f745d88ad8723614b71"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/bank-activity-eval/SKILL.md",
+      "sha256": "40c2f91ab7a48316f0b50259ec95e5c738edd3cca2645a39c98e88f528c511a5"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/bank-retail-finance-analysis/SKILL.md",
+      "sha256": "c260871eba2e34097cc3bbec29384578759c5aab520ace308846dd60e6fb5d39"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/bank-retail-finance-analysis/references/analysis-templates.md",
+      "sha256": "e81824ef75e472856ee43c1d4238c76e67f89a87aeee5ecff424f4e293ceac93"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/SKILL.md",
+      "sha256": "b3c95a871163a8fbed75dca16a6530170c6311627c577dd12e05242e412a2b8c"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/agents/openai.yaml",
+      "sha256": "fec0353b964130bb25a65db8dc0f36e908724a7dff9c34f70d256b203860fd13"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/EXAMPLES.md",
+      "sha256": "d4ff553f55b42894e0061bef016a9f6a8da54848db1a5274dfde4ffc1d421bb5"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/acru-financial-dashboard.html",
+      "sha256": "68aa46e1879d25d062aed7fcbe5edde60ea18b64567281ef49cf34fe0b7a14c1"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/aether-cinematic-tech.html",
+      "sha256": "27f77e1ca2e2305018276d20dc0d74f8d95f4a2c9888add82610eb4263afbe8b"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/buildly-growth-dashboard.html",
+      "sha256": "f4ae0e205ec0d1ddb575b06bd0a859d7c988b93e25ef5fbfc68b8f7850254a09"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/caliber-precision-horology.html",
+      "sha256": "20a63413387a60f1e02d038184a74306175b32f6e182a2387bd134df6368d6c1"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/flux-fluid-simulation.html",
+      "sha256": "609685d8371e29ceb3f6bc4ef60b6486ba6f3d727acb22dff0751cecf062e24e"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/h5-brew-mobile-pdp.html",
+      "sha256": "d7c245958899622a392bdb40e5b426fab4e8fd6f2f531f4b85b56b64b6a767d5"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/h5-fern-meal-desk.html",
+      "sha256": "e847d9b69d285f10a2097a9853b7a5d857ee4b075308430bb15d1bbb9c2f2b28"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/h5-pawpal-app-shell.html",
+      "sha256": "465c4b61d5932d5e915530f48ccf07adafaf21704019737faf938fd04ebbeb83"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/h5-peach-daily-desk.html",
+      "sha256": "6b014632ea451e02a739df01260d1da67e0b13efff1fb46142c776d1c31aa63a"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/huddle-team-workspace.html",
+      "sha256": "5b30afa90a9f8154717d3493a85f81b108accf4210f5d0a483249010060bff07"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/inkline-publishing-cms.html",
+      "sha256": "76ad8d234918e6727b1d3640ff6f1ebc4cd50c8fa0f20e6465064604eaae6a0c"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/ledgerio-treasury-console.html",
+      "sha256": "aeddcd893407d416f1ba30bfaa2eecf5e9f4fadd5e55b0268ae48b0b39a7987f"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/lib/ScrollTrigger.min.js",
+      "sha256": "308219390e5e3b84cda0c481e70caa9820883ae10bda44e6e9a149a81aac4b3f"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/lib/gsap.min.js",
+      "sha256": "96c01b81f44a3290e2b4532f55e2c9534b2adc43273a19f3756b2cb41f0fd0b6"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/morph-variable-type.html",
+      "sha256": "acb90a523a7203d777d383174d9506cde9125718ed3aa0a0563079a2d623680b"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/nodeflux-api-console.html",
+      "sha256": "e108f7b6036688cb4690512881c86aee9b5f52f6b80ca9efce12a95588e9695e"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/nova-brutal-typographic.html",
+      "sha256": "83628f33923931299b9585ea8a41519853c401c66edfb08a266b6d22fb459656"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/offscreen-editorial.html",
+      "sha256": "4936a4643b686ebcbad041561db79fa17605275f07091a87c41df2488fb9a7ab"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/pawcare-adaptive-health.html",
+      "sha256": "5b6aa2367866d74b7e9a0bd4fb4da8aabab35644c56d5695a3e72c9d50c85952"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/relay-agent-console.html",
+      "sha256": "71af321b8a962ecb9125f8a8f2373f017f2abddafde7a2174a9091ab36f89e04"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/signal-phosphor-terminal.html",
+      "sha256": "0d18265fd3a93d88b2884ffdbb36383e4b79ededc67505277ac9221fe2c4d9d7"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/sparkcraft-bauhaus-geometric.html",
+      "sha256": "d264d5a94a18e0c66733f793a89cdfc278f9f6b83595d56b02df31d9fe1d21e3"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/stakent-monitoring-dashboard.html",
+      "sha256": "5b806167efdf615c65f229f1a44395fb929911413f4f85d2b5432eebcb8e8392"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/examples/studio-quiet-luxury.html",
+      "sha256": "a51f9cbdc6d3c400b9065ab8cca20b905f0636fd2ea7d2b0c976924e0240c5b5"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/3d-effects.md",
+      "sha256": "ab5c8eeb2fb1afc7fc75c4866b5ebdaf856ae0dfd5a97fa7759db8459cd2c612"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/ai-console.md",
+      "sha256": "8914beb7a4c953713d35dac6cc60204ef6dd5a4f5d5504e75579037fdb1cb3af"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/anti-cheap.md",
+      "sha256": "d4688f17e823ab13628d3a56df4bda8e08bd21a62df1757ea8bea977da217467"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/asset-sourcing.md",
+      "sha256": "9b526b3e83b219be37f915773076a152770701f247bc935d5b3c81485d15fb43"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/audit.md",
+      "sha256": "10e8a14601b90ebac14d27f593115353cfad290fad5eff30c7ff0875cb8d058b"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/chart-crafting.md",
+      "sha256": "151cc990741c11c3f0256c9730026da70f6b9a77dec48f5b628993c92d405276"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/commerce-ui.md",
+      "sha256": "c6a0a5e02c40e95b883fb004008a1a9d28524b79a34a49753d417a5c0c4621f3"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/component-scope.md",
+      "sha256": "9721dffd207817721ebf846002828bdecfeff49f8886a4a45fbd460ec8502485"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/dataviz.md",
+      "sha256": "c09046ff7c404ca886262c05a951eceb9babc45b83d527f8448319cc5c9ba05f"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/design-dna.md",
+      "sha256": "ed52ffd04b72bc1ab3dbdcb7510fb246943d3df403a6495b127977f692e1bffe"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/design-model.md",
+      "sha256": "96c2e84d27c1cba221efef787efe1b1579cce8739fdb19d4ad5cbc93736b5a76"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/divergence.md",
+      "sha256": "867797ea63430db0a3a192d15421db5b33117b11c73fbaccfaaab1cab30b1181"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/document.md",
+      "sha256": "1c1a84b18c8f1f481c82cde450b1974f742a0510b4a4e4dcb8ac069e7631b33e"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/h5-mobile.md",
+      "sha256": "12e9fbbc7829ee4424ba4f86efddd5fcd060832c8d111b6458eeabc74dfe7137"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/hero-engines.md",
+      "sha256": "27b40984aed27f9dd9796fe3862919d8c7e8303197c55d8d1d8e6cd093d68390"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/init.md",
+      "sha256": "f036e5bb20c4c0f53f9524ad595aac5e235875f8b4ac4c27dc47c4de9529f8e2"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/inspiration-catalog.md",
+      "sha256": "f0549a198fc1f60dd8a2ede0fe0643d105c13f2c0223a59daf2a2f42c6960a15"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/mobile-floor.md",
+      "sha256": "3df080bbcdc8a94c86e54a8faec692231ed502f740a49ae1e90d339ce9b92ffb"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/motion.md",
+      "sha256": "04fd6ee3d018e0bfa42bb777d137ec3901f488c29e5a54e34d8e73c9b1da1ede"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/page-crafting.md",
+      "sha256": "d3c11728f093f12589412f5d2c20eb6e639556556cf68203c0548c93a2cff42d"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/plain-words.md",
+      "sha256": "8bf6660db40128612300d7431e8dae788784f827803717ece6072558a8a776e2"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/preflight.md",
+      "sha256": "1139d493b309c55844e498492b01f8eb10d079d5868e372254934d974e3df019"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/product-palettes.md",
+      "sha256": "cb13e76707bb21c7ce42fc8a97a90543735c52af54e0b95b9040c28b017e4a38"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/product-ui.md",
+      "sha256": "7120c76be6c1a35872d2c2dec21dd06c663c75b0f98c77e575f66b717561473b"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/redesign-mode.md",
+      "sha256": "22cdf3234080e90859bf22ba3f4739a52cb9d76c376bf92e372385a0cf4c0671"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/style-personas.md",
+      "sha256": "dc02da1d025ad987fed11ae8505f79c9f24dff0dd41792eccf1d008f92cbbdde"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/theming.md",
+      "sha256": "23dd20cd296edd0a0f861e179d59a2387d176f798d646c28777444e3719b616c"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/references/workflow-ui.md",
+      "sha256": "c7210c38844f9afe7243ddb8ea8aeda7a1a86cf08cf0cfb35ebcd12af0b38ce8"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/finesse-ui/scripts/detect.mjs",
+      "sha256": "e66d90a975e37b421a167a19dc5f3b094eb27c5075f5040b2c0b8704b3d64024"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/gsap-core/SKILL.md",
+      "sha256": "3887b47e050ab5afbe2a9a820f23d39fa02ab785e06a343be44c6f91d84d12b3"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/gsap-scrolltrigger/SKILL.md",
+      "sha256": "9351b6666a4749c0740406ea363aaccb99a087ff45cc5e8b99a0f367facf3ef4"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/gsap-timeline/SKILL.md",
+      "sha256": "1a8b0f39cc4be3ed3d834b89672e4ae2f151b901dc3450bebf10bbc45379fe02"
+    },
+    {
+      "path": "domain-packs/bank-finance/source/skills/strategy-consulting/SKILL.md",
+      "sha256": "4caefff0f4a63cf2313d17bbb36b94431b66f860e1d2c3df05053bb35bbfdb9f"
+    },
+    {
+      "path": "domain-packs/bank-finance/team-templates/bank.team.B.json",
+      "sha256": "b5d5b760cec7f18c0a0245ae8705d0fd92ddf2fb0d532006789bc5d04d8b556c"
+    },
+    {
+      "path": "domain-packs/beike/README.md",
+      "sha256": "091ba39462183adaa5e567d42cfc4246f392030b2c27b94c6950d1f23fc992d5"
+    },
+    {
+      "path": "domain-packs/beike/domain-knowledge/beike.99wiki.json",
+      "sha256": "efa5cd576a5bee8deecd360f4b0cb39cbcabe31194afb762726f314a3bbb5ef4"
+    },
+    {
+      "path": "domain-packs/beike/domain-knowledge/beike.expert-memory.json",
+      "sha256": "ebd66bf3504fd9a2e9b8233316e85e4726026d65877d1a19367ff14995cdd312"
+    },
+    {
+      "path": "domain-packs/beike/experts/bank-11.json",
+      "sha256": "221b05da6eec79a13bc40c3dfcc32deaa9453ffb0cbfd3233adda684f1c46157"
+    },
+    {
+      "path": "domain-packs/beike/experts/bk-002.json",
+      "sha256": "ae7259038348ea3cc2e0ba9d17e9c4725041a51652b3f4bcb0a8273c9b502b5e"
+    },
+    {
+      "path": "domain-packs/beike/experts/bk-016.json",
+      "sha256": "86a11f0a0e3a324832f433913702dfd661e12d6206f8819fec303c1f800e4d40"
+    },
+    {
+      "path": "domain-packs/beike/experts/bk-018.json",
+      "sha256": "dbbb69d123c887735398064596890af7bf645f9e2b42a1c12510bcff1586dc99"
+    },
+    {
+      "path": "domain-packs/beike/experts/bk-019.json",
+      "sha256": "2e80e8b403f53501823d6256556a7c6435b26f37c9d242695ccfc78a71078971"
+    },
+    {
+      "path": "domain-packs/beike/experts/bk-027.json",
+      "sha256": "1fadc8db3db60b934af81ef07dbf59581b9270410168f8cb7244d75d4ac46644"
+    },
+    {
+      "path": "domain-packs/beike/experts/bk-028.json",
+      "sha256": "9241b35b7be80b91c752ab44353ea440e39e9053010bde616db7a81da69d2c32"
+    },
+    {
+      "path": "domain-packs/beike/experts/bk-031.json",
+      "sha256": "dc9353db779856109c333cc4d0cdd3d97740994aa1f93f80790c0a9eec1f797a"
+    },
+    {
+      "path": "domain-packs/beike/experts/bk-033.json",
+      "sha256": "b672a13dd33f8dfb8a50e9c8765dece5d30c02e46b4f7db44e5205d2d33b6fb1"
+    },
+    {
+      "path": "domain-packs/beike/experts/e04-05.json",
+      "sha256": "08073513420db7564cfc1864de57d06d5a6285fc1363bdfd5becf8b255694b1d"
+    },
+    {
+      "path": "domain-packs/beike/experts/e08-08.json",
+      "sha256": "ead48d6d043599df83094d832f10805ef016f6ffee52ac874dc00d394964860b"
+    },
+    {
+      "path": "domain-packs/beike/experts/s-07.json",
+      "sha256": "9fa3c93ca19d968fef805133b7c5d13decc2367f86bc688a2a5b56a68835127a"
+    },
+    {
+      "path": "domain-packs/beike/experts/s-13.json",
+      "sha256": "507b78081f913d457b5fa2bb78faba01980000dafe1766b6659f3b6d63eebee5"
+    },
+    {
+      "path": "domain-packs/beike/experts/s-23.json",
+      "sha256": "fdd3819f46c30376e533a3ac091be4487e73c20ddc92d6fffaae4803f9487342"
+    },
+    {
+      "path": "domain-packs/beike/generated/pack.sha256",
+      "sha256": "a063de5f27c5ce40b5a155e1b069ca4b415e1073ded63ea9606ef85b1406f005"
+    },
+    {
+      "path": "domain-packs/beike/generated/verify.json",
+      "sha256": "209193eddc392c6f69d8c92968fb9e4f9a73c111b5920ff03a85bc59c100e481"
+    },
+    {
+      "path": "domain-packs/beike/knowledge-providers/beike-99wiki.json",
+      "sha256": "950b1524fce789d4b86bfaf286ecfcff07c6c427e38864510918595c10649873"
+    },
+    {
+      "path": "domain-packs/beike/knowledge-providers/beike-expert-memory.json",
+      "sha256": "19f7d2416a2ab2cbcd9b6903bbb93ab0237335198687e6c20c87e1d1d57fbeb0"
+    },
+    {
+      "path": "domain-packs/beike/knowledge-providers/local-knowledge.json",
+      "sha256": "3525df3fd48a9727a1b4980af884028efcba0214b9bb6cd597f3b09cefddd33c"
+    },
+    {
+      "path": "domain-packs/beike/method-packs/beike.method.ecosystem-protocol.json",
+      "sha256": "e307e92e98d0268fcc6837cc8894e98ebb4432f0e136051cea5311ac048bb010"
+    },
+    {
+      "path": "domain-packs/beike/method-packs/beike.method.framework-b.json",
+      "sha256": "5d2f280e9c9ea2dcf1b4878891b34ed8b1050939640bfb0cc72938b1bceb721b"
+    },
+    {
+      "path": "domain-packs/beike/output-templates/beike.output.B.json",
+      "sha256": "3ecfa3f5d1094537539d4a055ae5ab473f9d48dd77151465e15f06ec09418068"
+    },
+    {
+      "path": "domain-packs/beike/pack.json",
+      "sha256": "f6df8d54c29f8c3269509515e7de14bf5e8a90e00bffcc686d664d227ff3cf48"
+    },
+    {
+      "path": "domain-packs/beike/quality-policies/beike.quality.json",
+      "sha256": "e4cc99f4c801bf542c11878e89eaacb0354fff065cc2e307357a3df14ec03199"
+    },
+    {
+      "path": "domain-packs/beike/scenarios/beike-ecosystem.json",
+      "sha256": "2ed2a0733641bb1501caba9ac76ed04236d0b393e24982db7c39eaa79bf7aeb5"
+    },
+    {
+      "path": "domain-packs/beike/scenarios/beike-rental-supply-chain.json",
+      "sha256": "35cb6cad1ed2c335611b239e316e1dec469ff25048e4e494c7c0ba0ceddd3675"
+    },
+    {
+      "path": "domain-packs/beike/team-templates/beike.team.B.json",
+      "sha256": "cf9c5eeed40422cd32939febcd286ca03f5b1c5311a971bab34a454bfea9a4aa"
+    },
+    {
+      "path": "domain-packs/builtin-library/README.md",
+      "sha256": "5e2c73e54af426636e6122317e6b2fadfda3956b025be895c5ca5fdd6b157a42"
+    },
+    {
+      "path": "domain-packs/builtin-library/experts/data-analyst.json",
+      "sha256": "7fc2b24cd444a5d0edb94b4338b9b2822b6d2663a7efca0b2e86882015d9767c"
+    },
+    {
+      "path": "domain-packs/builtin-library/experts/designer.json",
+      "sha256": "1c2400f2c1bf2354e05914f46057388cc22ddf149c4a0f56ac15cd44f615ec4b"
+    },
+    {
+      "path": "domain-packs/builtin-library/experts/docs-coordinator.json",
+      "sha256": "12cdf7d0e55aff40baeb82f7149460bd882715673175d068579425e7a46d733c"
+    },
+    {
+      "path": "domain-packs/builtin-library/experts/engineer.json",
+      "sha256": "ade70b95c61337457d1813a72191268575a862f93437cb0da3e4f62d80dbb7f9"
+    },
+    {
+      "path": "domain-packs/builtin-library/experts/qa-engineer.json",
+      "sha256": "ae7808456b592ca094d1da13632f65e3d0822baa5c2182ee3fcbe07a964d6bba"
+    },
+    {
+      "path": "domain-packs/builtin-library/experts/researcher.json",
+      "sha256": "52600cdd4088739f5314cbbfd4fc4f7094fc57a3b2bab4d40c42e643d553f739"
+    },
+    {
+      "path": "domain-packs/builtin-library/experts/security-reviewer.json",
+      "sha256": "4d1af2a90e362d90df970d30b29af98d0c5e2c154c0d30a572aba4a520268398"
+    },
+    {
+      "path": "domain-packs/builtin-library/experts/team-lead.json",
+      "sha256": "d1e869fa607a97ce5ffd1ab4f64b428afeed9f63c070d3b0d4b93cf4b25e8ef0"
+    },
+    {
+      "path": "domain-packs/builtin-library/generated/pack.sha256",
+      "sha256": "89cd8031f99d49f8c3ba5323535c3614ab3765996406750dd315b1f785fc3b82"
+    },
+    {
+      "path": "domain-packs/builtin-library/generated/verify.json",
+      "sha256": "1633a19118be46b5197421419ba4b220ca9bfa8b40c8c47f421754aec1b0a949"
+    },
+    {
+      "path": "domain-packs/builtin-library/knowledge-providers/local-knowledge.json",
+      "sha256": "95f4d8bbaa84c353e4a2548fb826bf967bf46d9c132ce0b77462fad4c7a23b32"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/code-review.legacy-output.json",
+      "sha256": "8c30275277429328e67c6b5cc5cd0c4b97408147460095d110910a35202254db"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/cross-debate.legacy-output.json",
+      "sha256": "67a7c4cee0a11592ccbb6320ed4edaf67d2021676be5cb4899c2a75208453ce2"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/documentation.legacy-output.json",
+      "sha256": "bcd8d90779014141f7fe683307e5d516b7382d458fbbf8ff242014ded6b37d1e"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/fullstack-build.legacy-output.json",
+      "sha256": "87ebcd602a9b9f3fb5719f2b6a695e6e307a682b0093325108c3b3289e1de75a"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/market-research.legacy-output.json",
+      "sha256": "52f00ecb43adf9fc3c2685624d46449e05be5e9756ff78d376335c3af43f1647"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/ppt-gen.legacy-output.json",
+      "sha256": "ffe85b63b6878f5d49357ed4a141231dc6a5287704f79b293a2cb0d0c531f70e"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/product-design.legacy-output.json",
+      "sha256": "d5f14d60eec20f4cacd7fe6cad82d1f42441827339e90f036cc9841c6321a41d"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/research-report.legacy-output.json",
+      "sha256": "1b14aff50e13a6666af4c3fa46e8c2395dd4ee73816d2b9bda308ce612f84a4e"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/roundtable.legacy-output.json",
+      "sha256": "68f229bd2448dc771a3bf138f4c849ac4e8ec50c01e7888aab88f0dd9ac18438"
+    },
+    {
+      "path": "domain-packs/builtin-library/output-templates/security-audit.legacy-output.json",
+      "sha256": "502baa3c95e1aba90705197f63c69020bb8172949d16a58a6c32382345e2e83a"
+    },
+    {
+      "path": "domain-packs/builtin-library/pack.json",
+      "sha256": "23f3de84699ce5c0619ec1c4eea1036d056762d180f0477b37a2e941bb583b03"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/code-review.legacy-quality.json",
+      "sha256": "1338908005353005e1ca3eef2c172eb9ac244c42df3d9cb09dc1ed18bb2292e2"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/cross-debate.legacy-quality.json",
+      "sha256": "6c9ba5b83db2ce4392675e7a3b0ca7766e5250afecfe4943dad127a0a8826c33"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/documentation.legacy-quality.json",
+      "sha256": "900f94e399615a66062d65f11013ef12c51b55b30c94259144d8ed5c0944731d"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/fullstack-build.legacy-quality.json",
+      "sha256": "c991bff5cb15e45ebd861672fe9e0cb4d157de462a5f83ac36969d7dd23bb2d4"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/market-research.legacy-quality.json",
+      "sha256": "83f5d96d3ccf115a759502a18768e82c19926c4fcfa7fc10f670afe6c3f7f91f"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/ppt-gen.legacy-quality.json",
+      "sha256": "57fb4a0c6c0634e6d31759fad87c6618be953f4a0990c27abf7eb54310a161b7"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/product-design.legacy-quality.json",
+      "sha256": "ece84e4b4a14005bdf46508f978fde4361d2b6a9e20a76be991b71f38db34784"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/research-report.legacy-quality.json",
+      "sha256": "95eea89404a9489e20498a21089538b360a0ad027ed07bc1c169b46d415b4fd0"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/roundtable.legacy-quality.json",
+      "sha256": "932d135f7b3ea5b287c23726ec5b5e9471a6425a22a707d4c6fb9899a832a7c7"
+    },
+    {
+      "path": "domain-packs/builtin-library/quality-policies/security-audit.legacy-quality.json",
+      "sha256": "dcc356908c09857e88fcad85d72cb13ba7b34d79d28cf20d4440199b08da1e64"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/code-review.json",
+      "sha256": "e344b1f11a880918d82a0440cdbae153f17dedcd85230b95a2d59c41c85f376b"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/cross-debate.json",
+      "sha256": "2e72645539c6ea9d43478e4e3c4d56f076f6a2403d874720a0d15f2b4182aeb1"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/documentation.json",
+      "sha256": "fe45709363e2fa51b43b46cdb4bde26098fc20df47dc7c981fd26773b3a1ee28"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/fullstack-build.json",
+      "sha256": "86f1bc231877ec072ce6845474dbe9e7be2ecd8373b8bf5bf0a3aa2d36b4fd17"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/market-research.json",
+      "sha256": "863cfbba68c79d09adf05421a2089a0f320bd3c5fad07cde11fda13a1ad73b89"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/ppt-gen.json",
+      "sha256": "d6f1ac6cd0c28e0adec0899722270d21c9ae03fdbe795476e015a2c60e2987ce"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/product-design.json",
+      "sha256": "e15561bacdd468b8a764a4d1dedc0a2d41f22eb2972fba54777e1d66b2849ba1"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/research-report.json",
+      "sha256": "35262f2052a89ad496b70c19641abc70b2faa3020f880c82671163892786013e"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/roundtable.json",
+      "sha256": "c2700e01af94c1275401259694ee4a9946fa0724e583be1aa20e0ed21ed521e5"
+    },
+    {
+      "path": "domain-packs/builtin-library/scenarios/security-audit.json",
+      "sha256": "b3de7963af61c4e56abf7088757526800c55390e586f5a45f5d4888a320055ac"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/code-review.legacy-team.json",
+      "sha256": "2c0ca3eb4b651b460d3223e360339dc7945f851545a1e5b3465ee1cce9da65fc"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/cross-debate.legacy-team.json",
+      "sha256": "6235574dc0231ca03ddcb6bd0a0f4ea419a9a99131aa494a540d989144ddcfb3"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/documentation.legacy-team.json",
+      "sha256": "866e12229096a5554aff983121365a4c6fd4be1f659a9422d1ee7c1b0ccd3f14"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/fullstack-build.legacy-team.json",
+      "sha256": "b3cdf7ab667cf3da8139fc7aec45cfb030e5c6a1b8684a67f1adcb791f06cb6e"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/market-research.legacy-team.json",
+      "sha256": "194cb3d5437f56fab218b4880debceec24f4738e7075e7e5bbf973e59c3a4978"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/ppt-gen.legacy-team.json",
+      "sha256": "4381e7620ed25f11f9e1e8382a1157827952aafbd79df9ce85c200e564d1383b"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/product-design.legacy-team.json",
+      "sha256": "8a9d19fda4229704a8fe6fd149b8669797e332f7b576e16b7f9b5cf536a1b902"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/research-report.legacy-team.json",
+      "sha256": "d511e8f1a05737514f545183d91f1588214e4c7ed522764976bc3e56c44a84e5"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/roundtable.legacy-team.json",
+      "sha256": "1f9d08daf81ad349f8083e681b0ad2ae3f9ff048861bfbb3d7e2f3d1897b36e6"
+    },
+    {
+      "path": "domain-packs/builtin-library/team-templates/security-audit.legacy-team.json",
+      "sha256": "276e7baf0cbae17da046a4735a98bb2a5fade64970704138c3dab29a7fc606dc"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/README.md",
+      "sha256": "195dc227e804f091a029296bc4bf2ed1fd60eb4e51dd056cc791fa541ab36649"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/domain-knowledge/pipeline.expert-memory.json",
+      "sha256": "4c3bcca4208b6d37477e938a446f273201d0501656750703db6d4f6f9f0e2028"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-01.json",
+      "sha256": "d2776e2dae2c6fb408fcf830d039622e5f3d34ced542516bff3c5fc55debf15b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-02.json",
+      "sha256": "3f26a3b29ef06659051d6ad751b78c3ce483dac7fdaf427168b70c150f62ed77"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-03.json",
+      "sha256": "c61c6e1122801c55b6ecc723dcf4f5d52367817f8e26a581ba25c91fda513be4"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-04.json",
+      "sha256": "d2ef803836fd2e2857eb5c3872bd4adb3e32055ecb43b6bbd01e83353489afab"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-05.json",
+      "sha256": "04308845830fedb0e8c304b3d0b6a4ae16fe859219961d32067ec4817c606580"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-06.json",
+      "sha256": "e31d947048d6302225524d4bd1085b86a4f096f7bb9b5a7f987bd26382a76c32"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-07.json",
+      "sha256": "4e39e6a9e387f8d6319a1dfd4572078308adbc9bf777b778bf1a16ab8bc2d9b7"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-08.json",
+      "sha256": "9738184943735aaaab4784e48a9b29f29b3e7996eb649375be291989127273dc"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e01-09.json",
+      "sha256": "3876bb4da8e80590f66f486344f330b955b90b7471e4b66b77116b1d040ba3aa"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-01.json",
+      "sha256": "ac003d47dd4cbe84e10bdaa9fb8d3821573e09077f2948c8bdb348bd6b47516b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-02.json",
+      "sha256": "e1071a9951a0f0028b1ae4876388503732477942c53bbf7e243c110641b69ed8"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-03.json",
+      "sha256": "662a2ee8571feb0728da7c7111a36a836bb4f5ab93ebba5814fa31632d735311"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-04.json",
+      "sha256": "6a84b8d4f3f3bf6e098e07b642c02cfc16909fcc8bdd3eaaef336c6b65258780"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-05.json",
+      "sha256": "2cb764d6d14413435e3c9f5fa2fe445cd49a0a787fe7b500661d68ab4afdcb5b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-06.json",
+      "sha256": "d2ee0a49da0135458a7db65b6db18385fd8b000425439d716a42e2bb847791ac"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-07.json",
+      "sha256": "d5acd51ae195538578fbfdd7695e795c343b0a180ce7af8a3f1599f885bbfabd"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-08.json",
+      "sha256": "a185ac9a829c8043f42ce56de67ff1588fc05516ed534e54508465a649b50a00"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e02-09.json",
+      "sha256": "49d2d8bb73c8f809931da1cb3546c2f503b2cbfbc87f639ae08e034b0fcc888a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-01.json",
+      "sha256": "d6ebe172386534f2b24fec112e49613cc3af50653e33081f374f68d924e15f82"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-02.json",
+      "sha256": "0d70290f9132e5f489dbabd1c7a6ac557dc83fe5ecc9aa527e7fa9d6ed2466b4"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-03.json",
+      "sha256": "bb26617a6ebe7fcd8dd39274359c4d128aa19e9e0f51beba47ac2f8872fd0ddf"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-04.json",
+      "sha256": "2a820cc61b4513ebafc235b20841793710ef1b05bb5ecde3bfcbb3bc9a4705a2"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-05.json",
+      "sha256": "faf190249548ecb0a630a72c3fb629dd9ebaf2bdf376927a4654667ccc356ffa"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-06.json",
+      "sha256": "b535b65571dc6626c9dd86b5a58ce4eeef02db7c396f5d3b374bbc52bb8d88f2"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-07.json",
+      "sha256": "70eee5583346a81c2a7481190ed0df9ddd037ceb87e0be0322c3bae824447bd1"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-08.json",
+      "sha256": "fd8a23956b7885988dfa24adc70b7116fb07f0ccacdc8a5753110486cf2d25cb"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e03-09.json",
+      "sha256": "2b9c10bd4dd3f1002cad63fc0ebfb87dd97346b3bce8172e346544586533203e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-01.json",
+      "sha256": "a553cb57c5b9a04b2a8481d2f53048b2c2ad1f149386f7a15f235303e7cdf207"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-02.json",
+      "sha256": "46d3ae2ca467337d57c9eb57087a8ce594197d4e71ce566fb67fd4db2f024de7"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-03.json",
+      "sha256": "d297180f7c30754ad38ddbe47a5024de308aac5da4ea0a6222d35806f7e847ad"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-04.json",
+      "sha256": "1be3c3dfa31d288dc24b22ee5267be97b67e540741f32462df1f45102fa60822"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-05.json",
+      "sha256": "f294188b56029abc46301d8612376c18c0962cf10ade3d564382e448d20a89d0"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-06.json",
+      "sha256": "701ab8656380e2e832edd26fe51b650e6cdea8f4df076d06cc38af8b4cf4c522"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-07.json",
+      "sha256": "4346dd4d8ff563807d3dfbf0e66ed396137659ecce3ed784f048b82393dc7f3a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-08.json",
+      "sha256": "ef5dbee8219b3d5aabb46274d8a3b21eb9e904d4543ccf3d7a3dfb17822a4d6d"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e04-09.json",
+      "sha256": "4db8007dd53f57d6b6804754bd1a2352ff838b23bdd61b82e28f7d376ac57899"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e05-01.json",
+      "sha256": "5dd62725fee5688796fc9a8a165c3f21d4e30781b09401673ab506b1c67f1768"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e05-02.json",
+      "sha256": "9e0eb64dcce64d5cb85b009bf01f0973418b53c5ae74d434e68c1fbcb66c62cb"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e05-03.json",
+      "sha256": "c91f3a4927e4e85f1773c49c27225f25a6299c7b01bc56e20f0c3d2b591afc66"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e05-04.json",
+      "sha256": "77fcbf406695d4fe2ec806060f94a9ac8f12dfc40eaa0a2a1297c57a0aa00d15"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e05-05.json",
+      "sha256": "6cea9626cad7f57ac3780027c3cf5140412864a916c5eb047620ff6e5ffac98d"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e05-06.json",
+      "sha256": "6e7c0a738326731981db685ac9b16a7ecd22ca0e9792343a5b1490783ac069d9"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e05-07.json",
+      "sha256": "2d036c7f51084e1fd5593cc5b076cb224753eefe7596f008d62241a7f0ba2587"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e05-08.json",
+      "sha256": "97f57f095f4aa80a2c9137e69ae1a180d0ce9e471538ce47fd302debf20e7a8c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-01.json",
+      "sha256": "3487c3030a369ecd0bbd66f7ccd26344fd75c3659660265a687ba059512c1d90"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-02.json",
+      "sha256": "870788ee3a01ed00e2f6693ea488010305d1ba908e070cea7b5336b0e575a854"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-03.json",
+      "sha256": "c4af2503a7fa548f40392497bf541cb95bcaef0dce42f8b62997a7a22f9e4cc6"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-04.json",
+      "sha256": "c99b9bab9d54e63b40376d46a95c098c4b28da7163e30e831ee28a2667ee5611"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-05.json",
+      "sha256": "6ffcfc583097aee7fed990913d76147dbed53da1bd0fc3508e89a5288cc43651"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-06.json",
+      "sha256": "a00c290a8a8c3a5edeca43cebf1a2e2694a72e8bc14ecd57c02dfe177c388a0a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-07.json",
+      "sha256": "5f82cb6f9855d21b64b62c8be919b1904f783c8ac627ae1d4722205002b553eb"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-08.json",
+      "sha256": "d6516cd4c52947f70c47e8586910bca10d64b4865f643b407c5b3582f705aef7"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e06-09.json",
+      "sha256": "1a31b95b30157174a6f57f2e970b87ce21142489d7d22f51190fa0411279e53a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-01.json",
+      "sha256": "4edcd13a2eb6cd51312ac8dc646d659236f08d975d96fdd22f7b04547939f674"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-02.json",
+      "sha256": "4afe72a7ff7ce30083e56cf8f66f646543f050da319ec4ff309f6ff22d763b33"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-03.json",
+      "sha256": "6ae96a5d8e9a47f4b08f0824394b6216f04c6aaf25528956c35af65ad566d2ad"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-04.json",
+      "sha256": "72d4cb3cc956e1b1d7aae72964cff170251ce26950ff4c7f260e162255fee69e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-05.json",
+      "sha256": "81dc16980e20171939a3fdc6bb8d2d1cf807f1d725d4d9031c982140d801bd09"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-06.json",
+      "sha256": "e820ea5da87c4d5db8d5a04d7f2818f1cf6d5c2a0488ca9ba54eee11acd5e45c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-07.json",
+      "sha256": "78a5d391872e4e4021c76d08bbbba42959eb0a0c6311259264f1daa85355ce27"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-08.json",
+      "sha256": "b3220b08dcb64644b57bdc554c270f148ff5cbf81bd710d6a19de80c8c9c1c8a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-09.json",
+      "sha256": "5808efc41313da5061e70bf21ff57b671ed9d7264f3a40598f66cfa903f9cb84"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e07-10.json",
+      "sha256": "7f8a0c3f0c288ed85259b1b2ebf3cc1ba1e0fb5cbc9b45b1d6a2766268606a15"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-01.json",
+      "sha256": "482e8103e77a04591825e23db69169b7ca0ad9539b77f90c5aed8afbc58ea013"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-02.json",
+      "sha256": "9e2fca986ca2d9624b6ef40324a0f08b75e25d7a74dfa07b0ab016b7439c78e1"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-03.json",
+      "sha256": "cd9736b3c8c48e87861c99f3b5c56ee039da1d9a6af41b9c9eedd57976002610"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-04.json",
+      "sha256": "98d25d46fb51e6031b204606aa23d8dafbae656d16d0c852858ae12d27319e8e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-05.json",
+      "sha256": "027a46262143c4d67ce9fb6f4c1fc156869d8d617e5b9925b87892e2ba67e216"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-06.json",
+      "sha256": "91907f8c8a205f262c9f291a84ff913c2c54a1687f2b044dacd78867b496b0f4"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-07.json",
+      "sha256": "e997e4ee14b799d8ec6382c339bcbc3515e1ccdd7dd8709f0f6c09d7231b12d1"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-08.json",
+      "sha256": "68ae274e5589c21090f0f46228798760c7b381177038896dbe31849163d7fc58"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-09.json",
+      "sha256": "ad3cf75e50de0979063705da5770d7bf647338c1c0da2da25a48d3a86065829d"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e08-yong-bang.json",
+      "sha256": "b18dc3886dcb93c12036dbc825d18377f4933bb55c1cf3adc44b0d149f625860"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-01.json",
+      "sha256": "a979b100c861ed71776918d3d5bd75c3399b4706496944dfcbf7e0b03e8cfe10"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-02.json",
+      "sha256": "5ecbab891453f099aff55d9c00682bc3d824d52e9f5c5678656e1ad42241280b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-03.json",
+      "sha256": "89b4e5d3322c3deaf57aa8910449592e57c19915d9907aec755bb5acc4b22ca3"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-04.json",
+      "sha256": "49d187ae0be20435092acab21619ed2dce693fe8e31073c68e8de87cf9a21dfd"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-05.json",
+      "sha256": "883d463b29a0fc61b483a0e658737ff2d7208e616f2f327c1f413b053a76ae91"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-06.json",
+      "sha256": "9a472817ec9f44a5202e4966ad06fdcdfa81dc528b4099c719ac90b9bab6f8bc"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-07.json",
+      "sha256": "f8850733bfd9ec7bcdc67a54f5df6f030b5e2b5c988b91a6c91175e9b7ca39ba"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-08.json",
+      "sha256": "a2c46a7396f4b639dbfd1c902652ae94fb8571f98e21d532b94d9762aafc1a7c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e09-09.json",
+      "sha256": "e5aec2640896055b4e563a1a131f6c4b242ac42b3a0bd701a033982004ee0b01"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e10-01.json",
+      "sha256": "e0a704a6e5f882f2dcebb77e57da7af7680f8234423975e47b44fbdce5816a5c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e10-02.json",
+      "sha256": "513b03e7f04d112a7c32c412e03d2feca7ec3d590f3462deebaef93b21bb7b8f"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e10-03.json",
+      "sha256": "942956db4c852fec39908b6ec7c946feffa0a205b46fcaa289ec72e93ec1014d"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e10-04.json",
+      "sha256": "1f04e4873f1033f4da568d032d19d5797af63da591b57452bba1723325d1fdb0"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e10-05.json",
+      "sha256": "fdfd30cabc97f8db1f889ac03a7b786932c396b7dd561e9a1b087387673612d5"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e10-06.json",
+      "sha256": "9bf9acf1c63f30bb0e67c736c59051b564bdad3bc80565f7a9bd5fedcf46f1d2"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e10-07.json",
+      "sha256": "38e6c2f23afa9c10631ebb4b1814b0af4f5de4be91732f6e93059a859c5fc8f7"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e10-08.json",
+      "sha256": "28c5497c402a36d926e27000e6596c9a49a690d12928eb202fc3b19816fb070b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e11-01.json",
+      "sha256": "123967798c90c4e109b115e40e98a0045e13cf0d9e5036bd1cd153a2558b2934"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e11-02.json",
+      "sha256": "cd847a45200dba0c07663878e81e74a7b5e827414b07e8e2782a40f4f27f4b9d"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e11-03.json",
+      "sha256": "0f68b1f32ebf85b7f99e8234d1c661a6b803e68d2952aaada376168a4200aac9"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e11-04.json",
+      "sha256": "6ccf30039ee42efffb5831a1128a751903aa0e86a2603e4f89b99f0398f6b97b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e11-05.json",
+      "sha256": "f531f544e9cd5ef5778410cb1f124e4462ce2ad6df36e25b322952a5983d3776"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e11-06.json",
+      "sha256": "c09b6a41bf0f0c09b42a90627611f6f6450e22fdd711a3a497c5c95205a36b5b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e11-07.json",
+      "sha256": "3cf59ffe465ebd56b4cf3f9a2cfdb4b1e6a16cee8f705bc312edb9f5f7a4304e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e11-08.json",
+      "sha256": "6a67f10b4cb58342d9b62786418f0b8270f19b2323b7a65d0da09499b24859de"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e12-01.json",
+      "sha256": "0919013a3f7f913ce097b1c3f0d40f88feb129c383c9dcc745dff19f362c2527"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e12-02.json",
+      "sha256": "958c94008d9dcf9c0c9f7c29114e516f753056b2224f201b2125227b74213836"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e12-03.json",
+      "sha256": "da1d8943a027cdc6fd454fae6c830fe4467ed3c3018436912e5aa97c14b70f79"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e12-04.json",
+      "sha256": "4a5096421297569bfb45819aa8d70b189e7770f86c34493ac2f252da50353bca"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e12-05.json",
+      "sha256": "822be0a77f18c41d9c75e1e33e625472fa4f50556cb85760f0c64f7e79adaeb3"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e12-06.json",
+      "sha256": "9f98a41df2324d4ca7e9a4961ec53f32140bc3a3ca7d177b5769d51f0479ef21"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e12-07.json",
+      "sha256": "47e207d472c13895263f275853c762d2cd1da0951cbd5a58d8e81862476437b2"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/experts/e12-08.json",
+      "sha256": "db1da49c5238196fd3cd6c070b5cb13bf578e79166e1adba37506834b769a2cb"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/generated/pack.sha256",
+      "sha256": "7f124423de2f787055292da79f6c782e5e80ef4089f1d7d913d0c34058a967d2"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/generated/verify.json",
+      "sha256": "e53d69215de1cdb6ea47812ee084f0ea4cb429374844f834d4602f32d077e4c0"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/knowledge-providers/local-knowledge.json",
+      "sha256": "3525df3fd48a9727a1b4980af884028efcba0214b9bb6cd597f3b09cefddd33c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/knowledge-providers/pipeline-expert-memory.json",
+      "sha256": "044c63054b12766d20c4fe4355f3e23a3c0d5f003ef24d3bbcaee8ea8fe0a52e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/method-packs/pipeline.method.framework-b.json",
+      "sha256": "242cf0617f2e7f12ab92eacc93a86f11b725a1a2d8c7cf42a58f582ae808afe9"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/method-packs/pipeline.method.review-protocol.json",
+      "sha256": "cc98823c4407ebe51d60dd709e62148d90c5a5559db9e8a851f8d17fdf95a237"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/output-templates/pipeline.output.B.json",
+      "sha256": "076d94f05c896d0c2ae5a4170ea94504c629c78cd39d02633e52cf265ac9b474"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/pack.json",
+      "sha256": "db9d1f466cd9c61e3017a5c8ab84daf3b9dba61f137d0ee45c2eb6b3cdc8e04d"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/quality-policies/pipeline.quality.json",
+      "sha256": "719fb996548dd0124e6953aad01c9b00321d0d8172def1991fbdd3f585956bcc"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/routing/routing.json",
+      "sha256": "f2e3f997245e2f14748cb795ae6c749b2d0d2e445fce366613d5fd1610427352"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/scenarios/pipeline-macro-capital.json",
+      "sha256": "00b93876074354245311833a77bba41f847273eaf849d270de8a3727f9608464"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/scenarios/pipeline-realestate-ops.json",
+      "sha256": "de88e7def0ba7de15f2b42a9123e2fce580c47e993f7872ec2b17777e60c6c88"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/SOURCE-MANIFEST.json",
+      "sha256": "f3733602203cee53497e4f0c689ab8d31524c5091b63607291589b4d95c59d2c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/docs/专家总表.md",
+      "sha256": "f446de2256d6358d065ddf299ac4657c2852dca5201ca39178dfb786e94a3bbc"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/一濛_专家Profile_E04-05.json",
+      "sha256": "e14d4d056908ff1785275945953ef46b6d1ea05d0280842132cd5e72d42c5597"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验匠人_专家Profile_E02-03.json",
+      "sha256": "c8bce6b76a13fd4c151d66bcb45289d94dac11f4b5479476b5cd409b9b7da757"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验参谋_专家Profile_E02-05.json",
+      "sha256": "e0df1de4e3dcba3df0639bfee9fe31b47d24e5fa42ab4b119a0fa35f996c5d62"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验司南_专家Profile_E02-09.json",
+      "sha256": "2d01b9dba00d9af8a55ffc8f7763129448413151f67ccc5012ad1824eaf1e33f"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验哨兵_专家Profile_E02-02.json",
+      "sha256": "76d7b52d1ff49291451af94a4822c8b81c7e0521da80a8314428715543ba4d38"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验捕手_专家Profile_E02-04.json",
+      "sha256": "e488e3fde4a481092030e5caa1c8de449bc2ea0516987bc9800a7ed30a8ceb56"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验掌门_专家Profile_E02-01.json",
+      "sha256": "498a5eede7810d0ace55ee4e8f0d6975b39d58a7980ab04a799e26dcc8bfbe2b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验游侠_专家Profile_E02-06.json",
+      "sha256": "f9bae780bef218ea9494098908d4b4fdc982e9a5ec47f3afefb6f2835f4f9d14"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验灯塔_专家Profile_E02-08.json",
+      "sha256": "92b7007591f2765ddb8b59ee4e08538ed5373dc6d7c51f782c114525894f8581"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/体验账房_专家Profile_E02-07.json",
+      "sha256": "59062eeceedd28c7054850eab45fb9381bd1d91eede2024276ce4a262eb720f1"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/双碳匠人_专家Profile_E11-03.json",
+      "sha256": "dd39ccba8da77f46a26f8965f620ee13ee79e773942d0d76bbec8efdda34db5e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/双碳参谋_专家Profile_E11-05.json",
+      "sha256": "6266ee37a501eeec74b930be6d214ec4284ccd412668f145dd9e315abbd1ef68"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/双碳哨兵_专家Profile_E11-02.json",
+      "sha256": "58b049bfdc1fe14e1fba1c326d9ca59bd87375f722ca11c4230e880050e3ea73"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/双碳捕手_专家Profile_E11-04.json",
+      "sha256": "07a8e507c804dc81dbaf49f3b4c30e8a9c0be84f6677ecc1e62e7ef58cfcd59e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/双碳掌门_专家Profile_E11-01.json",
+      "sha256": "fd0f4a10b7602044c542c0faa8877845ca4e26d33fe85b4ee2a86ef08b27ed69"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/双碳游侠_专家Profile_E11-06.json",
+      "sha256": "167a3aab4b78845fcb26e9a417b4682240acd671a2f4daaf542f8a421404249c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/双碳灯塔_专家Profile_E11-08.json",
+      "sha256": "e57405e4fec7e0883c9671d71baf614b812db51bc252a2306a5311d62e94c3ac"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/双碳账房_专家Profile_E11-07.json",
+      "sha256": "204ec21de73a94bf7aad72f969f4b538484c760178e138861373dd7b4cdc0630"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期匠人_专家Profile_E01-03.json",
+      "sha256": "505156288b1efb07de8f17f5f0029a42108d6c658d4091184ac45cce83b1dd87"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期参谋_专家Profile_E01-05.json",
+      "sha256": "5a72b87b9f011141bf4fbc1be7a34201b88a3ffc5b41ee734e540390992535a6"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期司南_专家Profile_E01-09.json",
+      "sha256": "c010108a4b6bab3857d2ef45fcf82af73c6486ebf0bf73ffdb9e990b8fd128a1"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期哨兵_专家Profile_E01-02.json",
+      "sha256": "7e1dd3427d774f3e53909e15e69ee1a5e12c8c2cf1f551d2dc3f48a6ad808da5"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期捕手_专家Profile_E01-04.json",
+      "sha256": "f3c744db84adfd9b921efcf4c4904c0b10e01aef947ae7bcf01b66077320a776"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期掌门_专家Profile_E01-01.json",
+      "sha256": "2abb00019fc7a565566e3bd4a03ba3be61e9412d082ddf3f8c7e5ec524fc4fbe"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期游侠_专家Profile_E01-06.json",
+      "sha256": "bd401428c4c37ec519554fad690c595b32236074525f862dad25eec743b63d59"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期灯塔_专家Profile_E01-08.json",
+      "sha256": "a1af1957353e96ee90ccb8ae6ead469b27489162af0a588ace8e92dd06c4f4cf"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/周期账房_专家Profile_E01-07.json",
+      "sha256": "1d21bef7db27041fabdd09c68d9368d9b7b1461abe7b5e1d6bb2e0a2262e9e5a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/品牌匠人_专家Profile_E05-03.json",
+      "sha256": "5d23ffe7c1e762859bcd30eae54e51056d90ac3121579e29aaf1ad6a815b9320"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/品牌参谋_专家Profile_E05-05.json",
+      "sha256": "147f4a08923087d0966eeb7810c69e88b7d3806caf4b79dc0429c008f532d543"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/品牌哨兵_专家Profile_E05-02.json",
+      "sha256": "0dd39cabce472652ec54409b6ba90b986d1d6cd9d0f559204be2e71ec4dea74c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/品牌捕手_专家Profile_E05-04.json",
+      "sha256": "7c05f76fdec046f5c0c93dfd1ec8d975c18f5f580688bbb4da845a8c5f43db7d"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/品牌掌门_专家Profile_E05-01.json",
+      "sha256": "90c9bc9515b646fb8617b429cd69f7b2854bdaef9a05a9891bcc8db283bb7056"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/品牌游侠_专家Profile_E05-06.json",
+      "sha256": "d5bcaa483557c4dd0a507bd46554856d19a785de6f2ddbff73f17b1f7289934b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/品牌灯塔_专家Profile_E05-08.json",
+      "sha256": "61b7f26133a0fc39c1a2373844ce5170a929c33682de017578c4b2fba9185683"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/品牌账房_专家Profile_E05-07.json",
+      "sha256": "2541be768ff92554afe06046575c9c996ed1ef5674c1962edad1d1ce12ac462a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/扬帆匠人_专家Profile_E12-03.json",
+      "sha256": "b0dfb6cbd3aa269d4d534e7827de40d47719ae2d92147da7f8421d4d24f81969"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/扬帆参谋_专家Profile_E12-05.json",
+      "sha256": "8ffce03fde97a55ede2e00db3651a7159a6e88edcfbcde9010ede6ec08fc9674"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/扬帆哨兵_专家Profile_E12-02.json",
+      "sha256": "96d1b9d7590a73937af57f010216a4b1f43d5130b829299dbf892355788c77de"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/扬帆捕手_专家Profile_E12-04.json",
+      "sha256": "a0f1f0b6aa069921e03bff5fd25e92dd950ddb922a2fe7e22567a994f212380c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/扬帆掌门_专家Profile_E12-01.json",
+      "sha256": "d29c28df2b310710a82959deb41dd5dae1149a75a84fc13730431c8a9b85226c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/扬帆游侠_专家Profile_E12-06.json",
+      "sha256": "b3cb3618d7caffaac311591ac3f05269d5bf587860f1012b0526bc20b78c8944"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/扬帆灯塔_专家Profile_E12-08.json",
+      "sha256": "32f19669665631819052afcd9d1b4d76c8e3e36d3931534f96ae393a43702131"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/扬帆账房_专家Profile_E12-07.json",
+      "sha256": "3b94b5c30e10528daaa2f0711c64e43c1dfae632902340309dd7cbe62e20c653"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事匠人_专家Profile_E09-03.json",
+      "sha256": "5931e66ed7a72ed436fbd648ded13585e2f5c29e141c1eecc66ea3d65b56a923"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事参谋_专家Profile_E09-05.json",
+      "sha256": "2bf3ff882d5146bbced11b4f8ba48721b6eca0c8bf86545de83868f48ba25dec"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事司南_专家Profile_E09-09.json",
+      "sha256": "92281b25d2cf4c89aeac8f5ed60fc03bb0a5282a0df252506c2ddfc8a097c082"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事哨兵_专家Profile_E09-02.json",
+      "sha256": "6ee858b4013c8f92350b78ebd0df3cc9186602b5ac5a7e6e7571e0b0b67ab796"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事捕手_专家Profile_E09-04.json",
+      "sha256": "9eff2f2a518f406a8c805fb696feb3e5134e2f2432e09790add47429dfab6f14"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事掌门_专家Profile_E09-01.json",
+      "sha256": "1423ecb9db98f97908b7ffbf6e4ac4be75a3edc912c863bf3e37cb1bd4de3cdc"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事游侠_专家Profile_E09-06.json",
+      "sha256": "fd28c36df0cddfea17c73c73c573a86238631fbc592490a5452648a0cf523273"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事灯塔_专家Profile_E09-08.json",
+      "sha256": "abc7de72d91cf422d0eb25b4593442eaa652fb26b632b637182838ca394ecb8d"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/故事账房_专家Profile_E09-07.json",
+      "sha256": "1e68bef36b8f6803623a367d4dd3efc01cd790d6ec5e430e814fb9784323d0b7"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/效率匠人_专家Profile_E10-03.json",
+      "sha256": "337ca5ddfbd9cfed8d3ed82b28666926426bf3e7c456f8be71d04090a0b9d835"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/效率参谋_专家Profile_E10-05.json",
+      "sha256": "ca7a59374876d576386bef3be6f9e00ab2b855d17db74be01122af142c180e73"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/效率哨兵_专家Profile_E10-02.json",
+      "sha256": "5b0a9020967c756ee41421f59f5192ad1d3c603a96207ca8cecfce72c5f59343"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/效率捕手_专家Profile_E10-04.json",
+      "sha256": "a0fc2482841169b6d6bc8cdd4dcad1a83888939639d3d3a0529e9cd8273d4c7e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/效率掌门_专家Profile_E10-01.json",
+      "sha256": "b5ff745fc2626498e363ffe3569a73b1421a1431c2e8ed11e90435f4adb474dd"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/效率游侠_专家Profile_E10-06.json",
+      "sha256": "715e149a5aa58b6ef7ef0d582b03b60976edb06ba9053bdb932f8259a45c8199"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/效率灯塔_专家Profile_E10-08.json",
+      "sha256": "552fc0c1a6ebf84bc33bbe40ad6605cdb9ca9dbdfb1631afec82fb66c1f7ac2a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/效率账房_专家Profile_E10-07.json",
+      "sha256": "e3b9fc1555a351b5dc7e1dc00f59abec7e978baf56a8e721325fbdaea65cbf18"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/新药匠人_专家Profile_E04-03.json",
+      "sha256": "a9b6dc536338e0fad5c23016c2ec031f956ea48875f3bcd0e22914b29819ebf7"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/新药司南_专家Profile_E04-09.json",
+      "sha256": "207ddb64d925b16bf8a0f40fa19001d0613abb5a479c5de0376f96532ebdbdea"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/新药哨兵_专家Profile_E04-02.json",
+      "sha256": "0b1c79a182c5059c39424323b5e698017807ce6af59b4ea468e900f61a97838e"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/新药捕手_专家Profile_E04-04.json",
+      "sha256": "ff8ed41d2b8ac1de778571fe97abab4566aff87b57b7f577fc3f2241cfd84e4f"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/新药掌门_专家Profile_E04-01.json",
+      "sha256": "2419b4f8fe77861a1b1173bfbd0f85d2f65c248acb6b2c3df2749918b91dac19"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/新药游侠_专家Profile_E04-06.json",
+      "sha256": "180dd48de637c67d8eb1acebef8e5e43ab11d5ed50be5a9fc49d29d0466482b2"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/新药灯塔_专家Profile_E04-08.json",
+      "sha256": "14f2e260ab033b86927426c76c7a8202645df6301b427e84843b16bb1446b4e0"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/新药账房_专家Profile_E04-07.json",
+      "sha256": "e5ac11d1e134e8c6ee44a26df28a7b8fc9b0cbf98adc32df70d4c7f87afe4a59"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能匠人_专家Profile_E07-03.json",
+      "sha256": "d950044d853b32b2bcb65777ca7f9329c7d4ec35677de97c4c0cbc99b87217b4"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能参谋_专家Profile_E07-05.json",
+      "sha256": "ddb640920d1bce76cbb53f725f33b1d72226c7ef802f8c4b0f9d213b6db51358"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能司南_专家Profile_E07-09.json",
+      "sha256": "5a81a1f48176975223b71c8afff1020128b26d84b286f6f4c9f9813683b4d213"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能哨兵_专家Profile_E07-02.json",
+      "sha256": "d19621729c34ebb86ecf7f57222371bce8661004bd632420530b31bdd79dc5b9"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能捕手_专家Profile_E07-04.json",
+      "sha256": "aaf42ea613604a62a8cd31ae80bab9b2a5006a165e067109ceef0900f9bbf11f"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能掌门_专家Profile_E07-01.json",
+      "sha256": "1bc3ce5cee709c74c177cdffe7a4901cc79a0a776480f96a001a79dc02343187"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能游侠_专家Profile_E07-06.json",
+      "sha256": "c62fbd80fba6659a84cbe727d71abaa97fd9375f6e55f96b0b11eb76d6f1af14"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能灯塔_专家Profile_E07-08.json",
+      "sha256": "6635e9e3eb94d4fca9659cb374bebebf0d25a4c3930aee32cd455f43db84dcc0"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能观察家_专家Profile_E07-10.json",
+      "sha256": "2c76edbbb767108b9d05f842d2df998de48ec61179235e8a2930d293abbad0ab"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/智能账房_专家Profile_E07-07.json",
+      "sha256": "ddce034f54041d0575e177cb037bf94313a523a96c2bc2ad1d6b0b1140231fbc"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/永邦_专家Profile_E08-yong-bang.json",
+      "sha256": "6d76dd1e8cf15aa577107aa052b116ad96348c90d13540e08fb18986c514ec68"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯匠人_专家Profile_E03-03.json",
+      "sha256": "ef62aef2259d54f00dd7aec201be1455919886721cd91f689806d063310b6570"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯参谋_专家Profile_E03-05.json",
+      "sha256": "fbc61f2bd3b65aaebfdc24fa888975a2fa8a4c5dad4d3ea43f630db71323d082"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯司南_专家Profile_E03-09.json",
+      "sha256": "ae08b918227f33d03e67a1241b428c63a7a2da78d91b6f0460b5cc1bd4610726"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯哨兵_专家Profile_E03-02.json",
+      "sha256": "cbacdf16b77744e85de46e90a2f22b055ff6fd3c3201b2f5a0c467fa6db42979"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯捕手_专家Profile_E03-04.json",
+      "sha256": "617c1f8dab22649fb60156fcb2de89824c8e5636b8cf3d42024b25189fb8e523"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯掌门_专家Profile_E03-01.json",
+      "sha256": "ec87043e8642da5e8af41d46dea33507020444c40bf0f34f96e827b86e1c1ffd"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯游侠_专家Profile_E03-06.json",
+      "sha256": "fc0cbd2454b2a4fa3655e249f296699480ed67572257ddc47d882111109e3233"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯灯塔_专家Profile_E03-08.json",
+      "sha256": "51a116dd9ce0a08a7ea82530ed9d63e6313aebd3e165ae8ffa70a955b0935155"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/电芯账房_专家Profile_E03-07.json",
+      "sha256": "44780fe6be707301219c3a557d847dbefccc4e100308ae7cde34212ac1f3f187"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率匠人_专家Profile_E06-03.json",
+      "sha256": "d5c6b75f13e6fb376847df8ff2d1da225e2e688d46d6732a2182d6edb4313f31"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率参谋_专家Profile_E06-05.json",
+      "sha256": "b263b75f09bb71da0d2201d9cf6db256f1c54cd7530f23d84a187d7872f33f47"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率司南_专家Profile_E06-09.json",
+      "sha256": "828a50cf06654404311abd04bc1454faeca6d8772a4e9cbddaed8a192883245f"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率哨兵_专家Profile_E06-02.json",
+      "sha256": "ca94a05deda73912175473bc1b882c467816d241c4bd6d7457a71ef2403358e7"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率捕手_专家Profile_E06-04.json",
+      "sha256": "5e056b6aaee1512840848324b70fd33e460f95d29c6b41dacf813ea7233ce723"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率掌门_专家Profile_E06-01.json",
+      "sha256": "eb778baf0141efe39c60611e4c8823f62038fc75c1ac7f601ae0bec811f3833b"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率游侠_专家Profile_E06-06.json",
+      "sha256": "1c7688228bfa86049d2704b555232becc70c061328597f5145620edbfcdb8a67"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率灯塔_专家Profile_E06-08.json",
+      "sha256": "b35ffd5e8840c5f91497152a7fa6a6f32fd7202f11f5162cb206a81420e677d0"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/良率账房_专家Profile_E06-07.json",
+      "sha256": "46a02f0973e9f9474a4b49ccf309af67328fca784127ede3c9fe03c281bb4c2c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/营造匠人_专家Profile_E08-03.json",
+      "sha256": "18d3dfe9b280c9bdcade976adea6fc9d4d08f288eaed99e34f5fd5418eb28c75"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/营造参谋_专家Profile_E08-05.json",
+      "sha256": "2b9d8d54a3a980d4d1821d7bc76443af44df0fe393a831212980289b061dde35"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/营造司南_专家Profile_E08-09.json",
+      "sha256": "c712bab73e41e643d258a517dd081531e4d7ce35b829035cafaba01db653847a"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/营造哨兵_专家Profile_E08-02.json",
+      "sha256": "57ee5d93cd2a5dbe10f912d675c89f3ad88e01c2aba26cb9b57ea9a2b155f6a2"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/营造捕手_专家Profile_E08-04.json",
+      "sha256": "09d7a26044a873b68c00b007db0de70dcc8ce21df1e01c5bfc58ba45a6c384e6"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/营造掌门_专家Profile_E08-01.json",
+      "sha256": "bf8e601b82e2a0de2502ee72e4e0d56ef38f4daa6a6a7a3cefd04e8eafed370f"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/营造游侠_专家Profile_E08-06.json",
+      "sha256": "2dd713bac90f6f09538aabf01a10b5ce8d61486839318bf57a3eee12cc96805c"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/营造账房_专家Profile_E08-07.json",
+      "sha256": "9705a8c6a48e83987b3d4468d34cb9494d9b7d8ee5dd3597980909e07d421dbb"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/source/raw-profiles/难而正确君_专家Profile_E08-08.json",
+      "sha256": "b9fa3edfb2289fff4f4c4aa4f39c66dc4a534392bf57d39c0eace40bc76d9181"
+    },
+    {
+      "path": "domain-packs/pipeline-domains/team-templates/pipeline.team.B.json",
+      "sha256": "9417738d9ab08b04e35504b1c9902107b323726f776a0fc2297baeadb49f87db"
+    },
+    {
+      "path": "domain-packs/pipeline-general/README.md",
+      "sha256": "aebd8985c59f007bf5cc8207585ff1183f6845ca82eadceb3dcd97956c8a768b"
+    },
+    {
+      "path": "domain-packs/pipeline-general/domain-knowledge/pipeline-general.expert-memory.json",
+      "sha256": "ab5013c698f2f17d2282badef1d9f4cc7e2f0541faf2747104076dc26dd6d798"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-01.json",
+      "sha256": "fcb282dc469047108d387c0fabb5056a3d700112c50419e0b81892be239c4e3f"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-02.json",
+      "sha256": "e25663a913446c7b18fbbef51a283ef5f674e51f71562ec5bc84250426e88904"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-03.json",
+      "sha256": "f1056ceab2722b28567d10ff3700bef47d8dd4ef67df3bfbf5a35631c31e643b"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-04.json",
+      "sha256": "b805f121b5e5a436c4dcf40a4e4d9707ff51e6d3947258ae1696d627ab6da898"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-05.json",
+      "sha256": "7abe95110c66b6247b929461d99456fa21708ba02feaef42ec214d7ad0c0a117"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-06.json",
+      "sha256": "90094c711a32fe91b5fcacb4f205a380f631917b9efe347e8ae7cabf6ebaa181"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-07.json",
+      "sha256": "fd49405ad981a40d820215d8622762e8bb6a02d927437b0f8b97d8d561ec9363"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-08.json",
+      "sha256": "effa7d17e3223771071ff4f0a247456c978f4444ac193e9a3afae63ad14b19d6"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-09.json",
+      "sha256": "b9830534acf23f8b8cafe048a9315530a61c5d8e0be1cc4ed2147f13e2eb37c7"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-10.json",
+      "sha256": "207e0d75b846230058f3ff84a412bfd53862e184f8b7718853e92bef5373cba4"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-11.json",
+      "sha256": "6e8dd8c3a658da0140bbdde71a9f2233d6299e2ae3deb23b0c6d838620a662fb"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-12.json",
+      "sha256": "55bec88afca3c535101dd82c3b62f77bc528a2d82376097b65f64dc97d04248b"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-13.json",
+      "sha256": "2172cb5c0f8d45e1ac68fe407cfcfb339769e022765638debf0361060d86cab2"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-14.json",
+      "sha256": "e4be932fe4c929f35991ce9c4d692a7ea2a9180534dff59734f3985fa0b986c7"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-15.json",
+      "sha256": "247032afa614ade0b887247a889e85e47bcc315349f22a1ba2009a58d25eb222"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-16.json",
+      "sha256": "07c718bd2531f0fe34becc1aa3ecbefcb2a9a1d868ec4f500b550642370a3263"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-17.json",
+      "sha256": "4d5354469555202f08f2b10fb03a6aba9bb7de5be5a6b431e5ffa854d1d91884"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-18.json",
+      "sha256": "018de14fd613dd97eb1471d355a1b2eda487ece9b4bc5b50a92185f3544f05a0"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-19.json",
+      "sha256": "dee67e2635db61788605ae25eaf232e422e1c866bf2e442422395af57fd3ce47"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-20.json",
+      "sha256": "b942ed680502849f4d38775411cb317d170dbc9fec1a434548aa76eddf98df7c"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-21.json",
+      "sha256": "028bddbe3b47da52f7beb4c7f2b8efa46527d3b7a759feb747198a63e285fa4f"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-22.json",
+      "sha256": "4b64191dd016ed7d1106cf1cb203b3125c8ae7cf5d1e81565722f844b043dbb6"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-23.json",
+      "sha256": "eb5eb37c8a2cf39ad619fa9f95ac3756bbe31dad80969b1ac9ba85f806b854ee"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-24.json",
+      "sha256": "b2f35a2fa081b7e412e5ca279a62cd569c043fb24f3bd6da5ced42bb2d81e3bb"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-26.json",
+      "sha256": "7487c71ea61bbad8c7bbdf66212480f5bfb5c8360d55f0d148efb4a94ed0e818"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-27.json",
+      "sha256": "e1ddc30063e6ef678cacd4ba31c3289beb535fc21fa782da5e5ed88dd03a2f74"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-28.json",
+      "sha256": "1376f1c8e31425f927685a48dc46a8dda96528c1def72277e51b89f566ac871c"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-29.json",
+      "sha256": "d79a1b6cf4cd9dc1b3678f5822f9a6dbb33ef0564eec6e8c0d41d67b9a315f61"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-30.json",
+      "sha256": "3ea89d2b9a39246cb32cfb7e05719f2be59ac0d3b2dcd9f04cab71f3e7c0eec3"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-31.json",
+      "sha256": "4b301b42cf6d0eb623834e41ed0801b881a793f47823e4010a20155e37ca49e0"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-32.json",
+      "sha256": "697ca09b245346e714f5b6d848b6401c3d4769047e984069442e041b4fcaa982"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-33.json",
+      "sha256": "69c7bedb5495354d5231399f334502a79317d9eb2c221203d91213b8dee2fb57"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-34.json",
+      "sha256": "5eb6cec8e2e159c99b12693f393cb6396e84206fcced9cbaf9e3758ecaafdfe4"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-35.json",
+      "sha256": "23cf0b9752f300cebdd894f11ea685adb654c833f39d21fd13c598d19c3634d6"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-36.json",
+      "sha256": "38fd29cbec515cd177962cc3d8b1bd2338d645c5372966a94633102ac67b6884"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-37.json",
+      "sha256": "ef916f705c6eab7ce96929443373d65aae303d16620472f6ae98a09b15704b43"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-38.json",
+      "sha256": "2427b760f32e9b2ec8fe0069d4dbdab4e5f21d54249662fb63b6a228b551b1a9"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-39.json",
+      "sha256": "0918b3de21a079ba28263f8a050d83d9955c5caa281b95fffd6c0e2ecbb52f7c"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-40.json",
+      "sha256": "086e1e04955a521b3b35c34768ac108074f4627c0a42ae4a18a0033069967977"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/s-41.json",
+      "sha256": "60a47ffbd92ff5ed4de68faec067e4ff74a07a259d31e5e1be4c4ff775602fab"
+    },
+    {
+      "path": "domain-packs/pipeline-general/experts/xhs-01.json",
+      "sha256": "1a9c4ec5bce209bb2e6e4706c98878309c00da24a0bdfe603030384bfd074d5f"
+    },
+    {
+      "path": "domain-packs/pipeline-general/generated/pack.sha256",
+      "sha256": "b56015f572baf3ae5a5576a7eec07818398865f7e1694e0b091e6c3419e8824f"
+    },
+    {
+      "path": "domain-packs/pipeline-general/generated/verify.json",
+      "sha256": "51bc1a451caba701ae8c692c40cbff3a2e06f3cf4bbee2a741a618a6c1744b52"
+    },
+    {
+      "path": "domain-packs/pipeline-general/knowledge-providers/local-knowledge.json",
+      "sha256": "3525df3fd48a9727a1b4980af884028efcba0214b9bb6cd597f3b09cefddd33c"
+    },
+    {
+      "path": "domain-packs/pipeline-general/knowledge-providers/pipeline-general-expert-memory.json",
+      "sha256": "dff61f148b0d12fc473b34ebc5fb401362747f33636fa435dbc13c23bc792a14"
+    },
+    {
+      "path": "domain-packs/pipeline-general/method-packs/pipeline-general.method.framework-b.json",
+      "sha256": "029403ddc1c228577a6bd5c453821e828e83389e0f7461db7b40a451a1a7992d"
+    },
+    {
+      "path": "domain-packs/pipeline-general/method-packs/pipeline-general.method.review-protocol.json",
+      "sha256": "54f13ddac40563b868256d44be07fa4e8b8064909a16f603d3bcb6cef499fcee"
+    },
+    {
+      "path": "domain-packs/pipeline-general/output-templates/pipeline-general.output.B.json",
+      "sha256": "11c1edca96966d7ff6374f290535c42fc7bc86496457b818db7f4c32430a05a9"
+    },
+    {
+      "path": "domain-packs/pipeline-general/pack.json",
+      "sha256": "90c4e6583640d73d70cd26df1688f304f41668c83e60ec48f2ccdd522e78a1ad"
+    },
+    {
+      "path": "domain-packs/pipeline-general/quality-policies/pipeline-general.quality.json",
+      "sha256": "87030d5f1937039d1e7e4acd9fdf0e7540f1a57c5259648c50791d7a717f9439"
+    },
+    {
+      "path": "domain-packs/pipeline-general/routing/routing.json",
+      "sha256": "18108f617c3736df11e43a8c9538b4fbdb577e739b51a5ea42239ad70ee159d1"
+    },
+    {
+      "path": "domain-packs/pipeline-general/scenarios/pipeline-general.json",
+      "sha256": "08a4408b699b0f145d72b77dd071085ad58f738ed1233c40eab80db8128d3744"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/SOURCE-MANIFEST.json",
+      "sha256": "382e1f860d8532d564ed6b838794dd5ee206b2c91b391fce556e0a92c40a64a9"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/docs/专家总表.md",
+      "sha256": "d36302bbe91c08ecc757a3dcca5b69555b5f9bb645acd07639b15cc4a6220856"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/产品课代表_专家Profile_S-09.json",
+      "sha256": "b079c914f4f486f82db0bdc2d5d826af3acbaacbc21cb898f0d24c9081846567"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/产权散步者_专家Profile_S-16.json",
+      "sha256": "c0937090f7485c98423aed8dec703c6edafa1e94d16304ab3e5c1911aaa988d9"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/人口笔仗士_专家Profile_S-26.json",
+      "sha256": "05d0a4ba4dd03f43539d849e8fe06461c58eb9e5a16a2f183acda7f7b8d9293e"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/价值摆渡人_专家Profile_S-12.json",
+      "sha256": "ec829b2b2aeea6176ea6453aff2e0026b589f04f9bab6353bde49dffc5c1a4b6"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/克制哲人_专家Profile_S-24.json",
+      "sha256": "0141a02dbbb6cb22cd23a2141fb5787253a8b2dca631439e6961a0c6ffca61fa"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/共情云掌门_专家Profile_S-35.json",
+      "sha256": "15b4d189838d658238ef0f738409adc8f45ea5a07e9cb066b83dab9448b761c3"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/冬天论老兵_专家Profile_S-06.json",
+      "sha256": "967d04f41771014852fe8f5963778fbe31b77b9fae7bb83f001746bc149eaeb2"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/出行老舰长_专家Profile_S-23.json",
+      "sha256": "ed567d32d0cf5a29052041a0ebd482ce3075ae293eb01deb1c95723423eda762"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/创业随笔园丁_专家Profile_S-41.json",
+      "sha256": "e09555b9241b8bb842033f9a902747ddca74a73ce5dba9aee15a9b59c11717bf"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/后发优势先生_专家Profile_S-15.json",
+      "sha256": "08c33b750652a38a1148b4f4aa1f1188a34e797565093cf3b89ad5cb50c315e2"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/增长演说家_专家Profile_S-22.json",
+      "sha256": "1d18dc15ab48c273eb7c20450a5f692f9837874c4ab3332c295b05f038e4ec7c"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/复利老爷子_专家Profile_S-32.json",
+      "sha256": "e5f888e82364f317c853e4b1650abc30524e3389e0c25e9b1cc5eb121ade5bc7"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/多元思维耆老_专家Profile_S-37.json",
+      "sha256": "3448ad61cf6ad7d10a31e5e031537bdb6d9b1a95902a2ae0036d1bfc877638ff"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/宏观权衡者_专家Profile_S-21.json",
+      "sha256": "0f8b3e2f11d9a95602c3b8875e4ddf8e0dfe8fa980655bb08aaf5dda15ff8e29"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/小红书爆款操盘手_专家Profile_XHS-01.json",
+      "sha256": "5b2e81a216004dc61c616a36e627b3b733b48f329160dcf1168aadcf76eaad33"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/延迟满足船长_专家Profile_S-01.json",
+      "sha256": "2d8dbae246e673084800f2a293acf4c575053fcbfe7ff6ad2b7d1d7265c87755"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/快乐养猪厂长_专家Profile_S-18.json",
+      "sha256": "8358368c91cf411614a1ff6e830bcf2049c7cc797387be8bc13183bd54aa34ee"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/手搓GPT老师_专家Profile_S-40.json",
+      "sha256": "3a3a9dc1b138f15ecb61f6762280db4a7ec58fb8ed52d579510aef34da1efa1f"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/报表译码员_专家Profile_S-20.json",
+      "sha256": "cbdebce5c45c224ab02a49c8ee1e50d622707fa898d6304425e2b58c8a39a0aa"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/搜索布道者_专家Profile_S-27.json",
+      "sha256": "814ac5084808bb3c53865dfc0b8aef0bd00569aa6dc9cc6bece613acc7ef343e"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/斗嘴金主_专家Profile_S-13.json",
+      "sha256": "b2f6a27099047260fb8307236dcf2d097888f712ed15374660d3dfa5e085c76f"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/无限游戏玩家_专家Profile_S-04.json",
+      "sha256": "00696601c179c48782487cbeb0845f7d57e06ebb1df3a24a4cdaff415c106a0e"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/时间机器操盘手_专家Profile_S-33.json",
+      "sha256": "e91b73e75bd3ae1391bc757c5fa45a5a2f08d3a6e7c0f6b107e766dd13a35bed"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/普惠砍价刀客_专家Profile_S-34.json",
+      "sha256": "a5392b53c7d984e276ad088d21f71b14d11313dc54840a9a0259d271a84ffed7"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/海归信鸽_专家Profile_S-19.json",
+      "sha256": "f015bb4d1003c283f298d5cf741fc1e97b8bc51d7cdfcad627465b0613324573"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/渡人先生_专家Profile_S-30.json",
+      "sha256": "68fdb340b4bc9121c897583ebed40018e7132009f47846ead8c576e5e82f7e02"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/火星殖民官_专家Profile_S-05.json",
+      "sha256": "b2c6785684b495d7b9c82b3dd39538d793c8bd396dc9e9d8c98e5a093b5ee0df"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/火箭男_专家Profile_S-03.json",
+      "sha256": "2d4094aa7b0f1921cc9f9a2a2546cd0f8c6d6c38c8e30af4e273139a26a760be"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/现实扭曲大师_专家Profile_S-36.json",
+      "sha256": "d530f345b5ef3e2104efef0bb3ec50508d33903f3dc316a2a675ec800145ef7c"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/生态链链主_专家Profile_S-02.json",
+      "sha256": "26864ef5bbbde9dd742495d07032c2311b9be9d10b3bc2704de7f2ff0d679bec"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/画布架构师_专家Profile_S-10.json",
+      "sha256": "b6f38f7a996409e2a48b49a0578829188bef91cf681d0d378eb21aad96578b23"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/算法老实人_专家Profile_S-08.json",
+      "sha256": "5ac2cfeae73c7bcb3348c4303b03e574565757a706d52921eed132abe1d87754"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/组织一号位_专家Profile_S-07.json",
+      "sha256": "4fa6cb0de3b274a67e40edcda86981e96867303c8abceb9e07672939a36436cc"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/课堂拆解顽童_专家Profile_S-39.json",
+      "sha256": "4ac5ec64afff78676397cb5c25c0aca2898f59cb8ff594cc8826d56d09ec8443"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/赛道捕手_专家Profile_S-11.json",
+      "sha256": "b2c77d616adbf1a68eadf0df5140dfff3cfadd297d565fd5ba159fad6e65170d"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/遥遥领先哥_专家Profile_S-28.json",
+      "sha256": "84a4f43e35fb8e656ebba3b6cedc04a2f4af94ac66b1904ef0e5d7b2c4b4bdce"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/重资产快递盟主_专家Profile_S-17.json",
+      "sha256": "46eadeb44f0a31f0f5cfe6ba56dcdfa9a22ed16e1c0df60101488b40b8994961"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/铁娘子厂长_专家Profile_S-29.json",
+      "sha256": "bc68f9f9dc38f3d00583ea0942c4c3aa73bd661a6ffeb9418aab34c443b144df"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/风投女猎手_专家Profile_S-14.json",
+      "sha256": "b2c1a0cee03261287eb73f338c70998096832b8d025489e945381df00f51ff65"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/飞轮指挥官_专家Profile_S-31.json",
+      "sha256": "467c7904defa94a220c3057cf6c741f90796ac63faae1fda1edc4b9c59595c18"
+    },
+    {
+      "path": "domain-packs/pipeline-general/source/raw-profiles/黑天鹅驯兽师_专家Profile_S-38.json",
+      "sha256": "862bd1e5cae81814131789efa20c6a0becc6ae02114b13bbc3a795d7fa4b2173"
+    },
+    {
+      "path": "domain-packs/pipeline-general/team-templates/pipeline-general.team.B.json",
+      "sha256": "f3f6abad26d3c59f01ef83fbfc2f135a224996e991e1d61241673e24fe947566"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/README.md",
+      "sha256": "717be799a9a0563804c1a37b50fa36aa22e1e09d850b824bd2d2dcaf3cd278b8"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/domain-knowledge/zhijian.expert-memory.json",
+      "sha256": "128c7195999c6e189fde791a43aeb64297c1cbf8a959d3b5ebbfa3f8138daa32"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-002.json",
+      "sha256": "a9b9a8c218a5ee1ea978a95c01a525e2a79bc89dec5e3b45e108c2f1cf50c570"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-003.json",
+      "sha256": "e4ba7410c30f36a532fa8b1bb4790575cdc63b735e59f18f4f0ac4cb9b1d83b6"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-004.json",
+      "sha256": "a795117b51837f164adf8b2c80fece1da9c0b42d46986597f4d9f0dcb697c3d5"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-005.json",
+      "sha256": "9dd925149e5152643e0ccfb1f88f977f600e0676eb37a7513e289b0fc918a213"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-006.json",
+      "sha256": "3cc524645f52c5c5971e5b4bdce17ae1b524a7e068aeb3f83ef59865d2910bcb"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-007.json",
+      "sha256": "94c74a4fd88e68abe62b58301e2741886fc59f0de904a42b7385c472fc7f3ce1"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-008.json",
+      "sha256": "320846f34692fc174d869e394b81e51dddd587f4bcda1d3ca3d2155bb92ede05"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-009.json",
+      "sha256": "a59897c71e01554d821624fdc377a1ff8dce6653ba2920c0d5c351018948d903"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-010.json",
+      "sha256": "718e195b34899c64694f150c91436c7207aeb0779e5cd4ac6a21d69116963579"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-011.json",
+      "sha256": "06aa1b444d5f3a0078565990e12a925e6ea37c22d5cb3f5f4b0e7fb4f2423673"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-012.json",
+      "sha256": "84bbf075bf9ea850e15799910c14f5d7731ec2298e46efe7d693e241ee9d9408"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-013.json",
+      "sha256": "8c4dcee5fb6aca107b1338d13606a9d4f4366a1e8bac86a20218fd34e43e4882"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-014.json",
+      "sha256": "34ae0ee1ee695feeb83d75ba560395617e4eba1402d19d042606105ccee08b11"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-015.json",
+      "sha256": "2e147e9161c8388382c7227080d9df306aff90c4982b02816c1a2dde2302a962"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-016.json",
+      "sha256": "fb802253d77e139ba202a3f6caea8ff6088e22b21c80b7bb03f8fd39dd29b020"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-017.json",
+      "sha256": "b31466a552ce75bc87ec1affab4275b145b89e48f19f1f380ee28296821d3f0c"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-018.json",
+      "sha256": "b036d81670ae61c1684f000360e4a32578cdf01f358b1415995c87f5da0e43c2"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-019.json",
+      "sha256": "14bffe16048d588e01928a1cd472c5401f70f3912b108bbaccaf08834b67453d"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-020.json",
+      "sha256": "3aa63bbf08512df09f06ebd45497f3453468bb6ce739e737d2a46195a74c5b3c"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-021.json",
+      "sha256": "e9f2db0d708164e5448d3e42f078719589e297fd53e0bb3979be4be9072b0b14"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-022.json",
+      "sha256": "2c8c546e3ef67ad912cd6e06115b9add64cd0bed3d7dc186da91a13adfd60d5e"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-023.json",
+      "sha256": "8356b848a5441023d6eaeafc7d4a6928a128f3f3343824139bda16d8de69749a"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-024.json",
+      "sha256": "21d8af6b29996b2a1a423118b4ebcd2b2c40c7ae0c912bb764ab30d83abea58e"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-025.json",
+      "sha256": "d95f20cd595cc3a976861ed0deef37071642405a6c5b522da06b85b9ff7e6a5f"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-026.json",
+      "sha256": "37ee8a1dcf3b89acb0fc16f0c775d33da6178979be542c38f1cc4600c2ac6952"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-027.json",
+      "sha256": "29222843d3122bb062c3e32b2792c5df941ea788655fa2c6a642a9e7a0c4472f"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-028.json",
+      "sha256": "11438ab6994c9fb5142aed5c0d201f947bde2b5e4131c5f2163c681229b0cabd"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-029.json",
+      "sha256": "89c4cbed60f700a337c01e2ce0f445ad80d10c0086eb79452c902248c43ce361"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-030.json",
+      "sha256": "1eec12cfe35594c7069f8a83fe960b8d035bfed9317741ef1ebe4c628cd1f57d"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-031.json",
+      "sha256": "f961ce9159dd374c7f6dd28e044fb1938bbc1963d04d721dabdb2dd3322bd2c1"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-032.json",
+      "sha256": "ddee4c16929aa09353a50b8ffbe32aedfe5635e5d2733a65b5c48c9d35b58a5f"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-033.json",
+      "sha256": "244ad02da8b10e1d927eaa565623109a488ce229c163832abc95454dfed0f323"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/experts/bk-034.json",
+      "sha256": "d575515d8752c5458261f2be788a78c7807cb10e674311da36a39a10cd0ea83b"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/generated/pack.sha256",
+      "sha256": "c4ee58afd0cc23912a0f2a5b9239ffcf59611409e2c2c84a91f0d4f235aef94b"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/generated/roster.md",
+      "sha256": "95de508ed0e4da13ba01c559f6c8bdc4829b3bc38db1bb7462d07add36bec846"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/generated/v1/experts.json",
+      "sha256": "8981fe9d0c46628997501b5263b9ab30febff7f612049b195c32e6f9d60c8676"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/generated/v1/scenarios.json",
+      "sha256": "405ba06941dbe705457e8de34f0f4214aa9a2273f74272688b90cf3bae953738"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/generated/verify.json",
+      "sha256": "b9913d34ea04d68d9e636da8665ec5b9c57bef1ab0cb811fd8d1c601a6b3cf6b"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/knowledge-providers/local-knowledge.json",
+      "sha256": "ed7801dc3e9bb88cc1f58c5ee08bbaa7ef2d075ff5bab1b8c819b60b7c0dccb4"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/knowledge-providers/zhijian-expert-memory.json",
+      "sha256": "efef8cb95d267efc2acc0fd30715d1a5be39b97356508e093f795626e2dcaadd"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/method-packs/zhijian.method.framework-a.json",
+      "sha256": "73e4af9a49b73fbb07cc8df3e2d4877ed257656b63b4aed2f14c8b3df261f974"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/method-packs/zhijian.method.framework-b.json",
+      "sha256": "a922f1d36b4761545e0fd29c6bf0b71c50e917da7b17cde1ff25adf58083c490"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/method-packs/zhijian.method.framework-c.json",
+      "sha256": "8f63f43f40beefae039c9d3f89368921c9e2e7b9e8f7526b64c181883fbca286"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/method-packs/zhijian.method.framework-d.json",
+      "sha256": "cc475b2a2cc658a7f1f82909292edda719091e64a788bb69e5867e4a36b91301"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/method-packs/zhijian.method.framework-e.json",
+      "sha256": "880260a41cdd46f109cfe0d6f964347475865a40510f37a0c40300e6f2f4e21c"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/method-packs/zhijian.method.review-protocol.json",
+      "sha256": "876d7a7dc1fc6ac1a1e1086677d62311d7027dd3a846c0a695ca7ad1a5ac8385"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/output-templates/zhijian.output.A.json",
+      "sha256": "1e68d69bdf327377c745ef65579ea3692b5fca9dee96f0def389978fc856cbf3"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/output-templates/zhijian.output.B.json",
+      "sha256": "6136d723b5b58c113caaf72db448ac5f5786de2d503cfda33ef390b7bd492acc"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/output-templates/zhijian.output.C.json",
+      "sha256": "67d7cf3054f53241cdb46a8b99f5a23367dee7f8784aeef8379b7a6b7db161bd"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/output-templates/zhijian.output.D.json",
+      "sha256": "7659dfd51f5d1153c98b2fc60e5c69ccdf6a5210c15cfb7cfa6b5f8959ae9262"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/output-templates/zhijian.output.E.json",
+      "sha256": "11f53aa91fe87b706c47397ee2ab89f72f8015a0bc4a525ab45cb2b73741da14"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/pack.json",
+      "sha256": "8c4f88e644f02e5c3d44fb5e6308668bec77f49591764c03fb4583caa2cff329"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/quality-policies/zhijian.quality.json",
+      "sha256": "6b4cfe731d376e050b7fec6306a4f60a9ae1733450f3b350bb74057209050f51"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/routing/routing.json",
+      "sha256": "446e1c5a86b9537ee191b383743b2400f508bb70ce71ea9ba8386d11c93bc3e2"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/scenarios/zhijian-city.json",
+      "sha256": "475c3668f76d65032aeee5d05b223519569b1142f154c57f16682adfb8328cf8"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/scenarios/zhijian-finance.json",
+      "sha256": "473029aa86cea18d5ea99eaec6a6bcecd6cc58b9ae96bd431ffaf733f3f650b1"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/scenarios/zhijian-industry.json",
+      "sha256": "0b490b9c82700aa49bba2206a7c33deb25d8966205a18e38d0e1b5553e448c2c"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/scenarios/zhijian-institution.json",
+      "sha256": "b889fea66671d831e090d67a4f84c37233f6e112e974833bafb7f3010afea537"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/scenarios/zhijian-macro.json",
+      "sha256": "c51055bd34e0c2a740956e08c7e1a3645898a67cb99d7297c5999073946f157e"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/scenarios/zhijian-monthly.json",
+      "sha256": "da4c519f1aed2983045db57c129c33ffc4ef44aae61f460d1d4128daffa18353"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/scenarios/zhijian-policy.json",
+      "sha256": "f80d9f1b2a07ed82b6216b875392a8f059d0eb119dccc7cc68e06e58e8850aca"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/scenarios/zhijian-services.json",
+      "sha256": "5e37545b50f6db6d9a28bb7299dc20cc28325e1a04bd6de6c63089f359c47999"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/finesse-ui.json",
+      "sha256": "d7150a78ae12cf2e44782eefe05a6eb1ae198c75ad25e74adbf303859880ca93"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/gsap-core.json",
+      "sha256": "f7f3b35ece1431a1c7e2ffc3edd7cfa40f6383a175183cb6fd27c462965c4eb6"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/gsap-frameworks.json",
+      "sha256": "ae0fcc74204bd9a83797b9796d6a8ff28e0ac1a0840bfdaf8e2357b973b444b0"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/gsap-performance.json",
+      "sha256": "6377ddf905a8371514967098299ed98582b4c71ea24b73eaa37ca8d789229c46"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/gsap-plugins.json",
+      "sha256": "55c8a4c12c43bc2f5710b0690823732e7e1c33f3a4bf4571c689e0f044dd26b9"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/gsap-react.json",
+      "sha256": "b30d6941de50c3072cb9e2e207496b140305edd7df4eb8ec1950f30844c90dba"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/gsap-scrolltrigger.json",
+      "sha256": "4df9c3ae13b376b23ea2ffef8f4cf65b20ef9f0f1c1488b8aeb2f530954e0fe4"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/gsap-timeline.json",
+      "sha256": "48711257e92317240d5f4e6cb91a36ef7e8367a350477613dd71b2935f38daa7"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/gsap-utils.json",
+      "sha256": "a97cec89fc015dc2403577054ae36eaf80b46f12274f8f3cbd8d4cfcfbc772d0"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/skill-packages/video-shotcraft.json",
+      "sha256": "f5bce39fe1ad333d047af535080f3f56388084a3a03b3eb1c684057379636965"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/SOURCE-MANIFEST.json",
+      "sha256": "6cc2747a25aeb91a6e4c3252a2168bf68e32b9f56890d1efe4499e33dda5eb9d"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/docs/SKILL.md",
+      "sha256": "6040b4790fe6daaf0be6370c1212043e4bc085db35193616ee9e72e9e5102530"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/docs/专家分类框架_v1.md",
+      "sha256": "a187db03c2e287ef7a1249d47fd8be30d73c012e16cd71e18c0e46a0a176d336"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/docs/专家总表.md",
+      "sha256": "26e4ae9f6c43c4d89c95c2b348172851e6a281dac2c4bf99bee679ddbadff336"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/docs/专家输出框架规范_20260809.md",
+      "sha256": "afe5fae99ec5bcdde5a9c52decb1495a07bb7df5081a77c65652b8c9e045a663"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/docs/资料更新规范.md",
+      "sha256": "8a2636add2a260cc2c4398fc82f082a41106d7cdd1384a57414afc9270d2add0"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/docs/路由规则.md",
+      "sha256": "105f5fee39dbec1c0950c4ed5f930f64a1749cfea17c3494855221c615f32246"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-002_制度君.md",
+      "sha256": "01c432bdf24e62f904e5f8ba6405b905aca50c1400417e4a5afdb3429a5bb2a8"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-003_老规划.md",
+      "sha256": "7e02c69d95d41d512b1ec85f6458a6f267902766d86b9796eb565c0c5b2a2248"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-004_周期班长.md",
+      "sha256": "29ec2313f10adc57c927b73b4b3cfcd6be1a6804e2ea1fcfb625e123520f44a5"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-005_长牛博士.md",
+      "sha256": "12c0defdd2ee28e316397c5fd0a7ba18e39c79abf0ac44ba301c3c6fb13b8e88"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-006_存量猎手.md",
+      "sha256": "80411bdb867b3b3434f51714ade3fff672ab34716074cf4cd85068278592894f"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-007_杠杆侦探.md",
+      "sha256": "05cbbeb3970bb0b22b273bfe8939bef1b86e7c821196f13489a1318f34f67c68"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-008_分化哨兵.md",
+      "sha256": "98b1a2fcae18036af660cccf5dff2572763a47a1ee8eab3bffdebb5ef2edddc0"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-009_土地账房.md",
+      "sha256": "0940c93b11219c2ad133e2c0cad447080161043a43dc632c90543409a69f36ce"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-010_能级参谋.md",
+      "sha256": "7046fbc6ac39b49f49f900b0114b6a365810383359c958695bac309b6ae42dad"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-011_转轨师傅.md",
+      "sha256": "fea5dc66fbe8ca85bb065fe8564119156a8675d632bb6fea6ad6cc99bf345003"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-012_政策翻译官.md",
+      "sha256": "08cb0df51d0f1b9bc1fc731b2c92ac3c5d36faf7519899185a33239c54afabec"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-013_批判教授.md",
+      "sha256": "e575f4eeb92793ea9eea8dda74088c6a4941cc3d0eabd9d7e848c08dc23519b9"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-014_数据司长.md",
+      "sha256": "e15a997a74f0b884f416666ccdff147b4d9fcc649c1112fc33cf2cf7b797607e"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-015_喇叭博士.md",
+      "sha256": "7095a4d2e44ca177da45039144e24666cde9f81155793d138121d0bb49bb7232"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-016_结构老市长.md",
+      "sha256": "11582c259e29ea068c2df0ce233ecfa1790408def8c36668b570034c3e7a8cab"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-017_错配外科.md",
+      "sha256": "b8c580877f7220c1107ab11adab94ad9cbcd68eca4537720fed9a571fcb76490"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-018_统筹会长.md",
+      "sha256": "280166e596f25c1912c0cdb3b0885e1c5e20ad28f22bc2e978e3fff3db2743da"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-019_海外瞭望员.md",
+      "sha256": "c6f8d724673ac1f3808379158dec435bd6771aec9969aad21f17ec9290701cb2"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-020_均衡教头.md",
+      "sha256": "ba33201d0a165379713bec06e8cfe85abc46fcf8dfbda2a9629e603112ab7ff0"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-021_运营管家.md",
+      "sha256": "5490162beabedcfcd3098b1617bc5a108cc130a1fb1e74f0d6310e5e5024cd2d"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-022_慢牛主席.md",
+      "sha256": "d775659364263fe1de40ffdb89ae35bb3f1b570c5620d1784baa150a437519d1"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-023_保价局长.md",
+      "sha256": "689bf7c38df9f1f90db68c4f43a91556b2427ce8df6e00cf1dc2907c93b332b5"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-024_定力董座.md",
+      "sha256": "1bbff120f6f9291983d8e26da081e18ed27fe0b1d6e4843c6c79ac6b7d3deb23"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-025_百城台长.md",
+      "sha256": "30f367d18662ac73316e9bfcaae7cd033d69cebef45d1b31562cf09bc2015c41"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-026_新范式园丁.md",
+      "sha256": "35679f20bce4b3f3358cfa78d4bf712110b043bfd8f25523126ad03c6f2916bb"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-027_稳心会长.md",
+      "sha256": "418bfb25de64cb841a903264deb342416d27ead09978f04ed78acaf68a443b38"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-028_好房子工匠.md",
+      "sha256": "f78ce62e1eca13778fd723f1268dc6974d35d51845b71cecf6463c8e1d61af77"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-029_利率司南.md",
+      "sha256": "9a211e11f58b7f4872db3e3f741f46c39a795e7087b16294edc51d6ce293da73"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-030_拓界理事.md",
+      "sha256": "522ab21e5e4c3ed3612d863561d69d93dbe811da5fff3d540acaaba11529f285"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-031_挂牌哨探.md",
+      "sha256": "e577e481fe7524cb60c85a505cf8c737215dd36d005eeb436b4e04c2a0d09f75"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-032_财政掌柜.md",
+      "sha256": "077a00ac4af441fa2ade23195e61da48fe2d3b109aa3b3ec86e5b52c1d3cfa6f"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/library/BK-033_渠道灯塔.md",
+      "sha256": "72278cb6690df7bee968923ea9e54a1611cddc8e4cb7ef3b94232bd0c5347720"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/保价局长_专家Profile_BK-023.json",
+      "sha256": "46c45e8e6331a0a6a04c77089da1ed6523d58a2e48e3da5242ced4a48fae4c6f"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/分化哨兵_专家Profile_BK-008.json",
+      "sha256": "0a6571b75cc68de7db02b725b79c176509f50d1c084e90068c394afd678bdf81"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/利率司南_专家Profile_BK-029.json",
+      "sha256": "3057f3eb967fbc0c933f88189f1826226e30a628060ac67d940e39cd1453f562"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/制度君_专家Profile_BK-002.json",
+      "sha256": "15ef5b9d829f69688fb5f5dda05839d16483abd1934080899c6368005e295d92"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/周期班长_专家Profile_BK-004.json",
+      "sha256": "02cb14fff8e3ccd8ba0d53e2363e81b2419417f04ba136eb0f13cee007234ffc"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/喇叭博士_专家Profile_BK-015.json",
+      "sha256": "59c95ea07b29372107392abe4c344f6498d4978b79da37679db5884b50ea9450"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/土地账房_专家Profile_BK-009.json",
+      "sha256": "ab6b3e56a38f3af60a5eb62dada355cca39a923bc828a2db7e72cfd1e283449d"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/均衡教头_专家Profile_BK-020.json",
+      "sha256": "c3508d0dd090b2fe2f6e35614cfe682c82ffc4fee7d6aa84096a1bc15307aee2"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/好房子工匠_专家Profile_BK-028.json",
+      "sha256": "62e3156c11aad31ab1619b4df0f7dc96999418da89eb52bac8764b4af3bdd765"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/存量猎手_专家Profile_BK-006.json",
+      "sha256": "2f08c72b0614c6d081f836cf8a3f46605f986c993623370f6fc26aa414373a41"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/定力董座_专家Profile_BK-024.json",
+      "sha256": "162361516da9fe9d354bee26fbdbc35265b368e7be690d1e597742b7cb651f9e"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/慢牛主席_专家Profile_BK-022.json",
+      "sha256": "fd792a1a09e2058c85f4f319f9e97bb3b5c180e1c19e01dde8ceac69a75ca28c"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/批判教授_专家Profile_BK-013.json",
+      "sha256": "d2630b259c8d96444dc51f261f4bb4f138dcb1098770c0c68a12621a2fb15040"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/拓界理事_专家Profile_BK-030.json",
+      "sha256": "c8233a634e1f5da126bc432f4eda16b61cf939331272aa57a4e5c217d451b549"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/挂牌哨探_专家Profile_BK-031.json",
+      "sha256": "fab9c3f1151d2fef6f3afbaadff075a442a118ceb40cc1431e4423af94ff99d9"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/政策翻译官_专家Profile_BK-012.json",
+      "sha256": "e41c0b3c19651e1dbd03939393f6a0dd3c7e74ea7ddb15cefc62335906014392"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/数据司长_专家Profile_BK-014.json",
+      "sha256": "15466abad6b36c4185515d37ccb0a748d7379746791e9bee3682966cb1945c23"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/新范式园丁_专家Profile_BK-026.json",
+      "sha256": "10ab739256c291f56992efffc073117ec6aa4a102c0bf446d818e5e59e2ded12"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/杠杆侦探_专家Profile_BK-007.json",
+      "sha256": "e213b494051e919a75a1e63d6b452019c56a632fc27a2c6e794d32fd618a298d"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/格物讲师_专家Profile_BK-034.json",
+      "sha256": "5ca1083ccf7836d0c4f6232db71ff3d29824811012c08299fa37afc32d10c72d"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/海外瞭望员_专家Profile_BK-019.json",
+      "sha256": "420c842a9554beb6783449d93a27e9160352ac6f172d8dc19e377d554ac5cbd7"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/渠道灯塔_专家Profile_BK-033.json",
+      "sha256": "fd0db1388da9de0dde0ccae039bb24c8a6a80d985431c4f127cc8a1b0f49cba4"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/百城台长_专家Profile_BK-025.json",
+      "sha256": "1915a1f3a70c164dafcea92738b4e932281dc78d2694719fa552b3f93338b987"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/稳心会长_专家Profile_BK-027.json",
+      "sha256": "62361624084286b28534763ec0ee62e1f28b5bf0da6f6d4a89b75599359d3042"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/结构老市长_专家Profile_BK-016.json",
+      "sha256": "455817b9f82847266de86d8c4874616004da3f502c86c97c65e27e0b267dc1f1"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/统筹会长_专家Profile_BK-018.json",
+      "sha256": "1450f1ffa201b2ee37274c37f1c79746a07b33c970d2ea0b85e2147e21af8553"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/老规划_专家Profile_BK-003.json",
+      "sha256": "6511038d48188966afd264f61c3afc943a2fc13dcbe021ca31c4fb4dde9698e3"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/能级参谋_专家Profile_BK-010.json",
+      "sha256": "a530396b5e63681c6dc06e4255a25810e442d7044cba94ef8f055a0a27bfa770"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/财政掌柜_专家Profile_BK-032.json",
+      "sha256": "89549eeb4d80f89c1e8e611df2be8c619f911a0720b025498e7324e3b9618f5f"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/转轨师傅_专家Profile_BK-011.json",
+      "sha256": "b62a0ff7b2996bdb0698b1e33dbca29ea23acaf1a86dbf2ebcb50d0b1579fcec"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/运营管家_专家Profile_BK-021.json",
+      "sha256": "c4f1e25d4c01341d318977d2d049717cbb94c3b816b31a7ffcd1452bea69a042"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/错配外科_专家Profile_BK-017.json",
+      "sha256": "e01d6c8c5eca78175eb7bf6c3ff93e8b83afdde2ff27fa54d8fc9ce1df4ec4b9"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/source/raw-profiles/长牛博士_专家Profile_BK-005.json",
+      "sha256": "e1606009e93b89b7e2b17196fe2292ef64a9297a879baa5ce1ef18c3e0c3c34b"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/team-templates/zhijian.team.A.json",
+      "sha256": "ab571ff0afee9a5563a4e0ee3f6bbde5cd09b00fd3c9966ce283ca0930dcab18"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/team-templates/zhijian.team.B.json",
+      "sha256": "494300899e075d9b05916c8aac4d1d7d5d989c91747e285ca666b20291c60344"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/team-templates/zhijian.team.C.json",
+      "sha256": "84ae2df710cac7137c7ce3b2e39ae0de260bced5d08daeeb776c28ea55d06204"
+    },
+    {
+      "path": "domain-packs/zhijian-realestate/team-templates/zhijian.team.D.json",
+      "sha256": "4a4a25a399f086032cceb65cbb82b8eb071f20662cc8c5e40ba1b7daeb8ce358"
+    },
+    {
+      "path": "examples/pack-center/README.md",
+      "sha256": "0786469d4de7097be1897184b515080817d48366b17b6d40e2e6d1abdc1b23c3"
+    },
+    {
+      "path": "examples/pack-center/demo-v1/README.md",
+      "sha256": "8b489475a8da8ebada474ecf92210b0e43182d00f5a770613dec43801e3b8c99"
+    },
+    {
+      "path": "examples/pack-center/demo-v1/pack.json",
+      "sha256": "96debbe4e617f173555e8a86a34c32ff35665e4a46ac316e8f0f7509eb88b723"
+    },
+    {
+      "path": "examples/pack-center/demo-v2/README.md",
+      "sha256": "b8e79bf7fc892e4519aa5699213b62a46cfe3d364bfc4b4ed66be7d20e4500e3"
+    },
+    {
+      "path": "examples/pack-center/demo-v2/pack.json",
+      "sha256": "2d7e46a52e0df4038ac9a6295f10a9e505a07bb3ededec446075fccca741c976"
+    },
+    {
+      "path": "examples/pack-center/digest-vectors.json",
+      "sha256": "57dd107f1c4ed34ed323413bb2b4352dfae0806115c7cd8673b3ab31578f6543"
+    },
+    {
+      "path": "examples/pack-center/invalid/pack.json",
+      "sha256": "7d7eb06cddd2ff777fcce4bf11dd55b22792a56450534952956ec5c6aef2deb9"
+    },
+    {
+      "path": "package.json",
+      "sha256": "a97e7dae329a51c712b9c324ebe577a68e5868867157983eee50c44458b512e7"
+    },
+    {
+      "path": "packages/pack-artifact/README.md",
+      "sha256": "4dc8704a410f5139ebfc23cb10caa46f08f0abac0f597af1cc8c7bc1213a3213"
+    },
+    {
+      "path": "packages/pack-artifact/index.d.mts",
+      "sha256": "ab5bc636ad21da1404eccc96ccaf81f0203c8f1edecca615cd55628826b7c892"
+    },
+    {
+      "path": "packages/pack-artifact/index.mjs",
+      "sha256": "49056263549922f0c0d2705459bebfa324e400f964e7c8a6d26961fd30d08fa9"
+    },
+    {
+      "path": "packages/pack-artifact/package.json",
+      "sha256": "0d443524cf9e65d5babf6cbc2b45fc22ac63cc5d9d62e527413f88a019a2038b"
+    },
+    {
+      "path": "packages/pack-artifact/test/artifact.test.mjs",
+      "sha256": "1ae59bcce1af1da515d675b4bca64211e6d0345393b3dc1963721351c21da988"
+    },
+    {
+      "path": "packages/pack-contract/README.md",
+      "sha256": "efe297c2071946aaea25f15a937de4cf888344c94f4b34b881ac071ea93a9a54"
+    },
+    {
+      "path": "packages/pack-contract/index.d.mts",
+      "sha256": "ff7c5d324e5963b91cc70f1943592674bde1be4c9703ee6e27ecc4dd57a04279"
+    },
+    {
+      "path": "packages/pack-contract/index.mjs",
+      "sha256": "d2d42a73aaac7d7be4cf247d9f693180ddb0dc5b82e2083b0a0939c1e977b4de"
+    },
+    {
+      "path": "packages/pack-contract/package.json",
+      "sha256": "cc84c1ad5f338857ff6d40e96f553d89d687914f2a70f8aa39506b8fb5e6343b"
+    },
+    {
+      "path": "packages/pack-contract/test/content-signature.test.mjs",
+      "sha256": "5b439e0a77d5421a8543e4da1afab608480cbfdcd810193dc4c2a118e466187d"
+    },
+    {
+      "path": "packages/pack-contract/test/fixtures.mjs",
+      "sha256": "bac44343cc8bca1a5d29c1f111e1bb2fc9bcebb20de45d92601c6c6587b79b9c"
+    },
+    {
+      "path": "packages/pack-contract/test/schema.test.mjs",
+      "sha256": "abc5ec3e4463d0571a691abc0dc339d56cbef67e0c27d700ae2317195383f802"
+    },
+    {
+      "path": "packages/pack-contract/test/updates.test.mjs",
+      "sha256": "74ff9d83719541acd5d5dd9ac34cc7febb5df4ed81eeb14386f7f23113f65259"
+    },
+    {
+      "path": "pnpm-lock.yaml",
+      "sha256": "5f9206f44f36d2871bce5a5b317dc757f9bd8df8950f2eb978746afab4c0a540"
+    },
+    {
+      "path": "scripts/pack-center-host-fingerprint.mjs",
+      "sha256": "10a40a91ff8b8fb5b12caf7d77af4b1c4e42bc74cdbb9914fcdf80e35f63c523"
+    },
+    {
+      "path": "src/apply.ts",
+      "sha256": "444224b5c92bcea60f7accc1679860495fcb4bf39bc5d9a82ce3fe6984f95556"
+    },
+    {
+      "path": "src/bank/data/experts.generated.ts",
+      "sha256": "2e4d5da58ec26c4583f2441625108885af9b84d9e155af21bea9d5f7132a1571"
+    },
+    {
+      "path": "src/client/ActivityPanel.module.css",
+      "sha256": "bf5f5fbd60bbe78f7bff866dbe9ced5a9a586947c84de040ec62e4179965a87b"
+    },
+    {
+      "path": "src/client/ActivityPanel.tsx",
+      "sha256": "35306db7d7461adedec7ac1eb215b0a1312eec3366c56fbcb2d72714416b0782"
+    },
+    {
+      "path": "src/client/AgentTeamsCard.module.css",
+      "sha256": "b8223ef5a085b1cf85726f45a8a56586137831012a698ee4348755e382d2ee6e"
+    },
+    {
+      "path": "src/client/AgentTeamsCard.tsx",
+      "sha256": "f84c64dac6b8dc8a1e69c841d14c71e9bfb265a9df853dd50a1f4e37b3ece55c"
+    },
+    {
+      "path": "src/client/FilesView.module.css",
+      "sha256": "e475f379d2d086e3c40c2dcc077ae482317cde1cbf88a4502a81b0d9a017069e"
+    },
+    {
+      "path": "src/client/FilesView.tsx",
+      "sha256": "6175fe4f8c871a77d3b2b12f8a85c88dbc364f72819fbf4c61939fe55f8c9870"
+    },
+    {
+      "path": "src/client/activity-model.ts",
+      "sha256": "6586a842e11de9105a9624b6f15b99a798b5b79702260b34d3e33c943c8193b4"
+    },
+    {
+      "path": "src/client/agent-teams-card-definition.ts",
+      "sha256": "f4cdf630f04d45d1f0b3b394e48b7b97005edfe39d4a2ab871924f746ecd4c0a"
+    },
+    {
+      "path": "src/client/artwork.ts",
+      "sha256": "02e27e32e1e1725a668103675def97d7e10e9a77ed07880eb863af4aa2761573"
+    },
+    {
+      "path": "src/client/domain-packs-card.module.css",
+      "sha256": "d73ae67febe435a089a0f4ff5527cb5204943d17b5227d3f8e522e5ce6e3e391"
+    },
+    {
+      "path": "src/client/domain-packs-card.tsx",
+      "sha256": "b0ed76772e85cf7e608bc9cfbbd52546c616da59705e49161b64c256c3ec8fb7"
+    },
+    {
+      "path": "src/client/index.tsx",
+      "sha256": "15181169f46e1d947367d1b9f3a83445af4c1894abe8115771fe2d8584044e0b"
+    },
+    {
+      "path": "src/client/manage-card.tsx",
+      "sha256": "c4bd4edba727d722344fec89f3e86e550c4d8fcd2465251ea294f8fbc87094d6"
+    },
+    {
+      "path": "src/client/pack-center-api.ts",
+      "sha256": "ede2f231f44590860563eb233efad30689e69d850de17fd202492ca5441ccbd4"
+    },
+    {
+      "path": "src/client/pack-center-card.module.css",
+      "sha256": "1716330d3b31aff12ff131e98014b2fce2fb9ef2876ab8b97922f915f87c9945"
+    },
+    {
+      "path": "src/client/pack-center-card.tsx",
+      "sha256": "e83da206bba48807fb6a1014a54b0b3938f22b8a4b93443fdffba9ba2c6dc6bd"
+    },
+    {
+      "path": "src/client/settings-card.module.css",
+      "sha256": "c381c94b78a540aaa3a4f05fa9fca2ce0550e809e39cc0791f6e9d42aaa38a4f"
+    },
+    {
+      "path": "src/client/settings-card.tsx",
+      "sha256": "22be9c449406b762f065f07cda45bf0035a64f5de1cf83b19b9c2b0da3a42e6e"
+    },
+    {
+      "path": "src/collab/templates.ts",
+      "sha256": "2c694047df0ea342af936d920ed558345a7c995f9603163e080419319c513b2c"
+    },
+    {
+      "path": "src/collab/tools.ts",
+      "sha256": "e676cce8bfa6849603498e2bcaa78474206f5c58a91f57601bb169537b422eae"
+    },
+    {
+      "path": "src/css-modules.d.ts",
+      "sha256": "d4395f8ef04ea16601b9b84979df7de5af4ccfeb7b094c510f1442f3d8d5785a"
+    },
+    {
+      "path": "src/event-types.ts",
+      "sha256": "9d85fb29f660acd49f2e5a55a47593d9d94a9ebb372d9a3349a5ff1101ff05bf"
+    },
+    {
+      "path": "src/events.ts",
+      "sha256": "58ba534c1f63a17cee8f94ccdafaf23ba3df2645006176d4055bc59dd5da6c3a"
+    },
+    {
+      "path": "src/expert-library/builtin-experts.ts",
+      "sha256": "3f3c1b14d7b41adb12b55eccee4f8e0025cad9bd48bff1e38625de82a058a45a"
+    },
+    {
+      "path": "src/expert-library/builtin-scenarios.ts",
+      "sha256": "fd5a601aedba00b648c4a4feb20e23a877df5a00ca44601f4736258b76061c12"
+    },
+    {
+      "path": "src/expert-library/registry.ts",
+      "sha256": "a5b5d16f8566c392581a197e0b09b1bc40471ad4750129a563a79b224fd3e00a"
+    },
+    {
+      "path": "src/expert-library/types.ts",
+      "sha256": "6d08beeaee9e38ce82647d7d8bf0ac2f4adb52211f92b9ac9b6776793ddffea4"
+    },
+    {
+      "path": "src/harness-compat.ts",
+      "sha256": "e15011eae007d843fa42e8a1898384fab0f764fd167dcd420cd6bc5b0e8f527b"
+    },
+    {
+      "path": "src/host/audit-log.ts",
+      "sha256": "db0f76d418e2cf43d81c67e397ae2f77cfd6316a057e0ac9a21cfb1161841ffa"
+    },
+    {
+      "path": "src/host/auth.ts",
+      "sha256": "93ebfad721fb85aff2f7531f741319a41f3f4ddd9a4778db79416d0cd80ce29d"
+    },
+    {
+      "path": "src/host/dataset-registry.ts",
+      "sha256": "e6ff50522a8ea25971c14702149bb51e1f5d015918e4cd77be8abb7438336da4"
+    },
+    {
+      "path": "src/host/health.ts",
+      "sha256": "6fe6b250b4422d1985473eb10631fdbf22aee74c8ebdeb36e05df28b976c703e"
+    },
+    {
+      "path": "src/host/manage.ts",
+      "sha256": "eba276b1004b86346349d28f962a92c81ac1268653b547e36914375b03747eb0"
+    },
+    {
+      "path": "src/host/pack-center-client.ts",
+      "sha256": "abd6412347b4453b6e950ba39b3e3e7e178a4ae30224054fb345401f2b3eb83b"
+    },
+    {
+      "path": "src/host/pack-center-connection.ts",
+      "sha256": "443a2ac9f2be8b24e960b93412d0f3e74c488cec60aae3233dd42486799b39e2"
+    },
+    {
+      "path": "src/host/pack-center-host.ts",
+      "sha256": "280314d40dcf369fb863f978b665da91b3b3f848976d0f0e13fabd12db57aca3"
+    },
+    {
+      "path": "src/host/pack-center-manager.ts",
+      "sha256": "9c7c96aa1fdd13d12c663b66b269e7e12be564fca678b0180c48bdb8e676d3ef"
+    },
+    {
+      "path": "src/host/pack-center-operations.ts",
+      "sha256": "818fb3c36a4fd4f5c202390b4e18cd6344788648db87939d449b34350d588f3e"
+    },
+    {
+      "path": "src/host/pack-center-routes.ts",
+      "sha256": "c97dc44a16f262ceeebe52c4df924c1c5cc04f9afde3a807bb06998a918032dd"
+    },
+    {
+      "path": "src/host/pack-center-state.ts",
+      "sha256": "7ec5b15b0a195c4c815fa5d68260d5bb97e5cae51e9618da8cc45acac08d52ea"
+    },
+    {
+      "path": "src/host/pack-center-transport.ts",
+      "sha256": "162c801b39d96095086a26d82be5512626b3367990cbd360504b98a484d9dddd"
+    },
+    {
+      "path": "src/host/pack-legacy.ts",
+      "sha256": "2a78a12f5a7295b788ed6c40c2d048edb3fcaebb6ec2a5ac2f658529e9cc810e"
+    },
+    {
+      "path": "src/host/pack-registry.ts",
+      "sha256": "0bc30f9bb05f72f4ee37b6b5cddb2b9f1b0f899b1cfadb2c2f1226f20d22b33b"
+    },
+    {
+      "path": "src/host/pack-runtime.ts",
+      "sha256": "bb0c95637f3d816ebd3f7e9b1568194708208428dc1e4c25460abdcb60727c26"
+    },
+    {
+      "path": "src/host/pack-source-routes.ts",
+      "sha256": "695707f2c8c0af8529df2b59ae61e7c1dbac00f17f9950f7cc1faa81e5b9f2b4"
+    },
+    {
+      "path": "src/host/pack-source.ts",
+      "sha256": "06e8532141c22b0484361a9b9ca75c56dcb1766356da551e0234158d3b3b95b6"
+    },
+    {
+      "path": "src/host/pack-store.ts",
+      "sha256": "96e22a9b1cdd6e1594d09248e83f50912e528d4345175b65b4caa83da1afc427"
+    },
+    {
+      "path": "src/host/provider-service.ts",
+      "sha256": "1a658305ca65a1b3a4431b3f591c14f283521292996efd820dab034c19c382bf"
+    },
+    {
+      "path": "src/host/provider-tool.ts",
+      "sha256": "8164615b797a2a7bc72187a85462c93852f4d743b9bde89e20242c4b26556500"
+    },
+    {
+      "path": "src/host/provider-transports.ts",
+      "sha256": "1795f687fef85687c42230fb61a1c258436b5a77b5034b5347822d470e1069be"
+    },
+    {
+      "path": "src/host/render-publish.ts",
+      "sha256": "824cac9eb7e667583aa8110d8222ac611d546b838fd18fbbc1e4149a640be8c9"
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "372f30c8efec472c0cdff41391586436491fa4615954d3439e44cecb6bd7bec2"
+    },
+    {
+      "path": "src/knowledge.ts",
+      "sha256": "5e5ce6eeae9364ed29b4fed9ca65a4387061879ca0b83b84b5852f79500ad8a9"
+    },
+    {
+      "path": "src/members.ts",
+      "sha256": "15d2d222c31bac13524f966fc066d8be1aa124ca7c80e256e409eecf17c58dcb"
+    },
+    {
+      "path": "src/pack-center-wire.ts",
+      "sha256": "3c0f592e260b41a71a619c469c1958a06b9c6c4ef0f34832a6ad593b930ef0c8"
+    },
+    {
+      "path": "src/pack-validator.ts",
+      "sha256": "365cab02f394474d60acb4c171408f4b6e139f848cb5f058c4036669da6383ca"
+    },
+    {
+      "path": "src/pipeline-general/data/experts.generated.ts",
+      "sha256": "2ad740eafd76da5c9673d7a5cb433e87670407b781d155906e977f51d3c44493"
+    },
+    {
+      "path": "src/pipeline/data/experts.generated.ts",
+      "sha256": "c00206327e0b3d6f5b157030baea88621f9288177c77af5dd8324c3b771d7b39"
+    },
+    {
+      "path": "src/preset.ts",
+      "sha256": "e49ab7bcb1ba4a97580eefcf20936139faff9a7c1b7c5ccb23553572ba68569c"
+    },
+    {
+      "path": "src/scheduler.ts",
+      "sha256": "bea6d32430f81553f38fd1895b2772ab40c6b792df9df9fa2df3e1d07deaf510"
+    },
+    {
+      "path": "src/settings.ts",
+      "sha256": "ef767b4bb38400c790ed223826a7bbc323d4658239a805c6faef8232b09900ec"
+    },
+    {
+      "path": "src/skills-discovery.ts",
+      "sha256": "8f2d733dcb542ad320aa20e2249c820bd52b7aa83f40bdf1e728b7b5607836c2"
+    },
+    {
+      "path": "src/skills.ts",
+      "sha256": "e9b191a38f98236f084345ee9f538f0a9bae5cf27d6ed7fb37f737a1d05d71e9"
+    },
+    {
+      "path": "src/snapshot.ts",
+      "sha256": "b0eac8568b762be735193ccbbea949a6056e67f517390435d85a61ddf38229e9"
+    },
+    {
+      "path": "src/state.ts",
+      "sha256": "4ee55434b11a40c99dcf7a1dcb9b43f73f58517e69dc437707a3e2ea24a8d81b"
+    },
+    {
+      "path": "src/task-gates.ts",
+      "sha256": "1dc66746805429cddf62a02cbb45c95149b77f423db59490f79b3d8722daf86e"
+    },
+    {
+      "path": "src/team-core.ts",
+      "sha256": "e67938bf7c93926e392f812a7180177cd38487f1bced4c1301cecda1ae28a028"
+    },
+    {
+      "path": "src/tools.ts",
+      "sha256": "e94cda78b7c1065915f69849d01ef7165fcd788569ff24b0cdc53ea73916b7eb"
+    },
+    {
+      "path": "src/types.ts",
+      "sha256": "1855bca31b5b6959e18877664fd6fd993f568f7eefb00f491c95f840d95f9bd1"
+    },
+    {
+      "path": "src/v2/bank-pack.ts",
+      "sha256": "141a8f0ae8aa7b6eb36fd11c4b09b57e054d58b3b2e7726f3f87029a0b7c8cc4"
+    },
+    {
+      "path": "src/v2/beike-pack.ts",
+      "sha256": "86d3e6baf62ac5c80ae7bc12e2a150b222c0b26acd1737fae456935b27daa238"
+    },
+    {
+      "path": "src/v2/builtin-gates.ts",
+      "sha256": "f153b474b2474554b3ba704899f9e0816830900c66163ddaea00f77e40159d08"
+    },
+    {
+      "path": "src/v2/compat.ts",
+      "sha256": "6c8244579689644ceac22712bd75bb3d5e3d7384c614c7b9e3bc302704fc49b6"
+    },
+    {
+      "path": "src/v2/compiler.ts",
+      "sha256": "a8c60197f7506f45285b0cdea5f915a3c0c1a58d8b17825f148a3ab8445bb584"
+    },
+    {
+      "path": "src/v2/digest.ts",
+      "sha256": "d505c331f3fd7b736b94c9c3cabef4b95395d34a62c0995d686a21a5b0eb7d41"
+    },
+    {
+      "path": "src/v2/index.ts",
+      "sha256": "039963329784a4a06572bb8b6e6ca7cebed408ee36afc03f5995739d4a88c252"
+    },
+    {
+      "path": "src/v2/pack-loader.ts",
+      "sha256": "43f71221b515aed8cd3db310f92b8ba263ff8a359b915f5bf855b30886a83dab"
+    },
+    {
+      "path": "src/v2/phases.ts",
+      "sha256": "496e44ef4f19ef21192451dcc2d3f6f2a15076b5ea39b2f75d1034b8649a27e3"
+    },
+    {
+      "path": "src/v2/pipeline-general-pack.ts",
+      "sha256": "01088bfeb584043ef2c10e840d40c6ef9b16c60556e1a2b18e535ec0c163e581"
+    },
+    {
+      "path": "src/v2/pipeline-pack.ts",
+      "sha256": "ae7656b2ea5831731b378ae49b5b982bfc9617eb00bbeadaa1f3bcb533b79f82"
+    },
+    {
+      "path": "src/v2/preview.ts",
+      "sha256": "3552abfddffe16bb65aeeaad22ff424dbd4ce00c12f3d36ef6529d2e78356139"
+    },
+    {
+      "path": "src/v2/provider-runtime.ts",
+      "sha256": "8407cc46f176ca7ae0c686f490cada8a4e354b4fd0363065d696a582e9be53cc"
+    },
+    {
+      "path": "src/v2/providers/beike.ts",
+      "sha256": "09cfb1fd58e226fe65141e59db773a80d29121718e46e22f82c0920eb7b0f838"
+    },
+    {
+      "path": "src/v2/providers/rongcheng.ts",
+      "sha256": "8773ea29f766c3d0e03cc77b4a402d45b8d673ddadae934300bacec6b78b9374"
+    },
+    {
+      "path": "src/v2/providers/wind.ts",
+      "sha256": "626e92aecdbbf7cc45f5e9bcc0679e6c11ce6b2075d708f421adc4ee4c1cdb3a"
+    },
+    {
+      "path": "src/v2/providers/zyt.ts",
+      "sha256": "8fdb86a00f50784f6a0de1ce4fc692f00ce5c401dabe29f650419a464240c4c3"
+    },
+    {
+      "path": "src/v2/quality.ts",
+      "sha256": "e63c036ca2f5de5547c22ff2c37b5536a74776df4840cf0c6a23bd5086cec8fd"
+    },
+    {
+      "path": "src/v2/runtime-pack.ts",
+      "sha256": "1125bb83c57d0161f62e6ce1de4e90b229d783adc8ac536a1ae261fda68fa269"
+    },
+    {
+      "path": "src/v2/types.ts",
+      "sha256": "d93930b7043ab1b36685a9328e2f9b028a7b465a3587f55c82be513aaae677cb"
+    },
+    {
+      "path": "src/v2/validate.ts",
+      "sha256": "b45634e5e31a5fa9bcebd8be8f170437543bf1eb8974cdec42254c380de91d49"
+    },
+    {
+      "path": "src/v2/zhijian-pack.ts",
+      "sha256": "6d0a786dd9df8b9e37161ee056065aa7740f23d8583a934c492f15e67eb53e4f"
+    },
+    {
+      "path": "src/zhijian/capability.ts",
+      "sha256": "124e87fc18f0bcfb5541e600642cfbb485ad29e0a83727e56127141bf294c1b3"
+    },
+    {
+      "path": "src/zhijian/clarify.ts",
+      "sha256": "cf55ed2daf22264edc8f736f9742c9bd56633366aad25631360aa094ff232a99"
+    },
+    {
+      "path": "src/zhijian/data/experts.generated.ts",
+      "sha256": "556425223b707e83c4b81a31fe11f7cb1f6b3bc730adbdd2f16157848e9c666a"
+    },
+    {
+      "path": "src/zhijian/data/realname-blocklist.generated.ts",
+      "sha256": "4ca3541492b333c6058240b2200da612e7df89be63a73125fb3b51356f8a9b5b"
+    },
+    {
+      "path": "src/zhijian/evaluations.ts",
+      "sha256": "8792c2ffedcdece55b303edf5d1ae965d49e9100fedd52578eb6ce2b2b5bf614"
+    },
+    {
+      "path": "src/zhijian/expert-memory.ts",
+      "sha256": "4ef77b4e56eeb69c707cba3d3b557f80d73067824b159209e7e16397a8779ee5"
+    },
+    {
+      "path": "src/zhijian/frameworks.ts",
+      "sha256": "0b9947c5e8abbba031bb1b2f6661f39387d838649212d4697d5e0cc8d87b4ef1"
+    },
+    {
+      "path": "src/zhijian/persona.ts",
+      "sha256": "ac7bda1bb210d2ac6f031007c580d8f176240896ae3b36cf3149cab6c73e837e"
+    },
+    {
+      "path": "src/zhijian/registry.ts",
+      "sha256": "3758e184c0b3c4eb4fd07f94cfca1c18310f4539cfd61a70e025f89ab19d0044"
+    },
+    {
+      "path": "src/zhijian/routing.ts",
+      "sha256": "99e0d306413d4711ee0b6e03fa3b82c0275971b8171f8fb51dbdd45b043ca72c"
+    },
+    {
+      "path": "src/zhijian/tools.ts",
+      "sha256": "1224c4e3fb66316903f001d9a29c8276ff99f1d69b7a302e5ebe84130953af73"
+    },
+    {
+      "path": "src/zhijian/types.ts",
+      "sha256": "4ed879734bf6644a7ec098714b75209a5341a4871d11ff19addaf0ae8ff82ef3"
+    },
+    {
+      "path": "test/bank-pack.test.mjs",
+      "sha256": "dc2cce27bd59bd325dfdf5a756706397024febac325e95901533acc4341987c2"
+    },
+    {
+      "path": "test/beike-pack.test.mjs",
+      "sha256": "71dd2a8d2692d5b715e67d2548e4439215fb326ac34fecbe767eadb9001cf683"
+    },
+    {
+      "path": "test/capability.test.mjs",
+      "sha256": "d01b9a58e961f1c734b66d97d2ee1b1b06985c3a0981edbfa33139c8b113e861"
+    },
+    {
+      "path": "test/clarify.test.mjs",
+      "sha256": "b7c11d4b6d9ac4943b00650263a42d533dbc3f524c2eccca09bb8b34ac38e589"
+    },
+    {
+      "path": "test/client-pack-center-api.test.mjs",
+      "sha256": "2b951b2f9b003263b72049af0ed857926313416fc1653b8789cea9be6fd2c288"
+    },
+    {
+      "path": "test/dataset-gate.test.mjs",
+      "sha256": "077722b338a66a1ea924246d885ddf61916613459f85df0d52f0814c678fb9cb"
+    },
+    {
+      "path": "test/events-dropped.test.mjs",
+      "sha256": "ab7d7d31f4de585c7617ac5a65c1d135d2f2b95d30d53249eb1310e0f3f808a5"
+    },
+    {
+      "path": "test/fixtures/zyt-request-plans.json",
+      "sha256": "9819146ef34bdc111e6b47a14f688289eebb936f09fd45357be21477a6130dab"
+    },
+    {
+      "path": "test/host-health.test.mjs",
+      "sha256": "dacc54e8c19757675064ea21b0f09532e5f3668faf634bc6c25447fd801f1fd2"
+    },
+    {
+      "path": "test/host-manage-auth.test.mjs",
+      "sha256": "a3f0c1f53b2eaa6f0a7a46a9eac569baaf78898f50a9bdc243cc82e006af194b"
+    },
+    {
+      "path": "test/host-pack-center-client.test.mjs",
+      "sha256": "a2285e74eae07d52fb0d5c62f71e7677182055028b521aae9592d0164f13b43c"
+    },
+    {
+      "path": "test/host-pack-center-connection.test.mjs",
+      "sha256": "52b416a470960897421333e708720a59b3f140eeac174e5103d709eb76456731"
+    },
+    {
+      "path": "test/host-pack-center-host.test.mjs",
+      "sha256": "40e53e7de72d299f9e3c3872449dbcf3fa03dbc31c32877a36939585d8cda458"
+    },
+    {
+      "path": "test/host-pack-center-manager-races.test.mjs",
+      "sha256": "728d65d055eb6b10bdc988defb9252f812be25f489d7fa7ecee704ec3e45c4f6"
+    },
+    {
+      "path": "test/host-pack-center-manager.test.mjs",
+      "sha256": "8dfb494309f533aa9f70be44be4830ad9ff39fb032d2bba7857137e2d2e9e35c"
+    },
+    {
+      "path": "test/host-pack-center-operations.test.mjs",
+      "sha256": "ef782a0748d7a622d9beba3edcfd33525621277276e3a49b28171d66c537e039"
+    },
+    {
+      "path": "test/host-pack-center-routes.test.mjs",
+      "sha256": "38f31f686320ac0728302b3c4e4a5282a8c76a0c22604997dd45d9bf9b05cb32"
+    },
+    {
+      "path": "test/host-pack-center-state.test.mjs",
+      "sha256": "bc9eb1963fafb718503ae150754c88eb77309735b819f24ae8a073a851bfbb65"
+    },
+    {
+      "path": "test/host-pack-center-transport.test.mjs",
+      "sha256": "efbdd4588dbfd050c92640c3e570ecdd3ccd8949b3d5ce0144e8d084b907ae3e"
+    },
+    {
+      "path": "test/host-pack-legacy.test.mjs",
+      "sha256": "0cb0ba6f9e02e57eb9df23b0f06d4db8fbce8241ab45ff30de7a496958b12d09"
+    },
+    {
+      "path": "test/host-pack-runtime.test.mjs",
+      "sha256": "2a209c0186212709f7f35c633e0055aecd34b8160f8d9977c777e0b549822064"
+    },
+    {
+      "path": "test/host-pack-source.test.mjs",
+      "sha256": "c97477648bbc63c2c3c8454e113802d5dada4a601616ab374aaf817494a39471"
+    },
+    {
+      "path": "test/host-pack-store.test.mjs",
+      "sha256": "7f8e8f26d6cae5a98b66116a11c989111fd72c11f215ab9d894177e9ca3b71f4"
+    },
+    {
+      "path": "test/host-provider-service.test.mjs",
+      "sha256": "1eecefae65f2722b1bc3dfd503d68e4d5046eb3881a0fe4ff40fb1ac89df5342"
+    },
+    {
+      "path": "test/import-persons.test.mjs",
+      "sha256": "165db7a9a0df5f20830cf2e3a237ade0b654059434d705fd5f55fc722b0a413c"
+    },
+    {
+      "path": "test/input-boundary.test.mjs",
+      "sha256": "5e3af47909fa57dcd8c9b12eb0a99c3b11d75522b44e71e24f3f112f0a6f0649"
+    },
+    {
+      "path": "test/p2-feedback-knowledge.test.mjs",
+      "sha256": "f4f1f3607b12068e5fb349be374fb3b6149daeabd20165e451fea9908b49bd63"
+    },
+    {
+      "path": "test/pack-center-fixtures.test.mjs",
+      "sha256": "febe8f107f4aa3dd5612c32c7b91dd3e142ddf36ec1db0523fba3bc28cbe4f22"
+    },
+    {
+      "path": "test/phase0-regressions.test.mjs",
+      "sha256": "257b1b8f6aaf1da923d578723a1f9fb7c920ac7141da7e98415bce414482122d"
+    },
+    {
+      "path": "test/pipeline-general-pack.test.mjs",
+      "sha256": "672c66b9fef5965b581ceb66ce7078993e5c3772399032cfcf16326b66dd1575"
+    },
+    {
+      "path": "test/pipeline-pack.test.mjs",
+      "sha256": "adbcfe41045c91f957cc415cc61e8607dc5545ae2e8d6c8244be29e3ad3b145a"
+    },
+    {
+      "path": "test/pipeline-sync.test.mjs",
+      "sha256": "c6b8bb89791080fa1659f8147decaf8c78a3bd070dc664124d9ef74f6ba49f03"
+    },
+    {
+      "path": "test/provider-capability-gate.test.mjs",
+      "sha256": "0f416d8abb823ae7442ff01945fabd2269e81abc9a455dbb130dbb7d9c2266a2"
+    },
+    {
+      "path": "test/provider-options-precedence.test.mjs",
+      "sha256": "74c83f6c160f5806012ddb6dde7d224a1d52dd476cce41027f4a2b590af2b8cd"
+    },
+    {
+      "path": "test/provider-tool.test.mjs",
+      "sha256": "476486017a5ed04a208e74fd69609904aaaeebe2131b376cdcb8a7f29ce9ed40"
+    },
+    {
+      "path": "test/settings-schema.test.mjs",
+      "sha256": "14e229878fe167f79ba91c846221e9e7198ad363d71ed9654fed017981971d6f"
+    },
+    {
+      "path": "test/skills-discovery.test.mjs",
+      "sha256": "3c08ee677a98c5d8f2142dbf4217d5d635667d37cfa46260c4fa1f2d3d242f64"
+    },
+    {
+      "path": "test/skills-index.test.mjs",
+      "sha256": "ffd08143af8798a07bd041a2515a581a8de0afa70435f6051e414145d9b33faa"
+    },
+    {
+      "path": "test/skills-resolution.test.mjs",
+      "sha256": "de6a1ab9150a7d8925705430fad9cdcac6d119a30fde076f5d75f0860017074e"
+    },
+    {
+      "path": "test/state-integrity.test.mjs",
+      "sha256": "35a0bd5977e1e1c22e5a0c7eb98973f8df59b7a356b8ca880945fcc87d818cb6"
+    },
+    {
+      "path": "test/support/pack-center-manager-fixture.mjs",
+      "sha256": "a0cf505354810a7305a4d1ce5e3443ed965fbdfb9378a9e5cd8fbad738f4c7ec"
+    },
+    {
+      "path": "test/v2-apply-expand.test.mjs",
+      "sha256": "db5eed6330c32e586b0bf6988d6e7aa3edff3c578f822b83c23cfb817ebd9812"
+    },
+    {
+      "path": "test/v2-apply-golden.test.mjs",
+      "sha256": "055a6e15b21b7298327d529f999733216ed9bec55b24150c4d8f43b4d2cde081"
+    },
+    {
+      "path": "test/v2-audit-log.test.mjs",
+      "sha256": "d64d153957bec21a560e0c44ed46b997005e563c309ae46a5a7348517e38a6b5"
+    },
+    {
+      "path": "test/v2-audit-persistence.test.mjs",
+      "sha256": "5148ef2bfbb5a89df668432d53d7e5cd6925db4a380b6882934ef1ca0979af1c"
+    },
+    {
+      "path": "test/v2-builtin-gates.test.mjs",
+      "sha256": "50cf7f5fb3a9213e4e14400631cc4751eb89d66cc7a4ba472695018e11020f55"
+    },
+    {
+      "path": "test/v2-builtin-pack-cache.test.mjs",
+      "sha256": "523f70af67c87984b774c8dd5cd1551e6b365bda36d06429a69c437fb9f44889"
+    },
+    {
+      "path": "test/v2-builtin-pack.test.mjs",
+      "sha256": "1c9431d9d3bc25f2db9fc2ab174602d19d480dcd7fe0dac287ba0f9bea1a7322"
+    },
+    {
+      "path": "test/v2-center-runtime.test.mjs",
+      "sha256": "8f7b85ad01e14bf917a2700042afd8fb62b7f0831be16b3160fb36859f27bc44"
+    },
+    {
+      "path": "test/v2-collab-templates.test.mjs",
+      "sha256": "dbd4f8df50d5c683853f3a11f73bb3cf523eedfef17f8021507a63c90851948a"
+    },
+    {
+      "path": "test/v2-compiler.test.mjs",
+      "sha256": "0c09f914b4f31b1e200d29d10acfe28d8378b512ad4cc1156703ad57662e9b0f"
+    },
+    {
+      "path": "test/v2-migrate.test.mjs",
+      "sha256": "89e69bcaea15142fece4fc9b71a07308c5e5e4c2c019f08f4d7ad1373af0bbb8"
+    },
+    {
+      "path": "test/v2-no-network.test.mjs",
+      "sha256": "f0c2e6005231275f967747e9e0bf58005280b0800c2c536c2da150bfd8166810"
+    },
+    {
+      "path": "test/v2-pack-loader.test.mjs",
+      "sha256": "472f281dd9e1fdb1186d399bde3ca393bea68467311b0077d582016403b5f28f"
+    },
+    {
+      "path": "test/v2-pack-migration.test.mjs",
+      "sha256": "a09583da176d0930b254d0d9926b0ffa1c0fae65f0c32acaeccab297cde2d082"
+    },
+    {
+      "path": "test/v2-preview.test.mjs",
+      "sha256": "352c9d1a3e10c83c20253260b5a7b23a8632ecaee56eb04ee9de9e163f1ea1bf"
+    },
+    {
+      "path": "test/v2-provider-runtime.test.mjs",
+      "sha256": "3ad54659d8a4a4f3987048545a667531c0558e85385831f1c0fd53155be66e0f"
+    },
+    {
+      "path": "test/v2-providers.test.mjs",
+      "sha256": "cb5d0cd194f94463ebd993e6590ea00f4248a489628a5c8962be190adcdb007c"
+    },
+    {
+      "path": "test/v2-quality.test.mjs",
+      "sha256": "68b1ced23e1a10c85841a760b4edfb61c0a6900c09668982450fa306f086c8ac"
+    },
+    {
+      "path": "test/v2-review-apply-compile.test.mjs",
+      "sha256": "a9abdac320ebe820c96493db352c53f8f13db7601f2d761e2bde35d627999354"
+    },
+    {
+      "path": "test/v2-runtime-pack.test.mjs",
+      "sha256": "741d7e94e60f4d393d1cec663ff3d14e6c5c8ccaa9fef9d63d8d515214e2aead"
+    },
+    {
+      "path": "test/v2-schema.test.mjs",
+      "sha256": "d2dfe77fb3fdd9f086a028a2e704f1e2879826b691799c041eb4978476a77764"
+    },
+    {
+      "path": "test/v2-task-gates.test.mjs",
+      "sha256": "25a1e1cee82475a1ac15eca13d060e4ca405d49540492fbec9dd11496ff135a0"
+    },
+    {
+      "path": "test/v2-v1-bridge.test.mjs",
+      "sha256": "7168a3ee2f060ea07df3c09aaca1c00fea42398d2ae3817f60611ea707bf5049"
+    },
+    {
+      "path": "test/v2-v1-consolidation.test.mjs",
+      "sha256": "3c6003f535c21961aa5c2b7d93018bab7affe28df3c4262a26f79d2461e6445c"
+    },
+    {
+      "path": "test/v2-zhijian-pack.test.mjs",
+      "sha256": "a8d17e7ae5a1491276f9bcf5ae92bb8fd9de49ec193b43deb66db9df2279a913"
+    },
+    {
+      "path": "test/zhijian-expert-memory-guide.test.mjs",
+      "sha256": "4d12f0b9475ce2507fad1c3d67d98fd0770c74156aa44fa0402055aa63d51c7b"
+    },
+    {
+      "path": "test/zhijian-skill-packages.test.mjs",
+      "sha256": "a5a94a98b4d583f64c5376d1bc5a3a3e6b0fa1d45843428b6906fc6d95c6b0eb"
+    },
+    {
+      "path": "test/zhijian-source-parse.test.mjs",
+      "sha256": "6f6c2e9df3f4a9891c3a0e5e946fec9d27a91a9c483622e906a662a4ee3ee82f"
+    },
+    {
+      "path": "tsconfig.client.json",
+      "sha256": "5573674943bbafbaed066919dfd690a0bc785def0d2469fa52cca414fecb3597"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "8c8d50130358e25392a8d3429382303658a41aeb0d011397f34bc49bf8817af4"
+    },
+    {
+      "path": "tsdown.config.ts",
+      "sha256": "76240b8d3b2800b6fa48a148cb7f0d014679adb4db413084aa86926d1b3401e7"
+    }
+  ]
+}

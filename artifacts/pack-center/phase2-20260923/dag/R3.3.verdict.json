@@ -1,0 +1,133 @@
+{
+  "node": "R3.3",
+  "passed": true,
+  "approximation": "No manage/runtime endpoint exposes internal activeSnapshot paths. A real child process read/held the active root; taskId is null by design.",
+  "reasons": [
+    {
+      "at": "2026-09-24T02:17:09.200Z",
+      "message": "baseline",
+      "generation": 24,
+      "oldRelease": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "oldSnapshotPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/fe32bc4549f6f0c5d2c94f4a6ae97d9745aeae63d838d9736ab3b8660de8c503/content",
+      "oldSnapshotHash": "3257fae66b34f2820f76c2706cd164c424d0c9bc6c441e3fd3d3c915fb3f4d20",
+      "runtimeEndpointProbe": [
+        {
+          "path": "/runtime",
+          "status": 404,
+          "ok": false,
+          "errorCode": "CENTER_ROUTE_NOT_FOUND",
+          "hasSnapshot": false
+        },
+        {
+          "path": "/runtime/snapshot",
+          "status": 404,
+          "ok": false,
+          "errorCode": "CENTER_ROUTE_NOT_FOUND",
+          "hasSnapshot": false
+        },
+        {
+          "path": "/runtime/pack-center",
+          "status": 404,
+          "ok": false,
+          "errorCode": "CENTER_ROUTE_NOT_FOUND",
+          "hasSnapshot": false
+        },
+        {
+          "path": "/snapshot",
+          "status": 404,
+          "ok": false,
+          "errorCode": "CENTER_ROUTE_NOT_FOUND",
+          "hasSnapshot": false
+        }
+      ]
+    },
+    {
+      "at": "2026-09-24T02:17:15.861Z",
+      "message": "mid-run-update",
+      "operation": {
+        "queued": {
+          "operationId": "op_1b71b8090955adaf927deab6a06359aaed284bc84ba45c9e6598ec15a5c7eaa2",
+          "request": {
+            "operationKey": "r33-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b-24",
+            "kind": "update_enable",
+            "expectedGeneration": 24,
+            "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "connectionRevision": 1,
+            "target": {
+              "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+              "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+              "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696"
+            }
+          },
+          "status": "queued",
+          "phase": "queued",
+          "createdAt": "2026-09-24T02:17:09.778Z",
+          "updatedAt": "2026-09-24T02:17:09.778Z"
+        },
+        "done": {
+          "operationId": "op_1b71b8090955adaf927deab6a06359aaed284bc84ba45c9e6598ec15a5c7eaa2",
+          "request": {
+            "operationKey": "r33-A-update-enable-3f041d24-df04-4186-bba0-ecd9dfc83d5b-24",
+            "kind": "update_enable",
+            "expectedGeneration": 24,
+            "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "connectionRevision": 1,
+            "target": {
+              "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+              "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+              "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696"
+            }
+          },
+          "status": "succeeded",
+          "phase": "completed",
+          "createdAt": "2026-09-24T02:17:09.778Z",
+          "updatedAt": "2026-09-24T02:17:15.351Z",
+          "result": {
+            "generation": 25,
+            "outcome": "succeeded",
+            "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+            "activated": true
+          }
+        }
+      },
+      "newRuntimeView": {
+        "source": "center installations / activeSnapshot contract",
+        "generation": 25,
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "version": "2.3.0",
+        "snapshotPath": "/tmp/p2-20260923/pack-center-a/inventory/releases/83f7a4b8b80dc9f3bae0209749930fa9003126dca426f1ba928bd67035d8230c/content",
+        "snapshotHash": "0ca989baeb7652d50df6cf50ca5592e70e58e8f303b3dd3508326f2faad1b8ba"
+      },
+      "oldWhileAlive": {
+        "exists": true,
+        "path": "/tmp/p2-20260923/pack-center-a/inventory/releases/fe32bc4549f6f0c5d2c94f4a6ae97d9745aeae63d838d9736ab3b8660de8c503/content",
+        "hash": "3257fae66b34f2820f76c2706cd164c424d0c9bc6c441e3fd3d3c915fb3f4d20",
+        "byteIdentical": true,
+        "taskPid": 666553
+      }
+    },
+    {
+      "at": "2026-09-24T02:17:39.535Z",
+      "message": "task-ended",
+      "task": {
+        "taskId": null,
+        "kind": "local-snapshot-probe",
+        "pid": 666553,
+        "root": "/tmp/p2-20260923/pack-center-a/inventory/releases/fe32bc4549f6f0c5d2c94f4a6ae97d9745aeae63d838d9736ab3b8660de8c503/content",
+        "expectedHash": "3257fae66b34f2820f76c2706cd164c424d0c9bc6c441e3fd3d3c915fb3f4d20",
+        "approximation": "real child process reads and holds the active pack root; no DSH task id was fabricated"
+      },
+      "taskResult": {
+        "exitCode": 0,
+        "stdout": "{\"root\":\"/tmp/p2-20260923/pack-center-a/inventory/releases/fe32bc4549f6f0c5d2c94f4a6ae97d9745aeae63d838d9736ab3b8660de8c503/content\",\"expected\":\"3257fae66b34f2820f76c2706cd164c424d0c9bc6c441e3fd3d3c915fb3f4d20\"}",
+        "stderr": ""
+      },
+      "oldRetained": {
+        "exists": true,
+        "hash": "3257fae66b34f2820f76c2706cd164c424d0c9bc6c441e3fd3d3c915fb3f4d20",
+        "byteIdentical": true
+      }
+    }
+  ],
+  "failure": null
+}

@@ -1,0 +1,12 @@
+session_start=2026-09-23T17:36:39.139Z
+core_marker=/tmp/p2-20260923/dsh-core-session-start
+command: git -C /root/zhijian/dsh-pack-center-dev.ZGtty5 diff --check
+exit_code: 0
+command: git -C /root/zhijian/dsh-pack-center-dev.ZGtty5 status --porcelain | wc -l
+exit_code: 0
+stdout: 80
+command: find /usr/lib/node_modules/@deepseek-ai/dsh -newer /tmp/p2-20260923/dsh-core-session-start -print
+exit_code: 0
+newer_files: <none>
+outside_tree_changes: only /tmp/p2-20260923 runtime homes and this tree evidence/scripts were created; DSH core newer-file check is empty
+core_clean=true

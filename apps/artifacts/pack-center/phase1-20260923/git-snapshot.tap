@@ -1,0 +1,115 @@
+TAP version 13
+# Subtest: production source gate rejects SSRF variants, credential-bearing URLs and nonliteral refs
+ok 1 - production source gate rejects SSRF variants, credential-bearing URLs and nonliteral refs
+  ---
+  duration_ms: 84.766323
+  type: 'test'
+  ...
+# Subtest: snapshot archive producer cannot exceed publisher/client reader limits, including directory entries
+ok 2 - snapshot archive producer cannot exceed publisher/client reader limits, including directory entries
+  ---
+  duration_ms: 2.97617
+  type: 'test'
+  ...
+# Subtest: all resolved addresses must be public; private DNS answers never spawn a process
+ok 3 - all resolved addresses must be public; private DNS answers never spawn a process
+  ---
+  duration_ms: 2399.316513
+  type: 'test'
+  ...
+# Subtest: real pinned TLS Git transfer freezes raw files, commit, deterministic tar and report; moving ref does not rewrite old snapshot
+ok 4 - real pinned TLS Git transfer freezes raw files, commit, deterministic tar and report; moving ref does not rewrite old snapshot
+  ---
+  duration_ms: 7788.496939
+  type: 'test'
+  ...
+# Subtest: Git subprocesses cannot inherit production secrets, proxies, config, hooks or credential helpers
+ok 5 - Git subprocesses cannot inherit production secrets, proxies, config, hooks or credential helpers
+  ---
+  duration_ms: 4981.209473
+  type: 'test'
+  ...
+# Subtest: an HTTPS redirect is rejected without contacting its target
+ok 6 - an HTTPS redirect is rejected without contacting its target
+  ---
+  duration_ms: 2675.655058
+  type: 'test'
+  ...
+# Subtest: dumb HTTP fallback is rejected before it can follow object alternates
+ok 7 - dumb HTTP fallback is rejected before it can follow object alternates
+  ---
+  duration_ms: 3361.773281
+  type: 'test'
+  ...
+# Subtest: invalid V2 content is frozen for diagnostics but cannot be treated as a valid release
+ok 8 - invalid V2 content is frozen for diagnostics but cannot be treated as a valid release
+  ---
+  duration_ms: 3499.981992
+  type: 'test'
+  ...
+# Subtest: script declarations and internal-only license restrictions are surfaced without execution
+ok 9 - script declarations and internal-only license restrictions are surfaced without execution
+  ---
+  duration_ms: 4782.253535
+  type: 'test'
+  ...
+# Subtest: tracked symlinks and submodule entries are rejected without publication leftovers
+    # Subtest: symlink
+    ok 1 - symlink
+      ---
+      duration_ms: 3356.726284
+      type: 'test'
+      ...
+    # Subtest: submodule
+    ok 2 - submodule
+      ---
+      duration_ms: 5706.056411
+      type: 'test'
+      ...
+    1..2
+ok 10 - tracked symlinks and submodule entries are rejected without publication leftovers
+  ---
+  duration_ms: 9070.008076
+  type: 'test'
+  ...
+# Subtest: Git filenames must meet the same safe NFC path contract as release archives
+    # Subtest: unsafe:name.txt
+    ok 1 - unsafe:name.txt
+      ---
+      duration_ms: 1970.620841
+      type: 'test'
+      ...
+    # Subtest: é.txt
+    ok 2 - é.txt
+      ---
+      duration_ms: 2443.699084
+      type: 'test'
+      ...
+    1..2
+ok 11 - Git filenames must meet the same safe NFC path contract as release archives
+  ---
+  duration_ms: 4415.167961
+  type: 'test'
+  ...
+# Subtest: preview byte bounds preserve complete UTF-8 code points
+ok 12 - preview byte bounds preserve complete UTF-8 code points
+  ---
+  duration_ms: 1806.562889
+  type: 'test'
+  ...
+# Subtest: file count/bytes, object expansion, diagnostic output and wall time limits fail closed
+ok 13 - file count/bytes, object expansion, diagnostic output and wall time limits fail closed
+  ---
+  duration_ms: 8575.102285
+  type: 'test'
+  ...
+1..13
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54330.703863
+exit=0

@@ -21,6 +21,8 @@ test('schema accepts every new field (memberMaxDepth/toolExecution/enabledPacks/
     memberMaxDepth: 2,
     knowledgeDir: 'knowledge',
     packsDir: 'domain-packs',
+    packCenterOrigin: 'https://packs.example',
+    packCenterDir: '/tmp/deployment-private-packs',
     promptSectionOrder: 117,
     announceToAgent: true,
     toolExecution: {
@@ -38,6 +40,8 @@ test('schema accepts every new field (memberMaxDepth/toolExecution/enabledPacks/
     },
   })
   assert.equal(parsed.memberMaxDepth, 2)
+  assert.equal(parsed.packCenterOrigin, 'https://packs.example')
+  assert.equal(parsed.packCenterDir, '/tmp/deployment-private-packs')
   assert.equal(parsed.toolExecution.zyt.mode, 'cli')
   assert.equal(parsed.toolExecution.zyt.readOnly, true)
   assert.deepEqual(parsed.enabledPacks, ['bank-finance', 'beike'])

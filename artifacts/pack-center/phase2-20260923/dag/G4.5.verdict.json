@@ -1,0 +1,198 @@
+{
+  "node": "G4.5",
+  "passed": true,
+  "reasons": [
+    {
+      "at": "2026-09-24T03:39:43.483Z",
+      "stage": "storage-adapter",
+      "message": "storage-adapter",
+      "s3AdapterImplemented": false,
+      "s3ClientPresent": false,
+      "exercisedAdapter": "LocalArtifactStore (local content-addressed store)",
+      "honestGap": "adapter space: storage.ts implements only LocalArtifactStore (\"this is not S3\" per its own doc comment); no S3 endpoint exists in the isolated env, so no S3-compatible adapter is exercised and none is faked",
+      "small": {
+        "key": "sha256/9d3600825698fdcdc885eb5b4564cd1a5da28105249fcc0e430740d9d5e427f9",
+        "sizeBytes": 17
+      },
+      "bigRejected": {
+        "code": "STORAGE_LIMIT",
+        "maxBytes": 1048576,
+        "payloadBytes": 2097152
+      },
+      "storeRootCleanedAfterTest": true
+    },
+    {
+      "at": "2026-09-24T03:39:43.489Z",
+      "stage": "storage-adapter",
+      "message": "limits-from-source",
+      "values": {
+        "timeoutMs": "120000",
+        "maxFiles": "5000",
+        "maxFileBytes": "8 * 1024 * 1024",
+        "maxTotalBytes": "64 * 1024 * 1024",
+        "maxArchiveBytes": "80 * 1024 * 1024",
+        "maxGitBytes": "128 * 1024 * 1024",
+        "maxObjects": "20000",
+        "maxLogBytes": "64 * 1024",
+        "maxTreeBytes": "4 * 1024 * 1024",
+        "maxPathDepth": "32",
+        "maxPreviewBytes": "512 * 1024"
+      },
+      "overrideCap": "GIT_LIMIT_CONFIG when any override > default*10",
+      "workerWiring": {
+        "workerLimitsOverride": "none (main.ts passes no limits; defaults apply)",
+        "source": "apps/pack-center/src/main.ts"
+      }
+    },
+    {
+      "at": "2026-09-24T03:39:45.533Z",
+      "stage": "fixture-branches",
+      "message": "branches-pushed",
+      "commits": {
+        "toobig": "9de5ac8c0758d96414caf083f385c9f2420160b4",
+        "toodeep": "93d6689608c2ee87a0229ce06dd07a792997bcd5",
+        "valid": "3810181ccd593eff22a694c197e7772ce155e8f1"
+      },
+      "branches": [
+        "p2g45-toobig",
+        "p2g45-toodeep",
+        "p2g45-valid"
+      ],
+      "packId": "phase2.g45-demo",
+      "version": "9.9.9"
+    },
+    {
+      "at": "2026-09-24T03:39:46.074Z",
+      "stage": "limit-missing-ref",
+      "message": "submission-reused",
+      "submissionId": "0a84af0e-aeb2-4840-b6f8-49965873af56",
+      "label": "missing-ref",
+      "status": "validation_failed"
+    },
+    {
+      "at": "2026-09-24T03:39:46.236Z",
+      "stage": "limit-missing-ref",
+      "message": "limit-rejected",
+      "jobId": "0a84af0e-aeb2-4840-b6f8-49965873af56",
+      "submissionId": "0a84af0e-aeb2-4840-b6f8-49965873af56",
+      "label": "missing-ref",
+      "status": "validation_failed",
+      "errorCodes": [
+        "GIT_FETCH_FAILED"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "failed"
+        },
+        {
+          "attempt": 2,
+          "status": "failed"
+        },
+        {
+          "attempt": 3,
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "at": "2026-09-24T03:39:46.811Z",
+      "stage": "limit-toobig",
+      "message": "submission-created",
+      "submissionId": "ea580321-408e-4394-8f92-246431c56c1c",
+      "label": "toobig",
+      "packId": "p2g45-oversize",
+      "version": "1.0.0"
+    },
+    {
+      "at": "2026-09-24T03:39:49.067Z",
+      "stage": "limit-toobig",
+      "message": "limit-rejected",
+      "jobId": "ea580321-408e-4394-8f92-246431c56c1c",
+      "submissionId": "ea580321-408e-4394-8f92-246431c56c1c",
+      "label": "toobig",
+      "status": "validation_failed",
+      "errorCodes": [
+        "GIT_CONTENT_LIMIT"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "at": "2026-09-24T03:39:49.501Z",
+      "stage": "limit-toodeep",
+      "message": "submission-created",
+      "submissionId": "73230681-d013-4bab-82ce-88d40e4ac463",
+      "label": "toodeep",
+      "packId": "p2g45-deep",
+      "version": "1.0.0"
+    },
+    {
+      "at": "2026-09-24T03:39:50.895Z",
+      "stage": "limit-toodeep",
+      "message": "limit-rejected",
+      "jobId": "73230681-d013-4bab-82ce-88d40e4ac463",
+      "submissionId": "73230681-d013-4bab-82ce-88d40e4ac463",
+      "label": "toodeep",
+      "status": "validation_failed",
+      "errorCodes": [
+        "GIT_PATH_REJECTED"
+      ],
+      "attempts": [
+        {
+          "attempt": 1,
+          "status": "failed"
+        }
+      ]
+    },
+    {
+      "at": "2026-09-24T03:39:51.444Z",
+      "stage": "valid-recovery",
+      "message": "submission-created",
+      "submissionId": "616d555b-8cca-4e98-a2ee-cff7dfc10d8f",
+      "label": "valid",
+      "packId": "phase2.g45-demo",
+      "version": "9.9.9"
+    },
+    {
+      "at": "2026-09-24T03:39:53.722Z",
+      "stage": "valid-recovery",
+      "message": "valid-validated",
+      "submissionId": "616d555b-8cca-4e98-a2ee-cff7dfc10d8f",
+      "packId": "phase2.g45-demo",
+      "version": "9.9.9",
+      "reportValid": true
+    },
+    {
+      "at": "2026-09-24T03:39:53.875Z",
+      "stage": "reclaim",
+      "message": "reclaim-audit",
+      "scratchRoot": "/tmp/p2-20260923/t22/scratch",
+      "sizes": {
+        "scratchRootKiB": "0 KiB",
+        "artifactsKiB": "396 KiB"
+      },
+      "leftoverSnapshotStaging": [],
+      "bounded": true,
+      "interpretation": "failed oversized jobs leave no unbounded scratch: per-task staging directories are removed by the worker on failure (git-snapshot cleanup), leaving the scratch root at baseline size"
+    },
+    {
+      "at": "2026-09-24T03:39:53.882Z",
+      "stage": "reclaim",
+      "message": "final-running",
+      "workers": {
+        "validate": [
+          711573
+        ],
+        "publish": [
+          711580
+        ]
+      },
+      "centerHealth": 200
+    }
+  ]
+}

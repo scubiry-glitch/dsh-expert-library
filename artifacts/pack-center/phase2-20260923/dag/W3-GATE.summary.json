@@ -1,0 +1,11 @@
+{
+ "gate": "W3-GATE",
+ "passed": true,
+ "checks": {
+  "R3.1_passed": true,
+  "R3.2_passed": true,
+  "R3.3_passed": true,
+  "R3.4_passed": true,
+  "A_mode_normal": true
+ }
+}

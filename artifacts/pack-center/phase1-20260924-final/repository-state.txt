@@ -1,0 +1,14 @@
+# Phase 1 repository state (isolated implementation tree)
+root=/root/zhijian/dsh-pack-center-dev.ZGtty5
+sourceCommit=784a6ac07b96a67c89b8516664172c0973f98079
+workingTreeChanges=78
+workingTreeChangesNote=pre-existing phase implementation and evidence files are intentionally uncommitted in this isolated tree
+gitDiffCheck=0
+productionOrDnsChanges=none
+credentials=not-read-or-written
+
+# DSH core / production boundary
+corePath=/usr/lib/node_modules/@deepseek-ai/dsh
+coreCheck=not-a-git-checkout; no command in this run wrote to that path
+coreServiceRestart=none
+productionDeploy=none

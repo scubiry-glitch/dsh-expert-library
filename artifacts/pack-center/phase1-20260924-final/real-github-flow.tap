@@ -1,0 +1,20 @@
+TAP version 13
+# \# Isolated center-flow PostgreSQL container: c60e34963c3e1f28b17b82a22eb12d817f0a7c214e68e7bd9391305b6db34191
+# \# Removed owned test container and anonymous volume: c60e34963c3e1f28b17b82a22eb12d817f0a7c214e68e7bd9391305b6db34191
+# Subtest: Phase 1 real GitHub submission, independent review, signed publication and authorized download
+ok 1 - Phase 1 real GitHub submission, independent review, signed publication and authorized download
+  ---
+  duration_ms: 5516.675323
+  type: 'test'
+  ...
+# {"sourceUrl":"https://github.com/weixkcornell/macro-capital-analyst.git","approvedCommit":"f42bf4c8068294726ab7c780fe23ad121d72f34e","fixedCommit":true,"artifactSha256":"3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0","contentTreeSha256":"7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696","reportSha256":"889366b441f09a30511c3ffaa7d1306402b5911751e996f9b7b5ce132a5c3382","releaseId":"b9e7f1e7-edb5-4d84-ac50-42b942e7fc46","duplicatePublicationUnchanged":true,"authenticatedHttpDownload":true,"twoMachineIdentityIsolation":true,"oldGrantRejectedAfterYank":true}
+1..1
+# tests 1
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5848.619236
+exit=0

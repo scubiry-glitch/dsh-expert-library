@@ -71,6 +71,7 @@ import {
   type SkillPackageManifest,
   type TeamTemplate,
 } from './types.ts'
+import { ZHIJIAN_PIPELINE_COMPATIBILITY } from './zhijian-pipeline-compat.ts'
 
 /** Pack id (SafeId). */
 export const ZHIJIAN_PACK_ID = 'zhijian-realestate'
@@ -342,6 +343,17 @@ export function zhijianMetaToExpertV2(
   for (const tag of meta.tags) {
     const capability = TAG_CAPABILITIES[tag]
     if (capability !== undefined) claims.push(rosterClaim(capability, 'medium'))
+  }
+  const pipelineCompatibility = ZHIJIAN_PIPELINE_COMPATIBILITY[meta.id]
+  if (pipelineCompatibility !== undefined) {
+    for (const capability of pipelineCompatibility.capabilities) {
+      claims.push({
+        capability,
+        proficiency: 1,
+        coverage: pipelineCompatibility.coverage,
+        evidenceRefs: [...pipelineCompatibility.evidenceRefs],
+      })
+    }
   }
   return {
     id: meta.id,

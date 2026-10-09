@@ -1,0 +1,10 @@
+{
+  "node": "T2.2",
+  "passed": true,
+  "reasons": [
+    "Both isolated DSH instances (A :18281, B :18282) were bound to the real Pack Center via issued binding codes; live /connection reports bound=true with matching deploymentIds, centerId phase2-center-20260923, trusted signing key fingerprint, and future credential expiry.",
+    "Playwright captures of the real 设置 → 领域包 → 来源设置 connection panel contain each instance's deploymentId (dag/T2.2.connection-A.html, dag/T2.2.connection-B.html plus screenshots).",
+    "Exact secret scan (grep -F -f secrets/t22-scan-patterns over both connection captures, both raw instance logs, and all four owned center process logs) exited 1: no PostgreSQL password, binding code, or machine credential token appears in evidence.",
+    "No DSH process was stopped, restarted, or modified; owned center services (PostgreSQL container, OIDC, API, validate/publish workers) remain running."
+  ]
+}

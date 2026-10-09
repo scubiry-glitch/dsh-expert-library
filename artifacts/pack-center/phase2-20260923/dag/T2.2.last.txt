@@ -1,0 +1,17 @@
+T2.2 could not pass in this execution context:
+
+- Docker access is denied.
+- TCP listen/loopback access is denied.
+- Recorded DSH PIDs are absent.
+- Both T2.1 instances were started with empty `packCenterOrigin`; the bind DTO cannot set origin, and changing it requires restart.
+
+Created:
+
+- [T2.2.verdict.json](/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.2.verdict.json)
+- [T2.2.bind.json](/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.2.bind.json)
+- [T2.2.secret-scan.txt](/root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.2.secret-scan.txt)
+- Host runner: [t22-bind.mjs](/root/zhijian/dsh-pack-center-dev.ZGtty5/scripts/phase2/t22-bind.mjs)
+
+No DSH process was stopped or modified, and no machine secrets were written to evidence.
+
+{"node":"T2.2","passed":false}

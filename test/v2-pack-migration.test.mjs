@@ -32,6 +32,9 @@ import {
   canonicalJson,
   hashPackageTree,
   compileExecutionPlan,
+  ZHIJIAN_PIPELINE_COMPATIBILITY,
+  ZHIJIAN_PIPELINE_COMPATIBILITY_EVIDENCE,
+  ZHIJIAN_PIPELINE_REVIEW_CAPABILITIES,
 } from '../lib/v2/index.js'
 import { ZHIJIAN_EXPERTS } from '../lib/zhijian/data/experts.generated.js'
 import { ZHIJIAN_EXPERT_BY_ID, ZHIJIAN_ROUTE } from '../lib/zhijian/registry.js'
@@ -203,7 +206,11 @@ test('pack contains no legacySource markers and no fabricated proficiency', asyn
     assert.ok(expert.capabilities.length > 0)
     for (const claim of expert.capabilities) {
       assert.equal(claim.proficiency, 1, 'metas assert membership, not level — floor 1 only')
-      assert.deepEqual(claim.evidenceRefs, ['zhijian:roster'])
+      const compatibility = ZHIJIAN_PIPELINE_COMPATIBILITY[expert.id]
+      const expectedEvidence = compatibility?.capabilities.includes(claim.capability)
+        ? [ZHIJIAN_PIPELINE_COMPATIBILITY_EVIDENCE]
+        : ['zhijian:roster']
+      assert.deepEqual(claim.evidenceRefs, expectedEvidence)
     }
     // 1.1.0: rich mental models carry real summaries from the raw profiles
     // (all 33 assert persona.cognition.mentalModels); a summary is never

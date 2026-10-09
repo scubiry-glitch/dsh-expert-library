@@ -1,0 +1,175 @@
+{
+  "node": "G4.3",
+  "passed": true,
+  "summary": {
+    "lease": {
+      "via": "docker",
+      "raw": "failed|3\nsucceeded|20\n0\n"
+    },
+    "backup": {
+      "counts": {
+        "createTableAuditEvents": 1,
+        "createTableReleases": 1,
+        "copyAuditEvents": 1,
+        "copyReleases": 1,
+        "auditEventRows": 309,
+        "releaseRows": 10
+      },
+      "picked": {
+        "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+        "artifactSha256": "00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69"
+      }
+    }
+  },
+  "log": [
+    {
+      "at": "2026-09-24T03:20:14.316Z",
+      "stage": "center-restart",
+      "message": "center-stopped",
+      "apiPids": [
+        710230
+      ],
+      "tlsPids": [
+        710231
+      ],
+      "health": "unreachable"
+    },
+    {
+      "at": "2026-09-24T03:20:14.341Z",
+      "stage": "center-restart",
+      "message": "center-relaunched",
+      "apiPid": 711532,
+      "tlsPid": 711533,
+      "logs": [
+        "/tmp/p2-20260923/t22/api.log",
+        "/tmp/p2-20260923/t22/tls-front.log"
+      ]
+    },
+    {
+      "at": "2026-09-24T03:20:15.439Z",
+      "stage": "center-restart",
+      "message": "center-restored",
+      "health": 200
+    },
+    {
+      "at": "2026-09-24T03:20:15.866Z",
+      "stage": "catalog-check",
+      "message": "catalog-after-restart",
+      "A": {
+        "status": 200,
+        "items": 9
+      },
+      "B": {
+        "status": 200,
+        "items": 9
+      }
+    },
+    {
+      "at": "2026-09-24T03:20:17.604Z",
+      "stage": "worker-restart",
+      "message": "workers-stopped",
+      "validate": [],
+      "publish": []
+    },
+    {
+      "at": "2026-09-24T03:20:17.681Z",
+      "stage": "worker-restart",
+      "message": "workers-relaunched",
+      "validatePid": 711573,
+      "publishPid": 711580,
+      "logs": [
+        "/tmp/p2-20260923/t22/validate-worker.log",
+        "/tmp/p2-20260923/t22/publish-worker.log"
+      ]
+    },
+    {
+      "at": "2026-09-24T03:20:19.858Z",
+      "stage": "worker-restart",
+      "message": "workers-respawned",
+      "validatePids": [
+        711573
+      ],
+      "publishPids": [
+        711580
+      ],
+      "replacedValidate": false,
+      "replacedPublish": false
+    },
+    {
+      "at": "2026-09-24T03:20:20.052Z",
+      "stage": "lease-check",
+      "message": "jobs-lease-query",
+      "via": "docker exec psql",
+      "result": "failed|3\nsucceeded|20\n0\n"
+    },
+    {
+      "at": "2026-09-24T03:20:21.011Z",
+      "stage": "backup",
+      "message": "backup-done",
+      "dumpPath": "/tmp/p2-20260923/g43/db-backup.sql",
+      "tarPath": "/tmp/p2-20260923/g43/artifacts-backup.tar.gz"
+    },
+    {
+      "at": "2026-09-24T03:20:21.143Z",
+      "stage": "restore-verify",
+      "message": "restore-verified",
+      "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+      "artifactSha256": "00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69",
+      "liveSha256": "00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69",
+      "restoredSha256": "00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69",
+      "byteIdentical": true,
+      "envelopeVerified": "verifyReleaseManifest against trusted phase2-key passed",
+      "restoredDir": "/tmp/p2-20260923/g43/restore/artifacts/sha256/00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69"
+    },
+    {
+      "at": "2026-09-24T03:20:21.163Z",
+      "stage": "dump-audit",
+      "message": "dump-audited",
+      "createTableAuditEvents": 1,
+      "createTableReleases": 1,
+      "copyAuditEvents": 1,
+      "copyReleases": 1,
+      "auditEventRows": 309,
+      "releaseRows": 10
+    },
+    {
+      "at": "2026-09-24T03:20:21.163Z",
+      "stage": "dump-audit",
+      "message": "scope-limitation",
+      "exercised": "artifact tar restored into a parallel directory; one signed release envelope re-verified (signature + byte-identical sha256 vs live artifact); SQL dump grep-audited for audit_events + releases schema and row counts",
+      "notExercised": "a FULL pack_center_phase2 DATABASE restore into an empty/drop-replaced cluster was NOT performed (no scratch cluster; drop is not safely reversible). Restore into an empty cluster remains possible via psql -f db-backup.sql but was not executed."
+    },
+    {
+      "at": "2026-09-24T03:20:21.751Z",
+      "stage": "final",
+      "message": "final-running",
+      "api": [
+        711532
+      ],
+      "tls": [
+        711533
+      ],
+      "validate": [
+        711573
+      ],
+      "publish": [
+        711580
+      ],
+      "health": 200
+    }
+  ],
+  "events": [
+    {
+      "actor": "A",
+      "method": "GET",
+      "path": "/catalog?limit=20",
+      "status": 200
+    },
+    {
+      "actor": "B",
+      "method": "GET",
+      "path": "/catalog?limit=20",
+      "status": 200
+    }
+  ]
+}

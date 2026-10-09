@@ -1,0 +1,1136 @@
+TAP version 13
+# (node:757786) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated auth PostgreSQL container: 973a0a6158db58073b2dbc049b9d499c63ae7123b90a9f2df235ef7f7241db43
+# Subtest: OIDC requires HTTPS unless explicitly loopback; no arbitrary HTTP issuer/callback
+ok 1 - OIDC requires HTTPS unless explicitly loopback; no arbitrary HTTP issuer/callback
+  ---
+  duration_ms: 5446.129743
+  type: 'test'
+  ...
+# Subtest: bootstrap is explicit issuer+subject, first uninvited login cannot create user/admin, and invite consumption is atomic
+ok 2 - bootstrap is explicit issuer+subject, first uninvited login cannot create user/admin, and invite consumption is atomic
+  ---
+  duration_ms: 2798.975114
+  type: 'test'
+  ...
+# Subtest: login is browser-bound, one-shot and encrypted; invalid cookie cannot consume a legitimate flow
+ok 3 - login is browser-bound, one-shot and encrypted; invalid cookie cannot consume a legitimate flow
+  ---
+  duration_ms: 1996.560458
+  type: 'test'
+  ...
+# Subtest: OIDC checks issuer, audience, nonce, expiry, signature and PKCE with real token requests
+ok 4 - OIDC checks issuer, audience, nonce, expiry, signature and PKCE with real token requests
+  ---
+  duration_ms: 2793.159932
+  type: 'test'
+  ...
+# Subtest: callback origin/path, login expiry and encrypted-envelope tampering are rejected without new sessions
+ok 5 - callback origin/path, login expiry and encrypted-envelope tampering are rejected without new sessions
+  ---
+  duration_ms: 2041.965249
+  type: 'test'
+  ...
+# Subtest: sessions and CSRF are hashed, revoked/expired accounts rejected, no cleartext audit/idempotency
+ok 6 - sessions and CSRF are hashed, revoked/expired accounts rejected, no cleartext audit/idempotency
+  ---
+  duration_ms: 1559.75087
+  type: 'test'
+  ...
+# Subtest: organization roles are live, emails do not identify accounts, review needs assigned scope and prohibits self-review
+ok 7 - organization roles are live, emails do not identify accounts, review needs assigned scope and prohibits self-review
+  ---
+  duration_ms: 3266.176555
+  type: 'test'
+  ...
+# Subtest: invitation revocation/expiry and disabled organization take effect before callback membership admission
+ok 8 - invitation revocation/expiry and disabled organization take effect before callback membership admission
+  ---
+  duration_ms: 2798.772881
+  type: 'test'
+  ...
+# Subtest: transactional permission locks prevent revoke racing a business commit; next request denies immediately
+ok 9 - transactional permission locks prevent revoke racing a business commit; next request denies immediately
+  ---
+  duration_ms: 3722.043142
+  type: 'test'
+  ...
+# Subtest: member/invitation lists respect tenant roles and redact secrets; organization disable invalidates access
+ok 10 - member/invitation lists respect tenant roles and redact secrets; organization disable invalidates access
+  ---
+  duration_ms: 3564.52837
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: 973a0a6158db58073b2dbc049b9d499c63ae7123b90a9f2df235ef7f7241db43
+# (node:759052) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated catalog PostgreSQL container: ea12001640fba9717e6cb8b34c3dea5ae454f09f2ed6b7cb18e853cbf710f812
+# Subtest: organization catalogs include only live members/deployments; platform-admin power does not bypass private distribution
+ok 11 - organization catalogs include only live members/deployments; platform-admin power does not bypass private distribution
+  ---
+  duration_ms: 11172.140785
+  type: 'test'
+  ...
+# Subtest: selected scope is an explicit union and does not implicitly include author, owner organization or administrators
+ok 12 - selected scope is an explicit union and does not implicitly include author, owner organization or administrators
+  ---
+  duration_ms: 5715.256895
+  type: 'test'
+  ...
+# Subtest: authenticated distribution requires an actual current principal, never a copied or caller-invented identity
+ok 13 - authenticated distribution requires an actual current principal, never a copied or caller-invented identity
+  ---
+  duration_ms: 6176.684372
+  type: 'test'
+  ...
+# Subtest: authorization filtering precedes LIMIT and private rows do not dilute pages or change public cursors
+ok 14 - authorization filtering precedes LIMIT and private rows do not dilute pages or change public cursors
+  ---
+  duration_ms: 5531.662399
+  type: 'test'
+  ...
+# Subtest: download grants bind exact deployment credential, release and manifest; secrets are hashed and unaudited
+ok 15 - download grants bind exact deployment credential, release and manifest; secrets are hashed and unaudited
+  ---
+  duration_ms: 5920.464687
+  type: 'test'
+  ...
+# Subtest: revoked machine credentials and revoked human sessions invalidate already-issued grants
+ok 16 - revoked machine credentials and revoked human sessions invalidate already-issued grants
+  ---
+  duration_ms: 4394.564583
+  type: 'test'
+  ...
+# Subtest: a dependency yank invalidates old parent grants while keeping authorized parent metadata with unavailable marker
+ok 17 - a dependency yank invalidates old parent grants while keeping authorized parent metadata with unavailable marker
+  ---
+  duration_ms: 6551.925864
+  type: 'test'
+  ...
+# Subtest: dependency scope is checked again at old-grant use, including nested dependency closure
+ok 18 - dependency scope is checked again at old-grant use, including nested dependency closure
+  ---
+  duration_ms: 4612.63887
+  type: 'test'
+  ...
+# Subtest: root scope narrowing, yanking and publisher organization disable invalidate old grants without signature mutation
+ok 19 - root scope narrowing, yanking and publisher organization disable invalidate old grants without signature mutation
+  ---
+  duration_ms: 3949.829059
+  type: 'test'
+  ...
+# Subtest: untrusted or corrupted signatures fail closed in list, details and grant issuance
+ok 20 - untrusted or corrupted signatures fail closed in list, details and grant issuance
+  ---
+  duration_ms: 3387.73553
+  type: 'test'
+  ...
+# Subtest: even a valid signature cannot substitute another center, snapshot identity, archive digest or fixed dependency lock
+ok 21 - even a valid signature cannot substitute another center, snapshot identity, archive digest or fixed dependency lock
+  ---
+  duration_ms: 5937.232636
+  type: 'test'
+  ...
+# Subtest: real CAS tampering rejects new grants and previously minted grants before exposing a download stream
+ok 22 - real CAS tampering rejects new grants and previously minted grants before exposing a download stream
+  ---
+  duration_ms: 3620.806309
+  type: 'test'
+  ...
+# Subtest: real clock expiry rejects grants; token syntax, absence and actor mismatch are not authentication substitutes
+ok 23 - real clock expiry rejects grants; token syntax, absence and actor mismatch are not authentication substitutes
+  ---
+  duration_ms: 4329.698272
+  type: 'test'
+  ...
+# Subtest: catalog configuration accepts only bounded public Ed25519 keys and exposes stable public fingerprints
+ok 24 - catalog configuration accepts only bounded public Ed25519 keys and exposes stable public fingerprints
+  ---
+  duration_ms: 3244.56174
+  type: 'test'
+  ...
+# Subtest: public current-release diff cannot leak private baseline file paths, entity IDs or release identity
+ok 25 - public current-release diff cannot leak private baseline file paths, entity IDs or release identity
+  ---
+  duration_ms: 5385.915876
+  type: 'test'
+  ...
+# Subtest: a previously visible diff is suppressed after baseline scope withdrawal or yank; first-version diff remains available
+ok 26 - a previously visible diff is suppressed after baseline scope withdrawal or yank; first-version diff remains available
+  ---
+  duration_ms: 6246.663039
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: ea12001640fba9717e6cb8b34c3dea5ae454f09f2ed6b7cb18e853cbf710f812
+# (node:763122) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated center-flow PostgreSQL container: 2b9ad32a08ccb48d1eec55a07ad14ed6c30f71be8c5d639db31fd4341ddd7d40
+# \# Removed owned test container and anonymous volume: 2b9ad32a08ccb48d1eec55a07ad14ed6c30f71be8c5d639db31fd4341ddd7d40
+# Subtest: HTTP submission, independent review and two machine identities distribute only the approved Git snapshot after the branch moves
+ok 27 - HTTP submission, independent review and two machine identities distribute only the approved Git snapshot after the branch moves
+  ---
+  duration_ms: 29052.664512
+  type: 'test'
+  ...
+# {"approvedCommit":"6a948bd4a83148ecc67284b7cea30c23eee8831f","movedBranchCommit":"65659ff7406f8de089e56f19e1c3b0d000d72a5f","artifactSha256":"c4b3e156d108df3a4ce56aed9937523640920bff2649a6ca1746dcb60986cd1f","contentTreeSha256":"46b911cffc02b1e4288d283c33b3ac63db080c1a030dbcced24afc8b9136f596","reportSha256":"211e5a349fd683cc3719398516aca184ff746b829da8520643fc5933b36380af","releaseId":"8ad4c0dc-d75f-453c-8be2-62e0973e5e85","duplicatePublicationUnchanged":true,"authenticatedHttpDownload":true,"twoMachineIdentityIsolation":true,"oldGrantRejectedAfterYank":true}
+# (node:765009) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated PostgreSQL container: 7e99e2fcf8e969480838080340bab8f75224835f2bfa3d858b0ef5a2c5576897; image: postgres@sha256:f02121de6f74d30d8a94cd1d9584125e2178d7e6c377d8130112d4e52d867995
+# \# PostgreSQL server_version: 17.11
+# Subtest: configuration requires an independent identity, dedicated DB schema and secure public origin
+ok 28 - configuration requires an independent identity, dedicated DB schema and secure public origin
+  ---
+  duration_ms: 6534.846511
+  type: 'test'
+  ...
+# Subtest: migrations apply transactionally, are concurrent-idempotent and detect changed history
+ok 29 - migrations apply transactionally, are concurrent-idempotent and detect changed history
+  ---
+  duration_ms: 1622.633847
+  type: 'test'
+  ...
+# Subtest: a failed migration leaves neither its partial table nor the newly-created schema
+ok 30 - a failed migration leaves neither its partial table nor the newly-created schema
+  ---
+  duration_ms: 316.390925
+  type: 'test'
+  ...
+# Subtest: service startup validates migration completeness and hashes without applying changes
+ok 31 - service startup validates migration completeness and hashes without applying changes
+  ---
+  duration_ms: 3231.769073
+  type: 'test'
+  ...
+# Subtest: connection URL startup options cannot redirect normal queries to a different schema
+ok 32 - connection URL startup options cannot redirect normal queries to a different schema
+  ---
+  duration_ms: 1682.57094
+  type: 'test'
+  ...
+# Subtest: business state and jobs roll back together, while identity and ownership remain database-enforced
+ok 33 - business state and jobs roll back together, while identity and ownership remain database-enforced
+  ---
+  duration_ms: 2061.84386
+  type: 'test'
+  ...
+# Subtest: snapshots/source are immutable, self-review is refused, and concurrent reviewers commit once
+ok 34 - snapshots/source are immutable, self-review is refused, and concurrent reviewers commit once
+  ---
+  duration_ms: 2311.472853
+  type: 'test'
+  ...
+# Subtest: releases require reviewed bytes, preserve full version uniqueness and immutable signed content after yank
+ok 35 - releases require reviewed bytes, preserve full version uniqueness and immutable signed content after yank
+  ---
+  duration_ms: 2298.616852
+  type: 'test'
+  ...
+# Subtest: deployment credentials cannot gain human roles and audit records cannot be overwritten
+ok 36 - deployment credentials cannot gain human roles and audit records cannot be overwritten
+  ---
+  duration_ms: 1765.247334
+  type: 'test'
+  ...
+# Subtest: concurrent job enqueue is idempotent and claimers use one exclusive lease
+ok 37 - concurrent job enqueue is idempotent and claimers use one exclusive lease
+  ---
+  duration_ms: 2179.386609
+  type: 'test'
+  ...
+# Subtest: expired worker cannot renew/write back; reclaim gets a new fence and durable attempt history
+ok 38 - expired worker cannot renew/write back; reclaim gets a new fence and durable attempt history
+  ---
+  duration_ms: 1775.871118
+  type: 'test'
+  ...
+# Subtest: fenced completion rolls back business writes if the lease expires during the transaction
+ok 39 - fenced completion rolls back business writes if the lease expires during the transaction
+  ---
+  duration_ms: 1569.119531
+  type: 'test'
+  ...
+# Subtest: retry exhaustion and a last-attempt crash become terminal instead of permanently running
+ok 40 - retry exhaustion and a last-attempt crash become terminal instead of permanently running
+  ---
+  duration_ms: 1498.712972
+  type: 'test'
+  ...
+# Subtest: a job committed by an independent Node process is recovered by a new database client
+ok 41 - a job committed by an independent Node process is recovered by a new database client
+  ---
+  duration_ms: 2486.070652
+  type: 'test'
+  ...
+# \# Removed owned test container and its anonymous database volume: 7e99e2fcf8e969480838080340bab8f75224835f2bfa3d858b0ef5a2c5576897
+# (node:766830) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated deployments PostgreSQL container: 0394e57f7a2ca7084682921d8097d0d3956576b124321a3c205858d9f569722c
+# Subtest: creation uses current administrator permission; concurrent idempotency creates exactly one deployment
+ok 42 - creation uses current administrator permission; concurrent idempotency creates exactly one deployment
+  ---
+  duration_ms: 12751.284325
+  type: 'test'
+  ...
+# Subtest: cross-tenant administrators, developers and machine principals cannot manage deployments
+ok 43 - cross-tenant administrators, developers and machine principals cannot manage deployments
+  ---
+  duration_ms: 3041.530696
+  type: 'test'
+  ...
+# Subtest: unauthorized deployment management cannot distinguish existing foreign IDs from unknown IDs
+ok 44 - unauthorized deployment management cannot distinguish existing foreign IDs from unknown IDs
+  ---
+  duration_ms: 2691.680466
+  type: 'test'
+  ...
+# Subtest: binding exchange is atomically one-shot; secrets are hashed, never audited, listed or cached for replay
+ok 45 - binding exchange is atomically one-shot; secrets are hashed, never audited, listed or cached for replay
+  ---
+  duration_ms: 2296.765529
+  type: 'test'
+  ...
+# Subtest: issuing a replacement code cancels unconsumed predecessors; expiry and explicit cancellation fail closed
+ok 46 - issuing a replacement code cancels unconsumed predecessors; expiry and explicit cancellation fail closed
+  ---
+  duration_ms: 1924.527285
+  type: 'test'
+  ...
+# Subtest: machine capabilities are service-issued, immutable, current and scoped only to catalog/download
+ok 47 - machine capabilities are service-issued, immutable, current and scoped only to catalog/download
+  ---
+  duration_ms: 3789.380467
+  type: 'test'
+  ...
+# Subtest: credential revocation is idempotent, immediate for old principals and does not revoke unrelated points
+ok 48 - credential revocation is idempotent, immediate for old principals and does not revoke unrelated points
+  ---
+  duration_ms: 4905.934934
+  type: 'test'
+  ...
+# Subtest: credential expiry and organization disable reject both token authentication and already-issued principals
+ok 49 - credential expiry and organization disable reject both token authentication and already-issued principals
+  ---
+  duration_ms: 2859.748053
+  type: 'test'
+  ...
+# Subtest: deployment disable revokes all credentials/codes; optimistic re-enable never resurrects old secrets
+ok 50 - deployment disable revokes all credentials/codes; optimistic re-enable never resurrects old secrets
+  ---
+  duration_ms: 3376.615436
+  type: 'test'
+  ...
+# Subtest: concurrent status updates produce one new state version, not last-writer-wins
+ok 51 - concurrent status updates produce one new state version, not last-writer-wins
+  ---
+  duration_ms: 1923.040948
+  type: 'test'
+  ...
+# Subtest: live administrator/session revocation blocks previously authorized management and idempotent replay
+ok 52 - live administrator/session revocation blocks previously authorized management and idempotent replay
+  ---
+  duration_ms: 2740.567194
+  type: 'test'
+  ...
+# Subtest: authorized transaction fences revocation until commit; following request immediately denies
+ok 53 - authorized transaction fences revocation until commit; following request immediately denies
+  ---
+  duration_ms: 2325.975038
+  type: 'test'
+  ...
+# Subtest: concurrent binding exchange and deployment disable cannot leave a usable credential
+ok 54 - concurrent binding exchange and deployment disable cannot leave a usable credential
+  ---
+  duration_ms: 2153.767255
+  type: 'test'
+  ...
+# Subtest: deployment identity is immutable in PostgreSQL and version increments cannot be skipped
+ok 55 - deployment identity is immutable in PostgreSQL and version increments cannot be skipped
+  ---
+  duration_ms: 2638.758362
+  type: 'test'
+  ...
+# Subtest: list pagination is bounded, tenant-filtered and metadata-only
+ok 56 - list pagination is bounded, tenant-filtered and metadata-only
+  ---
+  duration_ms: 2330.9336
+  type: 'test'
+  ...
+# Subtest: invalid identifiers, bounds, scope-injection and malformed secrets are rejected before any credential mint
+ok 57 - invalid identifiers, bounds, scope-injection and malformed secrets are rejected before any credential mint
+  ---
+  duration_ms: 1967.158099
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: 0394e57f7a2ca7084682921d8097d0d3956576b124321a3c205858d9f569722c
+# (node:768145) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated distribution-http PostgreSQL container: cc25328146538437235aaa8daeade82a6d754e92da60189da3fec0aeea76fc17
+# Subtest: HTTP admin binds two real host identities, returns credentials only to hosts and refuses browser exchange
+ok 58 - HTTP admin binds two real host identities, returns credentials only to hosts and refuses browser exchange
+  ---
+  duration_ms: 13994.302766
+  type: 'test'
+  ...
+# Subtest: HTTP authorized catalogue and fixed download bytes isolate deployments and reject machine human-mutations
+ok 59 - HTTP authorized catalogue and fixed download bytes isolate deployments and reject machine human-mutations
+  ---
+  duration_ms: 6307.540995
+  type: 'test'
+  ...
+# Subtest: HTTP selected deployment scope hides a release from a same-organization second host
+ok 60 - HTTP selected deployment scope hides a release from a same-organization second host
+  ---
+  duration_ms: 2342.645662
+  type: 'test'
+  ...
+# Subtest: HTTP organization release management is human-only, separately authorized and retains yanked records
+ok 61 - HTTP organization release management is human-only, separately authorized and retains yanked records
+  ---
+  duration_ms: 4109.416342
+  type: 'test'
+  ...
+# Subtest: HTTP scope review and yank invalidate old download grants without changing the signed bytes
+ok 62 - HTTP scope review and yank invalidate old download grants without changing the signed bytes
+  ---
+  duration_ms: 3676.253244
+  type: 'test'
+  ...
+# Subtest: HTTP transport rejects ambiguous auth, browser Bearer, URL grants, range and conditional requests
+ok 63 - HTTP transport rejects ambiguous auth, browser Bearer, URL grants, range and conditional requests
+  ---
+  duration_ms: 1290.559063
+  type: 'test'
+  ...
+# Subtest: HTTP short-lived grants require their original current identity and expiry is enforced
+ok 64 - HTTP short-lived grants require their original current identity and expiry is enforced
+  ---
+  duration_ms: 2652.358497
+  type: 'test'
+  ...
+# Subtest: HTTP fails closed on damaged artifact bytes without leaking private storage paths or grant material
+ok 65 - HTTP fails closed on damaged artifact bytes without leaking private storage paths or grant material
+  ---
+  duration_ms: 2370.116291
+  type: 'test'
+  ...
+# Subtest: HTTP stream read failure destroys transport and source without recording raw exception secrets
+ok 66 - HTTP stream read failure destroys transport and source without recording raw exception secrets
+  ---
+  duration_ms: 2889.232074
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: cc25328146538437235aaa8daeade82a6d754e92da60189da3fec0aeea76fc17
+# (node:768826) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: production source gate rejects SSRF variants, credential-bearing URLs and nonliteral refs
+ok 67 - production source gate rejects SSRF variants, credential-bearing URLs and nonliteral refs
+  ---
+  duration_ms: 47.574914
+  type: 'test'
+  ...
+# Subtest: snapshot archive producer cannot exceed publisher/client reader limits, including directory entries
+ok 68 - snapshot archive producer cannot exceed publisher/client reader limits, including directory entries
+  ---
+  duration_ms: 3.700574
+  type: 'test'
+  ...
+# Subtest: all resolved addresses must be public; private DNS answers never spawn a process
+ok 69 - all resolved addresses must be public; private DNS answers never spawn a process
+  ---
+  duration_ms: 1249.911981
+  type: 'test'
+  ...
+# Subtest: real pinned TLS Git transfer freezes raw files, commit, deterministic tar and report; moving ref does not rewrite old snapshot
+ok 70 - real pinned TLS Git transfer freezes raw files, commit, deterministic tar and report; moving ref does not rewrite old snapshot
+  ---
+  duration_ms: 2286.523612
+  type: 'test'
+  ...
+# Subtest: Git subprocesses cannot inherit production secrets, proxies, config, hooks or credential helpers
+ok 71 - Git subprocesses cannot inherit production secrets, proxies, config, hooks or credential helpers
+  ---
+  duration_ms: 2500.774092
+  type: 'test'
+  ...
+# Subtest: an HTTPS redirect is rejected without contacting its target
+ok 72 - an HTTPS redirect is rejected without contacting its target
+  ---
+  duration_ms: 370.105223
+  type: 'test'
+  ...
+# Subtest: dumb HTTP fallback is rejected before it can follow object alternates
+ok 73 - dumb HTTP fallback is rejected before it can follow object alternates
+  ---
+  duration_ms: 660.27042
+  type: 'test'
+  ...
+# Subtest: invalid V2 content is frozen for diagnostics but cannot be treated as a valid release
+ok 74 - invalid V2 content is frozen for diagnostics but cannot be treated as a valid release
+  ---
+  duration_ms: 933.13948
+  type: 'test'
+  ...
+# Subtest: script declarations and internal-only license restrictions are surfaced without execution
+ok 75 - script declarations and internal-only license restrictions are surfaced without execution
+  ---
+  duration_ms: 1665.592892
+  type: 'test'
+  ...
+# Subtest: tracked symlinks and submodule entries are rejected without publication leftovers
+    # Subtest: symlink
+    ok 1 - symlink
+      ---
+      duration_ms: 2366.391924
+      type: 'test'
+      ...
+    # Subtest: submodule
+    ok 2 - submodule
+      ---
+      duration_ms: 1345.300136
+      type: 'test'
+      ...
+    1..2
+ok 76 - tracked symlinks and submodule entries are rejected without publication leftovers
+  ---
+  duration_ms: 3712.723039
+  type: 'test'
+  ...
+# Subtest: Git filenames must meet the same safe NFC path contract as release archives
+    # Subtest: unsafe:name.txt
+    ok 1 - unsafe:name.txt
+      ---
+      duration_ms: 1503.105795
+      type: 'test'
+      ...
+    # Subtest: é.txt
+    ok 2 - é.txt
+      ---
+      duration_ms: 2135.056449
+      type: 'test'
+      ...
+    1..2
+ok 77 - Git filenames must meet the same safe NFC path contract as release archives
+  ---
+  duration_ms: 3638.839898
+  type: 'test'
+  ...
+# Subtest: preview byte bounds preserve complete UTF-8 code points
+ok 78 - preview byte bounds preserve complete UTF-8 code points
+  ---
+  duration_ms: 2294.621871
+  type: 'test'
+  ...
+# Subtest: file count/bytes, object expansion, diagnostic output and wall time limits fail closed
+ok 79 - file count/bytes, object expansion, diagnostic output and wall time limits fail closed
+  ---
+  duration_ms: 7178.478925
+  type: 'test'
+  ...
+# (node:770298) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated host-client-flow PostgreSQL container: cffdbba3f32c15ed5f4e8f72281f9b0597d59d557b2aa03533e17e7d8d47a2ff
+# \# Removed owned test container and anonymous volume: cffdbba3f32c15ed5f4e8f72281f9b0597d59d557b2aa03533e17e7d8d47a2ff
+# Subtest: real center host client pins, persists, isolates deployments, installs without enabling and keeps verified offline content after revoke/unbind
+ok 80 - real center host client pins, persists, isolates deployments, installs without enabling and keeps verified offline content after revoke/unbind
+  ---
+  duration_ms: 13515.585529
+  type: 'test'
+  ...
+# {"releaseId":"4704ca27-026d-45d2-815b-74bda423435b","artifactSha256":"c4b3e156d108df3a4ce56aed9937523640920bff2649a6ca1746dcb60986cd1f","contentTreeSha256":"46b911cffc02b1e4288d283c33b3ac63db080c1a030dbcced24afc8b9136f596","independentlyPinned":true,"realCenterGrantAndStream":true,"defaultInstallInactive":true,"twoClientDirectoryIsolation":true,"credentialRevocationEnforced":true,"offlineAfterRestartAndUnbind":true,"offlineCommittedReceiptReplay":true,"changedReceiptRequestRejected":true,"sampleContentPreflightOnly":true,"realDshAcceptance":false}
+# (node:770737) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated operation-locks PostgreSQL container: a438cf1c1fe5c35d8d97318448bab3a11a108c21375fa80595e2d0685b1ab722
+# Subtest: publication retry waits for its operation key without retaining submission or release row locks
+ok 81 - publication retry waits for its operation key without retaining submission or release row locks
+  ---
+  duration_ms: 6126.804887
+  type: 'test'
+  ...
+# Subtest: same actor/key governance and publication retry serialize with one success and one identity conflict, not a deadlock
+ok 82 - same actor/key governance and publication retry serialize with one success and one identity conflict, not a deadlock
+  ---
+  duration_ms: 2412.277744
+  type: 'test'
+  ...
+# Subtest: waiting cross-module retries recheck live authorization before reading an existing idempotency result
+ok 83 - waiting cross-module retries recheck live authorization before reading an existing idempotency result
+  ---
+  duration_ms: 1704.881547
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: a438cf1c1fe5c35d8d97318448bab3a11a108c21375fa80595e2d0685b1ab722
+# (node:771017) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated publisher PostgreSQL container: 9688bdc0a3886015837da273616f54094d6c4a38634c7fd4570482db2896f7b3
+# Subtest: publisher signs approved fixed archive/report without fetching its unreachable Git source
+ok 84 - publisher signs approved fixed archive/report without fetching its unreachable Git source
+  ---
+  duration_ms: 8235.541416
+  type: 'test'
+  ...
+# Subtest: concurrent publishers lease one job and duplicate authorized jobs preserve exact signature and one audit
+ok 85 - concurrent publishers lease one job and duplicate authorized jobs preserve exact signature and one audit
+  ---
+  duration_ms: 3484.239384
+  type: 'test'
+  ...
+# Subtest: publisher rejects missing delivery, invalid reports, wrong pack identity/version and inconsistent tree
+ok 86 - publisher rejects missing delivery, invalid reports, wrong pack identity/version and inconsistent tree
+  ---
+  duration_ms: 14343.06105
+  type: 'test'
+  ...
+# Subtest: CAS archive/report tampering fails closed before a signature is frozen
+ok 87 - CAS archive/report tampering fails closed before a signature is frozen
+  ---
+  duration_ms: 3296.72164
+  type: 'test'
+  ...
+# Subtest: direct dependency must still be published and available to every approved recipient
+ok 88 - direct dependency must still be published and available to every approved recipient
+  ---
+  duration_ms: 10234.901334
+  type: 'test'
+  ...
+# Subtest: a dependency yanked after signature freeze blocks final publication without changing the frozen envelope
+ok 89 - a dependency yanked after signature freeze blocks final publication without changing the frozen envelope
+  ---
+  duration_ms: 3611.169833
+  type: 'test'
+  ...
+# Subtest: transitive dependency narrowing blocks its parent release and builtins require the trusted inventory
+ok 90 - transitive dependency narrowing blocks its parent release and builtins require the trusted inventory
+  ---
+  duration_ms: 7448.310773
+  type: 'test'
+  ...
+# Subtest: frozen envelope survives manifest-store failure and retry cannot rotate key or signature
+ok 91 - frozen envelope survives manifest-store failure and retry cannot rotate key or signature
+  ---
+  duration_ms: 2116.384586
+  type: 'test'
+  ...
+# Subtest: actual process exits after freeze and CAS write resume the identical signature after lease expiry
+ok 92 - actual process exits after freeze and CAS write resume the identical signature after lease expiry
+  ---
+  duration_ms: 10644.565029
+  type: 'test'
+  ...
+# Subtest: publisher uses its explicit private scratch root and refuses an unsafe parent instead of system tmp fallback
+ok 93 - publisher uses its explicit private scratch root and refuses an unsafe parent instead of system tmp fallback
+  ---
+  duration_ms: 4111.306588
+  type: 'test'
+  ...
+# Subtest: a deterministic final-transaction lease fence rolls back publication and its success audit
+ok 94 - a deterministic final-transaction lease fence rolls back publication and its success audit
+  ---
+  duration_ms: 2615.999468
+  type: 'test'
+  ...
+# Subtest: exhausted crashed last attempt reconciles to publish_failed and an authorized new job can recover
+ok 95 - exhausted crashed last attempt reconciles to publish_failed and an authorized new job can recover
+  ---
+  duration_ms: 1198.786255
+  type: 'test'
+  ...
+# Subtest: replayed jobs never undo a yanked release or enlarge its distribution
+ok 96 - replayed jobs never undo a yanked release or enlarge its distribution
+  ---
+  duration_ms: 3144.532601
+  type: 'test'
+  ...
+# Subtest: signing configuration rejects RSA and invalid identifiers without claiming work
+ok 97 - signing configuration rejects RSA and invalid identifiers without claiming work
+  ---
+  duration_ms: 1962.525528
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: 9688bdc0a3886015837da273616f54094d6c4a38634c7fd4570482db2896f7b3
+# (node:773477) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated governance PostgreSQL container: a553b7f448f3161fd70b340fffae0541e2975e707b063b1553ec41ff772ee240
+# Subtest: organization management lists every release state with stable pagination, independently of download scope
+ok 98 - organization management lists every release state with stable pagination, independently of download scope
+  ---
+  duration_ms: 10730.645535
+  type: 'test'
+  ...
+# Subtest: organization release management checks live human privileges even for empty pages and rejects unsafe pagination
+ok 99 - organization release management checks live human privileges even for empty pages and rejects unsafe pagination
+  ---
+  duration_ms: 2569.013995
+  type: 'test'
+  ...
+# Subtest: distribution requests do not publish scopes; independent approval changes only scope metadata
+ok 100 - distribution requests do not publish scopes; independent approval changes only scope metadata
+  ---
+  duration_ms: 2520.265287
+  type: 'test'
+  ...
+# Subtest: org-admin request, assigned independent reviewer, live authorization and human-only enforcement
+ok 101 - org-admin request, assigned independent reviewer, live authorization and human-only enforcement
+  ---
+  duration_ms: 2737.038435
+  type: 'test'
+  ...
+# Subtest: idempotent retries return committed results only after current authorization; conflicting payload fails
+ok 102 - idempotent retries return committed results only after current authorization; conflicting payload fails
+  ---
+  duration_ms: 2962.63339
+  type: 'test'
+  ...
+# Subtest: concurrent duplicate requests and decisions commit once; stale competing approvals do not broaden scope
+ok 103 - concurrent duplicate requests and decisions commit once; stale competing approvals do not broaden scope
+  ---
+  duration_ms: 2456.72052
+  type: 'test'
+  ...
+# Subtest: concurrent same-request decisions produce one immutable terminal review
+ok 104 - concurrent same-request decisions produce one immutable terminal review
+  ---
+  duration_ms: 2094.382094
+  type: 'test'
+  ...
+# Subtest: operation-key lock precedes release rows, so reused keys cannot deadlock fixed dependency traversal
+ok 105 - operation-key lock precedes release rows, so reused keys cannot deadlock fixed dependency traversal
+  ---
+  duration_ms: 2306.427289
+  type: 'test'
+  ...
+# Subtest: rejected requests preserve scope and cannot be edited or subsequently approved
+ok 106 - rejected requests preserve scope and cannot be edited or subsequently approved
+  ---
+  duration_ms: 1828.806688
+  type: 'test'
+  ...
+# Subtest: selected recipient existence and active status checked both on request and approval
+ok 107 - selected recipient existence and active status checked both on request and approval
+  ---
+  duration_ms: 2211.66897
+  type: 'test'
+  ...
+# Subtest: fixed direct and transitive dependency scopes prevent broadening beyond authorized recipients
+ok 108 - fixed direct and transitive dependency scopes prevent broadening beyond authorized recipients
+  ---
+  duration_ms: 2777.46238
+  type: 'test'
+  ...
+# Subtest: approval rechecks the current locked dependency graph, not request-time scopes or floating versions
+ok 109 - approval rechecks the current locked dependency graph, not request-time scopes or floating versions
+  ---
+  duration_ms: 2471.682851
+  type: 'test'
+  ...
+# Subtest: yanked fixed dependency prevents a previously valid scope approval
+ok 110 - yanked fixed dependency prevents a previously valid scope approval
+  ---
+  duration_ms: 2426.301176
+  type: 'test'
+  ...
+# Subtest: yank is owner-admin/platform-admin only, versioned, irreversible and retains fixed signed content
+ok 111 - yank is owner-admin/platform-admin only, versioned, irreversible and retains fixed signed content
+  ---
+  duration_ms: 2617.105146
+  type: 'test'
+  ...
+# Subtest: yank blocks new scope changes/approvals but permits explicit rejection of an obsolete request
+ok 112 - yank blocks new scope changes/approvals but permits explicit rejection of an obsolete request
+  ---
+  duration_ms: 1716.09382
+  type: 'test'
+  ...
+# Subtest: management reads and review queue expose no credentials and enforce current org/scope isolation
+ok 113 - management reads and review queue expose no credentials and enforce current org/scope isolation
+  ---
+  duration_ms: 2763.077097
+  type: 'test'
+  ...
+# Subtest: inputs are strict and detached before awaits; invalid proposals leave no state
+ok 114 - inputs are strict and detached before awaits; invalid proposals leave no state
+  ---
+  duration_ms: 2278.634524
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: a553b7f448f3161fd70b340fffae0541e2975e707b063b1553ec41ff772ee240
+# (node:774812) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: credential files are explicit, private, bounded regular files; no links or permissive files
+ok 115 - credential files are explicit, private, bounded regular files; no links or permissive files
+  ---
+  duration_ms: 110.414533
+  type: 'test'
+  ...
+# Subtest: Git host allowlist is exact, no wildcards/addresses/ports, and HTTP needs explicit development opt-in
+ok 116 - Git host allowlist is exact, no wildcards/addresses/ports, and HTTP needs explicit development opt-in
+  ---
+  duration_ms: 58.316464
+  type: 'test'
+  ...
+# Subtest: identity process uses a fixed callback and raw encryption key, never a signing key
+ok 117 - identity process uses a fixed callback and raw encryption key, never a signing key
+  ---
+  duration_ms: 118.266548
+  type: 'test'
+  ...
+# Subtest: worker scratch is private; authoritative builtin inventory is explicit and strict
+ok 118 - worker scratch is private; authoritative builtin inventory is explicit and strict
+  ---
+  duration_ms: 27.965512
+  type: 'test'
+  ...
+# Subtest: API verification inventory loads only explicit owned Ed25519 public keys, never publisher private keys
+ok 119 - API verification inventory loads only explicit owned Ed25519 public keys, never publisher private keys
+  ---
+  duration_ms: 163.791039
+  type: 'test'
+  ...
+# (node:774838) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated http PostgreSQL container: 174b94d8a221de0847af598d85bc1d3886e64cb725a5bcbcd967f819e1139f93
+# Subtest: HTTP transport configuration rejects insecure non-loopback and implicit development settings
+ok 120 - HTTP transport configuration rejects insecure non-loopback and implicit development settings
+  ---
+  duration_ms: 5870.703869
+  type: 'test'
+  ...
+# Subtest: HTTP uses real OIDC sessions, production host-only Secure cookies and readable CSRF; logout revokes
+ok 121 - HTTP uses real OIDC sessions, production host-only Secure cookies and readable CSRF; logout revokes
+  ---
+  duration_ms: 2016.171203
+  type: 'test'
+  ...
+# Subtest: HTTP refuses missing/cross Origin, missing/wrong CSRF, preflight and machine-style anonymous writes
+ok 122 - HTTP refuses missing/cross Origin, missing/wrong CSRF, preflight and machine-style anonymous writes
+  ---
+  duration_ms: 1252.650679
+  type: 'test'
+  ...
+# Subtest: callback is browser-bound and never derives origin from spoofed Host or forwarded headers
+ok 123 - callback is browser-bound and never derives origin from spoofed Host or forwarded headers
+  ---
+  duration_ms: 1432.983846
+  type: 'test'
+  ...
+# Subtest: request size/JSON/content-type errors are safe, no-store and secret-free even in failure audit
+ok 124 - request size/JSON/content-type errors are safe, no-store and secret-free even in failure audit
+  ---
+  duration_ms: 1318.881888
+  type: 'test'
+  ...
+# Subtest: developer HTTP create/edit/validate is idempotent, requires versions, and prevents cross-organization access
+ok 125 - developer HTTP create/edit/validate is idempotent, requires versions, and prevents cross-organization access
+  ---
+  duration_ms: 2340.043729
+  type: 'test'
+  ...
+# Subtest: admin membership/scope routes are enforced live; reviewer queue works across organizations and self-review is denied
+ok 126 - admin membership/scope routes are enforced live; reviewer queue works across organizations and self-review is denied
+  ---
+  duration_ms: 2041.704858
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: 174b94d8a221de0847af598d85bc1d3886e64cb725a5bcbcd967f819e1139f93
+# (node:775295) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: local adapter stores canonical JSON and private immutable content-addressed files
+ok 127 - local adapter stores canonical JSON and private immutable content-addressed files
+  ---
+  duration_ms: 393.485882
+  type: 'test'
+  ...
+# Subtest: file copy is streamed, expected hash is enforced, and equal content is reused without inode replacement
+ok 128 - file copy is streamed, expected hash is enforced, and equal content is reused without inode replacement
+  ---
+  duration_ms: 1787.410868
+  type: 'test'
+  ...
+# Subtest: 24 concurrent writers converge on one immutable object and independent keys remain independent
+ok 129 - 24 concurrent writers converge on one immutable object and independent keys remain independent
+  ---
+  duration_ms: 277.740064
+  type: 'test'
+  ...
+# Subtest: independent processes publish the same key without locks, overwrite, or temporary hard links
+ok 130 - independent processes publish the same key without locks, overwrite, or temporary hard links
+  ---
+  duration_ms: 1321.538554
+  type: 'test'
+  ...
+# Subtest: source digest mismatch and excessive file/JSON input never publish or leave owned staging
+ok 131 - source digest mismatch and excessive file/JSON input never publish or leave owned staging
+  ---
+  duration_ms: 102.320924
+  type: 'test'
+  ...
+# Subtest: per-request limits can tighten but never relax store limits; empty files work
+ok 132 - per-request limits can tighten but never relax store limits; empty files work
+  ---
+  duration_ms: 167.956332
+  type: 'test'
+  ...
+# Subtest: fixed keys reject traversal, encoded paths, uppercase hashes, NUL, and trailing newline
+ok 133 - fixed keys reject traversal, encoded paths, uppercase hashes, NUL, and trailing newline
+  ---
+  duration_ms: 49.759218
+  type: 'test'
+  ...
+# Subtest: store refuses public/symlink roots and parent symlinks, without changing existing permissions
+ok 134 - store refuses public/symlink roots and parent symlinks, without changing existing permissions
+  ---
+  duration_ms: 41.784497
+  type: 'test'
+  ...
+# Subtest: source symbolic/hard links and nonregular files are rejected
+ok 135 - source symbolic/hard links and nonregular files are rejected
+  ---
+  duration_ms: 76.317162
+  type: 'test'
+  ...
+# Subtest: existing corrupt objects cannot be downloaded or overwritten by an otherwise valid retry
+ok 136 - existing corrupt objects cannot be downloaded or overwritten by an otherwise valid retry
+  ---
+  duration_ms: 205.718174
+  type: 'test'
+  ...
+# Subtest: invalid existing empty object directories are not repaired or replaced silently
+ok 137 - invalid existing empty object directories are not repaired or replaced silently
+  ---
+  duration_ms: 67.422313
+  type: 'test'
+  ...
+# Subtest: stored symlinks, hardlinks and writable blobs fail closed
+ok 138 - stored symlinks, hardlinks and writable blobs fail closed
+  ---
+  duration_ms: 147.561964
+  type: 'test'
+  ...
+# Subtest: an opened stream stays on its verified FD and rejects post-verification mutation
+ok 139 - an opened stream stays on its verified FD and rejects post-verification mutation
+  ---
+  duration_ms: 54.900188
+  type: 'test'
+  ...
+# Subtest: crash before publish leaves no visible object; crash after publish leaves a complete verified object
+ok 140 - crash before publish leaves no visible object; crash after publish leaves a complete verified object
+  ---
+  duration_ms: 1455.509897
+  type: 'test'
+  ...
+# Subtest: thrown publish fault preserves committed object and retry is idempotent
+ok 141 - thrown publish fault preserves committed object and retry is idempotent
+  ---
+  duration_ms: 220.470187
+  type: 'test'
+  ...
+# Subtest: JSON contract rejects ambiguous noncanonical payloads before storing
+ok 142 - JSON contract rejects ambiguous noncanonical payloads before storing
+  ---
+  duration_ms: 50.787422
+  type: 'test'
+  ...
+# (node:776151) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated submissions PostgreSQL container: 9f1bd6d7a82d6adf376148dc011ac44909ff4b1206789b352b3604733070f042
+# Subtest: create detaches input, enforces ownership, validates source and deduplicates retries
+ok 143 - create detaches input, enforces ownership, validates source and deduplicates retries
+  ---
+  duration_ms: 7054.838708
+  type: 'test'
+  ...
+# Subtest: draft editing is versioned; validation atomically enqueues once and freezes reviewed fields
+ok 144 - draft editing is versioned; validation atomically enqueues once and freezes reviewed fields
+  ---
+  duration_ms: 1974.919272
+  type: 'test'
+  ...
+# Subtest: private read/list isolation, cross-org scoped review queue and live revocation
+ok 145 - private read/list isolation, cross-org scoped review queue and live revocation
+  ---
+  duration_ms: 2547.588484
+  type: 'test'
+  ...
+# Subtest: invalid or digest-mismatched reports cannot be submitted, even if database status says validated
+ok 146 - invalid or digest-mismatched reports cannot be submitted, even if database status says validated
+  ---
+  duration_ms: 1330.980953
+  type: 'test'
+  ...
+# Subtest: self-review and machine/forged principals are rejected; stale version/digest never reserve releases
+ok 147 - self-review and machine/forged principals are rejected; stale version/digest never reserve releases
+  ---
+  duration_ms: 1067.797795
+  type: 'test'
+  ...
+# Subtest: concurrent reviewers produce exactly one decision/release/outbox; retry returns the same immutable target
+ok 148 - concurrent reviewers produce exactly one decision/release/outbox; retry returns the same immutable target
+  ---
+  duration_ms: 1810.144819
+  type: 'test'
+  ...
+# Subtest: two approved candidates for one version roll the losing review back; later version creates a fresh immutable revision
+ok 149 - two approved candidates for one version roll the losing review back; later version creates a fresh immutable revision
+  ---
+  duration_ms: 1738.977874
+  type: 'test'
+  ...
+# Subtest: changes requested and withdrawal retain fixed snapshots and comments; rework is a separate submission
+ok 150 - changes requested and withdrawal retain fixed snapshots and comments; rework is a separate submission
+  ---
+  duration_ms: 1947.819516
+  type: 'test'
+  ...
+# Subtest: publication failures are visible and only authorized reviewers/admins can retry the exact approved snapshot once
+ok 151 - publication failures are visible and only authorized reviewers/admins can retry the exact approved snapshot once
+  ---
+  duration_ms: 2016.80598
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: 9f1bd6d7a82d6adf376148dc011ac44909ff4b1206789b352b3604733070f042
+# (node:777107) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated validation-worker PostgreSQL container: 506dd7b1f78217ca46fb72c6bf78de02062340a0b2a0276906422210a5e1e997
+# Subtest: real Git -> verified CAS -> immutable PostgreSQL snapshot; no further fetch after completion
+ok 152 - real Git -> verified CAS -> immutable PostgreSQL snapshot; no further fetch after completion
+  ---
+  duration_ms: 7390.147103
+  type: 'test'
+  ...
+# Subtest: invalid content and mismatched version retain diagnostic archive but never become validated
+    # Subtest: invalid
+    ok 1 - invalid
+      ---
+      duration_ms: 2557.818598
+      type: 'test'
+      ...
+    # Subtest: identity
+    ok 2 - identity
+      ---
+      duration_ms: 2167.356213
+      type: 'test'
+      ...
+    1..2
+ok 153 - invalid content and mismatched version retain diagnostic archive but never become validated
+  ---
+  duration_ms: 4727.837142
+  type: 'test'
+  ...
+# Subtest: fixed dependency graph and exact built-in inventory are recorded before review
+ok 154 - fixed dependency graph and exact built-in inventory are recorded before review
+  ---
+  duration_ms: 3582.635998
+  type: 'test'
+  ...
+# Subtest: dependency visibility, scope expansion, missing declarations and unconfigured built-ins fail validation
+    # Subtest: scope-expansion
+    ok 1 - scope-expansion
+      ---
+      duration_ms: 2605.571328
+      type: 'test'
+      ...
+    # Subtest: private-dependency
+    ok 2 - private-dependency
+      ---
+      duration_ms: 2161.506027
+      type: 'test'
+      ...
+    # Subtest: missing-lock
+    ok 3 - missing-lock
+      ---
+      duration_ms: 2543.72613
+      type: 'test'
+      ...
+    # Subtest: builtin-unknown
+    ok 4 - builtin-unknown
+      ---
+      duration_ms: 1651.72766
+      type: 'test'
+      ...
+    1..4
+ok 155 - dependency visibility, scope expansion, missing declarations and unconfigured built-ins fail validation
+  ---
+  duration_ms: 8964.445165
+  type: 'test'
+  ...
+# Subtest: transitive dependency cycles and conflicting versions cannot become a frozen lock
+ok 156 - transitive dependency cycles and conflicting versions cannot become a frozen lock
+  ---
+  duration_ms: 5113.200313
+  type: 'test'
+  ...
+# Subtest: selected recipients are checked as exact deployment/org sets, not inferred owner access
+ok 157 - selected recipients are checked as exact deployment/org sets, not inferred owner access
+  ---
+  duration_ms: 2797.048893
+  type: 'test'
+  ...
+# Subtest: two workers claim once while heartbeat prevents a slow active fetch from being stolen
+ok 158 - two workers claim once while heartbeat prevents a slow active fetch from being stolen
+  ---
+  duration_ms: 3257.880828
+  type: 'test'
+  ...
+# Subtest: stale worker cannot commit after a newer claim has obtained the fence
+ok 159 - stale worker cannot commit after a newer claim has obtained the fence
+  ---
+  duration_ms: 2395.383644
+  type: 'test'
+  ...
+# Subtest: CAS write failure cannot attach a missing snapshot; errors are sanitized and final crash is reconciled
+ok 160 - CAS write failure cannot attach a missing snapshot; errors are sanitized and final crash is reconciled
+  ---
+  duration_ms: 1849.667761
+  type: 'test'
+  ...
+# Subtest: review diff uses last published snapshot for changed/removed files and entity removals
+ok 161 - review diff uses last published snapshot for changed/removed files and entity removals
+  ---
+  duration_ms: 1662.248393
+  type: 'test'
+  ...
+# Subtest: historical snapshots without an entity inventory are unverified, not empty or unchanged
+    # Subtest: missing
+    ok 1 - missing
+      ---
+      duration_ms: 2289.508779
+      type: 'test'
+      ...
+    # Subtest: []
+    ok 2 - []
+      ---
+      duration_ms: 3025.728342
+      type: 'test'
+      ...
+    # Subtest: {"experts":"not-an-array"}
+    ok 3 - {"experts":"not-an-array"}
+      ---
+      duration_ms: 2260.768364
+      type: 'test'
+      ...
+    1..3
+ok 162 - historical snapshots without an entity inventory are unverified, not empty or unchanged
+  ---
+  duration_ms: 7577.124101
+  type: 'test'
+  ...
+# \# Removed owned test container and anonymous volume: 506dd7b1f78217ca46fb72c6bf78de02062340a0b2a0276906422210a5e1e997
+# (node:778420) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# \# Isolated web-http PostgreSQL container: 82b8c67e1e7a347b7817d26721bdb3b7a42bdfa0168b8321d3c45efadc1fb4e4
+# \# Removed owned test container and anonymous volume: 82b8c67e1e7a347b7817d26721bdb3b7a42bdfa0168b8321d3c45efadc1fb4e4
+# Subtest: real HTTP serves a finite CSP-safe web shell without exposing server files, and OIDC callback negotiates only a fixed redirect
+ok 163 - real HTTP serves a finite CSP-safe web shell without exposing server files, and OIDC callback negotiates only a fixed redirect
+  ---
+  duration_ms: 6717.492365
+  type: 'test'
+  ...
+1..163
+# tests 176
+# suites 0
+# pass 176
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 579383.562255

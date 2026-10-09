@@ -1,0 +1,10 @@
+{"node":"C5.2","passed":true,"checks":{
+ "pluginTypecheck":{"exit":0,"log":"c52-plugin-typecheck.log"},
+ "pluginFullSuite":{"pass":"934/934","exit":0,"log":"c52-plugin-test.log","note":"node22; includes host-pack-*/center-runtime/no-network-adjacent suites"},
+ "centerSuite":{"pass":"177/177","exit":0,"log":"c52-center-test.log","note":"real docker PG 17.11 + smart fixture; grew from 176 to 177 (new governance/limit coverage)"},
+ "contractArtifact":{"pass":"85/85","exit":0,"log":"c52-contract-artifact.log"},
+ "noNetwork":{"pass":"7/7","exit":0,"log":"c52-no-network.log"},
+ "dshCoreDiff":{"files":0,"check":"git -C /usr/lib/node_modules/@deepseek-ai/dsh status --porcelain = 0"},
+ "sensitiveScan":{"hits":0,"patterns":"machine tokens, binding codes, DB password, session cookies over all phase2 evidence"},
+ "sourceFingerprint":{"file":"c52-fingerprint.txt"}},
+ "explainedDeltas":["apps/pack-center: env-gated loopback-git fixture allowance (default off) + fixture-transport + STARTUP_DEBUG gate","plugin: no runtime source changes in phase2 (phase1-tree deltas unchanged)"]}

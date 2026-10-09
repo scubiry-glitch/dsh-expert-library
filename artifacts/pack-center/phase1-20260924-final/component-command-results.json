@@ -1,0 +1,72 @@
+{
+  "testDatabaseSource": "unique Docker fixture; inherited PACK_CENTER_TEST_DATABASE_URL removed",
+  "results": [
+    {
+      "log": "build-plugin.log",
+      "command": [
+        "pnpm",
+        "build"
+      ],
+      "cwd": "/root/zhijian/dsh-pack-center-dev.ZGtty5",
+      "startedAt": "2026-09-23T16:51:09.465731+00:00",
+      "finishedAt": "2026-09-23T16:52:12.311208+00:00",
+      "exitCode": 0
+    },
+    {
+      "log": "build-center.log",
+      "command": [
+        "npm",
+        "--prefix",
+        "apps/pack-center",
+        "run",
+        "build"
+      ],
+      "cwd": "/root/zhijian/dsh-pack-center-dev.ZGtty5",
+      "startedAt": "2026-09-23T16:52:12.312269+00:00",
+      "finishedAt": "2026-09-23T16:52:24.843043+00:00",
+      "exitCode": 0
+    },
+    {
+      "log": "center-stage.tap",
+      "command": [
+        "node",
+        "--test",
+        "test/center-flow.test.mjs",
+        "test/submissions.test.mjs",
+        "test/validation-worker.test.mjs",
+        "test/publisher.test.mjs",
+        "test/distribution-http.test.mjs",
+        "test/git-snapshot.test.mjs"
+      ],
+      "cwd": "/root/zhijian/dsh-pack-center-dev.ZGtty5/apps/pack-center",
+      "startedAt": "2026-09-23T16:52:24.844862+00:00",
+      "finishedAt": "2026-09-23T16:56:38.669272+00:00",
+      "exitCode": 0,
+      "tests": 70,
+      "pass": 70,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    },
+    {
+      "log": "shared.tap",
+      "command": [
+        "node",
+        "--test",
+        "packages/pack-contract/test/*.test.mjs",
+        "packages/pack-artifact/test/*.test.mjs"
+      ],
+      "cwd": "/root/zhijian/dsh-pack-center-dev.ZGtty5",
+      "startedAt": "2026-09-23T16:56:38.673948+00:00",
+      "finishedAt": "2026-09-23T16:56:42.766707+00:00",
+      "exitCode": 0,
+      "tests": 85,
+      "pass": 85,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0
+    }
+  ]
+}

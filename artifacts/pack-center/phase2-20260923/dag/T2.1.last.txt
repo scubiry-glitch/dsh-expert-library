@@ -1,0 +1,10 @@
+`pnpm build` succeeded, and the isolated profiles/symlinks and evidence were created. However, this sandbox denies local TCP binding (`EPERM`), so the two real DSH instances could not start; verdict is correctly `passed:false`.
+
+- [T2.1.instances.json](</root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.1.instances.json>)
+- [T2.1.core-clean.txt](</root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.1.core-clean.txt>)
+- [T2.1.verdict.json](</root/zhijian/dsh-pack-center-dev.ZGtty5/artifacts/pack-center/phase2-20260923/dag/T2.1.verdict.json>)
+- [run-ab-instances.mjs](</root/zhijian/dsh-pack-center-dev.ZGtty5/scripts/phase2/run-ab-instances.mjs>)
+
+```json
+{"node":"T2.1","passed":false,"ports":[18281,18282]}
+```

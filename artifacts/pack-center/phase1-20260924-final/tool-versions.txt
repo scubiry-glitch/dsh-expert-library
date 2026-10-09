@@ -1,0 +1,5 @@
+v22.23.2
+npm 10.9.8
+pnpm 11.22.0
+git version 2.43.7
+Docker version 28.0.1-20241223130549-3b49deb, build 3b49deb

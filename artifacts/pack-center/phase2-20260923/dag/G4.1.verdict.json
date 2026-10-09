@@ -1,0 +1,7 @@
+{
+  "node": "G4.1",
+  "passed": true,
+  "reasons": [
+    "all seven governance matrix rows satisfied: self-review blocked, cross-org private detail denied, machine token rejected on review, A credential revoked/re-bound while B kept working, yanked release stopped being granted, scope widening stayed pending until independent approval, and a disabled member lost write access then was restored"
+  ]
+}

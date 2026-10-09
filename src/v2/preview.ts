@@ -35,6 +35,10 @@ import {
 } from './zhijian-pack.ts'
 
 /** Default subdirectory under a workspace root where domain packs live. */
+type CenterSnapshotLike = {
+  packs?: ReadonlyArray<{ packId: string; releaseId: string; root: string; contentTreeSha256?: string; source?: string }>
+}
+
 export const DEFAULT_PACKS_DIR = 'domain-packs'
 
 /** Web-server service key candidates, newest first (mirrors src/index.ts). */
@@ -309,12 +313,19 @@ async function builtinPackRealDir(): Promise<string | undefined> {
  * workspace dirs that realpath to the same physical location across roots
  * collapse to a single row.
  */
-export async function listPackSources(ctx: Context, packsDir: string = DEFAULT_PACKS_DIR): Promise<PackSourceResult[]> {
+export async function listPackSources(
+  ctx: Context,
+  packsDir: string = DEFAULT_PACKS_DIR,
+  centerSnapshot?: CenterSnapshotLike,
+): Promise<PackSourceResult[]> {
   const results: PackSourceResult[] = []
   const builtin = builtinLoadedPack()
   results.push({ summary: summarizePack(builtin, { snapshot: ZHIJIAN_PACK_SNAPSHOT }), loaded: builtin })
   const builtinRealDir = await builtinPackRealDir()
   const seenDirs = new Set<string>()
+  // Center-enabled fixed releases shadow same-id disk copies (the runtime merge
+  // gives the center layer precedence).
+  const centerIds = new Set((centerSnapshot?.packs ?? []).map(item => item.packId))
   for (const { dir, label } of await discoverPackDirs(ctx, packsDir)) {
     // The loader realpaths the dir into `source.root`; dedupe on that so a
     // symlinked/overlapping workspace root never double-lists one physical
@@ -328,16 +339,25 @@ export async function listPackSources(ctx: Context, packsDir: string = DEFAULT_P
     }
     if (builtinRealDir !== undefined && real === builtinRealDir) continue
     if (seenDirs.has(real)) continue
+    if (centerIds.has(basename(real))) continue
     seenDirs.add(real)
     const loaded = await loadPackFromDir(dir, { layer: 'workspace', label })
     results.push({ summary: summarizePack(loaded), loaded })
+  }
+  for (const item of centerSnapshot?.packs ?? []) {
+    const loaded = await loadPackFromDir(item.root, { layer: 'domain-pack', label: `center/${item.packId}/${item.releaseId}` })
+    results.push({ summary: summarizePack(loaded, { snapshot: item.releaseId }), loaded })
   }
   return results
 }
 
 /** Read-only pack list for the settings page (health badge + counts per pack). */
-export async function listDomainPacks(ctx: Context, packsDir: string = DEFAULT_PACKS_DIR): Promise<DomainPacksResponse> {
-  const sources = await listPackSources(ctx, packsDir)
+export async function listDomainPacks(
+  ctx: Context,
+  packsDir: string = DEFAULT_PACKS_DIR,
+  centerSnapshot?: CenterSnapshotLike,
+): Promise<DomainPacksResponse> {
+  const sources = await listPackSources(ctx, packsDir, centerSnapshot)
   return { packs: sources.map((source) => source.summary) }
 }
 
@@ -351,9 +371,10 @@ export async function previewDomainPack(
   ctx: Context,
   id: string,
   packsDir: string = DEFAULT_PACKS_DIR,
+  centerSnapshot?: CenterSnapshotLike,
 ): Promise<DomainPackPreviewResponse | undefined> {
   if (!isSafeKnowledgeId(id)) return undefined
-  const found = (await listPackSources(ctx, packsDir)).find(({ summary }) => summary.id === id)
+  const found = (await listPackSources(ctx, packsDir, centerSnapshot)).find(({ summary }) => summary.id === id)
   if (found === undefined) return undefined
   return {
     ok: found.loaded.ok,

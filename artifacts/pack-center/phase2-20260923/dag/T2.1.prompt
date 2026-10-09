@@ -1,0 +1,36 @@
+You are executing DAG node T2.1 of the pack-center phase2 acceptance plan.
+
+Workspace (isolated implementation tree, do NOT cd elsewhere):
+  /root/zhijian/dsh-pack-center-dev.ZGtty5
+
+GOAL: Start TWO real, isolated DSH web instances (A and B) that load the plugin from THIS isolated tree, and record evidence.
+
+Hard boundaries (violating any of these fails the node):
+- Do NOT modify DSH core (/usr/lib/node_modules/@deepseek-ai/dsh), production services, DNS, production credentials, or public Git repos.
+- Do NOT touch the production profile or the running production DSH on port 3080. Do not read or print production credentials/tokens.
+- Do NOT git-commit or push anything.
+- Do not modify plugin source code in this node; you may only CREATE new scripts/evidence under:
+  - scripts/phase2/          (new launcher/verifier scripts)
+  - artifacts/pack-center/phase2-20260923/   (evidence)
+
+Known facts from prior probes (phase P6, see PACK-CENTER-P5-HOST-UI-EVIDENCE.md §96-102):
+- A real DSH web process is booted with `DSH_HOME=<dir> dsh web` (or `dsh --profile <name>`); profiles live under $DSH_HOME/profiles/<name>.
+- The plugin package is @zhijian/dsh-expert-library; in the P6 probe it was loaded via an exact symlink inside the profile (no dependency install).
+- Prior probe used loopback ports 18181/18182; those processes were stopped. Pick fresh free ports (e.g. 18281/18282) and verify they are free.
+- The web app's port flag/env: discover it yourself (inspect `dsh web --dump-config`, the profile boot lib at /usr/lib/node_modules/@deepseek-ai/dsh/lib/profile-boot-*.js, or the web frontend bundle). Do not guess silently — record what you found in the evidence.
+
+Steps:
+1. Create isolated homes: /tmp/p2-20260923/dsh-a and /tmp/p2-20260923/dsh-b, each with its own profiles/<name> containing an exact symlink to THIS tree's plugin so the real DSH loads the plugin from /root/zhijian/dsh-pack-center-dev.ZGtty5. Build the plugin first if required for real loading (pnpm build in this tree is allowed; it must not modify DSH core).
+2. Write a launcher script `scripts/phase2/run-ab-instances.mjs` that:
+   - starts instance A on port A, instance B on port B (background child processes, logs to artifacts/pack-center/phase2-20260923/dag/T2.1.a.log and T2.1.b.log),
+   - each with its own DSH_HOME, profile name, working directory, and pack-center state root,
+   - waits for both HTTP endpoints to answer, then writes artifacts/pack-center/phase2-20260923/dag/T2.1.instances.json containing for A and B: pid, port, DSH_HOME, profile, workspace dir, pack-center root, resolved plugin load path (must point into /root/zhijian/dsh-pack-center-dev.ZGtty5).
+3. Verify from a real HTTP request to each instance's local manage endpoint (route prefix /plugins/dsh-expert-library/manage/) that the plugin is live (HTTP 200 with safe JSON like configured=false) and that the two instances have disjoint state roots.
+4. Verify DSH core is unmodified: `git -C /root/zhijian/dsh-pack-center-dev.ZGtty5 diff --check` and confirm no file outside this tree changed (record `git status --porcelain | wc -l` and check nothing under /usr/lib/node_modules/@deepseek-ai/dsh is newer than session start — a find -newer check is acceptable).
+5. Write evidence:
+   - dag/T2.1.instances.json (the facts above)
+   - dag/T2.1.core-clean.txt (commands + exit codes proving core unmodified)
+   - dag/T2.1.verdict.json: {"node":"T2.1","passed":true|false,"reasons":[...]}
+   Do NOT mark passed unless every check actually ran and passed with exit code 0.
+
+Leave both DSH processes RUNNING at the end (later nodes reuse them). Print a final JSON summary line: {"node":"T2.1","passed":<bool>,"ports":[a,b]}.

@@ -1,0 +1,176 @@
+{
+  "before": {
+    "generation": 19,
+    "sha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa",
+    "active": [
+      {
+        "packId": "macro-capital-analyst",
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "version": "2.3.0"
+      },
+      {
+        "packId": "phase2-dep-b",
+        "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+        "version": "2.0.0"
+      },
+      {
+        "packId": "phase2-dep-a",
+        "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+        "version": "2.0.0"
+      }
+    ]
+  },
+  "after": {
+    "generation": 19,
+    "sha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa",
+    "active": [
+      {
+        "packId": "macro-capital-analyst",
+        "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+        "version": "2.3.0"
+      },
+      {
+        "packId": "phase2-dep-b",
+        "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+        "version": "2.0.0"
+      },
+      {
+        "packId": "phase2-dep-a",
+        "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+        "version": "2.0.0"
+      }
+    ]
+  },
+  "attempts": [
+    {
+      "label": "update_enable",
+      "request": {
+        "operationKey": "t25-A-block-1-update_enable",
+        "expectedGeneration": 19,
+        "kind": "update_enable",
+        "releaseId": "d0d46d0e-1a25-4a52-b086-060c5c630583",
+        "target": {
+          "manifestSha256": "0454f9cf332fb0d94f157532c8da8ce95bc0a81e9b7ffd81c458286da5d19c64",
+          "artifactSha256": "00e79871c92d0b6b7da5576d64756d3366bd6538b9b7084455a3452e69c37b69",
+          "contentTreeSha256": "4b359fa7dbe9b5719db3fe89269ccd69f0a004e2d0988f47e5a1f244fd227696"
+        },
+        "connectionRevision": 1
+      },
+      "operationId": "op_017b765c19d4e6188064b688b3d6058cd47a97f30862f69b239592878ee5ab4d",
+      "status": "failed",
+      "errorCode": "DEPENDENCY_BLOCKED",
+      "affectedList": [
+        "phase2-dep-a"
+      ],
+      "affectedListSource": "active phase2-dep-a manifest dependencyLock",
+      "preStateSha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa",
+      "postStateSha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa",
+      "generation": {
+        "before": 19,
+        "after": 19,
+        "unchanged": true
+      },
+      "active": [
+        {
+          "packId": "macro-capital-analyst",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "version": "2.3.0"
+        },
+        {
+          "packId": "phase2-dep-b",
+          "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+          "version": "2.0.0"
+        },
+        {
+          "packId": "phase2-dep-a",
+          "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+          "version": "2.0.0"
+        }
+      ]
+    },
+    {
+      "label": "disable",
+      "request": {
+        "operationKey": "t25-A-block-2-disable",
+        "expectedGeneration": 19,
+        "kind": "disable",
+        "packId": "phase2-dep-b"
+      },
+      "operationId": "op_530f14d31873c0fc01416e9ec230dfd2ddde66f1dc9924e2abef971df098da04",
+      "status": "failed",
+      "errorCode": "DEPENDENCY_BLOCKED",
+      "affectedList": [
+        "phase2-dep-a"
+      ],
+      "affectedListSource": "active phase2-dep-a manifest dependencyLock",
+      "preStateSha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa",
+      "postStateSha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa",
+      "generation": {
+        "before": 19,
+        "after": 19,
+        "unchanged": true
+      },
+      "active": [
+        {
+          "packId": "macro-capital-analyst",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "version": "2.3.0"
+        },
+        {
+          "packId": "phase2-dep-b",
+          "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+          "version": "2.0.0"
+        },
+        {
+          "packId": "phase2-dep-a",
+          "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+          "version": "2.0.0"
+        }
+      ]
+    },
+    {
+      "label": "uninstall",
+      "request": {
+        "operationKey": "t25-A-block-3-uninstall",
+        "expectedGeneration": 19,
+        "kind": "uninstall",
+        "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19"
+      },
+      "operationId": "op_3257e8ad6eb3f8818d1b6cfa131feded2d16fef384c1e8be9ceddbcc76a114d9",
+      "status": "failed",
+      "errorCode": "RELEASE_ACTIVE",
+      "affectedList": [
+        "phase2-dep-a"
+      ],
+      "affectedListSource": "active phase2-dep-a manifest dependencyLock",
+      "preStateSha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa",
+      "postStateSha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa",
+      "generation": {
+        "before": 19,
+        "after": 19,
+        "unchanged": true
+      },
+      "active": [
+        {
+          "packId": "macro-capital-analyst",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "version": "2.3.0"
+        },
+        {
+          "packId": "phase2-dep-b",
+          "releaseId": "5cb74a39-0999-4174-8443-e99a5a5a8a19",
+          "version": "2.0.0"
+        },
+        {
+          "packId": "phase2-dep-a",
+          "releaseId": "ce39c201-67b4-43a0-84b0-ea975c2b30a5",
+          "version": "2.0.0"
+        }
+      ]
+    }
+  ],
+  "rollback": {
+    "exercised": false,
+    "reason": "No older locally installed B release exists; update_enable covers the release switch semantics."
+  }
+}

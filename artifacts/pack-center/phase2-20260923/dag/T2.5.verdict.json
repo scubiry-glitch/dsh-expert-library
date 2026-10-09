@@ -1,0 +1,10 @@
+{
+  "node": "T2.5",
+  "passed": true,
+  "reasons": [
+    "isolated V2 fixture was locally validated before publication",
+    "B 1.0.0 and A 1.0.0 were published with an exact fixed dependency lock and independently reviewed",
+    "all dependency-changing B operations were rejected before a generation/state commit and named phase2-dep-a as the affected package",
+    "explicit dependent quiesce enabled B 1.1.0, then A 1.1.0, with macro-capital-analyst preserved on A and B"
+  ]
+}

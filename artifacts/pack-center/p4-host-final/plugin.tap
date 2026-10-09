@@ -1,0 +1,5235 @@
+TAP version 13
+# (node:654222) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: bank-finance pack validates clean with bank-09 + e13-* 江苏银行高层
+ok 1 - bank-finance pack validates clean with bank-09 + e13-* 江苏银行高层
+  ---
+  duration_ms: 43.075983
+  type: 'test'
+  ...
+# Subtest: bank pack declares local 99wiki as its knowledge base
+ok 2 - bank pack declares local 99wiki as its knowledge base
+  ---
+  duration_ms: 10.69866
+  type: 'test'
+  ...
+# Subtest: bank pack bundles both consulting skills with pack-relative roots
+ok 3 - bank pack bundles both consulting skills with pack-relative roots
+  ---
+  duration_ms: 2.505572
+  type: 'test'
+  ...
+# Subtest: bank pack reuses the shared framework B template with bank prefix
+ok 4 - bank pack reuses the shared framework B template with bank prefix
+  ---
+  duration_ms: 3.559298
+  type: 'test'
+  ...
+# Subtest: bank pack carries methodology-distilled gates / method packs / output template (v1.1.0)
+ok 5 - bank pack carries methodology-distilled gates / method packs / output template (v1.1.0)
+  ---
+  duration_ms: 8.713129
+  type: 'test'
+  ...
+# Subtest: bank-09 is merged into the native expert registry (single merge point)
+ok 6 - bank-09 is merged into the native expert registry (single merge point)
+  ---
+  duration_ms: 13.713075
+  type: 'test'
+  ...
+# Subtest: BK registry unaffected: bk-004 and bk-034 still resolve
+ok 7 - BK registry unaffected: bk-004 and bk-034 still resolve
+  ---
+  duration_ms: 0.495704
+  type: 'test'
+  ...
+# Subtest: routeRequest routes 零售金融 to framework B with bank-09 candidate
+ok 8 - routeRequest routes 零售金融 to framework B with bank-09 candidate
+  ---
+  duration_ms: 128.586821
+  type: 'test'
+  ...
+# Subtest: scenarioForTopic resolves bank-retail / bank-strategy
+ok 9 - scenarioForTopic resolves bank-retail / bank-strategy
+  ---
+  duration_ms: 0.731718
+  type: 'test'
+  ...
+# Subtest: zhijian-realestate scenarios do not leak bank scenarios (pack slice)
+ok 10 - zhijian-realestate scenarios do not leak bank scenarios (pack slice)
+  ---
+  duration_ms: 137.688484
+  type: 'test'
+  ...
+# Subtest: pii-redaction blocks mobile / ID / bank-card / account values
+ok 11 - pii-redaction blocks mobile / ID / bank-card / account values
+  ---
+  duration_ms: 24.775926
+  type: 'test'
+  ...
+# Subtest: pii-redaction does not flag aggregates / dates / masked citations
+ok 12 - pii-redaction does not flag aggregates / dates / masked citations
+  ---
+  duration_ms: 1.944728
+  type: 'test'
+  ...
+# (node:654247) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: beike pack validates clean with 13 cross-projected experts
+ok 13 - beike pack validates clean with 13 cross-projected experts
+  ---
+  duration_ms: 100.978295
+  type: 'test'
+  ...
+# Subtest: beike experts claim beike.review and scenarios use one shared roster gate
+ok 14 - beike experts claim beike.review and scenarios use one shared roster gate
+  ---
+  duration_ms: 19.631203
+  type: 'test'
+  ...
+# Subtest: real overlay order preserves beike capabilities and compiles beike-ecosystem
+ok 15 - real overlay order preserves beike capabilities and compiles beike-ecosystem
+  ---
+  duration_ms: 284.417475
+  type: 'test'
+  ...
+# Subtest: beike experts are shared registry entries (no duplicate registration)
+ok 16 - beike experts are shared registry entries (no duplicate registration)
+  ---
+  duration_ms: 0.51157
+  type: 'test'
+  ...
+# Subtest: routeRequest routes 贝壳生态与居住服务 to beike candidates
+ok 17 - routeRequest routes 贝壳生态与居住服务 to beike candidates
+  ---
+  duration_ms: 170.120976
+  type: 'test'
+  ...
+# Subtest: beike pack declares 99wiki knowledge base and internal-only 陶琦
+ok 18 - beike pack declares 99wiki knowledge base and internal-only 陶琦
+  ---
+  duration_ms: 16.389297
+  type: 'test'
+  ...
+# Subtest: pack slices stay clean: beike carries only its own scenarios
+ok 19 - pack slices stay clean: beike carries only its own scenarios
+  ---
+  duration_ms: 50.042206
+  type: 'test'
+  ...
+# (node:654298) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: capabilitySignatureOf is deterministic and namespace-aware
+ok 20 - capabilitySignatureOf is deterministic and namespace-aware
+  ---
+  duration_ms: 3.323901
+  type: 'test'
+  ...
+# Subtest: parseTopicCapability reuses the shared routing table
+ok 21 - parseTopicCapability reuses the shared routing table
+  ---
+  duration_ms: 0.606002
+  type: 'test'
+  ...
+# Subtest: matchExperts ranks bank-09 first for 零售金融 and caps at limit
+ok 22 - matchExperts ranks bank-09 first for 零售金融 and caps at limit
+  ---
+  duration_ms: 33.219146
+  type: 'test'
+  ...
+# Subtest: matchExperts surfaces data+judgment experts for 金融风险
+ok 23 - matchExperts surfaces data+judgment experts for 金融风险
+  ---
+  duration_ms: 3.158133
+  type: 'test'
+  ...
+# Subtest: matchExperts excludes zero-score candidates (no fabricated hits)
+ok 24 - matchExperts excludes zero-score candidates (no fabricated hits)
+  ---
+  duration_ms: 1.974943
+  type: 'test'
+  ...
+# Subtest: mentalModelCatalog aggregates across namespaces deterministically
+ok 25 - mentalModelCatalog aggregates across namespaces deterministically
+  ---
+  duration_ms: 41.206762
+  type: 'test'
+  ...
+# Subtest: findExpertsByMentalModel reverse-lookup (债务-通缩循环 → bk-007)
+ok 26 - findExpertsByMentalModel reverse-lookup (债务-通缩循环 → bk-007)
+  ---
+  duration_ms: 3.403094
+  type: 'test'
+  ...
+# Subtest: stancePairForTopic matches the stance table for 市场是否见底
+ok 27 - stancePairForTopic matches the stance table for 市场是否见底
+  ---
+  duration_ms: 1.107294
+  type: 'test'
+  ...
+# Subtest: stancePairForTopic returns undefined for unmatched topics
+ok 28 - stancePairForTopic returns undefined for unmatched topics
+  ---
+  duration_ms: 0.701419
+  type: 'test'
+  ...
+# Subtest: routeRequest candidates carry version/namespace and capability match fields
+ok 29 - routeRequest candidates carry version/namespace and capability match fields
+  ---
+  duration_ms: 11.29521
+  type: 'test'
+  ...
+# Subtest: routeRequest bk candidates carry bk namespace and version 1.1.0
+ok 30 - routeRequest bk candidates carry bk namespace and version 1.1.0
+  ---
+  duration_ms: 14.448684
+  type: 'test'
+  ...
+# (node:654515) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: clarification set for beike combines common + beike domain questions
+ok 31 - clarification set for beike combines common + beike domain questions
+  ---
+  duration_ms: 3.774163
+  type: 'test'
+  ...
+# Subtest: scenario-level resolution picks the owning pack scope
+ok 32 - scenario-level resolution picks the owning pack scope
+  ---
+  duration_ms: 1.838383
+  type: 'test'
+  ...
+# Subtest: pendingRequiredQuestions lists unanswered required items only
+ok 33 - pendingRequiredQuestions lists unanswered required items only
+  ---
+  duration_ms: 9.046119
+  type: 'test'
+  ...
+# Subtest: answersToRouteContext maps answers into apply-ready params
+ok 34 - answersToRouteContext maps answers into apply-ready params
+  ---
+  duration_ms: 2.844031
+  type: 'test'
+  ...
+# Subtest: registry is deterministic and covers every pack scope
+ok 35 - registry is deterministic and covers every pack scope
+  ---
+  duration_ms: 1.809015
+  type: 'test'
+  ...
+# (node:654529) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: registry ships only read-only never-install datasets
+ok 36 - registry ships only read-only never-install datasets
+  ---
+  duration_ms: 6.719618
+  type: 'test'
+  ...
+# Subtest: datasetDefinition resolves known ids and rejects unknown ones
+ok 37 - datasetDefinition resolves known ids and rejects unknown ones
+  ---
+  duration_ms: 3.095722
+  type: 'test'
+  ...
+# Subtest: resolveDatasetRequest binds the first pinned capability and validates caliber
+ok 38 - resolveDatasetRequest binds the first pinned capability and validates caliber
+  ---
+  duration_ms: 5.94736
+  type: 'test'
+  ...
+# Subtest: resolveDatasetRequest pins versions and rejects unknown datasets without install hints
+ok 39 - resolveDatasetRequest pins versions and rejects unknown datasets without install hints
+  ---
+  duration_ms: 0.325789
+  type: 'test'
+  ...
+# Subtest: datasetRequestSignature is order-insensitive and value-normalized
+ok 40 - datasetRequestSignature is order-insensitive and value-normalized
+  ---
+  duration_ms: 16.497269
+  type: 'test'
+  ...
+# Subtest: validateDatasetProvenance hard-gates source/caliber only (unit is a soft warning)
+ok 41 - validateDatasetProvenance hard-gates source/caliber only (unit is a soft warning)
+  ---
+  duration_ms: 0.489
+  type: 'test'
+  ...
+# Subtest: applyDatasetRequest substitutes the pinned capability and stamps dataset metadata
+ok 42 - applyDatasetRequest substitutes the pinned capability and stamps dataset metadata
+  ---
+  duration_ms: 0.665415
+  type: 'test'
+  ...
+# Subtest: applyDatasetRequest fails closed on contradictions, missing input, and missing ids
+ok 43 - applyDatasetRequest fails closed on contradictions, missing input, and missing ids
+  ---
+  duration_ms: 4.427772
+  type: 'test'
+  ...
+# Subtest: applyDatasetRequest keeps capability-only calls as a compat passthrough
+ok 44 - applyDatasetRequest keeps capability-only calls as a compat passthrough
+  ---
+  duration_ms: 0.684495
+  type: 'test'
+  ...
+# Subtest: dataset call binds the substituted capability at the resolver and stamps result metadata
+ok 45 - dataset call binds the substituted capability at the resolver and stamps result metadata
+  ---
+  duration_ms: 46.78884
+  type: 'test'
+  ...
+# Subtest: dataset call with missing caliber fails hard; missing unit degrades to a warning
+ok 46 - dataset call with missing caliber fails hard; missing unit degrades to a warning
+  ---
+  duration_ms: 18.69861
+  type: 'test'
+  ...
+# Subtest: dataset contract errors fire before the service-availability check (fail closed, no install hint)
+ok 47 - dataset contract errors fire before the service-availability check (fail closed, no install hint)
+  ---
+  duration_ms: 1.335286
+  type: 'test'
+  ...
+# Subtest: calls with neither dataset nor capability fail closed with INPUT_INVALID
+ok 48 - calls with neither dataset nor capability fail closed with INPUT_INVALID
+  ---
+  duration_ms: 5.149529
+  type: 'test'
+  ...
+# (node:654539) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: default path: expert-teams/* events are dropped and counted; a known type appends
+ok 49 - default path: expert-teams/* events are dropped and counted; a known type appends
+  ---
+  duration_ms: 10.922528
+  type: 'test'
+  ...
+# Subtest: drops are counted per type and in total
+ok 50 - drops are counted per type and in total
+  ---
+  duration_ms: 10.388859
+  type: 'test'
+  ...
+# Subtest: resetDroppedSessionEvents clears the counters (test seam)
+ok 51 - resetDroppedSessionEvents clears the counters (test seam)
+  ---
+  duration_ms: 3.908846
+  type: 'test'
+  ...
+# Subtest: a recognized type is appended with its data and never counted as dropped
+ok 52 - a recognized type is appended with its data and never counted as dropped
+  ---
+  duration_ms: 0.467946
+  type: 'test'
+  ...
+# Subtest: an append failure is warned, not counted as a drop, and never throws
+ok 53 - an append failure is warned, not counted as a drop, and never throws
+  ---
+  duration_ms: 0.578566
+  type: 'test'
+  ...
+# Subtest: /audit carries eventsDropped when the resolver is wired
+ok 54 - /audit carries eventsDropped when the resolver is wired
+  ---
+  duration_ms: 12.302554
+  type: 'test'
+  ...
+# Subtest: /audit omits eventsDropped when the resolver is absent (backward compatible)
+ok 55 - /audit omits eventsDropped when the resolver is absent (backward compatible)
+  ---
+  duration_ms: 4.242806
+  type: 'test'
+  ...
+# Subtest: EXPERT_TEAMS_EVENT_TYPES enumerates all nine expert-teams/* event names
+ok 56 - EXPERT_TEAMS_EVENT_TYPES enumerates all nine expert-teams/* event names
+  ---
+  duration_ms: 0.460916
+  type: 'test'
+  ...
+# (node:654548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: wind: cli exists + env key → ready, no network
+ok 57 - wind: cli exists + env key → ready, no network
+  ---
+  duration_ms: 18.391313
+  type: 'test'
+  ...
+# Subtest: wind: key file present counts as keyPresent
+ok 58 - wind: key file present counts as keyPresent
+  ---
+  duration_ms: 0.613459
+  type: 'test'
+  ...
+# Subtest: wind: missing CLI → cliExists false with detail; unregistered without cliPath
+ok 59 - wind: missing CLI → cliExists false with detail; unregistered without cliPath
+  ---
+  duration_ms: 3.420038
+  type: 'test'
+  ...
+# Subtest: wind: no key anywhere → 未配置凭据 detail
+ok 60 - wind: no key anywhere → 未配置凭据 detail
+  ---
+  duration_ms: 0.306694
+  type: 'test'
+  ...
+# Subtest: zyt: 2xx identity → reachable + latency + tenant/dataView parsed
+ok 61 - zyt: 2xx identity → reachable + latency + tenant/dataView parsed
+  ---
+  duration_ms: 14.083142
+  type: 'test'
+  ...
+# Subtest: zyt: key from config file JSON ({apiKey})
+ok 62 - zyt: key from config file JSON ({apiKey})
+  ---
+  duration_ms: 0.562327
+  type: 'test'
+  ...
+# Subtest: zyt: 401 → reachable false, body never echoed in detail
+ok 63 - zyt: 401 → reachable false, body never echoed in detail
+  ---
+  duration_ms: 2.775363
+  type: 'test'
+  ...
+# Subtest: zyt: no key → no socket, keyPresent false
+ok 64 - zyt: no key → no socket, keyPresent false
+  ---
+  duration_ms: 0.345427
+  type: 'test'
+  ...
+# Subtest: zyt: timeout → reachable false with 超时 detail
+ok 65 - zyt: timeout → reachable false with 超时 detail
+  ---
+  duration_ms: 64.784684
+  type: 'test'
+  ...
+# Subtest: beike: SSE initialize → reachable + serverInfo parsed from first data line
+ok 66 - beike: SSE initialize → reachable + serverInfo parsed from first data line
+  ---
+  duration_ms: 29.568349
+  type: 'test'
+  ...
+# Subtest: beike: plain JSON handshake also parses; key from CLI key file
+ok 67 - beike: plain JSON handshake also parses; key from CLI key file
+  ---
+  duration_ms: 2.910642
+  type: 'test'
+  ...
+# Subtest: beike: transport error → reachable false with message detail
+ok 68 - beike: transport error → reachable false with message detail
+  ---
+  duration_ms: 2.8315
+  type: 'test'
+  ...
+# Subtest: beike: home key file resolves when env absent
+ok 69 - beike: home key file resolves when env absent
+  ---
+  duration_ms: 0.311875
+  type: 'test'
+  ...
+# Subtest: firstSseData returns the first data line, or the body itself
+ok 70 - firstSseData returns the first data line, or the body itself
+  ---
+  duration_ms: 0.191772
+  type: 'test'
+  ...
+# Subtest: single-target probe: only that provider goes to the network, packs empty
+ok 71 - single-target probe: only that provider goes to the network, packs empty
+  ---
+  duration_ms: 0.658689
+  type: 'test'
+  ...
+# Subtest: cache: concurrent runs share one task; fresh within TTL; re-run after TTL
+ok 72 - cache: concurrent runs share one task; fresh within TTL; re-run after TTL
+  ---
+  duration_ms: 2.855599
+  type: 'test'
+  ...
+# Subtest: cache: rejected runs are evicted, not served again
+ok 73 - cache: rejected runs are evicted, not served again
+  ---
+  duration_ms: 10.015817
+  type: 'test'
+  ...
+# Subtest: handler: 200 JSON for a valid probe; 400 for unknown probe
+ok 74 - handler: 200 JSON for a valid probe; 400 for unknown probe
+  ---
+  duration_ms: 1.314962
+  type: 'test'
+  ...
+# Subtest: handler: default probe is all; cache makes the second call skip resolve
+ok 75 - handler: default probe is all; cache makes the second call skip resolve
+  ---
+  duration_ms: 2.79263
+  type: 'test'
+  ...
+# Subtest: secret scan: fake keys never appear in the serialized health response
+ok 76 - secret scan: fake keys never appear in the serialized health response
+  ---
+  duration_ms: 107.664988
+  type: 'test'
+  ...
+# Subtest: packs: clean drift when the tree matches the recorded digest
+ok 77 - packs: clean drift when the tree matches the recorded digest
+  ---
+  duration_ms: 70.830503
+  type: 'test'
+  ...
+# Subtest: packs: dirty drift when content changed after generation
+ok 78 - packs: dirty drift when content changed after generation
+  ---
+  duration_ms: 67.066028
+  type: 'test'
+  ...
+# Subtest: packs: unknown drift without a reference hash; tampering inside generated/ is not content drift
+ok 79 - packs: unknown drift without a reference hash; tampering inside generated/ is not content drift
+  ---
+  duration_ms: 270.139423
+  type: 'test'
+  ...
+# Subtest: packs: runHealthProbe lists every pack dir for probe=packs
+ok 80 - packs: runHealthProbe lists every pack dir for probe=packs
+  ---
+  duration_ms: 58.400856
+  type: 'test'
+  ...
+# (node:654562) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: authorityHostname strips the port, lowercases, and unwraps IPv6 brackets
+ok 81 - authorityHostname strips the port, lowercases, and unwraps IPv6 brackets
+  ---
+  duration_ms: 3.225942
+  type: 'test'
+  ...
+# Subtest: isLoopbackAddress accepts the whole 127/8 block and IPv4-mapped forms
+ok 82 - isLoopbackAddress accepts the whole 127/8 block and IPv4-mapped forms
+  ---
+  duration_ms: 0.815578
+  type: 'test'
+  ...
+# Subtest: a plain loopback request is admitted
+ok 83 - a plain loopback request is admitted
+  ---
+  duration_ms: 0.472391
+  type: 'test'
+  ...
+# Subtest: localhost and bracketed IPv6 loopback are admitted too
+ok 84 - localhost and bracketed IPv6 loopback are admitted too
+  ---
+  duration_ms: 10.916268
+  type: 'test'
+  ...
+# Subtest: a forwarded request is refused even though its socket is loopback
+ok 85 - a forwarded request is refused even though its socket is loopback
+  ---
+  duration_ms: 10.843436
+  type: 'test'
+  ...
+# Subtest: a forwarded request is refused even when its authority claims loopback
+ok 86 - a forwarded request is refused even when its authority claims loopback
+  ---
+  duration_ms: 0.449047
+  type: 'test'
+  ...
+# Subtest: the public authority is refused without a token
+ok 87 - the public authority is refused without a token
+  ---
+  duration_ms: 0.411517
+  type: 'test'
+  ...
+# Subtest: a loopback authority on a non-loopback socket is refused
+ok 88 - a loopback authority on a non-loopback socket is refused
+  ---
+  duration_ms: 13.567016
+  type: 'test'
+  ...
+# Subtest: a valid token admits a non-loopback request
+ok 89 - a valid token admits a non-loopback request
+  ---
+  duration_ms: 0.978316
+  type: 'test'
+  ...
+# Subtest: an Authorization: Bearer token is accepted as well
+ok 90 - an Authorization: Bearer token is accepted as well
+  ---
+  duration_ms: 22.196005
+  type: 'test'
+  ...
+# Subtest: a forwarded request carrying the token is admitted as a remote operator
+ok 91 - a forwarded request carrying the token is admitted as a remote operator
+  ---
+  duration_ms: 0.51505
+  type: 'test'
+  ...
+# Subtest: a wrong token is refused, including a same-prefix and an empty one
+ok 92 - a wrong token is refused, including a same-prefix and an empty one
+  ---
+  duration_ms: 0.385628
+  type: 'test'
+  ...
+# Subtest: a token presentation that is missing entirely is refused
+ok 93 - a token presentation that is missing entirely is refused
+  ---
+  duration_ms: 8.156791
+  type: 'test'
+  ...
+# Subtest: an unset or blank token leaves the surface loopback-only
+ok 94 - an unset or blank token leaves the surface loopback-only
+  ---
+  duration_ms: 0.350112
+  type: 'test'
+  ...
+# Subtest: resolveManageToken prefers the environment over config and trims
+ok 95 - resolveManageToken prefers the environment over config and trims
+  ---
+  duration_ms: 10.093992
+  type: 'test'
+  ...
+# (node:654606) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: host connection and catalog are metadata projections; inputs are captured before awaiting
+ok 96 - host connection and catalog are metadata projections; inputs are captured before awaiting
+  ---
+  duration_ms: 593.561348
+  type: 'test'
+  ...
+# Subtest: bad pin syntax, private key, revision and reserved identifiers fail before one-time exchange
+ok 97 - bad pin syntax, private key, revision and reserved identifiers fail before one-time exchange
+  ---
+  duration_ms: 74.169239
+  type: 'test'
+  ...
+# Subtest: failed rebind leaves previous credential and pins byte-for-byte; no automatic exchange retry
+ok 98 - failed rebind leaves previous credential and pins byte-for-byte; no automatic exchange retry
+  ---
+  duration_ms: 464.54502
+  type: 'test'
+  ...
+# Subtest: key rotation retains historical offline pins and refuses reassignment before exchange
+ok 99 - key rotation retains historical offline pins and refuses reassignment before exchange
+  ---
+  duration_ms: 813.061977
+  type: 'test'
+  ...
+# Subtest: two simultaneous binds have one CAS winner; losing credential is explicitly unconfirmed
+ok 100 - two simultaneous binds have one CAS winner; losing credential is explicitly unconfirmed
+  ---
+  duration_ms: 548.011378
+  type: 'test'
+  ...
+# Subtest: new private binding cannot adopt an existing inventory or orphaned inventory
+ok 101 - new private binding cannot adopt an existing inventory or orphaned inventory
+  ---
+  duration_ms: 166.762891
+  type: 'test'
+  ...
+# Subtest: storage layout binds one private connection directory to exactly one inventory
+ok 102 - storage layout binds one private connection directory to exactly one inventory
+  ---
+  duration_ms: 162.531287
+  type: 'test'
+  ...
+# Subtest: configured origin change never sends the old credential to the replacement origin
+ok 103 - configured origin change never sends the old credential to the replacement origin
+  ---
+  duration_ms: 946.737696
+  type: 'test'
+  ...
+# Subtest: unsupported catalog metadata remains visible but cannot grant runnable inventory
+ok 104 - unsupported catalog metadata remains visible but cannot grant runnable inventory
+  ---
+  duration_ms: 502.207676
+  type: 'test'
+  ...
+# Subtest: unsigned manifest is refused before archive download and never changes local state
+ok 105 - unsigned manifest is refused before archive download and never changes local state
+  ---
+  duration_ms: 509.732442
+  type: 'test'
+  ...
+# Subtest: arbitrary artifact URL is refused before archive download and never changes local state
+ok 106 - arbitrary artifact URL is refused before archive download and never changes local state
+  ---
+  duration_ms: 691.653321
+  type: 'test'
+  ...
+# Subtest: relative artifact redirect is refused before archive download and never changes local state
+ok 107 - relative artifact redirect is refused before archive download and never changes local state
+  ---
+  duration_ms: 573.05628
+  type: 'test'
+  ...
+# Subtest: expired grant is refused before archive download and never changes local state
+ok 108 - expired grant is refused before archive download and never changes local state
+  ---
+  duration_ms: 471.997347
+  type: 'test'
+  ...
+# Subtest: oversized or incompatible signed artifact is refused before downloading bytes
+ok 109 - oversized or incompatible signed artifact is refused before downloading bytes
+  ---
+  duration_ms: 486.875297
+  type: 'test'
+  ...
+# Subtest: archive corruption cleans private staging and preserves previous active state
+ok 110 - archive corruption cleans private staging and preserves previous active state
+  ---
+  duration_ms: 2582.87946
+  type: 'test'
+  ...
+# Subtest: unbind during artifact transfer fences commit and preserves offline trust
+ok 111 - unbind during artifact transfer fences commit and preserves offline trust
+  ---
+  duration_ms: 989.184886
+  type: 'test'
+  ...
+# Subtest: cancellation before request and during transfer never commits an install
+ok 112 - cancellation before request and during transfer never commits an install
+  ---
+  duration_ms: 410.473432
+  type: 'test'
+  ...
+# Subtest: stale generation, activation flags and traversal inputs fail before remote grant
+ok 113 - stale generation, activation flags and traversal inputs fail before remote grant
+  ---
+  duration_ms: 513.038477
+  type: 'test'
+  ...
+# Subtest: signed detail must match its approved report; unavailable diff is not invented as empty
+ok 114 - signed detail must match its approved report; unavailable diff is not invented as empty
+  ---
+  duration_ms: 407.031144
+  type: 'test'
+  ...
+# Subtest: committed cache-only operation replays offline after unbind without new grant or download
+ok 115 - committed cache-only operation replays offline after unbind without new grant or download
+  ---
+  duration_ms: 1747.633719
+  type: 'test'
+  ...
+# Subtest: install receipt is distinct from enable/other operations, even for the same release
+ok 116 - install receipt is distinct from enable/other operations, even for the same release
+  ---
+  duration_ms: 1934.768209
+  type: 'test'
+  ...
+# Subtest: local errors redact credential text and filesystem paths
+ok 117 - local errors redact credential text and filesystem paths
+  ---
+  duration_ms: 555.849632
+  type: 'test'
+  ...
+# (node:654875) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: private connection read is side-effect free; atomic write creates 0700 directories and 0600 files
+ok 118 - private connection read is side-effect free; atomic write creates 0700 directories and 0600 files
+  ---
+  duration_ms: 546.520018
+  type: 'test'
+  ...
+# Subtest: public view explicitly projects metadata and SPKI hashes, never credentials, key text, or paths
+ok 119 - public view explicitly projects metadata and SPKI hashes, never credentials, key text, or paths
+  ---
+  duration_ms: 218.907765
+  type: 'test'
+  ...
+# Subtest: local unbind preserves offline identity and signing pins and advances CAS revision
+ok 120 - local unbind preserves offline identity and signing pins and advances CAS revision
+  ---
+  duration_ms: 1284.320333
+  type: 'test'
+  ...
+# Subtest: strict input rejects extra fields, accessors, proxies, invalid ids, tokens, timestamps, and key maps before writes
+ok 121 - strict input rejects extra fields, accessors, proxies, invalid ids, tokens, timestamps, and key maps before writes
+  ---
+  duration_ms: 78.520522
+  type: 'test'
+  ...
+# Subtest: origin accepts only canonical HTTPS origins or explicitly enabled exact HTTP loopback
+ok 122 - origin accepts only canonical HTTPS origins or explicitly enabled exact HTTP loopback
+  ---
+  duration_ms: 144.194291
+  type: 'test'
+  ...
+# Subtest: only Ed25519 SPKI public PEM is accepted, normalized, and hashed by DER bytes
+ok 123 - only Ed25519 SPKI public PEM is accepted, normalized, and hashed by DER bytes
+  ---
+  duration_ms: 18.506688
+  type: 'test'
+  ...
+# Subtest: expired credentials remain readable for management; persistence does not silently renew or authenticate them
+ok 124 - expired credentials remain readable for management; persistence does not silently renew or authenticate them
+  ---
+  duration_ms: 87.252479
+  type: 'test'
+  ...
+# Subtest: broad or relative roots, unsafe directory modes, symlink roots and parent aliases fail without chmod
+ok 125 - broad or relative roots, unsafe directory modes, symlink roots and parent aliases fail without chmod
+  ---
+  duration_ms: 12.30624
+  type: 'test'
+  ...
+# Subtest: private document rejects symlinks, hardlinks, nonregular files and insecure file modes while preserving targets
+ok 126 - private document rejects symlinks, hardlinks, nonregular files and insecure file modes while preserving targets
+  ---
+  duration_ms: 1431.620869
+  type: 'test'
+  ...
+# Subtest: foreign-owner private directories and files are refused when ownership changes are supported
+ok 127 - foreign-owner private directories and files are refused when ownership changes are supported
+  ---
+  duration_ms: 194.825885
+  type: 'test'
+  ...
+# Subtest: lock file cannot alias other files or use insecure permissions
+ok 128 - lock file cannot alias other files or use insecure permissions
+  ---
+  duration_ms: 70.817415
+  type: 'test'
+  ...
+# Subtest: malformed, oversized, noncanonical, duplicate-key, unknown-schema documents are preserved and never reset
+ok 129 - malformed, oversized, noncanonical, duplicate-key, unknown-schema documents are preserved and never reset
+  ---
+  duration_ms: 1452.453397
+  type: 'test'
+  ...
+# Subtest: input is detached before lock acquisition and returned values cannot mutate stored credentials
+ok 130 - input is detached before lock acquisition and returned values cannot mutate stored credentials
+  ---
+  duration_ms: 131.89018
+  type: 'test'
+  ...
+# Subtest: cross-process revision CAS admits exactly one writer and does not expose credentials to subprocess output
+ok 131 - cross-process revision CAS admits exactly one writer and does not expose credentials to subprocess output
+  ---
+  duration_ms: 1740.896471
+  type: 'test'
+  ...
+# Subtest: live lock is never stolen on timeout; terminating its holder releases the kernel lock and preserves old binding
+ok 132 - live lock is never stolen on timeout; terminating its holder releases the kernel lock and preserves old binding
+  ---
+  duration_ms: 558.767083
+  type: 'test'
+  ...
+# Subtest: failed validation, CAS conflict and corruption errors omit credentials, public keys, raw JSON and local paths
+ok 133 - failed validation, CAS conflict and corruption errors omit credentials, public keys, raw JSON and local paths
+  ---
+  duration_ms: 258.424505
+  type: 'test'
+  ...
+# Subtest: withRevision holds the connection lock until host work finishes; other instances wait to unbind or replace credentials
+ok 134 - withRevision holds the connection lock until host work finishes; other instances wait to unbind or replace credentials
+  ---
+  duration_ms: 580.880911
+  type: 'test'
+  ...
+# Subtest: withRevision propagates callback failure unchanged and releases its lock without changing credentials
+ok 135 - withRevision propagates callback failure unchanged and releases its lock without changing credentials
+  ---
+  duration_ms: 422.063555
+  type: 'test'
+  ...
+# Subtest: withRevision rechecks revision under lock and never invokes stale or invalid callbacks
+ok 136 - withRevision rechecks revision under lock and never invokes stale or invalid callbacks
+  ---
+  duration_ms: 346.443408
+  type: 'test'
+  ...
+# (node:655609) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: empty state is read without writes; explicit initialization is durable and idempotent
+ok 137 - empty state is read without writes; explicit initialization is durable and idempotent
+  ---
+  duration_ms: 461.147665
+  type: 'test'
+  ...
+# Subtest: install is atomic with its operation and does not implicitly activate
+ok 138 - install is atomic with its operation and does not implicitly activate
+  ---
+  duration_ms: 374.056897
+  type: 'test'
+  ...
+# Subtest: idempotent retries survive later commits and canonical key order, but key reuse is refused
+ok 139 - idempotent retries survive later commits and canonical key order, but key reuse is refused
+  ---
+  duration_ms: 464.307135
+  type: 'test'
+  ...
+# Subtest: concurrent generation compare-and-swap admits exactly one writer
+ok 140 - concurrent generation compare-and-swap admits exactly one writer
+  ---
+  duration_ms: 300.362652
+  type: 'test'
+  ...
+# Subtest: mutation is isolated and invalid mapping or metadata rewrite cannot touch durable state
+ok 141 - mutation is isolated and invalid mapping or metadata rewrite cannot touch durable state
+  ---
+  duration_ms: 742.941591
+  type: 'test'
+  ...
+# Subtest: request hashing refuses undefined, sparse arrays, NaN, cycles, and prototype-bearing values
+ok 142 - request hashing refuses undefined, sparse arrays, NaN, cycles, and prototype-bearing values
+  ---
+  duration_ms: 15.923639
+  type: 'test'
+  ...
+# Subtest: canonical request hashing refuses ignored decorations and accessors without invoking them
+ok 143 - canonical request hashing refuses ignored decorations and accessors without invoking them
+  ---
+  duration_ms: 19.428168
+  type: 'test'
+  ...
+# Subtest: transaction captures immutable request identity before awaiting a lock
+ok 144 - transaction captures immutable request identity before awaiting a lock
+  ---
+  duration_ms: 269.708014
+  type: 'test'
+  ...
+# Subtest: retained mutation references and getters cannot alter the verified commit snapshot
+ok 145 - retained mutation references and getters cannot alter the verified commit snapshot
+  ---
+  duration_ms: 502.20024
+  type: 'test'
+  ...
+# Subtest: invalid requests fail before creating files and reject prototype operation keys
+ok 146 - invalid requests fail before creating files and reject prototype operation keys
+  ---
+  duration_ms: 23.936796
+  type: 'test'
+  ...
+# Subtest: corrupt state is preserved and never interpreted as empty, even with a valid previous file
+ok 147 - corrupt state is preserved and never interpreted as empty, even with a valid previous file
+  ---
+  duration_ms: 291.871233
+  type: 'test'
+  ...
+# Subtest: recovery requires snapshot integrity callback and remains read-only with corrupt bytes retained
+ok 148 - recovery requires snapshot integrity callback and remains read-only with corrupt bytes retained
+  ---
+  duration_ms: 477.07583
+  type: 'test'
+  ...
+# Subtest: unsupported schema refuses fallback instead of silently downgrading
+ok 149 - unsupported schema refuses fallback instead of silently downgrading
+  ---
+  duration_ms: 72.641815
+  type: 'test'
+  ...
+# Subtest: missing state with previous state or inventory fails closed; verified previous state is only read-only
+ok 150 - missing state with previous state or inventory fails closed; verified previous state is only read-only
+  ---
+  duration_ms: 651.344322
+  type: 'test'
+  ...
+# Subtest: recovery rejects damaged previous state and retains both files
+ok 151 - recovery rejects damaged previous state and retains both files
+  ---
+  duration_ms: 63.150945
+  type: 'test'
+  ...
+# Subtest: fault at before-prev-write preserves old state or resolves committed operation by identical retry
+ok 152 - fault at before-prev-write preserves old state or resolves committed operation by identical retry
+  ---
+  duration_ms: 374.369627
+  type: 'test'
+  ...
+# Subtest: fault at after-prev-write preserves old state or resolves committed operation by identical retry
+ok 153 - fault at after-prev-write preserves old state or resolves committed operation by identical retry
+  ---
+  duration_ms: 229.825498
+  type: 'test'
+  ...
+# Subtest: fault at before-state-rename preserves old state or resolves committed operation by identical retry
+ok 154 - fault at before-state-rename preserves old state or resolves committed operation by identical retry
+  ---
+  duration_ms: 416.417228
+  type: 'test'
+  ...
+# Subtest: fault at after-state-rename preserves old state or resolves committed operation by identical retry
+ok 155 - fault at after-state-rename preserves old state or resolves committed operation by identical retry
+  ---
+  duration_ms: 376.959714
+  type: 'test'
+  ...
+# Subtest: fault at after-state-sync preserves old state or resolves committed operation by identical retry
+ok 156 - fault at after-state-sync preserves old state or resolves committed operation by identical retry
+  ---
+  duration_ms: 229.930563
+  type: 'test'
+  ...
+# Subtest: first transaction precommit crash leaves durable initial state and can retry
+ok 157 - first transaction precommit crash leaves durable initial state and can retry
+  ---
+  duration_ms: 165.906958
+  type: 'test'
+  ...
+# Subtest: different processes share one compare-and-swap lock
+ok 158 - different processes share one compare-and-swap lock
+  ---
+  duration_ms: 1095.133647
+  type: 'test'
+  ...
+# Subtest: simultaneous identical operations from different processes mutate once and replay once
+ok 159 - simultaneous identical operations from different processes mutate once and replay once
+  ---
+  duration_ms: 1138.368371
+  type: 'test'
+  ...
+# Subtest: a live competing writer produces a bounded LOCK_TIMEOUT without state mutation
+ok 160 - a live competing writer produces a bounded LOCK_TIMEOUT without state mutation
+  ---
+  duration_ms: 1214.262963
+  type: 'test'
+  ...
+# Subtest: SIGKILL of writer releases kernel lock automatically and preserves old state
+ok 161 - SIGKILL of writer releases kernel lock automatically and preserves old state
+  ---
+  duration_ms: 777.369609
+  type: 'test'
+  ...
+# Subtest: real process SIGKILL at before-prev-write leaves an old-or-new state and retry resolves once
+ok 162 - real process SIGKILL at before-prev-write leaves an old-or-new state and retry resolves once
+  ---
+  duration_ms: 1188.957615
+  type: 'test'
+  ...
+# Subtest: real process SIGKILL at after-prev-write leaves an old-or-new state and retry resolves once
+ok 163 - real process SIGKILL at after-prev-write leaves an old-or-new state and retry resolves once
+  ---
+  duration_ms: 795.850554
+  type: 'test'
+  ...
+# Subtest: real process SIGKILL at before-state-rename leaves an old-or-new state and retry resolves once
+ok 164 - real process SIGKILL at before-state-rename leaves an old-or-new state and retry resolves once
+  ---
+  duration_ms: 1140.115558
+  type: 'test'
+  ...
+# Subtest: real process SIGKILL at after-state-rename leaves an old-or-new state and retry resolves once
+ok 165 - real process SIGKILL at after-state-rename leaves an old-or-new state and retry resolves once
+  ---
+  duration_ms: 1018.932505
+  type: 'test'
+  ...
+# Subtest: real process SIGKILL at after-state-sync leaves an old-or-new state and retry resolves once
+ok 166 - real process SIGKILL at after-state-sync leaves an old-or-new state and retry resolves once
+  ---
+  duration_ms: 849.250499
+  type: 'test'
+  ...
+# Subtest: unexpected acquisition-child exit fails closed while the real parent-fd holder retains its lock
+ok 167 - unexpected acquisition-child exit fails closed while the real parent-fd holder retains its lock
+  ---
+  duration_ms: 1541.352688
+  type: 'test'
+  ...
+# Subtest: lock refuses symbolic/hard links, non-files, and aliased roots without deleting lock material
+ok 168 - lock refuses symbolic/hard links, non-files, and aliased roots without deleting lock material
+  ---
+  duration_ms: 179.639726
+  type: 'test'
+  ...
+# Subtest: generation/history and exact legacy path invariants are checked
+ok 169 - generation/history and exact legacy path invariants are checked
+  ---
+  duration_ms: 43.518119
+  type: 'test'
+  ...
+# Subtest: accepted release receipts survive uninstall and cannot be removed, rewritten, or rebound
+ok 170 - accepted release receipts survive uninstall and cannot be removed, rewritten, or rebound
+  ---
+  duration_ms: 516.728438
+  type: 'test'
+  ...
+# (node:656162) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: origin accepts explicit HTTPS centers and only explicit canonical test-loopback HTTP
+ok 171 - origin accepts explicit HTTPS centers and only explicit canonical test-loopback HTTP
+  ---
+  duration_ms: 14.614494
+  type: 'test'
+  ...
+# Subtest: transport bounds configuration and refuses production test CA overrides
+ok 172 - transport bounds configuration and refuses production test CA overrides
+  ---
+  duration_ms: 1.990797
+  type: 'test'
+  ...
+# Subtest: host JSON exchange sends no browser identity headers and never carries the binding code in URL
+ok 173 - host JSON exchange sends no browser identity headers and never carries the binding code in URL
+  ---
+  duration_ms: 190.522624
+  type: 'test'
+  ...
+# Subtest: catalog and grant requests carry only Bearer host authority; Set-Cookie is never replayed
+ok 174 - catalog and grant requests carry only Bearer host authority; Set-Cookie is never replayed
+  ---
+  duration_ms: 25.262878
+  type: 'test'
+  ...
+# Subtest: invalid paths, unknown operations, query credentials, and header injection fail before any network call
+ok 175 - invalid paths, unknown operations, query credentials, and header injection fail before any network call
+  ---
+  duration_ms: 9.445178
+  type: 'test'
+  ...
+# Subtest: redirects are rejected without leaking credentials or performing a second request
+ok 176 - redirects are rejected without leaking credentials or performing a second request
+  ---
+  duration_ms: 8.645357
+  type: 'test'
+  ...
+# Subtest: JSON requires UTF-8 application/json, non-scalar JSON, and uncompressed complete responses
+ok 177 - JSON requires UTF-8 application/json, non-scalar JSON, and uncompressed complete responses
+  ---
+  duration_ms: 57.274666
+  type: 'test'
+  ...
+# Subtest: JSON size limits stop declared oversized and chunked oversized bodies
+ok 178 - JSON size limits stop declared oversized and chunked oversized bodies
+  ---
+  duration_ms: 23.009217
+  type: 'test'
+  ...
+# Subtest: truncated JSON and disconnected sockets do not retry or expose raw network exceptions
+ok 179 - truncated JSON and disconnected sockets do not retry or expose raw network exceptions
+  ---
+  duration_ms: 13.310656
+  type: 'test'
+  ...
+# Subtest: HTTP errors preserve only a fixed allowlisted code and safe status, never remote message/code text
+ok 180 - HTTP errors preserve only a fixed allowlisted code and safe status, never remote message/code text
+  ---
+  duration_ms: 9.069484
+  type: 'test'
+  ...
+# Subtest: one total JSON timeout includes delayed headers and an endlessly trickling body
+ok 181 - one total JSON timeout includes delayed headers and an endlessly trickling body
+  ---
+  duration_ms: 505.624342
+  type: 'test'
+  ...
+# Subtest: JSON cancellation covers pre-aborted and active requests without retries
+ok 182 - JSON cancellation covers pre-aborted and active requests without retries
+  ---
+  duration_ms: 15.236699
+  type: 'test'
+  ...
+# Subtest: HTTP(S) proxy environment variables are ignored; only the explicitly configured center receives authority
+ok 183 - HTTP(S) proxy environment variables are ignored; only the explicitly configured center receives authority
+  ---
+  duration_ms: 23.237858
+  type: 'test'
+  ...
+# (node:656162) Warning: Setting the NODE_TLS_REJECT_UNAUTHORIZED environment variable to '0' makes TLS connections and HTTPS requests insecure by disabling certificate verification.
+# Subtest: real HTTPS verifies certificate trust and hostname, including when global TLS verification is disabled
+ok 184 - real HTTPS verifies certificate trust and hostname, including when global TLS verification is disabled
+  ---
+  duration_ms: 7854.999085
+  type: 'test'
+  ...
+# Subtest: download streams exact approved bytes into a new mode-0600 file with host headers only
+ok 185 - download streams exact approved bytes into a new mode-0600 file with host headers only
+  ---
+  duration_ms: 218.470998
+  type: 'test'
+  ...
+# Subtest: multi-chunk download verifies the original approved identity despite caller mutation
+ok 186 - multi-chunk download verifies the original approved identity despite caller mutation
+  ---
+  duration_ms: 532.287528
+  type: 'test'
+  ...
+# Subtest: download never overwrites or removes an existing file, symlink, or symlink-parent target
+ok 187 - download never overwrites or removes an existing file, symlink, or symlink-parent target
+  ---
+  duration_ms: 298.205019
+  type: 'test'
+  ...
+# Subtest: download refuses invalid metadata, limits, routing, and grants before writing or networking
+ok 188 - download refuses invalid metadata, limits, routing, and grants before writing or networking
+  ---
+  duration_ms: 113.728167
+  type: 'test'
+  ...
+# Subtest: download digest mismatch and declared length mismatch clean up only the new destination
+ok 189 - download digest mismatch and declared length mismatch clean up only the new destination
+  ---
+  duration_ms: 207.767558
+  type: 'test'
+  ...
+# Subtest: download refuses compression, partial responses, non-tar content, redirects and chunked unknown lengths
+ok 190 - download refuses compression, partial responses, non-tar content, redirects and chunked unknown lengths
+  ---
+  duration_ms: 350.106139
+  type: 'test'
+  ...
+# Subtest: truncated download cleans up after the body reader stops and never retries
+ok 191 - truncated download cleans up after the body reader stops and never retries
+  ---
+  duration_ms: 49.93662
+  type: 'test'
+  ...
+# Subtest: download total timeout and cancellation remove partial files without exposing AbortSignal reasons
+ok 192 - download total timeout and cancellation remove partial files without exposing AbortSignal reasons
+  ---
+  duration_ms: 372.139122
+  type: 'test'
+  ...
+# Subtest: failed download cleanup does not delete a substituted destination owned by another actor
+ok 193 - failed download cleanup does not delete a substituted destination owned by another actor
+  ---
+  duration_ms: 88.785301
+  type: 'test'
+  ...
+# (node:656433) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: copies a real V2 tree durably; source and state remain byte-for-byte unchanged
+ok 194 - copies a real V2 tree durably; source and state remain byte-for-byte unchanged
+  ---
+  duration_ms: 1461.340052
+  type: 'test'
+  ...
+# Subtest: non-SemVer legacy versions are preserved verbatim rather than forged as center versions
+ok 195 - non-SemVer legacy versions are preserved verbatim rather than forged as center versions
+  ---
+  duration_ms: 506.451875
+  type: 'test'
+  ...
+# Subtest: two independent vendor paths with identical content reuse one backup and retain exact path identities
+ok 196 - two independent vendor paths with identical content reuse one backup and retain exact path identities
+  ---
+  duration_ms: 1000.538875
+  type: 'test'
+  ...
+# Subtest: source deletion after takeover does not invalidate the isolated backup; restoration fails
+ok 197 - source deletion after takeover does not invalidate the isolated backup; restoration fails
+  ---
+  duration_ms: 813.814628
+  type: 'test'
+  ...
+# Subtest: different versions of the same pack at two vendor paths keep independent content addresses
+ok 198 - different versions of the same pack at two vendor paths keep independent content addresses
+  ---
+  duration_ms: 1149.430502
+  type: 'test'
+  ...
+# Subtest: tree-identical sources with different empty directories reuse the existing archive receipt
+ok 199 - tree-identical sources with different empty directories reuse the existing archive receipt
+  ---
+  duration_ms: 1397.285353
+  type: 'test'
+  ...
+# Subtest: tampered backup content is rejected and never silently restored from the old source
+ok 200 - tampered backup content is rejected and never silently restored from the old source
+  ---
+  duration_ms: 973.028624
+  type: 'test'
+  ...
+# Subtest: archive byte tampering is detected independently of unchanged extracted files
+ok 201 - archive byte tampering is detected independently of unchanged extracted files
+  ---
+  duration_ms: 448.020241
+  type: 'test'
+  ...
+# Subtest: receipt edits, forged center provenance, and state identity edits are rejected
+ok 202 - receipt edits, forged center provenance, and state identity edits are rejected
+  ---
+  duration_ms: 648.78037
+  type: 'test'
+  ...
+# Subtest: rejects record and suppression path escape, source/root overlap, and nonnormalized paths
+ok 203 - rejects record and suppression path escape, source/root overlap, and nonnormalized paths
+  ---
+  duration_ms: 634.081292
+  type: 'test'
+  ...
+# Subtest: source and backup symlinks/hardlinks are refused without deleting targets
+ok 204 - source and backup symlinks/hardlinks are refused without deleting targets
+  ---
+  duration_ms: 1006.481409
+  type: 'test'
+  ...
+# Subtest: invalid V2 sources and missing/corrupt state fail without source mutation or committed backups
+ok 205 - invalid V2 sources and missing/corrupt state fail without source mutation or committed backups
+  ---
+  duration_ms: 597.206216
+  type: 'test'
+  ...
+# Subtest: scripts remain passive bytes and retained content includes generated and nested resources
+ok 206 - scripts remain passive bytes and retained content includes generated and nested resources
+  ---
+  duration_ms: 872.47776
+  type: 'test'
+  ...
+# (node:656803) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: without a provider the bridge preserves legacy overlay behavior
+ok 207 - without a provider the bridge preserves legacy overlay behavior
+  ---
+  duration_ms: 528.094717
+  type: 'test'
+  ...
+# Subtest: each managed call reads local state and retains a frozen old result after generation change
+ok 208 - each managed call reads local state and retains a frozen old result after generation change
+  ---
+  duration_ms: 422.887729
+  type: 'test'
+  ...
+# Subtest: empty active state does not discover installed candidates and provider errors are not hidden
+ok 209 - empty active state does not discover installed candidates and provider errors are not hidden
+  ---
+  duration_ms: 81.324562
+  type: 'test'
+  ...
+# Subtest: selection, base, and provider are captured before awaiting the state read
+ok 210 - selection, base, and provider are captured before awaiting the state read
+  ---
+  duration_ms: 277.924166
+  type: 'test'
+  ...
+# Subtest: managed snapshots reject non-JSON accessors without executing them
+ok 211 - managed snapshots reject non-JSON accessors without executing them
+  ---
+  duration_ms: 59.165857
+  type: 'test'
+  ...
+# Subtest: builtin pack identities and entity ids cannot be overwritten by a center pack
+ok 212 - builtin pack identities and entity ids cannot be overwritten by a center pack
+  ---
+  duration_ms: 311.638869
+  type: 'test'
+  ...
+# Subtest: workspace conflicts across roots and post-activation edits are checked on every call
+ok 213 - workspace conflicts across roots and post-activation edits are checked on every call
+  ---
+  duration_ms: 479.311897
+  type: 'test'
+  ...
+# Subtest: center packs cannot collide with one another even with distinct pack ids
+ok 214 - center packs cannot collide with one another even with distinct pack ids
+  ---
+  duration_ms: 291.961097
+  type: 'test'
+  ...
+# Subtest: preflight checks all actual bases and executes the real merge validator
+ok 215 - preflight checks all actual bases and executes the real merge validator
+  ---
+  duration_ms: 466.347074
+  type: 'test'
+  ...
+# Subtest: only the exact taken-over vendor path is suppressed; local legacy origin remains visible
+ok 216 - only the exact taken-over vendor path is suppressed; local legacy origin remains visible
+  ---
+  duration_ms: 598.611355
+  type: 'test'
+  ...
+# Subtest: preflight accepts a pending state transaction without mutating it or consulting provider
+ok 217 - preflight accepts a pending state transaction without mutating it or consulting provider
+  ---
+  duration_ms: 155.354657
+  type: 'test'
+  ...
+# Subtest: pure v2 runtime dependency graph never imports the host bridge
+ok 218 - pure v2 runtime dependency graph never imports the host bridge
+  ---
+  duration_ms: 33.226381
+  type: 'test'
+  ...
+# (node:657015) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: locatorHost reads https, ssh, scp-shorthand, userinfo and ports
+ok 219 - locatorHost reads https, ssh, scp-shorthand, userinfo and ports
+  ---
+  duration_ms: 28.244617
+  type: 'test'
+  ...
+# Subtest: isAllowlistedLocator only admits listed hosts, and nothing when empty
+ok 220 - isAllowlistedLocator only admits listed hosts, and nothing when empty
+  ---
+  duration_ms: 5.236871
+  type: 'test'
+  ...
+# Subtest: an empty or whitespace locator is refused before any process is spawned
+ok 221 - an empty or whitespace locator is refused before any process is spawned
+  ---
+  duration_ms: 26.777895
+  type: 'test'
+  ...
+# Subtest: fetchPackSource clones a local repo and resolves a 40-hex revision
+ok 222 - fetchPackSource clones a local repo and resolves a 40-hex revision
+  ---
+  duration_ms: 612.190463
+  type: 'test'
+  ...
+# Subtest: fetchPackSource pins to a tag when one is requested
+ok 223 - fetchPackSource pins to a tag when one is requested
+  ---
+  duration_ms: 1283.615489
+  type: 'test'
+  ...
+# Subtest: fetchPackSource reports a bad ref instead of throwing
+ok 224 - fetchPackSource reports a bad ref instead of throwing
+  ---
+  duration_ms: 422.715555
+  type: 'test'
+  ...
+# Subtest: a valid staged pack validates and yields section counts and a digest
+ok 225 - a valid staged pack validates and yields section counts and a digest
+  ---
+  duration_ms: 479.895613
+  type: 'test'
+  ...
+# Subtest: an id that would shadow an installed pack is refused
+ok 226 - an id that would shadow an installed pack is refused
+  ---
+  duration_ms: 81.519221
+  type: 'test'
+  ...
+# Subtest: a declared dependency that nothing resolves is refused
+ok 227 - a declared dependency that nothing resolves is refused
+  ---
+  duration_ms: 456.66349
+  type: 'test'
+  ...
+# Subtest: credentials or internal endpoints in pack content are refused
+ok 228 - credentials or internal endpoints in pack content are refused
+  ---
+  duration_ms: 1170.619177
+  type: 'test'
+  ...
+# Subtest: a structurally broken pack is refused
+ok 229 - a structurally broken pack is refused
+  ---
+  duration_ms: 176.207859
+  type: 'test'
+  ...
+# Subtest: install swaps the pack in and the result hashes clean
+ok 230 - install swaps the pack in and the result hashes clean
+  ---
+  duration_ms: 154.539051
+  type: 'test'
+  ...
+# Subtest: install refuses to clobber a pack whose content has drifted
+ok 231 - install refuses to clobber a pack whose content has drifted
+  ---
+  duration_ms: 51.111227
+  type: 'test'
+  ...
+# Subtest: install rejects an unsafe pack id
+ok 232 - install rejects an unsafe pack id
+  ---
+  duration_ms: 6.668248
+  type: 'test'
+  ...
+# Subtest: a malformed or unknown-version ledger reads as empty rather than throwing
+ok 233 - a malformed or unknown-version ledger reads as empty rather than throwing
+  ---
+  duration_ms: 5.052611
+  type: 'test'
+  ...
+# Subtest: upsert carries the replaced revision forward as the rollback anchor
+ok 234 - upsert carries the replaced revision forward as the rollback anchor
+  ---
+  duration_ms: 2.711003
+  type: 'test'
+  ...
+# Subtest: the ledger round-trips through an atomic write
+ok 235 - the ledger round-trips through an atomic write
+  ---
+  duration_ms: 38.937129
+  type: 'test'
+  ...
+# (node:657223) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: verified download enters inventory without activation; explicit enable and all-disabled work
+ok 236 - verified download enters inventory without activation; explicit enable and all-disabled work
+  ---
+  duration_ms: 2130.056976
+  type: 'test'
+  ...
+# Subtest: cached release update/enable and offline rollback preserve captured old content paths
+ok 237 - cached release update/enable and offline rollback preserve captured old content paths
+  ---
+  duration_ms: 1780.56551
+  type: 'test'
+  ...
+# Subtest: identical install retries need no original archive and do not increase generation
+ok 238 - identical install retries need no original archive and do not increase generation
+  ---
+  duration_ms: 584.481181
+  type: 'test'
+  ...
+# Subtest: archive tampering never changes existing activation and leaves no runnable staging tree
+ok 239 - archive tampering never changes existing activation and leaves no runnable staging tree
+  ---
+  duration_ms: 934.915292
+  type: 'test'
+  ...
+# Subtest: unsigned metadata edits, wrong center, incompatible plugin and identity mismatch are rejected
+ok 240 - unsigned metadata edits, wrong center, incompatible plugin and identity mismatch are rejected
+  ---
+  duration_ms: 692.875965
+  type: 'test'
+  ...
+# Subtest: a release ID cannot be reused with a different signed compatibility requirement
+ok 241 - a release ID cannot be reused with a different signed compatibility requirement
+  ---
+  duration_ms: 1097.604546
+  type: 'test'
+  ...
+# Subtest: owner namespace and pack-version identity collisions do not replace a valid installed release
+ok 242 - owner namespace and pack-version identity collisions do not replace a valid installed release
+  ---
+  duration_ms: 1619.946386
+  type: 'test'
+  ...
+# Subtest: modified installed files cannot be enabled, used in a snapshot, or rolled back to
+ok 243 - modified installed files cannot be enabled, used in a snapshot, or rolled back to
+  ---
+  duration_ms: 2254.722486
+  type: 'test'
+  ...
+# Subtest: generation CAS prevents concurrent active switches; replay of winner is stable
+ok 244 - generation CAS prevents concurrent active switches; replay of winner is stable
+  ---
+  duration_ms: 1740.090296
+  type: 'test'
+  ...
+# Subtest: state commit failure keeps old release; uncertain committed reply resolves via identical retry
+ok 245 - state commit failure keeps old release; uncertain committed reply resolves via identical retry
+  ---
+  duration_ms: 1906.185994
+  type: 'test'
+  ...
+# Subtest: corrupt state recovers a verified previous snapshot read-only and preserves corrupt bytes
+ok 246 - corrupt state recovers a verified previous snapshot read-only and preserves corrupt bytes
+  ---
+  duration_ms: 2073.727023
+  type: 'test'
+  ...
+# Subtest: corrupt state with corrupted previous inventory refuses recovery
+ok 247 - corrupt state with corrupted previous inventory refuses recovery
+  ---
+  duration_ms: 1384.225566
+  type: 'test'
+  ...
+# Subtest: uninstall refuses active release and keeps inactive content for earlier task snapshots
+ok 248 - uninstall refuses active release and keeps inactive content for earlier task snapshots
+  ---
+  duration_ms: 2086.411157
+  type: 'test'
+  ...
+# Subtest: exact forward and reverse dependencies block incompatible update and disable
+ok 249 - exact forward and reverse dependencies block incompatible update and disable
+  ---
+  duration_ms: 2808.124329
+  type: 'test'
+  ...
+# Subtest: built-in dependencies and changed local plugin capabilities are checked without downloads
+ok 250 - built-in dependencies and changed local plugin capabilities are checked without downloads
+  ---
+  duration_ms: 1665.682452
+  type: 'test'
+  ...
+# Subtest: two independent local stores can keep different active versions
+ok 251 - two independent local stores can keep different active versions
+  ---
+  duration_ms: 1213.007903
+  type: 'test'
+  ...
+# Subtest: failed host activation keeps a verified download with an explicit unsuccessful outcome
+ok 252 - failed host activation keeps a verified download with an explicit unsuccessful outcome
+  ---
+  duration_ms: 1987.930011
+  type: 'test'
+  ...
+# Subtest: distinct SemVer build metadata is distinct immutable identity, not an automatic priority increase
+ok 253 - distinct SemVer build metadata is distinct immutable identity, not an automatic priority increase
+  ---
+  duration_ms: 1216.208048
+  type: 'test'
+  ...
+# Subtest: different packs cannot silently replace an already-active entity
+ok 254 - different packs cannot silently replace an already-active entity
+  ---
+  duration_ms: 1750.331815
+  type: 'test'
+  ...
+# Subtest: uninstall does not erase the accepted immutable version or owner binding
+ok 255 - uninstall does not erase the accepted immutable version or owner binding
+  ---
+  duration_ms: 1734.907834
+  type: 'test'
+  ...
+# Subtest: mutation of caller request during install cannot change signed bytes or activation choice
+ok 256 - mutation of caller request during install cannot change signed bytes or activation choice
+  ---
+  duration_ms: 759.2054
+  type: 'test'
+  ...
+# Subtest: legacy takeover switches exact paths atomically, supports offline history rollback and explicit restore
+ok 257 - legacy takeover switches exact paths atomically, supports offline history rollback and explicit restore
+  ---
+  duration_ms: 2706.359304
+  type: 'test'
+  ...
+# Subtest: legacy source changes after takeover do not change the backup; restore refuses changed source
+ok 258 - legacy source changes after takeover do not change the backup; restore refuses changed source
+  ---
+  duration_ms: 1434.699613
+  type: 'test'
+  ...
+# Subtest: legacy takeover failure before commit leaves automatic source untouched and unsuppressed
+ok 259 - legacy takeover failure before commit leaves automatic source untouched and unsuppressed
+  ---
+  duration_ms: 1246.346874
+  type: 'test'
+  ...
+# (node:658303) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: service registers wind/zyt/beike manifests and attaches invokers
+ok 260 - service registers wind/zyt/beike manifests and attaches invokers
+  ---
+  duration_ms: 97.647964
+  type: 'test'
+  ...
+# Subtest: service resolver binds capabilities and reports unavailable for unknown ones
+ok 261 - service resolver binds capabilities and reports unavailable for unknown ones
+  ---
+  duration_ms: 50.971813
+  type: 'test'
+  ...
+# Subtest: availableCredentials returns only refs that resolve (fail-closed gate)
+ok 262 - availableCredentials returns only refs that resolve (fail-closed gate)
+  ---
+  duration_ms: 16.535483
+  type: 'test'
+  ...
+# Subtest: wind invoke plans the CLI call, injects the key into env, and normalizes the envelope
+ok 263 - wind invoke plans the CLI call, injects the key into env, and normalizes the envelope
+  ---
+  duration_ms: 48.388054
+  type: 'test'
+  ...
+# Subtest: missing credential fails closed before the spawn seam is reached
+ok 264 - missing credential fails closed before the spawn seam is reached
+  ---
+  duration_ms: 9.677315
+  type: 'test'
+  ...
+# Subtest: missing binary surfaces as TRANSPORT_MISSING_BINARY (never)
+ok 265 - missing binary surfaces as TRANSPORT_MISSING_BINARY (never)
+  ---
+  duration_ms: 13.665894
+  type: 'test'
+  ...
+# Subtest: plan errors map to a correct-input envelope (never retried blindly)
+ok 266 - plan errors map to a correct-input envelope (never retried blindly)
+  ---
+  duration_ms: 24.044069
+  type: 'test'
+  ...
+# Subtest: zyt http invoke builds the request URL + X-Api-Key header and normalizes 2xx
+ok 267 - zyt http invoke builds the request URL + X-Api-Key header and normalizes 2xx
+  ---
+  duration_ms: 27.047935
+  type: 'test'
+  ...
+# Subtest: zyt http auth failure maps to ZYT_AUTH_ERROR (never)
+ok 268 - zyt http auth failure maps to ZYT_AUTH_ERROR (never)
+  ---
+  duration_ms: 11.151278
+  type: 'test'
+  ...
+# Subtest: zyt cli transport (preferCli) spawns the binary with --json
+ok 269 - zyt cli transport (preferCli) spawns the binary with --json
+  ---
+  duration_ms: 9.629367
+  type: 'test'
+  ...
+# Subtest: beike read invoke performs the MCP initialize + tools/call handshake
+ok 270 - beike read invoke performs the MCP initialize + tools/call handshake
+  ---
+  duration_ms: 5.252706
+  type: 'test'
+  ...
+# Subtest: write invoke without an approval service stays blocked at registry.invoke
+ok 271 - write invoke without an approval service stays blocked at registry.invoke
+  ---
+  duration_ms: 4.4637
+  type: 'test'
+  ...
+# Subtest: write invoke with an approval service: allowed-once passes, rejected blocks
+ok 272 - write invoke with an approval service: allowed-once passes, rejected blocks
+  ---
+  duration_ms: 8.615112
+  type: 'test'
+  ...
+# Subtest: approval unavailable (fail-closed answerer) blocks the write
+ok 273 - approval unavailable (fail-closed answerer) blocks the write
+  ---
+  duration_ms: 6.809182
+  type: 'test'
+  ...
+# Subtest: secrets never appear in envelopes, audit records or snapshots
+ok 274 - secrets never appear in envelopes, audit records or snapshots
+  ---
+  duration_ms: 16.016544
+  type: 'test'
+  ...
+# Subtest: toolExecution overlay rewrites endpoints/timeouts and rebinds mode without breaking write gates
+ok 275 - toolExecution overlay rewrites endpoints/timeouts and rebinds mode without breaking write gates
+  ---
+  duration_ms: 22.507608
+  type: 'test'
+  ...
+# Subtest: reconfigure rebuilds the registry from fresh options
+ok 276 - reconfigure rebuilds the registry from fresh options
+  ---
+  duration_ms: 9.326265
+  type: 'test'
+  ...
+# Subtest: transport timeout classifies as TRANSPORT_TIMEOUT (backoff at the envelope layer)
+ok 277 - transport timeout classifies as TRANSPORT_TIMEOUT (backoff at the envelope layer)
+  ---
+  duration_ms: 332.915617
+  type: 'test'
+  ...
+# Subtest: caller cancellation classifies as TRANSPORT_CANCELLED (never)
+ok 278 - caller cancellation classifies as TRANSPORT_CANCELLED (never)
+  ---
+  duration_ms: 30.402585
+  type: 'test'
+  ...
+# Subtest: mcp-stdio fails closed as TRANSPORT_UNSUPPORTED in this version
+ok 279 - mcp-stdio fails closed as TRANSPORT_UNSUPPORTED in this version
+  ---
+  duration_ms: 0.48113
+  type: 'test'
+  ...
+# Subtest: real spawn runner bounds stdout and kills the runaway process
+ok 280 - real spawn runner bounds stdout and kills the runaway process
+  ---
+  duration_ms: 942.895644
+  type: 'test'
+  ...
+# Subtest: parseMaybeSSE extracts the last data payload
+ok 281 - parseMaybeSSE extracts the last data payload
+  ---
+  duration_ms: 1.462398
+  type: 'test'
+  ...
+# Subtest: credential resolver reads env and file sources; missing files fail closed
+ok 282 - credential resolver reads env and file sources; missing files fail closed
+  ---
+  duration_ms: 13.348996
+  type: 'test'
+  ...
+# (node:658446) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: header-only transcript format (飞书逐字稿) aggregates per normalized speaker
+ok 283 - header-only transcript format (飞书逐字稿) aggregates per normalized speaker
+  ---
+  duration_ms: 39.339091
+  type: 'test'
+  ...
+# Subtest: inline format (`**名字**：发言`) is supported
+ok 284 - inline format (`**名字**：发言`) is supported
+  ---
+  duration_ms: 5.189416
+  type: 'test'
+  ...
+# Subtest: metadata labels are never treated as speakers
+ok 285 - metadata labels are never treated as speakers
+  ---
+  duration_ms: 25.038278
+  type: 'test'
+  ...
+# Subtest: personDraft is deterministic, fact-only and marks inference fields
+ok 286 - personDraft is deterministic, fact-only and marks inference fields
+  ---
+  duration_ms: 75.072583
+  type: 'test'
+  ...
+# (node:658477) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: isSafeKnowledgeId rejects traversal and accepts domain ids
+ok 287 - isSafeKnowledgeId rejects traversal and accepts domain ids
+  ---
+  duration_ms: 7.345347
+  type: 'test'
+  ...
+# Subtest: isSafeSkillId accepts local skill ids and rejects repo/path forms
+ok 288 - isSafeSkillId accepts local skill ids and rejects repo/path forms
+  ---
+  duration_ms: 0.630422
+  type: 'test'
+  ...
+# Subtest: resolveSkill reads an installed local skill under knowledge/skills
+ok 289 - resolveSkill reads an installed local skill under knowledge/skills
+  ---
+  duration_ms: 48.610592
+  type: 'test'
+  ...
+# Subtest: resolveSkill reports missing and invalid skills as locally-installable only
+ok 290 - resolveSkill reports missing and invalid skills as locally-installable only
+  ---
+  duration_ms: 146.372039
+  type: 'test'
+  ...
+# Subtest: resolveSkill rejects an oversized SKILL.md
+ok 291 - resolveSkill rejects an oversized SKILL.md
+  ---
+  duration_ms: 226.676486
+  type: 'test'
+  ...
+# Subtest: resolveSkill rejects a skill directory that symlinks outside the skills root
+ok 292 - resolveSkill rejects a skill directory that symlinks outside the skills root
+  ---
+  duration_ms: 110.443574
+  type: 'test'
+  ...
+# Subtest: skills resolver performs no network access (source-level guarantee)
+ok 293 - skills resolver performs no network access (source-level guarantee)
+  ---
+  duration_ms: 15.042141
+  type: 'test'
+  ...
+# Subtest: topicRouteFor falls back to the question text
+ok 294 - topicRouteFor falls back to the question text
+  ---
+  duration_ms: 14.762992
+  type: 'test'
+  ...
+# Subtest: scenarioForTopic uses the question when the topic does not name one
+ok 295 - scenarioForTopic uses the question when the topic does not name one
+  ---
+  duration_ms: 9.576884
+  type: 'test'
+  ...
+# Subtest: routeRequest output is anonymized: no real names in candidates
+ok 296 - routeRequest output is anonymized: no real names in candidates
+  ---
+  duration_ms: 157.622451
+  type: 'test'
+  ...
+# Subtest: public expert ids normalize to canonical lowercase ids and resolve
+ok 297 - public expert ids normalize to canonical lowercase ids and resolve
+  ---
+  duration_ms: 12.944554
+  type: 'test'
+  ...
+# (node:658577) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: appendEvaluation writes and readEvaluations round-trips
+ok 298 - appendEvaluation writes and readEvaluations round-trips
+  ---
+  duration_ms: 111.488599
+  type: 'test'
+  ...
+# Subtest: readEvaluations tolerates corrupt lines and missing files
+ok 299 - readEvaluations tolerates corrupt lines and missing files
+  ---
+  duration_ms: 50.269504
+  type: 'test'
+  ...
+# Subtest: unsafe expert id refuses evaluation writes
+ok 300 - unsafe expert id refuses evaluation writes
+  ---
+  duration_ms: 11.328098
+  type: 'test'
+  ...
+# Subtest: feedbackGuideSection injects summary only when records exist
+ok 301 - feedbackGuideSection injects summary only when records exist
+  ---
+  duration_ms: 32.534304
+  type: 'test'
+  ...
+# Subtest: knowledgeGuide surfaces the VERSION anchor of an expert pack
+ok 302 - knowledgeGuide surfaces the VERSION anchor of an expert pack
+  ---
+  duration_ms: 66.63056
+  type: 'test'
+  ...
+# Subtest: knowledgeGuide omits version when VERSION is absent
+ok 303 - knowledgeGuide omits version when VERSION is absent
+  ---
+  duration_ms: 62.653779
+  type: 'test'
+  ...
+# (node:658591) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: standalone validator is the existing implementation, not a fork
+ok 304 - standalone validator is the existing implementation, not a fork
+  ---
+  duration_ms: 3.434037
+  type: 'test'
+  ...
+# Subtest: both center samples contain real, valid, version-distinguishable scenario content
+ok 305 - both center samples contain real, valid, version-distinguishable scenario content
+  ---
+  duration_ms: 146.035652
+  type: 'test'
+  ...
+# Subtest: invalid sample produces schema and identity diagnostics and no usable pack
+ok 306 - invalid sample produces schema and identity diagnostics and no usable pack
+  ---
+  duration_ms: 447.223133
+  type: 'test'
+  ...
+# Subtest: sample overlay changes future selection without mutating the previous pack
+ok 307 - sample overlay changes future selection without mutating the previous pack
+  ---
+  duration_ms: 65.506324
+  type: 'test'
+  ...
+# Subtest: filesystem and transport entries match the frozen fixture digest vectors
+ok 308 - filesystem and transport entries match the frozen fixture digest vectors
+  ---
+  duration_ms: 154.922659
+  type: 'test'
+  ...
+# Subtest: existing loader diagnostics fit the shared report contract for success and failure
+ok 309 - existing loader diagnostics fit the shared report contract for success and failure
+  ---
+  duration_ms: 286.075213
+  type: 'test'
+  ...
+# Subtest: standalone validation dependency graph imports no Harness or network runtime
+ok 310 - standalone validation dependency graph imports no Harness or network runtime
+  ---
+  duration_ms: 51.355544
+  type: 'test'
+  ...
+# (node:658623) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: cancelled tasks are never auto-requeued, at any attempt
+ok 311 - cancelled tasks are never auto-requeued, at any attempt
+  ---
+  duration_ms: 17.443077
+  type: 'test'
+  ...
+# Subtest: failed tasks auto-requeue only for attempt 1 and 2
+ok 312 - failed tasks auto-requeue only for attempt 1 and 2
+  ---
+  duration_ms: 0.316543
+  type: 'test'
+  ...
+# Subtest: failed attempt 0 (legacy) and attempt 3 (budget exhausted) stay terminal
+ok 313 - failed attempt 0 (legacy) and attempt 3 (budget exhausted) stay terminal
+  ---
+  duration_ms: 0.394944
+  type: 'test'
+  ...
+# Subtest: non-terminal and other statuses never auto-requeue
+ok 314 - non-terminal and other statuses never auto-requeue
+  ---
+  duration_ms: 0.264813
+  type: 'test'
+  ...
+# Subtest: a lone reasoning_effort overrides the config effort but keeps the config route
+ok 315 - a lone reasoning_effort overrides the config effort but keeps the config route
+  ---
+  duration_ms: 10.585178
+  type: 'test'
+  ...
+# Subtest: no explicit route and no effort falls back to the config route with its effort
+ok 316 - no explicit route and no effort falls back to the config route with its effort
+  ---
+  duration_ms: 9.001625
+  type: 'test'
+  ...
+# Subtest: explicit provider/model keep the defaultModel hint and the explicit effort
+ok 317 - explicit provider/model keep the defaultModel hint and the explicit effort
+  ---
+  duration_ms: 2.756779
+  type: 'test'
+  ...
+# Subtest: the preset expert route wins over explicit arguments and config
+ok 318 - the preset expert route wins over explicit arguments and config
+  ---
+  duration_ms: 4.500645
+  type: 'test'
+  ...
+# Subtest: without expert and config, a lone effort rides on the captain route placeholders
+ok 319 - without expert and config, a lone effort rides on the captain route placeholders
+  ---
+  duration_ms: 3.490134
+  type: 'test'
+  ...
+# Subtest: commitTaskUpdate writes the project first and the team record second
+ok 320 - commitTaskUpdate writes the project first and the team record second
+  ---
+  duration_ms: 18.450099
+  type: 'test'
+  ...
+# Subtest: a project write failure never touches the team record
+ok 321 - a project write failure never touches the team record
+  ---
+  duration_ms: 10.993461
+  type: 'test'
+  ...
+# Subtest: a team write failure restores the project from the snapshot and surfaces the original error
+ok 322 - a team write failure restores the project from the snapshot and surfaces the original error
+  ---
+  duration_ms: 16.01852
+  type: 'test'
+  ...
+# Subtest: a rollback failure during a team-write failure aggregates both errors
+ok 323 - a rollback failure during a team-write failure aggregates both errors
+  ---
+  duration_ms: 10.350824
+  type: 'test'
+  ...
+# Subtest: production defaults write real files: project output, then team.json stays consistent
+ok 324 - production defaults write real files: project output, then team.json stays consistent
+  ---
+  duration_ms: 401.294062
+  type: 'test'
+  ...
+# Subtest: planDispatch re-delivers the SAME capability for an owned claimed task
+ok 325 - planDispatch re-delivers the SAME capability for an owned claimed task
+  ---
+  duration_ms: 0.470038
+  type: 'test'
+  ...
+# Subtest: planDispatch opens a fresh generation for a pending task (never reuse)
+ok 326 - planDispatch opens a fresh generation for a pending task (never reuse)
+  ---
+  duration_ms: 0.526663
+  type: 'test'
+  ...
+# Subtest: planDispatch never reuses a task owned by someone else or without a capability
+ok 327 - planDispatch never reuses a task owned by someone else or without a capability
+  ---
+  duration_ms: 0.248006
+  type: 'test'
+  ...
+# Subtest: planDispatch blocks re-dispatch inside the cooldown window and frees it after
+ok 328 - planDispatch blocks re-dispatch inside the cooldown window and frees it after
+  ---
+  duration_ms: 0.21223
+  type: 'test'
+  ...
+# Subtest: completed tasks are never dispatchable regardless of cooldown state
+ok 329 - completed tasks are never dispatchable regardless of cooldown state
+  ---
+  duration_ms: 0.299145
+  type: 'test'
+  ...
+# Subtest: finalizeTerminalTask clears attemptId on terminal transitions only
+ok 330 - finalizeTerminalTask clears attemptId on terminal transitions only
+  ---
+  duration_ms: 0.349583
+  type: 'test'
+  ...
+# Subtest: kickTeam all-terminal short circuit is a pure decision (exported for tests)
+ok 331 - kickTeam all-terminal short circuit is a pure decision (exported for tests)
+  ---
+  duration_ms: 0.456624
+  type: 'test'
+  ...
+# (node:658704) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: pipeline-general pack validates clean with 41 experts (S 40 + XHS 1)
+ok 332 - pipeline-general pack validates clean with 41 experts (S 40 + XHS 1)
+  ---
+  duration_ms: 203.061097
+  type: 'test'
+  ...
+# Subtest: general experts merge into the single registry with per-id namespaces
+ok 333 - general experts merge into the single registry with per-id namespaces
+  ---
+  duration_ms: 15.745806
+  type: 'test'
+  ...
+# Subtest: shared route table routes 特级专家研判 to general candidates
+ok 334 - shared route table routes 特级专家研判 to general candidates
+  ---
+  duration_ms: 318.611849
+  type: 'test'
+  ...
+# Subtest: pack slices stay clean: general pack carries only its own scenario
+ok 335 - pack slices stay clean: general pack carries only its own scenario
+  ---
+  duration_ms: 44.606988
+  type: 'test'
+  ...
+# (node:658792) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: pipeline-domains pack validates clean with 106 experts (E01-E12; E13 已并入 bank)
+ok 336 - pipeline-domains pack validates clean with 106 experts (E01-E12; E13 已并入 bank)
+  ---
+  duration_ms: 198.324048
+  type: 'test'
+  ...
+# Subtest: pipeline pack reuses shared template builders with pipeline prefix
+ok 337 - pipeline pack reuses shared template builders with pipeline prefix
+  ---
+  duration_ms: 58.78573
+  type: 'test'
+  ...
+# Subtest: pipeline experts are merged into the native registry with per-id namespaces
+ok 338 - pipeline experts are merged into the native registry with per-id namespaces
+  ---
+  duration_ms: 0.541332
+  type: 'test'
+  ...
+# Subtest: BK registry unaffected by pipeline merge (slice intact)
+ok 339 - BK registry unaffected by pipeline merge (slice intact)
+  ---
+  duration_ms: 10.697192
+  type: 'test'
+  ...
+# Subtest: routeRequest routes 房地产企业经营 to e08 candidates
+ok 340 - routeRequest routes 房地产企业经营 to e08 candidates
+  ---
+  duration_ms: 252.005244
+  type: 'test'
+  ...
+# Subtest: routeRequest routes 银行战略与经营 to e13 candidates (shared table, pack=bank)
+ok 341 - routeRequest routes 银行战略与经营 to e13 candidates (shared table, pack=bank)
+  ---
+  duration_ms: 86.367316
+  type: 'test'
+  ...
+# Subtest: pack slices stay clean: zhijian excludes pipeline; pipeline excludes bank-strategy; bank carries it
+ok 342 - pack slices stay clean: zhijian excludes pipeline; pipeline excludes bank-strategy; bank carries it
+  ---
+  duration_ms: 161.477787
+  type: 'test'
+  ...
+# (node:659097) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: normalizePipelineProfile derives standard Profile deterministically
+ok 343 - normalizePipelineProfile derives standard Profile deterministically
+  ---
+  duration_ms: 3.791853
+  type: 'test'
+  ...
+# Subtest: derivePipelineMeta maps domain keywords to capability tags
+ok 344 - derivePipelineMeta maps domain keywords to capability tags
+  ---
+  duration_ms: 0.964823
+  type: 'test'
+  ...
+# Subtest: emitPipelineRoster groups by field with parser-compatible rows
+ok 345 - emitPipelineRoster groups by field with parser-compatible rows
+  ---
+  duration_ms: 21.24578
+  type: 'test'
+  ...
+# Subtest: pipeline-domains source parses into e01/e08 namespaced metas (E13 moved to bank)
+ok 346 - pipeline-domains source parses into e01/e08 namespaced metas (E13 moved to bank)
+  ---
+  duration_ms: 3005.594222
+  type: 'test'
+  ...
+# (node:659423) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: resolveCapabilityAllowance: no team / no session → open
+ok 347 - resolveCapabilityAllowance: no team / no session → open
+  ---
+  duration_ms: 54.783941
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: captain keeps full access even under a constrained plan
+ok 348 - resolveCapabilityAllowance: captain keeps full access even under a constrained plan
+  ---
+  duration_ms: 8.811801
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: legacy team without planTaskCapabilities stays open
+ok 349 - resolveCapabilityAllowance: legacy team without planTaskCapabilities stays open
+  ---
+  duration_ms: 13.723623
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: member union over plan-linked tasks with dedupe
+ok 350 - resolveCapabilityAllowance: member union over plan-linked tasks with dedupe
+  ---
+  duration_ms: 10.765567
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: empty allowedCapabilities set means none allowed (constrained, empty union)
+ok 351 - resolveCapabilityAllowance: empty allowedCapabilities set means none allowed (constrained, empty union)
+  ---
+  duration_ms: 0.436289
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: tasks without planTask linkage contribute nothing
+ok 352 - resolveCapabilityAllowance: tasks without planTask linkage contribute nothing
+  ---
+  duration_ms: 2.497346
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: member with only unlinked tasks stays open
+ok 353 - resolveCapabilityAllowance: member with only unlinked tasks stays open
+  ---
+  duration_ms: 9.438327
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: rostered member with no assigned tasks stays open
+ok 354 - resolveCapabilityAllowance: rostered member with no assigned tasks stays open
+  ---
+  duration_ms: 0.428848
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: removed member stays open
+ok 355 - resolveCapabilityAllowance: removed member stays open
+  ---
+  duration_ms: 10.647369
+  type: 'test'
+  ...
+# Subtest: resolveCapabilityAllowance: logicalId missing from the persisted map stays open (defensive)
+ok 356 - resolveCapabilityAllowance: logicalId missing from the persisted map stays open (defensive)
+  ---
+  duration_ms: 4.729493
+  type: 'test'
+  ...
+# Subtest: member blocked for a capability not in the plan → CAPABILITY_NOT_ALLOWED before resolution
+ok 357 - member blocked for a capability not in the plan → CAPABILITY_NOT_ALLOWED before resolution
+  ---
+  duration_ms: 372.214487
+  type: 'test'
+  ...
+# Subtest: member allowed for a capability granted by the plan passes through
+ok 358 - member allowed for a capability granted by the plan passes through
+  ---
+  duration_ms: 91.50666
+  type: 'test'
+  ...
+# Subtest: legacy team (no plan capability info) is unaffected — call passes
+ok 359 - legacy team (no plan capability info) is unaffected — call passes
+  ---
+  duration_ms: 67.144722
+  type: 'test'
+  ...
+# Subtest: captain is unaffected even when the plan constrains members
+ok 360 - captain is unaffected even when the plan constrains members
+  ---
+  duration_ms: 34.125712
+  type: 'test'
+  ...
+# Subtest: empty-set semantics: a member whose tasks allow nothing is blocked for any capability
+ok 361 - empty-set semantics: a member whose tasks allow nothing is blocked for any capability
+  ---
+  duration_ms: 67.51176
+  type: 'test'
+  ...
+# Subtest: blocked error surfaces the correction through the renderer
+ok 362 - blocked error surfaces the correction through the renderer
+  ---
+  duration_ms: 59.61492
+  type: 'test'
+  ...
+# Subtest: planTaskCapabilities round-trips through readTeam like the other plan provenance fields
+ok 363 - planTaskCapabilities round-trips through readTeam like the other plan provenance fields
+  ---
+  duration_ms: 37.29254
+  type: 'test'
+  ...
+# (node:659511) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: zyt baseUrl: input > env > probe default
+ok 364 - zyt baseUrl: input > env > probe default
+  ---
+  duration_ms: 30.925735
+  type: 'test'
+  ...
+# Subtest: beike baseUrl: input > env > probe default; preferCli passthrough
+ok 365 - beike baseUrl: input > env > probe default; preferCli passthrough
+  ---
+  duration_ms: 19.897527
+  type: 'test'
+  ...
+# Subtest: wind cliPath: input > env > default probe; registration gated on existence
+ok 366 - wind cliPath: input > env > default probe; registration gated on existence
+  ---
+  duration_ms: 32.081989
+  type: 'test'
+  ...
+# Subtest: settings layer wins over cordis entry after the base-layer merge
+ok 367 - settings layer wins over cordis entry after the base-layer merge
+  ---
+  duration_ms: 11.442387
+  type: 'test'
+  ...
+# (node:659601) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: registerProviderCallTool registers expert_provider_call with the required params and Chinese description
+ok 368 - registerProviderCallTool registers expert_provider_call with the required params and Chinese description
+  ---
+  duration_ms: 120.427727
+  type: 'test'
+  ...
+# Subtest: providerCallToolEligible gates registration on a live service with providers
+ok 369 - providerCallToolEligible gates registration on a live service with providers
+  ---
+  duration_ms: 21.266156
+  type: 'test'
+  ...
+# Subtest: read-op passthrough: resolves with credentials + readOnly:false, forwards meta, preserves provenance/warnings/data
+ok 370 - read-op passthrough: resolves with credentials + readOnly:false, forwards meta, preserves provenance/warnings/data
+  ---
+  duration_ms: 54.368085
+  type: 'test'
+  ...
+# Subtest: unknown capability returns CAPABILITY_UNBOUND with rejections and never invokes
+ok 371 - unknown capability returns CAPABILITY_UNBOUND with rejections and never invokes
+  ---
+  duration_ms: 16.592295
+  type: 'test'
+  ...
+# Subtest: service unavailable at execute time fails closed with PROVIDER_SERVICE_UNAVAILABLE
+ok 372 - service unavailable at execute time fails closed with PROVIDER_SERVICE_UNAVAILABLE
+  ---
+  duration_ms: 12.291315
+  type: 'test'
+  ...
+# Subtest: failure envelopes pass through with error/provenance/warnings intact
+ok 373 - failure envelopes pass through with error/provenance/warnings intact
+  ---
+  duration_ms: 11.935082
+  type: 'test'
+  ...
+# Subtest: oversized data is truncated with a marker while provenance stays intact
+ok 374 - oversized data is truncated with a marker while provenance stays intact
+  ---
+  duration_ms: 126.722502
+  type: 'test'
+  ...
+# Subtest: write-op blocked without an approval service (real registry.invoke gate)
+ok 375 - write-op blocked without an approval service (real registry.invoke gate)
+  ---
+  duration_ms: 149.356519
+  type: 'test'
+  ...
+# Subtest: write-op executes after allowed-once approval and is rejected otherwise
+ok 376 - write-op executes after allowed-once approval and is rejected otherwise
+  ---
+  duration_ms: 208.21143
+  type: 'test'
+  ...
+# Subtest: write-op without a calling agent stays blocked even with an approval service
+ok 377 - write-op without a calling agent stays blocked even with an approval service
+  ---
+  duration_ms: 60.935737
+  type: 'test'
+  ...
+# (node:659957) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: schema accepts every new field (memberMaxDepth/toolExecution/enabledPacks/packPriority/expertModelOverrides)
+ok 378 - schema accepts every new field (memberMaxDepth/toolExecution/enabledPacks/packPriority/expertModelOverrides)
+  ---
+  duration_ms: 57.795482
+  type: 'test'
+  ...
+# Subtest: schema tolerates a partial section (every field optional)
+ok 379 - schema tolerates a partial section (every field optional)
+  ---
+  duration_ms: 13.498501
+  type: 'test'
+  ...
+# Subtest: normalizeToolMode: unknown/empty modes fall back to auto
+ok 380 - normalizeToolMode: unknown/empty modes fall back to auto
+  ---
+  duration_ms: 0.359575
+  type: 'test'
+  ...
+# Subtest: toolExecutionOf reads the per-tool policy and tolerates absence
+ok 381 - toolExecutionOf reads the per-tool policy and tolerates absence
+  ---
+  duration_ms: 0.287397
+  type: 'test'
+  ...
+# (node:660042) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: skillNameFromFrontmatter: plain, quoted, missing, and no-frontmatter cases
+ok 382 - skillNameFromFrontmatter: plain, quoted, missing, and no-frontmatter cases
+  ---
+  duration_ms: 13.525818
+  type: 'test'
+  ...
+# Subtest: scanSkillsRoot: rows carry id/name/path/sizeBytes/hasReferences; unsafe ids are filtered
+ok 383 - scanSkillsRoot: rows carry id/name/path/sizeBytes/hasReferences; unsafe ids are filtered
+  ---
+  duration_ms: 97.049636
+  type: 'test'
+  ...
+# Subtest: scanSkillsRoot: a missing/unreadable skills root yields zero entries
+ok 384 - scanSkillsRoot: a missing/unreadable skills root yields zero entries
+  ---
+  duration_ms: 28.764618
+  type: 'test'
+  ...
+# Subtest: collectSkillEntries: first hit per id wins across roots, entries id-sorted
+ok 385 - collectSkillEntries: first hit per id wins across roots, entries id-sorted
+  ---
+  duration_ms: 42.107395
+  type: 'test'
+  ...
+# Subtest: collectSkillEntries: empty state — no roots or empty roots give []
+ok 386 - collectSkillEntries: empty state — no roots or empty roots give []
+  ---
+  duration_ms: 6.937383
+  type: 'test'
+  ...
+# Subtest: pluginKnowledgeRoot: resolves the bundled knowledge/ dir when present
+ok 387 - pluginKnowledgeRoot: resolves the bundled knowledge/ dir when present
+  ---
+  duration_ms: 318.123077
+  type: 'test'
+  ...
+# Subtest: builtinSkillIdsSync: mount-time bundled inventory, safe-id filtered, sorted
+ok 388 - builtinSkillIdsSync: mount-time bundled inventory, safe-id filtered, sorted
+  ---
+  duration_ms: 146.027002
+  type: 'test'
+  ...
+# Subtest: skillDiscoveryPromptSection: names the convention + the channel + the inventory line
+ok 389 - skillDiscoveryPromptSection: names the convention + the channel + the inventory line
+  ---
+  duration_ms: 0.565021
+  type: 'test'
+  ...
+# Subtest: skillDiscoveryPromptSection: without a resolvable inventory the mechanism is still named
+ok 390 - skillDiscoveryPromptSection: without a resolvable inventory the mechanism is still named
+  ---
+  duration_ms: 0.531163
+  type: 'test'
+  ...
+# Subtest: skillsInventoryLine: renders id lists and the empty case
+ok 391 - skillsInventoryLine: renders id lists and the empty case
+  ---
+  duration_ms: 4.319073
+  type: 'test'
+  ...
+# (node:660105) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: index: unchanged fingerprint returns the SAME frozen entries (stable identity)
+ok 392 - index: unchanged fingerprint returns the SAME frozen entries (stable identity)
+  ---
+  duration_ms: 15.882184
+  type: 'test'
+  ...
+# Subtest: index: a SKILL.md content edit bumps the mtime fingerprint and rebuilds
+ok 393 - index: a SKILL.md content edit bumps the mtime fingerprint and rebuilds
+  ---
+  duration_ms: 60.786657
+  type: 'test'
+  ...
+# Subtest: index: adding a skill dir changes the fingerprint and the inventory grows
+ok 394 - index: adding a skill dir changes the fingerprint and the inventory grows
+  ---
+  duration_ms: 65.191583
+  type: 'test'
+  ...
+# Subtest: index: a missing skills root yields [] and recovers once the root appears
+ok 395 - index: a missing skills root yields [] and recovers once the root appears
+  ---
+  duration_ms: 31.173226
+  type: 'test'
+  ...
+# Subtest: skillsGuideSection lists every installed skill as `- <id>: <name>` with the convention hint
+ok 396 - skillsGuideSection lists every installed skill as `- <id>: <name>` with the convention hint
+  ---
+  duration_ms: 60.672699
+  type: 'test'
+  ...
+# Subtest: skillsGuideSection returns "" when no skill is installed anywhere
+ok 397 - skillsGuideSection returns "" when no skill is installed anywhere
+  ---
+  duration_ms: 29.329963
+  type: 'test'
+  ...
+# Subtest: route path and guide share the identical cached entries for the same root
+ok 398 - route path and guide share the identical cached entries for the same root
+  ---
+  duration_ms: 28.729437
+  type: 'test'
+  ...
+# Subtest: liveSkillsInventoryLine prefers the initiating agent workspace (per-session)
+ok 399 - liveSkillsInventoryLine prefers the initiating agent workspace (per-session)
+  ---
+  duration_ms: 19.125931
+  type: 'test'
+  ...
+# Subtest: liveSkillsInventoryLine falls back to the union without an initiator
+ok 400 - liveSkillsInventoryLine falls back to the union without an initiator
+  ---
+  duration_ms: 7.59502
+  type: 'test'
+  ...
+# (node:660123) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: (a) resolveSkill unavailable lists the currently available workspace skill ids
+ok 401 - (a) resolveSkill unavailable lists the currently available workspace skill ids
+  ---
+  duration_ms: 68.459613
+  type: 'test'
+  ...
+# Subtest: (b) expert_teams_ppt skill_id path: the embedded block carries the available ids
+ok 402 - (b) expert_teams_ppt skill_id path: the embedded block carries the available ids
+  ---
+  duration_ms: 16.716316
+  type: 'test'
+  ...
+# Subtest: (c) scenario skill-binding path: the embedded block (with purpose) carries the available ids
+ok 403 - (c) scenario skill-binding path: the embedded block (with purpose) carries the available ids
+  ---
+  duration_ms: 62.201635
+  type: 'test'
+  ...
+# Subtest: resolveSkill unavailable also lists the plugin bundled skills (union)
+ok 404 - resolveSkill unavailable also lists the plugin bundled skills (union)
+  ---
+  duration_ms: 64.806943
+  type: 'test'
+  ...
+# Subtest: resolveSkill suggestion list dedupes the workspace set against the bundled set
+ok 405 - resolveSkill suggestion list dedupes the workspace set against the bundled set
+  ---
+  duration_ms: 67.696262
+  type: 'test'
+  ...
+# Subtest: resolveSkill invalid-id failure also carries the available list
+ok 406 - resolveSkill invalid-id failure also carries the available list
+  ---
+  duration_ms: 34.930971
+  type: 'test'
+  ...
+# Subtest: resolveSkill success stays clean: no available-list suffix, path set
+ok 407 - resolveSkill success stays clean: no available-list suffix, path set
+  ---
+  duration_ms: 97.767852
+  type: 'test'
+  ...
+# Subtest: empty case: no available ids formats as 「当前可用：（无）」
+ok 408 - empty case: no available ids formats as 「当前可用：（无）」
+  ---
+  duration_ms: 25.109253
+  type: 'test'
+  ...
+# (node:660138) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: concurrent appendMailbox calls never lose messages
+ok 409 - concurrent appendMailbox calls never lose messages
+  ---
+  duration_ms: 3358.382248
+  type: 'test'
+  ...
+# Subtest: acknowledge racing an append does not drop the new message
+ok 410 - acknowledge racing an append does not drop the new message
+  ---
+  duration_ms: 162.388491
+  type: 'test'
+  ...
+# Subtest: readTeam rejects a dangling task dependency
+ok 411 - readTeam rejects a dangling task dependency
+  ---
+  duration_ms: 148.829806
+  type: 'test'
+  ...
+# Subtest: readTeam rejects a dependency cycle
+ok 412 - readTeam rejects a dependency cycle
+  ---
+  duration_ms: 132.684067
+  type: 'test'
+  ...
+# Subtest: readTeam rejects a task assigned to a nonexistent member
+ok 413 - readTeam rejects a task assigned to a nonexistent member
+  ---
+  duration_ms: 82.223715
+  type: 'test'
+  ...
+# Subtest: planRef/planProvenance on TeamState and planTask on TeamTask round-trip through readTeam
+ok 414 - planRef/planProvenance on TeamState and planTask on TeamTask round-trip through readTeam
+  ---
+  duration_ms: 207.993331
+  type: 'test'
+  ...
+# Subtest: a legacy team record without provenance fields reads back unchanged
+ok 415 - a legacy team record without provenance fields reads back unchanged
+  ---
+  duration_ms: 44.955443
+  type: 'test'
+  ...
+# (node:660446) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: single-expert task expands 1:1; multi-expert task fans out in roster order; no-expert task stays shared
+ok 416 - single-expert task expands 1:1; multi-expert task fans out in roster order; no-expert task stays shared
+  ---
+  duration_ms: 147.254361
+  type: 'test'
+  ...
+# Subtest: physical dependencies cover every physical id of every upstream logical task, in creation order
+ok 417 - physical dependencies cover every physical id of every upstream logical task, in creation order
+  ---
+  duration_ms: 30.04749
+  type: 'test'
+  ...
+# Subtest: interpolation merges plan.params + opts.interpolations + per-expert keys + {dependencies}
+ok 418 - interpolation merges plan.params + opts.interpolations + per-expert keys + {dependencies}
+  ---
+  duration_ms: 39.970995
+  type: 'test'
+  ...
+# Subtest: unknown {key} tokens are left verbatim; non-string params are skipped
+ok 419 - unknown {key} tokens are left verbatim; non-string params are skipped
+  ---
+  duration_ms: 32.806044
+  type: 'test'
+  ...
+# Subtest: compileErrorOf turns a failed CompileResult into a structured Error
+ok 420 - compileErrorOf turns a failed CompileResult into a structured Error
+  ---
+  duration_ms: 12.066254
+  type: 'test'
+  ...
+# Subtest: members dedupe by expertId (first occurrence wins) across slots
+ok 421 - members dedupe by expertId (first occurrence wins) across slots
+  ---
+  duration_ms: 30.769402
+  type: 'test'
+  ...
+# Subtest: memberOrder reorders members and validates coverage/uniqueness
+ok 422 - memberOrder reorders members and validates coverage/uniqueness
+  ---
+  duration_ms: 19.551007
+  type: 'test'
+  ...
+# Subtest: planRef carries planId/digest/template; scenarioId only when the plan has one
+ok 423 - planRef carries planId/digest/template; scenarioId only when the plan has one
+  ---
+  duration_ms: 9.473169
+  type: 'test'
+  ...
+# Subtest: the same plan expands byte-identically every time
+ok 424 - the same plan expands byte-identically every time
+  ---
+  duration_ms: 7.607137
+  type: 'test'
+  ...
+# Subtest: taskSuffixes append after interpolation (suffix-as-description covered by the V1 golden test)
+ok 425 - taskSuffixes append after interpolation (suffix-as-description covered by the V1 golden test)
+  ---
+  duration_ms: 22.779211
+  type: 'test'
+  ...
+# (node:660776) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: golden: V1 scenario expands to the exact imperative DAG (ids/subjects/deps/assignees)
+ok 426 - golden: V1 scenario expands to the exact imperative DAG (ids/subjects/deps/assignees)
+  ---
+  duration_ms: 559.014126
+  type: 'test'
+  ...
+# Subtest: golden: every V1 placeholder key resolves (missing → empty), unknown tokens stay verbatim
+ok 427 - golden: every V1 placeholder key resolves (missing → empty), unknown tokens stay verbatim
+  ---
+  duration_ms: 36.370979
+  type: 'test'
+  ...
+# Subtest: golden: the skill task suffix appends after interpolation (and becomes the description when none)
+ok 428 - golden: the skill task suffix appends after interpolation (and becomes the description when none)
+  ---
+  duration_ms: 33.342718
+  type: 'test'
+  ...
+# Subtest: golden: a skill bound to a described task appends the block to the interpolated text
+ok 429 - golden: a skill bound to a described task appends the block to the interpolated text
+  ---
+  duration_ms: 5.531153
+  type: 'test'
+  ...
+# Subtest: golden: expansion is deterministic for the V1 bridge (identical twice)
+ok 430 - golden: expansion is deterministic for the V1 bridge (identical twice)
+  ---
+  duration_ms: 6.449199
+  type: 'test'
+  ...
+# (node:660927) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: AuditLogFile appends one JSON line per record; readTail returns them in order
+ok 431 - AuditLogFile appends one JSON line per record; readTail returns them in order
+  ---
+  duration_ms: 291.266282
+  type: 'test'
+  ...
+# Subtest: readTail returns only the last N entries of the file
+ok 432 - readTail returns only the last N entries of the file
+  ---
+  duration_ms: 92.757885
+  type: 'test'
+  ...
+# Subtest: rotation rewrites the file to the last keepLines once it exceeds maxBytes
+ok 433 - rotation rewrites the file to the last keepLines once it exceeds maxBytes
+  ---
+  duration_ms: 86.367329
+  type: 'test'
+  ...
+# Subtest: readTail of a missing file is empty; malformed lines are skipped
+ok 434 - readTail of a missing file is empty; malformed lines are skipped
+  ---
+  duration_ms: 32.844876
+  type: 'test'
+  ...
+# Subtest: parseAuditLimit: default 100, clamps at 500, invalid → default
+ok 435 - parseAuditLimit: default 100, clamps at 500, invalid → default
+  ---
+  duration_ms: 0.564389
+  type: 'test'
+  ...
+# Subtest: resolveAuditLogPath: DSH_HOME when set, else cwd fallback
+ok 436 - resolveAuditLogPath: DSH_HOME when set, else cwd fallback
+  ---
+  duration_ms: 0.37515
+  type: 'test'
+  ...
+# Subtest: mergeAuditTails: dedupes file copies of in-memory entries, sorts by at, keeps the tail
+ok 437 - mergeAuditTails: dedupes file copies of in-memory entries, sorts by at, keeps the tail
+  ---
+  duration_ms: 9.650721
+  type: 'test'
+  ...
+# Subtest: handler: empty state returns an empty entries array (200 JSON)
+ok 438 - handler: empty state returns an empty entries array (200 JSON)
+  ---
+  duration_ms: 11.337752
+  type: 'test'
+  ...
+# Subtest: handler: returns the in-memory audit tail in order, respecting ?limit= clamp
+ok 439 - handler: returns the in-memory audit tail in order, respecting ?limit= clamp
+  ---
+  duration_ms: 4.51318
+  type: 'test'
+  ...
+# Subtest: handler: reload merge — a persisted file fills the tail when memory is empty (cross-restart memory)
+ok 440 - handler: reload merge — a persisted file fills the tail when memory is empty (cross-restart memory)
+  ---
+  duration_ms: 55.684479
+  type: 'test'
+  ...
+# Subtest: handler: reload merge — file copies of live in-memory entries are deduped, memory is first-class
+ok 441 - handler: reload merge — file copies of live in-memory entries are deduped, memory is first-class
+  ---
+  duration_ms: 54.029914
+  type: 'test'
+  ...
+# Subtest: secret scan: sentinel credential keys/values never appear in the serialized audit response
+ok 442 - secret scan: sentinel credential keys/values never appear in the serialized audit response
+  ---
+  duration_ms: 39.806068
+  type: 'test'
+  ...
+# (node:660969) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every invoke appends exactly one JSONL audit record (ok outcome)
+ok 443 - every invoke appends exactly one JSONL audit record (ok outcome)
+  ---
+  duration_ms: 167.693949
+  type: 'test'
+  ...
+# Subtest: a failed invoke is persisted with outcome fail
+ok 444 - a failed invoke is persisted with outcome fail
+  ---
+  duration_ms: 55.015535
+  type: 'test'
+  ...
+# Subtest: a failing audit write is swallowed (logger.warn) and never breaks the provider call
+ok 445 - a failing audit write is swallowed (logger.warn) and never breaks the provider call
+  ---
+  duration_ms: 64.492884
+  type: 'test'
+  ...
+# Subtest: reconfigure keeps persisting invoke records to the same file
+ok 446 - reconfigure keeps persisting invoke records to the same file
+  ---
+  duration_ms: 95.408385
+  type: 'test'
+  ...
+# Subtest: the persisted log survives a "restart": a fresh writer on the same file re-reads it
+ok 447 - the persisted log survives a "restart": a fresh writer on the same file re-reads it
+  ---
+  duration_ms: 56.213887
+  type: 'test'
+  ...
+# Subtest: secret scan: the serialized JSONL never contains credential material
+ok 448 - secret scan: the serialized JSONL never contains credential material
+  ---
+  duration_ms: 44.5325
+  type: 'test'
+  ...
+# (node:661003) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: structure: empty artifact and missing required sections fail
+ok 449 - structure: empty artifact and missing required sections fail
+  ---
+  duration_ms: 32.924085
+  type: 'test'
+  ...
+# Subtest: data-citation: numbers need provenance and null must never become 0
+ok 450 - data-citation: numbers need provenance and null must never become 0
+  ---
+  duration_ms: 7.491033
+  type: 'test'
+  ...
+# Subtest: compliance: blocked identity, internal-only and deceased terms (historical allowed)
+ok 451 - compliance: blocked identity, internal-only and deceased terms (historical allowed)
+  ---
+  duration_ms: 6.802958
+  type: 'test'
+  ...
+# Subtest: compliance terms can come from the gate config instead of options
+ok 452 - compliance terms can come from the gate config instead of options
+  ---
+  duration_ms: 0.575552
+  type: 'test'
+  ...
+# Subtest: style: phrase density warns; word limit errors but a soft gate only warns
+ok 453 - style: phrase density warns; word limit errors but a soft gate only warns
+  ---
+  duration_ms: 56.302338
+  type: 'test'
+  ...
+# Subtest: style: a hard word-limit gate blocks delivery
+ok 454 - style: a hard word-limit gate blocks delivery
+  ---
+  duration_ms: 8.802015
+  type: 'test'
+  ...
+# Subtest: gate config wins over options (conservative config reuse)
+ok 455 - gate config wins over options (conservative config reuse)
+  ---
+  duration_ms: 15.938572
+  type: 'test'
+  ...
+# Subtest: builtin map covers the deterministic ids and never fakes semantic/visual
+ok 456 - builtin map covers the deterministic ids and never fakes semantic/visual
+  ---
+  duration_ms: 2.271051
+  type: 'test'
+  ...
+# Subtest: zhijian quality policy executes with builtin evaluators; semantic stays injectable
+ok 457 - zhijian quality policy executes with builtin evaluators; semantic stays injectable
+  ---
+  duration_ms: 69.719116
+  type: 'test'
+  ...
+# Subtest: every issue carries code/severity; error issues carry location/evidence/correction
+ok 458 - every issue carries code/severity; error issues carry location/evidence/correction
+  ---
+  duration_ms: 3.329435
+  type: 'test'
+  ...
+# (node:661082) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: a stable pack dir mtime returns the same cached object (identity preserved)
+ok 459 - a stable pack dir mtime returns the same cached object (identity preserved)
+  ---
+  duration_ms: 127.697739
+  type: 'test'
+  ...
+# Subtest: invalidateBuiltinLegacyPack() drops the cache; the next access rebuilds
+ok 460 - invalidateBuiltinLegacyPack() drops the cache; the next access rebuilds
+  ---
+  duration_ms: 39.968118
+  type: 'test'
+  ...
+# Subtest: invalidateBuiltinLegacyPack(dir) drops only that dir entry
+ok 461 - invalidateBuiltinLegacyPack(dir) drops only that dir entry
+  ---
+  duration_ms: 1771.330887
+  type: 'test'
+  ...
+# Subtest: mtime staleness: touching pack.json rebuilds lazily on the next access
+ok 462 - mtime staleness: touching pack.json rebuilds lazily on the next access
+  ---
+  duration_ms: 757.82518
+  type: 'test'
+  ...
+# Subtest: mtime staleness: touching generated/pack.sha256 also rebuilds
+ok 463 - mtime staleness: touching generated/pack.sha256 also rebuilds
+  ---
+  duration_ms: 972.94491
+  type: 'test'
+  ...
+# Subtest: a missing pack dir stays a loud failure after invalidation (no silent fallback)
+ok 464 - a missing pack dir stays a loud failure after invalidation (no silent fallback)
+  ---
+  duration_ms: 20.87786
+  type: 'test'
+  ...
+# (node:661224) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# (node:661175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: generator --check is clean (committed pack == a fresh emit)
+ok 465 - generator --check is clean (committed pack == a fresh emit)
+  ---
+  duration_ms: 2687.523163
+  type: 'test'
+  ...
+# Subtest: the builtin pack round-trips through the real loader validator-clean
+ok 466 - the builtin pack round-trips through the real loader validator-clean
+  ---
+  duration_ms: 1014.377861
+  type: 'test'
+  ...
+# Subtest: every builtin scenario compiles digest-identically via the pack path and the adaptV1 path (10/10)
+ok 467 - every builtin scenario compiles digest-identically via the pack path and the adaptV1 path (10/10)
+  ---
+  duration_ms: 560.293572
+  type: 'test'
+  ...
+# Subtest: ppt-gen builtin DAG shape: the 渲染和出图 render task is the final node on docs-coordinator
+ok 468 - ppt-gen builtin DAG shape: the 渲染和出图 render task is the final node on docs-coordinator
+  ---
+  duration_ms: 24.007095
+  type: 'test'
+  ...
+# Subtest: a missing pack dir fails loudly with remediation (no adaptV1 fallback)
+ok 469 - a missing pack dir fails loudly with remediation (no adaptV1 fallback)
+  ---
+  duration_ms: 33.582054
+  type: 'test'
+  ...
+# Subtest: an invalid pack dir fails loudly with remediation (no silent projection)
+ok 470 - an invalid pack dir fails loudly with remediation (no silent projection)
+  ---
+  duration_ms: 133.167168
+  type: 'test'
+  ...
+# Subtest: builtinLegacyPack loads the static pack (not the projection) when the dir is present
+ok 471 - builtinLegacyPack loads the static pack (not the projection) when the dir is present
+  ---
+  duration_ms: 8.926205
+  type: 'test'
+  ...
+# Subtest: the builtin pack resolves from a published dist layout (lib/ + domain-packs/ at the package root)
+ok 472 - the builtin pack resolves from a published dist layout (lib/ + domain-packs/ at the package root)
+  ---
+  duration_ms: 4172.756814
+  type: 'test'
+  ...
+# (node:661440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: only explicit center activation reaches the compiler; v2 selection leaves v1 result and plan intact
+ok 473 - only explicit center activation reaches the compiler; v2 selection leaves v1 result and plan intact
+  ---
+  duration_ms: 709.843358
+  type: 'test'
+  ...
+# Subtest: empty snapshot disables all center packs even when files remain, and no snapshot auto-discovers no inventory
+ok 474 - empty snapshot disables all center packs even when files remain, and no snapshot auto-discovers no inventory
+  ---
+  duration_ms: 105.11961
+  type: 'test'
+  ...
+# Subtest: legacy enabledPacks empty/absent means all while nonempty filters legacy only
+ok 475 - legacy enabledPacks empty/absent means all while nonempty filters legacy only
+  ---
+  duration_ms: 258.83616
+  type: 'test'
+  ...
+# Subtest: suppression matches only exact real vendor paths, preserving same-ID workspace, sibling and builtin
+ok 476 - suppression matches only exact real vendor paths, preserving same-ID workspace, sibling and builtin
+  ---
+  duration_ms: 75.199693
+  type: 'test'
+  ...
+# Subtest: cache identity includes vendor roots and discovered workspaces even with equal file mtimes
+ok 477 - cache identity includes vendor roots and discovered workspaces even with equal file mtimes
+  ---
+  duration_ms: 241.575873
+  type: 'test'
+  ...
+# Subtest: cached center results reverify tree integrity and never hide tampering behind unchanged mtimes
+ok 478 - cached center results reverify tree integrity and never hide tampering behind unchanged mtimes
+  ---
+  duration_ms: 210.277642
+  type: 'test'
+  ...
+# Subtest: result snapshots are deeply frozen and detached without freezing or rewriting caller base or selection
+ok 479 - result snapshots are deeply frozen and detached without freezing or rewriting caller base or selection
+  ---
+  duration_ms: 172.419199
+  type: 'test'
+  ...
+# Subtest: center generation, release digest and roots each participate in cache selection
+ok 480 - center generation, release digest and roots each participate in cache selection
+  ---
+  duration_ms: 564.190729
+  type: 'test'
+  ...
+# Subtest: invalid center schema, mismatched identity and unsafe or missing roots are explicit failures
+ok 481 - invalid center schema, mismatched identity and unsafe or missing roots are explicit failures
+  ---
+  duration_ms: 511.405802
+  type: 'test'
+  ...
+# Subtest: malformed center snapshots and duplicate activations cannot be interpreted as an empty selection
+ok 482 - malformed center snapshots and duplicate activations cannot be interpreted as an empty selection
+  ---
+  duration_ms: 81.337594
+  type: 'test'
+  ...
+# Subtest: center merge order is stable by pack identity independent of input order and asynchronous loading
+ok 483 - center merge order is stable by pack identity independent of input order and asynchronous loading
+  ---
+  duration_ms: 165.850881
+  type: 'test'
+  ...
+# Subtest: individually valid center and workspace packs that invalidate the merged graph fail closed
+ok 484 - individually valid center and workspace packs that invalidate the merged graph fail closed
+  ---
+  duration_ms: 122.536609
+  type: 'test'
+  ...
+# Subtest: caller changes while resolving cannot rewrite the captured base, activation or legacy selection
+ok 485 - caller changes while resolving cannot rewrite the captured base, activation or legacy selection
+  ---
+  duration_ms: 45.216036
+  type: 'test'
+  ...
+# Subtest: legacy invalid packs still return diagnostics, cache invalidation still works and center resolver stays local
+ok 486 - legacy invalid packs still return diagnostics, cache invalidation still works and center resolver stays local
+  ---
+  duration_ms: 203.565888
+  type: 'test'
+  ...
+# (node:661618) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the collab pack is validator-clean and declares 5 templates + 4 scenarios
+ok 487 - the collab pack is validator-clean and declares 5 templates + 4 scenarios
+  ---
+  duration_ms: 158.360444
+  type: 'test'
+  ...
+# Subtest: debate: t1..t5 chain, roster [moderator, pro, con], subjects embed the expert ids
+ok 488 - debate: t1..t5 chain, roster [moderator, pro, con], subjects embed the expert ids
+  ---
+  duration_ms: 47.106446
+  type: 'test'
+  ...
+# Subtest: debate: pro == moderator dedupes the roster to two members
+ok 489 - debate: pro == moderator dedupes the roster to two members
+  ---
+  duration_ms: 28.580629
+  type: 'test'
+  ...
+# Subtest: roundtable: speakers fan out; the note-taker task depends on ALL speakers
+ok 490 - roundtable: speakers fan out; the note-taker task depends on ALL speakers
+  ---
+  duration_ms: 9.082961
+  type: 'test'
+  ...
+# Subtest: roundtable without note_taker: the 纪要 task stays unassigned (shared pool)
+ok 491 - roundtable without note_taker: the 纪要 task stays unassigned (shared pool)
+  ---
+  duration_ms: 11.351514
+  type: 'test'
+  ...
+# Subtest: roundtable with fewer than 2 speakers fails at compile time (assignment-count)
+ok 492 - roundtable with fewer than 2 speakers fails at compile time (assignment-count)
+  ---
+  duration_ms: 1.0555
+  type: 'test'
+  ...
+# Subtest: ppt: 架构 → 内容供给(fan-out) → 逐页文案 → 渲染和出图; docs-coordinator deduped
+ok 493 - ppt: 架构 → 内容供给(fan-out) → 逐页文案 → 渲染和出图; docs-coordinator deduped
+  ---
+  duration_ms: 6.271222
+  type: 'test'
+  ...
+# Subtest: ppt: the render task threads the template param — provided line present, absent → no line
+ok 494 - ppt: the render task threads the template param — provided line present, absent → no line
+  ---
+  duration_ms: 38.859902
+  type: 'test'
+  ...
+# Subtest: ppt: default audience/page-count text when not supplied
+ok 495 - ppt: default audience/page-count text when not supplied
+  ---
+  duration_ms: 10.931937
+  type: 'test'
+  ...
+# Subtest: ppt: more than 3 content experts fails at compile time
+ok 496 - ppt: more than 3 content experts fails at compile time
+  ---
+  duration_ms: 19.65568
+  type: 'test'
+  ...
+# Subtest: report (multi): 梳理 → 研判(fan-out) → 融合成文 → 渲染与生成 with dataLine embedded
+ok 497 - report (multi): 梳理 → 研判(fan-out) → 融合成文 → 渲染与生成 with dataLine embedded
+  ---
+  duration_ms: 12.633239
+  type: 'test'
+  ...
+# Subtest: report (single expert): variant template drops the analyst task entirely
+ok 498 - report (single expert): variant template drops the analyst task entirely
+  ---
+  duration_ms: 10.572151
+  type: 'test'
+  ...
+# Subtest: report: writer among the experts keeps the roster in experts order (dedup)
+ok 499 - report: writer among the experts keeps the roster in experts order (dedup)
+  ---
+  duration_ms: 11.202693
+  type: 'test'
+  ...
+# Subtest: every collab mode compiles with its scenario id and no template-mismatch warning
+ok 500 - every collab mode compiles with its scenario id and no template-mismatch warning
+  ---
+  duration_ms: 36.629396
+  type: 'test'
+  ...
+# (node:661764) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: fixture pack is validator-clean
+ok 501 - fixture pack is validator-clean
+  ---
+  duration_ms: 79.732828
+  type: 'test'
+  ...
+# Subtest: compiles into a frozen immutable plan with digest and topological order
+ok 502 - compiles into a frozen immutable plan with digest and topological order
+  ---
+  duration_ms: 61.67581
+  type: 'test'
+  ...
+# Subtest: auto roster ranks by proficiency and excludes deceased experts
+ok 503 - auto roster ranks by proficiency and excludes deceased experts
+  ---
+  duration_ms: 4.681763
+  type: 'test'
+  ...
+# Subtest: same template + same input ⇒ isomorphic DAG and identical digest
+ok 504 - same template + same input ⇒ isomorphic DAG and identical digest
+  ---
+  duration_ms: 35.695827
+  type: 'test'
+  ...
+# Subtest: param key order does not change the digest (canonical params)
+ok 505 - param key order does not change the digest (canonical params)
+  ---
+  duration_ms: 21.773538
+  type: 'test'
+  ...
+# Subtest: params are deep-cloned into the plan (input mutation cannot leak)
+ok 506 - params are deep-cloned into the plan (input mutation cannot leak)
+  ---
+  duration_ms: 11.062558
+  type: 'test'
+  ...
+# Subtest: digest is sensitive to params
+ok 507 - digest is sensitive to params
+  ---
+  duration_ms: 26.067681
+  type: 'test'
+  ...
+# Subtest: defaults are folded into normalized params
+ok 508 - defaults are folded into normalized params
+  ---
+  duration_ms: 12.081376
+  type: 'test'
+  ...
+# Subtest: missing required param fails with params kind and is not retryable
+ok 509 - missing required param fails with params kind and is not retryable
+  ---
+  duration_ms: 1.395286
+  type: 'test'
+  ...
+# Subtest: non-object params are rejected
+ok 510 - non-object params are rejected
+  ---
+  duration_ms: 8.202662
+  type: 'test'
+  ...
+# Subtest: param type violations are reported
+ok 511 - param type violations are reported
+  ---
+  duration_ms: 0.645305
+  type: 'test'
+  ...
+# Subtest: explicit assignments must satisfy slot cardinality
+ok 512 - explicit assignments must satisfy slot cardinality
+  ---
+  duration_ms: 16.219681
+  type: 'test'
+  ...
+# Subtest: expert must claim every slot capability
+ok 513 - expert must claim every slot capability
+  ---
+  duration_ms: 0.643499
+  type: 'test'
+  ...
+# Subtest: deceased experts cannot be rostered, only auto-skipped
+ok 514 - deceased experts cannot be rostered, only auto-skipped
+  ---
+  duration_ms: 10.008552
+  type: 'test'
+  ...
+# Subtest: undersupplied slot fails compilation (roster kind)
+ok 515 - undersupplied slot fails compilation (roster kind)
+  ---
+  duration_ms: 6.887641
+  type: 'test'
+  ...
+# Subtest: unbound capability fails with binding kind and is retryable
+ok 516 - unbound capability fails with binding kind and is retryable
+  ---
+  duration_ms: 1.106421
+  type: 'test'
+  ...
+# Subtest: scenario fallback resolves capability and records provenance
+ok 517 - scenario fallback resolves capability and records provenance
+  ---
+  duration_ms: 9.006232
+  type: 'test'
+  ...
+# Subtest: fallback binding stays keyed by the requested capability so task input lookup succeeds
+ok 518 - fallback binding stays keyed by the requested capability so task input lookup succeeds
+  ---
+  duration_ms: 21.832664
+  type: 'test'
+  ...
+# Subtest: explicit provider binding overrides resolution
+ok 519 - explicit provider binding overrides resolution
+  ---
+  duration_ms: 31.295171
+  type: 'test'
+  ...
+# Subtest: provider binding to a provider that lacks the capability fails
+ok 520 - provider binding to a provider that lacks the capability fails
+  ---
+  duration_ms: 0.547226
+  type: 'test'
+  ...
+# Subtest: unknown knowledge provider in an input binding fails
+ok 521 - unknown knowledge provider in an input binding fails
+  ---
+  duration_ms: 16.042961
+  type: 'test'
+  ...
+# Subtest: gate chain is ordered by phase, not by declaration order
+ok 522 - gate chain is ordered by phase, not by declaration order
+  ---
+  duration_ms: 8.71648
+  type: 'test'
+  ...
+# Subtest: dangling dependency fails with template kind and is not retryable
+ok 523 - dangling dependency fails with template kind and is not retryable
+  ---
+  duration_ms: 8.170984
+  type: 'test'
+  ...
+# Subtest: dependency cycle fails compilation
+ok 524 - dependency cycle fails compilation
+  ---
+  duration_ms: 2.963701
+  type: 'test'
+  ...
+# Subtest: gate bindings to unknown policy/gate fail as template errors
+ok 525 - gate bindings to unknown policy/gate fail as template errors
+  ---
+  duration_ms: 4.018272
+  type: 'test'
+  ...
+# Subtest: explicit render mode override lands on the deliverable
+ok 526 - explicit render mode override lands on the deliverable
+  ---
+  duration_ms: 8.726485
+  type: 'test'
+  ...
+# Subtest: scenario mismatch is a warning, not an error
+ok 527 - scenario mismatch is a warning, not an error
+  ---
+  duration_ms: 4.021029
+  type: 'test'
+  ...
+# Subtest: roster-only requiredCapabilities do not force a ToolProvider (zhijian pack)
+ok 528 - roster-only requiredCapabilities do not force a ToolProvider (zhijian pack)
+  ---
+  duration_ms: 158.730888
+  type: 'test'
+  ...
+# Subtest: diversity.fields grows the auto roster to distinct fields (up to cardinality.max)
+ok 529 - diversity.fields grows the auto roster to distinct fields (up to cardinality.max)
+  ---
+  duration_ms: 15.997189
+  type: 'test'
+  ...
+# Subtest: diversity.fields fails when the pool cannot provide distinct fields
+ok 530 - diversity.fields fails when the pool cannot provide distinct fields
+  ---
+  duration_ms: 4.72061
+  type: 'test'
+  ...
+# Subtest: diversity.fields is enforced for explicit assignments
+ok 531 - diversity.fields is enforced for explicit assignments
+  ---
+  duration_ms: 13.162828
+  type: 'test'
+  ...
+# Subtest: roster must satisfy requiredCapabilities minProficiency (pass/fail threshold)
+ok 532 - roster must satisfy requiredCapabilities minProficiency (pass/fail threshold)
+  ---
+  duration_ms: 34.271547
+  type: 'test'
+  ...
+# Subtest: required capability missing from every rostered expert fails
+ok 533 - required capability missing from every rostered expert fails
+  ---
+  duration_ms: 5.8872
+  type: 'test'
+  ...
+# Subtest: requiredCapabilities cardinality needs distinct rostered experts
+ok 534 - requiredCapabilities cardinality needs distinct rostered experts
+  ---
+  duration_ms: 27.770247
+  type: 'test'
+  ...
+# Subtest: requiredCapabilities.allowedProviders never forces a provider for roster capabilities
+ok 535 - requiredCapabilities.allowedProviders never forces a provider for roster capabilities
+  ---
+  duration_ms: 10.561785
+  type: 'test'
+  ...
+# Subtest: compiled tasks carry the resolved role roster expertIds for fan-out
+ok 536 - compiled tasks carry the resolved role roster expertIds for fan-out
+  ---
+  duration_ms: 8.916262
+  type: 'test'
+  ...
+# Subtest: params.selectedExpertIds drives the unique user-signoff slot
+ok 537 - params.selectedExpertIds drives the unique user-signoff slot
+  ---
+  duration_ms: 29.660437
+  type: 'test'
+  ...
+# Subtest: params.selectedExpertIds is validated like explicit assignments
+ok 538 - params.selectedExpertIds is validated like explicit assignments
+  ---
+  duration_ms: 15.240098
+  type: 'test'
+  ...
+# Subtest: binding.assignments wins over params.selectedExpertIds for the sign-off slot
+ok 539 - binding.assignments wins over params.selectedExpertIds for the sign-off slot
+  ---
+  duration_ms: 14.764727
+  type: 'test'
+  ...
+# Subtest: selectedExpertIds is ignored when sign-off slots are ambiguous or absent
+ok 540 - selectedExpertIds is ignored when sign-off slots are ambiguous or absent
+  ---
+  duration_ms: 11.17112
+  type: 'test'
+  ...
+# Subtest: duplicate policy/gate bindings are deduped deterministically with a warning
+ok 541 - duplicate policy/gate bindings are deduped deterministically with a warning
+  ---
+  duration_ms: 25.048441
+  type: 'test'
+  ...
+# Subtest: tool-capability input must be in the task allowedCapabilities
+ok 542 - tool-capability input must be in the task allowedCapabilities
+  ---
+  duration_ms: 0.714385
+  type: 'test'
+  ...
+# Subtest: tool-capability input must be in the scenario toolPolicy.allowed
+ok 543 - tool-capability input must be in the scenario toolPolicy.allowed
+  ---
+  duration_ms: 37.746124
+  type: 'test'
+  ...
+# Subtest: QualityGateSpec.phase is validated by the pack validator
+ok 544 - QualityGateSpec.phase is validated by the pack validator
+  ---
+  duration_ms: 29.781418
+  type: 'test'
+  ...
+# Subtest: auto roster fills zero experts for cardinality.min=0 (legacy shared slots stay shared-pool)
+ok 545 - auto roster fills zero experts for cardinality.min=0 (legacy shared slots stay shared-pool)
+  ---
+  duration_ms: 87.11706
+  type: 'test'
+  ...
+# Subtest: unreferenced slots compile when explicitly assigned (V1 assembly roster)
+ok 546 - unreferenced slots compile when explicitly assigned (V1 assembly roster)
+  ---
+  duration_ms: 4.384801
+  type: 'test'
+  ...
+# Subtest: auto-binding refuses explicitly writable transports without an explicit providerBinding
+ok 547 - auto-binding refuses explicitly writable transports without an explicit providerBinding
+  ---
+  duration_ms: 4.530113
+  type: 'test'
+  ...
+# Subtest: auto-binding refuses credentialed transports (auth.credentialRef) without an explicit providerBinding
+ok 548 - auto-binding refuses credentialed transports (auth.credentialRef) without an explicit providerBinding
+  ---
+  duration_ms: 5.448394
+  type: 'test'
+  ...
+# Subtest: auto-binding remains for uncredentialed, non-writable transports
+ok 549 - auto-binding remains for uncredentialed, non-writable transports
+  ---
+  duration_ms: 20.226072
+  type: 'test'
+  ...
+# Subtest: auto-binding prefers unprivileged candidates over privileged ones
+ok 550 - auto-binding prefers unprivileged candidates over privileged ones
+  ---
+  duration_ms: 4.372643
+  type: 'test'
+  ...
+# (node:661787) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: REGRESSION: a real valid V2 pack (no root schemaVersion) migrates idempotently
+ok 551 - REGRESSION: a real valid V2 pack (no root schemaVersion) migrates idempotently
+  ---
+  duration_ms: 258.584724
+  type: 'test'
+  ...
+# Subtest: an invalid V2 pack returns validator diagnostics without throwing
+ok 552 - an invalid V2 pack returns validator diagnostics without throwing
+  ---
+  duration_ms: 46.667914
+  type: 'test'
+  ...
+# Subtest: a legacy registry (schemaVersion 1) migrates via buildLegacyDomainPack
+ok 553 - a legacy registry (schemaVersion 1) migrates via buildLegacyDomainPack
+  ---
+  duration_ms: 18.480384
+  type: 'test'
+  ...
+# Subtest: a legacy registry without schemaVersion is treated as version 1
+ok 554 - a legacy registry without schemaVersion is treated as version 1
+  ---
+  duration_ms: 3.145267
+  type: 'test'
+  ...
+# Subtest: legacy packName is honored on the projected pack
+ok 555 - legacy packName is honored on the projected pack
+  ---
+  duration_ms: 0.700348
+  type: 'test'
+  ...
+# Subtest: a legacy projection that fails validation still reports migrated=true with diagnostics
+ok 556 - a legacy projection that fails validation still reports migrated=true with diagnostics
+  ---
+  duration_ms: 2.750323
+  type: 'test'
+  ...
+# Subtest: non-object legacy entries are rejected up front (never throw)
+ok 557 - non-object legacy entries are rejected up front (never throw)
+  ---
+  duration_ms: 0.778142
+  type: 'test'
+  ...
+# Subtest: a legacy-shaped input without both arrays is rejected
+ok 558 - a legacy-shaped input without both arrays is rejected
+  ---
+  duration_ms: 0.305631
+  type: 'test'
+  ...
+# Subtest: an empty legacy registry migrates to an empty but valid pack
+ok 559 - an empty legacy registry migrates to an empty but valid pack
+  ---
+  duration_ms: 5.763208
+  type: 'test'
+  ...
+# Subtest: unknown or future schema versions return diagnostics and never throw
+ok 560 - unknown or future schema versions return diagnostics and never throw
+  ---
+  duration_ms: 0.979274
+  type: 'test'
+  ...
+# Subtest: a V2-shaped document without pack.schemaVersion 2 is rejected at the nested path
+ok 561 - a V2-shaped document without pack.schemaVersion 2 is rejected at the nested path
+  ---
+  duration_ms: 32.451015
+  type: 'test'
+  ...
+# Subtest: pack presence wins over a root schemaVersion: root 1 + pack record reports the nested path
+ok 562 - pack presence wins over a root schemaVersion: root 1 + pack record reports the nested path
+  ---
+  duration_ms: 23.042347
+  type: 'test'
+  ...
+# Subtest: a root schemaVersion 2 without a pack record is NOT treated as V2 (root is legacy-only)
+ok 563 - a root schemaVersion 2 without a pack record is NOT treated as V2 (root is legacy-only)
+  ---
+  duration_ms: 0.319882
+  type: 'test'
+  ...
+# Subtest: non-record input returns invalid-shape diagnostics and never throws
+ok 564 - non-record input returns invalid-shape diagnostics and never throws
+  ---
+  duration_ms: 1.96828
+  type: 'test'
+  ...
+# Subtest: a migrated legacy pack round-trips as a V2 pack on a second call
+ok 565 - a migrated legacy pack round-trips as a V2 pack on a second call
+  ---
+  duration_ms: 2.001123
+  type: 'test'
+  ...
+# Subtest: migrateDomainPack never throws across the whole dispatch matrix
+ok 566 - migrateDomainPack never throws across the whole dispatch matrix
+  ---
+  duration_ms: 70.161008
+  type: 'test'
+  ...
+# (node:661876) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: V2 loader modules contain no network APIs (source-level)
+ok 567 - V2 loader modules contain no network APIs (source-level)
+  ---
+  duration_ms: 85.85295
+  type: 'test'
+  ...
+# Subtest: pack-loader imports only builtins and local modules (no remote specifiers)
+ok 568 - pack-loader imports only builtins and local modules (no remote specifiers)
+  ---
+  duration_ms: 17.157593
+  type: 'test'
+  ...
+# Subtest: no network-adjacent modules exist in the v2 loader chain
+ok 569 - no network-adjacent modules exist in the v2 loader chain
+  ---
+  duration_ms: 41.519469
+  type: 'test'
+  ...
+# Subtest: upstreamProvenance is a pure audit string: package still loads and verifies locally
+ok 570 - upstreamProvenance is a pure audit string: package still loads and verifies locally
+  ---
+  duration_ms: 222.087424
+  type: 'test'
+  ...
+# Subtest: a digest mismatch is rejected even when the package declares a provenance URL
+ok 571 - a digest mismatch is rejected even when the package declares a provenance URL
+  ---
+  duration_ms: 237.405542
+  type: 'test'
+  ...
+# Subtest: a missing license forces internalOnly even when a provenance URL is present
+ok 572 - a missing license forces internalOnly even when a provenance URL is present
+  ---
+  duration_ms: 52.919547
+  type: 'test'
+  ...
+# Subtest: lazy media entries are verified by bytes and sha256 (no network involved)
+ok 573 - lazy media entries are verified by bytes and sha256 (no network involved)
+  ---
+  duration_ms: 319.303194
+  type: 'test'
+  ...
+# (node:662096) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: expert overlays merge capability contributions by capability id
+ok 574 - expert overlays merge capability contributions by capability id
+  ---
+  duration_ms: 181.742304
+  type: 'test'
+  ...
+# Subtest: packFromJson accepts a complete pack and records the source
+ok 575 - packFromJson accepts a complete pack and records the source
+  ---
+  duration_ms: 9.752317
+  type: 'test'
+  ...
+# Subtest: packFromJson rejects an invalid pack with validator diagnostics
+ok 576 - packFromJson rejects an invalid pack with validator diagnostics
+  ---
+  duration_ms: 16.168886
+  type: 'test'
+  ...
+# Subtest: loadPackFromDir assembles sections from per-entity files (kebab dirs)
+ok 577 - loadPackFromDir assembles sections from per-entity files (kebab dirs)
+  ---
+  duration_ms: 627.126418
+  type: 'test'
+  ...
+# Subtest: loadPackFromDir supports index.json array sections and warns on filename/id mismatch
+ok 578 - loadPackFromDir supports index.json array sections and warns on filename/id mismatch
+  ---
+  duration_ms: 476.136616
+  type: 'test'
+  ...
+# Subtest: loadPackFromDir accepts the full-pack pack.json form
+ok 579 - loadPackFromDir accepts the full-pack pack.json form
+  ---
+  duration_ms: 105.808023
+  type: 'test'
+  ...
+# Subtest: loadPackFromFile reads a complete pack from disk
+ok 580 - loadPackFromFile reads a complete pack from disk
+  ---
+  duration_ms: 87.66529
+  type: 'test'
+  ...
+# Subtest: loadPackFromDir rejects a symlinked section directory escaping the pack root
+ok 581 - loadPackFromDir rejects a symlinked section directory escaping the pack root
+  ---
+  duration_ms: 160.697976
+  type: 'test'
+  ...
+# Subtest: loadPackFromDir rejects a symlinked entity file escaping the pack root
+ok 582 - loadPackFromDir rejects a symlinked entity file escaping the pack root
+  ---
+  duration_ms: 194.132592
+  type: 'test'
+  ...
+# Subtest: loadPackFromDir rejects a symlinked pack.json escaping the pack root
+ok 583 - loadPackFromDir rejects a symlinked pack.json escaping the pack root
+  ---
+  duration_ms: 87.701792
+  type: 'test'
+  ...
+# Subtest: loadPackFromFile enforces optional allowedRoot containment
+ok 584 - loadPackFromFile enforces optional allowedRoot containment
+  ---
+  duration_ms: 163.609255
+  type: 'test'
+  ...
+# Subtest: mergePackLayers applies builtin < domain-pack < workspace < request
+ok 585 - mergePackLayers applies builtin < domain-pack < workspace < request
+  ---
+  duration_ms: 4.291427
+  type: 'test'
+  ...
+# Subtest: mergePackLayers is deterministic and independent of input order
+ok 586 - mergePackLayers is deterministic and independent of input order
+  ---
+  duration_ms: 2.849062
+  type: 'test'
+  ...
+# Subtest: mergePackLayers skips failed layers with a diagnostic
+ok 587 - mergePackLayers skips failed layers with a diagnostic
+  ---
+  duration_ms: 3.208805
+  type: 'test'
+  ...
+# Subtest: sortLayersByPrecedence orders canonically and is stable
+ok 588 - sortLayersByPrecedence orders canonically and is stable
+  ---
+  duration_ms: 0.30334
+  type: 'test'
+  ...
+# Subtest: compareVersions compares numeric semver parts and is undefined for non-semver
+ok 589 - compareVersions compares numeric semver parts and is undefined for non-semver
+  ---
+  duration_ms: 0.179085
+  type: 'test'
+  ...
+# Subtest: compareVersions orders prereleases per semver (numeric, numeric < nonnumeric, list length)
+ok 590 - compareVersions orders prereleases per semver (numeric, numeric < nonnumeric, list length)
+  ---
+  duration_ms: 1.274989
+  type: 'test'
+  ...
+# Subtest: overlay merge flags an rc as a downgrade of a stable release
+ok 591 - overlay merge flags an rc as a downgrade of a stable release
+  ---
+  duration_ms: 2.625505
+  type: 'test'
+  ...
+# Subtest: isSafeRelativePath rejects escapes and accepts local relative paths
+ok 592 - isSafeRelativePath rejects escapes and accepts local relative paths
+  ---
+  duration_ms: 0.238349
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir verifies digest, lazy media and surfaces scripts
+ok 593 - loadSkillPackageFromDir verifies digest, lazy media and surfaces scripts
+  ---
+  duration_ms: 177.513666
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir rejects digest tampering
+ok 594 - loadSkillPackageFromDir rejects digest tampering
+  ---
+  duration_ms: 141.322909
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir rejects manifest tampering (contributions / execScripts)
+ok 595 - loadSkillPackageFromDir rejects manifest tampering (contributions / execScripts)
+  ---
+  duration_ms: 163.90287
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir verifies despite manifest key order (canonicalized)
+ok 596 - loadSkillPackageFromDir verifies despite manifest key order (canonicalized)
+  ---
+  duration_ms: 183.906993
+  type: 'test'
+  ...
+# Subtest: canonicalJson / canonicalManifestDigest are deterministic and key-order-insensitive
+ok 597 - canonicalJson / canonicalManifestDigest are deterministic and key-order-insensitive
+  ---
+  duration_ms: 14.711014
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir forces internalOnly when license is missing
+ok 598 - loadSkillPackageFromDir forces internalOnly when license is missing
+  ---
+  duration_ms: 232.302494
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir validates lazy media size and hash
+ok 599 - loadSkillPackageFromDir validates lazy media size and hash
+  ---
+  duration_ms: 224.571367
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir reports missing exec scripts as declarations
+ok 600 - loadSkillPackageFromDir reports missing exec scripts as declarations
+  ---
+  duration_ms: 258.959094
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir rejects remote kinds and unsafe roots
+ok 601 - loadSkillPackageFromDir rejects remote kinds and unsafe roots
+  ---
+  duration_ms: 308.930404
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir enforces declared root consistency with rootBase
+ok 602 - loadSkillPackageFromDir enforces declared root consistency with rootBase
+  ---
+  duration_ms: 469.958728
+  type: 'test'
+  ...
+# Subtest: loadSkillPackageFromDir rejects a lazy media symlink escaping the root
+ok 603 - loadSkillPackageFromDir rejects a lazy media symlink escaping the root
+  ---
+  duration_ms: 163.489598
+  type: 'test'
+  ...
+# Subtest: skill contributions are cross-validated when embedded in a pack
+ok 604 - skill contributions are cross-validated when embedded in a pack
+  ---
+  duration_ms: 140.628595
+  type: 'test'
+  ...
+# Subtest: hashPackageTree is deterministic and content-sensitive
+ok 605 - hashPackageTree is deterministic and content-sensitive
+  ---
+  duration_ms: 82.305074
+  type: 'test'
+  ...
+# (node:662337) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: domain-packs/zhijian-realestate loads clean (zero errors; only the documented unlicensed-skill warning)
+ok 606 - domain-packs/zhijian-realestate loads clean (zero errors; only the documented unlicensed-skill warning)
+  ---
+  duration_ms: 1660.427409
+  type: 'test'
+  ...
+# Subtest: round-trip: loaded pack equals the in-memory V2 projection (content per id)
+ok 607 - round-trip: loaded pack equals the in-memory V2 projection (content per id)
+  ---
+  duration_ms: 1493.654487
+  type: 'test'
+  ...
+# Subtest: pack.json is metadata-only; entity sections live in directories
+ok 608 - pack.json is metadata-only; entity sections live in directories
+  ---
+  duration_ms: 30.77919
+  type: 'test'
+  ...
+# Subtest: exactly 33 experts, ids bk-002..bk-034 (BK-034 merged in 1.1.0)
+ok 609 - exactly 33 experts, ids bk-002..bk-034 (BK-034 merged in 1.1.0)
+  ---
+  duration_ms: 1389.185356
+  type: 'test'
+  ...
+# Subtest: SOURCE-MANIFEST records both baselines (1.0.0 zip / 1.1.0 unpacked) and the upgrade history
+ok 610 - SOURCE-MANIFEST records both baselines (1.0.0 zip / 1.1.0 unpacked) and the upgrade history
+  ---
+  duration_ms: 17.84226
+  type: 'test'
+  ...
+# Subtest: raw profiles are lossless: every file matches its sha-256 in the manifest
+ok 611 - raw profiles are lossless: every file matches its sha-256 in the manifest
+  ---
+  duration_ms: 651.604664
+  type: 'test'
+  ...
+# Subtest: raw profile persona fields survive verbatim (no fabrication, spot checks)
+ok 612 - raw profile persona fields survive verbatim (no fabrication, spot checks)
+  ---
+  duration_ms: 64.714901
+  type: 'test'
+  ...
+# Subtest: pack contains no legacySource markers and no fabricated proficiency
+ok 613 - pack contains no legacySource markers and no fabricated proficiency
+  ---
+  duration_ms: 1326.222777
+  type: 'test'
+  ...
+# Subtest: fidelity: pack experts mirror the runtime metas verbatim
+ok 614 - fidelity: pack experts mirror the runtime metas verbatim
+  ---
+  duration_ms: 715.05472
+  type: 'test'
+  ...
+# Subtest: fidelity: generated/v1/experts.json matches the live V1 registry (frozen golden)
+ok 615 - fidelity: generated/v1/experts.json matches the live V1 registry (frozen golden)
+  ---
+  duration_ms: 14.599283
+  type: 'test'
+  ...
+# Subtest: fidelity: generated/v1/scenarios.json matches the bk-* builtin scenarios
+ok 616 - fidelity: generated/v1/scenarios.json matches the bk-* builtin scenarios
+  ---
+  duration_ms: 26.535654
+  type: 'test'
+  ...
+# Subtest: fidelity: routing overlay matches the in-repo routing tables
+ok 617 - fidelity: routing overlay matches the in-repo routing tables
+  ---
+  duration_ms: 25.423709
+  type: 'test'
+  ...
+# Subtest: quality policy intact after round-trip (5 gates, repair cap 2)
+ok 618 - quality policy intact after round-trip (5 gates, repair cap 2)
+  ---
+  duration_ms: 736.542586
+  type: 'test'
+  ...
+# Subtest: generator determinism: two fresh emits (no source) are byte-identical
+ok 619 - generator determinism: two fresh emits (no source) are byte-identical
+  ---
+  duration_ms: 2199.515446
+  type: 'test'
+  ...
+# Subtest: generator determinism: full regeneration from the embedded source reproduces the committed pack
+ok 620 - generator determinism: full regeneration from the embedded source reproduces the committed pack
+  ---
+  duration_ms: 3785.300669
+  type: 'test'
+  ...
+# Subtest: pack tree hash is deterministic and self-excluding (pack.sha256 not part of itself)
+ok 621 - pack tree hash is deterministic and self-excluding (pack.sha256 not part of itself)
+  ---
+  duration_ms: 1765.306763
+  type: 'test'
+  ...
+# Subtest: compiler golden: loaded-pack templates compile to the same ExecutionPlan digest
+ok 622 - compiler golden: loaded-pack templates compile to the same ExecutionPlan digest
+  ---
+  duration_ms: 580.913233
+  type: 'test'
+  ...
+# (node:662536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: builtin pack loads as validator-clean and summarizes without profile prose
+ok 623 - builtin pack loads as validator-clean and summarizes without profile prose
+  ---
+  duration_ms: 139.019858
+  type: 'test'
+  ...
+# Subtest: summarizePack maps a loaded pack to counts, provenance and health
+ok 624 - summarizePack maps a loaded pack to counts, provenance and health
+  ---
+  duration_ms: 4.536081
+  type: 'test'
+  ...
+# Subtest: summarizePack of a broken pack keeps ok=false and falls back to the root id
+ok 625 - summarizePack of a broken pack keeps ok=false and falls back to the root id
+  ---
+  duration_ms: 0.936765
+  type: 'test'
+  ...
+# Subtest: discoverPackDirsIn lists SafeId dirs and skips unsafe, files and missing roots
+ok 626 - discoverPackDirsIn lists SafeId dirs and skips unsafe, files and missing roots
+  ---
+  duration_ms: 155.949013
+  type: 'test'
+  ...
+# Subtest: listDomainPacks returns the builtin pack first plus workspace packs
+ok 627 - listDomainPacks returns the builtin pack first plus workspace packs
+  ---
+  duration_ms: 88.687889
+  type: 'test'
+  ...
+# Subtest: listDomainPacks reports a broken workspace pack with health and zero counts
+ok 628 - listDomainPacks reports a broken workspace pack with health and zero counts
+  ---
+  duration_ms: 184.292103
+  type: 'test'
+  ...
+# Subtest: listDomainPacks dedupes a workspace dir that realpaths to the builtin pack dir (内置 row wins)
+ok 629 - listDomainPacks dedupes a workspace dir that realpaths to the builtin pack dir (内置 row wins)
+  ---
+  duration_ms: 3979.513186
+  type: 'test'
+  ...
+# Subtest: listDomainPacks dedupes one physical dir discovered via two workspace roots
+ok 630 - listDomainPacks dedupes one physical dir discovered via two workspace roots
+  ---
+  duration_ms: 221.043523
+  type: 'test'
+  ...
+# Subtest: previewDomainPack validates the builtin pack
+ok 631 - previewDomainPack validates the builtin pack
+  ---
+  duration_ms: 93.175532
+  type: 'test'
+  ...
+# Subtest: previewDomainPack returns undefined for unknown or unsafe ids
+ok 632 - previewDomainPack returns undefined for unknown or unsafe ids
+  ---
+  duration_ms: 22.377253
+  type: 'test'
+  ...
+# Subtest: previewDomainPack of a broken workspace pack keeps diagnostics verbatim and drops pack
+ok 633 - previewDomainPack of a broken workspace pack keeps diagnostics verbatim and drops pack
+  ---
+  duration_ms: 542.155292
+  type: 'test'
+  ...
+# Subtest: previewDomainPack resolves a workspace pack by id across roots
+ok 634 - previewDomainPack resolves a workspace pack by id across roots
+  ---
+  duration_ms: 275.157292
+  type: 'test'
+  ...
+# (node:662901) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: registry registers manifests, serves frozen copies and audits
+ok 635 - registry registers manifests, serves frozen copies and audits
+  ---
+  duration_ms: 160.887412
+  type: 'test'
+  ...
+# Subtest: duplicate registration fails without replace, and replace supersedes with audit
+ok 636 - duplicate registration fails without replace, and replace supersedes with audit
+  ---
+  duration_ms: 14.210705
+  type: 'test'
+  ...
+# Subtest: invalid manifests are rejected with the pack validator diagnostics
+ok 637 - invalid manifests are rejected with the pack validator diagnostics
+  ---
+  duration_ms: 3.51775
+  type: 'test'
+  ...
+# Subtest: unregister stops resolution and records an audit entry
+ok 638 - unregister stops resolution and records an audit entry
+  ---
+  duration_ms: 13.633299
+  type: 'test'
+  ...
+# Subtest: snapshot is a frozen point-in-time view
+ok 639 - snapshot is a frozen point-in-time view
+  ---
+  duration_ms: 7.6014
+  type: 'test'
+  ...
+# Subtest: registry constructor rejects an invalid manifest eagerly
+ok 640 - registry constructor rejects an invalid manifest eagerly
+  ---
+  duration_ms: 9.068448
+  type: 'test'
+  ...
+# Subtest: resolver binds wind for financial.stock.snapshot with an auditable reason
+ok 641 - resolver binds wind for financial.stock.snapshot with an auditable reason
+  ---
+  duration_ms: 16.188987
+  type: 'test'
+  ...
+# Subtest: resolver binds zyt for realestate.indicators.timeseries (no implicit wind fallback)
+ok 642 - resolver binds zyt for realestate.indicators.timeseries (no implicit wind fallback)
+  ---
+  duration_ms: 0.605148
+  type: 'test'
+  ...
+# Subtest: allowedProviders filters candidates and reports provider-not-allowed
+ok 643 - allowedProviders filters candidates and reports provider-not-allowed
+  ---
+  duration_ms: 28.667073
+  type: 'test'
+  ...
+# Subtest: capability allowlist denies capabilities outside the task allowlist
+ok 644 - capability allowlist denies capabilities outside the task allowlist
+  ---
+  duration_ms: 10.203612
+  type: 'test'
+  ...
+# Subtest: capability nobody serves is unavailable
+ok 645 - capability nobody serves is unavailable
+  ---
+  duration_ms: 0.721026
+  type: 'test'
+  ...
+# Subtest: write transports are blocked by default and allowed with readOnly: false
+ok 646 - write transports are blocked by default and allowed with readOnly: false
+  ---
+  duration_ms: 15.673922
+  type: 'test'
+  ...
+# Subtest: missing credentials block binding; present credentials allow it
+ok 647 - missing credentials block binding; present credentials allow it
+  ---
+  duration_ms: 0.965211
+  type: 'test'
+  ...
+# Subtest: minFreshness rejects static data when daily is required
+ok 648 - minFreshness rejects static data when daily is required
+  ---
+  duration_ms: 17.31978
+  type: 'test'
+  ...
+# Subtest: explicit fallback binds the substitute and records the hop in the reason
+ok 649 - explicit fallback binds the substitute and records the hop in the reason
+  ---
+  duration_ms: 11.152998
+  type: 'test'
+  ...
+# Subtest: fallback without any provider stays unavailable and never loops
+ok 650 - fallback without any provider stays unavailable and never loops
+  ---
+  duration_ms: 0.605653
+  type: 'test'
+  ...
+# Subtest: resolveAll produces an immutable, JSON-safe plan
+ok 651 - resolveAll produces an immutable, JSON-safe plan
+  ---
+  duration_ms: 21.097005
+  type: 'test'
+  ...
+# Subtest: okEnvelope/failEnvelope build the §3.2 contract and are frozen
+ok 652 - okEnvelope/failEnvelope build the §3.2 contract and are frozen
+  ---
+  duration_ms: 26.403358
+  type: 'test'
+  ...
+# Subtest: wind success unwraps the double-layer envelope and preserves unit
+ok 653 - wind success unwraps the double-layer envelope and preserves unit
+  ---
+  duration_ms: 22.748482
+  type: 'test'
+  ...
+# Subtest: wind cli_meta warnings and partial completeness surface as warnings
+ok 654 - wind cli_meta warnings and partial completeness surface as warnings
+  ---
+  duration_ms: 0.50402
+  type: 'test'
+  ...
+# Subtest: wind USAGE_ERROR maps to retry never and keeps the correction
+ok 655 - wind USAGE_ERROR maps to retry never and keeps the correction
+  ---
+  duration_ms: 26.500592
+  type: 'test'
+  ...
+# Subtest: wind ROUTE_ERROR maps to correct-input and preserves retry budget and details
+ok 656 - wind ROUTE_ERROR maps to correct-input and preserves retry budget and details
+  ---
+  duration_ms: 0.36919
+  type: 'test'
+  ...
+# Subtest: wind failure without an explicit retry directive defaults to never (no invented backoff)
+ok 657 - wind failure without an explicit retry directive defaults to never (no invented backoff)
+  ---
+  duration_ms: 8.710556
+  type: 'test'
+  ...
+# Subtest: wind circuit breaker tripped forces never and keeps the breaker directive
+ok 658 - wind circuit breaker tripped forces never and keeps the breaker directive
+  ---
+  duration_ms: 11.729752
+  type: 'test'
+  ...
+# Subtest: wind inner payload that is not JSON fails with a never retry
+ok 659 - wind inner payload that is not JSON fails with a never retry
+  ---
+  duration_ms: 0.497571
+  type: 'test'
+  ...
+# Subtest: wind null markers survive normalization (missing ≠ 0)
+ok 660 - wind null markers survive normalization (missing ≠ 0)
+  ---
+  duration_ms: 13.623447
+  type: 'test'
+  ...
+# Subtest: zyt success keeps entries and the payload verbatim
+ok 661 - zyt success keeps entries and the payload verbatim
+  ---
+  duration_ms: 1.322657
+  type: 'test'
+  ...
+# Subtest: zyt dataView external sets the caliber and warns; internal does not
+ok 662 - zyt dataView external sets the caliber and warns; internal does not
+  ---
+  duration_ms: 14.783664
+  type: 'test'
+  ...
+# Subtest: zyt unit is preserved from payload and nested data
+ok 663 - zyt unit is preserved from payload and nested data
+  ---
+  duration_ms: 14.853316
+  type: 'test'
+  ...
+# Subtest: zyt exit codes map to the right retry directives
+ok 664 - zyt exit codes map to the right retry directives
+  ---
+  duration_ms: 9.97595
+  type: 'test'
+  ...
+# Subtest: zyt exit 0 with an error payload maps httpStatus to retry
+ok 665 - zyt exit 0 with an error payload maps httpStatus to retry
+  ---
+  duration_ms: 3.7633
+  type: 'test'
+  ...
+# Subtest: attach requires a registered provider and records an audit entry
+ok 666 - attach requires a registered provider and records an audit entry
+  ---
+  duration_ms: 8.430703
+  type: 'test'
+  ...
+# Subtest: duplicate attach fails without replace; detach records an audit entry
+ok 667 - duplicate attach fails without replace; detach records an audit entry
+  ---
+  duration_ms: 0.676396
+  type: 'test'
+  ...
+# Subtest: unregister detaches the invoker so re-registration cannot reuse a stale adapter
+ok 668 - unregister detaches the invoker so re-registration cannot reuse a stale adapter
+  ---
+  duration_ms: 19.114289
+  type: 'test'
+  ...
+# Subtest: invoke executes a resolved binding, freezes the result and audits ok
+ok 669 - invoke executes a resolved binding, freezes the result and audits ok
+  ---
+  duration_ms: 11.720435
+  type: 'test'
+  ...
+# Subtest: stale bindings are rejected: removed provider, version replace, operation gone
+ok 670 - stale bindings are rejected: removed provider, version replace, operation gone
+  ---
+  duration_ms: 29.791259
+  type: 'test'
+  ...
+# Subtest: write transports require an explicit approved flag
+ok 671 - write transports require an explicit approved flag
+  ---
+  duration_ms: 28.875366
+  type: 'test'
+  ...
+# Subtest: invoke rejects a missing invoker and provenance mismatches
+ok 672 - invoke rejects a missing invoker and provenance mismatches
+  ---
+  duration_ms: 27.667118
+  type: 'test'
+  ...
+# Subtest: invoker exceptions are wrapped as a never-retry failure and audited
+ok 673 - invoker exceptions are wrapped as a never-retry failure and audited
+  ---
+  duration_ms: 1.099745
+  type: 'test'
+  ...
+# Subtest: beike success keeps the --json payload and caliber
+ok 674 - beike success keeps the --json payload and caliber
+  ---
+  duration_ms: 25.527635
+  type: 'test'
+  ...
+# Subtest: beike failure uses the stable fallback code and never invents retry
+ok 675 - beike failure uses the stable fallback code and never invents retry
+  ---
+  duration_ms: 4.354935
+  type: 'test'
+  ...
+# Subtest: beike preserves a payload-carried error code and rejects exit-0-without-json
+ok 676 - beike preserves a payload-carried error code and rejects exit-0-without-json
+  ---
+  duration_ms: 0.313519
+  type: 'test'
+  ...
+# Subtest: beike stderr on success becomes an informational warning
+ok 677 - beike stderr on success becomes an informational warning
+  ---
+  duration_ms: 0.474695
+  type: 'test'
+  ...
+# (node:663274) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: wind manifest registers and binds stock snapshot to the local-cli transport
+ok 678 - wind manifest registers and binds stock snapshot to the local-cli transport
+  ---
+  duration_ms: 160.032907
+  type: 'test'
+  ...
+# Subtest: zyt manifest declares http-api plus optional cli and honors preferCli
+ok 679 - zyt manifest declares http-api plus optional cli and honors preferCli
+  ---
+  duration_ms: 1.420248
+  type: 'test'
+  ...
+# Subtest: beike manifest: reads bind mcp-http, writes bind mcp-http-write and are gated
+ok 680 - beike manifest: reads bind mcp-http, writes bind mcp-http-write and are gated
+  ---
+  duration_ms: 7.967935
+  type: 'test'
+  ...
+# Subtest: zyt caveats mark live gaps; beike caveats carry the 2026-08-22 live verification
+ok 681 - zyt caveats mark live gaps; beike caveats carry the 2026-08-22 live verification
+  ---
+  duration_ms: 0.418588
+  type: 'test'
+  ...
+# Subtest: wind current failure envelope {ok:false,code,message} maps to a never-retry with correction
+ok 682 - wind current failure envelope {ok:false,code,message} maps to a never-retry with correction
+  ---
+  duration_ms: 0.893536
+  type: 'test'
+  ...
+# Subtest: wind RATE_LIMIT_ERROR and NETWORK_ERROR map to backoff; others stay never
+ok 683 - wind RATE_LIMIT_ERROR and NETWORK_ERROR map to backoff; others stay never
+  ---
+  duration_ms: 0.447193
+  type: 'test'
+  ...
+# Subtest: wind success unwraps the double-layer envelope and unit, with completeness drift normalized
+ok 684 - wind success unwraps the double-layer envelope and unit, with completeness drift normalized
+  ---
+  duration_ms: 0.894757
+  type: 'test'
+  ...
+# Subtest: wind list-tools payload (no text content) is returned verbatim
+ok 685 - wind list-tools payload (no text content) is returned verbatim
+  ---
+  duration_ms: 22.254872
+  type: 'test'
+  ...
+# Subtest: wind non-JSON stdout fails closed with WIND_INVALID_CLI_OUTPUT
+ok 686 - wind non-JSON stdout fails closed with WIND_INVALID_CLI_OUTPUT
+  ---
+  duration_ms: 9.529807
+  type: 'test'
+  ...
+# Subtest: windCallPlan routes operations to server_type/tool and keeps params verbatim
+ok 687 - windCallPlan routes operations to server_type/tool and keeps params verbatim
+  ---
+  duration_ms: 1.496197
+  type: 'test'
+  ...
+# Subtest: buildZytRequestPlan matches every upstream golden case (Chinese + English)
+ok 688 - buildZytRequestPlan matches every upstream golden case (Chinese + English)
+  ---
+  duration_ms: 62.898501
+  type: 'test'
+  ...
+# Subtest: buildZytRequestPlan local config commands and validation errors
+ok 689 - buildZytRequestPlan local config commands and validation errors
+  ---
+  duration_ms: 12.824155
+  type: 'test'
+  ...
+# Subtest: zytPlanFromOperation maps capability inputs to plans and validates required params
+ok 690 - zytPlanFromOperation maps capability inputs to plans and validates required params
+  ---
+  duration_ms: 1.025492
+  type: 'test'
+  ...
+# Subtest: zytCliArgvFromPlan and zytHttpRequestFromPlan derive from one plan
+ok 691 - zytCliArgvFromPlan and zytHttpRequestFromPlan derive from one plan
+  ---
+  duration_ms: 15.048408
+  type: 'test'
+  ...
+# Subtest: zyt CLI output normalizer preserves exit codes and dataView caliber
+ok 692 - zyt CLI output normalizer preserves exit codes and dataView caliber
+  ---
+  duration_ms: 0.977474
+  type: 'test'
+  ...
+# Subtest: zyt HTTP output normalizer maps status codes to auth/business/network semantics
+ok 693 - zyt HTTP output normalizer maps status codes to auth/business/network semantics
+  ---
+  duration_ms: 44.280213
+  type: 'test'
+  ...
+# Subtest: extractZytApiKey handles env keys and the {baseUrl,apiKey} config file JSON
+ok 694 - extractZytApiKey handles env keys and the {baseUrl,apiKey} config file JSON
+  ---
+  duration_ms: 12.653744
+  type: 'test'
+  ...
+# Subtest: beike CLI success keeps the --json payload; failure uses the stable code, never a retry
+ok 695 - beike CLI success keeps the --json payload; failure uses the stable code, never a retry
+  ---
+  duration_ms: 1.451705
+  type: 'test'
+  ...
+# Subtest: beike MCP HTTP result unwraps content[0].text; JSON-RPC errors map with the payload code
+ok 696 - beike MCP HTTP result unwraps content[0].text; JSON-RPC errors map with the payload code
+  ---
+  duration_ms: 1.120867
+  type: 'test'
+  ...
+# Subtest: beike planners produce MCP call params and CLI argv (live-verified surface)
+ok 697 - beike planners produce MCP call params and CLI argv (live-verified surface)
+  ---
+  duration_ms: 0.890847
+  type: 'test'
+  ...
+# (node:663439) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: MAX_REPAIR_ROUNDS design cap is 2
+ok 698 - MAX_REPAIR_ROUNDS design cap is 2
+  ---
+  duration_ms: 7.093115
+  type: 'test'
+  ...
+# Subtest: all-pass chain delivers with outcome pass
+ok 699 - all-pass chain delivers with outcome pass
+  ---
+  duration_ms: 14.412367
+  type: 'test'
+  ...
+# Subtest: soft failure warns but still allows delivery
+ok 700 - soft failure warns but still allows delivery
+  ---
+  duration_ms: 6.922977
+  type: 'test'
+  ...
+# Subtest: hard fail without a repair callback blocks delivery
+ok 701 - hard fail without a repair callback blocks delivery
+  ---
+  duration_ms: 10.81771
+  type: 'test'
+  ...
+# Subtest: targeted repair fixes only the failing gate, then re-runs the chain
+ok 702 - targeted repair fixes only the failing gate, then re-runs the chain
+  ---
+  duration_ms: 5.958398
+  type: 'test'
+  ...
+# Subtest: repair loop is capped at 2 rounds, then blocked (no endless self-edit)
+ok 703 - repair loop is capped at 2 rounds, then blocked (no endless self-edit)
+  ---
+  duration_ms: 5.751809
+  type: 'test'
+  ...
+# Subtest: caller maxRepairRounds is capped at the design cap of 2
+ok 704 - caller maxRepairRounds is capped at the design cap of 2
+  ---
+  duration_ms: 17.175084
+  type: 'test'
+  ...
+# Subtest: declining repair blocks delivery as failed
+ok 705 - declining repair blocks delivery as failed
+  ---
+  duration_ms: 0.609717
+  type: 'test'
+  ...
+# Subtest: soft fails that persist after repair yield repaired-warn and still deliver
+ok 706 - soft fails that persist after repair yield repaired-warn and still deliver
+  ---
+  duration_ms: 28.327831
+  type: 'test'
+  ...
+# Subtest: gates execute in deterministic chain order
+ok 707 - gates execute in deterministic chain order
+  ---
+  duration_ms: 7.183338
+  type: 'test'
+  ...
+# Subtest: a missing evaluator for a hard gate fails it and blocks delivery
+ok 708 - a missing evaluator for a hard gate fails it and blocks delivery
+  ---
+  duration_ms: 1.808713
+  type: 'test'
+  ...
+# Subtest: report carries final artifact hashes and per-gate artifact hashes
+ok 709 - report carries final artifact hashes and per-gate artifact hashes
+  ---
+  duration_ms: 2.21072
+  type: 'test'
+  ...
+# Subtest: hashes are recomputed over the repaired artifact
+ok 710 - hashes are recomputed over the repaired artifact
+  ---
+  duration_ms: 1.187813
+  type: 'test'
+  ...
+# Subtest: deliverable targets compose task artifacts deterministically
+ok 711 - deliverable targets compose task artifacts deterministically
+  ---
+  duration_ms: 7.179446
+  type: 'test'
+  ...
+# Subtest: orderGates sorts raw specs by phase, then declaration, then id
+ok 712 - orderGates sorts raw specs by phase, then declaration, then id
+  ---
+  duration_ms: 10.568344
+  type: 'test'
+  ...
+# Subtest: the whole chain result is deterministic for fixed inputs
+ok 713 - the whole chain result is deterministic for fixed inputs
+  ---
+  duration_ms: 0.560806
+  type: 'test'
+  ...
+# Subtest: deliverable repair targets source task artifacts (never the bare deliverable id)
+ok 714 - deliverable repair targets source task artifacts (never the bare deliverable id)
+  ---
+  duration_ms: 24.926684
+  type: 'test'
+  ...
+# Subtest: missing gate target fails with gate-artifact-missing (never concatenates artifacts)
+ok 715 - missing gate target fails with gate-artifact-missing (never concatenates artifacts)
+  ---
+  duration_ms: 5.181087
+  type: 'test'
+  ...
+# Subtest: deliverable gate without deliverableSources fails with gate-artifact-missing
+ok 716 - deliverable gate without deliverableSources fails with gate-artifact-missing
+  ---
+  duration_ms: 0.327877
+  type: 'test'
+  ...
+# Subtest: deliverable gates evaluate every deliverable deterministically (not just the first)
+ok 717 - deliverable gates evaluate every deliverable deterministically (not just the first)
+  ---
+  duration_ms: 18.507495
+  type: 'test'
+  ...
+# Subtest: repair preserves caller artifact hashes while content sha256 is recomputed
+ok 718 - repair preserves caller artifact hashes while content sha256 is recomputed
+  ---
+  duration_ms: 11.330248
+  type: 'test'
+  ...
+# (node:663482) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: framework A: roster = selected ids, reviewer fan-out, fusion + render tasks unassigned
+ok 719 - framework A: roster = selected ids, reviewer fan-out, fusion + render tasks unassigned
+  ---
+  duration_ms: 21.605209
+  type: 'test'
+  ...
+# Subtest: review copy reproduces the V1 strings after interpolation (subject, steps, constraints, fusion)
+ok 720 - review copy reproduces the V1 strings after interpolation (subject, steps, constraints, fusion)
+  ---
+  duration_ms: 9.507172
+  type: 'test'
+  ...
+# Subtest: 1 and 5 selected experts expand to 1..1 and 1..5 reviews
+ok 721 - 1 and 5 selected experts expand to 1..1 and 1..5 reviews
+  ---
+  duration_ms: 90.001898
+  type: 'test'
+  ...
+# Subtest: deceased expert (bk-022) is rejected by the roster gate
+ok 722 - deceased expert (bk-022) is rejected by the roster gate
+  ---
+  duration_ms: 15.306895
+  type: 'test'
+  ...
+# Subtest: framework D requires ≥2 distinct fields; same-field selection fails, 2-field passes
+ok 723 - framework D requires ≥2 distinct fields; same-field selection fails, 2-field passes
+  ---
+  duration_ms: 23.28289
+  type: 'test'
+  ...
+# Subtest: scenario-bound review enforces the primary-field capability (zhijian-monthly needs 行业研究)
+ok 724 - scenario-bound review enforces the primary-field capability (zhijian-monthly needs 行业研究)
+  ---
+  duration_ms: 29.91242
+  type: 'test'
+  ...
+# Subtest: compile without a scenario leaves plan.scenario undefined (the adapter note branch)
+ok 725 - compile without a scenario leaves plan.scenario undefined (the adapter note branch)
+  ---
+  duration_ms: 10.538729
+  type: 'test'
+  ...
+# Subtest: unknown expert id and empty selection are rejected
+ok 726 - unknown expert id and empty selection are rejected
+  ---
+  duration_ms: 25.019064
+  type: 'test'
+  ...
+# (node:663521) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: no workspace packs: runtime pack equals the base pack
+ok 727 - no workspace packs: runtime pack equals the base pack
+  ---
+  duration_ms: 109.495832
+  type: 'test'
+  ...
+# Subtest: workspace pack experts override the base by id (builtin < workspace)
+ok 728 - workspace pack experts override the base by id (builtin < workspace)
+  ---
+  duration_ms: 204.066995
+  type: 'test'
+  ...
+# Subtest: enabledPacks filters which workspace packs participate
+ok 729 - enabledPacks filters which workspace packs participate
+  ---
+  duration_ms: 928.764383
+  type: 'test'
+  ...
+# Subtest: empty enabledPacks = every valid workspace pack participates
+ok 730 - empty enabledPacks = every valid workspace pack participates
+  ---
+  duration_ms: 835.236698
+  type: 'test'
+  ...
+# Subtest: packPriority orders workspace layers (first = highest precedence)
+ok 731 - packPriority orders workspace layers (first = highest precedence)
+  ---
+  duration_ms: 426.308307
+  type: 'test'
+  ...
+# Subtest: broken workspace pack degrades to diagnostics, never fatal
+ok 732 - broken workspace pack degrades to diagnostics, never fatal
+  ---
+  duration_ms: 425.019506
+  type: 'test'
+  ...
+# Subtest: cache: same selection + fingerprint returns identical frozen result
+ok 733 - cache: same selection + fingerprint returns identical frozen result
+  ---
+  duration_ms: 784.639064
+  type: 'test'
+  ...
+# Subtest: compileV1ScenarioExecutionPlan accepts a resolved base pack (workspace overlay)
+ok 734 - compileV1ScenarioExecutionPlan accepts a resolved base pack (workspace overlay)
+  ---
+  duration_ms: 134.036083
+  type: 'test'
+  ...
+# Subtest: resolveRuntimePack feeds the zhijian pack without breaking its validity
+ok 735 - resolveRuntimePack feeds the zhijian pack without breaking its validity
+  ---
+  duration_ms: 484.969855
+  type: 'test'
+  ...
+# Subtest: invalidateRuntimePack drops the cache
+ok 736 - invalidateRuntimePack drops the cache
+  ---
+  duration_ms: 157.347789
+  type: 'test'
+  ...
+# (node:663754) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: valid pack passes with no error diagnostics
+ok 737 - valid pack passes with no error diagnostics
+  ---
+  duration_ms: 40.732538
+  type: 'test'
+  ...
+# Subtest: duplicate expert id is reported as error with path
+ok 738 - duplicate expert id is reported as error with path
+  ---
+  duration_ms: 10.626742
+  type: 'test'
+  ...
+# Subtest: scenario with dangling team template reference fails
+ok 739 - scenario with dangling team template reference fails
+  ---
+  duration_ms: 25.051704
+  type: 'test'
+  ...
+# Subtest: unknown task role and unknown dependency are both reported
+ok 740 - unknown task role and unknown dependency are both reported
+  ---
+  duration_ms: 1.001987
+  type: 'test'
+  ...
+# Subtest: dependency cycle fails validation
+ok 741 - dependency cycle fails validation
+  ---
+  duration_ms: 47.44002
+  type: 'test'
+  ...
+# Subtest: proficiency out of the 1..5 range fails
+ok 742 - proficiency out of the 1..5 range fails
+  ---
+  duration_ms: 71.673466
+  type: 'test'
+  ...
+# Subtest: expert with empty capabilities fails (capability-first routing)
+ok 743 - expert with empty capabilities fails (capability-first routing)
+  ---
+  duration_ms: 4.688584
+  type: 'test'
+  ...
+# Subtest: skill package with dangling contribution and unknown tool requirement fails
+ok 744 - skill package with dangling contribution and unknown tool requirement fails
+  ---
+  duration_ms: 0.700877
+  type: 'test'
+  ...
+# Subtest: skill package without license must be internalOnly
+ok 745 - skill package without license must be internalOnly
+  ---
+  duration_ms: 17.654305
+  type: 'test'
+  ...
+# Subtest: skill package contributions resolving inside the pack pass
+ok 746 - skill package contributions resolving inside the pack pass
+  ---
+  duration_ms: 28.303149
+  type: 'test'
+  ...
+# Subtest: remote skill sources are forbidden at runtime
+ok 747 - remote skill sources are forbidden at runtime
+  ---
+  duration_ms: 37.210497
+  type: 'test'
+  ...
+# Subtest: skill source root must stay a safe relative path
+ok 748 - skill source root must stay a safe relative path
+  ---
+  duration_ms: 11.963725
+  type: 'test'
+  ...
+# Subtest: duplicate transport id and dangling capability transportId fail
+ok 749 - duplicate transport id and dangling capability transportId fail
+  ---
+  duration_ms: 78.791795
+  type: 'test'
+  ...
+# Subtest: transport kind union is closed and per-kind fields required
+ok 750 - transport kind union is closed and per-kind fields required
+  ---
+  duration_ms: 17.4779
+  type: 'test'
+  ...
+# Subtest: method pack must be a progressive agent-instructions asset
+ok 751 - method pack must be a progressive agent-instructions asset
+  ---
+  duration_ms: 0.576681
+  type: 'test'
+  ...
+# Subtest: knowledge provider referencing an unknown domain knowledge base fails
+ok 752 - knowledge provider referencing an unknown domain knowledge base fails
+  ---
+  duration_ms: 40.720262
+  type: 'test'
+  ...
+# Subtest: domain knowledge collection root must not escape its root
+ok 753 - domain knowledge collection root must not escape its root
+  ---
+  duration_ms: 16.74157
+  type: 'test'
+  ...
+# Subtest: V1 adapter preserves id/name/model and marks legacy conservatively
+ok 754 - V1 adapter preserves id/name/model and marks legacy conservatively
+  ---
+  duration_ms: 141.710948
+  type: 'test'
+  ...
+# Subtest: buildLegacyDomainPack keeps scenario task dependencies and validates clean
+ok 755 - buildLegacyDomainPack keeps scenario task dependencies and validates clean
+  ---
+  duration_ms: 44.011496
+  type: 'test'
+  ...
+# (node:663768) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: stampQualityPlan copies the compiled gate chain (zhijian binds t2)
+ok 756 - stampQualityPlan copies the compiled gate chain (zhijian binds t2)
+  ---
+  duration_ms: 860.84467
+  type: 'test'
+  ...
+# Subtest: zhijianComplianceTerms cover real names and the deceased expert bk-022
+ok 757 - zhijianComplianceTerms cover real names and the deceased expert bk-022
+  ---
+  duration_ms: 2.539186
+  type: 'test'
+  ...
+# Subtest: completion blocked: real expert name in the output fails compliance-anonymization with correction guidance
+ok 758 - completion blocked: real expert name in the output fails compliance-anonymization with correction guidance
+  ---
+  duration_ms: 50.017241
+  type: 'test'
+  ...
+# Subtest: deceased expert (bk-022) real name is blocked even in a current-sounding citation; historical form without the real name passes
+ok 759 - deceased expert (bk-022) real name is blocked even in a current-sounding citation; historical form without the real name passes
+  ---
+  duration_ms: 38.842499
+  type: 'test'
+  ...
+# Subtest: retry succeeds after the member fixes the output
+ok 760 - retry succeeds after the member fixes the output
+  ---
+  duration_ms: 31.985133
+  type: 'test'
+  ...
+# Subtest: data-citation blocks uncited numbers and passes once 来源/口径 is present
+ok 761 - data-citation blocks uncited numbers and passes once 来源/口径 is present
+  ---
+  duration_ms: 16.384078
+  type: 'test'
+  ...
+# Subtest: gate failure message includes the gate id and the correction text
+ok 762 - gate failure message includes the gate id and the correction text
+  ---
+  duration_ms: 44.964303
+  type: 'test'
+  ...
+# Subtest: soft-gate warnings attach to the result (and would land on TeamTask.gateWarnings)
+ok 763 - soft-gate warnings attach to the result (and would land on TeamTask.gateWarnings)
+  ---
+  duration_ms: 23.608829
+  type: 'test'
+  ...
+# Subtest: deriveQualityScore: hard all pass = 80 + soft pass ratio ×20; hard fail = low band 0–59
+ok 764 - deriveQualityScore: hard all pass = 80 + soft pass ratio ×20; hard fail = low band 0–59
+  ---
+  duration_ms: 481.025474
+  type: 'test'
+  ...
+# Subtest: deriveQualityScore rule constants are the documented bands
+ok 765 - deriveQualityScore rule constants are the documented bands
+  ---
+  duration_ms: 2.885555
+  type: 'test'
+  ...
+# Subtest: output violating the declared output schema fails the injected schema-structure gate with correction
+ok 766 - output violating the declared output schema fails the injected schema-structure gate with correction
+  ---
+  duration_ms: 17.840017
+  type: 'test'
+  ...
+# Subtest: output satisfying every required section passes the schema-structure gate
+ok 767 - output satisfying every required section passes the schema-structure gate
+  ---
+  duration_ms: 28.617046
+  type: 'test'
+  ...
+# Subtest: JSON output-template contract: invalid JSON fails with correction, valid JSON passes
+ok 768 - JSON output-template contract: invalid JSON fails with correction, valid JSON passes
+  ---
+  duration_ms: 79.250298
+  type: 'test'
+  ...
+# Subtest: ad-hoc / legacy teams get no schema-structure injection (no policy declares the gate)
+ok 769 - ad-hoc / legacy teams get no schema-structure injection (no policy declares the gate)
+  ---
+  duration_ms: 90.111016
+  type: 'test'
+  ...
+# Subtest: subjectWithQualityMark is idempotent — replaces the old marker, never stacks
+ok 770 - subjectWithQualityMark is idempotent — replaces the old marker, never stacks
+  ---
+  duration_ms: 0.579161
+  type: 'test'
+  ...
+# Subtest: tool: quality_score/repair_count forced into the result even when the member output never mentions them
+ok 771 - tool: quality_score/repair_count forced into the result even when the member output never mentions them
+  ---
+  duration_ms: 821.664675
+  type: 'test'
+  ...
+# Subtest: tool: repair_count increments across blocked retries and stays accurate after the fixed pass
+ok 772 - tool: repair_count increments across blocked retries and stays accurate after the fixed pass
+  ---
+  duration_ms: 540.544419
+  type: 'test'
+  ...
+# Subtest: tool: no-policy team still records qualityScore: null / repairCount: 0 — fields always present
+ok 773 - tool: no-policy team still records qualityScore: null / repairCount: 0 — fields always present
+  ---
+  duration_ms: 382.555299
+  type: 'test'
+  ...
+# Subtest: tool: human-readable text output shows 质量分 X ｜ 修复 N 轮 (no-policy → 质量分 — ｜ 修复 0 轮)
+ok 774 - tool: human-readable text output shows 质量分 X ｜ 修复 N 轮 (no-policy → 质量分 — ｜ 修复 0 轮)
+  ---
+  duration_ms: 788.99884
+  type: 'test'
+  ...
+# Subtest: score enters the evaluation result and the durable subject through the tool
+ok 775 - score enters the evaluation result and the durable subject through the tool
+  ---
+  duration_ms: 390.323815
+  type: 'test'
+  ...
+# Subtest: ad-hoc team (no plan, no scenario) is unaffected — evaluation returns undefined
+ok 776 - ad-hoc team (no plan, no scenario) is unaffected — evaluation returns undefined
+  ---
+  duration_ms: 0.391404
+  type: 'test'
+  ...
+# Subtest: legacy scenario team (empty legacy quality policy) is unaffected
+ok 777 - legacy scenario team (empty legacy quality policy) is unaffected
+  ---
+  duration_ms: 0.386885
+  type: 'test'
+  ...
+# Subtest: repair budget honored: two blocks, then the third completion proceeds with a recorded warning
+ok 778 - repair budget honored: two blocks, then the third completion proceeds with a recorded warning
+  ---
+  duration_ms: 65.513742
+  type: 'test'
+  ...
+# Subtest: policy granting no repair rounds blocks forever (budget 0)
+ok 779 - policy granting no repair rounds blocks forever (budget 0)
+  ---
+  duration_ms: 54.567147
+  type: 'test'
+  ...
+# Subtest: logical t2 gates bind to physical t6 after five-reviewer fan-out
+ok 780 - logical t2 gates bind to physical t6 after five-reviewer fan-out
+  ---
+  duration_ms: 47.213348
+  type: 'test'
+  ...
+# Subtest: deliverable-targeted gate composes every source task output once all sources are complete
+ok 781 - deliverable-targeted gate composes every source task output once all sources are complete
+  ---
+  duration_ms: 89.481583
+  type: 'test'
+  ...
+# Subtest: tool: completion blocked by a failing hard gate — task stays in_progress, only the budget counter persists
+ok 782 - tool: completion blocked by a failing hard gate — task stays in_progress, only the budget counter persists
+  ---
+  duration_ms: 159.068739
+  type: 'test'
+  ...
+# Subtest: tool: retry after fixing the output succeeds — budget counter kept, task completes
+ok 783 - tool: retry after fixing the output succeeds — budget counter kept, task completes
+  ---
+  duration_ms: 127.85506
+  type: 'test'
+  ...
+# Subtest: tool: soft-gate warnings attach to the result and the durable task record
+ok 784 - tool: soft-gate warnings attach to the result and the durable task record
+  ---
+  duration_ms: 157.81899
+  type: 'test'
+  ...
+# Subtest: tool: ad-hoc team (no plan, no scenario) completes exactly as before — no gates
+ok 785 - tool: ad-hoc team (no plan, no scenario) completes exactly as before — no gates
+  ---
+  duration_ms: 284.038309
+  type: 'test'
+  ...
+# Subtest: stamped quality plan round-trips through the durable team record and still gates completion
+ok 786 - stamped quality plan round-trips through the durable team record and still gates completion
+  ---
+  duration_ms: 91.482452
+  type: 'test'
+  ...
+# (node:663863) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: golden: compiled task ids/dependencies/subjects are isomorphic to V1 t1..tn
+ok 787 - golden: compiled task ids/dependencies/subjects are isomorphic to V1 t1..tn
+  ---
+  duration_ms: 200.530925
+  type: 'test'
+  ...
+# Subtest: roster includes every scenario.experts entry, task-ownership notwithstanding
+ok 788 - roster includes every scenario.experts entry, task-ownership notwithstanding
+  ---
+  duration_ms: 14.950743
+  type: 'test'
+  ...
+# Subtest: the legacy team template declares a role slot per scenario.experts entry
+ok 789 - the legacy team template declares a role slot per scenario.experts entry
+  ---
+  duration_ms: 10.517528
+  type: 'test'
+  ...
+# Subtest: bridge returns the same CompileResult as the direct compileExecutionPlan call
+ok 790 - bridge returns the same CompileResult as the direct compileExecutionPlan call
+  ---
+  duration_ms: 16.737773
+  type: 'test'
+  ...
+# Subtest: bridge is deterministic: two calls produce byte-identical plans
+ok 791 - bridge is deterministic: two calls produce byte-identical plans
+  ---
+  duration_ms: 8.915345
+  type: 'test'
+  ...
+# Subtest: compiled deliverables collect every task and resolve the legacy output template
+ok 792 - compiled deliverables collect every task and resolve the legacy output template
+  ---
+  duration_ms: 2.155159
+  type: 'test'
+  ...
+# Subtest: the bridge pack itself is validator-clean (conservative legacy views)
+ok 793 - the bridge pack itself is validator-clean (conservative legacy views)
+  ---
+  duration_ms: 1.116644
+  type: 'test'
+  ...
+# Subtest: a task assigning an expert outside the experts list fails with a roster error
+ok 794 - a task assigning an expert outside the experts list fails with a roster error
+  ---
+  duration_ms: 4.507539
+  type: 'test'
+  ...
+# Subtest: an expert in scenario.experts but missing from the experts list fails as unknown
+ok 795 - an expert in scenario.experts but missing from the experts list fails as unknown
+  ---
+  duration_ms: 4.054
+  type: 'test'
+  ...
+# Subtest: a shared-only scenario rosters scenario.experts via unreferenced slots; role.shared stays empty
+ok 796 - a shared-only scenario rosters scenario.experts via unreferenced slots; role.shared stays empty
+  ---
+  duration_ms: 6.491345
+  type: 'test'
+  ...
+# Subtest: legacy tools are untouched: the bridge never mutates its inputs
+ok 797 - legacy tools are untouched: the bridge never mutates its inputs
+  ---
+  duration_ms: 6.387391
+  type: 'test'
+  ...
+# (node:663944) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: builtinLegacyPack returns the same object identity every call, covering the full builtin library
+ok 798 - builtinLegacyPack returns the same object identity every call, covering the full builtin library
+  ---
+  duration_ms: 33.827565
+  type: 'test'
+  ...
+# Subtest: compiled plan digest is stable across two compileV1ScenarioExecutionPlan calls
+ok 799 - compiled plan digest is stable across two compileV1ScenarioExecutionPlan calls
+  ---
+  duration_ms: 12.96697
+  type: 'test'
+  ...
+# Subtest: builtin scenario compile from the cache equals a fresh-build compile (2+ scenarios, digest equal)
+ok 800 - builtin scenario compile from the cache equals a fresh-build compile (2+ scenarios, digest equal)
+  ---
+  duration_ms: 17.980252
+  type: 'test'
+  ...
+# Subtest: a non-builtin scenario variant (fixture) compiles byte-identically to the fresh per-call build
+ok 801 - a non-builtin scenario variant (fixture) compiles byte-identically to the fresh per-call build
+  ---
+  duration_ms: 3.224128
+  type: 'test'
+  ...
+# Subtest: re-adaptation wins over cached entities when a builtin-id expert is overridden (preset route preserved)
+ok 802 - re-adaptation wins over cached entities when a builtin-id expert is overridden (preset route preserved)
+  ---
+  duration_ms: 7.309143
+  type: 'test'
+  ...
+# Subtest: buildCollabDomainPack reuses the cached expert entities by reference and still compiles
+ok 803 - buildCollabDomainPack reuses the cached expert entities by reference and still compiles
+  ---
+  duration_ms: 4.54422
+  type: 'test'
+  ...
+# Subtest: collab pack re-adapts non-builtin experts instead of using the cache
+ok 804 - collab pack re-adapts non-builtin experts instead of using the cache
+  ---
+  duration_ms: 0.730002
+  type: 'test'
+  ...
+# (node:663956) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: zhijian pack validates clean with 33 experts
+ok 805 - zhijian pack validates clean with 33 experts
+  ---
+  duration_ms: 63.188669
+  type: 'test'
+  ...
+# Subtest: expert ids exactly match the V1 roster ids (bk-002..bk-034)
+ok 806 - expert ids exactly match the V1 roster ids (bk-002..bk-034)
+  ---
+  duration_ms: 32.940969
+  type: 'test'
+  ...
+# Subtest: every derived expert maps 1:1 to a V1 Expert in the registry (runtime untouched)
+ok 807 - every derived expert maps 1:1 to a V1 Expert in the registry (runtime untouched)
+  ---
+  duration_ms: 19.564225
+  type: 'test'
+  ...
+# Subtest: pack contains no legacySource markers and no legacy initials placeholder
+ok 808 - pack contains no legacySource markers and no legacy initials placeholder
+  ---
+  duration_ms: 106.804997
+  type: 'test'
+  ...
+# Subtest: capabilities derive only from roster-asserted field/tags, proficiency is the unassessed floor
+ok 809 - capabilities derive only from roster-asserted field/tags, proficiency is the unassessed floor
+  ---
+  duration_ms: 54.623855
+  type: 'test'
+  ...
+# Subtest: primary field is high coverage, tags medium, secondary field low
+ok 810 - primary field is high coverage, tags medium, secondary field low
+  ---
+  duration_ms: 40.426439
+  type: 'test'
+  ...
+# Subtest: display uses the already-anonymized personaName/initials, internal name is the real name
+ok 811 - display uses the already-anonymized personaName/initials, internal name is the real name
+  ---
+  duration_ms: 76.790269
+  type: 'test'
+  ...
+# Subtest: persona fields mirror the generated meta verbatim (style/phrases/anti-patterns/models)
+ok 812 - persona fields mirror the generated meta verbatim (style/phrases/anti-patterns/models)
+  ---
+  duration_ms: 80.207725
+  type: 'test'
+  ...
+# Subtest: 1.1.0 rich projection: persona/method/emm/constraints/outputSchema mirror the raw Profile detail
+ok 813 - 1.1.0 rich projection: persona/method/emm/constraints/outputSchema mirror the raw Profile detail
+  ---
+  duration_ms: 115.74949
+  type: 'test'
+  ...
+# Subtest: compliance assertions match the roster rules (deceased bk-022, internalOnly bk-031, caliber policies)
+ok 814 - compliance assertions match the roster rules (deceased bk-022, internalOnly bk-031, caliber policies)
+  ---
+  duration_ms: 82.428113
+  type: 'test'
+  ...
+# Subtest: optional modelPolicy lands on every expert when supplied
+ok 815 - optional modelPolicy lands on every expert when supplied
+  ---
+  duration_ms: 178.681094
+  type: 'test'
+  ...
+# Subtest: five output templates (A-E) derived from the framework specs
+ok 816 - five output templates (A-E) derived from the framework specs
+  ---
+  duration_ms: 21.327048
+  type: 'test'
+  ...
+# Subtest: four team templates (A-D) model one logical review → fusion → render; E has none
+ok 817 - four team templates (A-D) model one logical review → fusion → render; E has none
+  ---
+  duration_ms: 25.4705
+  type: 'test'
+  ...
+# Subtest: eight scenarios derived from the routing table with resolvable references
+ok 818 - eight scenarios derived from the routing table with resolvable references
+  ---
+  duration_ms: 19.612745
+  type: 'test'
+  ...
+# Subtest: quality policy gates derive from the global output rules with repair cap 2
+ok 819 - quality policy gates derive from the global output rules with repair cap 2
+  ---
+  duration_ms: 117.897049
+  type: 'test'
+  ...
+# Subtest: method packs carry the framework methodology and the review protocol
+ok 820 - method packs carry the framework methodology and the review protocol
+  ---
+  duration_ms: 94.264869
+  type: 'test'
+  ...
+# Subtest: knowledge providers and the domain knowledge manifest are self-describing
+ok 821 - knowledge providers and the domain knowledge manifest are self-describing
+  ---
+  duration_ms: 133.375281
+  type: 'test'
+  ...
+# Subtest: two builds are byte-identical (deterministic projection)
+ok 822 - two builds are byte-identical (deterministic projection)
+  ---
+  duration_ms: 420.705838
+  type: 'test'
+  ...
+# Subtest: zhijianMetaToExpertV2 maps a single meta with a custom pack version
+ok 823 - zhijianMetaToExpertV2 maps a single meta with a custom pack version
+  ---
+  duration_ms: 5.401942
+  type: 'test'
+  ...
+# Subtest: the pack never mutates the source metas (V1 runtime data untouched)
+ok 824 - the pack never mutates the source metas (V1 runtime data untouched)
+  ---
+  duration_ms: 279.584539
+  type: 'test'
+  ...
+# (node:664177) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: zhijian team (scenario requires zhijian-expert-memory) gets the orientation section
+ok 825 - zhijian team (scenario requires zhijian-expert-memory) gets the orientation section
+  ---
+  duration_ms: 766.262749
+  type: 'test'
+  ...
+# Subtest: generic team (scenario not in the zhijian pack) gets no section
+ok 826 - generic team (scenario not in the zhijian pack) gets no section
+  ---
+  duration_ms: 422.004458
+  type: 'test'
+  ...
+# Subtest: scenario-less team gets no section
+ok 827 - scenario-less team gets no section
+  ---
+  duration_ms: 95.994029
+  type: 'test'
+  ...
+# Subtest: a zhijian scenario whose knowledge policy does not require the memory base gets no section
+ok 828 - a zhijian scenario whose knowledge policy does not require the memory base gets no section
+  ---
+  duration_ms: 299.575649
+  type: 'test'
+  ...
+# Subtest: missing pack directory degrades to a warning note for a zhijian scenario
+ok 829 - missing pack directory degrades to a warning note for a zhijian scenario
+  ---
+  duration_ms: 5.913877
+  type: 'test'
+  ...
+# Subtest: missing manifest file degrades to a warning note for a zhijian scenario
+ok 830 - missing manifest file degrades to a warning note for a zhijian scenario
+  ---
+  duration_ms: 288.826053
+  type: 'test'
+  ...
+# Subtest: corrupt pack.json never throws and degrades for a zhijian scenario
+ok 831 - corrupt pack.json never throws and degrades for a zhijian scenario
+  ---
+  duration_ms: 164.234728
+  type: 'test'
+  ...
+# Subtest: the section flows into the composed zhijian expert persona
+ok 832 - the section flows into the composed zhijian expert persona
+  ---
+  duration_ms: 247.66409
+  type: 'test'
+  ...
+# (node:664295) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: zhijian pack carries 10 bundled skill-package entities with id/name/version
+ok 833 - zhijian pack carries 10 bundled skill-package entities with id/name/version
+  ---
+  duration_ms: 29.795264
+  type: 'test'
+  ...
+# Subtest: every skill package declares local availability + the source-root convention, not content
+ok 834 - every skill package declares local availability + the source-root convention, not content
+  ---
+  duration_ms: 41.254222
+  type: 'test'
+  ...
+# Subtest: pack with skillPackages validates clean (in-memory and through the loader)
+ok 835 - pack with skillPackages validates clean (in-memory and through the loader)
+  ---
+  duration_ms: 18.352513
+  type: 'test'
+  ...
+# Subtest: two builds are byte-identical (deterministic inventory)
+ok 836 - two builds are byte-identical (deterministic inventory)
+  ---
+  duration_ms: 25.675043
+  type: 'test'
+  ...
+# Subtest: the generated domain-packs/zhijian-realestate loads with 10 skill packages
+ok 837 - the generated domain-packs/zhijian-realestate loads with 10 skill packages
+  ---
+  duration_ms: 343.424589
+  type: 'test'
+  ...
+# Subtest: scripts/build-zhijian-pack.mjs --check stays clean after regeneration
+ok 838 - scripts/build-zhijian-pack.mjs --check stays clean after regeneration
+  ---
+  duration_ms: 3468.933487
+  type: 'test'
+  ...
+# (node:664423) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: pack source parses clean: 33 experts, ids bk-002..bk-034, field counts, deceased bk-022
+ok 839 - pack source parses clean: 33 experts, ids bk-002..bk-034, field counts, deceased bk-022
+  ---
+  duration_ms: 197.343393
+  type: 'test'
+  ...
+# Subtest: embedded source regenerates experts.generated.ts byte-identically
+ok 840 - embedded source regenerates experts.generated.ts byte-identically
+  ---
+  duration_ms: 80.094629
+  type: 'test'
+  ...
+# Subtest: rich fields are extracted verbatim from the raw profiles (persona/method/emm/constraints/output_schema)
+ok 841 - rich fields are extracted verbatim from the raw profiles (persona/method/emm/constraints/output_schema)
+  ---
+  duration_ms: 240.751822
+  type: 'test'
+  ...
+# Subtest: parsing is deterministic (two runs deep-equal)
+ok 842 - parsing is deterministic (two runs deep-equal)
+  ---
+  duration_ms: 387.580876
+  type: 'test'
+  ...
+# Subtest: fatal: roster row without a Profile JSON
+ok 843 - fatal: roster row without a Profile JSON
+  ---
+  duration_ms: 46.799393
+  type: 'test'
+  ...
+# Subtest: fatal: Profile JSON without a roster row
+ok 844 - fatal: Profile JSON without a roster row
+  ---
+  duration_ms: 25.360108
+  type: 'test'
+  ...
+# Subtest: fatal: unparseable Profile JSON
+ok 845 - fatal: unparseable Profile JSON
+  ---
+  duration_ms: 23.873509
+  type: 'test'
+  ...
+# Subtest: fatal: real-name mismatch between file name and roster
+ok 846 - fatal: real-name mismatch between file name and roster
+  ---
+  duration_ms: 18.442866
+  type: 'test'
+  ...
+# Subtest: fatal: persona-name mismatch between Profile and roster
+ok 847 - fatal: persona-name mismatch between Profile and roster
+  ---
+  duration_ms: 42.124651
+  type: 'test'
+  ...
+# Subtest: fatal: duplicate roster row
+ok 848 - fatal: duplicate roster row
+  ---
+  duration_ms: 96.757404
+  type: 'test'
+  ...
+# Subtest: zip layout parses clean and equals the pack layout result
+ok 849 - zip layout parses clean and equals the pack layout result
+  ---
+  duration_ms: 102.900848
+  type: 'test'
+  ...
+# Subtest: parseRoster rejects a duplicated BK id (table-level guard)
+ok 850 - parseRoster rejects a duplicated BK id (table-level guard)
+  ---
+  duration_ms: 19.810779
+  type: 'test'
+  ...
+1..850
+# tests 850
+# suites 0
+# pass 850
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 293414.929445

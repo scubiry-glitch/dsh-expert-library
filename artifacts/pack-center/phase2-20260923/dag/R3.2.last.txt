@@ -1,0 +1,7 @@
+Created the three idempotent Node 22 ESM runners:
+
+- [r32-failure-injection.mjs](/root/zhijian/dsh-pack-center-dev.ZGtty5/scripts/phase2/r32-failure-injection.mjs)
+- [r33-long-task.mjs](/root/zhijian/dsh-pack-center-dev.ZGtty5/scripts/phase2/r33-long-task.mjs)
+- [r34-state-recovery.mjs](/root/zhijian/dsh-pack-center-dev.ZGtty5/scripts/phase2/r34-state-recovery.mjs)
+
+All pass Node 22 `node --check` and `git diff --check`. Live execution was not performed because this sandbox forbids loopback TCP.

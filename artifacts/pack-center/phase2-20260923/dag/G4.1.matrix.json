@@ -1,0 +1,82 @@
+{
+  "node": "G4.1",
+  "generatedAt": "2026-09-24T02:59:36.051Z",
+  "rows": [
+    {
+      "id": "selfReviewBlocked",
+      "ok": true,
+      "request": "POST /api/submissions/f72e3003-3694-4df6-b70f-126ec8ec3b61/review as author phase2-admin (already-decided, packId phase2-dep-a)",
+      "status": 403,
+      "outcome": "SELF_REVIEW_DENIED",
+      "audit": "audit_events action 'submission.review' denied; http.request requestId 8fa36faf-6eb0-4046-9163-33d3435270fa",
+      "notes": "submission already decided; API still refuses a second decision"
+    },
+    {
+      "id": "crossOrgDenied",
+      "ok": true,
+      "request": "GET /api/submissions/<org-b draft> and GET /api/submissions?organizationId=phase2-org-b as phase2-reviewer (member of phase2 only)",
+      "status": 403,
+      "outcome": "denied",
+      "audit": "audit_events http.request denied; requestId n/a",
+      "notes": [
+        "organization phase2-org-b already present",
+        "submission creation in phase2-org-b not achievable from this identity (INVALID_SOURCE); scoped-listing subset only"
+      ]
+    },
+    {
+      "id": "machineTokenReviewRejected",
+      "ok": true,
+      "request": "POST /api/submissions/f72e3003-3694-4df6-b70f-126ec8ec3b61/review with Authorization: Bearer <A machine token>",
+      "status": 403,
+      "outcome": "HUMAN_AUTHENTICATION_REQUIRED",
+      "audit": "audit_events http.request denied (actor deployment 40187cbf-ece2-4065-b797-157fadfe5be4); requestId 2e3d45ae-1847-4ad5-8cc9-ab3f865a3ef4",
+      "notes": "server.ts rejects any Authorization header outside /api/v1 distribution routes before session fallback"
+    },
+    {
+      "id": "revokeAKeepB",
+      "ok": true,
+      "request": "POST /api/v1/deployments/40187cbf-ece2-4065-b797-157fadfe5be4/credentials/revoke {credentialId}; POST {prefix}/catalog on A (expect auth failure); GET B /catalog; re-bind via POST /api/v1/deployments/40187cbf-ece2-4065-b797-157fadfe5be4/binding-codes + POST {prefix}/bind",
+      "status": 200,
+      "outcome": "revoked+rebound",
+      "audit": "deployment_credential_revoked e75f685f-a836-4e86-a843-ec1f36c89487; deployment_binding_issued; deployment_bound ec48b535-b54f-4f22-bd6e-caf18a1ca830",
+      "notes": [
+        "A refresh after revoke: 404 CENTER_ROUTE_NOT_FOUND",
+        "B local catalog unaffected",
+        "A bound=true with replacement credential ec48b535-b54f-4f22-bd6e-caf18a1ca830"
+      ]
+    },
+    {
+      "id": "yank",
+      "ok": true,
+      "request": "skip: release already yanked",
+      "status": 200,
+      "outcome": "ALREADY_YANKED",
+      "audit": "release.yanked ce39c201-67b4-43a0-84b0-ea975c2b30a5 (verified via manage view)",
+      "notes": [
+        "catalog excludes yanked release"
+      ]
+    },
+    {
+      "id": "scopeChangeNeedsReview",
+      "ok": true,
+      "request": "POST /api/v1/releases/14c08376-7bcb-40ca-8488-a5809de07a93/distribution-requests {scope:{kind:'authenticated'}} (created) then POST /api/v1/distribution-requests/8a3afdcf-97a4-4faa-a4ad-dcf972dcec46/review by phase2-reviewer",
+      "status": 200,
+      "outcome": "pending_review enforced; final scope=authenticated v2",
+      "audit": "audit_events 'distribution.requested' + 'distribution.approved' request 8a3afdcf-97a4-4faa-a4ad-dcf972dcec46",
+      "notes": [
+        "request sat at pending_review with scope still organization until reviewer approval"
+      ]
+    },
+    {
+      "id": "memberDisable",
+      "ok": true,
+      "request": "POST /api/users/00cfdfb9-2957-4768-a18e-67f806113bc5/status {status:'disabled'}; reviewer review POST; POST {status:'active'}",
+      "status": 401,
+      "outcome": "review rejected (UNAUTHENTICATED), member re-enabled",
+      "audit": "audit_events 'user_status_updated' x2 for user 00cfdfb9-2957-4768-a18e-67f806113bc5; requestId 6d4752e9-8363-4825-819a-a8b18754748a",
+      "notes": [
+        "disabling revoked the live reviewer session server-side"
+      ]
+    }
+  ]
+}

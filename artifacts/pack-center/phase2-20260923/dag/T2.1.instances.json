@@ -1,0 +1,34 @@
+{
+  "node": "T2.1",
+  "capturedAt": "2026-09-23T18:38:14Z",
+  "instances": [
+    {
+      "id": "A",
+      "pid": 427372,
+      "port": 18281,
+      "dshHome": "/tmp/p2-20260923/dsh-a",
+      "profile": "p2-a",
+      "pluginLoadPath": "/root/zhijian/dsh-pack-center-dev.ZGtty5",
+      "pluginSymlink": "/tmp/p2-20260923/dsh-a/profiles/p2-a/node_modules/@zhijian/dsh-expert-library",
+      "manageStatus": 200,
+      "manageEndpoint": "http://127.0.0.1:18281/plugins/dsh-expert-library/manage/center/connection",
+      "manageJson": {"ok":true,"data":{"configured":false,"configuredOrigin":null,"activationAvailable":true,"revision":0,"connection":null}},
+      "guardNoHeaderStatus": 403
+    },
+    {
+      "id": "B",
+      "pid": 427898,
+      "port": 18282,
+      "dshHome": "/tmp/p2-20260923/dsh-b",
+      "profile": "p2-b",
+      "pluginLoadPath": "/root/zhijian/dsh-pack-center-dev.ZGtty5",
+      "pluginSymlink": "/tmp/p2-20260923/dsh-b/profiles/p2-b/node_modules/@zhijian/dsh-expert-library",
+      "manageStatus": 200,
+      "manageEndpoint": "http://127.0.0.1:18282/plugins/dsh-expert-library/manage/center/connection",
+      "manageJson": {"ok":true,"data":{"configured":false,"configuredOrigin":null,"activationAvailable":true,"revision":0,"connection":null}},
+      "guardNoHeaderStatus": 403
+    }
+  ],
+  "disjointStateRoots": true,
+  "nodeBinary": "/root/.nvm/versions/node/v22.22.0/bin/node"
+}

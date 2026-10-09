@@ -1,0 +1,1005 @@
+TAP version 13
+# (node:771725) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: all UI requests are same-origin, no-store and marked; tokens are headers only
+ok 1 - all UI requests are same-origin, no-store and marked; tokens are headers only
+  ---
+  duration_ms: 523.630417
+  type: 'test'
+  ...
+# Subtest: bind/unbind use protected fixed routes and binding secrets never enter a URL
+ok 2 - bind/unbind use protected fixed routes and binding secrets never enter a URL
+  ---
+  duration_ms: 22.729533
+  type: 'test'
+  ...
+# Subtest: catalog filters are URL encoded and cannot change the fixed origin or route
+ok 3 - catalog filters are URL encoded and cannot change the fixed origin or route
+  ---
+  duration_ms: 27.011517
+  type: 'test'
+  ...
+# Subtest: ambiguous writes do not automatically retry; explicit retry retains exact immutable request
+ok 4 - ambiguous writes do not automatically retry; explicit retry retains exact immutable request
+  ---
+  duration_ms: 31.510605
+  type: 'test'
+  ...
+# Subtest: operation recovery reads never submit writes; retry is a separate explicit fixed route
+ok 5 - operation recovery reads never submit writes; retry is a separate explicit fixed route
+  ---
+  duration_ms: 34.289146
+  type: 'test'
+  ...
+# Subtest: connection close aborts outstanding requests and rejects late responses or future calls
+ok 6 - connection close aborts outstanding requests and rejects late responses or future calls
+  ---
+  duration_ms: 31.37209
+  type: 'test'
+  ...
+# Subtest: errors expose only bounded safe codes, never response reasons, tokens, HTML or raw exceptions
+ok 7 - errors expose only bounded safe codes, never response reasons, tokens, HTML or raw exceptions
+  ---
+  duration_ms: 50.491734
+  type: 'test'
+  ...
+# Subtest: malformed DTOs never enter component state
+ok 8 - malformed DTOs never enter component state
+  ---
+  duration_ms: 80.911462
+  type: 'test'
+  ...
+# Subtest: oversized local responses are cancelled and reported without body text
+ok 9 - oversized local responses are cancelled and reported without body text
+  ---
+  duration_ms: 74.52733
+  type: 'test'
+  ...
+# Subtest: rollback display comparator follows SemVer rather than lexical or unsafe numeric ordering
+ok 10 - rollback display comparator follows SemVer rather than lexical or unsafe numeric ordering
+  ---
+  duration_ms: 24.390723
+  type: 'test'
+  ...
+# (node:771726) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: host connection and catalog are metadata projections; inputs are captured before awaiting
+ok 11 - host connection and catalog are metadata projections; inputs are captured before awaiting
+  ---
+  duration_ms: 1963.404763
+  type: 'test'
+  ...
+# Subtest: bad pin syntax, private key, revision and reserved identifiers fail before one-time exchange
+ok 12 - bad pin syntax, private key, revision and reserved identifiers fail before one-time exchange
+  ---
+  duration_ms: 318.795236
+  type: 'test'
+  ...
+# Subtest: failed rebind leaves previous credential and pins byte-for-byte; no automatic exchange retry
+ok 13 - failed rebind leaves previous credential and pins byte-for-byte; no automatic exchange retry
+  ---
+  duration_ms: 878.419086
+  type: 'test'
+  ...
+# Subtest: key rotation retains historical offline pins and refuses reassignment before exchange
+ok 14 - key rotation retains historical offline pins and refuses reassignment before exchange
+  ---
+  duration_ms: 1375.805763
+  type: 'test'
+  ...
+# Subtest: two simultaneous binds have one CAS winner; losing credential is explicitly unconfirmed
+ok 15 - two simultaneous binds have one CAS winner; losing credential is explicitly unconfirmed
+  ---
+  duration_ms: 711.610023
+  type: 'test'
+  ...
+# Subtest: new private binding cannot adopt an existing inventory or orphaned inventory
+ok 16 - new private binding cannot adopt an existing inventory or orphaned inventory
+  ---
+  duration_ms: 189.304664
+  type: 'test'
+  ...
+# Subtest: storage layout binds one private connection directory to exactly one inventory
+ok 17 - storage layout binds one private connection directory to exactly one inventory
+  ---
+  duration_ms: 70.277533
+  type: 'test'
+  ...
+# Subtest: configured origin change never sends the old credential to the replacement origin
+ok 18 - configured origin change never sends the old credential to the replacement origin
+  ---
+  duration_ms: 1408.697317
+  type: 'test'
+  ...
+# Subtest: unsupported catalog metadata remains visible but cannot grant runnable inventory
+ok 19 - unsupported catalog metadata remains visible but cannot grant runnable inventory
+  ---
+  duration_ms: 1097.196629
+  type: 'test'
+  ...
+# Subtest: unsigned manifest is refused before archive download and never changes local state
+ok 20 - unsigned manifest is refused before archive download and never changes local state
+  ---
+  duration_ms: 743.708446
+  type: 'test'
+  ...
+# Subtest: arbitrary artifact URL is refused before archive download and never changes local state
+ok 21 - arbitrary artifact URL is refused before archive download and never changes local state
+  ---
+  duration_ms: 702.491013
+  type: 'test'
+  ...
+# Subtest: relative artifact redirect is refused before archive download and never changes local state
+ok 22 - relative artifact redirect is refused before archive download and never changes local state
+  ---
+  duration_ms: 915.126329
+  type: 'test'
+  ...
+# Subtest: expired grant is refused before archive download and never changes local state
+ok 23 - expired grant is refused before archive download and never changes local state
+  ---
+  duration_ms: 748.051913
+  type: 'test'
+  ...
+# Subtest: oversized or incompatible signed artifact is refused before downloading bytes
+ok 24 - oversized or incompatible signed artifact is refused before downloading bytes
+  ---
+  duration_ms: 590.228108
+  type: 'test'
+  ...
+# Subtest: archive corruption cleans private staging and preserves previous active state
+ok 25 - archive corruption cleans private staging and preserves previous active state
+  ---
+  duration_ms: 2032.367319
+  type: 'test'
+  ...
+# Subtest: unbind during artifact transfer fences commit and preserves offline trust
+ok 26 - unbind during artifact transfer fences commit and preserves offline trust
+  ---
+  duration_ms: 838.213452
+  type: 'test'
+  ...
+# Subtest: cancellation before request and during transfer never commits an install
+ok 27 - cancellation before request and during transfer never commits an install
+  ---
+  duration_ms: 787.363009
+  type: 'test'
+  ...
+# Subtest: stale generation, activation flags and traversal inputs fail before remote grant
+ok 28 - stale generation, activation flags and traversal inputs fail before remote grant
+  ---
+  duration_ms: 536.009667
+  type: 'test'
+  ...
+# Subtest: signed detail must match its approved report; unavailable diff is not invented as empty
+ok 29 - signed detail must match its approved report; unavailable diff is not invented as empty
+  ---
+  duration_ms: 397.091983
+  type: 'test'
+  ...
+# Subtest: committed cache-only operation replays offline after unbind without new grant or download
+ok 30 - committed cache-only operation replays offline after unbind without new grant or download
+  ---
+  duration_ms: 1751.718281
+  type: 'test'
+  ...
+# Subtest: install receipt is distinct from enable/other operations, even for the same release
+ok 31 - install receipt is distinct from enable/other operations, even for the same release
+  ---
+  duration_ms: 2122.280104
+  type: 'test'
+  ...
+# Subtest: pure local install receipt query has no remote or initialization side effects when no receipt exists
+ok 32 - pure local install receipt query has no remote or initialization side effects when no receipt exists
+  ---
+  duration_ms: 541.150486
+  type: 'test'
+  ...
+# Subtest: committed receipt replay rejects changes to every pinned target digest before returning prior success
+ok 33 - committed receipt replay rejects changes to every pinned target digest before returning prior success
+  ---
+  duration_ms: 2711.067997
+  type: 'test'
+  ...
+# Subtest: target-pinned historical receipt remains queryable after uninstall and unbind without reinstating inventory
+ok 34 - target-pinned historical receipt remains queryable after uninstall and unbind without reinstating inventory
+  ---
+  duration_ms: 2229.077598
+  type: 'test'
+  ...
+# Subtest: update-and-enable partial receipt preserves the old active map and replays only the same kind and target
+ok 35 - update-and-enable partial receipt preserves the old active map and replays only the same kind and target
+  ---
+  duration_ms: 2853.093162
+  type: 'test'
+  ...
+# Subtest: retained receipt metadata is reverified and rejects symlinks, hardlinks, FIFOs, oversize and substituted signed manifests
+    # Subtest: symlink
+    ok 1 - symlink
+      ---
+      duration_ms: 2751.601258
+      type: 'test'
+      ...
+    # Subtest: hardlink
+    ok 2 - hardlink
+      ---
+      duration_ms: 2353.244376
+      type: 'test'
+      ...
+    # Subtest: fifo
+    ok 3 - fifo
+      ---
+      duration_ms: 2112.13091
+      type: 'test'
+      ...
+    # Subtest: oversize
+    ok 4 - oversize
+      ---
+      duration_ms: 2887.71363
+      type: 'test'
+      ...
+    # Subtest: substituted
+    ok 5 - substituted
+      ---
+      duration_ms: 2157.1612
+      type: 'test'
+      ...
+    1..5
+ok 36 - retained receipt metadata is reverified and rejects symlinks, hardlinks, FIFOs, oversize and substituted signed manifests
+  ---
+  duration_ms: 12277.144814
+  type: 'test'
+  ...
+# Subtest: local errors redact credential text and filesystem paths
+ok 37 - local errors redact credential text and filesystem paths
+  ---
+  duration_ms: 360.849623
+  type: 'test'
+  ...
+# (node:771819) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: private storage defaults only under a known DSH_HOME and rejects broad/noncanonical paths
+ok 38 - private storage defaults only under a known DSH_HOME and rejects broad/noncanonical paths
+  ---
+  duration_ms: 38.083605
+  type: 'test'
+  ...
+# Subtest: configured but unbound read surfaces and runtime snapshot create no local inventory
+ok 39 - configured but unbound read surfaces and runtime snapshot create no local inventory
+  ---
+  duration_ms: 414.326969
+  type: 'test'
+  ...
+# Subtest: plugin preflight enables a signed offline cache and the actual runtime sees it; config switch requires restart
+ok 40 - plugin preflight enables a signed offline cache and the actual runtime sees it; config switch requires restart
+  ---
+  duration_ms: 9244.809704
+  type: 'test'
+  ...
+# Subtest: actual workspace conflict rejects activation without losing the verified cached release
+ok 41 - actual workspace conflict rejects activation without losing the verified cached release
+  ---
+  duration_ms: 3743.341329
+  type: 'test'
+  ...
+# Subtest: plugin source wiring retains the legacy cards and registers protected center routes before URL normalization
+ok 42 - plugin source wiring retains the legacy cards and registers protected center routes before URL normalization
+  ---
+  duration_ms: 31.33384
+  type: 'test'
+  ...
+# (node:772242) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: update snapshot crossing external unbind discards old metadata after a success response
+ok 43 - update snapshot crossing external unbind discards old metadata after a success response
+  ---
+  duration_ms: 4300.739866
+  type: 'test'
+  ...
+# Subtest: update snapshot crossing external unbind discards old metadata after a failure response
+ok 44 - update snapshot crossing external unbind discards old metadata after a failure response
+  ---
+  duration_ms: 8098.981155
+  type: 'test'
+  ...
+# Subtest: update snapshot crossing external rebind discards old metadata after a success response
+ok 45 - update snapshot crossing external rebind discards old metadata after a success response
+  ---
+  duration_ms: 8760.153806
+  type: 'test'
+  ...
+# Subtest: update snapshot crossing external rebind discards old metadata after a failure response
+ok 46 - update snapshot crossing external rebind discards old metadata after a failure response
+  ---
+  duration_ms: 5773.518508
+  type: 'test'
+  ...
+# Subtest: catalog errors preserve only same-revision snapshots and external rebind cannot reuse old private catalog
+ok 47 - catalog errors preserve only same-revision snapshots and external rebind cannot reuse old private catalog
+  ---
+  duration_ms: 3578.487238
+  type: 'test'
+  ...
+# Subtest: same-revision failed update check retains its last successful snapshot with explicit stale state
+ok 48 - same-revision failed update check retains its last successful snapshot with explicit stale state
+  ---
+  duration_ms: 2327.106639
+  type: 'test'
+  ...
+# Subtest: successful binding remains HTTP 200 with committed revision when operation journal startup is corrupt
+ok 49 - successful binding remains HTTP 200 with committed revision when operation journal startup is corrupt
+  ---
+  duration_ms: 176.060836
+  type: 'test'
+  ...
+# (node:772802) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: manager enqueues real signed install asynchronously, exposes phases, caches only, and returns no private data
+ok 50 - manager enqueues real signed install asynchronously, exposes phases, caches only, and returns no private data
+  ---
+  duration_ms: 8062.486144
+  type: 'test'
+  ...
+# Subtest: manager rejects stale generation/revision before queueing and fixed target changes before artifact bytes
+ok 51 - manager rejects stale generation/revision before queueing and fixed target changes before artifact bytes
+  ---
+  duration_ms: 4200.389085
+  type: 'test'
+  ...
+# Subtest: failed update-and-enable keeps previous active release, retains cache, and records failed partial receipt
+ok 52 - failed update-and-enable keeps previous active release, retains cache, and records failed partial receipt
+  ---
+  duration_ms: 18582.794747
+  type: 'test'
+  ...
+# Subtest: manual update check orders stable SemVer, excludes prereleases, blocks incompatible/dependency releases and downloads nothing
+ok 53 - manual update check orders stable SemVer, excludes prereleases, blocks incompatible/dependency releases and downloads nothing
+  ---
+  duration_ms: 6484.479115
+  type: 'test'
+  ...
+# Subtest: cached update candidate can be enabled offline without another download or generation mutation during checking
+ok 54 - cached update candidate can be enabled offline without another download or generation mutation during checking
+  ---
+  duration_ms: 11634.58091
+  type: 'test'
+  ...
+# Subtest: catalog and update failures distinguish stale previous snapshot from no successful history
+ok 55 - catalog and update failures distinguish stale previous snapshot from no successful history
+  ---
+  duration_ms: 5705.690899
+  type: 'test'
+  ...
+# Subtest: empty local update check still probes authorization and cannot misreport outage as up to date
+ok 56 - empty local update check still probes authorization and cannot misreport outage as up to date
+  ---
+  duration_ms: 501.913657
+  type: 'test'
+  ...
+# Subtest: binding changes clear remote history and disabled remote configuration preserves offline installations
+ok 57 - binding changes clear remote history and disabled remote configuration preserves offline installations
+  ---
+  duration_ms: 5062.607853
+  type: 'test'
+  ...
+# Subtest: tampered installed content is unavailable, cannot activate, and prevents a successful update check
+ok 58 - tampered installed content is unavailable, cannot activate, and prevents a successful update check
+  ---
+  duration_ms: 6493.053697
+  type: 'test'
+  ...
+# (node:773045) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: enqueue is durable before return, detached, private, and does not execute until start
+ok 59 - enqueue is durable before return, detached, private, and does not execute until start
+  ---
+  duration_ms: 2264.644794
+  type: 'test'
+  ...
+# Subtest: enqueue returns while executor runs and reports only actual durable phases
+ok 60 - enqueue returns while executor runs and reports only actual durable phases
+  ---
+  duration_ms: 2231.265629
+  type: 'test'
+  ...
+# Subtest: request fields, IDs, generation, target digests and JSON shape are strict before any write
+ok 61 - request fields, IDs, generation, target digests and JSON shape are strict before any write
+  ---
+  duration_ms: 78.845154
+  type: 'test'
+  ...
+# Subtest: same-key identical request replays; different immutable request conflicts across queue instances
+ok 62 - same-key identical request replays; different immutable request conflicts across queue instances
+  ---
+  duration_ms: 920.018991
+  type: 'test'
+  ...
+# Subtest: fixed failures and partial activation results are public; arbitrary exception payloads never persist
+ok 63 - fixed failures and partial activation results are public; arbitrary exception payloads never persist
+  ---
+  duration_ms: 3168.897246
+  type: 'test'
+  ...
+# Subtest: invalid executor results and unknown progress cannot enter the journal
+ok 64 - invalid executor results and unknown progress cannot enter the journal
+  ---
+  duration_ms: 4445.740764
+  type: 'test'
+  ...
+# Subtest: progress called without await is serialized and flushed before final success
+ok 65 - progress called without await is serialized and flushed before final success
+  ---
+  duration_ms: 1592.127265
+  type: 'test'
+  ...
+# Subtest: explicit retry retains exact target and key, while repeated enqueue never retries a failure
+ok 66 - explicit retry retains exact target and key, while repeated enqueue never retries a failure
+  ---
+  duration_ms: 3779.453661
+  type: 'test'
+  ...
+# Subtest: partial committed update remains failed on retry; new activation requires a new operation and generation
+ok 67 - partial committed update remains failed on retry; new activation requires a new operation and generation
+  ---
+  duration_ms: 2750.000713
+  type: 'test'
+  ...
+# Subtest: failed local receipt recovery never invokes executor or exposes exception data
+ok 68 - failed local receipt recovery never invokes executor or exposes exception data
+  ---
+  duration_ms: 1303.444354
+  type: 'test'
+  ...
+# Subtest: local receipt resolves a thrown post-commit exception and a queued replay without re-executing
+ok 69 - local receipt resolves a thrown post-commit exception and a queued replay without re-executing
+  ---
+  duration_ms: 1946.832746
+  type: 'test'
+  ...
+# Subtest: ambiguous commit without receipt is interrupted and never auto-retried after restart
+ok 70 - ambiguous commit without receipt is interrupted and never auto-retried after restart
+  ---
+  duration_ms: 1777.013537
+  type: 'test'
+  ...
+# Subtest: single runner across instances does not interrupt another live job and picks up follower enqueues
+ok 71 - single runner across instances does not interrupt another live job and picks up follower enqueues
+  ---
+  duration_ms: 3228.829577
+  type: 'test'
+  ...
+# Subtest: close drains an in-flight operation but leaves queued jobs for the next runner
+ok 72 - close drains an in-flight operation but leaves queued jobs for the next runner
+  ---
+  duration_ms: 2046.488274
+  type: 'test'
+  ...
+# Subtest: corrupt, duplicate-key, oversized, missing initialized journal and secret properties preserve disk and refuse writes
+ok 73 - corrupt, duplicate-key, oversized, missing initialized journal and secret properties preserve disk and refuse writes
+  ---
+  duration_ms: 2655.650192
+  type: 'test'
+  ...
+# Subtest: private storage rejects broad roots, insecure modes, symlink components, hardlinks and nonregular files
+ok 74 - private storage rejects broad roots, insecure modes, symlink components, hardlinks and nonregular files
+  ---
+  duration_ms: 804.519062
+  type: 'test'
+  ...
+# Subtest: unsafe lock and initialized marker aliases are rejected without replacing targets
+ok 75 - unsafe lock and initialized marker aliases are rejected without replacing targets
+  ---
+  duration_ms: 975.058384
+  type: 'test'
+  ...
+# Subtest: background runner storage failure surfaces a fixed code on reads and preserves unfinished durable state
+ok 76 - background runner storage failure surfaces a fixed code on reads and preserves unfinished durable state
+  ---
+  duration_ms: 1068.752785
+  type: 'test'
+  ...
+# Subtest: bounded retained operation history fails explicitly and never silently prunes or replaces requests
+ok 77 - bounded retained operation history fails explicitly and never silently prunes or replaces requests
+  ---
+  duration_ms: 59890.820571
+  type: 'test'
+  ...
+# Subtest: cross-process runner lock prevents duplicate execution; killed work without a receipt needs explicit retry
+ok 78 - cross-process runner lock prevents duplicate execution; killed work without a receipt needs explicit retry
+  ---
+  duration_ms: 3172.02958
+  type: 'test'
+  ...
+# Subtest: killed process with a durable local receipt recovers success without executing or changing target
+ok 79 - killed process with a durable local receipt recovers success without executing or changing target
+  ---
+  duration_ms: 752.658654
+  type: 'test'
+  ...
+# Subtest: cross-process enqueue serializes identical keys and rejects concurrent different requests
+ok 80 - cross-process enqueue serializes identical keys and rejects concurrent different requests
+  ---
+  duration_ms: 614.742616
+  type: 'test'
+  ...
+# (node:774575) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: center route ownership is fixed; unrelated plugin routes fall through
+ok 81 - center route ownership is fixed; unrelated plugin routes fall through
+  ---
+  duration_ms: 134.542914
+  type: 'test'
+  ...
+# Subtest: all GET metadata requires the non-simple UI header; loopback itself is not a CSRF fence
+ok 82 - all GET metadata requires the non-simple UI header; loopback itself is not a CSRF fence
+  ---
+  duration_ms: 61.543414
+  type: 'test'
+  ...
+# Subtest: public and forwarded requests use a dynamically resolved manage token independently of cookies
+ok 83 - public and forwarded requests use a dynamically resolved manage token independently of cookies
+  ---
+  duration_ms: 17.286393
+  type: 'test'
+  ...
+# Subtest: any forwarding header presence disables loopback trust, including proto, Via, extensions and empty values
+ok 84 - any forwarding header presence disables loopback trust, including proto, Via, extensions and empty values
+  ---
+  duration_ms: 51.784977
+  type: 'test'
+  ...
+# Subtest: Origin and Fetch Metadata reject localhost attacks, aliases, null and sibling-site requests
+ok 85 - Origin and Fetch Metadata reject localhost attacks, aliases, null and sibling-site requests
+  ---
+  duration_ms: 36.916972
+  type: 'test'
+  ...
+# Subtest: duplicate security-sensitive raw headers are refused before service dispatch
+ok 86 - duplicate security-sensitive raw headers are refused before service dispatch
+  ---
+  duration_ms: 39.918836
+  type: 'test'
+  ...
+# Subtest: no CORS preflight, unsupported methods, encoded paths or arbitrary routes
+ok 87 - no CORS preflight, unsupported methods, encoded paths or arbitrary routes
+  ---
+  duration_ms: 67.648166
+  type: 'test'
+  ...
+# Subtest: catalog query parameters are whitelisted, singular and bounded
+ok 88 - catalog query parameters are whitelisted, singular and bounded
+  ---
+  duration_ms: 92.671432
+  type: 'test'
+  ...
+# Subtest: POST bodies require JSON, bounded UTF-8 and exact object keys before invoking the service
+ok 89 - POST bodies require JSON, bounded UTF-8 and exact object keys before invoking the service
+  ---
+  duration_ms: 109.736903
+  type: 'test'
+  ...
+# Subtest: streamed oversized JSON is rejected without dispatching or echoing its body
+ok 90 - streamed oversized JSON is rejected without dispatching or echoing its body
+  ---
+  duration_ms: 16.470926
+  type: 'test'
+  ...
+# Subtest: body deadline includes slow streaming and returns no request content
+ok 91 - body deadline includes slow streaming and returns no request content
+  ---
+  duration_ms: 56.39371
+  type: 'test'
+  ...
+# Subtest: binding is direct and its code/public key are not retained in operation DTOs or responses
+ok 92 - binding is direct and its code/public key are not retained in operation DTOs or responses
+  ---
+  duration_ms: 57.751056
+  type: 'test'
+  ...
+# Subtest: each operation kind has exact input requirements and returns a sanitized 202 job
+ok 93 - each operation kind has exact input requirements and returns a sanitized 202 job
+  ---
+  duration_ms: 77.666414
+  type: 'test'
+  ...
+# Subtest: operation polling and explicit retry use stable IDs; retry body cannot change the target
+ok 94 - operation polling and explicit retry use stable IDs; retry body cannot change the target
+  ---
+  duration_ms: 10.88274
+  type: 'test'
+  ...
+# Subtest: all browser metadata is explicitly projected, including nested validation/diff/update/operation objects
+ok 95 - all browser metadata is explicitly projected, including nested validation/diff/update/operation objects
+  ---
+  duration_ms: 12.829853
+  type: 'test'
+  ...
+# Subtest: local legacy snapshot IDs remain visible without loosening remote release identifiers
+ok 96 - local legacy snapshot IDs remain visible without loosening remote release identifiers
+  ---
+  duration_ms: 8.008797
+  type: 'test'
+  ...
+# Subtest: text fields scrub credential, PEM and host-path accidents and never pass through object-shaped diffs
+ok 97 - text fields scrub credential, PEM and host-path accidents and never pass through object-shaped diffs
+  ---
+  duration_ms: 24.952519
+  type: 'test'
+  ...
+# Subtest: service errors never expose raw messages, details, URLs, arbitrary code values or stacks
+ok 98 - service errors never expose raw messages, details, URLs, arbitrary code values or stacks
+  ---
+  duration_ms: 23.536857
+  type: 'test'
+  ...
+# Subtest: ambiguous binding is one attempt, preserves only a safe reason and is never retried by the route
+ok 99 - ambiguous binding is one attempt, preserves only a safe reason and is never retried by the route
+  ---
+  duration_ms: 17.336156
+  type: 'test'
+  ...
+# Subtest: stale catalog and update snapshots retain safe errors instead of pretending an empty successful refresh
+ok 100 - stale catalog and update snapshots retain safe errors instead of pretending an empty successful refresh
+  ---
+  duration_ms: 17.775305
+  type: 'test'
+  ...
+# (node:774598) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: without a provider the bridge preserves legacy overlay behavior
+ok 101 - without a provider the bridge preserves legacy overlay behavior
+  ---
+  duration_ms: 57.474251
+  type: 'test'
+  ...
+# Subtest: each managed call reads local state and retains a frozen old result after generation change
+ok 102 - each managed call reads local state and retains a frozen old result after generation change
+  ---
+  duration_ms: 65.875934
+  type: 'test'
+  ...
+# Subtest: empty active state does not discover installed candidates and provider errors are not hidden
+ok 103 - empty active state does not discover installed candidates and provider errors are not hidden
+  ---
+  duration_ms: 27.720973
+  type: 'test'
+  ...
+# Subtest: selection, base, and provider are captured before awaiting the state read
+ok 104 - selection, base, and provider are captured before awaiting the state read
+  ---
+  duration_ms: 169.502538
+  type: 'test'
+  ...
+# Subtest: managed snapshots reject non-JSON accessors without executing them
+ok 105 - managed snapshots reject non-JSON accessors without executing them
+  ---
+  duration_ms: 17.067451
+  type: 'test'
+  ...
+# Subtest: builtin pack identities and entity ids cannot be overwritten by a center pack
+ok 106 - builtin pack identities and entity ids cannot be overwritten by a center pack
+  ---
+  duration_ms: 199.095171
+  type: 'test'
+  ...
+# Subtest: workspace conflicts across roots and post-activation edits are checked on every call
+ok 107 - workspace conflicts across roots and post-activation edits are checked on every call
+  ---
+  duration_ms: 349.764615
+  type: 'test'
+  ...
+# Subtest: center packs cannot collide with one another even with distinct pack ids
+ok 108 - center packs cannot collide with one another even with distinct pack ids
+  ---
+  duration_ms: 185.134426
+  type: 'test'
+  ...
+# Subtest: preflight checks all actual bases and executes the real merge validator
+ok 109 - preflight checks all actual bases and executes the real merge validator
+  ---
+  duration_ms: 253.602165
+  type: 'test'
+  ...
+# Subtest: only the exact taken-over vendor path is suppressed; local legacy origin remains visible
+ok 110 - only the exact taken-over vendor path is suppressed; local legacy origin remains visible
+  ---
+  duration_ms: 76.024143
+  type: 'test'
+  ...
+# Subtest: preflight accepts a pending state transaction without mutating it or consulting provider
+ok 111 - preflight accepts a pending state transaction without mutating it or consulting provider
+  ---
+  duration_ms: 23.201843
+  type: 'test'
+  ...
+# Subtest: pure v2 runtime dependency graph never imports the host bridge
+ok 112 - pure v2 runtime dependency graph never imports the host bridge
+  ---
+  duration_ms: 2.695771
+  type: 'test'
+  ...
+# (node:774627) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: verified download enters inventory without activation; explicit enable and all-disabled work
+ok 113 - verified download enters inventory without activation; explicit enable and all-disabled work
+  ---
+  duration_ms: 820.55603
+  type: 'test'
+  ...
+# Subtest: cached release update/enable and offline rollback preserve captured old content paths
+ok 114 - cached release update/enable and offline rollback preserve captured old content paths
+  ---
+  duration_ms: 1538.557469
+  type: 'test'
+  ...
+# Subtest: identical install retries need no original archive and do not increase generation
+ok 115 - identical install retries need no original archive and do not increase generation
+  ---
+  duration_ms: 612.057333
+  type: 'test'
+  ...
+# Subtest: archive tampering never changes existing activation and leaves no runnable staging tree
+ok 116 - archive tampering never changes existing activation and leaves no runnable staging tree
+  ---
+  duration_ms: 692.078381
+  type: 'test'
+  ...
+# Subtest: unsigned metadata edits, wrong center, incompatible plugin and identity mismatch are rejected
+ok 117 - unsigned metadata edits, wrong center, incompatible plugin and identity mismatch are rejected
+  ---
+  duration_ms: 538.210398
+  type: 'test'
+  ...
+# Subtest: a release ID cannot be reused with a different signed compatibility requirement
+ok 118 - a release ID cannot be reused with a different signed compatibility requirement
+  ---
+  duration_ms: 286.942353
+  type: 'test'
+  ...
+# Subtest: owner namespace and pack-version identity collisions do not replace a valid installed release
+ok 119 - owner namespace and pack-version identity collisions do not replace a valid installed release
+  ---
+  duration_ms: 934.241076
+  type: 'test'
+  ...
+# Subtest: modified installed files cannot be enabled, used in a snapshot, or rolled back to
+ok 120 - modified installed files cannot be enabled, used in a snapshot, or rolled back to
+  ---
+  duration_ms: 1414.073619
+  type: 'test'
+  ...
+# Subtest: generation CAS prevents concurrent active switches; replay of winner is stable
+ok 121 - generation CAS prevents concurrent active switches; replay of winner is stable
+  ---
+  duration_ms: 1223.45709
+  type: 'test'
+  ...
+# Subtest: state commit failure keeps old release; uncertain committed reply resolves via identical retry
+ok 122 - state commit failure keeps old release; uncertain committed reply resolves via identical retry
+  ---
+  duration_ms: 1541.005884
+  type: 'test'
+  ...
+# Subtest: corrupt state recovers a verified previous snapshot read-only and preserves corrupt bytes
+ok 123 - corrupt state recovers a verified previous snapshot read-only and preserves corrupt bytes
+  ---
+  duration_ms: 901.831276
+  type: 'test'
+  ...
+# Subtest: corrupt state with corrupted previous inventory refuses recovery
+ok 124 - corrupt state with corrupted previous inventory refuses recovery
+  ---
+  duration_ms: 675.986472
+  type: 'test'
+  ...
+# Subtest: uninstall refuses active release and keeps inactive content for earlier task snapshots
+ok 125 - uninstall refuses active release and keeps inactive content for earlier task snapshots
+  ---
+  duration_ms: 939.221084
+  type: 'test'
+  ...
+# Subtest: exact forward and reverse dependencies block incompatible update and disable
+ok 126 - exact forward and reverse dependencies block incompatible update and disable
+  ---
+  duration_ms: 1740.385321
+  type: 'test'
+  ...
+# Subtest: built-in dependencies and changed local plugin capabilities are checked without downloads
+ok 127 - built-in dependencies and changed local plugin capabilities are checked without downloads
+  ---
+  duration_ms: 748.559645
+  type: 'test'
+  ...
+# Subtest: two independent local stores can keep different active versions
+ok 128 - two independent local stores can keep different active versions
+  ---
+  duration_ms: 1149.295341
+  type: 'test'
+  ...
+# Subtest: failed host activation keeps a verified download with an explicit unsuccessful outcome
+ok 129 - failed host activation keeps a verified download with an explicit unsuccessful outcome
+  ---
+  duration_ms: 953.507834
+  type: 'test'
+  ...
+# Subtest: distinct SemVer build metadata is distinct immutable identity, not an automatic priority increase
+ok 130 - distinct SemVer build metadata is distinct immutable identity, not an automatic priority increase
+  ---
+  duration_ms: 640.031561
+  type: 'test'
+  ...
+# Subtest: different packs cannot silently replace an already-active entity
+ok 131 - different packs cannot silently replace an already-active entity
+  ---
+  duration_ms: 1079.787621
+  type: 'test'
+  ...
+# Subtest: uninstall does not erase the accepted immutable version or owner binding
+ok 132 - uninstall does not erase the accepted immutable version or owner binding
+  ---
+  duration_ms: 1329.178613
+  type: 'test'
+  ...
+# Subtest: mutation of caller request during install cannot change signed bytes or activation choice
+ok 133 - mutation of caller request during install cannot change signed bytes or activation choice
+  ---
+  duration_ms: 393.33528
+  type: 'test'
+  ...
+# Subtest: legacy takeover switches exact paths atomically, supports offline history rollback and explicit restore
+ok 134 - legacy takeover switches exact paths atomically, supports offline history rollback and explicit restore
+  ---
+  duration_ms: 1685.539457
+  type: 'test'
+  ...
+# Subtest: legacy source changes after takeover do not change the backup; restore refuses changed source
+ok 135 - legacy source changes after takeover do not change the backup; restore refuses changed source
+  ---
+  duration_ms: 937.000632
+  type: 'test'
+  ...
+# Subtest: legacy takeover failure before commit leaves automatic source untouched and unsuppressed
+ok 136 - legacy takeover failure before commit leaves automatic source untouched and unsuppressed
+  ---
+  duration_ms: 498.612419
+  type: 'test'
+  ...
+# (node:775175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: only explicit center activation reaches the compiler; v2 selection leaves v1 result and plan intact
+ok 137 - only explicit center activation reaches the compiler; v2 selection leaves v1 result and plan intact
+  ---
+  duration_ms: 253.091291
+  type: 'test'
+  ...
+# Subtest: empty snapshot disables all center packs even when files remain, and no snapshot auto-discovers no inventory
+ok 138 - empty snapshot disables all center packs even when files remain, and no snapshot auto-discovers no inventory
+  ---
+  duration_ms: 82.816177
+  type: 'test'
+  ...
+# Subtest: legacy enabledPacks empty/absent means all while nonempty filters legacy only
+ok 139 - legacy enabledPacks empty/absent means all while nonempty filters legacy only
+  ---
+  duration_ms: 251.506478
+  type: 'test'
+  ...
+# Subtest: suppression matches only exact real vendor paths, preserving same-ID workspace, sibling and builtin
+ok 140 - suppression matches only exact real vendor paths, preserving same-ID workspace, sibling and builtin
+  ---
+  duration_ms: 83.986298
+  type: 'test'
+  ...
+# Subtest: cache identity includes vendor roots and discovered workspaces even with equal file mtimes
+ok 141 - cache identity includes vendor roots and discovered workspaces even with equal file mtimes
+  ---
+  duration_ms: 167.230395
+  type: 'test'
+  ...
+# Subtest: cached center results reverify tree integrity and never hide tampering behind unchanged mtimes
+ok 142 - cached center results reverify tree integrity and never hide tampering behind unchanged mtimes
+  ---
+  duration_ms: 191.982647
+  type: 'test'
+  ...
+# Subtest: result snapshots are deeply frozen and detached without freezing or rewriting caller base or selection
+ok 143 - result snapshots are deeply frozen and detached without freezing or rewriting caller base or selection
+  ---
+  duration_ms: 93.66985
+  type: 'test'
+  ...
+# Subtest: center generation, release digest and roots each participate in cache selection
+ok 144 - center generation, release digest and roots each participate in cache selection
+  ---
+  duration_ms: 73.545721
+  type: 'test'
+  ...
+# Subtest: invalid center schema, mismatched identity and unsafe or missing roots are explicit failures
+ok 145 - invalid center schema, mismatched identity and unsafe or missing roots are explicit failures
+  ---
+  duration_ms: 139.596983
+  type: 'test'
+  ...
+# Subtest: malformed center snapshots and duplicate activations cannot be interpreted as an empty selection
+ok 146 - malformed center snapshots and duplicate activations cannot be interpreted as an empty selection
+  ---
+  duration_ms: 5.509028
+  type: 'test'
+  ...
+# Subtest: center merge order is stable by pack identity independent of input order and asynchronous loading
+ok 147 - center merge order is stable by pack identity independent of input order and asynchronous loading
+  ---
+  duration_ms: 52.160031
+  type: 'test'
+  ...
+# Subtest: individually valid center and workspace packs that invalidate the merged graph fail closed
+ok 148 - individually valid center and workspace packs that invalidate the merged graph fail closed
+  ---
+  duration_ms: 184.653355
+  type: 'test'
+  ...
+# Subtest: caller changes while resolving cannot rewrite the captured base, activation or legacy selection
+ok 149 - caller changes while resolving cannot rewrite the captured base, activation or legacy selection
+  ---
+  duration_ms: 35.833151
+  type: 'test'
+  ...
+# Subtest: legacy invalid packs still return diagnostics, cache invalidation still works and center resolver stays local
+ok 150 - legacy invalid packs still return diagnostics, cache invalidation still works and center resolver stays local
+  ---
+  duration_ms: 163.088058
+  type: 'test'
+  ...
+# (node:775208) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: V2 loader modules contain no network APIs (source-level)
+ok 151 - V2 loader modules contain no network APIs (source-level)
+  ---
+  duration_ms: 102.371961
+  type: 'test'
+  ...
+# Subtest: pack-loader imports only builtins and local modules (no remote specifiers)
+ok 152 - pack-loader imports only builtins and local modules (no remote specifiers)
+  ---
+  duration_ms: 36.824827
+  type: 'test'
+  ...
+# Subtest: no network-adjacent modules exist in the v2 loader chain
+ok 153 - no network-adjacent modules exist in the v2 loader chain
+  ---
+  duration_ms: 23.841999
+  type: 'test'
+  ...
+# Subtest: upstreamProvenance is a pure audit string: package still loads and verifies locally
+ok 154 - upstreamProvenance is a pure audit string: package still loads and verifies locally
+  ---
+  duration_ms: 146.308073
+  type: 'test'
+  ...
+# Subtest: a digest mismatch is rejected even when the package declares a provenance URL
+ok 155 - a digest mismatch is rejected even when the package declares a provenance URL
+  ---
+  duration_ms: 86.831764
+  type: 'test'
+  ...
+# Subtest: a missing license forces internalOnly even when a provenance URL is present
+ok 156 - a missing license forces internalOnly even when a provenance URL is present
+  ---
+  duration_ms: 85.684901
+  type: 'test'
+  ...
+# Subtest: lazy media entries are verified by bytes and sha256 (no network involved)
+ok 157 - lazy media entries are verified by bytes and sha256 (no network involved)
+  ---
+  duration_ms: 171.779415
+  type: 'test'
+  ...
+1..157
+# tests 162
+# suites 0
+# pass 162
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 155087.811373

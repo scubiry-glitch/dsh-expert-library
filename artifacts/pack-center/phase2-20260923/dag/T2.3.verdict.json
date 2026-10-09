@@ -1,0 +1,10 @@
+{
+  "node": "T2.3",
+  "passed": true,
+  "reasons": [
+    "v1 published from the pinned Git commit with an independent reviewer and async worker completion",
+    "artifact digest matches the phase1 v1 digest",
+    "A/B installs verified signed manifests, default-disabled behavior, explicit enable/disable/disable-all/final-enable flows",
+    "builtin/workspace pack inventories are unchanged"
+  ]
+}

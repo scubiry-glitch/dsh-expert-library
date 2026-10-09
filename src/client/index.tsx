@@ -19,6 +19,7 @@ import { FilesView } from './FilesView.tsx'
 import { ExpertLibrarySettingsCard } from './settings-card.tsx'
 import { DomainPacksCard } from './domain-packs-card.tsx'
 import { ManageCard } from './manage-card.tsx'
+import { PackCenterCard } from './pack-center-card.tsx'
 
 /** Required services: conversation nodes, slots, and sessions navigation. */
 export const inject = ['uiConversation', 'slots', 'sessions', 'settingsScope']
@@ -68,15 +69,22 @@ export function apply(ctx: ClientContext): void {
     inject: () => ({ scope: settingsScope }),
   }, ExpertLibrarySettingsCard)
 
-  // Read-only Domain Pack preview (Phase 1 「设置页只读预览校验」): next to the
-  // writable 专家库 runtime card, without any settings scope — the page only
-  // reads the host `/plugins/dsh-expert-library/packs` route.
+  // Read-only Domain Pack validation preview. Tenant version operations live in
+  // the separate settings section labelled 「领域包」 below; this preview keeps
+  // the existing local pack-health view distinct from center-managed versions.
   ctx.slots.register({
     name: 'settings.section',
     id: 'expert-library-packs',
     order: 165,
-    label: '领域包',
+    label: '领域包校验',
   }, DomainPacksCard)
+
+  ctx.slots.register({
+    name: 'settings.section',
+    id: 'expert-library-center',
+    order: 168,
+    label: '领域包',
+  }, PackCenterCard)
 
   // 专家库手动管理（写侧）：专家/场景覆盖层 CRUD、技能 zip 安装、领域包重建。
   // 把高频操作固定成设置表单，避免每次靠 agent 执行的随机性；host 路由

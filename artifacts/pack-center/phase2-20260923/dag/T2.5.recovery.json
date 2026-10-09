@@ -1,0 +1,22 @@
+{
+  "before": {
+    "generation": 19,
+    "sha256": "85fbcca9d05fb5cc36d1c4ad9b94924f8319c36cd5bbfee1c5ae4ace2b10e8fa"
+  },
+  "operations": {
+    "cached": "op_87847b04d3e24ecd60e10a7538033044e6420b3e63bfa375a73555858ccb3971",
+    "disableDependent": "op_487c16fc2e8c89d6796c0ad45861388dd8c0d078a4b8cccf3e59a0a74efcfe85",
+    "enableDependency": "op_7ad0326f68deb979f8a63498918d50c1c1ba3ad48109acbfa350df85cae8fcda",
+    "enableDependent": "op_e5f29439ef693fe71b3a00d61c11399d094b0e29158aa4139d2363fae5e9894d"
+  },
+  "final": {
+    "generation": 23,
+    "sha256": "566fcc29c85ebfcb4f7091527543ac2a4b6a82070ae84c00e895bfa0cd3eeba8",
+    "active": {
+      "macro-capital-analyst": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+      "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+      "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583"
+    }
+  },
+  "handoff": "explicit dependent disable; no automatic cascade"
+}

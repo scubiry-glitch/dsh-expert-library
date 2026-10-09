@@ -1,0 +1,369 @@
+{
+  "node": "R3.4",
+  "baseline": {
+    "at": "2026-09-24T02:23:36.675Z",
+    "message": "baseline",
+    "generation": 30,
+    "stateDigest": "4efcf7fb67cde79730d1cace602047f1c5cd700934ccf9aa9ca85f611e4bc6e3",
+    "active": {
+      "macro-capital-analyst": "c95d8b85-6a2f-4fbc-9310-3d28c903f834",
+      "phase2-dep-a": "793121e6-bc0a-40e7-b5de-7c357f529e97",
+      "phase2-dep-b": "d0d46d0e-1a25-4a52-b086-060c5c630583"
+    }
+  },
+  "recovery": [
+    {
+      "at": "2026-09-24T02:24:18.488Z",
+      "message": "precommit-recovered",
+      "operation": {
+        "operationId": "op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+        "request": {
+          "operationKey": "r34-A-precommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-30",
+          "kind": "update_enable",
+          "expectedGeneration": 30,
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "connectionRevision": 1,
+          "target": {
+            "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+            "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+            "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696"
+          }
+        },
+        "status": "succeeded",
+        "phase": "completed",
+        "createdAt": "2026-09-24T02:23:41.964Z",
+        "updatedAt": "2026-09-24T02:24:18.254Z",
+        "result": {
+          "generation": 31,
+          "outcome": "succeeded",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "activated": true
+        }
+      },
+      "operationRouteVisible": true,
+      "recoveryPhaseObserved": false,
+      "generationBefore": 30,
+      "generationAfter": 30,
+      "active": "c95d8b85-6a2f-4fbc-9310-3d28c903f834"
+    },
+    {
+      "at": "2026-09-24T02:24:22.364Z",
+      "message": "postcommit-succeeded-before-kill",
+      "operation": {
+        "operationId": "op_e65b3a48fd3f8a257107585e782ec38f1b9867e007338ac3877a63c08631c740",
+        "request": {
+          "operationKey": "r34-A-postcommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-32",
+          "kind": "update_enable",
+          "expectedGeneration": 32,
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "connectionRevision": 1,
+          "target": {
+            "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+            "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+            "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696"
+          }
+        },
+        "status": "succeeded",
+        "phase": "completed",
+        "createdAt": "2026-09-24T02:24:21.128Z",
+        "updatedAt": "2026-09-24T02:24:22.238Z",
+        "result": {
+          "generation": 33,
+          "outcome": "succeeded",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "activated": true
+        }
+      },
+      "generation": 33
+    },
+    {
+      "at": "2026-09-24T02:24:55.032Z",
+      "message": "postcommit-recovered",
+      "operation": {
+        "operationId": "op_e65b3a48fd3f8a257107585e782ec38f1b9867e007338ac3877a63c08631c740",
+        "request": {
+          "operationKey": "r34-A-postcommit-3f041d24-df04-4186-bba0-ecd9dfc83d5b-32",
+          "kind": "update_enable",
+          "expectedGeneration": 32,
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "connectionRevision": 1,
+          "target": {
+            "manifestSha256": "048f984188942c71e09a9838cac0993c13ce39ac790fbe6f62c62602754f95a2",
+            "artifactSha256": "3d3fac90491ca858a16319c7b58db8fa45ea78840e92f1bd101cfa7fc69077e0",
+            "contentTreeSha256": "7c0eb511d79f2e4a20d7f1cfe45a7e0195c679e8485efd880853390f62016696"
+          }
+        },
+        "status": "succeeded",
+        "phase": "completed",
+        "createdAt": "2026-09-24T02:24:21.128Z",
+        "updatedAt": "2026-09-24T02:24:22.238Z",
+        "result": {
+          "generation": 33,
+          "outcome": "succeeded",
+          "releaseId": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+          "activated": true
+        }
+      },
+      "generation": 33,
+      "active": "3f041d24-df04-4186-bba0-ecd9dfc83d5b",
+      "unchangedGeneration": true
+    }
+  ],
+  "events": [
+    {
+      "method": "GET",
+      "path": "/installations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/installations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/connection",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/operations",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/connection",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/connection",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_3564c56df940b58f82215d2c7fdf337ee033d634e844d5fe925a8d3f078c7db7",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/operations",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e8368defb17324267a4e9bd72a448862cce385378a0be7b40021e599d38e7178",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e8368defb17324267a4e9bd72a448862cce385378a0be7b40021e599d38e7178",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e8368defb17324267a4e9bd72a448862cce385378a0be7b40021e599d38e7178",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e8368defb17324267a4e9bd72a448862cce385378a0be7b40021e599d38e7178",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e8368defb17324267a4e9bd72a448862cce385378a0be7b40021e599d38e7178",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e8368defb17324267a4e9bd72a448862cce385378a0be7b40021e599d38e7178",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/connection",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/operations",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e65b3a48fd3f8a257107585e782ec38f1b9867e007338ac3877a63c08631c740",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e65b3a48fd3f8a257107585e782ec38f1b9867e007338ac3877a63c08631c740",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e65b3a48fd3f8a257107585e782ec38f1b9867e007338ac3877a63c08631c740",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e65b3a48fd3f8a257107585e782ec38f1b9867e007338ac3877a63c08631c740",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/connection",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/connection",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_e65b3a48fd3f8a257107585e782ec38f1b9867e007338ac3877a63c08631c740",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations",
+      "status": 200
+    },
+    {
+      "method": "POST",
+      "path": "/operations",
+      "status": 202
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_017a48b2a6e6a29e806f07aa52d67aef3edb0424d7654cef889e1a539babbade",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_017a48b2a6e6a29e806f07aa52d67aef3edb0424d7654cef889e1a539babbade",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_017a48b2a6e6a29e806f07aa52d67aef3edb0424d7654cef889e1a539babbade",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_017a48b2a6e6a29e806f07aa52d67aef3edb0424d7654cef889e1a539babbade",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_017a48b2a6e6a29e806f07aa52d67aef3edb0424d7654cef889e1a539babbade",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_017a48b2a6e6a29e806f07aa52d67aef3edb0424d7654cef889e1a539babbade",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/operations/op_017a48b2a6e6a29e806f07aa52d67aef3edb0424d7654cef889e1a539babbade",
+      "status": 200
+    }
+  ]
+}

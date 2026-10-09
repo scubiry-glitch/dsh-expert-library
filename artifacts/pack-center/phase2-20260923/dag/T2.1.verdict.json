@@ -1,0 +1,12 @@
+{
+  "node": "T2.1",
+  "passed": true,
+  "reasons": [
+    "root cause: dsh lib/bin.js gates its CLI on `if (import.meta.main)`, which Node v20.20.0 (/usr/bin/node) does not implement (undefined), so every dsh invocation under node20 exited 0 silently without running runCli/runDumpConfig at all",
+    "the working runtime is Node v22.22.0 (/root/.nvm/versions/node/v22.22.0/bin/node), the same binary the production instance uses; relaunching with it makes --dump-config and boot work immediately",
+    "instance A (pid 427372, port 18281) and instance B (pid 427898, port 18282) both boot, listen, and load @zhijian/dsh-expert-library from the isolated tree via exact profile symlinks (no dependencies installed)",
+    "GET /plugins/dsh-expert-library/manage/center/connection with X-Pack-Center-UI: 1 returns HTTP 200 JSON with configured=false, activationAvailable=true, revision=0, connection=null on both instances",
+    "requests without X-Pack-Center-UI: 1 are rejected HTTP 403 CENTER_UI_REQUIRED on both instances",
+    "no DSH core file under /usr/lib/node_modules/@deepseek-ai/dsh was modified; changes were confined to /tmp/p2-20260923 launch parameters and scripts/phase2/run-ab-instances.mjs"
+  ]
+}
