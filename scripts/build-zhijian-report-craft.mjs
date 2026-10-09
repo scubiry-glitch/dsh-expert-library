@@ -17,11 +17,12 @@ export async function buildReportDomainPack(write = false, packRoot = root) {
     if (write) await writeFile(target, emitted)
     else if (await readFile(target, 'utf8') !== emitted) throw new Error(`domain checker build drift: ${name}`)
   }
-  for (const id of ['zhijian-report-craft', 'zhijian-designer-render']) {
+  const skillNames = new Set(await readdir(join(root, 'skills')))
+  for (const id of ['zhijian-report-craft', 'zhijian-designer-render', 'zhijian-research-craft-v5', 'zhijian-rent-pricing'].filter(id => skillNames.has(id))) {
     const manifest = {
-      id, name: id, version: id === 'zhijian-designer-render' ? '1.1.1' : '1.1.0', schemaVersion: 2,
+      id, name: id, version: id === 'zhijian-research-craft-v5' ? '5.0.0' : id === 'zhijian-designer-render' ? '1.2.0' : id === 'zhijian-rent-pricing' ? '1.0.0' : '1.1.0', schemaVersion: 2,
       source: { kind: 'workspace', root: `skills/${id}`, digest: '' },
-      contributions: {}, permissions: { execScripts: ['scripts/check.mjs'], internalOnly: true },
+      contributions: {}, permissions: { execScripts: id === 'zhijian-rent-pricing' ? [] : ['scripts/check.mjs'], internalOnly: true },
       craft: { path: `craft/${id}.json` },
     }
     manifest.source.digest = await canonicalSkillDigest(join(root, 'skills', id), manifest)
