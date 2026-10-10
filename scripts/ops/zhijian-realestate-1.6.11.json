@@ -1,0 +1,47 @@
+{
+  "origin": "https://packs.meizu.life",
+  "organizationId": "beike",
+  "packId": "zhijian-realestate",
+  "name": "智见点评·房地产领域包",
+  "version": "1.6.11",
+  "sourceDir": "/root/zhijian/dsh-pack-zhijian-realestate-v16",
+  "sourceUrl": "https://github.com/scubiry-glitch/dsh-pack-zhijian-realestate.git",
+  "sourceCommit": "a81e57686c09da7d8c540dd0c63f6a47e8c4295a",
+  "license": "UNLICENSED",
+  "distribution": {
+    "kind": "authenticated"
+  },
+  "notes": "新增具体标的详细租金定价场景、v3 数据契约与同源渲染；趋势按小区→商圈→城市回退，四价格状态分列，取数说明含主备凭据引用。",
+  "reviewComment": "用户明确授权更新领域包、启用并测试。已核对新增详细场景、数据契约、凭据引用无明文、源包结构、13项租金回归、HTML/PDF与检查器、宿主预检；备用凭据仅有标识，尚待实际配置。审核账号与提交账号分离，不代表另一次人工独立审阅。",
+  "author": "admin",
+  "reviewer": "reviewer",
+  "credentialDir": "/var/lib/pack-center/oidc/users",
+  "receiptDir": "/var/lib/pack-center/release-receipts",
+  "settingsPath": "/root/zhijian/zhijianharness-main/settings.yaml",
+  "packCenterDir": "/root/zhijian/zhijianharness-main/pack-center",
+  "workspaces": [
+    "/root/.openclaw/workspace/98wiki"
+  ],
+  "legacyEnabledPacks": [
+    "pipeline-general",
+    "beike",
+    "bank-finance",
+    "pipeline-domains"
+  ],
+  "runtimeService": "dsh-web.service",
+  "healthUrl": "http://127.0.0.1:3080/",
+  "materializeAliases": [
+    "/root/zhijian/dsh-expert-library/domain-packs/builtin-library",
+    "/root/zhijian/dsh-expert-library/domain-packs/zhijian-realestate"
+  ],
+  "requiredSkills": [
+    "zhijian-research-craft-v5",
+    "zhijian-report-craft",
+    "zhijian-designer-render",
+    "zhijian-rent-pricing"
+  ],
+  "verificationTests": [
+    "test/pack-research-preflight.test.mjs",
+    "test/ops-pack-release.test.mjs"
+  ]
+}
