@@ -1,0 +1,47 @@
+{
+  "origin": "https://packs.meizu.life",
+  "organizationId": "beike",
+  "packId": "zhijian-realestate",
+  "name": "智见点评·房地产领域包",
+  "version": "1.6.12",
+  "sourceDir": "/root/zhijian/dsh-pack-zhijian-realestate-v16",
+  "sourceUrl": "https://github.com/scubiry-glitch/dsh-pack-zhijian-realestate.git",
+  "sourceCommit": "c5aacc911d2c68f966a294f0cfd68ef94183dcf9",
+  "license": "UNLICENSED",
+  "distribution": {
+    "kind": "authenticated"
+  },
+  "notes": "修复详细租金报告：恢复有证据的市场测算硬底与共用价格横轴；同层级完整月序列复算四项趋势变化率，缺月逐项说明。",
+  "reviewComment": "用户明确要求补足原报告底价、横轴和四项百分比，并已授权更新领域包、启用及测试。源包 17 项租金回归、包结构检查、历史原值复算、HTML/PDF 机械检查与桌面/手机视觉检查通过；未来悦市场硬底因样本不足仍待测算。审核账号与提交账号分离，不代表另一次人工独立审阅。",
+  "author": "admin",
+  "reviewer": "reviewer",
+  "credentialDir": "/var/lib/pack-center/oidc/users",
+  "receiptDir": "/var/lib/pack-center/release-receipts",
+  "settingsPath": "/root/zhijian/zhijianharness-main/settings.yaml",
+  "packCenterDir": "/root/zhijian/zhijianharness-main/pack-center",
+  "workspaces": [
+    "/root/.openclaw/workspace/98wiki"
+  ],
+  "legacyEnabledPacks": [
+    "pipeline-general",
+    "beike",
+    "bank-finance",
+    "pipeline-domains"
+  ],
+  "runtimeService": "dsh-web.service",
+  "healthUrl": "http://127.0.0.1:3080/",
+  "materializeAliases": [
+    "/root/zhijian/dsh-expert-library/domain-packs/builtin-library",
+    "/root/zhijian/dsh-expert-library/domain-packs/zhijian-realestate"
+  ],
+  "requiredSkills": [
+    "zhijian-research-craft-v5",
+    "zhijian-report-craft",
+    "zhijian-designer-render",
+    "zhijian-rent-pricing"
+  ],
+  "verificationTests": [
+    "test/pack-research-preflight.test.mjs",
+    "test/ops-pack-release.test.mjs"
+  ]
+}
