@@ -12,6 +12,8 @@ export const REPORT_CRAFT_V2_DEFAULT_BROWSER = '/root/.cache/dsh-report-craft/ch
 export interface ReportCraftV2Options {
   /** Trusted Host configuration only; never accepted from the artifact/ledger. */
   readonly browserExecutablePath?: string
+  /** Trusted Host screenshot cache; never accepted from report artifacts. */
+  readonly screenshotRoot?: string
   readonly signal?: AbortSignal
 }
 const EXTRA_IDS = ['report-craft-chapter-structure', 'report-craft-calculations', 'report-craft-format-consistency', 'report-craft-browser'] as const
@@ -43,7 +45,9 @@ export async function evaluateReportCraftV2(artifacts: readonly ArtifactEvidence
     const decoder = new TextDecoder('utf-8', { fatal: true })
     const browser = options.browserExecutablePath ?? REPORT_CRAFT_V2_DEFAULT_BROWSER
     if (!isAbsolute(browser) || browser.includes('\0')) throw new Error('Host browser path must be absolute')
-    input = JSON.stringify({ md: decoder.decode(md), html: decoder.decode(html), pdf: pdf.toString('base64'), ledger: decoder.decode(ledger), hashes: { md: createHash('sha256').update(md).digest('hex'), html: createHash('sha256').update(html).digest('hex'), pdf: createHash('sha256').update(pdf).digest('hex') }, browser, checkerVersion: REPORT_CRAFT_V2_CHECKER_VERSION })
+    const screenshotRoot = options.screenshotRoot ?? '/root/.cache/dsh-report-craft/evidence'
+    if (!isAbsolute(screenshotRoot) || screenshotRoot.includes('\0') || screenshotRoot.split('/').includes('..') || screenshotRoot === '/') throw new Error('Host screenshot root must be an absolute directory path')
+    input = JSON.stringify({ md: decoder.decode(md), html: decoder.decode(html), pdf: pdf.toString('base64'), ledger: decoder.decode(ledger), hashes: { md: createHash('sha256').update(md).digest('hex'), html: createHash('sha256').update(html).digest('hex'), pdf: createHash('sha256').update(pdf).digest('hex') }, browser, screenshotRoot, checkerVersion: REPORT_CRAFT_V2_CHECKER_VERSION })
   } catch (e) {
     return results('failed', 'V2 input invalid: ' + (e instanceof Error ? e.message : 'invalid input'))
   }

@@ -94,6 +94,26 @@ test('scanDirs discovers sqlite files with sanitized ids', () => {
   assert.deepEqual(options.localdb.databases.map(db => db.id), ['my-bank'])
 })
 
+test('customer mode requires explicit public database registration and ignores directory scans', () => {
+  const dir = join(workspace, 'customer-scan')
+  mkdirSync(dir, { recursive: true })
+  writeFileSync(join(dir, 'private.db'), 'x')
+  const original = process.env.DSH_CUSTOMER_WORKSPACE_DIR
+  process.env.DSH_CUSTOMER_WORKSPACE_DIR = '/tmp/customer-workspace'
+  try {
+    const options = resolveProviderServiceOptions({ providers: { localdb: {
+      scanDirs: [dir], databases: [
+        { id: 'internal', path: DEMO_DB(), sensitivity: 'internal' },
+        { id: 'public', path: DEMO_DB(), sensitivity: 'public' },
+      ],
+    } } })
+    assert.deepEqual(options.localdb.databases.map(db => db.id), ['public'])
+  } finally {
+    if (original === undefined) delete process.env.DSH_CUSTOMER_WORKSPACE_DIR
+    else process.env.DSH_CUSTOMER_WORKSPACE_DIR = original
+  }
+})
+
 /* ---------------------------------------------------------------------------
  * Service end-to-end through the real runner
  * ------------------------------------------------------------------------- */

@@ -113,9 +113,8 @@ test('staged-plan locking recovers a fresh legacy JSON lock owned by an exited p
   const f = await fixture(t), planLock = join(f.root, 'plans', 'plan-fixture.lock')
   await mkdir(join(f.root, 'plans'))
   await writeFile(planLock, JSON.stringify({ pid: f.deadPid, acquiredAt: Date.now() }))
-  const start = Date.now()
-  await worker(`const {withStagedPlanLock}=await import(${JSON.stringify(stagedModuleUrl)}); await withStagedPlanLock(root,'plan-fixture',async()=>{await fs.writeFile(join(root,'entered'),'yes')});`, [f.root]).done
-  assert.ok(Date.now() - start < 2500)
+  // Measure acquisition itself; process startup/module loading varies with concurrent Host tests.
+  await worker(`const {withStagedPlanLock}=await import(${JSON.stringify(stagedModuleUrl)}); const start=Date.now(); await withStagedPlanLock(root,'plan-fixture',async()=>{if(Date.now()-start>=2500)throw Error('orphan recovery exceeded 2500ms');await fs.writeFile(join(root,'entered'),'yes')});`, [f.root]).done
   assert.equal(await readFile(join(f.root, 'entered'), 'utf8'), 'yes')
   await assert.rejects(stat(planLock), { code: 'ENOENT' })
   assert.equal((await readdir(join(f.root, 'plans', '.recovery'))).filter(n => n.endsWith('.claim')).length, 1)

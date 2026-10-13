@@ -2,6 +2,8 @@
 
 实现基线：`f3523c0`。当前计划修订基于 `@nanmicoder/dsh-agent-teams` 主线快照 `f60d40d`（2026-09-25，0.1.21 代码）和专家库当前实现。
 
+> **验收状态（2026-09-27）**：本文保留 A0–A6 的原始验收标准，便于追溯计划来源。A0–A5 的源码和离线回归已完成；A6 的 wire/UI/doctor、故障与安全矩阵、真实包安装/隔离 profile 回滚已落地；真实 Host quality chain 的 reviewer、attempt 和 output-binding 修复已通过。GUI 活动计划续跑已通过独立 Web/GUI receipt；原 worker 冷恢复续写仍作为明确限制保留。证据见 [`docs/A6-EVIDENCE.md`](docs/A6-EVIDENCE.md) 与 [`docs/A6-HOST-EVIDENCE.md`](docs/A6-HOST-EVIDENCE.md)。
+
 这份计划只处理专家团队编排能力。学习对象是 AgentTeams 的状态模型、工具协议、调度恢复、质量门禁、宿主兼容和验证方法；专家库自己的 V2 compiler、provider runtime、专家画像、领域知识和质量 policy 继续作为业务底座，不复制对方的领域内容，也不修改 DSH 核心。
 
 ## 学习结论：借鉴什么，保留什么
@@ -10,13 +12,13 @@ AgentTeams 的关键经验不是“多开几个子代理”，而是把团队当
 
 专家库当前已经具备一部分底座：`src/state.ts` 有团队锁、原子写、任务 attempt、邮箱和归档；`src/scheduler.ts` 有 ready task 调度和重试；`src/v2/compiler.ts`、`src/apply.ts` 有声明式计划编译与统一 apply；`src/v2/quality.ts`、`src/task-gates.ts` 有质量 gate；`src/members.ts`、`src/harness-compat.ts` 有成员启动和宿主能力适配；`src/client/ActivityPanel.tsx` 有活动面板。
 
-需要借鉴并补齐的差距是：
+原计划识别出的差距中，A0–A5 已完成；A6 已完成实现和离线门禁，真实出口仍在验收：
 
-1. 当前 `scenarioApplyCore` 和协作模式仍在编译后直接 materialize；需要加入 staged plan、审阅、批准、恢复和归档边界。
-2. 当前质量链主要在任务完成时计数和重试；需要形成独立的 requirements/implementation/verification/review/repair/integration 合同链。
-3. 当前任务已有 attempt，但消息没有完整的来源 task/attempt/status 和 exactly-once admission；需要让迟到消息不能覆盖新状态。
-4. 当前专家画像和 V2 capability 是任务/领域能力；需要增加成员级 scope、模型路由、fallback、delegation depth 和冷恢复快照。
-5. 当前有活动面板和 API，但没有 AgentTeams 式的 profile 模式、计划编辑反馈、停止/恢复语义和独立 doctor/兼容矩阵。
+1. `scenarioApplyCore` 已通过 staged plan bridge 接入 preview/stage/edit/approve/discard、恢复和归档边界。
+2. 质量链已拆为独立 QualityRun，覆盖 requirements/implementation/verification/review/repair/re-review/integration 合同链。
+3. task attempt 与消息已带来源代际、sequence、幂等键和 exactly-once admission，迟到消息不会覆盖新状态。
+4. 成员已持久化 scope、模型路由/fallback、delegation depth、provider/task admission 和冷恢复快照。
+5. profile captain/seed、计划编辑和 halt/resume 已有工具/API 契约；A6 已补齐活动面板、doctor、wire/API、兼容矩阵、隔离包安装/回滚证据和真实 Host/Web 出口；当前只保留原 worker 冷恢复续写限制。
 
 ## 借鉴矩阵
 
@@ -34,15 +36,15 @@ AgentTeams 的关键经验不是“多开几个子代理”，而是把团队当
 
 下面是执行摘要；各阶段的源码范围、任务细节和负向测试在后文展开。
 
-| 阶段 | 开发计划 | 目标 | 验收标准 | 前置/停止条件 |
-|---|---|---|---|---|
-| A0 基线审计 | 固定 AgentTeams v0.1.21 对照版本；补齐 state、attempt、mailbox、quality、profile fixtures；记录现有门禁 | 明确专家库已有底座和真实缺口 | 同输入 plan/digest/DAG 稳定；V1/V2、专家包、provider 回归通过；新环境可复现 | 无前置；对照表和 fixtures 未完成，不改执行路径 |
-| A1 持久计划审批 | 增加 `StagedPlan`、preview/stage/edit/approve/discard、CAS、过期、journal、归档 | 用户批准前不创建成员、任务或调度 | preview 零副作用；旧 digest 拒绝；并发 approve 只建一队；重启可恢复；失败无半队 | A0；状态机或迁移未冻结，停止 apply 改造 |
-| A2 Profile 动态规划 | 增加 `captain/seed` profile；固定 roster/route/门禁；Captain 在 staged 阶段生成 DAG | 固定协作模板与目标驱动规划分离 | profile 错误不写状态；DAG 无环且可审阅；反馈修改原 plan；seed golden 不变 | A1；不能验证同一 plan 的编辑/批准，停止 UI 接入 |
-| A3 Attempt 与消息准入 | 强化 claim/reassign/resume/halt；消息增加 source task/attempt/status、sequence、幂等键、lease/ack | 迟到更新和旧消息不能覆盖当前执行代际 | 并发 claim 仅一次；旧 attempt update/message 被拒；坏邮箱可跳过；重启不重复 spawn；halt 不被静默解除 | A1；没有 kill/restart、并发和投递失败证据，停止质量调度 |
-| A4 结构化质量闭环 | 增加 task contract、finding、verdict、acceptance、commands、changedPaths；review→repair→re-review→integration | 质量结果由状态和证据决定，不靠文本自报 | reviewer≠assignee；hard block/越界路径/缺 artifact 被拒；最多两轮；第三次 escalated；预算跨重启；failed review 不解锁下游 | A3；旧 inline gate 与新 QualityRun 未隔离，停止扩大场景覆盖 |
-| A5 能力与冷恢复 | 增加成员 `capabilityScope`、模型 route/fallback、maxDepth、bootstrap、spawnError、compat matrix | 成员身份、工具范围和模型路由可解释、可恢复 | 越权 capability denied；默认 depth=0；route 不漂移；宿主缺能力有可见降级；冷恢复不重复成员 | A4；没有 scope/route/host 矩阵，停止声明兼容 |
-| A6 UI、Doctor 与发布 | activity/workspace 展示 staged plan、DAG、finding、attempt、archive；增加 doctor 和四层验证 | 用户可审阅、停止、恢复、诊断和复盘 | UI/API/磁盘快照一致；刷新/重启恢复；doctor 无副作用；真实 Host/Web 链路和回滚通过；兼容矩阵留证 | A5；真实 e2e、故障注入和回滚未通过，不 bump minor |
+| 阶段 | 开发计划 | 目标 | 验收标准 | 前置/停止条件 | 当前状态 |
+|---|---|---|---|---|---|
+| A0 基线审计 | 固定 AgentTeams v0.1.21 对照版本；补齐 state、attempt、mailbox、quality、profile fixtures；记录现有门禁 | 明确专家库已有底座和真实缺口 | 同输入 plan/digest/DAG 稳定；V1/V2、专家包、provider 回归通过；新环境可复现 | 无前置；对照表和 fixtures 未完成，不改执行路径 | 已完成；fixture 与基线门禁见 `docs/AGENT-TEAMS-BASELINE.md` |
+| A1 持久计划审批 | 增加 `StagedPlan`、preview/stage/edit/approve/discard、CAS、过期、journal、归档 | 用户批准前不创建成员、任务或调度 | preview 零副作用；旧 digest 拒绝；并发 approve 只建一队；重启可恢复；失败无半队 | A0；状态机或迁移未冻结，停止 apply 改造 | 已完成；实现位于 `src/staged-plan.ts`、`src/tools.ts` |
+| A2 Profile 动态规划 | 增加 `captain/seed` profile；固定 roster/route/门禁；Captain 在 staged 阶段生成 DAG | 固定协作模板与目标驱动规划分离 | profile 错误不写状态；DAG 无环且可审阅；反馈修改原 plan；seed golden 不变 | A1；不能验证同一 plan 的编辑/批准，停止 UI 接入 | 已完成；实现位于 `src/profiles.ts` 与 staged bridge |
+| A3 Attempt 与消息准入 | 强化 claim/reassign/resume/halt；消息增加 source task/attempt/status、sequence、幂等键、lease/ack | 迟到更新和旧消息不能覆盖当前执行代际 | 并发 claim 仅一次；旧 attempt update/message 被拒；坏邮箱可跳过；重启不重复 spawn；halt 不被静默解除 | A1；没有 kill/restart、并发和投递失败证据，停止质量调度 | 已完成；回归见 `test/a3-state-regressions.test.mjs` |
+| A4 结构化质量闭环 | 增加 task contract、finding、verdict、acceptance、commands、changedPaths；review→repair→re-review→integration | 质量结果由状态和证据决定，不靠文本自报 | reviewer≠assignee；hard block/越界路径/缺 artifact 被拒；最多两轮；第三次 escalated；预算跨重启；failed review 不解锁下游 | A3；旧 inline gate 与新 QualityRun 未隔离，停止扩大场景覆盖 | 已完成；实现位于 `src/quality-run.ts`、`src/quality-runtime.ts` |
+| A5 能力与冷恢复 | 增加成员 `capabilityScope`、模型 route/fallback、maxDepth、bootstrap、spawnError、compat matrix | 成员身份、工具范围和模型路由可解释、可恢复 | 越权 capability denied；默认 depth=0；route 不漂移；宿主缺能力有可见降级；冷恢复不重复成员 | A4；没有 scope/route/host 矩阵，停止声明兼容 | 已完成；实现位于 `src/capability-scope.ts`、`src/host/provider-tool.ts` |
+| A6 UI、Doctor 与发布 | activity/workspace 展示 staged plan、DAG、finding、attempt、archive；增加 doctor 和四层验证 | 用户可审阅、停止、恢复、诊断和复盘 | UI/API/磁盘快照一致；刷新/重启恢复；doctor 无副作用；真实 Host/Web 链路和真实包回滚通过；兼容矩阵留证 | A5；出口证据齐全后收口 | **验收中**；wire/API、UI、doctor、9/8/5 故障/安全/发布矩阵、全量回归、output-bound Host chain 与 GUI 活动计划同身份重启续跑已完成；原 worker 冷恢复续写待补 |
 
 ### A0：基线审计和学习样例
 
@@ -188,7 +190,9 @@ AgentTeams 的关键经验不是“多开几个子代理”，而是把团队当
 - UI 与工具 API 对同一 plan/team/task 深比较一致；刷新和重启不丢阶段、attempt、finding、消息和归档。
 - doctor 对坏 JSON、stale lock、损坏 team、缺 provider、scope 越权、错误来源和旧 schema 返回固定 code/path/remediation；doctor 不写磁盘、不触发 spawn。
 - 覆盖 loopback/token/forwarded/Origin/CSRF 的路由安全负例；未认证写操作被拒，错误响应不泄露凭据。
-- 真实运行至少完成一条“动态规划 → 批准 → 并行任务 → review/repair → integration → 归档”链路，并保留 state、事件、日志和 UI 证据。
+- 真实运行必须完成一条可审计的“动态规划 → 批准 → **真正并发**任务 → review/repair → integration → 归档”链路，并保留 state、事件、日志和 UI 证据；同一 lead 进程顺序调用 t1/t2 不计入并发证据。
+- 必须用隔离 DSH profile 安装 `pnpm pack` 生成的候选包，篡改候选时启动前拒绝，并通过实际 package-manager 安装旧包完成回滚；合成 manifest 或单纯状态指针回退不计入发布回滚证据。
+- 必须证明 GUI 刷新、同身份 DSH 重启后的 session/plan 续跑、候选包 Host 启动/回滚和无 provider headless 启动；这些出口已有独立 receipt；原 worker 冷恢复续写仍作为增强验收项。
 
 **里程碑 M4**：完成产品化、诊断、兼容和回滚证据后，才允许 bump minor 版本。
 

@@ -21,7 +21,7 @@ if (pack.id !== config.packId || pack.version !== config.version || commit !== c
 const remote = git('ls-remote', config.sourceUrl, `refs/tags/v${config.version}`, `refs/tags/v${config.version}^{}`)
 if (!remote.split('\n').some(line => line.startsWith(commit+'\t'))) throw Error('REMOTE_TAG_NOT_PINNED_TO_COMMIT')
 execFileSync(process.execPath, [resolve(repo, 'scripts/dsh-pack.mjs'), 'check', config.sourceDir], {stdio:'inherit'})
-if(config.verificationTests?.length)execFileSync(process.execPath,['--test',...config.verificationTests],{cwd:repo,stdio:'inherit'})
+if(config.verificationTests?.length)execFileSync(process.execPath,['--test','--test-concurrency=1',...config.verificationTests],{cwd:repo,stdio:'inherit'})
 console.log(JSON.stringify({stage:'source_verified', packId:pack.id, version:pack.version, commit, apply}))
 if (!apply) process.exit(0)
 

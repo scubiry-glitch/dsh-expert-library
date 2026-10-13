@@ -1,0 +1,47 @@
+{
+  "origin": "https://packs.meizu.life",
+  "organizationId": "beike",
+  "packId": "zhijian-realestate",
+  "name": "智见点评·房地产领域包",
+  "version": "1.6.3",
+  "sourceDir": "/root/zhijian/dsh-pack-zhijian-realestate-v16",
+  "sourceUrl": "https://github.com/scubiry-glitch/dsh-pack-zhijian-realestate.git",
+  "sourceCommit": "c48174389a77b3f169067350b57653370130c9d7",
+  "license": "UNLICENSED",
+  "distribution": {
+    "kind": "authenticated"
+  },
+  "notes": "具体标的月租定价评估：标的核验、同质样本与交叉证据并行、可复算定价、独立复审、冻结后渲染；补充海兴雅苑原始会话的任务图与提示词复盘。",
+  "reviewComment": "用户已授权启用 1.6.3 并以北京门头沟中铁西城小区试跑。已核对新增场景、技能、任务图、输出模板与原始会话溯源，执行领域包、预检及发布回归；审核账号与提交账号分离，不代表另一次人工独立审阅。",
+  "author": "admin",
+  "reviewer": "reviewer",
+  "credentialDir": "/var/lib/pack-center/oidc/users",
+  "receiptDir": "/var/lib/pack-center/release-receipts",
+  "settingsPath": "/root/zhijian/zhijianharness-main/settings.yaml",
+  "packCenterDir": "/root/zhijian/zhijianharness-main/pack-center",
+  "workspaces": [
+    "/root/.openclaw/workspace/98wiki"
+  ],
+  "legacyEnabledPacks": [
+    "pipeline-general",
+    "beike",
+    "bank-finance",
+    "pipeline-domains"
+  ],
+  "runtimeService": "dsh-web.service",
+  "healthUrl": "http://127.0.0.1:3080/",
+  "materializeAliases": [
+    "/root/zhijian/dsh-expert-library/domain-packs/builtin-library",
+    "/root/zhijian/dsh-expert-library/domain-packs/zhijian-realestate"
+  ],
+  "requiredSkills": [
+    "zhijian-research-craft-v5",
+    "zhijian-report-craft",
+    "zhijian-designer-render",
+    "zhijian-rent-pricing"
+  ],
+  "verificationTests": [
+    "test/pack-research-preflight.test.mjs",
+    "test/ops-pack-release.test.mjs"
+  ]
+}

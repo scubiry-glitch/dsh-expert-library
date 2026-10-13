@@ -492,8 +492,10 @@ export async function emitPack(outDir, options = {}) {
 }
 
 /** Compare two directory trees byte-for-byte; returns a list of differences. */
-export async function compareTrees(a, b) {
-  const [fa, fb] = await Promise.all([listFiles(a), listFiles(b)])
+export async function compareTrees(a, b, { exclude = [] } = {}) {
+  const ignored = new Set(exclude)
+  const [fa, fb] = (await Promise.all([listFiles(a), listFiles(b)]))
+    .map(files => files.filter(rel => !ignored.has(rel)))
   const diffs = []
   const onlyA = fa.filter(rel => !fb.includes(rel))
   const onlyB = fb.filter(rel => !fa.includes(rel))

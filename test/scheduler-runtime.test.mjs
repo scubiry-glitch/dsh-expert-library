@@ -8,7 +8,7 @@ import { captureRuntimeTurn, recordRuntimeFailure } from '../lib/runtime-failure
 import { appendMailbox, createMessage, createTeamDir, readMailbox, readTeam, resumeRuntimeMember, writeTeam } from '../lib/state.js'
 
 const makeTask = (id, assignee) => ({ id, subject: id, status: 'pending', assignee, dependencies: [], createdAt: 1, updatedAt: 1 })
-async function fixture(t, cap = 2) {
+async function fixture(t, cap = 2, v5ResearchCap) {
   const workspace = await mkdtemp(join(tmpdir(), 'scheduler-runtime-'))
   const root = join(workspace, '.expert-teams')
   const agents = new Map(['captain', 'one', 'two', 'three', 'reviewer'].map(id => [id, {
@@ -24,7 +24,7 @@ async function fixture(t, cap = 2) {
   await createTeamDir(root, { id: 'team', name: 'team', captainSessionId: 'captain', createdAt: 1,
     members: ['one', 'two', 'three', 'reviewer'].map(id => ({ id, name: id, joinedAt: 1, status: 'idle' })),
     tasks: [makeTask('t1', 'one'), makeTask('t2', 'two'), makeTask('t3', 'three')], taskSeq: 3 })
-  const scheduler = installTeamScheduler(ctx, { stateDir: '.expert-teams', maxActiveMembers: cap })
+  const scheduler = installTeamScheduler(ctx, { stateDir: '.expert-teams', maxActiveMembers: cap, v5ResearchMaxActiveMembers: v5ResearchCap })
   t.after(async () => { for (const dispose of disposers) dispose(); await rm(workspace, { recursive: true, force: true, maxRetries: 5, retryDelay: 20 }) })
   return { workspace, root, agents, callbacks, calls, ctx, scheduler,
     read: () => readTeam(root, 'team'),
@@ -40,6 +40,77 @@ async function eventually(check) {
   for (let i = 0; i < 300; i++) { if (await check()) return; await new Promise(resolve => setTimeout(resolve, 5)) }
   assert.fail('scheduler did not settle')
 }
+
+test('explicit cold task resume releases a mailbox-only reservation and dispatches the same attempt', async t => {
+  const f = await fixture(t)
+  const coldAgent = f.agents.get('one')
+  f.agents.delete('one')
+  const followup = f.ctx.subagents.followup
+  f.ctx.subagents.followup = async (...args) => {
+    f.agents.set('one', coldAgent)
+    return followup(...args)
+  }
+  await f.edit(team => {
+    Object.assign(team.tasks[0], { status: 'in_progress', executionState: 'active', attempt: 1, attemptId: 'original-attempt' })
+    team.members[0].activation = { id: 'old-mail', sessionId: 'one', reservedAt: 1, acceptedAt: 2, taskAttempts: [] }
+    for (const member of team.members.slice(1)) member.status = 'removed'
+  })
+  await f.scheduler.kickMember(f.workspace, 'team', 'one')
+  assert.equal(f.calls.length, 0, 'a cold reservation must not auto-resume without authorization')
+  const team = await f.read()
+  assert.equal(resumeRuntimeMember(team, 'one', 'Saved log inspected; resume same task', undefined, { cold: true }), true)
+  await writeTeam(f.root, team)
+  await f.scheduler.kickMember(f.workspace, 'team', 'one')
+  assert.equal(f.calls.length, 1)
+  assert.equal((await f.read()).tasks[0].attemptId, 'original-attempt')
+  assert.equal((await f.read()).tasks[0].attempt, 1)
+})
+
+test('cold reservation release requires verified residency and rejects stale blocker IDs without mutation', () => {
+  const team = { captainSessionId: 'captain', members: [{ id: 'one', name: 'one', status: 'working',
+    activation: { id: 'mail', sessionId: 'one', reservedAt: 1, taskAttempts: [] } }], tasks: [] }
+  const before = JSON.stringify(team)
+  assert.equal(resumeRuntimeMember(team, 'one', 'resume'), false)
+  assert.equal(resumeRuntimeMember(team, 'one', 'resume', undefined, { cold: false }), false)
+  assert.throws(() => resumeRuntimeMember(team, 'one', 'resume', 'stale-block', { cold: true }), /RUNTIME_BLOCK_STALE/)
+  assert.equal(JSON.stringify(team), before)
+})
+
+test('passive workspace instructions left by an idle bootstrap do not block task or mailbox dispatch', async t => {
+  const f = await fixture(t)
+  const baseline = { source: { kind: 'agent-instructions', form: 'instructions', baseline: true }, content: [{ type: 'text', text: 'Workspace rules' }] }
+  for (const id of ['one', 'two', 'three', 'reviewer']) {
+    f.agents.get(id).inbox.nextStep.push(baseline)
+    f.agents.get(id).inbox.hasPending = true
+  }
+  await f.scheduler.kickTeam(f.workspace, 'team', f.agents.get('captain'))
+  assert.equal(f.calls.length, 2)
+  assert.deepEqual((await f.read()).tasks.map(task => task.attempt), [1, 1, undefined])
+
+  // Once a slot frees, a newly added reviewer with the same bootstrap residue
+  // must receive durable mail even though they have no assigned task.
+  const first = f.calls[0].id
+  f.agents.get(first).inbox.nextStep.length = 0
+  f.agents.get(first).inbox.hasPending = false
+  await f.edit(team => {
+    team.tasks.find(task => task.assignee === first).executionState = 'awaiting_review'
+    team.members.find(member => member.name === 'three').status = 'removed'
+  })
+  await appendMailbox(f.root, 'team', 'reviewer', createMessage('captain', 'reviewer', 'Review the evidence'))
+  f.callbacks.get('agent/status')({ agent: f.agents.get(first), status: 'idle' })
+  await eventually(() => f.calls.some(call => call.id === 'reviewer'))
+  await eventually(async () => (await readMailbox(f.root, 'team', 'reviewer'))[0].deliveredAt !== undefined)
+})
+
+test('a real pending next-step message still blocks member dispatch', async t => {
+  const f = await fixture(t)
+  const member = f.agents.get('one')
+  member.inbox.nextStep.push({ source: { kind: 'plugin', plugin: 'other' }, content: [{ type: 'text', text: 'Real work' }] })
+  member.inbox.hasPending = true
+  await f.scheduler.kickMember(f.workspace, 'team', 'one')
+  assert.equal(f.calls.length, 0)
+  assert.equal((await f.read()).tasks[0].attempt, undefined)
+})
 
 test('concurrent task kicks and reviewer mail share two actual admission slots', async t => {
   const f = await fixture(t)
@@ -63,6 +134,37 @@ test('concurrent task kicks and reviewer mail share two actual admission slots',
   f.callbacks.get('agent/status')({ agent: f.agents.get(second), status: 'idle' })
   await eventually(() => f.calls.some(call => call.id === 'reviewer'))
   assert.equal((await f.read()).members.filter(member => member.activation).length, 2)
+})
+
+test('opt-in V5 research cap admits independent work without widening review or mixed stages', async t => {
+  const research = await fixture(t, 2, 4)
+  await research.edit(team => {
+    team.planRef = { scenarioId: '98wiki-deep-research', templateVersion: '5.0.0' }
+    for (const task of team.tasks) task.planTask = { logicalId: `expert_view_${task.assignee}` }
+  })
+  await Promise.all(['one', 'two', 'three'].map(name => research.scheduler.kickMember(research.workspace, 'team', name)))
+  assert.equal(research.calls.length, 3)
+  await appendMailbox(research.root, 'team', 'reviewer', createMessage('captain', 'reviewer', 'Review research'))
+  await research.scheduler.kickMember(research.workspace, 'team', 'reviewer')
+  assert.equal((await readMailbox(research.root, 'team', 'reviewer'))[0].readAt, undefined)
+
+  const mixed = await fixture(t, 2, 4)
+  await mixed.edit(team => {
+    team.planRef = { scenarioId: '98wiki-deep-research', templateVersion: '5.0.0' }
+    for (const task of team.tasks) task.planTask = { logicalId: task.assignee === 'three' ? 'writer' : `expert_view_${task.assignee}` }
+  })
+  await Promise.all(['one', 'two', 'three'].map(name => mixed.scheduler.kickMember(mixed.workspace, 'team', name)))
+  assert.equal(mixed.calls.length, 2)
+  assert.equal((await mixed.read()).tasks.find(task => task.assignee === 'three').attempt, undefined)
+
+  const limited = await fixture(t, 2, 4)
+  await limited.edit(team => {
+    team.planRef = { scenarioId: '98wiki-deep-research', templateVersion: '5.0.0' }
+    for (const task of team.tasks) task.planTask = { logicalId: `research_${task.assignee}` }
+    team.members.find(member => member.name === 'reviewer').runtimeBlock = { id: 'rate-limit', sessionId: 'reviewer', turn: 1, code: 'RATE_LIMIT', status: 429, message: 'provider limit', at: 1 }
+  })
+  await Promise.all(['one', 'two', 'three'].map(name => limited.scheduler.kickMember(limited.workspace, 'team', name)))
+  assert.equal(limited.calls.length, 2)
 })
 
 for (const failure of [{ code: 'QUOTA', status: 402, message: 'Insufficient Balance' }, { code: 'RATE_LIMIT', status: 429, message: 'Final retry exhausted' }, { code: 'NETWORK', message: 'Connection closed' }]) {

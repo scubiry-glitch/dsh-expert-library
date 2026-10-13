@@ -1,0 +1,47 @@
+{
+  "origin": "https://packs.meizu.life",
+  "organizationId": "beike",
+  "packId": "zhijian-realestate",
+  "name": "智见点评·房地产领域包",
+  "version": "1.6.8",
+  "sourceDir": "/root/zhijian/dsh-pack-zhijian-realestate-v16",
+  "sourceUrl": "https://github.com/scubiry-glitch/dsh-pack-zhijian-realestate.git",
+  "sourceCommit": "bc148148c0c3aeb3851acc785132dc625e9c10a3",
+  "license": "UNLICENSED",
+  "distribution": {
+    "kind": "authenticated"
+  },
+  "notes": "租金定价模板支持最近可得的社区连续12期，自动标注末期较报告基准月的滞后月数；未来月份仍拒绝。",
+  "reviewComment": "用户此前授权调整后发布并激活。杭州西房余杭公馆试跑使用真实两套三居挂牌和政研通社区12期；审查模板只调整滞后期展示，未来月份仍被拒绝。7项定向测试、包检查与宿主预检通过。审核账号与提交账号分离，不代表另一次人工独立审阅。",
+  "author": "admin",
+  "reviewer": "reviewer",
+  "credentialDir": "/var/lib/pack-center/oidc/users",
+  "receiptDir": "/var/lib/pack-center/release-receipts",
+  "settingsPath": "/root/zhijian/zhijianharness-main/settings.yaml",
+  "packCenterDir": "/root/zhijian/zhijianharness-main/pack-center",
+  "workspaces": [
+    "/root/.openclaw/workspace/98wiki"
+  ],
+  "legacyEnabledPacks": [
+    "pipeline-general",
+    "beike",
+    "bank-finance",
+    "pipeline-domains"
+  ],
+  "runtimeService": "dsh-web.service",
+  "healthUrl": "http://127.0.0.1:3080/",
+  "materializeAliases": [
+    "/root/zhijian/dsh-expert-library/domain-packs/builtin-library",
+    "/root/zhijian/dsh-expert-library/domain-packs/zhijian-realestate"
+  ],
+  "requiredSkills": [
+    "zhijian-research-craft-v5",
+    "zhijian-report-craft",
+    "zhijian-designer-render",
+    "zhijian-rent-pricing"
+  ],
+  "verificationTests": [
+    "test/pack-research-preflight.test.mjs",
+    "test/ops-pack-release.test.mjs"
+  ]
+}

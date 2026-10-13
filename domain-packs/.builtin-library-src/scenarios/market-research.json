@@ -1,0 +1,29 @@
+{
+  "id": "market-research",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "market-research-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "researcher",
+      "data-analyst",
+      "docs-coordinator"
+    ]
+  },
+  "teamTemplate": "market-research.legacy-team",
+  "outputTemplate": "market-research.legacy-output",
+  "qualityPolicy": "market-research.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

@@ -13,10 +13,11 @@ import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import { readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import {
-  CAPTAIN_KEY, listArchivedTeamIds, readArchivedTeam, readUnreadMailbox, readTeam,
+  CAPTAIN_KEY, listArchivedTeamIds, readArchivedTeam, readUnreadMailbox, readTeamActivity,
   taskDepthsById, taskVisualState,
 } from './state.ts'
-import type { MemberStatus, TeamState, TeamTask } from './types.ts'
+import type { TeamActivityState } from './state.ts'
+import type { MemberStatus, TeamTask } from './types.ts'
 
 /** Visual task state for the activity panel. */
 export type VisualTaskState = 'blocked' | 'open' | 'running' | 'completed'
@@ -49,6 +50,7 @@ export interface MemberDocument {
 /** One member row of the activity snapshot. */
 export interface TeamActivityMember {
   readonly id: string
+  readonly expertId?: string
   readonly name: string
   readonly role: string
   readonly status: MemberStatus
@@ -64,6 +66,7 @@ export interface TeamActivityMember {
 
 /** One task row of the activity snapshot. */
 export interface TeamActivityTask {
+  readonly scheduling?: import('./types.ts').TeamTask['scheduling']
   readonly id: string
   readonly subject: string
   readonly status: string
@@ -194,7 +197,7 @@ const activityCache = new Map<string, { at: number; value: Map<string, MemberAct
  * @param state - the durable team record.
  * @returns child id → activity; empty when nothing is live or the listing degraded.
  */
-async function liveActivity(ctx: Context, state: TeamState): Promise<Map<string, MemberActivity>> {
+async function liveActivity(ctx: Context, state: TeamActivityState): Promise<Map<string, MemberActivity>> {
   const captainSessionId = state.captainSessionId
   if (captainSessionId === '' || ctx.agents.get(captainSessionId as SessionId) === undefined) {
     return new Map()
@@ -243,7 +246,7 @@ export async function assembleTeamSnapshot(
   ctx: Context,
   stateRoot: string,
   workspace: string,
-  state: TeamState,
+  state: TeamActivityState,
   options: TeamSnapshotOptions = {},
 ): Promise<TeamActivitySnapshot> {
   const tasks = state.tasks
@@ -268,6 +271,7 @@ export async function assembleTeamSnapshot(
     const done = owned.filter((task) => task.status === 'completed').length
     return {
       id: member.id,
+      ...(member.capabilityScope?.expertId ? { expertId: member.capabilityScope.expertId } : {}),
       name: member.name,
       role: member.role ?? '',
       status: member.status,
@@ -306,6 +310,7 @@ export async function assembleTeamSnapshot(
       depth: depths.get(task.id) ?? 0,
       ...task.qualityScore === undefined ? {} : { qualityScore: task.qualityScore },
       ...task.repairCount === undefined ? {} : { repairCount: task.repairCount },
+      ...(task.scheduling === undefined ? {} : { scheduling: { ...task.scheduling } }),
     })),
     messageCount: captainInbox.length
       + members.reduce((count, member) => count + member.unread, 0),
@@ -340,7 +345,7 @@ export async function collectTeamsActivity(
     for (const entry of entries) {
       if (!entry.isDirectory()) continue
       try {
-        const state = await readTeam(root.stateRoot, entry.name)
+        const state = await readTeamActivity(root.stateRoot, entry.name)
         if (state === undefined) continue
         snapshots.push(await assembleTeamSnapshot(ctx, root.stateRoot, root.workspace, state))
       } catch {

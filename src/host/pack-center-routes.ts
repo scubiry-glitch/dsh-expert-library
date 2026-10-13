@@ -28,6 +28,7 @@ const safeCodes = new Set([
   'STATE_CORRUPT', 'STATE_MISSING', 'STATE_UNSUPPORTED_VERSION', 'STATE_READ_FAILED', 'STATE_READ_ONLY',
   'STATE_RECOVERY_INVALID', 'STATE_WRITE_FAILED', 'STATE_COMMIT_UNCERTAIN', 'STATE_INVALID',
   'ACTIVATION_PREFLIGHT_FAILED', 'BUILTIN_DEPENDENCY_BLOCKED', 'CENTER_ENTITY_CONFLICT', 'CENTER_MERGE_INVALID',
+  'CENTER_CRAFT_UNAVAILABLE', 'CENTER_TASK_MATERIAL_UNAVAILABLE',
   'CENTER_MISMATCH', 'CENTER_PACK_ID_CONFLICT', 'CONTENT_DIGEST_MISMATCH', 'DEPENDENCY_BLOCKED', 'DEPENDENCY_CYCLE',
   'DEPENDENCY_MANIFEST_MISMATCH', 'ENTITY_CONFLICT', 'IMMUTABLE_RELEASE_CONFLICT', 'IMMUTABLE_VERSION_CONFLICT',
   'INCOMPATIBLE_RELEASE', 'INVALID_ROLLBACK_TARGET', 'INVALID_ROOT', 'INVENTORY_IDENTITY_MISMATCH',
@@ -117,6 +118,13 @@ function errorCode(value: unknown): string {
 function optionalError(row: Record<string, unknown>, key = 'errorCode') {
   return row[key] === undefined ? {} : { [key]: errorCode(row[key]) }
 }
+function classification(value: unknown) {
+  if (value === undefined) return undefined
+  const row = record(value)
+  const tokens = (input: unknown) => list(input, 16).every(item => typeof item === 'string' && /^[a-z][a-z0-9-]{0,31}$/.test(item))
+    ? input as string[] : fail()
+  return { schemaVersion: integer(row.schemaVersion), types: tokens(row.types), scenarios: tokens(row.scenarios) }
+}
 function installed(value: unknown) {
   const row = record(value)
   const source = enumeration(row.source, ['center', 'legacy'])
@@ -133,6 +141,7 @@ function installed(value: unknown) {
     ...(row.previousReleaseId === undefined ? {} : { previousReleaseId: releaseId(row.previousReleaseId) }),
     artifactSha256: digest(row.artifactSha256), contentTreeSha256: digest(row.contentTreeSha256),
     ...(row.manifestSha256 === undefined ? {} : { manifestSha256: digest(row.manifestSha256) }),
+    ...(row.classification === undefined ? {} : { classification: classification(row.classification) }),
     integrity: enumeration(row.integrity, ['verified', 'unavailable']), ...optionalError(row),
   }
 }
@@ -148,6 +157,7 @@ function release(value: unknown, detail = false): Record<string, unknown> {
       const dependency = record(value)
       return { packId: id(dependency.packId), releaseId: id(dependency.releaseId), version: plainText(dependency.version, 128) }
     }),
+    ...(row.classification === undefined ? {} : { classification: classification(row.classification) }),
   }
   if (detail) {
     const validation = record(row.validation), diff = record(row.diff)

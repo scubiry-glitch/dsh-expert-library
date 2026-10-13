@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sail</title>
+  <style>
+    html, body { margin: 0; min-height: 100vh; background: #f4efe6; }
+    body { display: flex; align-items: center; justify-content: center;
+           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .frame { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .sheet { padding: 8px; background: #fbf8f2;
+             box-shadow: 0 12px 28px -18px rgba(47,58,72,.5), 0 1px 3px rgba(47,58,72,.08); }
+    .sheet canvas { display: block; }
+    #status { font-size: 13px; letter-spacing: .04em; color: #4b5b8f;
+              min-height: 1.3em; transition: opacity 250ms ease; }
+    #status.fade { opacity: 0; }
+  </style>
+  <!-- Load order matters: p5 first, then p5.brush (it registers itself as a p5 addon). -->
+  <script src="../vendor/p5.min.js"></script>
+  <script src="../vendor/p5.brush.js"></script>
+</head>
+<body>
+<main class="frame">
+  <div class="sheet" id="sheet"></div>
+  <div id="status" aria-live="polite"></div>
+</main>
+
+<script>
+// engine.js module state. Only functions are serialised below, so the two
+// non-function bindings the engine relies on are declared here by hand:
+// canvas dimensions (read by the vocabulary at call time) and the
+// scaleBrushes once-only guard.
+let W = 600, H = 600, m = 600;
+let brushScale = null;
+
+// The dials this style was tuned with.
+const S = {
+  "water": 0.55,
+  "coverage": 0.84,
+  "density": 0.5,
+  "scale": 1.1,
+  "soft": 0.7,
+  "glaze": 0.3,
+  "touch": 0.2,
+  "detail": 0.45,
+  "brushSize": 1.49,
+  "vivid": 0.45,
+  "flower": 1.8
+};
+
+const PALETTE = {
+  "seed": 1874,
+  "ground": "#e9e2e0",
+  "washes": [
+    "#b9c3d9",
+    "#c9b4c6",
+    "#e6b9b0",
+    "#8d95b3"
+  ],
+  "foliage": [
+    "#4a4f6a",
+    "#3a3f55",
+    "#2c3044",
+    "#7a7f9a"
+  ],
+  "accents": [
+    "#f0b39a",
+    "#e8a48e",
+    "#f6cdb5",
+    "#f9dccb"
+  ],
+  "highlights": [
+    "#f8e6d2",
+    "#fdf5ee"
+  ],
+  "phrases": [
+    "creating…",
+    "washing the sky…",
+    "stilling the sea…",
+    "raising a sail…",
+    "finished"
+  ]
+};
+
+const rr = (a, b) => random(a, b);
+
+const pickOne = (arr) => arr[Math.floor(random(arr.length))];
+
+const clamp01 = (v) => Math.max(0, Math.min(1, v));
+
+function hexRgb(h) { h = h.replace('#', ''); if (h.length === 3) h = h.split('').map((c) => c + c).join(''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); }
+
+function mixHex(a, b, t) { const A = hexRgb(a), B = hexRgb(b); return '#' + A.map((v, i) => Math.round(v + (B[i] - v) * t).toString(16).padStart(2, '0')).join(''); }
+
+function jitterEllipse(cx, cy, rx, ry, n, jitter, rot = 0) {
+  const pts = [], a0 = rr(0, TWO_PI), cr = Math.cos(rot), sr = Math.sin(rot);
+  for (let i = 0; i < n; i++) {
+    const a = a0 + (i / n) * TWO_PI, k = 1 + rr(-jitter, jitter);
+    const x = Math.cos(a) * rx * k, y = Math.sin(a) * ry * k;
+    pts.push([cx + x * cr - y * sr, cy + x * sr + y * cr]);
+  }
+  return pts;
+}
+
+function bandPolygon(y0, y1, wobble, n = 9) {
+  const top = [], bottom = [];
+  for (let i = 0; i <= n; i++) { const x = -10 + (W + 20) * (i / n); top.push([x, y0 + rr(-wobble, wobble)]); bottom.push([x, y1 + rr(-wobble, wobble)]); }
+  return top.concat(bottom.reverse());
+}
+
+const bboxOf = (pts, pad) => {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const [x, y] of pts) { if (x < x0) x0 = x; if (y < y0) y0 = y; if (x > x1) x1 = x; if (y > y1) y1 = y; }
+  return [Math.max(0, Math.floor(x0 - pad)), Math.max(0, Math.floor(y0 - pad)), Math.min(W, Math.ceil(x1 + pad)), Math.min(H, Math.ceil(y1 + pad))];
+};
+
+function fillStyle(color, opacity, bleed, texture, border) { brush.noStroke(); brush.noHatch(); brush.noWash(); brush.fill(color, opacity); brush.fillBleed(bleed, 'out'); brush.fillTexture(texture, border); }
+
+function washStyle(color, opacity) { brush.noStroke(); brush.noHatch(); brush.noFill(); brush.wash(color, opacity); }
+
+function strokeStyle(name, color, weight) { brush.noFill(); brush.noWash(); brush.noHatch(); brush.set(name, color, weight); }
+
+const D = (fn, bb, axis, dir, dur, gap = 60) => ({ fn, bb, axis, dir, dur, gap });
+
+const rdir = () => (random() < 0.5 ? 1 : -1);
+
+const raxis = () => (random() < 0.5 ? 'x' : 'y');
+
+function flushWash() {
+  brush.noStroke(); brush.noHatch(); brush.noWash();
+  brush.fill('#000000', 0); brush.fillBleed(0); brush.fillTexture(0, 0);
+  brush.polygon([[-8, -8], [-6, -8], [-6, -6]]);
+}
+
+function ensureBrushes(scale) {
+  if (brushScale !== null) {
+    if (Math.abs(brushScale - scale) > 1e-6) {
+      console.warn(`engine: brushes already scaled to ${brushScale}; ignoring request for ${scale}. ` +
+                   'scaleBrushes multiplies in place, so all canvases on a page must share one size.');
+    }
+    return;
+  }
+  brush.add('flick', { weight: 0.7, vibration: 0.12, definition: 0.9, quality: 0.8, opacity: 200, spacing: 0.1, pressure: { curve: [0.25, 0.25], min_max: [1.1, 0.85] } });
+  brush.add('rim', { weight: 0.45, vibration: 0.35, definition: 0.7, quality: 0.8, opacity: 190, spacing: 0.1, pressure: { curve: [0.15, 0.2], min_max: [1.2, 1] } });
+  brush.scaleBrushes(scale);
+  brushScale = scale;
+}
+
+function createEngine(styleConfig, opts = {}) {
+  let cfg = styleConfig;
+  let buf, paint, canvasEl;
+  let strokes = [], idx = 0;
+  let startMs = null, currentCycle = -1, phaseIndex = -1, fadeTimer = null;
+  let statusEl = opts.statusEl || null;
+  const freeze = typeof opts.freeze === 'number' ? clamp01(opts.freeze) : null;
+  const nextConfig = opts.nextConfig || (() => cfg);
+
+  function setup() {
+    W = cfg.canvasSize; H = cfg.canvasSize; m = Math.min(W, H);
+    const cnv = createCanvas(W, H, WEBGL);
+    canvasEl = cnv.elt || cnv.canvas || document.querySelector('canvas');
+    if (opts.mount) mount(opts.mount);
+
+    ensureBrushes(3 * m / 600);
+
+    // `paint` holds everything finished so far; `buf` is paint plus the stroke
+    // being drawn. Drawing each stroke over a copy of the painting lets its wet
+    // edges mix with the real colours underneath, and every copy between the
+    // three surfaces is opaque (no fringes).
+    paint = createGraphics(W, H, WEBGL);
+    buf = createGraphics(W, H, WEBGL);
+    paint.imageMode(CORNER); buf.imageMode(CORNER);
+    brush.load(buf);
+    // pre-warm the fill shaders into the buffer, then wipe it
+    buf.push(); buf.translate(-W / 2, -H / 2);
+    fillStyle('#7a86bd', 200, 0.3, 0.5, 0.3); brush.circle(W / 2, H / 2, 12);
+    buf.pop(); buf.clear();
+    imageMode(CORNER);
+    background(cfg.palette.ground);
+  }
+
+  /* Move the one canvas into a new parent. Used by the gallery to hand the
+     live canvas from card to card. */
+  function mount(el) {
+    if (canvasEl && el && canvasEl.parentElement !== el) el.appendChild(canvasEl);
+  }
+
+  /* Point the engine at a different style and start it from the first stroke. */
+  function load(nextCfg) {
+    cfg = nextCfg || cfg;
+    // The canvas and the scaled brushes are both fixed at setup, so every style
+    // sharing a page has to share its size. Say so rather than paint at the
+    // wrong coordinates.
+    if (cfg.canvasSize !== W) {
+      console.warn(`engine: "${cfg.label}" wants canvasSize ${cfg.canvasSize} but the canvas is ${W}. ` +
+                   'Painting at ' + W + '. All styles on one page must share a canvasSize.');
+    }
+    brush.load(buf);                       // brush.load is a global retarget
+    randomSeed(cfg.palette.seed); noiseSeed(cfg.palette.seed);
+    strokes = cfg.strokes(cfg.palette);
+    // give every stroke its own seed, then lay the timeline out end to end
+    // and fit it to loopMs
+    let cursor = 0;
+    for (const s of strokes) { s.seed = Math.floor(random() * 1e9); s.begun = false; s.rev = null; s.start = cursor; cursor += s.dur + s.gap; }
+    const k = cfg.loopMs / cursor;
+    for (const s of strokes) { s.start *= k; s.dur *= k; s.end = s.start + s.dur; }
+    idx = 0; phaseIndex = -1;
+    paint.background(cfg.palette.ground);
+    background(cfg.palette.ground);
+  }
+
+  function beginStroke(s) {
+    buf.clear();
+    buf.push(); buf.translate(-W / 2, -H / 2);
+    buf.image(paint, 0, 0, W, H);          // start from the painting so far
+    randomSeed(s.seed); noiseSeed(s.seed);
+    s.fn();
+    flushWash();
+    buf.pop();
+    s.begun = true; s.p = 0;
+  }
+  // a finished stroke becomes part of the painting
+  function foldStroke() {
+    paint.push(); paint.translate(-W / 2, -H / 2);
+    paint.image(buf, 0, 0, W, H);
+    paint.pop();
+  }
+  // draw the revealed part of the stroke in progress: a slice of its box,
+  // growing along its direction
+  function revealSlice(s) {
+    const [x0, y0, x1, y1] = s.bb;
+    if (x1 <= x0 || y1 <= y0 || s.p <= 0) return;
+    if (s.axis === 'x') {
+      const w = Math.round((x1 - x0) * s.p); if (w <= 0) return;
+      const a = s.dir > 0 ? x0 : x1 - w;
+      image(buf, a, y0, w, y1 - y0, a, y0, w, y1 - y0);
+    } else {
+      const h = Math.round((y1 - y0) * s.p); if (h <= 0) return;
+      const a = s.dir > 0 ? y0 : y1 - h;
+      image(buf, x0, a, x1 - x0, h, x0, a, x1 - x0, h);
+    }
+  }
+  function paintUpTo(t) {
+    while (idx < strokes.length && strokes[idx].start <= t) {
+      const s = strokes[idx];
+      if (!s.begun) beginStroke(s);
+      s.p = Math.min(1, (t - s.start) / s.dur);
+      if (s.p >= 1) { foldStroke(); idx++; } else break;
+    }
+  }
+  function drawFrame(t) {
+    paintUpTo(t);
+    image(paint, 0, 0, W, H);
+    const s = strokes[idx];
+    if (s && s.begun) revealSlice(s);
+  }
+
+  function draw() {
+    translate(-W / 2, -H / 2);
+    if (freeze !== null) {
+      if (!strokes.length) { load(nextConfig(0)); drawFrame(freeze * cfg.loopMs); updateStatus(freeze); noLoop(); }
+      return;
+    }
+    if (startMs === null) startMs = millis();
+    const now = millis() - startMs, cycleMs = cfg.loopMs + cfg.holdMs;
+    const cycle = Math.floor(now / cycleMs), elapsed = now % cycleMs;
+    if (cycle !== currentCycle) { currentCycle = cycle; load(nextConfig(cycle)); }
+    drawFrame(Math.min(elapsed, cfg.loopMs));
+    updateStatus(Math.min(elapsed / cfg.loopMs, 1));
+  }
+
+  /* Restart from the first stroke on the next frame. */
+  function restart() { startMs = null; currentCycle = -1; }
+
+  /* Paint up to t on demand, outside the animation loop. drawFrame is already
+     incremental — paintUpTo resumes from where it left off — so the caller can
+     walk t up over several frames to paint a whole picture without blocking.
+     The gallery uses this to render each card's finished still at load. */
+  function renderTo(t) { push(); translate(-W / 2, -H / 2); drawFrame(t); pop(); }
+
+  /* Point at a different style and restart. The strokes are not rebuilt here —
+     the next draw() does that once, via nextConfig. Used by the gallery when
+     the live canvas moves to another card. */
+  function switchTo(nextCfg, nextStatusEl) {
+    cfg = nextCfg || cfg;
+    if (nextStatusEl !== undefined) {
+      if (statusEl && statusEl !== nextStatusEl) { clearTimeout(fadeTimer); statusEl.textContent = ''; }
+      statusEl = nextStatusEl;
+    }
+    restart();
+  }
+
+  function updateStatus(progress) {
+    if (!statusEl) return;
+    const list = cfg.palette.phrases;
+    if (!list || !list.length) return;
+    let i;
+    if (progress >= 1) i = list.length - 1;
+    else { const active = Math.max(list.length - 1, 1); i = Math.min(Math.floor(progress * active), active - 1); }
+    if (i === phaseIndex) return;
+    const fresh = phaseIndex === -1;
+    phaseIndex = i;
+    clearTimeout(fadeTimer);
+    if (fresh) { statusEl.classList.remove('fade'); statusEl.textContent = list[i]; return; }
+    statusEl.classList.add('fade');
+    fadeTimer = setTimeout(() => { statusEl.textContent = list[i]; statusEl.classList.remove('fade'); }, 250);
+  }
+
+  return {
+    setup, draw, load, mount, restart, switchTo, renderTo,
+    get config() { return cfg; },
+    get canvas() { return canvasEl; },
+  };
+}
+
+function softBlobDraw(x, y, rx, ry, color, opacity, bleed, texture, rot = 0, jit = 0.12) {
+    const w = S.water - 0.5;
+    fillStyle(color, Math.round(opacity - w * 60), clamp01(bleed + w * 0.4), clamp01(texture + w * 0.2), 0.3);
+    brush.polygon(jitterEllipse(x, y, rx, ry, 14, jit, rot));
+  }
+
+function bloomFill(color, opacity, bleed) { fillStyle(color, opacity, clamp01(bleed + S.water * 0.3), 0.5, 0.4); }
+
+function centerDot(x, y, r, color, opacity = 250) { washStyle(color, opacity); brush.polygon(jitterEllipse(x, y, r, r * rr(0.85, 1), 12, 0.14)); }
+
+function glazeDraw(x0, y0, x1, y1, color, weight, field = 'hand') { brush.field(field); strokeStyle('marker', color, weight * S.brushSize); brush.line(x0, y0, x1, y1); brush.noField(); }
+
+function flickDraw(x, y, len, a, color, weight) { strokeStyle('flick', color, weight * S.brushSize); brush.line(x - Math.cos(a) * len / 2, y - Math.sin(a) * len / 2, x + Math.cos(a) * len / 2, y + Math.sin(a) * len / 2); }
+
+function dWash(color, opacity) {
+    const pts = [[-10, -10], [W + 10, -10], [W + 10, H + 10], [-10, H + 10]];
+    return D(() => { washStyle(color, opacity); brush.polygon(pts); }, [0, 0, W, H], 'x', rdir(), 700, 120);
+  }
+
+function dBand(y0, y1, color, opacity, wobble) {
+    const pts = bandPolygon(y0, y1, wobble), water = S.water;
+    const bleed = 0.25 + water * 0.5, texture = 0.3 + water * 0.5;
+    return D(() => { fillStyle(color, opacity, bleed, texture, 0.3); brush.polygon(pts); }, bboxOf(pts, m * 0.25), 'x', rdir(), 600, 100);
+  }
+
+function dBlob(x, y, rx, ry, color, opacity, bleed, texture, rot = 0, jit = 0.12, dur = 420) {
+    const big = Math.max(rx, ry), pad = big * 0.9 + 14;
+    const bb = [Math.max(0, x - big - pad), Math.max(0, y - big - pad), Math.min(W, x + big + pad), Math.min(H, y + big + pad)];
+    return D(() => softBlobDraw(x, y, rx, ry, color, opacity, bleed, texture, rot, jit), bb.map(Math.round), raxis(), rdir(), dur, 80);
+  }
+
+function dGlaze(x0, y0, x1, y1, color, weight, field) {
+    const bb = bboxOf([[x0, y0], [x1, y1]], 14 + weight * 4 * S.brushSize);
+    const axis = Math.abs(x1 - x0) >= Math.abs(y1 - y0) ? 'x' : 'y';
+    const dir = axis === 'x' ? Math.sign(x1 - x0) || 1 : Math.sign(y1 - y0) || 1;
+    const len = Math.hypot(x1 - x0, y1 - y0);
+    return D(() => glazeDraw(x0, y0, x1, y1, color, weight, field), bb, axis, dir, 160 + len * 1.4, 50);
+  }
+
+function dMarks(marks, dur = 220, gap = 40) {
+    const items = [];
+    for (let i = 0; i < marks.length; i += 8) {
+      const b = marks.slice(i, i + 8);
+      let pts = [];
+      for (const d of b) pts = pts.concat(d.pts);
+      items.push(D(() => { for (const d of b) { washStyle(d.color, d.op); brush.polygon(d.pts); } }, bboxOf(pts, 10), raxis(), rdir(), dur, gap));
+    }
+    return items;
+  }
+
+function dFlick(x, y, len, a, color, weight) {
+    const bb = bboxOf([[x - Math.cos(a) * len / 2, y - Math.sin(a) * len / 2], [x + Math.cos(a) * len / 2, y + Math.sin(a) * len / 2]], 10 + weight * 5);
+    const axis = Math.abs(Math.cos(a)) >= Math.abs(Math.sin(a)) ? 'x' : 'y';
+    return D(() => flickDraw(x, y, len, a, color, weight), bb, axis, rdir(), 90, 25);
+  }
+
+function dTouches(points, C, count, angleFn, sizeMul = 1) {
+    const items = [];
+    count = Math.round(count * (0.4 + 0.6 * S.detail));
+    for (let i = 0; i < count; i++) {
+      const p = points.length ? pickOne(points) : [rr(0, W), rr(0, H), 10];
+      const x = p[0] + rr(-p[2], p[2]), y = p[1] + rr(-p[2] * 0.6, p[2] * 0.6);
+      const color = random() < 0.85 ? pickOne(C.highlights) : pickOne(C.accents);
+      items.push(dFlick(x, y, rr(6, 16) * S.scale * sizeMul * (m / 600) * 3, angleFn(), color, rr(0.6, 1.1) * S.scale));
+    }
+    return items;
+  }
+
+function buildSail(C) {
+    const out = [], { density: dens, scale: sc, soft, detail: det, brushSize: bs } = S;
+    const water = 0.6, glaze = 0.5, touch = 0.3;
+    const { washes, foliage, accents, highlights } = C;
+    const horizon = H * 0.52, sunX = W * 0.56;
+    const sky = washes[0], sea = washes[1], glow = washes[2] || highlights[0], ripple = washes[3] || mixHex(sea, foliage[0], 0.4);
+
+    // sky, a warm band at the horizon, the sea in two bands, the glow's reflection
+    if (S.coverage > 0.02) out.push(dWash(sky, Math.round(S.coverage * 200)));
+    out.push(dBand(-20, horizon * 0.7, sky, Math.round(200 - water * 40), m * 0.033));
+    out.push(dBand(horizon * 0.55, horizon + H * 0.02, glow, Math.round(190 - water * 40), m * 0.03));
+    out.push(dBand(horizon - H * 0.01, H * 0.8, sea, Math.round(210 - water * 40), m * 0.017));
+    out.push(dBand(H * 0.7, H + 20, mixHex(sea, ripple, 0.35), Math.round(215 - water * 40), m * 0.02));
+    out.push(dBlob(sunX, horizon + H * 0.12, W * 0.2, H * 0.14, mixHex(glow, highlights[0], 0.5), 150, 0.7, 0.5, 0, 0.15, 460));
+
+    // cumulus: a big lit cloud upper right, a low bank left, each a grey underside
+    // under a peach body and a lit crown; then wisps near the horizon
+    const under = mixHex(sea, foliage[2], 0.3);
+    const clouds = [
+      { x: W * 0.62, y: H * 0.2, rx: W * 0.2, ry: H * 0.12 },
+      { x: W * 0.85, y: H * 0.32, rx: W * 0.16, ry: H * 0.07 },
+      { x: W * 0.12, y: H * 0.24, rx: W * 0.17, ry: H * 0.06 },
+      { x: W * 0.3, y: H * 0.4, rx: W * 0.22, ry: H * 0.045 },
+    ];
+    if (dens > 0.6) clouds.push({ x: W * 0.45, y: H * 0.1, rx: W * 0.1, ry: H * 0.05 });
+    for (const c of clouds) {
+      const peach = random() < 0.5 ? accents[0] : (accents[1] || accents[0]);
+      out.push(dBlob(c.x, c.y + c.ry * 0.3, c.rx, c.ry * 0.7, under, 170, 0.5 + water * 0.2, 0.5, 0, 0.2, 380));
+      out.push(dBlob(c.x, c.y, c.rx * 0.95, c.ry, peach, 215, 0.45 + water * 0.2, 0.5, rr(-0.1, 0.1), 0.25 + soft * 0.15, 420));
+      out.push(dBlob(c.x - c.rx * 0.2, c.y - c.ry * 0.45, c.rx * 0.6, c.ry * 0.6, accents[2] || highlights[0], 200, 0.5, 0.5, rr(-0.2, 0.2), 0.3, 340));
+    }
+    for (let i = 0; i < 3; i++) {
+      const x = rr(W * 0.1, W * 0.9), y = rr(horizon * 0.62, horizon * 0.92);
+      out.push(dBlob(x, y, W * rr(0.08, 0.16), H * rr(0.012, 0.025), under, 120, 0.6, 0.5, 0, 0.3, 300));
+    }
+
+    // the ripples: short horizontal dashes, grey-blue with a few warm ones, longer
+    // and denser toward the bottom; then still-water glazes
+    const dashes = [];
+    for (let i = 0; i < Math.round((90 + dens * 160) * (0.3 + 0.7 * det)); i++) {
+      const y = horizon + (H - horizon) * Math.pow(random(), 0.7), near = (y - horizon) / (H - horizon), x = rr(-5, W + 5);
+      const len = m * rr(0.012, 0.04) * sc * (0.5 + near) * bs, h = m * rr(0.002, 0.0035) * (0.6 + near) * bs;
+      const dark = random() < 0.65;
+      const color = dark ? (random() < 0.5 ? ripple : mixHex(ripple, sea, 0.4)) : (random() < 0.5 ? highlights[0] : mixHex(glow, highlights[1] || highlights[0], 0.5));
+      dashes.push({ color, pts: jitterEllipse(x, y, len, h, 8, 0.2, rr(-0.06, 0.06)), op: Math.round(rr(120, 200) - water * 30) });
+    }
+    out.push(...dMarks(dashes));
+    for (let i = 0; i < Math.round(3 + glaze * 8); i++) {
+      const y = rr(horizon + 5, H), x0 = rr(-10, W * 0.5), x1 = x0 + rr(W * 0.3, W * 0.8);
+      const color = random() < 0.5 ? sea : (random() < 0.5 ? ripple : glow);
+      out.push(dGlaze(x0, y, x1, y + rr(-3, 3), color, rr(1.5, 3) * Math.sqrt(sc), 'waves'));
+    }
+
+    // the sail and its hull over a faint reflection, a rowboat with two specks aboard, glints down the light
+    const sx = W * 0.55, sy = horizon + H * 0.1, sh = m * 0.165 * sc;
+    const sailPts = [[sx, sy - sh], [sx + sh * 0.45 + rr(-2, 2), sy], [sx - sh * 0.04, sy]];
+    const jib = [[sx - sh * 0.02, sy - sh * 0.7], [sx - sh * 0.3, sy - sh * 0.02], [sx - sh * 0.03, sy]];
+    const hull = jitterEllipse(sx + sh * 0.05, sy + sh * 0.03, sh * 0.32, sh * 0.035, 8, 0.15);
+    out.push(dBlob(sx, sy + sh * 0.5, sh * 0.35, sh * 0.5, highlights[1] || highlights[0], 110, 0.7, 0.5, 0, 0.2, 320));
+    out.push(D(() => {
+      washStyle(highlights[1] || highlights[0], 250); brush.polygon(sailPts); brush.polygon(jib);
+      bloomFill(highlights[0], 160, 0.15); brush.polygon(sailPts);
+      washStyle(foliage[1], 235); brush.polygon(hull);
+    }, bboxOf([...sailPts, ...jib, ...hull], 24), 'y', -1, 440, 90));
+    const bx = W * 0.38, by = horizon + H * 0.18;
+    const boat = jitterEllipse(bx, by, m * 0.02 * sc, m * 0.004 * sc, 8, 0.15);
+    out.push(D(() => {
+      washStyle(foliage[2], 230); brush.polygon(boat);
+      centerDot(bx - m * 0.005, by - m * 0.006, m * 0.004, foliage[2], 220); centerDot(bx + m * 0.006, by - m * 0.005, m * 0.0035, foliage[2], 220);
+    }, bboxOf(boat, 14), 'x', rdir(), 160, 40));
+    const glintPts = [];
+    for (let i = 0; i < 10; i++) glintPts.push([sunX + randomGaussian(0, W * 0.1), rr(horizon + 5, H * 0.95), 12]);
+    out.push(...dTouches(glintPts, C, Math.round(touch * 18), () => rr(-0.05, 0.05)));
+    return out;
+  }
+
+const CONFIG = {
+  label: "Sail",
+  canvasSize: 600,
+  loopMs: 9000,
+  holdMs: 1500,
+  palette: PALETTE,
+  strokes: (palette) => buildSail(palette),
+};
+
+const engine = createEngine(CONFIG, {
+  mount: document.getElementById('sheet'),
+  statusEl: document.getElementById('status'),
+});
+function setup() { engine.setup(); }
+function draw() { engine.draw(); }
+</script>
+</body>
+</html>

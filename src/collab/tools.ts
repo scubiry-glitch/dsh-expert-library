@@ -1,3 +1,4 @@
+import { issueReviewShareLink } from '../host/review-share-link.ts'
 /**
  * Collaboration mode tools — parameterized team patterns built on the core
  * team machinery: cross debate, roundtable, PPT generation, research report.
@@ -28,6 +29,7 @@ import { buildCollabDomainPack } from './templates.ts'
 import { resolveManagedRuntimePack } from '../host/pack-runtime.ts'
 import { stancePairForTopic, STANCE_TABLE } from '../zhijian/routing.ts'
 import { REPORT_BUNDLE_SCHEMA } from '../profile-schema.ts'
+import { presetReportArtifactFlow } from '../plan-artifact-flow.ts'
 import { isReportBundle, requireNewReportCraftSelection, type ReportBundle } from '../report-bundle.ts'
 
 /** The calling agent, or a loud failure. */
@@ -67,11 +69,14 @@ async function applyCollabPlan(
     /** Explicit AI-selected report contract on the final producer, never a Host default. */
     reportBundle?: ReportBundle
     reportTaskId?: string
+    reportOutline?: unknown
+    planModels?: unknown
   },
 ): Promise<{
   team_id?: string
   status: 'waiting_user' | 'applied'
   plan_id: string
+  review_url?: string
   digest: string
   revision: number
   team_name: string
@@ -98,13 +103,16 @@ async function applyCollabPlan(
   if (opts.reportBundle !== undefined) {
     if (plan.tasks.filter(task => task.id === opts.reportTaskId).length !== 1) throw new Error('report final producer task is missing or ambiguous')
     plan = { ...plan, tasks: plan.tasks.map(task => task.id === opts.reportTaskId ? { ...task, reportBundle: opts.reportBundle } : task) }
+    plan = presetReportArtifactFlow(plan)
   }
   const staged = await stageCompiledPlanCore(ctx, config, captain, plan, {
     teamName: opts.teamName,
     description: opts.description,
-  }, { compiled_source: `collab.${opts.mode}`, preset_args: JSON.stringify(opts), team_name: opts.teamName, goal: opts.description })
+  }, { compiled_source: `collab.${opts.mode}`, preset_args: JSON.stringify(opts), team_name: opts.teamName, goal: opts.description,
+    ...(opts.reportOutline === undefined ? {} : { report_outline: JSON.stringify(opts.reportOutline) }),
+    ...(opts.planModels === undefined ? {} : { plan_models: JSON.stringify(opts.planModels) }) })
   const approved = await scenarioApproveCore(ctx, config, captain, staged.planId, signal, core, staged.digest, staged.revision)
-  const planRef = { plan_id: approved.planId, digest: approved.digest, revision: approved.revision }
+  const planRef = { review_url: await issueReviewShareLink(stateRootOf(workspace, config), config.reviewPublicOrigin, { captainSessionId: captain.id, planId: approved.planId, gate: 'plan' }), plan_id: approved.planId, digest: approved.digest, revision: approved.revision }
   if (approved.appliedTeamId === undefined) {
     return { ...planRef, status: 'waiting_user', team_name: approved.runtime.teamName, members: [], tasks: [] }
   }
@@ -122,11 +130,11 @@ async function applyCollabPlan(
 
 /** Keep a pending plan visibly distinct from a materialized team. */
 function renderCollabPlan(label: string, value: {
-  status: string; plan_id: string; team_id?: string; team_name: string;
+  status: string; plan_id: string; review_url?: string; team_id?: string; team_name: string;
   members: readonly string[]; tasks: readonly { task_id: string; subject: string; assignee?: string }[];
 }): string {
   if (value.status === 'waiting_user') {
-    return `${label}计划已暂存：${value.team_name}（${value.plan_id}）。请在研究计划面板确认成员模型和任务安排。当前等待用户确认，尚未创建团队或成员；结束当前回合，不要重复批准或绕过确认。`
+    return `${label}计划已暂存：${value.team_name}（${value.plan_id}）。请在研究计划面板确认成员模型和任务安排。${value.review_url ? `独立确认页面：${value.review_url}。` : ''}当前等待用户确认，尚未创建团队或成员；结束当前回合，不要重复批准或绕过确认。`
   }
   return `${label}团队已组建：${value.team_name}（${value.team_id}）。成员：${value.members.join('、')}\n任务：${value.tasks.map(t => `${t.task_id}(${t.assignee ?? '共享'}) ${t.subject}`).join('；')}`
 }
@@ -156,6 +164,7 @@ export function registerCollabTools(
           team_id: { type: 'string' },
           status: { type: 'string', enum: ['waiting_user', 'applied'], required: true },
           plan_id: { type: 'string', required: true },
+          review_url: { type: 'string' },
           digest: { type: 'string', required: true },
           revision: { type: 'number', required: true },
           team_name: { type: 'string', required: true },
@@ -246,6 +255,7 @@ export function registerCollabTools(
           team_id: { type: 'string' },
           status: { type: 'string', enum: ['waiting_user', 'applied'], required: true },
           plan_id: { type: 'string', required: true },
+          review_url: { type: 'string' },
           digest: { type: 'string', required: true },
           revision: { type: 'number', required: true },
           team_name: { type: 'string', required: true },
@@ -327,6 +337,7 @@ export function registerCollabTools(
           team_id: { type: 'string' },
           status: { type: 'string', enum: ['waiting_user', 'applied'], required: true },
           plan_id: { type: 'string', required: true },
+          review_url: { type: 'string' },
           digest: { type: 'string', required: true },
           revision: { type: 'number', required: true },
           team_name: { type: 'string', required: true },
@@ -413,6 +424,8 @@ export function registerCollabTools(
       data: { type: 'string', description: '可用素材/数据（数字带口径）。' },
       writer: { type: 'string', description: '成文专家 id（默认 docs-coordinator；未选则自动补入）。' },
       report_bundle: { ...REPORT_BUNDLE_SCHEMA, required: true },
+      report_outline: { type: 'object', additionalProperties: true, required: true, description: 'Generate the complete ordered outline in this call: {chapters:[{id,title,questions:[string],evidence:[string],taskIds:[logicalTaskId]}],attachments:[string]}. Final producer is t3 for one expert, t4 for multiple experts. An omitted outline is rejected before staging.' },
+      plan_models: { type: 'object', additionalProperties: true, description: 'Optional per-plan {roleId:{provider,model,reasoningEffort}}. Uses the same confirmation as the outline; does not change tenant defaults.' },
       team_name: { type: 'string', description: '团队名（默认"研报·<主题>"）。' },
     },
     output: {
@@ -423,6 +436,7 @@ export function registerCollabTools(
           team_id: { type: 'string' },
           status: { type: 'string', enum: ['waiting_user', 'applied'], required: true },
           plan_id: { type: 'string', required: true },
+          review_url: { type: 'string' },
           digest: { type: 'string', required: true },
           revision: { type: 'number', required: true },
           team_name: { type: 'string', required: true },
@@ -474,6 +488,8 @@ export function registerCollabTools(
         templateId: multi ? 'collab.research-report' : 'collab.research-report-single',
         reportBundle: args.report_bundle,
         reportTaskId: multi ? 't4' : 't3',
+        reportOutline: args.report_outline,
+        planModels: args.plan_models,
         expertIds: roster,
         params: {
           topic: args.topic,

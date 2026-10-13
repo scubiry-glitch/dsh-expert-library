@@ -9,6 +9,7 @@ import { appendMailbox, claimMailboxDelivery, createMessage, createTeamDir, crea
 import { deliverCaptainMailbox, deliverToMember, MEMBER_DELIVERY_TIMEOUT_MS, memberToolFilter } from '../lib/members.js'
 import { createQualityRun, reviewQualityRun } from '../lib/quality-run.js'
 import { createHash } from 'node:crypto'
+import { occupiesMemberExecutionSlot } from '../lib/task-occupancy.js'
 
 function task(overrides = {}) {
   return {
@@ -57,14 +58,14 @@ async function fixture(t, overrides = {}, clock) {
     inbox: { nextTurn: [], nextStep: [] },
     steer(message) { captainMessages.push(message); this.inbox.nextStep.push(message) },
   }
-  const worker = { id: 'worker-id', status: 'idle', inbox: { hasPending: false }, session: { header: { cwd: workspace }, events: [] } }
+  const worker = { id: 'worker-id', status: 'idle', inbox: { hasPending: false, nextTurn: [], nextStep: [] }, session: { header: { cwd: workspace }, events: [] } }
   const calls = []
   const callbacks = new Map()
   const warnings = []
   const disposers = []
   t.after(async () => {
     for (const dispose of disposers) dispose()
-    await rm(workspace, { recursive: true, force: true })
+    await rm(workspace, { recursive: true, force: true, maxRetries: 5, retryDelay: 20 })
   })
   const ctx = {
     agents: { get: id => id === captain.id ? captain : id === worker.id ? worker : undefined },
@@ -93,6 +94,25 @@ test('waiting blocks dispatch without depending on cooldown, output, or attempt 
   for (const executionState of [undefined, 'active', 'interrupted']) {
     assert.deepEqual(planDispatch(task({ executionState, output: 'partial progress' }), 'worker', undefined, 1_000_000), { blocked: false, reuse: true })
   }
+})
+
+test('a rejected review releases the owner for an independent ready task while retaining the submitted attempt', async t => {
+  const f = await fixture(t, { id: 't4', executionState: 'awaiting_review',
+    waitReason: 'Review requires a quality repair decision.', output: 'Submitted renderer output' })
+  await f.update((submitted, team) => {
+    team.tasks.push({ id: 't6', subject: 'independent follow-up', status: 'pending', assignee: 'worker',
+      dependencies: [], attempt: 0, createdAt: 2, updatedAt: 2 })
+    team.members[0].activation = { id: 'old-activation', sessionId: 'worker-id', reservedAt: 1,
+      taskAttempts: [{ taskId: 't4', attemptId: 'attempt-1' }] }
+  })
+  await f.scheduler.kickMember(f.workspace, 'team', 'worker', f.captain)
+  const saved = await f.read()
+  assert.equal(saved.tasks.find(item => item.id === 't4').attemptId, 'attempt-1')
+  assert.equal(saved.tasks.find(item => item.id === 't4').executionState, 'awaiting_review')
+  assert.equal(saved.tasks.find(item => item.id === 't6').status, 'claimed')
+  assert.equal(f.calls.length, 1)
+  assert.equal(occupiesMemberExecutionSlot(saved.tasks.find(item => item.id === 't4')), false)
+  assert.equal(occupiesMemberExecutionSlot(saved.tasks.find(item => item.id === 't6')), true)
 })
 
 test('durable dispatch cooldown survives loss of the in-memory scheduler cache', () => {
@@ -176,7 +196,10 @@ test('ordinary communication is delivered once without clearing an external wait
   await f.reload().kickTeam(f.workspace, 'team', f.captain)
   assert.equal(f.calls.length, 1)
   assert.equal((await f.read()).tasks[0].executionState, 'blocked_external')
-  assert.deepEqual(await readUnreadMailbox(f.stateRoot, 'team', 'worker'), [])
+  const delivered = await readUnreadMailbox(f.stateRoot, 'team', 'worker')
+  assert.equal(delivered.length, 1)
+  assert.ok(delivered[0].deliveredAt)
+  assert.equal(delivered[0].consumedAt, undefined)
 })
 
 test('explicitly unblocked or interrupted work resumes under the original capability', async t => {
@@ -339,7 +362,7 @@ test('recovery waits out a pre-crash mailbox lease then delivers without another
   clock.advance(59_999)
   assert.equal(f.calls.length, 0)
   clock.advance(1)
-  await eventually(async () => (await readMailbox(f.stateRoot, 'team', 'worker'))[0].readAt !== undefined)
+  await eventually(async () => (await readMailbox(f.stateRoot, 'team', 'worker'))[0].deliveredAt !== undefined)
   assert.equal(f.calls.length, 1)
 })
 
@@ -363,7 +386,7 @@ test('scheduled retries respect halt, removed members, reassignment and disposal
     clock.advance(DISPATCH_COOLDOWN_MS)
     await new Promise(resolve => setTimeout(resolve, 15))
     assert.equal(attempts, 1, change)
-    assert.equal(clock.pending, 0, change)
+    await eventually(() => clock.pending === (change === 'removed' ? 1 : 0)) // removed owner retains diagnostic monitoring, never dispatch
   }
 })
 
@@ -379,7 +402,7 @@ test('mailbox-only transport failure is retried without an external event', asyn
   clock.advance(DISPATCH_COOLDOWN_MS)
   // A live delivery lease also hides the message from readUnreadMailbox,
   // before the transport has accepted it. Wait for the durable ACK itself.
-  await eventually(async () => (await readMailbox(f.stateRoot, 'team', 'worker'))[0]?.readAt !== undefined)
+  await eventually(async () => (await readMailbox(f.stateRoot, 'team', 'worker'))[0]?.deliveredAt !== undefined)
   assert.equal(f.calls.length, 1)
   assert.equal((await f.read()).tasks[0].executionState, 'awaiting_review')
 })
@@ -400,7 +423,7 @@ test('mailbox retries stop after three recovery rounds and preserve unread conte
   }
   await eventually(() => f.captainMessages.length === 1)
   await eventually(async () => (await readMailbox(f.stateRoot, 'team', 'captain'))[0]?.readAt !== undefined)
-  assert.equal(clock.pending, 0)
+  await eventually(() => clock.pending === 0)
   clock.advance(DISPATCH_COOLDOWN_MS * 10)
   assert.equal(attempts, 4)
   assert.equal((await readUnreadMailbox(f.stateRoot, 'team', 'worker'))[0].content, 'pending input')

@@ -1,3 +1,4 @@
+import { parseArtifactInputs, validatePlanArtifactFlow, type PlannedArtifactInput } from './plan-artifact-flow.ts'
 /**
  * Explicit Expert Teams profiles.
  *
@@ -15,6 +16,7 @@ import type { ExecutionPlan } from './v2/compiler.ts'
 import type { ModelPolicy } from './v2/types.ts'
 import { PROFILE_STAGE_EXAMPLE } from './profile-schema.ts'
 import { isReportBundle, type ReportBundle } from './report-bundle.ts'
+import { isTaskMaterialSelection, type TaskPromptBinding, type TaskSkillBinding } from './task-material-binding.ts'
 
 export const PROFILE_SCHEMA_VERSION = 1 as const
 
@@ -56,8 +58,29 @@ export interface ProfileReviewPolicy {
   readonly hardGateIds?: readonly string[]
 }
 
+/** Research analysis chosen in the same authenticated Host plan confirmation as the roster. */
+export interface ProfileAnalysisFramework {
+  readonly id: string
+  readonly question: string
+  readonly axes: readonly string[]
+  readonly hypotheses: readonly string[]
+  readonly falsifiers: readonly string[]
+}
+
+/** Route shortlist and proposed expert choice shown in the Host plan approval. */
+export interface ProfileExpertSelection {
+  readonly topic: string
+  readonly question: string
+  readonly routeFramework: string
+  readonly candidateIds: readonly string[]
+  readonly selectedIds: readonly string[]
+}
+
 /** A task used by a seed profile's fixed DAG. */
 export interface ProfileSeedTask {
+  readonly humanChoice?: { readonly sourceTaskId: string; readonly artifact: string; readonly options: readonly string[] }
+  readonly produces?: readonly string[]
+  readonly artifactInputs?: readonly PlannedArtifactInput[]
   readonly id: string
   readonly subject: string
   readonly description?: string
@@ -65,6 +88,10 @@ export interface ProfileSeedTask {
   readonly dependsOn: readonly string[]
   readonly acceptance?: readonly string[]
   readonly reportBundle?: ReportBundle
+  readonly skillBindings?: readonly TaskSkillBinding[]
+  readonly promptBinding?: TaskPromptBinding
+  /** Data capabilities this task may invoke through expert_provider_call. */
+  readonly allowedCapabilities?: readonly string[]
 }
 
 /** JSON-safe profile definition. */
@@ -76,6 +103,8 @@ export interface ExpertTeamProfile {
   /** A string is accepted at the input boundary and normalized to one item. */
   readonly protocol: readonly string[]
   readonly members: readonly ProfileMember[]
+  readonly analysisFramework?: ProfileAnalysisFramework
+  readonly expertSelection?: ProfileExpertSelection
   readonly route?: ProfileModelRoute
   readonly fallback?: readonly ProfileFallbackRoute[]
   readonly taskPlanning: ProfileTaskPlanning
@@ -122,12 +151,14 @@ export class ProfileValidationError extends Error {
 
 const PROFILE_KEYS = new Set([
   'schemaVersion', 'id', 'version', 'description', 'protocol', 'members',
-  'route', 'fallback', 'taskPlanning', 'review', 'templateId', 'tasks',
+  'route', 'fallback', 'taskPlanning', 'review', 'templateId', 'tasks', 'analysisFramework', 'expertSelection',
 ])
+const FRAMEWORK_KEYS = new Set(['id', 'question', 'axes', 'hypotheses', 'falsifiers'])
+const EXPERT_SELECTION_KEYS = new Set(['topic', 'question', 'routeFramework', 'candidateIds', 'selectedIds'])
 const ROUTE_KEYS = new Set(['provider', 'model', 'reasoningEffort', 'reason'])
 const MEMBER_KEYS = new Set(['id', 'name', 'role', 'expert', 'route', 'provider', 'model', 'reasoningEffort', 'capabilities', 'maxDepth'])
 const REVIEW_KEYS = new Set(['required', 'maxRepairRounds', 'hardGateIds'])
-const TASK_KEYS = new Set(['id', 'subject', 'description', 'owner', 'dependsOn', 'dependencies', 'acceptance', 'reportBundle'])
+const TASK_KEYS = new Set(['id', 'subject', 'description', 'owner', 'dependsOn', 'dependencies', 'acceptance', 'reportBundle', 'produces', 'artifactInputs', 'humanChoice', 'skillBindings', 'promptBinding', 'allowedCapabilities'])
 const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/
 
 function record(value: unknown): value is Record<string, unknown> {
@@ -283,9 +314,29 @@ function parseTask(value: unknown, index: number, issues: ProfileValidationIssue
     }
   }
   const dependsOn = canonicalDependencies ?? aliasDependencies ?? []
+  const produces = value.produces === undefined ? undefined : parseStringList(value.produces, `${path}.produces`, issues, 'produces')
+  if (produces?.some(name => !/^[A-Za-z0-9][A-Za-z0-9._-]{0,179}$/u.test(name))) issues.push({code:'invalid-value',path:`${path}.produces`,message:'produces must contain safe publication filenames'})
+  let artifactInputs: PlannedArtifactInput[] | undefined
+  try { if (value.artifactInputs !== undefined) artifactInputs = parseArtifactInputs(value.artifactInputs) }
+  catch (error) { issues.push({code:'invalid-value',path:`${path}.artifactInputs`,message:String(error)}) }
   const acceptance = value.acceptance === undefined ? undefined : parseStringList(value.acceptance, `${path}.acceptance`, issues, 'acceptance')
+  const allowedCapabilities = value.allowedCapabilities === undefined ? undefined : parseStringList(value.allowedCapabilities, `${path}.allowedCapabilities`, issues, 'allowedCapabilities')
+  let humanChoice: ProfileSeedTask['humanChoice']
+  if (value.humanChoice !== undefined) {
+    const gate = value.humanChoice
+    if (!record(gate) || Object.keys(gate).some(key => !['sourceTaskId', 'artifact', 'options'].includes(key))
+      || !text(gate.sourceTaskId) || !text(gate.artifact) || !/^[A-Za-z0-9][A-Za-z0-9._-]{0,179}$/u.test(gate.artifact)
+      || !Array.isArray(gate.options) || gate.options.length < 1 || gate.options.length > 8
+      || gate.options.some(option => !text(option) || option.length > 80)
+      || new Set(gate.options).size !== gate.options.length) {
+      issues.push({ code: 'invalid-value', path: `${path}.humanChoice`, message: 'humanChoice requires sourceTaskId, safe published artifact, and 1–8 unique nonempty options' })
+    } else humanChoice = { sourceTaskId: gate.sourceTaskId.trim(), artifact: gate.artifact.trim(), options: [...gate.options] as string[] }
+  }
   if (value.reportBundle !== undefined && !isReportBundle(value.reportBundle)) {
     issues.push({ code: 'invalid-value', path: `${path}.reportBundle`, message: 'reportBundle requires exact safe publication filenames {md:"report.md",html:"report.html",pdf:"report.pdf"}' })
+  }
+  if (value.skillBindings !== undefined || value.promptBinding !== undefined) {
+    if (!isTaskMaterialSelection(value.skillBindings, value.promptBinding)) issues.push({ code: 'invalid-value', path: `${path}.skillBindings`, message: 'skillBindings requires 1–4 distinct registered producer skills and one fixed plugin promptBinding' })
   }
   if (value.description !== undefined && !text(value.description)) issues.push({ code: 'invalid-value', path: `${path}.description`, message: 'description must be a non-empty string when present' })
   if (value.owner !== undefined && !text(value.owner)) issues.push({ code: 'invalid-value', path: `${path}.owner`, message: 'owner must be a non-empty string when present' })
@@ -300,8 +351,12 @@ function parseTask(value: unknown, index: number, issues: ProfileValidationIssue
     ...(description === undefined ? {} : { description }),
     ...(owner === undefined ? {} : { owner }),
     dependsOn,
-    ...(acceptance === undefined ? {} : { acceptance }),
+    ...(produces === undefined ? {} : { produces }),
+    ...(allowedCapabilities === undefined ? {} : { allowedCapabilities }),
+    ...(artifactInputs === undefined ? {} : { artifactInputs }),    ...(acceptance === undefined ? {} : { acceptance }),
+    ...(humanChoice === undefined ? {} : { humanChoice }),
     ...(isReportBundle(value.reportBundle) ? { reportBundle: structuredClone(value.reportBundle) } : {}),
+    ...(isTaskMaterialSelection(value.skillBindings, value.promptBinding) ? { skillBindings: structuredClone(value.skillBindings as TaskSkillBinding[]), promptBinding: structuredClone(value.promptBinding as TaskPromptBinding) } : {}),
   }
 }
 
@@ -319,6 +374,18 @@ function validateDag(tasks: readonly ProfileSeedTask[], members: readonly Profil
     if (task.owner !== undefined && task.owner !== 'captain' && !memberNames.has(task.owner)) {
       issues.push({ code: 'invalid-value', path: `tasks[${index}].owner`, message: `unknown task owner "${task.owner}"` })
     }
+    if (task.humanChoice !== undefined) {
+      const source = tasks.find(candidate => candidate.id === task.humanChoice!.sourceTaskId)
+      if (task.owner !== 'captain' || source === undefined || !task.dependsOn.includes(source.id)
+        || !source.produces?.includes(task.humanChoice.artifact)
+        || task.produces !== undefined || task.reportBundle !== undefined
+        || task.dependsOn.length !== 1
+        || task.artifactInputs?.length !== 1
+        || task.artifactInputs[0]?.fromTask !== source.id
+        || task.artifactInputs[0]?.artifact !== task.humanChoice.artifact) {
+        issues.push({ code: 'invalid-value', path: `tasks[${index}].humanChoice`, message: 'human choice must be captain-owned, depend only on one task publishing its candidate artifact, and declare that exact artifact input' })
+      }
+    }
   }
   const visiting = new Set<string>()
   const visited = new Set<string>()
@@ -335,6 +402,7 @@ function validateDag(tasks: readonly ProfileSeedTask[], members: readonly Profil
     visited.add(id)
   }
   for (const task of tasks) visit(task.id)
+  if (!issues.length) try { validatePlanArtifactFlow(tasks) } catch (error) { issues.push({ code: 'invalid-value', path: 'tasks', message: String(error) }) }
 }
 
 /** Validate and normalize a profile without any filesystem or runtime effects. */
@@ -371,6 +439,41 @@ export function validateProfile(value: unknown): ProfileValidationResult {
     names.add(member.name)
     ids.add(member.id)
   }
+  let analysisFramework: ProfileAnalysisFramework | undefined
+  if (value.analysisFramework !== undefined) {
+    const framework = value.analysisFramework
+    if (!record(framework)) issues.push({ code: 'invalid-type', path: 'analysisFramework', message: 'analysisFramework must be an object' })
+    else {
+      addUnknownKeys(framework, FRAMEWORK_KEYS, 'analysisFramework', issues)
+      const frameworkId = idIssue(framework.id, 'analysisFramework.id', issues, 'framework id')
+      const question = requiredText(framework.question, 'analysisFramework.question', issues, 'research question')
+      const axes = parseStringList(framework.axes, 'analysisFramework.axes', issues, 'axes')
+      const hypotheses = parseStringList(framework.hypotheses, 'analysisFramework.hypotheses', issues, 'hypotheses')
+      const falsifiers = parseStringList(framework.falsifiers, 'analysisFramework.falsifiers', issues, 'falsifiers')
+      if (axes !== undefined && (axes.length < (value.version === '5.0.0' && value.id === '98wiki-deep-research' ? 1 : 2) || axes.length > 6)) issues.push({ code: 'invalid-value', path: 'analysisFramework.axes', message: 'research framework needs 1..6 axes for V5, otherwise 2..6' })
+      if (hypotheses !== undefined && (hypotheses.length < (value.version === '5.0.0' && value.id === '98wiki-deep-research' ? 1 : 2) || hypotheses.length > 8)) issues.push({ code: 'invalid-value', path: 'analysisFramework.hypotheses', message: 'research framework needs 1..8 hypotheses for V5, otherwise 2..8' })
+      if (falsifiers !== undefined && (falsifiers.length < 1 || falsifiers.length > 8)) issues.push({ code: 'invalid-value', path: 'analysisFramework.falsifiers', message: 'research framework needs 1..8 falsifiers' })
+      if (frameworkId && question && axes !== undefined && hypotheses !== undefined && falsifiers !== undefined) {
+        analysisFramework = { id: (framework.id as string).trim(), question: (framework.question as string).trim(), axes, hypotheses, falsifiers }
+      }
+    }
+  }
+  let expertSelection: ProfileExpertSelection | undefined
+  if (value.expertSelection !== undefined) {
+    const selection = value.expertSelection
+    if (!record(selection)) issues.push({ code: 'invalid-type', path: 'expertSelection', message: 'expertSelection must be an object' })
+    else {
+      addUnknownKeys(selection, EXPERT_SELECTION_KEYS, 'expertSelection', issues)
+      const topic = requiredText(selection.topic, 'expertSelection.topic', issues, 'route topic')
+      const question = requiredText(selection.question, 'expertSelection.question', issues, 'route question')
+      const routeFramework = requiredText(selection.routeFramework, 'expertSelection.routeFramework', issues, 'route framework')
+      const candidateIds = parseStringList(selection.candidateIds, 'expertSelection.candidateIds', issues, 'route candidate ids')
+      const selectedIds = parseStringList(selection.selectedIds, 'expertSelection.selectedIds', issues, 'selected expert ids')
+      if (topic && question && routeFramework && candidateIds !== undefined && selectedIds !== undefined)
+        expertSelection = { topic: (selection.topic as string).trim(), question: (selection.question as string).trim(),
+          routeFramework: (selection.routeFramework as string).trim(), candidateIds, selectedIds }
+    }
+  }
   const taskPlanning = value.taskPlanning === 'captain' || value.taskPlanning === 'seed' ? value.taskPlanning : undefined
   if (taskPlanning === undefined) issues.push({ code: 'invalid-value', path: 'taskPlanning', message: 'taskPlanning must be "captain" or "seed"' })
   const route = value.route === undefined ? undefined : parseRoute(value.route, 'route', issues, false) as ProfileModelRoute | undefined
@@ -391,7 +494,7 @@ export function validateProfile(value: unknown): ProfileValidationResult {
     else {
       addUnknownKeys(value.review, REVIEW_KEYS, 'review', issues)
       if (value.review.required !== undefined && typeof value.review.required !== 'boolean') issues.push({ code: 'invalid-value', path: 'review.required', message: 'required must be boolean' })
-      if (value.review.maxRepairRounds !== undefined && (!Number.isInteger(value.review.maxRepairRounds) || (value.review.maxRepairRounds as number) < 0 || (value.review.maxRepairRounds as number) > 2)) issues.push({ code: 'invalid-value', path: 'review.maxRepairRounds', message: 'maxRepairRounds must be an integer from 0 to 2' })
+      if (value.review.maxRepairRounds !== undefined && (!Number.isInteger(value.review.maxRepairRounds) || (value.review.maxRepairRounds as number) < 0 || (value.review.maxRepairRounds as number) > 20)) issues.push({ code: 'invalid-value', path: 'review.maxRepairRounds', message: 'maxRepairRounds must be an integer from 0 to 20' })
       const hardGateIds = value.review.hardGateIds === undefined ? undefined : parseStringList(value.review.hardGateIds, 'review.hardGateIds', issues, 'hardGateIds')
       review = {
         ...(value.review.required === undefined ? {} : { required: value.review.required as boolean }),
@@ -431,6 +534,8 @@ export function validateProfile(value: unknown): ProfileValidationResult {
       description: (descriptionValue as string).trim(),
       protocol,
       members,
+      ...(analysisFramework === undefined ? {} : { analysisFramework }),
+      ...(expertSelection === undefined ? {} : { expertSelection }),
       ...(route === undefined ? {} : { route }),
       ...(fallback === undefined ? {} : { fallback }),
       taskPlanning,
@@ -538,12 +643,16 @@ export function profileToExecutionPlan(
       ...(task.owner === 'captain' ? { owner: 'captain' as const } : {}),
       dependsOn: [...task.dependsOn],
       inputs: [],
-      allowedCapabilities: owner?.capabilities === undefined ? [] : [...owner.capabilities],
+      ...(task.produces === undefined ? {} : { produces: [...task.produces] }),
+      ...(task.artifactInputs === undefined ? {} : { artifactInputs: structuredClone(task.artifactInputs) }),
+      ...(task.humanChoice === undefined ? {} : { humanChoice: structuredClone(task.humanChoice) }),
+      allowedCapabilities: task.allowedCapabilities === undefined ? [...(owner?.capabilities ?? [])] : [...task.allowedCapabilities],
       outputSchema: 'text',
       retryPolicy: 'quality-repair' as const,
       subject: task.subject,
       ...(task.acceptance === undefined ? {} : { acceptance: [...task.acceptance] }),
       ...(task.reportBundle === undefined ? {} : { reportBundle: structuredClone(task.reportBundle) }),
+      ...(task.skillBindings === undefined ? {} : { skillBindings: structuredClone(task.skillBindings), promptBinding: structuredClone(task.promptBinding!) }),
       ...(task.description === undefined ? {} : { description: task.description }),
     }
   })
@@ -553,7 +662,9 @@ export function profileToExecutionPlan(
     schemaVersion: 2 as const,
     template,
     scenario,
-    params,
+    params: { ...params,
+      ...(profile.analysisFramework === undefined ? {} : { analysisFramework: structuredClone(profile.analysisFramework) }),
+      ...(profile.expertSelection === undefined ? {} : { expertSelection: structuredClone(profile.expertSelection) }) },
     roster,
     tasks,
     executionOrder,

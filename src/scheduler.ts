@@ -1,4 +1,7 @@
+import { isCompactResearch, isResearchV5, compactReviewer } from './research-release.ts'
 import { prepareCraftDelivery, saveCraftDelivery, type CraftDeliveryReceipt } from './report-craft-delivery.ts'
+import { prepareTaskMaterialDelivery, saveTaskMaterialDelivery, type TaskMaterialDeliveryReceipt } from './task-material-binding.ts'
+import { occupiesMemberExecutionSlot } from './task-occupancy.ts'
 /**
  * Event-driven shared task scheduler.
  *
@@ -17,9 +20,9 @@ import { randomUUID } from 'node:crypto'
 import { readdir } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { deliverCaptainMailbox, deliverToMember } from './members.ts'
-import { deliverMemberMailbox } from './mailbox-delivery.ts'
+import { deliverMemberMailbox, consumedMemberMailboxIds } from './mailbox-delivery.ts'
 import { forkQualityRun, QualityRunError } from './quality-run.ts'
-import { captureRuntimeTurn, recordRuntimeFailure } from './runtime-failure.ts'
+import { captureRuntimeTurn, recordRuntimeFailure, runtimeRecoveryGuidance } from './runtime-failure.ts'
 import { sessionOwnEvents } from './harness-compat.ts'
 import { renderSharedTaskContext } from './shared-task-context.ts'
 import { renderTaskRepairFeedback } from './repair-feedback.ts'
@@ -51,6 +54,8 @@ export interface SchedulerConfig {
   readonly stateDir: string
   /** Hard cap over live/pending member turns, including independent review. */
   readonly maxActiveMembers?: number
+  /** Optional higher cap only while V5 independent viewpoint or evidence tasks occupy every live slot. */
+  readonly v5ResearchMaxActiveMembers?: number
   /** Injectable clock for deterministic transport recovery tests. */
   readonly clock?: {
     now(): number
@@ -85,6 +90,8 @@ interface DispatchTicket {
   readonly repairFeedback?: string
   readonly craftContent?: string
   readonly craftReceipts?: readonly CraftDeliveryReceipt[]
+  readonly taskMaterialContent?: string
+  readonly taskMaterialReceipt?: TaskMaterialDeliveryReceipt
   readonly projectPath?: string
   readonly inputPath?: string
   readonly outputPath?: string
@@ -102,6 +109,8 @@ interface DispatchTicket {
 export const DISPATCH_COOLDOWN_MS = 30_000
 export const MAX_DISPATCH_FAILURES = 3
 export const MAX_MAILBOX_RECOVERY_ROUNDS = 3
+export const HANDOFF_CHECK_MS = 30_000
+export const HANDOFF_ALERT_MS = 120_000
 
 /**
  * Pure dispatch decision for one (member, task): whether the cooldown blocks
@@ -115,7 +124,7 @@ export function planDispatch(
   lastDispatchAt: number | undefined,
   now: number = Date.now(),
 ): { readonly blocked: true } | { readonly blocked: false; readonly reuse: boolean } {
-  if (task.runtimeBlock !== undefined || task.executionState === 'awaiting_review' || task.executionState === 'blocked_external') {
+  if (task.humanChoice !== undefined || task.runtimeBlock !== undefined || task.executionState === 'awaiting_review' || task.executionState === 'blocked_external') {
     return { blocked: true }
   }
   const reuse = (task.status === 'claimed' || task.status === 'in_progress')
@@ -152,23 +161,44 @@ function liveCaptain(ctx: Context, captainSessionId: string, supplied?: Agent): 
   return ctx.agents.get(captainSessionId as SessionId)
 }
 
+/** Workspace instructions injected after an empty bootstrap turn are passive
+ * context for the next real turn. They must not reserve a member slot forever. */
+function hasActionablePendingInput(agent: Agent): boolean {
+  const inbox = agent.inbox
+  if (inbox?.hasPending !== true) return false
+  if (inbox.nextTurn.length > 0 || inbox.nextStep.length === 0) return true
+  return inbox.nextStep.some(message => {
+    const source = message.source as { kind?: string; form?: string; baseline?: boolean } | undefined
+    return source?.kind !== 'agent-instructions' || source.form !== 'instructions' || source.baseline !== true
+  })
+}
+
 function isMemberAvailable(ctx: Context, member: TeamMember): boolean {
   if (member.runtimeBlock !== undefined) return false
   const live = ctx.agents.get(member.id as SessionId)
   // The public status can still be idle between FIFO acceptance and turn
-  // start. Pending input already owns the next turn, including after restart.
-  return live === undefined || (live.status === 'idle' && live.inbox?.hasPending !== true)
+  // start. Real pending input owns the next turn, including after restart.
+  return live === undefined || (live.status === 'idle' && !hasActionablePendingInput(live))
 }
 
-function ownedOpenTask(tasks: readonly TeamTask[], memberName: string): TeamTask | undefined {
-  return tasks.find(task => task.assignee === memberName
-    && (task.status === 'claimed' || task.status === 'in_progress'))
+function ownedOpenTask(team: TeamState, memberName: string): TeamTask | undefined {
+  return team.tasks.find(task => task.assignee === memberName
+    && team.qualityRuns?.[task.id]?.status !== 'escalated'
+    && occupiesMemberExecutionSlot(task))
 }
 
-function nextReadyTask(tasks: readonly TeamTask[], memberName: string): TeamTask | undefined {
-  const ready = tasks.filter(task => task.status === 'pending'
+function isReadyTask(team: TeamState, task: TeamTask): boolean {
+  return task.status === 'pending'
+    && team.qualityRuns?.[task.id]?.status !== 'escalated'
+    && task.humanChoice === undefined
+    && task.runtimeBlock === undefined
+    && task.executionState !== 'blocked_external' && task.executionState !== 'awaiting_review'
     && task.reassigning !== true
-    && unsatisfiedDependencies([...tasks], task.dependencies).length === 0)
+    && unsatisfiedDependencies(team.tasks, task.dependencies).length === 0
+}
+
+function nextReadyTask(team: TeamState, memberName: string): TeamTask | undefined {
+  const ready = team.tasks.filter(task => isReadyTask(team, task))
   return ready.find(task => task.assignee === memberName)
     ?? ready.find(task => task.assignee === undefined)
 }
@@ -187,7 +217,7 @@ function nextReadyTask(tasks: readonly TeamTask[], memberName: string): TeamTask
  * Exported for unit testing at the pure boundary.
  */
 export function shouldAutoRetryTask(task: TeamTask): boolean {
-  if (task.status !== 'failed' || task.runtimeBlock !== undefined) return false
+  if (task.status !== 'failed' || task.runtimeBlock !== undefined || task.qualityCloseout !== undefined) return false
   const attempt = task.attempt ?? 0
   return attempt >= 1 && attempt < 3
 }
@@ -202,6 +232,12 @@ async function requeueRetryableTasks(stateRoot: string, teamId: string): Promise
       if (!shouldAutoRetryTask(task)) continue
       const previousRun = fresh.qualityRuns?.[task.id]
         ?? (fresh.qualityRun?.contract.taskId === task.id ? fresh.qualityRun : undefined)
+      if (previousRun?.status === 'escalated') {
+        await appendMailbox(stateRoot, teamId, 'captain', createMessage('scheduler', 'captain',
+          `Task ${task.id} remains failed: quality review is escalated and automatic retry is closed. An explicit policy decision is required.`,
+          { idempotencyKey: `auto-retry-blocked:${task.id}:${previousRun.runId}:${task.attempt}` }))
+        continue
+      }
       if (previousRun !== undefined) {
         const nextAttempt = (task.attempt ?? 0) + 1
         try {
@@ -270,6 +306,7 @@ Attempt id: ${ticket.attemptId}
 ${ticket.dispatchId === undefined ? '' : `Dispatch id: ${ticket.dispatchId}\n`}
 ${ticket.repairFeedback ?? ''}
 ${ticket.craftContent ?? ''}
+${ticket.taskMaterialContent ?? ''}
 ${(ticket.inputArtifactWarnings ?? []).join('\n')}
 ${ticket.inputArtifacts === undefined || ticket.inputArtifacts.length === 0 ? '' : `Verified upstream artifact manifest: ${JSON.stringify(ticket.inputArtifacts)}\nThese pinned immutable versions are the authoritative dependency inputs. Read each via expert_teams_read_artifact(task_id="${ticket.taskId}", source_task_id=<sourceTaskId>, artifact_id=<artifactId UUID>); reviewArtifactId is not an artifact UUID. Do not substitute mutable shared working copies or edit upstream files. An unavailable fixed version blocks work; do not fall back to another version.\n`}
 
@@ -286,6 +323,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
   const clock = config.clock ?? { now: () => Date.now(), setTimeout, clearTimeout }
   const recoveryTimers = new Map<string, { timer: ReturnType<typeof setTimeout>; dueAt: number }>()
   const mailboxRecovery = new Map<string, { rounds: number; dueAt?: number; notified?: boolean }>()
+  const failedMailboxDeliveries = new Map<string, number>()
   const deliveryController = new AbortController()
   const eventQueues = new Map<string, Promise<void>>()
   let disposed = false
@@ -295,25 +333,57 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
     return value
   }
   configuredCap()
+  const baseCap = (team: TeamState): number => team.maxActiveMembers ?? configuredCap()
+  const researchCap = (): number => {
+    const value = config.v5ResearchMaxActiveMembers ?? configuredCap()
+    if (!Number.isSafeInteger(value) || value < 1) throw new Error('v5ResearchMaxActiveMembers must be a positive integer')
+    return value
+  }
+  researchCap()
   const hasSlot = (member: TeamMember): boolean => {
     const agent = ctx.agents.get(member.id as SessionId)
-    return member.activation !== undefined || agent?.status === 'running' || agent?.inbox?.hasPending === true
+    return member.activation !== undefined || agent?.status === 'running'
+      || (agent !== undefined && hasActionablePendingInput(agent))
   }
-  const canReserve = (team: TeamState, member: TeamMember): boolean => {
+  const researchPhase = (task: TeamTask): 'view' | 'evidence' | undefined => {
+    const id = task.planTask?.logicalId ?? ''
+    return /^expert_view_/u.test(id) ? 'view' : /^research_/u.test(id) ? 'evidence' : undefined
+  }
+  const admissionCap = (team: TeamState, task?: TeamTask): number => {
+    const ordinary = baseCap(team)
+    const phase = task && isResearchV5(team) ? researchPhase(task) : undefined
+    if (phase === undefined || team.maxActiveMembers !== undefined) return ordinary
+    // A provider limit is a durable runtime block. Keep the ordinary cap until
+    // that block is explicitly resolved; don't admit more research turns into it.
+    if (team.members.some(member => member.status !== 'removed' && member.runtimeBlock
+      && (member.runtimeBlock.status === 429 || member.runtimeBlock.status === 402
+        || ['RATE_LIMIT', 'QUOTA'].includes(member.runtimeBlock.code)))) return ordinary
+    const higher = researchCap()
+    if (higher <= ordinary) return ordinary
+    const occupied = team.members.filter(member => member.status !== 'removed' && hasSlot(member))
+    return occupied.every(member => team.tasks.some(active => active.assignee === member.name
+      && occupiesMemberExecutionSlot(active) && researchPhase(active) === phase)) ? higher : ordinary
+  }
+  const canReserve = (team: TeamState, member: TeamMember, task?: TeamTask): boolean => {
     // Explicit task resume/reassignment retires the old delivery reservation.
     if (member.activation !== undefined && isMemberAvailable(ctx, member)
       && member.activation.taskAttempts.length > 0 && member.activation.taskAttempts.every(owned => {
         const task = team.tasks.find(item => item.id === owned.taskId)
-        return task?.attemptId !== owned.attemptId || task.dispatch === undefined || task.executionState === 'interrupted'
+        return task === undefined || !occupiesMemberExecutionSlot(task)
+          || task.attemptId !== owned.attemptId || task.dispatch === undefined || task.executionState === 'interrupted'
       })) member.activation = undefined
     return !hasSlot(member)
-      && team.members.filter(item => item.status !== 'removed' && hasSlot(item)).length < (team.maxActiveMembers ?? configuredCap())
+      && team.members.filter(item => item.status !== 'removed' && hasSlot(item)).length < admissionCap(team, task)
+  }
+  const hasLiveTurn = (member: TeamMember): boolean => {
+    const live = ctx.agents.get(member.id as SessionId)
+    return live !== undefined && (live.status === 'running' || hasActionablePendingInput(live))
   }
   const reserve = (team: TeamState, member: TeamMember): string => {
     const id = randomUUID()
     member.activation = { id, sessionId: member.id, reservedAt: clock.now(),
       taskAttempts: team.tasks.filter(task => task.assignee === member.name && task.attemptId !== undefined
-        && (task.status === 'claimed' || task.status === 'in_progress'))
+        && occupiesMemberExecutionSlot(task))
         .map(task => ({ taskId: task.id, attemptId: task.attemptId! })) }
     return id
   }
@@ -357,19 +427,30 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
     const team = await readTeam(stateRoot, teamId)
     if (team === undefined || team.halted === true) return
     let nextAt = Infinity
-    const capacityAvailable = team.members.filter(member => member.status !== 'removed' && hasSlot(member)).length < (team.maxActiveMembers ?? configuredCap())
+    let hasUndelivered = false
+    const capacityAvailable = team.members.filter(member => member.status !== 'removed' && hasSlot(member)).length < baseCap(team)
     // Healthy work occupying a slot is not a failed delivery. Idle events
     // admit its queued successors without spending the transport retry budget.
     for (const key of [...(team.captainRuntimeBlock === undefined ? ['captain'] : []), ...team.members.filter(member => member.status !== 'removed'
-      && member.runtimeBlock === undefined && capacityAvailable && isMemberAvailable(ctx, member) && !hasSlot(member)).map(member => member.name)]) {
+      && member.runtimeBlock === undefined).map(member => member.name)]) {
+      const member = team.members.find(candidate => candidate.name === key)
+      const available = member === undefined || hasLiveTurn(member)
+        || (capacityAvailable && isMemberAvailable(ctx, member) && !hasSlot(member))
       for (const message of await readMailbox(stateRoot, teamId, key)) {
         if (message.readAt !== undefined || message.discardedAt !== undefined) continue
+        // Accepted notifications wait for a consumption event, not another
+        // transport attempt. A restart reconciles child-owned receipts.
+        if (message.deliveredAt !== undefined) continue
+        hasUndelivered = true
+        if (!available || (failedMailboxDeliveries.get(message.id) ?? 0) > MAX_MAILBOX_RECOVERY_ROUNDS) continue
         nextAt = Math.min(nextAt, message.deliveryClaimedAt === undefined
           ? clock.now() + DISPATCH_COOLDOWN_MS : message.deliveryClaimedAt + MAILBOX_DELIVERY_LEASE_MS)
       }
     }
     if (Number.isFinite(nextAt)) runtime.scheduleRecovery(workspace, teamId, Math.max(1, nextAt - clock.now()))
-    else mailboxRecovery.delete(recoveryKey(workspace, teamId))
+    // A concurrent delivery reservation/capacity wait is not successful
+    // delivery. Retain its retry budget instead of restarting at round zero.
+    else if (!hasUndelivered) mailboxRecovery.delete(recoveryKey(workspace, teamId))
   }
 
   const serializeMember = async <T>(key: string, operation: () => Promise<T>): Promise<T> => {
@@ -417,6 +498,66 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
     })
   }
 
+  // Durable task state is the outbox source: a crash after integration but
+  // before kick/notification is repaired by this same pass after restart.
+  const reconcileHandoffs = async (workspace: string, teamId: string): Promise<void> => {
+    const stateRoot = stateRootOf(workspace, config)
+    let watch = false
+    await withTeamLock(teamLockKey(stateRoot, teamId), async () => {
+      const team = await readTeam(stateRoot, teamId)
+      if (!team || team.halted) return
+      let changed = false
+      let captainNoticeKeys: Set<string | undefined> | undefined
+      for (const task of team.tasks) {
+        const phase = isReadyTask(team, task) ? 'ready'
+          : task.status === 'claimed' && !task.runtimeBlock && !task.reassigning
+            && !['blocked_external', 'awaiting_review'].includes(task.executionState ?? '') ? 'assigned' : undefined
+        if (!phase) {
+          if (task.scheduling) { delete task.scheduling; changed = true }
+          continue
+        }
+        watch = true
+        const member = team.members.find(item => item.name === task.assignee && item.status !== 'removed')
+        const live = member ? ctx.agents.get(member.id as SessionId) : undefined
+        const reason = !ctx.agents.get(team.captainSessionId as SessionId) ? 'captain_unavailable'
+          : member?.runtimeBlock ? 'member_runtime_block'
+            : live?.status === 'running' ? 'member_busy'
+              : live && hasActionablePendingInput(live) ? 'member_input_queued'
+                : member?.activation ? 'activation_pending'
+                  : team.members.filter(item => item.status !== 'removed' && hasSlot(item)).length >= admissionCap(team, task) ? 'capacity'
+                    : member && ownedOpenTask(team, member.name) ? 'previous_task'
+                      : !member && task.assignee ? 'member_unavailable' : 'ready'
+        const key = `handoff:${task.id}:${task.attemptId ?? task.attempt ?? 0}:${task.assignee ?? 'unassigned'}:${phase}`
+        if (task.scheduling?.noticeKey !== key) {
+          task.scheduling = { since: clock.now(), phase, reason, noticeKey: key }
+          changed = true
+        } else if (task.scheduling.reason !== reason) { task.scheduling.reason = reason; changed = true }
+        // Notifications do not claim work. Running members may receive them
+        // at a safe step, then use normal guarded claim/update tools.
+        if (phase === 'ready' && member && !member.runtimeBlock && hasLiveTurn(member)) {
+          await appendMailbox(stateRoot, teamId, member.name, createMessage('scheduler', member.name,
+            `Task ${task.id} is ready: all dependencies completed. Inspect current team state. Finish or persist your current work before claiming ${task.id} through expert_teams_claim_task; do not run two tasks concurrently or bypass review/user gates. If the previous task is submitted or terminal, end its turn or claim this ready task.`,
+            { idempotencyKey: key, sourceTaskId: task.id, sourceTaskStatus: 'pending' }))
+        }
+        if (clock.now() - task.scheduling.since >= HANDOFF_ALERT_MS) {
+          captainNoticeKeys ??= new Set((await readMailbox(stateRoot, teamId, 'captain')).map(message => message.idempotencyKey))
+          // Elapsed time/reason can change on the next tick. Reusing a key
+          // with different content is a conflict, not idempotent delivery.
+          // The durable mailbox receipt also covers a crash before team save.
+          if (!captainNoticeKeys.has(`${key}:overdue`)) {
+            await appendMailbox(stateRoot, teamId, 'captain', createMessage('scheduler', 'captain',
+              `Task ${task.id} has not started after ${Math.floor((clock.now() - task.scheduling.since) / 1000)}s; phase=${phase}, reason=${reason}, assignee=${task.assignee ?? 'unassigned'}. Inspect actual tool/model progress and mailbox consumption. Running is not proof of task progress. Do not interrupt a healthy long tool or reset attempts; use explicit recovery only after confirming lost execution.`,
+              { idempotencyKey: `${key}:overdue` }))
+            captainNoticeKeys.add(`${key}:overdue`)
+          }
+        }
+      }
+      if (changed) await writeTeam(stateRoot, team)
+    })
+    // This observation loop does not spend transport retry/repair budgets.
+    if (watch) armRecovery(workspace, teamId, clock.now() + HANDOFF_CHECK_MS)
+  }
+
   const runtime: TeamScheduler = {
     scheduleRecovery(workspace, teamId, delayMs = DISPATCH_COOLDOWN_MS) {
       if (disposed) return
@@ -424,6 +565,9 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
       const recovery = mailboxRecovery.get(key) ?? { rounds: 0 }
       mailboxRecovery.set(key, recovery)
       if (recovery.rounds >= MAX_MAILBOX_RECOVERY_ROUNDS) {
+        recovery.dueAt = undefined
+        const pending = recoveryTimers.get(key)
+        if (pending !== undefined) { clock.clearTimeout(pending.timer); recoveryTimers.delete(key) }
         if (recovery.notified) return
         recovery.notified = true
         const stateRoot = stateRootOf(workspace, config)
@@ -488,6 +632,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
           }
         }
         await restoreMailboxRecovery(workspace, team.id)
+        await reconcileHandoffs(workspace, team.id)
         const captain = ctx.agents.get(team.captainSessionId as SessionId)
         if (captain === undefined) continue
         // Open claims retain their attemptId. kickTeam's planDispatch path
@@ -511,7 +656,21 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
       await requeueRetryableTasks(stateRoot, teamId)
       team = await readTeam(stateRoot, teamId)
       if (disposed || team === undefined || team.halted === true) return
+      if (isCompactResearch(team)) await withTeamLock(teamLockKey(stateRoot, teamId), async () => {
+        const fresh = await readTeam(stateRoot, teamId)
+        if (!fresh || fresh.halted) return
+        for (const task of fresh.tasks) {
+          const run = fresh.qualityRuns?.[task.id]
+          if (task.executionState !== 'awaiting_review' || !run || !['pending','repairing'].includes(run.status)) continue
+          const reviewer = compactReviewer(fresh, task)
+          if (!reviewer) continue
+          await appendMailbox(stateRoot, teamId, reviewer, createMessage('captain', reviewer,
+            `Host v4 independent review request: task ${task.id}, attempt ${task.attempt}, run ${run.runId}. Inspect expert_teams_status and all exact published bytes. First quality_review(prepare_only=true) to read frozen materials. Verify EVERY acceptance, content, source/unit/arithmetic and report consistency. For renderer, inspect actual DOM, wide/narrow browser and PDF first/middle/last pages and submit review_audit. Record truthful pass/needs_revision/reject. A real pass atomically freezes the reviewed input bundle and advances the task; no captain integration is needed. Do not claim or rewrite the producer task. If this attempt is no longer awaiting review, this message is stale; end without mutation.`,
+            { idempotencyKey: `compact-review:${task.id}:${run.runId}:${run.attempt}` }))
+        }
+      })
       const captain = liveCaptain(ctx, team.captainSessionId, suppliedCaptain)
+      await reconcileHandoffs(workspace, teamId)
       if (captain === undefined) { await restoreMailboxRecovery(workspace, teamId); return }
       // All-terminal short circuit: settle member statuses ONCE and stop
       // waking anyone. Without this, every kick during a finished team still
@@ -546,6 +705,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
       await notifyTeamCompletion(stateRoot, teamId)
       await flushCaptainMailbox(stateRoot, teamId, captain)
       await restoreMailboxRecovery(workspace, teamId)
+      await reconcileHandoffs(workspace, teamId)
     },
 
     async kickMember(workspace, teamId, memberName, suppliedCaptain) {
@@ -560,7 +720,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
         const captain = liveCaptain(ctx, team.captainSessionId, suppliedCaptain)
         if (captain === undefined) return
         let member = team.members.find(candidate => candidate.name === memberName && candidate.status !== 'removed')
-        if (member === undefined || member.id === '' || !isMemberAvailable(ctx, member)) return
+        if (member === undefined || member.id === '' || member.runtimeBlock !== undefined) return
 
         // A mailbox-only fallback is real pending work. Read the team and
         // mailbox under the same team lock so admission never evaluates an
@@ -568,22 +728,37 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
         const mailboxBatch = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
           const fresh = await readTeam(stateRoot, team!.id)
           const currentMember = fresh?.members.find(candidate => candidate.name === memberName && candidate.status !== 'removed')
-          if (disposed || fresh === undefined || fresh.halted === true || currentMember === undefined || currentMember.id === '' || !isMemberAvailable(ctx, currentMember)) {
+          if (disposed || fresh === undefined || fresh.halted === true || currentMember === undefined || currentMember.id === '' || currentMember.runtimeBlock !== undefined) {
             return undefined
+          }
+          const live = ctx.agents.get(currentMember.id as SessionId)
+          if (live) {
+            const consumed = sessionOwnEvents(live.session).flatMap(value => {
+              const event = value as { type?: string; data?: unknown }
+              return event.type === 'user/message' ? consumedMemberMailboxIds(event.data) : []
+            })
+            if (consumed.length) await acknowledgeMailbox(stateRoot, fresh.id, currentMember.name, consumed)
           }
           const unread = await readUnreadMailbox(stateRoot, fresh.id, currentMember.name)
           const decisions = unread.map(message => ({ message, admission: admitTeamMessage(fresh, message) }))
-          const admitted = decisions.filter(item => item.admission.accepted).map(item => item.message)
+          const admitted = decisions.filter(item => item.admission.accepted
+            // Accepted delivery is not consumption. While its recipient is
+            // running, leave the same mailbox item alone: the Host may have
+            // removed it from nextTurn before recording user/message, and a
+            // second queue in that gap can open a duplicate turn.
+            && !(item.message.deliveredAt !== undefined && live?.status === 'running')
+            && (failedMailboxDeliveries.get(item.message.id) ?? 0) <= MAX_MAILBOX_RECOVERY_ROUNDS).map(item => item.message)
           const discarded = decisions.filter(item => !item.admission.accepted)
           for (const group of new Set(discarded.map(item => item.admission.accepted ? '' : item.admission.reason))) {
             const ids = discarded.filter(item => !item.admission.accepted && item.admission.reason === group).map(item => item.message.id)
             await discardMailbox(stateRoot, fresh.id, currentMember.name, ids, group)
           }
           if (admitted.length > 0) {
-            if (!canReserve(fresh, currentMember)) return undefined
+            const existingTurn = hasLiveTurn(currentMember)
+            if (!existingTurn && (!isMemberAvailable(ctx, currentMember) || !canReserve(fresh, currentMember))) return undefined
             const claimedIds = await claimMailboxDelivery(stateRoot, fresh.id, currentMember.name, admitted.map(message => message.id))
             const claimed = new Set(claimedIds)
-            const activationId = claimed.size === 0 ? undefined : reserve(fresh, currentMember)
+            const activationId = claimed.size === 0 || existingTurn ? undefined : reserve(fresh, currentMember)
             if (activationId !== undefined) {
               if (fresh.runtimeWaits !== undefined) delete fresh.runtimeWaits[currentMember.id]
               await writeTeam(stateRoot, fresh)
@@ -601,12 +776,14 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
             mailboxBatch.messages,
             deliveryController.signal,
           )
-          await settleReservation(stateRoot, team.id, mailboxBatch.member.id, mailboxBatch.activationId!, accepted)
+          if (mailboxBatch.activationId !== undefined) await settleReservation(stateRoot, team.id, mailboxBatch.member.id, mailboxBatch.activationId, accepted)
           if (accepted) {
+            for (const message of mailboxBatch.messages) failedMailboxDeliveries.delete(message.id)
             await withTeamLock(teamLockKey(stateRoot, team.id), () => (
-              acknowledgeMailbox(stateRoot, team!.id, mailboxBatch.member.name, mailboxBatch.messages.map(message => message.id))
+              acknowledgeMailbox(stateRoot, team!.id, mailboxBatch.member.name, mailboxBatch.messages.map(message => message.id), 'delivered')
             ))
           } else {
+            for (const message of mailboxBatch.messages) failedMailboxDeliveries.set(message.id, (failedMailboxDeliveries.get(message.id) ?? 0) + 1)
             await withTeamLock(teamLockKey(stateRoot, team.id), () => (
               releaseMailboxDelivery(stateRoot, team!.id, mailboxBatch.member.name, mailboxBatch.messages.map(message => message.id))
             ))
@@ -619,13 +796,13 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
           const fresh = await readTeam(stateRoot, team!.id)
           if (disposed || fresh === undefined || fresh.halted === true) return undefined
           const currentMember = fresh.members.find(candidate => candidate.name === memberName && candidate.status !== 'removed')
-          if (currentMember === undefined || currentMember.id === '' || !isMemberAvailable(ctx, currentMember)
-            || !canReserve(fresh, currentMember)) return undefined
+          if (currentMember === undefined || currentMember.id === '' || !isMemberAvailable(ctx, currentMember)) return undefined
           // An open task owns this member even while waiting. planDispatch
           // separates deliberate waiting from runnable/interrupted recovery;
           // do not assign a second task just because the owner became idle.
-          const task = ownedOpenTask(fresh.tasks, currentMember.name)
-            ?? nextReadyTask(fresh.tasks, currentMember.name)
+          const task = ownedOpenTask(fresh, currentMember.name)
+            ?? nextReadyTask(fresh, currentMember.name)
+          if (!canReserve(fresh, currentMember, task)) return undefined
           if (fresh.runtimeWaits?.[currentMember.id] !== undefined) {
             // A dependency completion or quality repair can make a pending
             // assignment ready without a separate mailbox. That is a real
@@ -658,8 +835,10 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
 
           const inputArtifacts: NonNullable<DispatchTicket['inputArtifacts']>[number][] = []
           let craftPacket: ReturnType<typeof prepareCraftDelivery> | undefined
+          let taskMaterialPacket: ReturnType<typeof prepareTaskMaterialDelivery> | undefined
           try {
             craftPacket = prepareCraftDelivery(task, currentMember.id, decision.reuse ? task.attempt ?? 1 : (task.attempt ?? 0) + 1, ['writer', 'renderer'], 'assignment')
+            taskMaterialPacket = prepareTaskMaterialDelivery(task, currentMember.id, decision.reuse ? task.attempt ?? 1 : (task.attempt ?? 0) + 1, 'producer', false)
             inputArtifacts.push(...await prepareDependencyInputs(stateRoot, fresh, task,
               decision.reuse ? task.attempt ?? 1 : (task.attempt ?? 0) + 1))
           } catch (error) {
@@ -683,6 +862,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
             ? task.attemptId!
             : beginTaskAttempt(task, currentMember.name)
           saveCraftDelivery(task, craftPacket?.receipts ?? [])
+          saveTaskMaterialDelivery(task, taskMaterialPacket?.receipt)
           await syncTaskProjectInput(stateRoot, fresh, task)
           const dispatchId = randomUUID()
           const dispatchedAt = clock.now()
@@ -707,6 +887,8 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
             repairFeedback: renderTaskRepairFeedback(fresh, task, stateRoot),
             craftContent: craftPacket?.content,
             craftReceipts: craftPacket?.receipts,
+            taskMaterialContent: taskMaterialPacket?.content,
+            taskMaterialReceipt: taskMaterialPacket?.receipt,
             ...(task.project === undefined ? {} : {
               projectPath: resolve(stateRoot, fresh.id, task.project.path),
               inputPath: resolve(stateRoot, fresh.id, task.project.inputPath),
@@ -726,6 +908,10 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
           deliveryController.signal,
         )
         await settleReservation(stateRoot, team.id, ticket.memberId, ticket.activationId!, accepted)
+        // An accepted inbox delivery must not be duplicated merely because a
+        // runtime turn has not advanced. The member may be queued behind the
+        // provider capacity or already in that turn. Recovery handles refused
+        // delivery separately and native idle/turn events advance accepted work.
         if (accepted) {
           await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
             const fresh = await readTeam(stateRoot, team!.id)
@@ -733,6 +919,9 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
             if (fresh === undefined || task?.attemptId !== ticket.attemptId || task.dispatch === undefined || task.dispatch.id !== ticket.dispatchId) return
             for (const receipt of task.craftDeliveries ?? []) {
               if (ticket.craftReceipts?.some(r => r.id === receipt.id)) receipt.accepted = true
+            }
+            for (const receipt of task.taskMaterialDeliveries ?? []) {
+              if (receipt.id === ticket.taskMaterialReceipt?.id) receipt.accepted = true
             }
             task.dispatch.acceptedAt = clock.now()
             task.dispatch.failureCount = undefined
@@ -782,7 +971,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
   }
 
   const observeTurn = async (sessionId: string, workspace: string, event: SessionEvent): Promise<void> => {
-    if (disposed || (event.type !== 'turn/start' && event.type !== 'turn/end')) return
+    if (disposed || (event.type !== 'turn/start' && event.type !== 'turn/end' && event.type !== 'user/message')) return
     const stateRoot = stateRootOf(workspace, config)
     const located = await findTeamByParticipant(stateRoot, sessionId)
     if (located === undefined) return
@@ -790,6 +979,11 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
     await withTeamLock(teamLockKey(stateRoot, located.id), async () => {
       const team = await readTeam(stateRoot, located.id)
       if (team === undefined) return
+      if (event.type === 'user/message') {
+        const member = team.members.find(item => item.id === sessionId && item.status !== 'removed')
+        if (member) await acknowledgeMailbox(stateRoot, team.id, member.name, consumedMemberMailboxIds(event.data))
+        return
+      }
       if (event.type === 'turn/start') {
         changed = captureRuntimeTurn(team, sessionId, event.data.turn, event.time)
       } else {
@@ -799,7 +993,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
           if (block !== undefined) {
             changed = true
             await appendMailbox(stateRoot, team.id, 'captain', createMessage('scheduler', 'captain',
-              `Member runtime stopped: session ${sessionId}, turn ${block.turn}, code ${block.code}${block.status === undefined ? '' : ` (HTTP ${block.status})`}. ${block.message}. Automatic wake/retry is paused for this session; submitted artifacts and quality state are preserved. Restore its provider/connection and explicitly resume this member session. A captain model change does not resume member routes.`,
+              `Member runtime stopped: session ${sessionId}, turn ${block.turn}, code ${block.code}${block.status === undefined ? '' : ` (HTTP ${block.status})`}. ${block.message}. Automatic wake/retry is paused for this session; submitted artifacts and quality state are preserved. ${runtimeRecoveryGuidance(block.code)}. A captain model change does not resume member routes.`,
               { idempotencyKey: block.id }))
           }
         }
@@ -841,7 +1035,7 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
     }
   }
   ctx.on('session/event', (session, event) => {
-    if (event.type !== 'turn/start' && event.type !== 'turn/end') return
+    if (event.type !== 'turn/start' && event.type !== 'turn/end' && event.type !== 'user/message') return
     const previous = eventQueues.get(session.id) ?? Promise.resolve()
     const next = previous.then(() => observeTurn(session.id, session.header.cwd ?? process.cwd(), event))
       .catch((error: unknown) => ctx.logger.warn(`expert-teams: runtime observation failed for ${session.id}: ${String(error)}`))
@@ -858,8 +1052,11 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
     // handling; planDispatch reuses live attempt ids, so this is idempotent.
     const captainTeam = await findTeamByCaptain(stateRoot, agent.id)
     if (captainTeam !== undefined) {
-      if (status === 'idle') await runtime.kickTeam(workspace, captainTeam.id, agent)
-      else if (status === 'running') await flushCaptainMailbox(stateRoot, captainTeam.id, agent)
+      // A cold-restored captain may enter running directly, without a prior
+      // idle edge or a workspace found during plugin startup. Reconstruct
+      // handoff intent on either edge; member admission still prevents a
+      // second task while that member is running.
+      if (status === 'idle' || status === 'running') await runtime.kickTeam(workspace, captainTeam.id, agent)
       return
     }
     const located = await findTeamByParticipant(stateRoot, agent.id)
@@ -890,12 +1087,22 @@ export function installTeamScheduler(ctx: Context, config: SchedulerConfig): Tea
       ctx.logger.warn(`expert-teams: member status scheduling failed for ${agent.id}: ${String(error)}`)
     })
   })
+  // Restoring an idle captain need not emit an idle transition. The Host's
+  // startup-driving hook runs after registration/setup, so late workspace
+  // discovery and interrupted-member diagnostics do not rely on another
+  // human message or a one-shot startup timer.
+  ctx.on('agent/session-start', ({ agent }) => {
+    void runtime.recoverWorkspace(agent.session.header.cwd ?? process.cwd()).catch((error: unknown) => {
+      ctx.logger.warn(`expert-teams: session-start recovery failed for ${agent.id}: ${String(error)}`)
+    })
+  })
   const dispose = (): void => {
     disposed = true
     deliveryController.abort(new Error('team scheduler disposed'))
     for (const pending of recoveryTimers.values()) clock.clearTimeout(pending.timer)
     recoveryTimers.clear()
     mailboxRecovery.clear()
+    failedMailboxDeliveries.clear()
   }
   if (typeof ctx.effect === 'function') ctx.effect(() => dispose, 'expert-teams: scheduler recovery timers')
 

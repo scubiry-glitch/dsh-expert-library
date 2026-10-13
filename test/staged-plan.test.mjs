@@ -21,6 +21,21 @@ function plan(digest = 'digest-1') {
   return { planId: 'compiled-plan', digest, template: { id: 'demo', version: '1.0.0' }, tasks: [], roster: [] }
 }
 
+test('repeated identical edits retain the revision, timestamps and audit history', () => {
+  const original = createStagedPlan({ plan: plan(), request: { scenario: 'demo' },
+    runtime: { teamName: 'Demo', description: 'goal' }, createdBy: 'captain', expiresAt: 1000, now: 1 })
+  let current = original
+  for (let i = 0; i < 12; i++) {
+    current = editStagedPlan(current, { plan: structuredClone(current.plan), request: { ...current.request },
+      runtime: structuredClone(current.runtime), fields: ['tasks'], actor: 'captain', now: 10 + i })
+    assert.deepEqual(current, original)
+  }
+  const changed = editStagedPlan(current, { plan: current.plan, request: { ...current.request, goal: 'new requirement' },
+    runtime: { ...current.runtime, description: 'new requirement' }, fields: ['goal'], actor: 'captain', now: 50 })
+  assert.equal(changed.revision, original.revision + 1)
+  assert.notEqual(changed.digest, original.digest)
+})
+
 async function withRoot(fn) {
   const root = await mkdtemp(join(tmpdir(), 'expert-staged-plan-'))
   try {

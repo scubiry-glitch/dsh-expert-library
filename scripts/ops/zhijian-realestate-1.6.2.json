@@ -1,0 +1,48 @@
+{
+  "origin": "https://packs.meizu.life",
+  "organizationId": "beike",
+  "packId": "zhijian-realestate",
+  "name": "智见点评·房地产领域包",
+  "version": "1.6.2",
+  "sourceDir": "/root/zhijian/dsh-pack-zhijian-realestate-v16",
+  "sourceUrl": "https://github.com/scubiry-glitch/dsh-pack-zhijian-realestate.git",
+  "sourceCommit": "d1d264b4afa5a40f406b2c476bb2be9faf8f0a63",
+  "license": "UNLICENSED",
+  "distribution": {
+    "kind": "authenticated"
+  },
+  "notes": "V5 逐章论证与参考案例复盘；精确视觉评审契约和 Host 页图绑定。研究阶段并发优化由宿主独立配置启用。",
+  "reviewComment": "用户已授权启用并试跑 1.6.2。已核对包内逐章论证与视觉审计变更，执行领域包、V5、调度及发布脚本回归；审核账号与提交账号分离，不代表另一次人工独立审阅。",
+  "author": "admin",
+  "reviewer": "reviewer",
+  "credentialDir": "/var/lib/pack-center/oidc/users",
+  "receiptDir": "/var/lib/pack-center/release-receipts",
+  "settingsPath": "/root/zhijian/zhijianharness-main/settings.yaml",
+  "packCenterDir": "/root/zhijian/zhijianharness-main/pack-center",
+  "workspaces": [
+    "/root/.openclaw/workspace/98wiki"
+  ],
+  "legacyEnabledPacks": [
+    "pipeline-general",
+    "beike",
+    "bank-finance",
+    "pipeline-domains"
+  ],
+  "runtimeService": "dsh-web.service",
+  "healthUrl": "http://127.0.0.1:3080/",
+  "materializeAliases": [
+    "/root/zhijian/dsh-expert-library/domain-packs/builtin-library",
+    "/root/zhijian/dsh-expert-library/domain-packs/zhijian-realestate"
+  ],
+  "requiredSkills": [
+    "zhijian-research-craft-v5",
+    "zhijian-report-craft",
+    "zhijian-designer-render"
+  ],
+  "verificationTests": [
+    "test/viewpoint-research-v5.test.mjs",
+    "test/scheduler-runtime.test.mjs",
+    "test/pack-research-preflight.test.mjs",
+    "test/ops-pack-release.test.mjs"
+  ]
+}

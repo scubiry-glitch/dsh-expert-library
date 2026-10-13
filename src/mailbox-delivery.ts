@@ -27,6 +27,13 @@ function collectAccepted(value: unknown, accepted: Set<string>): void {
   }
 }
 
+/** Only Host-owned user/message events prove consumption, not inbox admission. */
+export function consumedMemberMailboxIds(value: unknown): string[] {
+  const ids = new Set<string>()
+  collectAccepted(value, ids)
+  return [...ids]
+}
+
 /** Queue only durable messages not already accepted by this live child.
  * Inbox and child-owned user events survive a lost durable-mailbox ACK; no
  * process-local receipt cache is needed. A canceled, unconsumed item remains
@@ -46,7 +53,13 @@ export async function deliverMemberMailbox(
     const accepted = new Set<string>()
     const child = ctx.agents.get(childId as SessionId)
     if (child) {
-      for (const item of [...(child.inbox?.nextTurn ?? []), ...(child.inbox?.nextStep ?? [])]) collectAccepted(item, accepted)
+      for (const item of child.inbox?.nextTurn ?? []) collectAccepted(item, accepted)
+      // An idle child cannot consume a nextStep message until some separate
+      // turn starts. Requeue it as a turn so an accepted steer cannot strand
+      // the team after the previous turn ended.
+      if (child.status !== 'idle') {
+        for (const item of child.inbox?.nextStep ?? []) collectAccepted(item, accepted)
+      }
       for (const value of sessionOwnEvents(child.session)) {
         const event = value as { type?: string; data?: unknown }
         if (event.type === 'user/message') collectAccepted(event.data, accepted)
@@ -60,7 +73,10 @@ export async function deliverMemberMailbox(
     if (pending.length === 0) return true
     const text = `${receiptPrefix}${JSON.stringify(pending.map(message => message.id))}\n\n${statePolicy}\n\n`
       + pending.map(message => `From ${message.from}:\n${message.content}`).join('\n\n')
-    return await deliverToMember(ctx, captain, childId, text, signal)
+    // A steer accepted near turn/end can remain in nextStep after the turn
+    // completes. The scheduler then treats it as actionable pending input and
+    // never dispatches the ready task. A FIFO turn always wakes the child.
+    return await deliverToMember(ctx, captain, childId, text, signal, 'queue')
   } catch (error: unknown) {
     ctx.logger.warn(`expert-teams: mailbox delivery to member ${childId} failed: ${String(error)}`)
     return false

@@ -251,6 +251,7 @@ test('member provider scope blocks a resolved provider before invocation', async
             expertId: 'alice',
             role: 'researcher',
             allowedProviders: ['zyt'],
+            allowedTools: ['expert_provider_call'],
           }),
         }
       : member)
@@ -399,4 +400,28 @@ test('planTaskCapabilities round-trips through readTeam like the other plan prov
   } finally {
     await rm(workspace, { recursive: true, force: true })
   }
+})
+
+test('future and completed tasks never lend provider capabilities to active work', () => {
+  const team = planTeam()
+  team.tasks.find(t => t.id === 't3').status = 'pending'
+  assert.deepEqual(resolveCapabilityAllowance(team, 'sess-alice').allowed, ['financial.stock.snapshot'])
+  team.tasks.find(t => t.id === 't3').status = 'completed'
+  assert.deepEqual(resolveCapabilityAllowance(team, 'sess-alice').allowed, ['financial.stock.snapshot'])
+  team.tasks.find(t => t.id === 't1').status = 'completed'
+  const result = resolveCapabilityAllowance(team, 'sess-alice')
+  assert.equal(result.constrained, true)
+  assert.deepEqual(result.allowed, [])
+})
+
+test('revoking durable provider tool permission blocks an already mounted tool', async t => {
+  const workspace = await mkdtemp(join(tmpdir(), 'provider-revoked-'))
+  t.after(() => rm(workspace, { recursive: true, force: true }))
+  const team = planTeam()
+  team.members[0].capabilityScope = createCapabilityScope({ expertId: 'fixture', role: 'worker', allowedTools: [], allowedDataProviders: ['wind'], allowedTasks: ['t1'] })
+  await writeTeamFixture(workspace, 'team1', team)
+  const calls = []
+  const result = await registerAndGetTool(fakeService(calls)).execute({ capability: 'financial.stock.snapshot', input: {} }, memberExec('sess-alice', workspace))
+  assert.equal(result.error.code, 'CAPABILITY_TOOL_DENIED')
+  assert.equal(calls.some(call => call[0] === 'invoke'), false)
 })

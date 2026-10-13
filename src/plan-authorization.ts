@@ -118,7 +118,7 @@ export function assertReviewedReportPlan(plan: ExecutionPlan): void {
 /** Expiry removes delegated approval authority, not the user's delivery requirement. */
 async function matchingReportRequirement(root: string, captain: string, context: SharedTaskContext): Promise<boolean> {
   const grant = await readPlanExecutionAuthorization(root, captain)
-  return grant?.requireReviewedReport === true && grant.revokedAt === undefined && planInputSha256(context) === grant.expectedInputSha256
+  return grant?.requireReviewedReport === true && planInputSha256(context) === grant.expectedInputSha256
 }
 export async function requireAuthorizedReportPlan(root: string, captain: string, context: SharedTaskContext, plan: ExecutionPlan): Promise<void> {
   if (await matchingReportRequirement(root, captain, context)) assertReviewedReportPlan(plan)

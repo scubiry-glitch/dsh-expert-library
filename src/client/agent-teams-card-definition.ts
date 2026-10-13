@@ -29,6 +29,7 @@ export interface ExpertTeamsCardData {
   readonly teamName: string
   readonly members: readonly {
     readonly id: string
+    readonly expertId?: string
     readonly name: string
     readonly role: string
   }[]

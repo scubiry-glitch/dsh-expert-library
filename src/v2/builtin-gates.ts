@@ -145,6 +145,17 @@ function numericClaims(line: string): string[] {
     const index = match.index
     const prev = line[index - 1]
     const next = line[index + raw.length]
+    // Digits inside identifiers and hexadecimal hashes are metadata, not
+    // quantitative claims (sha256, C1, 57c7f723...).
+    if ((prev !== undefined && /[A-Za-z_]/.test(prev))
+      || (next !== undefined && /[A-Za-z_]/.test(next))) continue
+    if (raw.length >= 12 && /\b(?:sha-?256|hash)\b/i.test(line)) continue
+    // A bare calendar year or source-code line reference is also metadata.
+    const before = line.slice(0, index)
+    const after = line.slice(index + raw.length)
+    if (/^(?:19|20)\d{2}$/.test(raw) && !/^\s*(?:%|‰|万|亿|元|套|户|人|平方米|㎡)/.test(after)) continue
+    if (/(?:\bline\s*|行号\s*[:：]?\s*)$/i.test(before)
+      || (/第\s*$/.test(before) && /^\s*行/.test(after))) continue
     // Date-like / range tokens: adjacent digit or date separator on either side.
     if (prev !== undefined && /[\d\-/年.]/.test(prev)) continue
     if (next !== undefined && /[\d\-/年月日]/.test(next)) continue
@@ -162,11 +173,12 @@ function numericClaims(line: string): string[] {
 function evaluateStructure(input: GateInput, ctx: GateEvaluationContext, options: BuiltinGateOptions): GateResult {
   const config = ctx.spec.config ?? {}
   const issues: GateIssue[] = []
+  const inspected = input.taskId === undefined ? '受检交付物' : `任务 ${input.taskId} 的 output 字段（output/result.json 中的 output 文本）`
   if (input.artifact.trim() === '') {
     issues.push({
       code: 'empty-artifact',
       severity: 'error',
-      evidence: '交付物为空（无任何内容）',
+      evidence: `${inspected}为空（无任何内容）`,
       correction: '生成正文后再交付，不要提交空文档',
     })
     return toResult(ctx.spec.id, issues, ctx.now)
@@ -198,7 +210,7 @@ function evaluateStructure(input: GateInput, ctx: GateEvaluationContext, options
           code: 'missing-section',
           severity: 'error',
           location: section.id,
-          evidence: `未找到必填章节标记 "${section.id}"`,
+          evidence: `${inspected}未找到必填章节标记 "${section.id}"；单独发布的文件不会替代此字段`,
           correction: `补充必填章节 "${section.id}"`,
         })
       }
@@ -215,7 +227,7 @@ function evaluateStructure(input: GateInput, ctx: GateEvaluationContext, options
         code: 'missing-section',
         severity: 'error',
         location: marker,
-        evidence: `未找到必填章节标记 "${marker}"`,
+        evidence: `${inspected}未找到必填章节标记 "${marker}"；单独发布的文件不会替代此字段`,
         correction: `补充必填章节 "${marker}"`,
       })
     }

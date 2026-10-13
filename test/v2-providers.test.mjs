@@ -77,6 +77,7 @@ test('zyt manifest declares http-api plus optional cli and honors preferCli', ()
   assert.equal(withCli.transports.length, 2)
   assert.equal(withCli.transports[1].kind, 'local-cli')
   assert.deepEqual(withCli.transports[1].args, ['--json'])
+  assert.equal(withCli.transports[1].auth.source, 'file', 'customer CLI reads its private config before passing the key to the child')
   assert.equal(withCli.capabilities[1].transportId, 'http', 'default keeps http binding')
 
   const preferCli = buildZytManifest({ cliCommand: 'zyt', preferCli: true })
@@ -109,9 +110,9 @@ test('beike manifest: reads bind mcp-http, writes bind mcp-http-write and are ga
   assert.match(writeTransport.auth.credentialRef, /BEIKE_MCP_API_KEY/)
 })
 
-test('zyt caveats mark live gaps; beike caveats carry the 2026-08-22 live verification', () => {
+test('zyt caveats distinguish internal live check from external-license gap; beike retains its live verification', () => {
   const zyt = buildZytManifest()
-  assert.ok(zyt.caveats.some(c => c.includes('待实测')), 'zyt live schema marked unverified')
+  assert.ok(zyt.caveats.some(c => c.includes('内部授权口径已实测') && c.includes('外部客户口径需')), 'zyt external-license gap remains explicit')
   const beike = buildBeikeManifest()
   assert.ok(beike.caveats.some(c => c.includes('【实测 2026-08-22】')), 'beike live verification recorded')
   assert.ok(beike.caveats.some(c => c.includes('17 个工具')), 'live tool count recorded')
@@ -212,6 +213,8 @@ test('buildZytRequestPlan local config commands and validation errors', () => {
 })
 
 test('zytPlanFromOperation maps capability inputs to plans and validates required params', () => {
+  const compare = zytPlanFromOperation('zyt.indicators.compare', { cities: ['北京', '上海'], code: 'SH_VOL' })
+  assert.equal(compare.query.cities, '北京,上海')
   const series = zytPlanFromOperation('zyt.indicators.series', { city: '北京', code: 'SH_PRICE', periodEnd: '2026-06', limit: '6' })
   assert.equal(series.command, '指标时序')
   assert.deepEqual(series.query, { city: '北京', code: 'SH_PRICE', periodEnd: '2026-06', limit: '6' })
@@ -304,6 +307,14 @@ test('beike CLI success keeps the --json payload; failure uses the stable code, 
   assert.match(clap.error.details.stderr, /unrecognized subcommand/)
 })
 
+test('beike CLI entity blocks become table-ready rows while the original response remains available', () => {
+  const text = '<参考数据><租赁房源><106121504184>{"摘要信息":{"房源ID":"106121504184","租赁价格":"3200元/月"}}</106121504184></租赁房源></参考数据>'
+  const result = normalizeBeikeCliOutput({ exitCode: 0, stdout: JSON.stringify({ ok: true, data: text }) }, { operation: 'beike.rent_house_search', transportId: 'cli' })
+  assert.equal(result.ok, true)
+  assert.deepEqual(result.data.data.list, [{ id: '106121504184', 房源ID: '106121504184', 租赁价格: '3200元/月' }])
+  assert.equal(result.data.data.text, text)
+})
+
 test('beike MCP HTTP result unwraps content[0].text; JSON-RPC errors map with the payload code', () => {
   const inner = JSON.stringify({ code: 0, data: { list: [] }, unit: '套' })
   const ok = normalizeBeikeMCPHttpOutput({ status: 200, body: JSON.stringify({ jsonrpc: '2.0', id: 1, result: { content: [{ type: 'text', text: inner }] } }) }, beikeOptions)
@@ -328,6 +339,33 @@ test('beike planners produce MCP call params and CLI argv (live-verified surface
   assert.equal(call.params.name, 'house_search')
   assert.deepEqual(call.params.arguments, { city: '上海' })
 
-  assert.deepEqual(beikeCliArgv('realestate.listing.search', { city: '上海' }), ['house_search', '--city', '上海'])
+  assert.deepEqual(beikeCliArgv('realestate.listing.search', { city: '上海' }), ['buy', 'search', '--city', '上海', '--query', '上海二手房', '--house-type', 'second', '--json'])
+  assert.deepEqual(beikeCliArgv('realestate.rent.search', { city: '贵阳', period: '2026-10', query: '观山湖整租' }), ['rent', 'search', '--city', '贵阳', '--query', '观山湖整租', '--json'])
+  assert.deepEqual(beikeCliArgv('realestate.policy.search', { city: '贵阳', topic: '公积金贷款', query: '首套房' }), ['policy', 'search', '--city', '贵阳', '--query', '公积金贷款；首套房', '--json'])
+  assert.throws(() => beikeCliArgv('realestate.rent.search', { city: '贵阳', business_types: ['普租'] }), /Unsupported/)
   assert.throws(() => beikeMCPCallParams('unknown.beike.op', {}), /unknown beike operation/)
+})
+
+test('beike CLI preference binds only supported reads; sensitive operations retain the write gate', () => {
+  const manifest = buildBeikeManifest({ cliCommand: '/usr/local/bin/beike', preferCli: true })
+  const transport = manifest.transports.find(item => item.id === 'cli')
+  assert.deepEqual(transport.args, undefined)
+  assert.equal(manifest.capabilities.find(item => item.capability === 'realestate.rent.search').transportId, 'cli')
+  assert.equal(manifest.capabilities.find(item => item.capability === 'realestate.policy.search').transportId, 'cli')
+  assert.equal(manifest.capabilities.find(item => item.capability === 'realestate.agent.search').transportId, 'mcp-http')
+  assert.equal(manifest.capabilities.find(item => item.capability === 'realestate.rent.appoint').transportId, 'mcp-http-write')
+})
+
+test('beike rent and policy adapters map dataset aliases to native schema without losing conditions', () => {
+  assert.deepEqual(beikeMCPCallParams('realestate.rent.search', { city: '上海', period: '2026-09', query: '徐汇整租两室', business_types: ['普租'] }).params,
+    { name: 'rent_house_search', arguments: { city_name: '上海', query: '徐汇整租两室', business_types: ['普租'] } })
+  assert.deepEqual(beikeMCPCallParams('beike.rent_house_search', { city_name: '上海', query: '整租' }).params.arguments,
+    { city_name: '上海', query: '整租' })
+  assert.deepEqual(beikeMCPCallParams('realestate.policy.search', { city: '上海', topic: '公积金贷款首付', query: '首套住房' }).params.arguments,
+    { city_name: '上海', query: '公积金贷款首付；首套住房' })
+  assert.deepEqual(beikeMCPCallParams('beike.policy_search', { city_name: '上海', query: '首套首付' }).params.arguments,
+    { city_name: '上海', query: '首套首付' })
+  for (const input of [{city:'上海',city_name:'北京'}, {city:3}, {city:'上海',period:[]}, {city:'上海',business_types:['未知']}, {city:'上海',budget:4000}])
+    assert.throws(() => beikeMCPCallParams('realestate.rent.search', input))
+  assert.throws(() => beikeMCPCallParams('realestate.policy.search', { city: '上海' }), /topic or query/)
 })

@@ -1,0 +1,31 @@
+{
+  "origin": "https://packs.meizu.life",
+  "organizationId": "rongcheng",
+  "packId": "zhijian-residential-advisory",
+  "name": "智见住宅估值咨询基础 Agent 领域包",
+  "version": "0.3.0",
+  "sourceDir": "/root/zhijian/pack-sources/dsh-pack-zhijian-residential-advisory",
+  "sourceUrl": "https://github.com/scubiry-glitch/dsh-pack-zhijian-residential-advisory.git",
+  "sourceCommit": "82fe361cf7aaed15c5f38ec2716b1aeaaeeef93c",
+  "license": "UNLICENSED",
+  "distribution": {
+    "kind": "authenticated"
+  },
+  "notes": "v0.3.0：四报告直出（冻结生成器默认交付完整/外发四份报告），城市绑定运行时契约；新增 residential-four-report-delivery 技能与四报告团队模板，补充交付校验（check_pack/validate_delivery）与福州稳定快照 Demo。",
+  "reviewComment": "用户已授权拉取 v0.3.0 并更新（PR #1 ruriying/four-report-delivery-v0.3.0 合入 main）。已复核新增技能、团队模板、运行时契约与交付校验，dsh-pack check 与包内 check_pack.py 均通过；执行领域包、预检及发布回归；审核账号与提交账号分离，不代表另一次人工独立审阅。",
+  "author": "admin",
+  "reviewer": "reviewer",
+  "credentialDir": "/var/lib/pack-center/oidc/users",
+  "receiptDir": "/var/lib/pack-center/release-receipts",
+  "settingsPath": "/root/zhijian/zhijianharness-main/settings.yaml",
+  "packCenterDir": "/root/zhijian/zhijianharness-main/pack-center",
+  "workspaces": [
+    "/root/.openclaw/workspace/98wiki"
+  ],
+  "requiredSkills": [
+    "residential-four-report-delivery",
+    "residential-market-value-reference",
+    "residential-rent-reference",
+    "residential-hold-return-acquisition"
+  ]
+}

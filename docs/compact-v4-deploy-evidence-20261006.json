@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-10-06T14:59:59.852814+00:00",
+  "runtime": {
+    "at": "2026-10-06T14:59:52.547Z",
+    "pid": 1468015,
+    "agents": [
+      {
+        "id": "session-bdf4fe75-fc8d-4cde-90d7-78f7d84ffd0f",
+        "status": "idle"
+      },
+      {
+        "id": "session-3f7d0b56-d00b-46d2-8a3a-d7b18170b5ab",
+        "status": "idle"
+      },
+      {
+        "id": "session-6c3d4868-860c-4698-b6a7-b9d37d0d47c2",
+        "status": "idle"
+      }
+    ],
+    "stageFields": [
+      "scenario",
+      "profile",
+      "research_flow",
+      "tasks",
+      "report_bundle",
+      "report_outline",
+      "plan_models",
+      "team_name",
+      "goal",
+      "data",
+      "city",
+      "period"
+    ],
+    "submitFields": [
+      "submission_id",
+      "publications",
+      "task_id",
+      "status",
+      "output",
+      "attempt_id",
+      "execution_state",
+      "wait_reason"
+    ],
+    "reviewFields": [
+      "repair_action",
+      "review_audit",
+      "event_id",
+      "task_id",
+      "reviewer",
+      "verdict",
+      "artifacts",
+      "acceptance_results",
+      "prepare_only",
+      "material_receipt",
+      "task_material_receipt",
+      "independent_review",
+      "changed_paths",
+      "findings"
+    ]
+  },
+  "regression": {
+    "passed": 64,
+    "failed": 0,
+    "log": "compact-v4-regression.log"
+  },
+  "legacyPlanUnchanged": true,
+  "legacyGraphUnchanged": true,
+  "historicalT12T13T19PublicationsUnchanged": true,
+  "publicNewFeaturesPresent": true,
+  "publicAssetSha256": "84ca60649941d62505bca1f9e6bac616dd834638528760ae5e7f2cfd645e3cfa",
+  "currentLocalAssetSha256": "48af79b06d974fcf90a9b14175df0444cde426a319dff6f1bdbcb3392989a9ea",
+  "publicAssetMatchesCurrentLocal": false,
+  "finalServiceCheck": {
+    "at": "2026-10-06T23:02:21.904945+08:00",
+    "status": "MainPID=1470443\nActiveState=active",
+    "runtimeProbeRemoved": true,
+    "originalCaptainOwnerRetained": true
+  }
+}

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dusk</title>
+  <style>
+    html, body { margin: 0; min-height: 100vh; background: #f4efe6; }
+    body { display: flex; align-items: center; justify-content: center;
+           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .frame { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .sheet { padding: 8px; background: #fbf8f2;
+             box-shadow: 0 12px 28px -18px rgba(47,58,72,.5), 0 1px 3px rgba(47,58,72,.08); }
+    .sheet canvas { display: block; }
+    #status { font-size: 13px; letter-spacing: .04em; color: #4b5b8f;
+              min-height: 1.3em; transition: opacity 250ms ease; }
+    #status.fade { opacity: 0; }
+  </style>
+  <!-- Load order matters: p5 first, then p5.brush (it registers itself as a p5 addon). -->
+  <script src="../vendor/p5.min.js"></script>
+  <script src="../vendor/p5.brush.js"></script>
+</head>
+<body>
+<main class="frame">
+  <div class="sheet" id="sheet"></div>
+  <div id="status" aria-live="polite"></div>
+</main>
+
+<script>
+// engine.js module state. Only functions are serialised below, so the two
+// non-function bindings the engine relies on are declared here by hand:
+// canvas dimensions (read by the vocabulary at call time) and the
+// scaleBrushes once-only guard.
+let W = 600, H = 600, m = 600;
+let brushScale = null;
+
+// The dials this style was tuned with.
+const S = {
+  "pattern": "drips",
+  "flow": "vertical",
+  "water": 0.7,
+  "coverage": 0.5,
+  "density": 0.35,
+  "scale": 1,
+  "soft": 0.6,
+  "glaze": 0.4,
+  "touch": 0.2,
+  "detail": 0.6,
+  "brushSize": 1
+};
+
+const PALETTE = {
+  "seed": 1874,
+  "ground": "#f4ece6",
+  "washes": [
+    "#8f7fa8",
+    "#c68aa0",
+    "#e6b39a",
+    "#f0cfa0"
+  ],
+  "accents": [
+    "#6d5c8a",
+    "#e28f8f",
+    "#d9a56b"
+  ],
+  "highlights": [
+    "#f9dc9c",
+    "#fff3e0"
+  ],
+  "phrases": [
+    "creating…",
+    "washing…",
+    "flowing…",
+    "blooming…",
+    "finished"
+  ]
+};
+
+const rr = (a, b) => random(a, b);
+
+const pickOne = (arr) => arr[Math.floor(random(arr.length))];
+
+const clamp01 = (v) => Math.max(0, Math.min(1, v));
+
+function jitterEllipse(cx, cy, rx, ry, n, jitter, rot = 0) {
+  const pts = [], a0 = rr(0, TWO_PI), cr = Math.cos(rot), sr = Math.sin(rot);
+  for (let i = 0; i < n; i++) {
+    const a = a0 + (i / n) * TWO_PI, k = 1 + rr(-jitter, jitter);
+    const x = Math.cos(a) * rx * k, y = Math.sin(a) * ry * k;
+    pts.push([cx + x * cr - y * sr, cy + x * sr + y * cr]);
+  }
+  return pts;
+}
+
+function bandPolygon(y0, y1, wobble, n = 9) {
+  const top = [], bottom = [];
+  for (let i = 0; i <= n; i++) { const x = -10 + (W + 20) * (i / n); top.push([x, y0 + rr(-wobble, wobble)]); bottom.push([x, y1 + rr(-wobble, wobble)]); }
+  return top.concat(bottom.reverse());
+}
+
+const bboxOf = (pts, pad) => {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const [x, y] of pts) { if (x < x0) x0 = x; if (y < y0) y0 = y; if (x > x1) x1 = x; if (y > y1) y1 = y; }
+  return [Math.max(0, Math.floor(x0 - pad)), Math.max(0, Math.floor(y0 - pad)), Math.min(W, Math.ceil(x1 + pad)), Math.min(H, Math.ceil(y1 + pad))];
+};
+
+function fillStyle(color, opacity, bleed, texture, border) { brush.noStroke(); brush.noHatch(); brush.noWash(); brush.fill(color, opacity); brush.fillBleed(bleed, 'out'); brush.fillTexture(texture, border); }
+
+function washStyle(color, opacity) { brush.noStroke(); brush.noHatch(); brush.noFill(); brush.wash(color, opacity); }
+
+function strokeStyle(name, color, weight) { brush.noFill(); brush.noWash(); brush.noHatch(); brush.set(name, color, weight); }
+
+const D = (fn, bb, axis, dir, dur, gap = 60) => ({ fn, bb, axis, dir, dur, gap });
+
+function flushWash() {
+  brush.noStroke(); brush.noHatch(); brush.noWash();
+  brush.fill('#000000', 0); brush.fillBleed(0); brush.fillTexture(0, 0);
+  brush.polygon([[-8, -8], [-6, -8], [-6, -6]]);
+}
+
+function ensureBrushes(scale) {
+  if (brushScale !== null) {
+    if (Math.abs(brushScale - scale) > 1e-6) {
+      console.warn(`engine: brushes already scaled to ${brushScale}; ignoring request for ${scale}. ` +
+                   'scaleBrushes multiplies in place, so all canvases on a page must share one size.');
+    }
+    return;
+  }
+  brush.add('flick', { weight: 0.7, vibration: 0.12, definition: 0.9, quality: 0.8, opacity: 200, spacing: 0.1, pressure: { curve: [0.25, 0.25], min_max: [1.1, 0.85] } });
+  brush.add('rim', { weight: 0.45, vibration: 0.35, definition: 0.7, quality: 0.8, opacity: 190, spacing: 0.1, pressure: { curve: [0.15, 0.2], min_max: [1.2, 1] } });
+  brush.scaleBrushes(scale);
+  brushScale = scale;
+}
+
+function createEngine(styleConfig, opts = {}) {
+  let cfg = styleConfig;
+  let buf, paint, canvasEl;
+  let strokes = [], idx = 0;
+  let startMs = null, currentCycle = -1, phaseIndex = -1, fadeTimer = null;
+  let statusEl = opts.statusEl || null;
+  const freeze = typeof opts.freeze === 'number' ? clamp01(opts.freeze) : null;
+  const nextConfig = opts.nextConfig || (() => cfg);
+
+  function setup() {
+    W = cfg.canvasSize; H = cfg.canvasSize; m = Math.min(W, H);
+    const cnv = createCanvas(W, H, WEBGL);
+    canvasEl = cnv.elt || cnv.canvas || document.querySelector('canvas');
+    if (opts.mount) mount(opts.mount);
+
+    ensureBrushes(3 * m / 600);
+
+    // `paint` holds everything finished so far; `buf` is paint plus the stroke
+    // being drawn. Drawing each stroke over a copy of the painting lets its wet
+    // edges mix with the real colours underneath, and every copy between the
+    // three surfaces is opaque (no fringes).
+    paint = createGraphics(W, H, WEBGL);
+    buf = createGraphics(W, H, WEBGL);
+    paint.imageMode(CORNER); buf.imageMode(CORNER);
+    brush.load(buf);
+    // pre-warm the fill shaders into the buffer, then wipe it
+    buf.push(); buf.translate(-W / 2, -H / 2);
+    fillStyle('#7a86bd', 200, 0.3, 0.5, 0.3); brush.circle(W / 2, H / 2, 12);
+    buf.pop(); buf.clear();
+    imageMode(CORNER);
+    background(cfg.palette.ground);
+  }
+
+  /* Move the one canvas into a new parent. Used by the gallery to hand the
+     live canvas from card to card. */
+  function mount(el) {
+    if (canvasEl && el && canvasEl.parentElement !== el) el.appendChild(canvasEl);
+  }
+
+  /* Point the engine at a different style and start it from the first stroke. */
+  function load(nextCfg) {
+    cfg = nextCfg || cfg;
+    // The canvas and the scaled brushes are both fixed at setup, so every style
+    // sharing a page has to share its size. Say so rather than paint at the
+    // wrong coordinates.
+    if (cfg.canvasSize !== W) {
+      console.warn(`engine: "${cfg.label}" wants canvasSize ${cfg.canvasSize} but the canvas is ${W}. ` +
+                   'Painting at ' + W + '. All styles on one page must share a canvasSize.');
+    }
+    brush.load(buf);                       // brush.load is a global retarget
+    randomSeed(cfg.palette.seed); noiseSeed(cfg.palette.seed);
+    strokes = cfg.strokes(cfg.palette);
+    // give every stroke its own seed, then lay the timeline out end to end
+    // and fit it to loopMs
+    let cursor = 0;
+    for (const s of strokes) { s.seed = Math.floor(random() * 1e9); s.begun = false; s.rev = null; s.start = cursor; cursor += s.dur + s.gap; }
+    const k = cfg.loopMs / cursor;
+    for (const s of strokes) { s.start *= k; s.dur *= k; s.end = s.start + s.dur; }
+    idx = 0; phaseIndex = -1;
+    paint.background(cfg.palette.ground);
+    background(cfg.palette.ground);
+  }
+
+  function beginStroke(s) {
+    buf.clear();
+    buf.push(); buf.translate(-W / 2, -H / 2);
+    buf.image(paint, 0, 0, W, H);          // start from the painting so far
+    randomSeed(s.seed); noiseSeed(s.seed);
+    s.fn();
+    flushWash();
+    buf.pop();
+    s.begun = true; s.p = 0;
+  }
+  // a finished stroke becomes part of the painting
+  function foldStroke() {
+    paint.push(); paint.translate(-W / 2, -H / 2);
+    paint.image(buf, 0, 0, W, H);
+    paint.pop();
+  }
+  // draw the revealed part of the stroke in progress: a slice of its box,
+  // growing along its direction
+  function revealSlice(s) {
+    const [x0, y0, x1, y1] = s.bb;
+    if (x1 <= x0 || y1 <= y0 || s.p <= 0) return;
+    if (s.axis === 'x') {
+      const w = Math.round((x1 - x0) * s.p); if (w <= 0) return;
+      const a = s.dir > 0 ? x0 : x1 - w;
+      image(buf, a, y0, w, y1 - y0, a, y0, w, y1 - y0);
+    } else {
+      const h = Math.round((y1 - y0) * s.p); if (h <= 0) return;
+      const a = s.dir > 0 ? y0 : y1 - h;
+      image(buf, x0, a, x1 - x0, h, x0, a, x1 - x0, h);
+    }
+  }
+  function paintUpTo(t) {
+    while (idx < strokes.length && strokes[idx].start <= t) {
+      const s = strokes[idx];
+      if (!s.begun) beginStroke(s);
+      s.p = Math.min(1, (t - s.start) / s.dur);
+      if (s.p >= 1) { foldStroke(); idx++; } else break;
+    }
+  }
+  function drawFrame(t) {
+    paintUpTo(t);
+    image(paint, 0, 0, W, H);
+    const s = strokes[idx];
+    if (s && s.begun) revealSlice(s);
+  }
+
+  function draw() {
+    translate(-W / 2, -H / 2);
+    if (freeze !== null) {
+      if (!strokes.length) { load(nextConfig(0)); drawFrame(freeze * cfg.loopMs); updateStatus(freeze); noLoop(); }
+      return;
+    }
+    if (startMs === null) startMs = millis();
+    const now = millis() - startMs, cycleMs = cfg.loopMs + cfg.holdMs;
+    const cycle = Math.floor(now / cycleMs), elapsed = now % cycleMs;
+    if (cycle !== currentCycle) { currentCycle = cycle; load(nextConfig(cycle)); }
+    drawFrame(Math.min(elapsed, cfg.loopMs));
+    updateStatus(Math.min(elapsed / cfg.loopMs, 1));
+  }
+
+  /* Restart from the first stroke on the next frame. */
+  function restart() { startMs = null; currentCycle = -1; }
+
+  /* Paint up to t on demand, outside the animation loop. drawFrame is already
+     incremental — paintUpTo resumes from where it left off — so the caller can
+     walk t up over several frames to paint a whole picture without blocking.
+     The gallery uses this to render each card's finished still at load. */
+  function renderTo(t) { push(); translate(-W / 2, -H / 2); drawFrame(t); pop(); }
+
+  /* Point at a different style and restart. The strokes are not rebuilt here —
+     the next draw() does that once, via nextConfig. Used by the gallery when
+     the live canvas moves to another card. */
+  function switchTo(nextCfg, nextStatusEl) {
+    cfg = nextCfg || cfg;
+    if (nextStatusEl !== undefined) {
+      if (statusEl && statusEl !== nextStatusEl) { clearTimeout(fadeTimer); statusEl.textContent = ''; }
+      statusEl = nextStatusEl;
+    }
+    restart();
+  }
+
+  function updateStatus(progress) {
+    if (!statusEl) return;
+    const list = cfg.palette.phrases;
+    if (!list || !list.length) return;
+    let i;
+    if (progress >= 1) i = list.length - 1;
+    else { const active = Math.max(list.length - 1, 1); i = Math.min(Math.floor(progress * active), active - 1); }
+    if (i === phaseIndex) return;
+    const fresh = phaseIndex === -1;
+    phaseIndex = i;
+    clearTimeout(fadeTimer);
+    if (fresh) { statusEl.classList.remove('fade'); statusEl.textContent = list[i]; return; }
+    statusEl.classList.add('fade');
+    fadeTimer = setTimeout(() => { statusEl.textContent = list[i]; statusEl.classList.remove('fade'); }, 250);
+  }
+
+  return {
+    setup, draw, load, mount, restart, switchTo, renderTo,
+    get config() { return cfg; },
+    get canvas() { return canvasEl; },
+  };
+}
+
+function columnPolygon(x0, x1, wobble, n = 9) {
+    const left = [], right = [];
+    for (let i = 0; i <= n; i++) {
+      const y = -20 + (H + 40) * (i / n);
+      left.push([x0 + rr(-wobble, wobble), y]);
+      right.push([x1 + rr(-wobble, wobble), y]);
+    }
+    return left.concat(right.reverse());
+  }
+
+function schedule(items, t0, t1, jitter = 0.3) {
+    const step = (t1 - t0) / Math.max(items.length, 1);
+    items.forEach((it, i) => { it.t = t0 + step * (i + 0.5) + rr(-jitter, jitter) * step; });
+    return items;
+  }
+
+function glazeDraw(x0, y0, x1, y1, color, weight, field = 'hand') {
+    brush.field(field); strokeStyle('marker', color, weight * S.brushSize);
+    brush.line(x0, y0, x1, y1); brush.noField();
+  }
+
+function flickDraw(x, y, len, a, color, weight) {
+    strokeStyle('flick', color, weight * S.brushSize);
+    brush.line(x - Math.cos(a) * len / 2, y - Math.sin(a) * len / 2, x + Math.cos(a) * len / 2, y + Math.sin(a) * len / 2);
+  }
+
+const flowAxis = () => (S.flow === 'horizontal' ? 'x' : 'y');
+
+const longAxis = (bb) => ((bb[2] - bb[0]) >= (bb[3] - bb[1]) ? 'x' : 'y');
+
+function dWash(color, opacity) {
+    const pts = [[-20, -20], [W + 20, -20], [W + 20, H + 20], [-20, H + 20]];
+    return D(() => { washStyle(color, opacity); brush.polygon(pts); }, [0, 0, W, H], flowAxis(), 1, 700, 120);
+  }
+
+function dGround(pts, color, opacity, bleed, texture) {
+    return D(() => { fillStyle(color, opacity, bleed, texture, 0.3); brush.polygon(pts); },
+             bboxOf(pts, m * 0.25), flowAxis(), 1, 520, 90);
+  }
+
+function dGlaze(x0, y0, x1, y1, color, weight, field) {
+    const bb = bboxOf([[x0, y0], [x1, y1]], 14 + weight * 4 * S.brushSize);
+    const axis = Math.abs(x1 - x0) >= Math.abs(y1 - y0) ? 'x' : 'y';
+    const dir = axis === 'x' ? (Math.sign(x1 - x0) || 1) : (Math.sign(y1 - y0) || 1);
+    const len = Math.hypot(x1 - x0, y1 - y0);
+    return D(() => glazeDraw(x0, y0, x1, y1, color, weight, field), bb, axis, dir, 90 + len * 0.45, 45);
+  }
+
+function dMark(pts, color, opacity, bleed, texture) {
+    const bb = bboxOf(pts, m * 0.08 + 14);
+    const axis = S.pattern === 'drips' ? 'y' : longAxis(bb);
+    const extent = axis === 'x' ? bb[2] - bb[0] : bb[3] - bb[1];
+    return D(() => { fillStyle(color, opacity, bleed, texture, 0.3); brush.polygon(pts); },
+             bb, axis, 1, 180 + extent * 0.9, 70);
+  }
+
+function dFlick(x, y, len, a, color, weight) {
+    const ends = [[x - Math.cos(a) * len / 2, y - Math.sin(a) * len / 2], [x + Math.cos(a) * len / 2, y + Math.sin(a) * len / 2]];
+    const axis = Math.abs(Math.cos(a)) >= Math.abs(Math.sin(a)) ? 'x' : 'y';
+    return D(() => flickDraw(x, y, len, a, color, weight), bboxOf(ends, 10 + weight * 5), axis, 1, 90, 25);
+  }
+
+function dTouches(points, C, count, angleFn, sizeMul = 1) {
+    const items = [];
+    count = Math.round(count * (0.4 + 0.6 * S.detail));
+    for (let i = 0; i < count; i++) {
+      const p = points.length ? pickOne(points) : [rr(0, W), rr(0, H), 20];
+      const x = p[0] + rr(-p[2], p[2]), y = p[1] + rr(-p[2] * 0.6, p[2] * 0.6);
+      const color = random() < 0.85 ? pickOne(C.highlights) : pickOne(C.accents);
+      const len = rr(8, 22) * S.scale * sizeMul, weight = rr(0.6, 1.1) * S.scale;
+      items.push(dFlick(x, y, len, angleFn(), color, weight));
+    }
+    return items;
+  }
+
+function buildAbstraction(C) {
+    const out = [];
+    const group = (items, t0, t1) => { schedule(items, t0, t1); out.push(...items); };
+    const { water, density: dens, scale: sc, soft } = S;
+    const { washes, accents, highlights } = C;
+    const horizontal = S.flow === 'horizontal', vertical = S.flow === 'vertical';
+
+    // 1. the coverage wash, flat, under everything
+    if (S.coverage > 0.02) {
+      const w = dWash(washes[0], Math.round(S.coverage * 200));
+      w.t = 0.02;
+      out.push(w);
+    }
+
+    // 2. the ground: a few wide stains, one per wash colour, overlapping
+    const nGround = 2 + Math.round(dens * 2);
+    const ground = [];
+    for (let i = 0; i < nGround; i++) {
+      const color = washes[i % washes.length];
+      const opacity = Math.round(225 - water * 80);
+      const bleed = 0.25 + water * 0.55, texture = 0.3 + water * 0.5;
+      let pts;
+      if (horizontal) { const y0 = -20 + (i / nGround) * H + rr(-30, 30), h = H / nGround * rr(1.2, 1.8); pts = bandPolygon(y0, y0 + h, 14 + soft * 20); }
+      else if (vertical) { const x0 = -20 + (i / nGround) * W + rr(-30, 30), w = W / nGround * rr(1.2, 1.8); pts = columnPolygon(x0, x0 + w, 14 + soft * 20); }
+      else pts = jitterEllipse(rr(W * 0.2, W * 0.8), rr(H * 0.2, H * 0.8), W * rr(0.35, 0.6), H * rr(0.25, 0.45), 14, 0.1 + soft * 0.25, rr(-0.6, 0.6));
+      ground.push(dGround(pts, color, opacity, bleed, texture));
+    }
+    group(ground, 0.03, 0.16);
+
+    // 3. glazes travelling with the flow. A quarter of them are held back as a
+    //    veil and laid over the marks at the end instead.
+    const glazes = [];
+    for (let i = 0; i < Math.round(S.glaze * 22); i++) {
+      const color = random() < 0.7 ? pickOne(washes) : pickOne(accents);
+      const weight = rr(1.2, 3.2) * Math.sqrt(sc);
+      let x0, y0, x1, y1, field;
+      if (horizontal) { y0 = rr(0, H); x0 = rr(-10, W * 0.5); x1 = x0 + rr(W * 0.3, W * 0.9); y1 = y0 + rr(-8, 8); field = random() < 0.25 ? 'waves' : 'hand'; }
+      else if (vertical) { x0 = rr(0, W); y0 = rr(-10, H * 0.5); y1 = y0 + rr(H * 0.25, H * 0.8); x1 = x0 + rr(-8, 8); field = 'hand'; }
+      else { x0 = rr(0, W); y0 = rr(0, H); const a = rr(-0.6, 0.6), len = rr(m * 0.2, m * 0.5); x1 = x0 + Math.cos(a) * len; y1 = y0 + Math.sin(a) * len; field = random() < 0.5 ? 'curved' : 'seabed'; }
+      glazes.push(dGlaze(x0, y0, x1, y1, color, weight, field));
+    }
+    const veil = glazes.splice(0, Math.round(glazes.length * 0.25));
+    group(glazes, 0.16, 0.30);
+
+    // 4. the marks. Most fall near two or three attractors, which is what gives
+    //    the picture its clusters and its empty right-hand side; the rest are
+    //    scattered anywhere. Painted biggest first so the small ones sit on top.
+    const nMarks = Math.round((3 + dens * 34) * (S.pattern === 'dapple' ? 1.6 : 1));
+    const attractors = [];
+    for (let i = 0, n = 2 + Math.floor(rr(0, 3)); i < n; i++) attractors.push([rr(W * 0.15, W * 0.85), rr(H * 0.15, H * 0.85)]);
+    const s0 = m * 0.06 * sc;
+    const marks = [], centers = [];
+    for (let i = 0; i < nMarks; i++) {
+      let x, y;
+      if (random() < 0.25) { x = rr(0, W); y = rr(0, H); }
+      else { const a = pickOne(attractors); const sd = m * (S.pattern === 'dapple' ? 0.1 : 0.16); x = a[0] + randomGaussian(0, sd); y = a[1] + randomGaussian(0, sd); }
+      const r = s0 * rr(0.5, 1.6);
+      const color = random() < 0.2 ? pickOne(highlights) : pickOne(accents);
+      const jit = 0.08 + soft * 0.3;
+      let pts, opacity, bleed, texture;
+      switch (S.pattern) {
+        case 'bands': pts = jitterEllipse(x, y, r * rr(2.5, 4.5), r * rr(0.25, 0.5), 14, jit * 0.6); opacity = 205 - water * 60; bleed = 0.3 + water * 0.5; texture = 0.4 + water * 0.4; break;
+        case 'petals': pts = jitterEllipse(x, y, r * rr(0.7, 1.1), r * rr(0.28, 0.45), 10, jit * 0.5, rr(0, TWO_PI)); opacity = 225 - water * 45; bleed = 0.12 + water * 0.3; texture = 0.3 + water * 0.3; break;
+        case 'drips': pts = jitterEllipse(x, y, r * rr(0.3, 0.5), r * rr(2, 4), 14, jit * 0.7); opacity = 200 - water * 60; bleed = 0.4 + water * 0.4; texture = 0.4 + water * 0.4; break;
+        case 'dapple': pts = jitterEllipse(x, y, r * 0.45, r * rr(0.35, 0.45), 10, jit); opacity = 200 - water * 40; bleed = 0.2 + water * 0.3; texture = 0.3 + water * 0.3; break;
+        default: pts = jitterEllipse(x, y, r, r * rr(0.6, 1), 12, jit); opacity = 200 - water * 60; bleed = 0.3 + water * 0.5; texture = 0.4 + water * 0.4;
+      }
+      centers.push([x, y, r]);
+      const d = dMark(pts, color, Math.round(opacity), bleed, texture);
+      d.r = r;
+      marks.push(d);
+    }
+    marks.sort((a, b) => b.r - a.r);
+    group(marks, 0.30, 0.86);
+
+    // 5. the held-back glazes over the top, then the touches
+    group(veil, 0.86, 0.92);
+    const angle = () => (horizontal ? rr(-0.1, 0.1) : vertical ? HALF_PI + rr(-0.15, 0.15) : rr(0, TWO_PI));
+    group(dTouches(centers, C, Math.round(S.touch * 20), angle), 0.92, 1.0);
+
+    // the engine paints in array order; t is the playground's paint order
+    return out.sort((a, b) => a.t - b.t);
+  }
+
+const CONFIG = {
+  label: "Dusk",
+  canvasSize: 600,
+  loopMs: 9000,
+  holdMs: 1500,
+  palette: PALETTE,
+  strokes: (palette) => buildAbstraction(palette),
+};
+
+const engine = createEngine(CONFIG, {
+  mount: document.getElementById('sheet'),
+  statusEl: document.getElementById('status'),
+});
+function setup() { engine.setup(); }
+function draw() { engine.draw(); }
+</script>
+</body>
+</html>

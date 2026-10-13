@@ -1,0 +1,101 @@
+{
+  "id": "security-audit.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.docs-coordinator",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.engineer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.security-reviewer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.security-reviewer",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "security-audit.legacy-output",
+      "retryPolicy": "never",
+      "subject": "威胁建模",
+      "description": "明确资产、信任边界、攻击者能力，建立威胁清单。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.security-reviewer",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "security-audit.legacy-output",
+      "retryPolicy": "never",
+      "subject": "漏洞面审查",
+      "description": "按威胁清单审查输入处理、鉴权授权、密钥管理、注入面与供应链。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.engineer",
+      "dependsOn": [
+        "t2"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "security-audit.legacy-output",
+      "retryPolicy": "never",
+      "subject": "修复方案验证",
+      "description": "对确认的问题给出具体修复方案，并验证方案可行性。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "security-audit.legacy-output",
+      "retryPolicy": "never",
+      "subject": "审计报告",
+      "description": "输出审计报告：威胁模型、按严重级别排序的发现、修复方案、复测建议。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "security-audit.deliverable",
+      "outputTemplate": "security-audit.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

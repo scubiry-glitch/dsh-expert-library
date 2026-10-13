@@ -1,0 +1,20 @@
+{
+  "id": "fullstack-build.legacy-output",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "media": [
+    "markdown"
+  ],
+  "sections": [
+    {
+      "id": "legacy-deliverable",
+      "required": true
+    }
+  ],
+  "renderModes": {
+    "final": {
+      "anonymize": false
+    }
+  },
+  "legacySource": "v1"
+}

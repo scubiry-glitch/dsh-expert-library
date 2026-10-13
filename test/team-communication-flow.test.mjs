@@ -117,7 +117,7 @@ async function fixture(t, { realArtifact = true } = {}) {
       const task = state.tasks.find(item => item.id === id)
       const prefix = `${teamId}/${task.project.path}`
       return f.host.call('quality_review', {
-        task_id: id, event_id: eventId, reviewer: 'reviewer', verdict,
+        task_id: id, event_id: eventId, verdict, // authenticated member identity is inferred by Host
         artifacts: [
           { id: 'task-output', path: `${prefix}/output/result.json` },
           ...(realArtifact ? [{ id: 'report', path: `${prefix}/artifacts/report.txt` }] : []),
@@ -197,6 +197,19 @@ test('multi-member flow waits across restart, repairs once, integrates and unloc
   assert.equal(f.host.deliveries.length, deliveries)
 })
 
+test('guarded takeover preserves running owners and submitted review evidence without changing task state', async t => {
+  const f=await fixture(t)
+  await f.host.scheduler.kickTeam(f.workspace,f.teamId)
+  let before=await f.read(),task=before.tasks[0]
+  f.host.agents.get('worker-id').status='running'
+  await assert.rejects(f.host.call('reassign_task',{task_id:'t1',assignee:'captain',expected_attempt:task.attempt,expected_attempt_id:task.attemptId,reason:'Waited a long time'}),/OWNER_ACTIVE/)
+  assert.deepEqual(await f.read(),before)
+  f.host.agents.get('worker-id').status='idle'
+  await f.submit();before=await f.read();task=before.tasks[0]
+  await assert.rejects(f.host.call('reassign_task',{task_id:'t1',assignee:'captain',expected_attempt:task.attempt,expected_attempt_id:task.attemptId,reason:'Finish bookkeeping'}),/AWAITING_REVIEW/)
+  assert.deepEqual(await f.read(),before)
+})
+
 test('reviewed artifact changes block both integration and completion; reopen and reassignment restore a valid review path', async t => {
   const f = await fixture(t)
   await f.host.scheduler.kickTeam(f.workspace, f.teamId)
@@ -217,7 +230,11 @@ test('reviewed artifact changes block both integration and completion; reopen an
   }, 'worker'), artifactChanged)
   assert.notEqual((await f.read()).tasks[0].status, 'completed')
 
-  await f.host.call('reassign_task', { task_id: 't1', assignee: 'replacement', reason: 'A different worker validates the final correction' })
+  // Explicitly stop this attempt. A generic failure intentionally schedules
+  // an automatic retry, whose newly active work must remain protected.
+  await f.host.call('update_task', {task_id:'t1',attempt_id:before.tasks[0].attemptId,status:'cancelled',output:'Published bytes changed; cancel this attempt for a replacement and new independent review'}, 'worker')
+  const failedAttempt=(await f.read()).tasks[0]
+  await f.host.call('reassign_task', { task_id: 't1', assignee: 'replacement', expected_attempt:failedAttempt.attempt, ...(failedAttempt.attemptId === undefined ? {} : {expected_attempt_id:failedAttempt.attemptId}), reason: 'A different worker validates the final correction' })
   let state = await f.read()
   assert.equal(state.tasks[0].assignee, 'replacement')
   assert.equal(state.qualityRuns.t1.contract.assignee, 'replacement')
@@ -259,7 +276,7 @@ test('failed live delivery survives runtime restart and a duplicate send does no
   await f.host.scheduler.kickMember(f.workspace, f.teamId, 'reviewer')
   assert.equal(f.host.deliveries.length, 1)
   assert.match(f.host.deliveries[0].text, /Please review the durable data artifact/)
-  assert.equal((await readUnreadMailbox(f.stateRoot, f.teamId, 'reviewer')).length, 0)
+  assert.equal((await readUnreadMailbox(f.stateRoot, f.teamId, 'reviewer')).length, 1, 'queued mail is not yet consumed')
   const repeated = await f.host.call('send_message', args)
   assert.equal(repeated.message_id, first.message_id)
   await f.host.scheduler.kickMember(f.workspace, f.teamId, 'reviewer')
@@ -356,10 +373,29 @@ test('published versions retain their bytes and only an authorized downstream ta
   const page1 = await f.host.call('read_artifact', readArgs, 'replacement')
   assert.equal(page1.content, firstContent.slice(0, 8))
   assert.equal(page1.next_offset, 8)
+  const visiblePage1 = JSON.parse(f.host.render('read_artifact', page1))
+  assert.equal(visiblePage1.next_offset, 8, 'the model must see the next page cursor')
+  assert.equal(visiblePage1.total_characters, firstContent.length)
+  assert.equal(visiblePage1.eof, false)
   const page2 = await f.host.call('read_artifact', { ...readArgs, offset: page1.next_offset, limit: 16000 }, 'replacement')
   assert.equal(page1.content + page2.content, firstContent)
   assert.equal(page2.next_offset, null)
   assert.equal(page2.sha256, first.sha256)
+  assert.equal(JSON.parse(f.host.render('read_artifact', page2)).eof, true)
+  for (const offset of [firstContent.length, firstContent.length + 1000]) {
+    const end = await f.host.call('read_artifact', { ...readArgs, offset }, 'replacement')
+    const visible = JSON.parse(f.host.render('read_artifact', end))
+    assert.equal(visible.content, '')
+    assert.equal(visible.returned_characters, 0)
+    assert.equal(visible.eof, true)
+    assert.equal(visible.next_offset, null)
+    assert.equal(visible.total_characters, firstContent.length)
+    assert.match(visible.notice, /Do not increase offset/)
+  }
+  const binary = { artifact_id: 'binary-id', sha256: 'a'.repeat(64), size_bytes: 8,
+    binary: true, path: 'team/artifacts/file.pdf', content: 'Use the appropriate viewer.', next_offset: null }
+  assert.equal(JSON.parse(f.host.render('read_artifact', binary)).path, binary.path,
+    'the binary viewer path must survive the same output renderer')
 })
 
 test('default output-only contracts automatically review the latest publication and require fresh publication after repair', async t => {
@@ -509,4 +545,55 @@ test('a refused first assignment keeps one durable generation through repeated k
   assert.equal(resumed.attemptId, first.attemptId)
   assert.equal(f.host.deliveryAttempts.length, 1)
   assert.equal(f.host.deliveries.length, 1)
+})
+
+test('publication retry is idempotent and a valid handoff can explicitly reuse verified bytes without inheriting approval', async t => {
+  const f=await fixture(t,{realArtifact:false})
+  await f.host.scheduler.kickTeam(f.workspace,f.teamId)
+  let task=(await f.read()).tasks[0]
+  await writeFile(f.artifact('t1'),'verified original bytes\n')
+  const request={task_id:'t1',attempt_id:task.attemptId,source_path:'artifacts/report.txt',name:'report.txt'}
+  const first=await f.host.call('publish_artifact',request,'worker')
+  const repeated=await f.host.call('publish_artifact',request,'worker')
+  assert.equal(repeated.artifact_id,first.artifact_id)
+  assert.equal((await f.read()).tasks[0].publishedArtifacts.length,1)
+  await f.host.call('update_task',{task_id:'t1',attempt_id:task.attemptId,status:'cancelled',output:'Stop this generation for an explicit handoff'},'worker')
+  task=(await f.read()).tasks[0]
+  await f.host.call('reassign_task',{task_id:'t1',assignee:'replacement',expected_attempt:task.attempt,reason:'Replacement revalidates the existing observations'})
+  task=(await f.read()).tasks[0]
+  const reuse={task_id:'t1',attempt_id:task.attemptId,name:'report.txt',reuse_artifact_id:first.artifact_id,expected_sha256:first.sha256,reuse_reason:'Same source inputs and task scope; original observations remain applicable'}
+  await assert.rejects(f.host.call('publish_artifact',{...reuse,expected_sha256:'0'.repeat(64)},'replacement'),/ARTIFACT_REUSE_SCOPE_CHANGED/)
+  const oldArtifact=task.publishedArtifacts[0],oldPath=join(f.teamRoot,task.project.artifactsPath,oldArtifact.relativePath)
+  await writeFile(oldPath,'tampered bytes\n')
+  await assert.rejects(f.host.call('publish_artifact',reuse,'replacement'),/ARTIFACT_REUSE_BYTES_CHANGED/)
+  await writeFile(oldPath,'verified original bytes\n')
+  const adopted=await f.host.call('publish_artifact',reuse,'replacement')
+  assert.equal(adopted.sha256,first.sha256)
+  assert.notEqual(adopted.artifact_id,first.artifact_id)
+  assert.equal((await f.host.call('publish_artifact',reuse,'replacement')).artifact_id,adopted.artifact_id)
+  const after=await f.read()
+  assert.equal(after.tasks[0].publishedArtifacts.length,2)
+  assert.equal(after.tasks[0].publishedArtifacts[1].reusedFrom.artifactId,first.artifact_id)
+  assert.equal(after.qualityRuns.t1.status,'pending')
+  assert.equal(after.qualityRuns.t1.latestEvidence,undefined)
+})
+
+test('resume_member wakes a cold mailbox-only reviewer even when prior mail was acknowledged', async t => {
+  const f = await fixture(t)
+  const state = await f.read()
+  const reviewer = state.members.find(m => m.name === 'reviewer')
+  reviewer.activation = { id: 'orphan-mail-reservation', sessionId: reviewer.id, reservedAt: 1, acceptedAt: 2, taskAttempts: [] }
+  reviewer.status = 'working'
+  await writeFile(join(f.teamRoot, 'team.json'), JSON.stringify(state))
+  f.host.agents.delete('reviewer-id')
+  const result = await f.host.call('resume_member', { member: 'reviewer', reason: 'Logs inspected; resume the existing independent review' })
+  assert.equal(result.resumed, true)
+  assert.equal(f.host.deliveries.length, 1)
+  assert.equal(f.host.deliveries[0].childId, 'reviewer-id')
+  assert.match(f.host.deliveries[0].text, /Explicit runtime recovery/)
+  assert.deepEqual((await f.read()).tasks, state.tasks, 'review wake must not create or revise a task attempt')
+  const mailbox = await readMailbox(f.stateRoot, f.teamId, 'reviewer')
+  assert.equal(mailbox.length, 1)
+  assert.ok(mailbox[0].deliveredAt, 'the recovery notice was actually delivered')
+  assert.equal(mailbox[0].consumedAt, undefined)
 })

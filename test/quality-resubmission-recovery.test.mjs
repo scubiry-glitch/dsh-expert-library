@@ -6,6 +6,20 @@ import { qualityPublicationFixture } from './support/quality-publication-fixture
 import { createQualityRun, forkQualityRun, isQualityRun, reviewQualityRun, amendQualityRun } from '../lib/quality-run.js'
 import { assertDurableQualityRun } from '../lib/quality-runtime.js'
 
+test('registered Host recheck requires captain and rejects ordinary report defects without mutation',async t=>{
+  const f=await qualityPublicationFixture(t)
+  await f.publish('Synthetic report with a substantive missing conclusion')
+  await f.call('quality_review',{task_id:'t1',event_id:'substantive-review',reviewer:'reviewer',verdict:'needs_revision',
+    acceptance_results:[{id:'present',passed:false}],
+    findings:[{id:'content',code:'missing-conclusion',severity:'hard',message:'Real content repair required',taskId:'t1',attempt:1}]},'reviewer')
+  const saved=await f.read();saved.tasks[0].executionState='awaiting_review';await f.write(saved)
+  const args={task_id:'t1',expected_run_id:saved.qualityRuns.t1.runId,expected_review_event_id:'substantive-review',event_id:'invalid-host-recheck',reason:'Synthetic test'}
+  await assert.rejects(f.call('quality_host_recheck',args,'worker'),/captain|leading any team/)
+  assert.deepEqual(await f.read(),saved)
+  await assert.rejects(f.call('quality_host_recheck',args,'captain'),/substantive|unrelated/)
+  assert.deepEqual(await f.read(),saved)
+})
+
 async function repairedFixture(t) {
   const f = await qualityPublicationFixture(t)
   await f.publish('Rejected first report')
@@ -82,6 +96,24 @@ test('captain withdraws a legacy premature repair submission without extra budge
   await f.call('quality_integrate', { task_id: 't1', event_id: 'integrate-after-withdrawal', actor: 'captain', complete_task: true }, 'captain')
   assert.equal((await f.read()).tasks[0].status, 'completed')
   await assert.rejects(f.call('quality_reopen', { ...args, event_id: 'reopen-completed' }, 'captain'), /follow-up task/)
+})
+
+test('submitted task frees the worker for another task, and cannot reopen until that work finishes', async t => {
+  const f = await qualityPublicationFixture(t)
+  const waiting = await f.read()
+  waiting.tasks[0].executionState = 'awaiting_review'
+  waiting.tasks.push({ id: 't6', subject: 'Independent work', status: 'pending', assignee: 'worker',
+    dependencies: [], createdAt: 2, updatedAt: 2 })
+  waiting.taskSeq = 6
+  await f.write(waiting)
+  const claim = await f.call('claim_task', { task_id: 't6' }, 'worker')
+  assert.equal(claim.status, 'claimed')
+  await assert.rejects(f.call('quality_reopen', {
+    task_id: 't1', event_id: 'reopen-while-t6-active', reason: 'Correct an unreviewed submission',
+  }, 'captain'), /busy with t6/)
+  const saved = await f.read()
+  assert.equal(saved.tasks[0].executionState, 'awaiting_review')
+  assert.equal(saved.tasks[1].status, 'claimed')
 })
 
 test('withdrawal cannot alter a reviewed generation, consume a fresh repair, or unfreeze failed criteria', async t => {

@@ -1,0 +1,108 @@
+{
+  "implementedAt": "2026-10-07T00:58:17.295106+08:00",
+  "feature": "Optional domain-pack presentation and shared expert portrait fallback",
+  "assets": {
+    "mode": "built-in image_gen",
+    "manifest": "assets/review/portraits/manifest.json",
+    "prompts": "assets/review/portraits/prompts.json",
+    "originals": "assets/review/portraits/source",
+    "preview": "docs/previews/review-portrait-gallery.png",
+    "embeddedFallbackCompression": {
+      "beforeScriptBytes": 1770744,
+      "afterScriptBytes": 344885,
+      "method": "Existing inline fallback portraits resized to 256px and action icons to 72px; WebP encoding; original artwork preserved"
+    }
+  },
+  "contract": {
+    "field": "reviewUi",
+    "version": 1,
+    "precedence": [
+      "pack",
+      "teamTemplate",
+      "scenario"
+    ],
+    "frozenIn": [
+      "ExecutionPlan.reviewUi",
+      "TeamState.reviewSnapshot"
+    ],
+    "portraits": [
+      "asset:coordinator",
+      "asset:finance",
+      "asset:policy",
+      "asset:market",
+      "asset:engineer",
+      "asset:reviewer",
+      "data:image/png;base64,...",
+      "data:image/jpeg;base64,...",
+      "data:image/webp;base64,..."
+    ],
+    "missingOrInvalid": "warning and shared artwork; legacy execution definitions unchanged",
+    "runtimeFallback": [
+      "configured artwork",
+      "stable role-based shared portrait",
+      "embedded legacy portrait"
+    ],
+    "artifacts": "explicit final/key rules; legacy research manuscript rules retained; otherwise unambiguous declared deliverables after workflow/quality completion, ambiguous files in collapsed task outputs"
+  },
+  "samples": {
+    "unchanged": [
+      "examples/pack-center/demo-v1",
+      "examples/pack-center/demo-v2"
+    ],
+    "added": [
+      "examples/pack-center/demo-review-ui",
+      "examples/pack-center/demo-review-ui-fallback"
+    ]
+  },
+  "packsLoaded": [
+    {
+      "id": "bank-finance",
+      "ok": true
+    },
+    {
+      "id": "beike",
+      "ok": true
+    },
+    {
+      "id": "builtin-library",
+      "ok": true
+    },
+    {
+      "id": "pipeline-domains",
+      "ok": true
+    },
+    {
+      "id": "pipeline-general",
+      "ok": true
+    },
+    {
+      "id": "zhijian-realestate",
+      "ok": true
+    }
+  ],
+  "validation": {
+    "typecheck": "passed",
+    "compiler_documents_routes_and_presentation": "62 passed before final additional alias regression",
+    "legacy_apply_and_pack_loader": "56 passed",
+    "additional_identity_alias": "6 presentation tests passed, including frozen profile identity aliases",
+    "browser": [
+      "320/390/768/1440 widths",
+      "cover / plan / DAG / list / roster share identity",
+      "corrupt custom image -> shared image",
+      "404 shared image -> embedded fallback",
+      "multiple declared final outputs",
+      "collapsed intermediate outputs",
+      "legacy Chinese roles / outline folding / focus / download"
+    ],
+    "public": "temporary scoped grant opens existing research team; all shared portraits load; no page error; grant revoked",
+    "transient": "Initial public browser verification passed. Subsequent tests encountered intermittent Host timeouts (including loopback). After restart public JS matches local SHA256; final browser obtained exchange 200 but state exceeded its 15-second timeout. Public state access is not consistently verified; do not describe all production access as stable.",
+    "publicAssetSha256": "1962fbe592ecc1cf27b37596cbbb67f33e0f56952b6204225bf9beab62698509",
+    "finalStatus": "Assets and compatibility implementation deployed; local browser and contract tests passed. Production service remains intermittently slow: final direct exchange request exceeded 45 seconds. Test grants revoked; no live team task or approval changed."
+  },
+  "deployment": {
+    "service": "dsh-web.service",
+    "backup": "/root/zhijian/deploy-backups/review-generic-20261007",
+    "authIntegration": "docs/deployment/auth-gate-scoped-review.patch",
+    "publicAllowlist": "GET of exactly six named .webp assets; other authorization unchanged"
+  }
+}

@@ -93,6 +93,7 @@ import {
   type ToolProviderManifest,
 } from './types.ts'
 import { canonicalDigest, deepFreeze } from './digest.ts'
+import { mergeReviewUi } from '../review-ui.ts'
 import { defaultPhaseForKind, phaseRank } from './phases.ts'
 
 /* ------------------------------------------------------------------ */
@@ -191,7 +192,7 @@ export interface CompiledMember {
   readonly profileId?: string
   readonly modelPolicy?: ModelPolicy
   /** Source and exact route resolved by the Host before approval. */
-  readonly modelRouteSource?: 'profile-member' | 'profile-default' | 'expert-override' | 'expert-preset' | 'plugin-default' | 'captain'
+  readonly modelRouteSource?: 'profile-member' | 'profile-default' | 'expert-override' | 'expert-preset' | 'plugin-default' | 'captain' | 'plan-edit'
   readonly modelRouteFrozen?: boolean
   readonly modelRouteFallbackIndex?: number
   /** Ordered fallback routes declared by an explicit profile. */
@@ -231,6 +232,9 @@ export interface CompiledInput {
  * roster.
  */
 export interface CompiledTask {
+  readonly humanChoice?: { readonly sourceTaskId: string; readonly artifact: string; readonly options: readonly string[] }
+  readonly produces?: readonly string[]
+  readonly artifactInputs?: readonly import('../plan-artifact-flow.ts').PlannedArtifactInput[]
   readonly id: string
   readonly role: string
   /** Expert ids rostered for this task's role slot, in roster order. */
@@ -247,6 +251,10 @@ export interface CompiledTask {
   readonly reportBundle?: import('../report-bundle.ts').ReportBundle
   /** Host-resolved at stage/edit; never accepted in model-submitted profiles. */
   readonly frozenSkillCraftContract?: import('../skill-craft-types.ts').FrozenSkillCraftContract
+  readonly skillBindings?: readonly import('../task-material-binding.ts').TaskSkillBinding[]
+  readonly promptBinding?: import('../task-material-binding.ts').TaskPromptBinding
+  /** Host-resolved at stage; never accepted in model-submitted profiles. */
+  readonly frozenTaskMaterialContract?: import('../task-material-binding.ts').FrozenTaskMaterialContract
   /** Explicit captain ownership in a profile; omission retains shared-pool semantics. */
   readonly owner?: 'captain'
 }
@@ -322,6 +330,9 @@ export interface CompileRecord {
  * the template, bindings and params are never re-read afterwards.
  */
 export interface ExecutionPlan {
+  readonly reviewUi?: import('../review-ui.ts').ReviewUi
+  readonly reportOutline?: import('../plan-review.ts').ReportOutline
+  readonly captainModel?: import('../plan-review.ts').PlanModelRoute
   readonly schemaVersion: typeof SCHEMA_VERSION
   /** Short stable id derived from the digest (first 16 hex chars). */
   readonly planId: string
@@ -1345,7 +1356,9 @@ class Compiler {
     const scenarioRef = scenario === undefined ? undefined : { id: scenario.id, version: scenario.version }
     // Digest over the *executable core* only (template/bindings/params/dag);
     // descriptive provenance is deliberately excluded (§4.3 "模板/绑定/参数 digest").
+    const reviewUi = mergeReviewUi(this.pack.pack.reviewUi,template.reviewUi,scenario?.reviewUi)
     const core = {
+      ...(reviewUi ? { reviewUi } : {}),
       schemaVersion: SCHEMA_VERSION,
       template: templateRef,
       scenario: scenarioRef,
@@ -1376,6 +1389,7 @@ class Compiler {
       gates: this.gates,
       deliverables: this.deliverables,
       bindings: core.bindings,
+      ...(reviewUi ? { reviewUi } : {}),
       provenance: this.provenance,
     }
   }

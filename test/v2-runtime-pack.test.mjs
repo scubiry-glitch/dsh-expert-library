@@ -132,6 +132,9 @@ test('workspace pack experts override the base by id (builtin < workspace)', asy
     assert.equal(exA.display.internalName, 'OVERRIDDEN')
     assert.equal(exA.version, '2.0.0')
     assert.equal(result.layers.length, 1)
+    assert.equal(result.layerPacks[0].pack.id, 'overlay')
+    assert.equal(result.layerPacks[0].experts.find(expert => expert.id === 'ex-a').version, '2.0.0')
+    assert.equal(Object.isFrozen(result.layerPacks[0]), true)
   })
 })
 
@@ -151,6 +154,7 @@ test('enabledPacks filters which workspace packs participate', async () => {
     assert.ok(ids.includes('ex-a'))
     assert.ok(!ids.includes('ex-b'))
     assert.equal(result.layers.length, 1)
+    assert.deepEqual(result.layerPacks.map(pack => pack.pack.id), ['overlay-a'])
   })
 })
 

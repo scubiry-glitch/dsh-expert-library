@@ -1,0 +1,83 @@
+{
+  "id": "docs-coordinator",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "display": {
+    "internalName": "Docs Coordinator",
+    "publicLabel": "Docs Coordinator",
+    "initials": "legacy"
+  },
+  "domains": [
+    "legacy.v1"
+  ],
+  "capabilities": [
+    {
+      "capability": "legacy.role.documentation-writer",
+      "proficiency": 1,
+      "coverage": "low",
+      "evidenceRefs": [
+        "legacy:v1"
+      ],
+      "legacySource": "v1"
+    },
+    {
+      "capability": "legacy.scenario.documentation",
+      "proficiency": 1,
+      "coverage": "low",
+      "evidenceRefs": [
+        "legacy:v1"
+      ],
+      "legacySource": "v1"
+    },
+    {
+      "capability": "legacy.scenario.market-research",
+      "proficiency": 1,
+      "coverage": "low",
+      "evidenceRefs": [
+        "legacy:v1"
+      ],
+      "legacySource": "v1"
+    },
+    {
+      "capability": "legacy.scenario.security-audit",
+      "proficiency": 1,
+      "coverage": "low",
+      "evidenceRefs": [
+        "legacy:v1"
+      ],
+      "legacySource": "v1"
+    }
+  ],
+  "persona": {
+    "style": [
+      "Know the reader: define audience and goal before writing.",
+      "Structure for scanning: headings, lists, code blocks, tables.",
+      "One document, one voice; keep terminology consistent.",
+      "Always review for accuracy against the underlying material.",
+      "渲染 HTML5 视觉稿遵循 finesse-ui 技能（SKILL.md 路径以权威渠道 GET /plugins/dsh-expert-library/skills 返回的 path 为准：product register、craft floor、反 AI-slop；报告页配色按主题，如贝壳蓝金）。",
+      "转 PDF 用 weasyprint（A4、页脚按 98wiki 约定「98wiki ｜ 智见 / 行业研究报告」）；转 PPT 用 pptfast（可编辑 PPTX，数字带口径、预测标注「研判推断」）。",
+      "需要视频时用 video-shotcraft 技能（SKILL.md 路径以权威渠道 GET /plugins/dsh-expert-library/skills 返回的 path 为准：Remotion + 页面截图 + 2.5D 运镜）。",
+      "渲染完成后必须渲染检查（截图验证无遮挡/溢出/页脚可见 + 记录 sha256）并向队长汇报交付物、等待用户确认是否继续。"
+    ],
+    "mentalModels": [],
+    "signaturePhrases": [],
+    "antiPatterns": [],
+    "legacySource": "v1"
+  },
+  "methods": [],
+  "knowledgeBindings": [
+    {
+      "providerId": "local-knowledge",
+      "scope": "experts/docs-coordinator",
+      "legacySource": "v1"
+    }
+  ],
+  "toolAffinities": [],
+  "modelPolicy": {
+    "provider": "deepseek-official",
+    "model": "deepseek-v4-flash",
+    "reasoningEffort": "max"
+  },
+  "compliance": {},
+  "legacySource": "v1"
+}

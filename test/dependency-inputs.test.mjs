@@ -221,3 +221,17 @@ test('review opt-out does not bypass explicit publication pins or their hash val
   assert.equal(task.inputArtifactBinding, undefined)
   assert.equal(task.inputArtifactManifest[0].sha256, f.artifact.sha256)
 })
+
+test('approved artifact input names are enforced and summary-only selections do not import extra files', async t => {
+ const f = await fixture(t)
+ let team=await f.read(), consumer=team.tasks[1]
+ consumer.plannedArtifactInputs=[{fromTask:'t1',artifact:'missing.json',purpose:'Required source',phase:'work'}]
+ await assert.rejects(prepareDependencyInputs(f.stateRoot,team,consumer,1),/INPUT_PUBLICATION_MISSING.*planned input/)
+ consumer.plannedArtifactInputs=[{fromTask:'t1',artifact:'task-output',purpose:'Only the reviewed conclusion is needed',phase:'work'}]
+ await prepareDependencyInputs(f.stateRoot,team,consumer,1)
+ assert.deepEqual(consumer.inputArtifacts,[])
+ consumer.inputArtifacts=undefined;consumer.inputArtifactManifest=undefined
+ consumer.plannedArtifactInputs=[{fromTask:'t1',artifact:'report.md',purpose:'Exact report source',phase:'work'}]
+ await prepareDependencyInputs(f.stateRoot,team,consumer,1)
+ assert.deepEqual(consumer.inputArtifacts,[{sourceTaskId:'t1',artifactId:f.artifact.id}])
+})

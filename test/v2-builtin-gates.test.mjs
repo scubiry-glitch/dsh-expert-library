@@ -61,6 +61,7 @@ test('structure: empty artifact and missing required sections fail', () => {
   assert.ok(issue !== undefined)
   assert.equal(issue.location, '## 数据')
   assert.ok(issue.evidence.includes('## 数据'))
+  assert.ok(issue.evidence.includes('output 字段'))
   assert.ok(issue.correction)
 
   const ok = run(
@@ -94,6 +95,12 @@ test('data-citation: numbers need provenance and null must never become 0', () =
 
   const datesOnly = runData('数据期间 2026-07。')
   assert.equal(datesOnly.outcome, 'pass') // date-like tokens are not numeric claims
+
+  const metadataOnly = runData('sha256=57c7f723ab921cef8910a2ff01c627b24757061939ce903e395309a41488b120\n复核年份 2026\n见 line 43 和第 47 行。')
+  assert.equal(metadataOnly.outcome, 'pass')
+  const mixed = runData('sha256=57c7f723ab921cef8910a2ff01c627b24757061939ce903e395309a41488b120；价格上涨 3.2%。')
+  assert.equal(mixed.outcome, 'failed', 'metadata exemptions must not hide a real uncited number')
+  assert.equal(runData('成交达到 2026 万户。').outcome, 'failed', 'a year-shaped quantity remains a claim')
 
   const noRequire = runData('成交均价上涨 3.2%。', { requireCitation: false })
   assert.equal(noRequire.outcome, 'pass')

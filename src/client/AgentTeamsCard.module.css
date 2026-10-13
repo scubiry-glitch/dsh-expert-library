@@ -137,3 +137,6 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.leadAvatar,.memberArt { object-fit: contain; border: 0; border-radius: 6px; background: transparent; }
+.memberArt { border-radius: 50%; }

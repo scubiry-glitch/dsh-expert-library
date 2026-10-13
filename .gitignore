@@ -10,7 +10,9 @@ work/publish/
 
 # Local runs, delivery evidence and rollback copies are not source.
 /work/
+/output/
 /docs/evidence/
+domain-packs/.*-alias-*
 /.pack-disabled/
 **/__pycache__/
 *.bak

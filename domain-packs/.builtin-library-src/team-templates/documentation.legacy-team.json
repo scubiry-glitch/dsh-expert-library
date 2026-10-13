@@ -1,0 +1,78 @@
+{
+  "id": "documentation.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.docs-coordinator",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.researcher",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.researcher",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "documentation.legacy-output",
+      "retryPolicy": "never",
+      "subject": "资料研究与提纲",
+      "description": "搜集并梳理素材，确定读者对象，输出文档提纲。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "documentation.legacy-output",
+      "retryPolicy": "never",
+      "subject": "文档写作",
+      "description": "按提纲完成初稿：结构清晰、术语一致、含示例与代码块。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t2"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "documentation.legacy-output",
+      "retryPolicy": "never",
+      "subject": "校对与定稿",
+      "description": "对照素材校对准确性，统一风格与格式，输出终稿。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "documentation.deliverable",
+      "outputTemplate": "documentation.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

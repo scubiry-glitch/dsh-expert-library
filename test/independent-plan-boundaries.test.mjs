@@ -5,7 +5,7 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { registerExpertTeamsTools, scenarioStageCore, scenarioApproveCore, scenarioApproveFromHost, scenarioDiscardCore } from '../lib/tools.js'
-import { readStagedPlan } from '../lib/staged-plan.js'
+import { readStagedPlan, withStagedPlanLock } from '../lib/staged-plan.js'
 
 async function fixture(t) {
   const workspace = await mkdtemp(join(tmpdir(), 'independent-plan-boundary-'))
@@ -76,16 +76,14 @@ test('legacy preset can be staged after discard for a new explicit team and task
 
 test('a Host approval following an in-flight unprivileged check still performs its own authenticated transition', async t => {
   const f = await fixture(t), plan = await stage(f)
-  let release, entered, once = false
-  const blocked = new Promise(resolve => { release = resolve })
-  const validationEntered = new Promise(resolve => { entered = resolve })
-  f.ctx.llm.resolveCallConfig = async config => { if (!once) { once = true; entered(); await blocked } return config }
-  const modelCall = approve(f, plan, false)
-  const modelResult = modelCall.then(value => ({ value }), error => ({ error }))
-  await validationEntered
-  const hostCall = approve(f, plan, true)
-  const hostResult = hostCall.then(value => ({ value }), error => ({ error }))
-  release()
+  let modelResult, hostResult
+  // Hold the durable reservation while both callers enter. The unprivileged
+  // wait no longer needs model validation; using that callback as a barrier
+  // would leave this concurrency test waiting for an intentionally absent call.
+  await withStagedPlanLock(f.stateRoot, plan.planId, async () => {
+    modelResult = approve(f, plan, false).then(value => ({ value }), error => ({ error }))
+    hostResult = approve(f, plan, true).then(value => ({ value }), error => ({ error }))
+  })
   const [model, host] = await Promise.all([modelResult, hostResult])
   assert.equal(model.error, undefined)
   assert.equal(model.value.status, 'staged')

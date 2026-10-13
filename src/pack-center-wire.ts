@@ -1,4 +1,8 @@
 /** Browser-safe DTOs only. No host imports, credentials, filesystem paths, or PEM text. */
+/** Center-side package classification; absent when the center predates rollout. */
+export interface CenterPackClassification {
+  schemaVersion: number; types: string[]; scenarios: string[]
+}
 export interface CenterConnectionView {
   configured: boolean
   configuredOrigin: string | null
@@ -17,6 +21,7 @@ export interface CenterReleaseSummary {
   compatibility: { compatible: boolean; reasons: string[] }
   downloadAvailability: { available: boolean; code?: string }
   dependencies: Array<{ packId: string; releaseId: string; version: string }>
+  classification?: CenterPackClassification
 }
 export interface CenterReleaseDetail extends CenterReleaseSummary {
   sourceCommit: string; notes: string; license: string
@@ -32,6 +37,7 @@ export interface CenterInstalledRelease {
   centerId?: string; ownerOrgId?: string; installedAt: string; active: boolean
   previousReleaseId?: string; artifactSha256: string; contentTreeSha256: string
   manifestSha256?: string
+  classification?: CenterPackClassification
   integrity: 'verified' | 'unavailable'; errorCode?: string
 }
 export interface CenterInstallationsView {

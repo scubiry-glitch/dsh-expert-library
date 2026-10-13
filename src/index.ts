@@ -1,3 +1,17 @@
+import { createReviewStateWatch } from './host/review-state-watch.ts'
+import { readReviewContext } from './host/review-context.ts'
+import { listReviewDocuments, readReviewDocument } from './host/review-documents.ts'
+import { reviewPresentation } from './host/review-presentation.ts'
+import { readReviewConversation, readReviewSharedTaskContext, sendReviewMessage, reviewReplyGuidance } from './host/review-conversation.ts'
+import { customerMentions } from './host/customer-mentions.ts'
+import { customerCapabilityMentions, registerCustomerMentionTool } from './host/customer-capabilities.ts'
+import { CustomerQuestionHub, registerCustomerQuestionTool } from './host/customer-questions.ts'
+import { createCustomerApprovalHub } from './host/customer-approval.ts'
+import { CUSTOMER_GATEWAY_PREFIX, handleCustomerGateway, type CustomerWorkspaceAction } from './host/customer-gateway.ts'
+import { listCustomerDatasets, readCustomerDataset } from './host/customer-datasets.ts'
+import { createReviewEventHub } from './host/review-event-hub.ts'
+import { installPlanExecutionBoundary } from './plan-execution-boundary.ts'
+import { installToolLoopGuard } from './tool-loop-guard.ts'
 import { craftSessionContext } from './report-craft-delivery.ts'
 import { scopedSkillCraftDiscovery } from './skill-craft-discovery.ts'
 /**
@@ -35,19 +49,20 @@ import type {} from '@deepseek-ai/dsh-subagent'
 import type {} from '@deepseek-ai/dsh-system-prompt'
 import type { WorkspaceRegistry } from '@deepseek-ai/dsh-workspace'
 import type { SessionId } from '@deepseek-ai/dsh-session'
+import type { Agent } from '@deepseek-ai/dsh-agent'
 import type { IncomingMessage, ServerResponse } from 'node:http'
-import { registerExpertTeamsTools, scenarioApproveFromHost, scenarioDiscardCore, scenarioEditCore, type ToolsConfig } from './tools.ts'
+import { registerExpertTeamsTools, scenarioApproveFromHost, scenarioApproveFromReviewToken, scenarioDiscardCore, scenarioEditCore, type ToolsConfig } from './tools.ts'
 import { registerZhijianTools } from './zhijian/tools.ts'
 import { registerCollabTools } from './collab/tools.ts'
 import { registerTeamWaitTool } from './team-wait.ts'
 import { BUILTIN_EXPERT_BY_ID } from './expert-library/builtin-experts.ts'
 import { BUILTIN_SCENARIO_BY_ID } from './expert-library/builtin-scenarios.ts'
 import { ZHIJIAN_EXPERT_BY_ID, ALL_EXPERT_METAS, zhijianMetaById } from './zhijian/registry.ts'
-import { readFile, readdir, stat } from 'node:fs/promises'
-import { basename, dirname, join, resolve as resolvePath, sep } from 'node:path'
+import { readFile, readdir, realpath, stat } from 'node:fs/promises'
+import { basename, dirname, isAbsolute, join, resolve as resolvePath, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { collectArchivedTeamsActivity, collectTeamsActivity } from './snapshot.ts'
-import { archiveTeamDir, findTeamByCaptain, haltTeam, listArchivedTeamIds, readArchivedTeam, readTeam, resumeTeam, recordRetiredMemberIds, writeTeam, withTeamLock } from './state.ts'
+import { archiveTeamDir, findTeamByCaptain, findTeamRouteHeaderByCaptain, haltTeam, listArchivedTeamIds, readArchivedTeam, readTeam, readTeamRouteHeader, resumeTeam, recordRetiredMemberIds, writeTeam, withTeamLock } from './state.ts'
 import type { TeamState } from './types.ts'
 import { droppedSessionEvents } from './events.ts'
 import { handleManage } from './host/manage.ts'
@@ -60,7 +75,14 @@ import { captureSharedTaskContext } from './shared-task-context.ts'
 import { captainGoalRules } from './goal-prompts.ts'
 import { installProviderRequestQueue } from './provider-request-queue.ts'
 import { handleTeamRoutes, type TeamRouteRequest, type TeamRouteTarget } from './host/team-routes.ts'
+import { handleReviewRoutes, REVIEW_PREFIX } from './host/review-routes.ts'
+import { changeReviewTaskExecution } from './host/review-task-control.ts'
 import { planToWire, teamToWire, type TeamWireResponse } from './team-wire.ts'
+import { completeHumanChoice, readHumanChoice } from './human-choice.ts'
+import { isResearchV5 } from './research-release.ts'
+import { selectDeepResearchSubDag } from './deep-research-selection.ts'
+import { recommendResearchChoices } from './deep-research-recommendation.ts'
+import { parseProfile } from './profiles.ts'
 import { teamLockKey, workspaceOf, stateRootOf } from './team-core.ts'
 import { interruptMember } from './members.ts'
 import { waitForMemberIdle } from './team-core.ts'
@@ -284,6 +306,9 @@ export interface Config {
   memberMaxDepth?: number
   /** Maximum concurrently active team members, including independent review (default `2`). */
   maxActiveMembers?: number
+  /** Optional higher cap for V5 independent viewpoint and evidence tasks only. */
+  v5ResearchMaxActiveMembers?: number
+  reassignmentGraceMs?: number
   /** Host-local provider stream limits, shared by captain, members and auxiliary calls. */
   providerRequestConcurrency?: Record<string, number>
   /** Team size cap in members (default `8`). */
@@ -306,6 +331,8 @@ export interface Config {
   vendorPacksDir?: string
   /** HTTPS center origin and private storage. Changes require plugin restart. */
   packCenterOrigin?: string
+  /** HTTPS browser origin for non-secret human review links. */
+  reviewPublicOrigin?: string
   packCenterDir?: string
   /**
    * 宿主侧半自动更新策略（三档：manual/download/patch_auto），热生效、无需重启。
@@ -403,6 +430,8 @@ export const Config: z<Config> = z.object({
   memberModel: memberModelSchema,
   memberMaxDepth: z.natural().default(0),
   maxActiveMembers: z.natural().min(1).default(2),
+  v5ResearchMaxActiveMembers: z.natural().min(1),
+  reassignmentGraceMs: z.natural().min(1000).max(3600000).default(120000),
   providerRequestConcurrency: z.dict(z.natural().min(1)),
   maxMembers: z.natural().min(1).default(8),
   knowledgeDir: z.string().default('knowledge'),
@@ -410,6 +439,7 @@ export const Config: z<Config> = z.object({
   manageToken: z.string().default(''),
   vendorPacksDir: z.string().default(''),
   packCenterOrigin: z.string().default(''),
+  reviewPublicOrigin: z.string().default(''),
   packCenterDir: z.string().default(''),
   packCenterUpdatePolicy: PackCenterUpdatePolicySchema,
   packSourceAllowlist: z.array(z.string()).default([]),
@@ -454,6 +484,8 @@ These tools assemble the team from the caller's expert selection and seed the mo
 
 Knowledge packs: files under the workspace <knowledgeDir>/{experts,scenarios,shared}/ are read by members directly (pointed to by their personas); never edit team.json or inbox files directly — use the expert_teams_* tools.
 
+When a plan, outline or body is waiting for human confirmation, return a short user-facing reply containing a clickable Markdown link from review_url or confirmation_links (plan: 编辑并确认研究计划; outline: 选择并确认大纲; body: 审阅并确认正文). Preserve the entire URL including its #share fragment so it works from Feishu or another browser. Do not leave the link only in a tool result or activity panel. After an upstream confirmation artifact is integrated, read expert_teams_status once to obtain the ready gate link and include it before waiting. These scoped links expire after 24 hours; obtain a fresh link on user request, never persist them in project artifacts or memory. A deep link is only navigation; it never grants the agent authority to approve. If no public URL is configured, direct the user to the workspace's independent-page link instead of inventing a URL.
+
 ${skillDiscoveryPromptSection(skillInventoryLine)}
 
 Tools: ${toolNames}`
@@ -469,12 +501,15 @@ export function apply(ctx: Context, config: Config): void {
     memberModel: effectiveMemberModel(config),
     memberMaxDepth: config.memberMaxDepth ?? 0,
     maxActiveMembers: config.maxActiveMembers ?? 2,
+    v5ResearchMaxActiveMembers: config.v5ResearchMaxActiveMembers,
+    reassignmentGraceMs: config.reassignmentGraceMs ?? 120000,
     maxMembers: config.maxMembers ?? 8,
     knowledgeDir: config.knowledgeDir ?? 'knowledge',
     packsDir: config.packsDir ?? 'domain-packs',
     manageToken: config.manageToken,
     vendorPacksDir: resolveVendorPacksDir(config.vendorPacksDir),
     packCenterOrigin: config.packCenterOrigin,
+    reviewPublicOrigin: config.reviewPublicOrigin,
     packCenterDir: config.packCenterDir,
     packCenterUpdatePolicy: normalizeUpdatePolicy(config.packCenterUpdatePolicy),
     packSourceAllowlist: config.packSourceAllowlist ?? [],
@@ -512,6 +547,9 @@ export function apply(ctx: Context, config: Config): void {
     'expert_teams_quality_review',
     'expert_teams_quality_repair',
     'expert_teams_quality_reopen',
+    'expert_teams_quality_continue',
+    'expert_teams_quality_host_recheck',
+    'expert_teams_revise_inputs',
     'expert_teams_quality_integrate',
     'expert_teams_resume_task',
     'expert_teams_status',
@@ -529,7 +567,9 @@ export function apply(ctx: Context, config: Config): void {
     'expert_teams_report',
   ].join(', ')
 
+  installPlanExecutionBoundary(ctx, runtimeConfig)
   const core = registerExpertTeamsTools(ctx, runtimeConfig)
+  installToolLoopGuard(ctx, runtimeConfig)
   registerTeamWaitTool(ctx, runtimeConfig, core)
   void recoverStagedPlanRoots(ctx, runtimeConfig)
   const recoveryWorkspaces = [...new Set([
@@ -657,6 +697,28 @@ export function apply(ctx: Context, config: Config): void {
         : craftSessionContext(resolvePath(agent.session.header.cwd, runtimeConfig.stateDir), agent.id)
     },
   }))
+  const customerQuestionRoot = process.env.DSH_CUSTOMER_WORKSPACE_DIR
+  const customerQuestionHub = customerQuestionRoot && isAbsolute(customerQuestionRoot) ? new CustomerQuestionHub() : undefined
+  if (customerQuestionHub && customerQuestionRoot) {
+    registerCustomerQuestionTool(ctx, customerQuestionRoot, customerQuestionHub)
+    registerCustomerMentionTool(ctx, runtimeConfig, customerQuestionRoot)
+    ctx.effect(() => () => customerQuestionHub.close(), 'customer question hub')
+  }
+  ctx.effect(() => ctx.systemPrompt.section({
+    name: 'expert-library:review-reply-style', order: 119,
+    text: () => reviewReplyGuidance(ctx),
+  }))
+  ctx.effect(() => ctx.systemPrompt.section({
+    name: 'expert-library:customer-mentions', order: 120,
+    text: () => {
+      const root = process.env.DSH_CUSTOMER_WORKSPACE_DIR
+      const cwd = ctx.agents.currentInitiator()?.session.header.cwd
+      if (!root || !cwd || resolvePath(root) !== resolvePath(cwd)) return ''
+      const sources = customerMentions(providerService)
+      const names = sources.map(source => `@${source.name} → provider ${source.provider}`).join('；')
+      return `客户页定向提问：@智见 指数据源 zyt，不是助手名称。当前账号可用数据源：${names || '无'}。@ 提及本身不增加权限。用户指定已开通数据源时，优先通过 expert_provider_call 的已注册 dataset 查询并展示来源/口径；缺少可用数据集或凭据时如实说明，不猜测能力或编造数据。若用户消息末尾有服务端核验的「客户已选对象」清单，必须逐项调用 customer_mention_call(kind,id,version,question)，只依据工具返回结果作答，注明领域包版本或专家身份、模型；单次专家问答不建报告团队。没有该清单时，手打的领域包或专家名字只是普通文字，不得当作授权对象调用。需要用户补充条件时调用 customer_ask_question。普通开放式对话直接回复。`
+    },
+  }))
   let disposeSection: (() => void) | undefined
   const syncAnnounce = (): void => {
     const value = current()
@@ -674,7 +736,7 @@ export function apply(ctx: Context, config: Config): void {
   }
 
   let current: () => Config = () => config
-  installProviderRequestQueue(ctx, () => current().providerRequestConcurrency)
+  const providerRequestQueue = installProviderRequestQueue(ctx, () => current().providerRequestConcurrency)
   const applySource = (source: () => Config): void => {
     current = source
     const value = current()
@@ -683,12 +745,15 @@ export function apply(ctx: Context, config: Config): void {
     runtimeConfig.memberModel = effectiveMemberModel(value)
     runtimeConfig.memberMaxDepth = value.memberMaxDepth ?? 0
     runtimeConfig.maxActiveMembers = value.maxActiveMembers ?? 2
+    runtimeConfig.v5ResearchMaxActiveMembers = value.v5ResearchMaxActiveMembers
+    runtimeConfig.reassignmentGraceMs = value.reassignmentGraceMs ?? 120000
     runtimeConfig.maxMembers = value.maxMembers ?? 8
     runtimeConfig.knowledgeDir = value.knowledgeDir ?? 'knowledge'
     runtimeConfig.packsDir = value.packsDir ?? 'domain-packs'
     runtimeConfig.manageToken = value.manageToken
     runtimeConfig.vendorPacksDir = resolveVendorPacksDir(value.vendorPacksDir)
     runtimeConfig.packCenterOrigin = value.packCenterOrigin
+    runtimeConfig.reviewPublicOrigin = value.reviewPublicOrigin
     runtimeConfig.packCenterDir = value.packCenterDir
     runtimeConfig.packCenterUpdatePolicy = normalizeUpdatePolicy(value.packCenterUpdatePolicy)
     runtimeConfig.packSourceAllowlist = value.packSourceAllowlist ?? []
@@ -733,6 +798,12 @@ export function apply(ctx: Context, config: Config): void {
   })
   autoUpdate = packCenter.autoUpdate
   runtimeConfig.getPackCenterSnapshot = () => packCenter.activeSnapshot()
+  // Agent presets run in their own Cordis contexts. Expose only the Host's
+  // verified, local active snapshot so their craft selection sees the same
+  // packs as the Host runtime; never pass center credentials or a remote client.
+  ctx.effect(() => ctx.provide('expertLibraryPackCenterSnapshot', {
+    activeSnapshot: () => packCenter.activeSnapshot(),
+  }), 'expert-library: active pack snapshot service')
   const handlePackCenter = createPackCenterRouteHandler({ service: packCenter.service,
     getManageToken: () => resolveManageToken(runtimeConfig.manageToken), updatePolicy: packCenter.updatePolicy })
   // No network on startup: startup only resumes persisted jobs and verifies
@@ -760,6 +831,9 @@ export function apply(ctx: Context, config: Config): void {
     const workspaceRegistry = (ctx.get(WORKSPACE_KEYS[0]) ?? ctx.get(WORKSPACE_KEYS[1])) as WorkspaceRegistry | undefined
     if (webServer === undefined || workspaceRegistry === undefined) return
     webRegistered = true
+    const subscribeReviewSession = createReviewEventHub(ctx)
+    const reviewStateWatch = createReviewStateWatch()
+    ctx.effect(() => () => reviewStateWatch.close(), 'review: release state watches')
 
     // The host connection service owns the signed browser cookie and the
     // trusted Host/Origin fence. Plugin routes must use that predicate rather
@@ -772,6 +846,230 @@ export function apply(ctx: Context, config: Config): void {
       if (connection?.requestRejection === undefined) return 401
       return connection.requestRejection(req)
     }
+
+    // This gateway is opt-in on a DSH process dedicated to exactly one
+    // customer account. A Workspace alone is not a read isolation boundary.
+    const customerRoot = process.env.DSH_CUSTOMER_WORKSPACE_DIR
+    const customerTokenFile = process.env.DSH_CUSTOMER_GATEWAY_TOKEN_FILE
+    const customerHome = process.env.DSH_HOME
+    if (customerRoot && customerTokenFile && customerHome
+      && isAbsolute(customerRoot) && isAbsolute(customerTokenFile) && isAbsolute(customerHome)) {
+      const customerApprovalHub = createCustomerApprovalHub(ctx)
+      // Session id, origin and cwd are immutable header fields. Keep only
+      // positive, fully checked ownership in this process; a cold lookup still
+      // reads the durable header, and unknown ids never enter the cache.
+      const ownedCustomerSessions = new Set<string>()
+      const rememberOwnedCustomerSession = (sessionId: string) => {
+        ownedCustomerSessions.delete(sessionId)
+        ownedCustomerSessions.add(sessionId)
+        if (ownedCustomerSessions.size > 512) ownedCustomerSessions.delete(ownedCustomerSessions.values().next().value!)
+      }
+      const customerTarget = async (sessionId: string): Promise<TeamRouteTarget | undefined> => {
+        const stateRoot = stateRootOf(customerRoot, runtimeConfig)
+        const plans = await Promise.all((await listStagedPlanIds(stateRoot)).map(id => readStagedPlan(stateRoot, id)))
+        const latestPlan = plans.filter(plan => plan?.createdBy === sessionId)
+          .sort((left, right) => (right?.updatedAt ?? 0) - (left?.updatedAt ?? 0))[0]
+        if (latestPlan?.appliedTeamId) {
+          const header = await readTeamRouteHeader(stateRoot, latestPlan.appliedTeamId)
+          if (header?.captainSessionId === sessionId && header.planRef?.planId === latestPlan.planId) {
+            return { stateRoot, teamId: header.id, planId: latestPlan.planId, captainSessionId: sessionId, archived: false }
+          }
+        }
+        const team = await findTeamRouteHeaderByCaptain(stateRoot, sessionId)
+        return team
+          ? { stateRoot, teamId: team.id, planId: team.planRef?.planId, captainSessionId: sessionId, archived: false }
+          : latestPlan ? { stateRoot, planId: latestPlan.planId, captainSessionId: sessionId, archived: false } : undefined
+      }
+      const customerReportDelivery = (plan?: NonNullable<Awaited<ReturnType<typeof readStagedPlan>>>['plan']) => {
+        const boundReport = plan?.tasks.some(task => task.reportBundle?.craft?.version === 3
+          && [task.reportBundle.md, task.reportBundle.html, task.reportBundle.pdf]
+            .every(name => task.produces?.includes(name))) ?? false
+        const finalContract = !!plan && (plan.deliverables.length > 0
+          || (plan.reviewUi?.artifacts ?? []).some(item => item.kind === 'final')
+          || boundReport)
+        const names = (plan?.tasks ?? []).flatMap(task => task.produces ?? [])
+        const expectedFormats = ['md', 'html', 'pdf'].filter(extension => names.some(name => new RegExp(`\\.${extension}$`, 'i').test(name)))
+        return { ready: finalContract && expectedFormats.length === 3, finalContract, expectedFormats }
+      }
+      const customerActivity = async (sessionId: string): Promise<{ running: boolean }> => {
+        if (ctx.agents.get(sessionId as SessionId)?.status === 'running') return { running: true }
+        const target = await customerTarget(sessionId)
+        const header = target?.teamId ? await readTeamRouteHeader(target.stateRoot, target.teamId) : undefined
+        return { running: header?.captainSessionId === sessionId && !header.halted
+          && header.activeMemberIds.some(id => ctx.agents.get(id as SessionId)?.status === 'running') }
+      }
+      const customerActivityBatch = async (sessionIds: string[]) => {
+        const started = Date.now()
+        const stateRoot = stateRootOf(customerRoot, runtimeConfig)
+        const byCaptain = new Map<string, Awaited<ReturnType<typeof readTeamRouteHeader>>[]>()
+        const entries = await readdir(stateRoot, { withFileTypes: true }).catch((error: NodeJS.ErrnoException) => {
+          if (error.code === 'ENOENT') return []
+          throw error
+        })
+        for (const entry of entries) {
+          if (!entry.isDirectory()) continue
+          const header = await readTeamRouteHeader(stateRoot, entry.name)
+          if (!header?.captainSessionId) continue
+          const headers = byCaptain.get(header.captainSessionId) ?? []
+          headers.push(header)
+          byCaptain.set(header.captainSessionId, headers)
+        }
+        const scanMs = Date.now() - started
+        const items = await Promise.all(sessionIds.map(async sessionId => {
+          if (ctx.agents.get(sessionId as SessionId)?.status === 'running') return { sessionId, running: true }
+          const candidates = byCaptain.get(sessionId) ?? []
+          let header = candidates[0]
+          if (candidates.length > 1) {
+            const target = await customerTarget(sessionId)
+            header = candidates.find(candidate => candidate?.id === target?.teamId)
+          }
+          return { sessionId, running: !!header && !header.halted
+            && header.activeMemberIds.some(id => ctx.agents.get(id as SessionId)?.status === 'running') }
+        }))
+        if (Date.now() - started > 500) console.warn(`customer activity scan slow: count=${sessionIds.length} scanMs=${scanMs} projectionMs=${Date.now() - started - scanMs}`)
+        return { items }
+      }
+      const customerWorkspace = async (sessionId: string) => {
+        const target = await customerTarget(sessionId)
+        const context = target ? await readReviewContext(target) : undefined
+        const review = target ? await readTeamRouteResponse(target, context) : { version: 1 as const, team: null, plan: null, archived: false }
+        const documents = target ? await listReviewDocuments(target, context) : []
+        const presentation = context ? reviewPresentation(context, review, documents) : null
+        const datasets = await listCustomerDatasets(customerHome, sessionId)
+        let contextReview: { unavailable: boolean } | { planId: string; digest: string; revision: number;
+          baselineSha256: string | null; currentSha256: string; changed: boolean;
+          newMessages: { id: string; seq: number; text: string }[] } | undefined
+        if (context?.plan?.status === 'staged' && !review.team) {
+          try {
+            const previous = context.plan.runtime.sharedTaskContext
+            const latest = await readReviewSharedTaskContext(ctx, sessionId, previous)
+            contextReview = { planId: context.plan.planId, digest: context.plan.digest, revision: context.plan.revision,
+              baselineSha256: previous?.sha256 ?? null, currentSha256: latest.sha256,
+              changed: previous !== undefined && latest.sha256 !== previous.sha256,
+              newMessages: previous === undefined ? [] : latest.messages.slice(previous.messages.length)
+                .map(({ id, seq, text }) => ({ id, seq, text })) }
+          } catch { contextReview = { unavailable: true } }
+        }
+        return { ...review, documents, presentation, datasets: datasets.items,
+          delivery: customerReportDelivery(context?.plan?.plan), contextReview }
+      }
+      ctx.effect(() => webServer.register({
+        kind: 'prefix', path: CUSTOMER_GATEWAY_PREFIX,
+        handler: async (req, res) => handleCustomerGateway(req, res, {
+          token: async () => (await readFile(customerTokenFile, 'utf8')).trim(),
+          createSession: async (sessionId) => {
+            const registry = (ctx.get(WORKSPACE_KEYS[0]) ?? ctx.get(WORKSPACE_KEYS[1])) as WorkspaceRegistry
+            const workspace = await registry.resolveByPath(customerRoot) ?? await registry.create(customerRoot)
+            const controller = ctx.get('sessionController') as { create(request: { workspaceId: string; sessionId: SessionId }): Promise<{ sessionId: SessionId }> } | undefined
+            if (!controller) throw new Error('customer session controller unavailable')
+            return controller.create({ workspaceId: workspace.id, sessionId: sessionId as SessionId })
+          },
+          ownsSession: async (sessionId) => {
+            if (ownedCustomerSessions.has(sessionId)) return true
+            // The live Session registry is empty after a Host restart. Read
+            // the persisted header through SessionQuery before authorizing a
+            // cold conversation or the next user message.
+            const query = ctx.get('sessionQuery') as { observeSession?: (id: string, options: {
+              projectionMode: 'none'; signal: AbortSignal
+            }) => Promise<{ header: { id: string; cwd?: string; origin?: string }; [Symbol.dispose](): void }> } | undefined
+            if (query?.observeSession) {
+              const observation = await query.observeSession(sessionId, { projectionMode: 'none', signal: AbortSignal.timeout(15_000) })
+              try {
+                const header = observation.header
+                const owned = header.id === sessionId && header.origin !== 'subagent' && header.cwd !== undefined
+                  && await realpath(header.cwd) === await realpath(customerRoot)
+                if (owned) rememberOwnedCustomerSession(sessionId)
+                return owned
+              } finally { observation[Symbol.dispose]() }
+            }
+            const cwd = sessionCwdOf(ctx, sessionId)
+            const owned = cwd !== undefined && await realpath(cwd) === await realpath(customerRoot)
+            if (owned) rememberOwnedCustomerSession(sessionId)
+            return owned
+          },
+          sendMessage: (sessionId, content, requestId, mentions) => sendReviewMessage(ctx, sessionId, content, requestId, mentions),
+          conversation: (sessionId, after, latest, before) => readReviewConversation(ctx, sessionId, after, latest, before),
+          listDatasets: (sessionId, before) => listCustomerDatasets(customerHome, sessionId, before),
+          readDataset: (sessionId, datasetId, offset) => readCustomerDataset(customerHome, sessionId, datasetId, offset),
+          activity: customerActivity,
+          activityBatch: customerActivityBatch,
+          workspace: customerWorkspace,
+          models: async (sessionId: string) => {
+            const target = await customerTarget(sessionId)
+            if (!target?.planId || target.teamId) return []
+            return availableModelCatalog()
+          },
+          conversationModel: async (sessionId: string) => {
+            const controller = ctx.get('sessionController') as any
+            if (!controller) throw new Error('session controller unavailable')
+            const found = await controller.resolveAgent(sessionId)
+            if ('error' in found) throw found.error
+            return { selected: controller.agents.selectionFor(found.agent).current, models: await availableModelCatalog() }
+          },
+          selectConversationModel: async (sessionId: string, provider: string, model: string) => {
+            const catalog = await availableModelCatalog()
+            if (!catalog.some(item => item.provider === provider && item.model === model)) throw new Error('model unavailable')
+            const controller = ctx.get('sessionController') as any
+            if (!controller) throw new Error('session controller unavailable')
+            const found = await controller.resolveAgent(sessionId)
+            if ('error' in found) throw found.error
+            return controller.agents.serializeImageAdmission(found.agent, async () => {
+              const resolved = await ctx.llm.resolveCallConfig({ provider, model })
+              const selected = { provider: resolved.provider, model: resolved.model,
+                ...(resolved.reasoningEffort === undefined ? {} : { reasoningEffort: resolved.reasoningEffort }) }
+              controller.agents.selectForNextRequest(found.agent, selected)
+              return { selected }
+            })
+          },
+          workspaceAction: async (sessionId: string, input: CustomerWorkspaceAction) => {
+            const target = await customerTarget(sessionId)
+            if (!target) throw new Error('plan not found')
+            if (input.action === 'approve' && target.planId && !target.teamId) {
+              const staged = await readStagedPlan(target.stateRoot, target.planId)
+              if (!customerReportDelivery(staged?.plan).ready) throw new Error('CUSTOMER_REPORT_DELIVERY_REQUIRED')
+            }
+            if (input.action === 'approve' && target.teamId && target.planId) {
+              const plan = await readStagedPlan(target.stateRoot, target.planId)
+              if (plan?.createdBy === sessionId && plan.appliedTeamId === target.teamId
+                && plan.digest === input.expectedDigest && plan.revision === input.expectedRevision) return customerWorkspace(sessionId)
+            }
+            if ((input.action === 'edit' || input.action === 'approve' || input.action === 'sync-context') && (!target.planId || target.teamId)) throw new Error('plan not staged')
+            if ((input.action === 'choose' || input.action === 'halt' || input.action === 'resume') && !target.teamId) throw new Error('team not found')
+            const request: TeamRouteRequest = input.action === 'sync-context'
+              ? { action: 'edit', captainSessionId: sessionId, planId: target.planId,
+                expectedDigest: input.expectedDigest, expectedRevision: input.expectedRevision,
+                expectedContextSha256: input.expectedContextSha256, patch: {} }
+              : { ...input, captainSessionId: sessionId,
+                ...(target.planId ? { planId: target.planId } : {}), ...(target.teamId ? { teamId: target.teamId } : {}) }
+            await actionTeamRoute(target, request)
+            return customerWorkspace(sessionId)
+          },
+          document: async (sessionId: string, taskId: string, artifactId: string) => {
+            const target = await customerTarget(sessionId)
+            if (!target?.teamId) throw new Error('document not found')
+            const documents = await listReviewDocuments(target)
+            if (!documents.some(item => item.taskId === taskId && item.id === artifactId)) throw new Error('document not found')
+            return { document: await readReviewDocument(target, taskId, artifactId) }
+          },
+          mentions: async () => customerCapabilityMentions(ctx, runtimeConfig, customerRoot, customerMentions(providerService)),
+          pendingQuestion: (sessionId) => customerQuestionHub?.read(sessionId) ?? null,
+          answerQuestion: (sessionId, requestId, answers) => customerQuestionHub?.answer(sessionId, requestId, answers) ?? false,
+          pendingApproval: (sessionId) => customerApprovalHub.read(sessionId),
+          answerApproval: (sessionId, id, decision) => customerApprovalHub.answer(sessionId, id, decision),
+        }),
+      }), 'customer gateway: one-account DSH service route')
+    }
+
+    ctx.effect(() => webServer.register({
+      kind: 'exact', path: '/plugins/dsh-expert-library/request-queue',
+      handler: async (req, res) => {
+        const refusal = nativeHostAuth(req)
+        if (refusal !== undefined) { res.writeHead(refusal); res.end(); return }
+        if (req.method !== 'GET') { res.writeHead(405); res.end(); return }
+        res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' })
+        res.end(JSON.stringify(providerRequestQueue.snapshot()))
+      },
+    }), 'expert-teams: read-only provider queue timings')
 
     // Versioned team wire surface used by the activity panel. Reads are
     // projected from durable state and never kick the scheduler or consume
@@ -809,34 +1107,114 @@ export function apply(ctx: Context, config: Config): void {
       }
       return targets.length === 1 ? targets[0] : undefined
     }
-    const readTeamRouteResponse = async (target: TeamRouteTarget): Promise<TeamWireResponse> => {
+    const readTeamRouteResponse = async (target: TeamRouteTarget, context?: Awaited<ReturnType<typeof readReviewContext>>): Promise<TeamWireResponse> => {
       if (target.teamId === undefined) {
         if (target.planId === undefined) throw new Error('team or plan is required')
-        const staged = await readStagedPlan(target.stateRoot, target.planId)
+        const staged = context?.plan ?? await readStagedPlan(target.stateRoot, target.planId)
         if (staged === undefined || staged.createdBy !== target.captainSessionId) throw new Error('plan not found')
         return { version: 1, team: null, plan: planToWire(staged), archived: false }
       }
-      const team = target.archived
+      const team = context?.team ?? (target.archived
         ? await readArchivedTeam(target.stateRoot, target.teamId)
-        : await readTeam(target.stateRoot, target.teamId)
+        : await readTeam(target.stateRoot, target.teamId))
       if (team === undefined || team.captainSessionId !== target.captainSessionId) throw new Error('team not found')
-      const plan = (target.planId ?? team.planRef?.planId) === undefined ? undefined : await readStagedPlan(target.stateRoot, target.planId ?? team.planRef?.planId as string)
-      return { version: 1, team: teamToWire(team, target.archived), ...(plan === undefined ? { plan: null } : { plan: planToWire(plan) }), archived: target.archived }
+      const plan = context ? context.plan : (target.planId ?? team.planRef?.planId) === undefined ? undefined : await readStagedPlan(target.stateRoot, target.planId ?? team.planRef?.planId as string)
+      const wire = teamToWire(team, target.archived)
+      if (!target.archived) for (const row of wire.tasks) {
+        if (row.humanChoice === undefined || row.status !== 'pending') continue
+        const task = team.tasks.find(candidate => candidate.id === row.id)!
+        try {
+          const source = await readHumanChoice(target.stateRoot, team, task)
+          ;(row as { humanChoice: unknown }).humanChoice = { ...row.humanChoice, sha256: source.sha256, content: source.content, options: source.options,
+            ...(isResearchV5(team) && task.planTask?.logicalId === 'outline_choice' ? { multiple: true } : {}) }
+        } catch (cause) {
+          const code = cause instanceof Error && /^HUMAN_CHOICE_[A-Z_]+$/u.test(cause.message) ? cause.message : 'HUMAN_CHOICE_SOURCE_UNAVAILABLE'
+          ;(row as { humanChoice: unknown }).humanChoice = { ...row.humanChoice, blockedReason: code }
+        }
+      }
+      return { version: 1, team: wire, ...(plan === undefined ? { plan: null } : { plan: planToWire(plan) }), archived: target.archived }
+    }
+    const availableModelCatalog = async () => {
+      const providers = ctx.llm.listProviders().slice(0, 24)
+      const rows: { provider: string; model: string; name: string; reasoningEffort?: string }[] = []
+      for (const provider of providers) {
+        let models: Awaited<ReturnType<typeof ctx.llm.listModels>>
+        try { models = await ctx.llm.listModels(provider.id) } catch { continue }
+        for (const model of models.slice(0, 100)) {
+          if (rows.length >= 200) break
+          try {
+            const selected = await ctx.llm.resolveCallConfig({ provider: provider.id, model: model.id })
+            rows.push({ provider: selected.provider, model: selected.model, name: model.name,
+              ...(selected.reasoningEffort === undefined ? {} : { reasoningEffort: String(selected.reasoningEffort) }) })
+          } catch { /* Unavailable routes are never recommended. */ }
+        }
+        if (rows.length >= 200) break
+      }
+      return rows
     }
     const actionTeamRoute = async (target: TeamRouteTarget, request: TeamRouteRequest): Promise<TeamWireResponse> => {
       if (target.archived) throw new Error('archived team is read-only')
-      const captain = ctx.agents.get(target.captainSessionId as SessionId)
-      if (captain === undefined) throw new Error('captain session is not live')
+      if (request.action === 'choose') {
+        if (target.teamId === undefined || request.taskId === undefined || (request.choice === undefined && request.choices === undefined) || request.expectedSha256 === undefined) throw new Error('HUMAN_CHOICE_INVALID_REQUEST')
+        await withTeamLock(teamLockKey(target.stateRoot, target.teamId), async () => {
+          const fresh = await readTeam(target.stateRoot, target.teamId!)
+          if (fresh === undefined || fresh.captainSessionId !== target.captainSessionId || fresh.halted) throw new Error('HUMAN_CHOICE_TEAM_NOT_READY')
+          const task = fresh.tasks.find(candidate => candidate.id === request.taskId)
+          if (task === undefined) throw new Error('HUMAN_CHOICE_TASK_NOT_FOUND')
+          await completeHumanChoice(target.stateRoot, fresh, task, request.choices ?? request.choice!, request.expectedSha256!, request.actor ?? 'authenticated-host-user', request.reviewTokenId)
+        })
+        const liveCaptain = ctx.agents.get(target.captainSessionId as SessionId)
+        if (liveCaptain !== undefined) await core.scheduler.kickTeam(workspaceOf(liveCaptain), target.teamId, liveCaptain)
+        return readTeamRouteResponse(target)
+      }
+      let captain = ctx.agents.get(target.captainSessionId as SessionId)
+      if (captain === undefined) {
+        // Review links remain usable after a Web restart, when the durable plan
+        // is readable but its captain has not yet been resumed by the Host UI.
+        const controller = ctx.get('sessionController') as {
+          resolveAgent?: (sessionId: SessionId) => Promise<{ agent: Agent } | { error: unknown }>
+        } | undefined
+        let resolved: { agent: Agent } | { error: unknown } | undefined
+        try { resolved = await controller?.resolveAgent?.(target.captainSessionId as SessionId) }
+        catch { throw new Error('REVIEW_SESSION_UNAVAILABLE') }
+        if (resolved && 'agent' in resolved) captain = resolved.agent
+      }
+      if (captain === undefined) throw new Error('REVIEW_SESSION_UNAVAILABLE')
       const current = target.teamId === undefined ? undefined : await readTeam(target.stateRoot, target.teamId)
       if (target.teamId !== undefined && (current === undefined || current.captainSessionId !== captain.id)) throw new Error('team not found')
+      if (request.action === 'task-pause' || request.action === 'task-start' || request.action === 'task-recover') {
+        if (!request.taskId || !request.expectedAttemptId || target.teamId === undefined) throw new Error('REVIEW_TASK_NOT_AVAILABLE')
+        const changed = await changeReviewTaskExecution(target, request.action, request.taskId, request.expectedAttemptId, request.expectedWaitReason)
+        if (request.action === 'task-pause' && changed.memberSessionId) interruptMember(ctx, captain, changed.memberSessionId)
+        if (request.action === 'task-start' || request.action === 'task-recover') await core.scheduler.kickTeam(workspaceOf(captain), changed.teamId, captain)
+        return readTeamRouteResponse(target)
+      }
       const planId = request.planId ?? target.planId ?? current?.planRef?.planId
       let approvedTeamId: string | undefined
-      if (request.action === 'edit') {
+      if (request.action === 'recommend') {
+        if (planId === undefined || request.expectedDigest === undefined || request.expectedRevision === undefined) throw new Error('RESEARCH_RECOMMENDATION_PLAN_UNAVAILABLE')
+        const staged = await readStagedPlan(target.stateRoot, planId)
+        if (staged === undefined || staged.createdBy !== captain.id || staged.status !== 'staged'
+          || staged.digest !== request.expectedDigest || staged.revision !== request.expectedRevision) throw new Error('RESEARCH_RECOMMENDATION_STALE')
+        const input = staged.request.profile === undefined ? undefined : parseProfile(JSON.parse(staged.request.profile))
+        if (input?.id !== '98wiki-deep-research' || !input.version.startsWith('3.') || staged.plan.captainModel === undefined) throw new Error('RESEARCH_RECOMMENDATION_PLAN_UNAVAILABLE')
+        const recommendation = await recommendResearchChoices(ctx, planToWire(staged), await availableModelCatalog())
+        const selected = selectDeepResearchSubDag(input, { subDagId: recommendation.subDagId, expertIds: recommendation.expertIds })
+        const planModels = Object.fromEntries(selected.members.map(member => [member.id, recommendation.memberModel]))
+        await scenarioEditCore(ctx, runtimeConfig, captain, planId, {
+          research_selection: { subDagId: recommendation.subDagId, expertIds: recommendation.expertIds },
+          research_material_selection: recommendation.materials, plan_models: planModels,
+        }, request.expectedDigest, request.expectedRevision, { reason: recommendation.reason,
+          model: `${staged.plan.captainModel.provider}/${staged.plan.captainModel.model}`,
+          ...(recommendation.modelCallTokens === undefined ? {} : { modelCallTokens: recommendation.modelCallTokens }) })
+      } else if (request.action === 'edit') {
         if (planId === undefined) throw new Error('team has no staged plan')
-        await scenarioEditCore(ctx, runtimeConfig, captain, planId, (request.patch ?? {}) as never, request.expectedDigest, request.expectedRevision)
+        await scenarioEditCore(ctx, runtimeConfig, captain, planId, (request.patch ?? {}) as never, request.expectedDigest, request.expectedRevision, undefined, request.expectedContextSha256)
       } else if (request.action === 'approve') {
         if (planId === undefined) throw new Error('team has no staged plan')
-        const approved = await scenarioApproveFromHost(ctx, runtimeConfig, captain, planId, new AbortController().signal, core, request.expectedDigest, request.expectedRevision)
+        const approved = request.actor === 'scoped-review-token' && request.reviewTokenId !== undefined
+          ? await scenarioApproveFromReviewToken(ctx, runtimeConfig, captain, planId, new AbortController().signal, core, request.expectedDigest!, request.expectedRevision!, request.reviewTokenId)
+          : await scenarioApproveFromHost(ctx, runtimeConfig, captain, planId, new AbortController().signal, core, request.expectedDigest, request.expectedRevision)
         approvedTeamId = approved.appliedTeamId
       } else if (request.action === 'discard') {
         if (planId === undefined) throw new Error('team has no staged plan')
@@ -899,6 +1277,7 @@ export function apply(ctx: Context, config: Config): void {
           resolve: resolveTeamRouteTarget,
           read: readTeamRouteResponse,
           action: actionTeamRoute,
+          modelCatalog: availableModelCatalog,
           authorization: async (sessionId, action, input) => {
             const captain = ctx.agents.get(sessionId as SessionId)
             if (captain === undefined || captain.session.header.origin === 'subagent') throw new Error('PLAN_AUTHORIZATION_CAPTAIN_NOT_FOUND')
@@ -916,6 +1295,27 @@ export function apply(ctx: Context, config: Config): void {
         })
       },
     }), 'expert-teams: versioned team wire route')
+
+    ctx.effect(() => webServer.register({
+      kind: 'prefix',
+      path: REVIEW_PREFIX,
+      handler: async (req, res) => {
+        const url = new URL(req.url ?? '/', 'http://x')
+        await handleReviewRoutes(req, res, url, {
+          hostAuth: nativeHostAuth,
+          stateRoots: () => discoverStateRoots(ctx, runtimeConfig).map(root => root.stateRoot),
+          conversation: (captainSessionId, after, latest, before) => readReviewConversation(ctx, captainSessionId, after, latest, before),
+          contextSnapshot: (captainSessionId, previous) => readReviewSharedTaskContext(ctx, captainSessionId, previous),
+          subscribeSession: subscribeReviewSession,
+          subscribeState: reviewStateWatch.subscribe,
+          sendMessage: ctx.get('sessionController') ? (captainSessionId, text, requestId) => sendReviewMessage(ctx, captainSessionId, text, requestId) : undefined,
+          resolve: resolveTeamRouteTarget,
+          read: readTeamRouteResponse,
+          action: actionTeamRoute,
+          modelCatalog: availableModelCatalog,
+        })
+      },
+    }), 'expert-teams: standalone token review page')
 
     // Activity panel data route: the browser floater polls this for team
     // snapshots (disk truth + live subagent activity). Mirrors the Claude
@@ -1011,7 +1411,7 @@ export function apply(ctx: Context, config: Config): void {
     },
   }), 'expert-teams: scoped domain craft discovery route')
 
-  // Whale mascot artwork: serve the packaged role/action images to the
+  // Zhijian robot artwork: serve the packaged role/action images to the
   // activity panel. An explicit allowlist guards the route (no path
   // traversal); the images ship with the bundle (files: assets/).
   const artDir = fileURLToPath(new URL('../assets/expert-teams/', import.meta.url))

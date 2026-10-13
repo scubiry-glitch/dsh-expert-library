@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Expert Teams · 专家协作室</title>
+  <link rel="stylesheet" href="/plugins/dsh-expert-library/review/review.css?v=__REVIEW_CSS_VERSION__">
+</head>
+<body>
+  <div class="appFrame">
+    <aside id="sessionSidebar" class="sessionSidebar" aria-label="研究会话" aria-hidden="true">
+      <div class="sessionSidebarHead"><div><small>智见 · 我的研究</small><h2>研究会话</h2></div><button id="closeSidebar" type="button" aria-label="关闭会话列表">×</button></div>
+      <p class="sessionSidebarHint">选择已在此浏览器打开的会话。</p>
+      <nav id="sessionList" class="sessionList" aria-label="最近打开的会话"></nav>
+      <details class="sessionAdd"><summary>打开其他会话</summary><form id="sessionLinkForm"><label for="sessionLink">粘贴该会话的授权链接</label><input id="sessionLink" type="url" inputmode="url" placeholder="https://…/review?…" required><button type="submit">打开会话</button><p id="sessionLinkError" role="alert" hidden></p></form></details>
+      <details class="sessionSettings"><summary>设置</summary><div class="sessionSettingsBody"><button id="motionToggle" type="button" class="quiet" aria-pressed="true" aria-label="切换页面动效">动效 · 开</button><button id="logout" type="button" class="quiet" aria-label="退出此审阅页" title="退出此审阅页" hidden>退出当前会话</button></div></details>
+      <p class="sessionSidebarFoot">会话仍按各自的分享授权访问。</p>
+    </aside>
+    <button id="sidebarScrim" class="sidebarScrim" type="button" aria-label="关闭会话列表" hidden></button>
+    <main class="main">
+      <header class="topbar">
+        <div class="studioIdentity"><button id="openSidebar" class="sidebarToggle" type="button" aria-controls="sessionSidebar" aria-expanded="false" aria-label="打开研究会话列表"><span aria-hidden="true">☰</span></button><h1 id="headerSessionTitle" class="visuallyHidden">专家协作室</h1><p id="connection" role="status">正在加载协作室…</p></div>
+        <div id="viewSwitch" class="viewSwitch" role="group" aria-label="协作室视图" hidden>
+          <button id="view-workspace" type="button" aria-controls="workspaceTabs" aria-pressed="false"><strong>工作区</strong><small id="workspaceProgress">进度读取中</small></button>
+          <button id="view-conversation" type="button" aria-controls="conversationSection" aria-pressed="false"><strong>会话</strong><small>与智见小秘书沟通</small></button>
+        </div>
+        <div class="studioActions"><button id="pendingBadge" class="pendingBadge" type="button" aria-controls="pendingSection" hidden>待确认 <b id="pendingBadgeCount">0</b></button></div>
+      </header>
+      <div id="viewNavigation" class="viewNavigation" hidden>
+        <nav id="workspaceTabs" class="tabs" role="tablist" aria-label="工作区内容" hidden>
+          <button id="tab-plan" type="button" role="tab" aria-controls="planSection" data-tab="plan">研究计划</button>
+          <button id="tab-outline" type="button" role="tab" aria-controls="choiceSection" data-tab="outline">研究大纲</button>
+          <button id="tab-activity" type="button" role="tab" aria-controls="activitySection" data-tab="activity">团队进展</button>
+          <button id="tab-results" type="button" role="tab" aria-controls="resultsSection" data-tab="results">研究成果</button>
+        </nav>
+      </div>
+      <section id="loadingStudio" class="loadingStudio" aria-labelledby="loadingTitle">
+        <span class="eyebrow">智见 · 专家协作</span>
+        <div class="bootScene" aria-hidden="true"><div class="bootHalo"></div><div class="bootWindow"><i></i><i></i></div><div class="bootExpert boot-researcher"><img src="/plugins/dsh-expert-library/review/portraits/market.webp" width="256" height="256" alt="" decoding="async" fetchpriority="low"><span>研读<i></i></span></div><div class="bootExpert boot-data-analyst"><img src="/plugins/dsh-expert-library/review/portraits/finance.webp" width="256" height="256" alt="" decoding="async" fetchpriority="low"><span>推演<i></i></span></div><div class="bootExpert boot-docs-coordinator"><img src="/plugins/dsh-expert-library/review/portraits/coordinator.webp" width="256" height="256" alt="" decoding="async" fetchpriority="low"><span>核对<i></i></span></div><div class="bootDesk"><i class="bootNotes"></i><i class="bootChart"></i><i class="bootPencil"></i><i class="bootCup"></i></div><div class="bootPaper"><i></i><i></i><i></i></div><div class="bootThought"><i></i><i></i><i></i></div></div>
+        <h2 id="loadingTitle">正在打开专家协作室</h2>
+        <p class="bootSubtitle">一起研读，交换观点，让研究步步深入。</p>
+        <div class="bootConnection"><span class="bootSignal" aria-hidden="true"><i></i><i></i><i></i></span><span id="loadingStatus">正在加载协作室…</span></div>
+        <span class="bootCaption">专家协作场景示意</span>
+        <div id="bootHelp" class="bootHelp"><p>如果持续停在这里，请重新打开本页；仍无法进入时，可复制完整链接到系统浏览器打开。</p><button id="loadingRetry" type="button" hidden>重新加载</button><a class="bootRetryLink" href="">重新打开本页</a></div>
+      </section><noscript><p class="error">请启用 JavaScript，或复制完整链接到 Safari / Chrome 打开。</p></noscript>
+      <section id="login" class="login surface" hidden>
+        <span class="eyebrow">访问验证</span><h2>打开独立审阅页</h2>
+        <p id="loginHelp">使用分享码免密进入，或从已登录的工作区打开。免密链接会在后台验证后直接进入；分享码有效期为 24 小时，最多可在 10 个浏览器中兑换登录。</p>
+        <form id="loginForm"><label for="token">分享码 / 免密链接</label><div class="loginControls"><input id="token" type="password" autocomplete="off" required placeholder="粘贴分享码或完整免密链接"><button type="submit" class="primary">打开审阅页</button></div></form>
+      </section>
+      <div id="reviewReceipt" class="reviewReceipt" role="status" aria-live="polite" hidden></div><p id="error" class="error" role="alert" hidden></p>
+      <dialog id="documentDialog" aria-labelledby="documentTitle"><header><div><span class="eyebrow">研究档案</span><h2 id="documentTitle">产出物</h2></div><button id="closeDocument" type="button">关闭</button></header><div id="documentBody"></div><footer><a id="downloadDocument" class="download" hidden>下载原文件</a><button id="shareOpenDocument" type="button" hidden>分享链接</button></footer></dialog>
+      <dialog id="shareDocumentDialog" aria-labelledby="shareDocumentTitle"><header><h2 id="shareDocumentTitle">分享链接</h2><button id="closeShareDocument" type="button">关闭</button></header><p>文件已发布为无需登录的公开链接。该链接指向当前版本，后续修改不会覆盖它。</p><label for="shareDocumentUrl">文件链接</label><input id="shareDocumentUrl" type="text" readonly><p id="shareDocumentStatus" role="status"></p><footer><button id="copyShareDocument" type="button" class="primary">复制链接</button></footer></dialog>
+      <div id="content" hidden>
+        <section id="studioHero" class="studioHero" aria-label="智见研究协作室">
+          <div class="windowLight" aria-hidden="true"></div>
+          <div class="heroCopy"><span class="eyebrow">当前研究</span><h2 id="heroResearchTitle">正在载入研究题目</h2><p id="heroResearchSummary">研究进度与专家协作即将呈现。</p><button id="enterStudio" class="primary" type="button">查看当前进展 <span aria-hidden="true">↗</span></button><span class="heroNote">计划 · 大纲 · 每一步进展</span></div>
+          <div class="heroScene collaborationScene" aria-label="专家协作场景">
+            <span class="sceneEyebrow">专家协作中</span>
+            <div class="collaborationDesk" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div id="sceneExperts" class="sceneExperts"></div>
+            <div class="handoffPaper" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="organizeSheets" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="discussionMarks" aria-hidden="true"><i></i><i></i><i></i></div>
+            <p id="sceneStatus" class="sceneStatus"></p>
+            <span class="sceneCaption">整理资料 · 交换观点 · 共同交付（协作示意）</span>
+          </div>
+        </section>
+        <details id="researchBrief" class="overview surface researchBrief"><summary>研究说明与团队概况</summary>
+          <div><span class="eyebrow">当前研究</span><h2 id="teamName">读取中…</h2><p id="teamSummary"></p></div>
+          <div class="summaryCounts" id="counts"></div>
+        </details>
+        <section hidden id="pendingSection" class="surface pendingSection" aria-label="待审批任务"><div class="pendingHead"><h2>待你确认 <span id="pendingCount"></span></h2><span>人工确认后继续</span></div><div id="pendingItems"></div></section>
+        <section id="launchProgress" class="surface launchProgress" aria-labelledby="launchTitle" hidden>
+          <div class="launchProgressHead"><div><span class="eyebrow">启动进展</span><h2 id="launchTitle">正在启动专家团队</h2></div><strong id="launchCount">等待检查点</strong></div>
+          <progress id="launchBar" max="3" aria-label="已核实的启动检查点"></progress>
+          <p id="launchDetail" role="status" aria-live="polite">正在等待服务端确认。</p>
+          <button id="launchRecheck" type="button" hidden>重新核实启动结果</button>
+          <ol class="launchSteps"><li data-launch-step="approval">确认已写入计划记录</li><li data-launch-step="running">团队组建流程已开始</li><li data-launch-step="team">专家团队已建立</li></ol>
+          <small>进度只统计已核实的启动检查点，不代表预计耗时或研究任务完成度。</small>
+        </section>
+        <p id="stageSummary" class="stageSummary" role="status"></p>
+        <section id="planSection" class="surface section" hidden><div class="sectionHead"><div><span class="eyebrow">研究计划</span><h2>研究计划</h2><p>先看研究目标与路线，再核对专家、模型、研究方法和每项任务。</p></div><span id="planStatus" class="pill"></span></div><div id="planContent"></div></section>
+        <section id="choiceSection" class="surface section" hidden><div class="sectionHead"><div><span class="eyebrow">研究方向确认</span><h2>研究大纲</h2><p>查看当前大纲；需要选择方向时，在对应方案旁确认。</p></div></div><div id="choices"></div></section>
+        <section id="resultsSection" class="surface section" hidden><div class="sectionHead"><div><span class="eyebrow">研究档案</span><h2>研究成果</h2><p>正式报告、底稿、大纲等关键稿件，各保留最新定稿。</p></div></div><div id="results"></div></section>
+        <section id="conversationSection" class="surface section" aria-label="与智见小秘书的对话" hidden>
+          <div class="conversationNav"><p id="conversationStatus" class="muted" role="status">正在读取对话…</p><button id="conversationMore" type="button" class="quiet" hidden>加载更早对话</button><button id="conversationQuestionsToggle" type="button" class="quiet" aria-label="提问记录" title="提问记录" aria-expanded="false" aria-controls="conversationQuestions"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M5 4h14v13H9l-4 3V4Z"/><path d="M8 8h8M8 12h6"/></svg></button><button id="conversationLatest" hidden type="button" class="quiet">最新 ↓</button></div>
+          <aside id="conversationQuestions" class="conversationQuestions" aria-label="提问记录" hidden>
+            <div class="conversationQuestionsHead"><strong>提问记录</strong><button id="conversationQuestionsClose" type="button" class="quiet" aria-label="关闭提问记录">×</button></div>
+            <p class="muted">已加载的提问 · 点击定位原文</p>
+            <label class="visuallyHidden" for="conversationQuestionSearch">搜索已加载的提问</label>
+            <input id="conversationQuestionSearch" type="search" placeholder="搜索提问关键词…" autocomplete="off">
+            <div id="conversationQuestionsList"></div>
+            <button id="conversationQuestionsMore" type="button" class="quiet" hidden>加载更早提问</button>
+          </aside>
+          <div id="conversationMessages" class="conversationMessages" role="log" aria-label="与智见小秘书的对话" aria-live="polite" aria-relevant="additions"></div>
+          <div id="conversationDispatch" class="conversationDispatch" role="status" aria-live="polite" hidden>
+            <span class="dispatchIllustration" aria-hidden="true"><span class="dispatchPortrait"><img src="/plugins/dsh-expert-library/review/portraits/coordinator.webp?v=coordinator-young-20261007" alt=""></span><span class="dispatchRoute"><i class="dispatchPaper"></i></span></span>
+            <span class="dispatchCopy"><span class="dispatchHeadline"><strong id="dispatchTitle">正在送达智见小秘书</strong><span class="dispatchTyping" aria-hidden="true"><i></i><i></i><i></i></span></span><span id="dispatchDetail">消息沿工作流送往原会话。</span></span>
+            <time id="dispatchElapsed" class="dispatchElapsed" aria-hidden="true"></time>
+          </div>
+          <form id="conversationCompose" class="conversationCompose" hidden>
+            <label class="visuallyHidden" for="conversationInput">发给智见小秘书</label>
+            <textarea id="conversationInput" rows="1" maxlength="8000" placeholder="补充要求，或继续提问…" aria-describedby="conversationHint"></textarea>
+            <div class="conversationComposeFoot"><span id="conversationHint" class="visuallyHidden">忙碌时消息会排队，回复在下方自动更新。Ctrl / ⌘ + Enter 发送。</span><button id="conversationSend" type="submit">发送</button></div>
+          </form>
+          <p id="conversationSendStatus" class="conversationSendStatus" role="status" aria-live="polite"></p>
+        </section>
+        <section id="activitySection" class="surface section" hidden><div class="sectionHead"><div><span class="eyebrow">实时进展</span><h2>团队进展</h2><p>按任务查看研究进展，点击人物或分工表可找到负责的任务。</p></div><span id="updatedAt" class="muted"></span></div><div id="activity"></div></section>
+      </div>
+    </main>
+  </div>
+  <script async src="/plugins/dsh-expert-library/review/review.js?v=__REVIEW_JS_VERSION__"></script>
+</body>
+</html>

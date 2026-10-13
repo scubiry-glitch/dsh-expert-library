@@ -19,6 +19,16 @@ import { SCHEMA_VERSION } from '../types.ts'
 export const DEFAULT_RONGCHENG_ADAPTER_URL = 'http://127.0.0.1:8791'
 export const DEFAULT_RONGCHENG_ENGINE_URL = 'http://127.0.0.1:8792'
 
+/** C-account frozen Fuzhou demo adapter. New cases remain disabled by the service. */
+export const RONGCHENG_V2_OPERATIONS: Readonly<Record<string, { path: string; method: string }>> = {
+  'housevalue.realestate.v2.subject.validate': { path: '/api/v2/capabilities/subject.validate', method: 'POST' },
+  'housevalue.realestate.v2.marketvalue.infer': { path: '/api/v2/capabilities/marketvalue.infer', method: 'POST' },
+  'housevalue.realestate.v2.rentvalue.infer': { path: '/api/v2/capabilities/rentvalue.infer', method: 'POST' },
+  'housevalue.realestate.v2.report.generate': { path: '/api/v2/capabilities/report.generate', method: 'POST' },
+  'housevalue.realestate.v2.job.status': { path: '/api/v2/capabilities/job.status', method: 'GET' },
+  'housevalue.realestate.v2.file.get': { path: '/api/v2/capabilities/file.get', method: 'GET' },
+}
+
 /** Adapter-served capabilities (03-provider-adapter). */
 export const RONGCHENG_ADAPTER_OPERATIONS: Readonly<Record<string, { path: string; method: string }>> = {
   'housevalue.realestate.valuation.infer': { path: '/api/v1/capabilities/valuation.infer', method: 'POST' },
@@ -41,6 +51,7 @@ export const RONGCHENG_CAVEATS: readonly string[] = [
 export interface RongchengManifestOptions {
   adapterBaseUrl?: string
   engineBaseUrl?: string
+  v2BaseUrl?: string
   version?: string
   timeoutMs?: number
 }
@@ -49,6 +60,7 @@ export function buildRongchengManifest(options: RongchengManifestOptions = {}): 
   const {
     adapterBaseUrl = DEFAULT_RONGCHENG_ADAPTER_URL,
     engineBaseUrl = DEFAULT_RONGCHENG_ENGINE_URL,
+    v2BaseUrl,
     version = '1.0.0',
     timeoutMs = 120_000,
   } = options
@@ -56,6 +68,10 @@ export function buildRongchengManifest(options: RongchengManifestOptions = {}): 
     { kind: 'http-api', id: 'adapter-api', baseUrl: adapterBaseUrl, timeoutMs, readOnly: true },
     { kind: 'http-api', id: 'engine-api', baseUrl: engineBaseUrl, timeoutMs, readOnly: true },
   ]
+  if (v2BaseUrl !== undefined) {
+    transports.push({ kind: 'http-api', id: 'v2-read-api', baseUrl: v2BaseUrl, timeoutMs, readOnly: true })
+    transports.push({ kind: 'http-api', id: 'v2-write-api', baseUrl: v2BaseUrl, timeoutMs, readOnly: false })
+  }
   const caliber = '容诚在线估价模型（candidate；结构化快照带 inference_id/model_version，语言模型不得自行计算估值）'
   const capabilities: ToolCapability[] = [
     ...Object.entries(RONGCHENG_ADAPTER_OPERATIONS).map(([capability, op]) => ({
@@ -72,6 +88,13 @@ export function buildRongchengManifest(options: RongchengManifestOptions = {}): 
       caliber: '确定性持有收益/收购价测算引擎（结构化计算快照，语言模型不参与算术）',
       freshness: 'realtime' as const,
     })),
+    ...(v2BaseUrl === undefined ? [] : Object.entries(RONGCHENG_V2_OPERATIONS).map(([capability, op]) => ({
+      capability,
+      operation: `rongcheng${op.path}`,
+      transportId: capability === 'housevalue.realestate.v2.report.generate' ? 'v2-write-api' : 'v2-read-api',
+      caliber: '冻结福州黄金样例接线验收；真实新案不可用',
+      freshness: 'realtime' as const,
+    }))),
   ]
   return {
     id: 'rongcheng',

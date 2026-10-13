@@ -87,6 +87,9 @@ export interface RuntimePackResult {
   readonly pack: DomainPackV2
   /** Every center/workspace pack that participated, in merge order (highest last). */
   readonly layers: readonly PackDir[]
+  /** Validated packs corresponding to `layers`, retained for host consumers
+   * that need the selected sources without loading the same files again. */
+  readonly layerPacks: readonly DomainPackV2[]
   /** Workspace failures degrade; invalid center snapshots throw before returning a result. */
   readonly diagnostics: readonly PackDiagnostic[]
   /** Detached local version/root snapshot retained by this result, when supplied. */
@@ -384,9 +387,11 @@ export async function resolveRuntimePack(
   }
 
   const mergedPack = merged.pack === undefined ? undefined : { ...merged.pack, pack: baseCopy.pack }
+  const selectedLayers = [...centerLoaded, ...ordered]
   const result: RuntimePackResult = deepFreeze({
     pack: mergedPack ?? baseCopy,
-    layers: [...centerLoaded, ...ordered].map(item => ({ dir: item.source.root ?? item.source.label, label: item.source.label })),
+    layers: selectedLayers.map(item => ({ dir: item.source.root ?? item.source.label, label: item.source.label })),
+    layerPacks: selectedLayers.map(item => item.pack!),
     diagnostics,
     ...(centerSnapshot === undefined ? {} : { centerSnapshot }),
   })

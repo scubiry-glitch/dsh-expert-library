@@ -6,7 +6,7 @@
  * - enforces the plan's per-task capability allowlist at execute time
  *   (architecture gap #3): a member of a team assembled from a compiled
  *   ExecutionPlan may only invoke capabilities granted by their plan-linked
- *   tasks' `allowedCapabilities` (union; empty ⇒ none) — anything else fails
+ *   active tasks' `allowedCapabilities` (union; empty ⇒ none) — anything else fails
  *   with a never-retry `CAPABILITY_NOT_ALLOWED` BEFORE capability resolution;
  *   teams without plan capability info (legacy/ad-hoc) stay open and captains
  *   keep full access;
@@ -34,6 +34,7 @@
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool, type InferValue } from '@deepseek-ai/dsh-tools'
 import { join } from 'node:path'
+import { saveCustomerDataset } from './customer-datasets.ts'
 import { appendTeamEvent, captainSessionOf } from '../events.ts'
 import { findTeamByParticipant } from '../state.ts'
 import type { ExpertTeamsProviderCalledData } from '../event-types.ts'
@@ -122,7 +123,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  *  as `TeamState.planTaskCapabilities` (logical CompiledTask id → caps).
  *
  *  At execute time the gate resolves: caller session → team →
- *  member's plan-linked tasks (`TeamTask.planTask.logicalId`) → the union of
+ *  member's active plan-linked tasks (`TeamTask.planTask.logicalId`) → the union of
  *  their allowedCapabilities. When that set is defined (the team is a plan
  *  team with persisted capability info) and does not include the requested
  *  capability, the call fails with a never-retry `CAPABILITY_NOT_ALLOWED`
@@ -176,6 +177,9 @@ export function resolveCapabilityAllowance(team: TeamState | undefined, agentSes
     const caps = planTaskCapabilities[logicalId]
     if (caps === undefined) continue // defensive: unknown logical id
     fromTasks.push(task.id)
+    // Pending/finalized tasks cannot lend grants to the current task. Keep
+    // the caller constrained even when all its linked work is inactive.
+    if (task.status !== 'claimed' && task.status !== 'in_progress') continue
     for (const cap of caps) {
       if (!allowed.includes(cap)) allowed.push(cap)
     }
@@ -256,7 +260,7 @@ export async function resolveProviderCallerContext(
 function capabilityCorrection(capability: string, allowance: CapabilityAllowance): string {
   const tasks = allowance.fromTasks.join('、')
   if (allowance.allowed.length === 0) {
-    return `计划未授予该成员任何 provider 能力（其任务 ${tasks} 的 allowedCapabilities 为空），禁止调用「${capability}」`
+    return `计划未授予该成员任何 provider 能力（其当前活动任务可用授权为空；关联任务 ${tasks}），禁止调用「${capability}」`
   }
   return `计划仅允许该成员（任务 ${tasks}）调用：${allowance.allowed.join('、')}；「${capability}」不在其中，请改用允许的能力或由队长调整任务`
 }
@@ -272,12 +276,12 @@ export function providerCallToolEligible(service: ProviderTransportService | und
 }
 
 /** Bound `data` to the model-facing size limit; keeps everything else intact. */
-function boundData(data: unknown, maxChars: number): { readonly data: unknown; readonly truncated?: { readonly chars: number; readonly kept: number } } {
+function boundData(data: unknown, maxChars: number): { readonly data: unknown; readonly truncated?: { readonly chars: number; readonly kept: number }; readonly unserializable?: true } {
   let json: string | undefined
   try {
     json = JSON.stringify(data)
   } catch {
-    return { data: { _unserializable: true } }
+    return { data: undefined, unserializable: true }
   }
   if (json === undefined) return { data }
   if (json.length <= maxChars) {
@@ -311,7 +315,8 @@ export function summarizeEnvelope(envelope: ProviderEnvelope, capability: string
   }
   if (envelope.provenance.transportId !== undefined) base.transportId = envelope.provenance.transportId
   if (envelope.ok) {
-    const { data, truncated } = boundData(envelope.data, PROVIDER_CALL_MAX_DATA_CHARS)
+    const { data, truncated, unserializable } = boundData(envelope.data, PROVIDER_CALL_MAX_DATA_CHARS)
+    if (unserializable) return { ...base, ok: false, error: { code: 'PROVIDER_OUTPUT_NOT_JSON', retry: 'never', correction: '上游数据包含无法安全传递的值；停止引用该数据并联系数据通道维护方' } }
     base.data = data
     if (truncated !== undefined) base.truncated = truncated as unknown as Record<string, unknown>
     return base
@@ -498,6 +503,9 @@ async function executeProviderCall(
   // a provider route cannot be used to escape the member's persisted scope.
   const memberScope = resolveMemberCapabilityScope(caller.team, caller.sessionId)
   if (memberScope !== undefined) {
+    if (!admitCapability(memberScope, { tool: 'expert_provider_call' }).ok) {
+      return fail('CAPABILITY_TOOL_DENIED', '成员当前 durable scope 未授权 expert_provider_call；已拒绝调用')
+    }
     const member = caller.team?.members.find(candidate => candidate.id === caller.sessionId && candidate.status !== 'removed')
     const activeTask = member === undefined
       ? undefined
@@ -570,24 +578,43 @@ async function executeProviderCall(
       result.warnings = warnings
     }
   }
-  // 审计埋点：provider 调用（含失败）写入团队事件流，队长/活动面板可追踪。
-  // 修复观测点「provider 失败只存在于成员口头汇报、无审计记录」。
+  // Host 严格要求 lossless JSON；可序列化的可选字段由 round-trip 归一化。
+  // BigInt、循环引用等无法安全序列化时必须返回可审计的失败回执，不能把
+  // 原始无效对象交给 Host，否则整个工具调用会被 INVALID_TOOL_OUTPUT 吞掉。
+  let safeResult: ProviderCallResult
   try {
-    await emitProviderCallEvent(ctx, exec.agent, result, caller)
+    safeResult = JSON.parse(JSON.stringify(result)) as ProviderCallResult
+  } catch {
+    safeResult = fail('PROVIDER_OUTPUT_NOT_JSON', '上游数据包含无法安全传递的值；停止引用该数据并联系数据通道维护方')
+  }
+  // Customer data is durable outside the writable agent workspace. Keep the
+  // complete validated provider payload, not the 32k model-facing preview.
+  const customerHome = process.env['DSH_HOME']
+  const customerWorkspace = process.env['DSH_CUSTOMER_WORKSPACE_DIR']
+  if (customerHome && customerWorkspace && datasetInfo && safeResult.ok && envelope.ok) {
+    const sessionId = caller.team?.captainSessionId ?? caller.sessionId
+    if (sessionId) {
+      try {
+        await saveCustomerDataset(customerHome, {
+          sessionId, workspace: caller.workspace, configuredWorkspace: customerWorkspace,
+          dataset: datasetInfo.id, version: datasetInfo.version, signature: datasetInfo.signature,
+          provider: safeResult.provider ?? 'unknown', provenance: safeResult.provenance ?? {}, data: envelope.data,
+        })
+      } catch {
+        safeResult.warnings = [...(safeResult.warnings ?? []), {
+          code: 'customer.snapshot.unavailable', severity: 'warning',
+          message: '数据查询成功，但未能保存到客户数据清单。请勿将本次结果视为已留存。',
+        }]
+      }
+    }
+  }
+  // 事件与调用方观察同一份结果；审计失败本身不阻断数据回执。
+  try {
+    await emitProviderCallEvent(ctx, exec.agent, safeResult, caller)
   } catch {
     // 事件埋点失败不阻断调用结果返回。
   }
-  // 防御性 lossless-JSON 归一化：宿主对工具返回值做严格快照校验，任何显式
-  // undefined / 非 plain 原型都会整体拒绝（INVALID_TOOL_OUTPUT，表现为
-  // "value is not lossless JSON"）。JSON round-trip 一次性剥离所有不可
-  // 序列化残留（Date/BigInt 副产物、readonly 容器等），结构与语义不受影响。
-  // 修复 2026-09-27 上海租赁报告 dataset 层批量拒收（原热修只打在 lib 上，
-  // 重建即丢，故回填源码——2026-09-28）。
-  try {
-    return JSON.parse(JSON.stringify(result)) as typeof result
-  } catch {
-    return result
-  }
+  return safeResult
 }
 
 /**

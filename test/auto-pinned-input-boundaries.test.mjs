@@ -361,7 +361,7 @@ test('registered tools cannot reopen or reassign a completed integrated source t
   const completed = await f.read()
   assert.equal(completed.tasks[0].status, 'completed')
   await assert.rejects(f.call('quality_reopen', { task_id: 't1', event_id: 'illegal-reopen', reason: 'Change an upstream file' }, 'captain'), /Only unfinished|completed|terminal/i)
-  await assert.rejects(f.call('reassign_task', { task_id: 't1', assignee: 'worker' }, 'captain'), /completed|terminal/i)
+  await assert.rejects(f.call('reassign_task', { task_id: 't1', assignee: 'worker', expected_attempt:(await f.read()).tasks[0].attempt }, 'captain'), /completed|terminal/i)
   assert.deepEqual(await f.read(), completed)
 })
 

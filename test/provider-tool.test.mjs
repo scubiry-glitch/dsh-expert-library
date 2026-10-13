@@ -165,6 +165,18 @@ test('optional undefined provenance is omitted from the Host JSON result without
   assert.deepEqual(JSON.parse(JSON.stringify(result)), result, 'result must satisfy the Host lossless-JSON contract')
 })
 
+test('unserializable provider data fails with a lossless JSON error instead of reporting success', async () => {
+  const service = fakeService({
+    resolve: () => ({ capability: readBinding.capability, status: 'bound', binding: readBinding, rejections: [] }),
+    invoke: async () => okEnvelope({ amount: 1n }, { provider: 'wind', operation: readBinding.operation, transportId: 'cli' }),
+  })
+  const result = await registerAndGetTool(service).execute({ capability: readBinding.capability, input: {} }, exec)
+  assert.equal(result.ok, false)
+  assert.equal(result.error.code, 'PROVIDER_OUTPUT_NOT_JSON')
+  assert.equal(result.error.retry, 'never')
+  assert.deepEqual(JSON.parse(JSON.stringify(result)), result)
+})
+
 test('unknown capability returns CAPABILITY_UNBOUND with rejections and never invokes', async () => {
   let invoked = false
   const service = fakeService({

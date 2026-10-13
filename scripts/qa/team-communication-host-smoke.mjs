@@ -9,7 +9,7 @@
 import assert from 'node:assert/strict'
 import { execFile, spawn } from 'node:child_process'
 import { createHash, randomBytes } from 'node:crypto'
-import { cp, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, readdir, realpath, rm, symlink, writeFile } from 'node:fs/promises'
 import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -388,7 +388,7 @@ export async function runTeamCommunicationHostSmoke(options = {}) {
   const candidateTools = await readFile(join(REPO, 'lib/tools.js'), 'utf8')
   assert.ok(candidateTools.includes('expert_teams_quality_reopen') && candidateTools.includes('complete_task'), 'Build the current candidate before running the Host smoke test')
   const candidateIdentity = await runtimeIdentity()
-  const sourceDomainPack = join(REPO, 'domain-packs', 'zhijian-realestate')
+  const sourceDomainPack = await realpath(options.domainPackSource ?? join(REPO, 'domain-packs', 'zhijian-realestate'))
   const domainPackIdentity = await domainPackIdentityAt(sourceDomainPack)
   const root = await mkdtemp(join(tmpdir(), 'team-communication-real-host-'))
   const workspace = join(root, 'workspace')
@@ -396,6 +396,7 @@ export async function runTeamCommunicationHostSmoke(options = {}) {
   const profile = 'team-communication-smoke'
   const profileRoot = join(dshHome, 'profiles', profile)
   const probeRoot = join(root, 'probe-plugin')
+  const isolationPatch = join(root, 'isolation.patch.yml')
   const port = await freePort()
   const nonce = randomBytes(24).toString('hex')
   // Forward only runtime paths/locale, never the parent process's API keys.
@@ -437,7 +438,7 @@ export async function runTeamCommunicationHostSmoke(options = {}) {
     progress(`start ${label}`)
     hostOutput = ''
     browserCookie = undefined
-    child = spawn('dsh', ['--profile', profile, '--host', '127.0.0.1', '--port', String(port)], {
+    child = spawn('dsh', ['--profile', profile, ...(options.disableHostModels ? ['--patch', isolationPatch] : []), '--host', '127.0.0.1', '--port', String(port)], {
       cwd: workspace, env, detached: true, stdio: ['ignore', 'pipe', 'pipe'],
     })
     progress(`isolated ${label} pid=${child.pid} port=${port}`)
@@ -481,6 +482,8 @@ export async function runTeamCommunicationHostSmoke(options = {}) {
     }))
     await writeFile(join(probeRoot, 'index.mjs'), (options.probePlugin ?? probePlugin)(workspace, nonce, domainPackIdentity))
     await writeFile(join(probeRoot, 'cordis.patch.yml'), '- insert:\n    - id: team-communication-probe\n      name: team-communication-host-probe\n')
+    if (options.disableHostModels) await writeFile(isolationPatch,
+      ['llm-deepseek', 'llm-pi-ai', 'session-title-llm', 'session-telemetry-otel'].map(id => '- id: ' + id + '\n  disabled: true\n').join(''))
     await command('dsh', ['--from-default-profile', 'web', '--profile', profile, '--help'])
     await command('dsh', ['plugin', '--profile', profile, 'add', REPO])
     await command('dsh', ['plugin', '--profile', profile, 'add', probeRoot])
@@ -495,6 +498,13 @@ export async function runTeamCommunicationHostSmoke(options = {}) {
     await stop()
     const restartFault = await options.afterInitialStop?.({ workspace, stoppedPid: observations[0].pid })
     await start('restart')
+    const browserObservation = await options.afterRestartReady?.({
+      baseUrl: `http://127.0.0.1:${port}`,
+      cookie: browserCookie,
+      prepared,
+      workspace,
+      probe: action => probe(action, 'POST'),
+    })
     const finished = await probe('finish', 'POST')
     const reportCraftV2Finished = options.probePlugin ? undefined : await probe('craft-v2-finish', 'POST')
     const selectedSkillCraftFinished = options.probePlugin ? undefined : await probe('craft-v3-finish', 'POST')
@@ -511,7 +521,7 @@ export async function runTeamCommunicationHostSmoke(options = {}) {
       candidateRuntimeSha256: candidateIdentity.sha256,
       candidateRuntimeFileCount: candidateIdentity.fileCount,
       candidateCriticalModules: candidateIdentity.criticalModules,
-      observations, prepared, finished, ...(reportCraftV2Prepared === undefined ? {} : { reportCraftV2: { prepared: reportCraftV2Prepared, finished: reportCraftV2Finished } }), ...(selectedSkillCraftPrepared === undefined ? {} : { selectedSkillCraft: { prepared: selectedSkillCraftPrepared, finished: selectedSkillCraftFinished } }), ...(restartFault === undefined ? {} : { restartFault }), stopped: true,
+      observations, prepared, finished, ...(browserObservation === undefined ? {} : { browserObservation }), ...(reportCraftV2Prepared === undefined ? {} : { reportCraftV2: { prepared: reportCraftV2Prepared, finished: reportCraftV2Finished } }), ...(selectedSkillCraftPrepared === undefined ? {} : { selectedSkillCraft: { prepared: selectedSkillCraftPrepared, finished: selectedSkillCraftFinished } }), ...(restartFault === undefined ? {} : { restartFault }), stopped: true,
       limitations: options.limitations ?? [
         'The real Host loads the plugin and HTTP probe invokes its registered tool definitions with synthetic participant identities.',
         'This does not exercise model reasoning, the full tool execution policy pipeline or real continuable-subagent transport.',

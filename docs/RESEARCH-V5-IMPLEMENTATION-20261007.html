@@ -1,0 +1,24 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>V5 实现与试跑说明</title><style>@page{size:A4;margin:18mm}*{box-sizing:border-box}body{margin:0;background:#f5f4eb;color:#20301f;font-family:'Noto Sans CJK SC',sans-serif;line-height:1.65}main{max-width:960px;margin:auto;padding:32px}h1{font-size:30px}h2{font-size:21px;border-left:4px solid #24553d;padding-left:12px}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:9px;border-bottom:1px solid #cdd2c4;text-align:left;vertical-align:top}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#e9eedf;padding:16px}section{break-inside:avoid}.note{padding:16px;border:1px solid #aab49b;background:#fdfdf6}a{color:#24553d}</style></head><body><main>
+<h1>V5：观点引领研究，工艺服务表达</h1><p>实现与试跑说明 · 2026-10-07 · 流程 5.0.0 / 领域包候选 1.6.0</p>
+<div class="note"><b>验收边界：</b>核心实现、构建和合成流程回归已完成。合成试跑覆盖 Host 真实工具、磁盘状态、独立评审事务和实际浏览器/PDF 检查，未调用付费模型或伪造业务数据。领域包正式发布启用、真实研究试跑尚待完成，不称为线上已验收。</div>
+<section><h2>执行路径</h2><p>专家与框架推荐 → 所有选中专家提出观点 → 用户选择方向 → 各专家取证与反证 → 表达策划 → 正文及独立内容评审 → 用户确认正文 → HTML/PDF 及独立视觉评审。</p><p>候选观点确定前不要求最终章节；大纲随证据重组。两位研究专家时，内部执行图为 10 个节点；三位为 12 个，五位为 16 个。增加的节点对应实际专家贡献，不增加人工审批。用户参与的两道阶段门为方向选择、正文确认；创建团队前仍需确认专家、框架与模型安排。</p></section>
+<section><h2>专家与 skill 分工</h2><table><thead><tr><th>阶段</th><th>责任</th><th>实际 skill</th><th>流转方式</th></tr></thead><tbody>
+<tr><td>候选观点</td><td>全部选中领域专家：轻量取证、框架、判断与最强反例</td><td>research-v5-view</td><td>材料校验后自动流转</td></tr>
+<tr><td>观点综合</td><td>主笔整理分歧、推荐有价值的研究方向</td><td>research-v5-synthesis</td><td>展示真实候选，用户选择</td></tr>
+<tr><td>专题取证</td><td>每位选中专家：真实来源、口径、机制与反证</td><td>research-v5-evidence</td><td>材料校验后自动流转</td></tr>
+<tr><td>表达策划</td><td>designer-craft：神韵、逻辑顺序、图文节奏</td><td>research-v5-expression</td><td>材料校验后进入成文</td></tr>
+<tr><td>正文</td><td>主笔成文，另一位领域专家独立复核</td><td>research-v5-writer</td><td>独立评审后原子集成，用户确认</td></tr>
+<tr><td>成品</td><td>designer-craft 制作，design-critic 独立评审</td><td>research-v5-renderer + zhijian-research-craft-v5</td><td>真实渲染检查和独立评审后交付</td></tr>
+</tbody></table></section>
+<section><h2>门禁如何放宽</h2><p>取消固定章数、标题逐字锁定、逐章六件套、研究占比、外部增量数、每章图数、全渠道探针及固定结束语。V5 允许一个明确的分析轴与主命题，不必为了数量另造假设。</p><p>保留真实来源、单位与口径、关键计算、反证与不确定性、独立内容/视觉复核。内部材料锁定为“工作材料版本”，不会伪称独立评审通过。声明文件不齐或提交格式错误，返回明确可重试状态，不消耗内容修复预算；Host 检查未验证时进入技术等待，不能用作者改稿次数填补工具故障。</p><p>核心判断台账采用 schemaVersion 2，记录来源、正文原句、实质数值单位/统计期/口径、计算说明和未决问题。机器格式通过不认证事实；独立评审还须检查遗漏及错误推断。</p></section>
+<section><h2>表达与两个参考设计</h2><p><b>credit-policy：</b>深青色轴、暖白底、紧凑比较表、左侧章旨和规则标签。<b>designer-paper：</b>forest-sage、纸面卡片、清楚的章节侧栏与层级。</p><p>冻结主样式，记录两份参考各自采用/未采用的组件和理由。按论证需要制图，不逐章凑图。可选点睛图绑定已审原句，不能新增未经审核的数值。真实检查 1280/375 屏幕和 A4；V5 无最少三页限制。正文层与图层分型检查，完整 PDF 仍核对实际正文。</p></section>
+<section><h2>证据与兼容性</h2><ul><li>定向回归：内部材料原子提交、失败无半提交、幂等重试、输入防漂移、真实候选选择、短文与未知单位规则、Host 应用和全流程完成。</li><li>合成闭环：全部任务 completed，两个独立质量任务 integrated；测试不是业务报告验收。</li><li>浏览器：1280/375 真实 DOM 与截图；PDF：实际 A4 页面和正文。</li><li>旧工艺：8 项检查通过；领域包 1.5.0 的图层修复按原字节保留。旧 DAG 和在途 V4 不迁移。</li></ul></section>
+<section><h2>正式启用后的试跑口令</h2><pre>新建一轮观点驱动 V5 研究试跑，不迁移旧团队。
+选题：上海租赁市场是否出现改善迹象？先明确“改善”的口径。
+先推荐互补专家与分析框架，解释推荐理由；给我选择候选观点，再据证据重组大纲。
+使用 research_flow="viewpoint-v5"，保留已批准模型配置，不自动增加专家或切换更贵模型。
+内部简报、取证和表达草案自动流转；正文和成品做独立评审。
+designer-craft 先参与表达策划；成品明确执行 credit-policy 与 designer-paper 两份参考的取舍。
+未知单位和空数据如实保留，不伪造样本；技术故障报告可重试状态。
+阶段结束报告真实证据与仍待验收的项目。</pre><p>启用前提：插件注册 viewpoint-v5；正式安装并启用包含 zhijian-research-craft-v5 的领域包 1.6.0。缺少任一项应报告未就绪，不回退成 V4 冒充 V5。</p></section>
+</main></body></html>

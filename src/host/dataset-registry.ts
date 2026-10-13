@@ -9,10 +9,10 @@ export const ZHIJIAN_DATASETS: readonly DatasetDefinition[] = [
   { dataset: 'realestate.city.market', version: '1.1', description: '城市房地产指标时序（city=城市名称；code=指标代码，先查 realestate.indicators.catalog，不是城市/行政区编码；可选 periodEnd=截止月 YYYY-MM、limit=期数；当前时序路线不支持 metric/period）', providerPreference: ['zyt', 'beike'], capabilities: [{ id: 'realestate.indicators.timeseries', schemaVersion: '1' }, { id: 'realestate.market.snapshot', schemaVersion: '1' }], requiredFields: ['city', 'code'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
   { dataset: 'realestate.city.compare', version: '1.0', description: '多城市房地产指标对比', providerPreference: ['zyt'], capabilities: [{ id: 'realestate.city.compare', schemaVersion: '1' }], requiredFields: ['cities'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
   { dataset: 'realestate.listing.search', version: '1.0', description: '贝壳房源检索', providerPreference: ['beike'], capabilities: [{ id: 'realestate.listing.search', schemaVersion: '1' }], requiredFields: ['city'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
-  { dataset: 'realestate.policy', version: '1.0', description: '城市房地产政策检索', providerPreference: ['beike'], capabilities: [{ id: 'realestate.policy.search', schemaVersion: '1' }], requiredFields: ['city', 'topic'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
-  { dataset: 'realestate.rent.market', version: '1.0', description: '城市租赁市场检索', providerPreference: ['beike'], capabilities: [{ id: 'realestate.rent.search', schemaVersion: '1' }], requiredFields: ['city', 'period'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
+  { dataset: 'realestate.policy', version: '1.0', description: '购房政策与交易规则检索；city=城市、topic=单个政策问题，可选 query 补充条件；自动转换为 city_name/query', providerPreference: ['beike'], capabilities: [{ id: 'realestate.policy.search', schemaVersion: '1' }], requiredFields: ['city', 'topic'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
+  { dataset: 'realestate.rent.market', version: '1.0', description: '当前在租挂牌房源检索，非成交租金或历史快照；city=城市、period=研究参考期（接口不按该期过滤），可选 query=房源条件。MCP HTTP 可用 business_types 结构化过滤；CLI 优先实例不支持该字段，请改在 query 中描述且不得宣称精确过滤', providerPreference: ['beike'], capabilities: [{ id: 'realestate.rent.search', schemaVersion: '1' }], requiredFields: ['city', 'period'], requiredProvenance: ['source', 'caliber'], readOnly: true, installPolicy: 'never' },
   { dataset: 'financial.stock.quote', version: '1.0', description: '股票行情快照', providerPreference: ['wind'], capabilities: [{ id: 'financial.stock.quote', schemaVersion: '1' }], requiredFields: ['windcode'], requiredProvenance: ['source'], readOnly: true, installPolicy: 'never' },
-  { dataset: 'financial.macro', version: '1.0', description: '宏观经济指标查询', providerPreference: ['wind'], capabilities: [{ id: 'financial.macro.query', schemaVersion: '1' }], requiredFields: ['metric', 'period'], requiredProvenance: ['source'], readOnly: true, installPolicy: 'never' },
+  { dataset: 'financial.macro', version: '1.1', description: '万得宏观指标查询；input.question=自然语言指标问题，并提供 observation=近 N 期，或 beginDate/endDate=起止日期（YYYY-MM-DD），两种时间方式不能混用', providerPreference: ['wind'], capabilities: [{ id: 'financial.macro.query', schemaVersion: '1' }], requiredFields: ['question'], requiredProvenance: ['source'], readOnly: true, installPolicy: 'never' },
 ]
 const DATASET_BY_ID = new Map(ZHIJIAN_DATASETS.map(definition => [definition.dataset, definition]))
 export function datasetDefinition(dataset: string): DatasetDefinition | undefined { return DATASET_BY_ID.get(dataset) }
@@ -57,6 +57,15 @@ export function resolveDatasetRequest(request: DatasetRequest, localDatabases?: 
   if (request.version !== undefined && request.version !== definition.version) return { error: datasetError('DATASET_VERSION_UNSUPPORTED', `数据集「${request.dataset}」仅支持版本 ${definition.version}`) }
   const missing = definition.requiredFields.filter(field => { const value = request.input[field]; return value === undefined || value === null || value === '' || (Array.isArray(value) && value.length === 0) })
   if (missing.length > 0) return { error: datasetError('CALIBER_MISSING', `数据集「${request.dataset}」缺少必填口径：${missing.join('、')}`, { missing }) }
+  if (request.dataset === 'financial.macro') {
+    const { observation, beginDate, endDate } = request.input
+    const hasObservation = observation !== undefined
+    const hasRange = beginDate !== undefined || endDate !== undefined
+    if (hasObservation === hasRange) return { error: datasetError('INPUT_INVALID', 'financial.macro 必须二选一：observation=正整数，或 beginDate/endDate=完整日期范围') }
+    if (hasObservation && (typeof observation !== 'number' || !Number.isInteger(observation) || observation <= 0)) return { error: datasetError('INPUT_INVALID', 'financial.macro 的 observation 必须是正整数') }
+    const validDate = (value: unknown): value is string => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(`${value}T00:00:00Z`)) && new Date(`${value}T00:00:00Z`).toISOString().slice(0, 10) === value
+    if (hasRange && (!validDate(beginDate) || !validDate(endDate) || beginDate > endDate)) return { error: datasetError('INPUT_INVALID', 'financial.macro 的 beginDate/endDate 必须是有效且有序的 YYYY-MM-DD 日期') }
+  }
   const binding = definition.capabilities[0]
   if (binding === undefined) return { error: datasetError('DATASET_UNKNOWN', `数据集「${request.dataset}」未绑定任何 capability（注册表配置错误，请联系维护者补充映射）`) }
   return { definition, binding, input: request.input, signature: datasetRequestSignature(request.dataset, request.input) }

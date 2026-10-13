@@ -1,44 +1,41 @@
+import { expertPortraitId, expertPortraitUrl, sharedPortraitId, hasPortraitAvatar } from '../review-portraits.ts'
 /**
- * Shared whale artwork lookup for the activity panel and the conversation
+ * Shared Zhijian hand-drawn expert artwork lookup for the activity panel and the conversation
  * card: role keywords map to the packaged role images; the captain always
- * uses the lead whale.
+ * uses the lead expert.
  * @module dsh-expert-library/client/artwork
  */
 
 /** Artwork route prefix served by the plugin host half. */
 export const ART_BASE = '/plugins/dsh-expert-library/assets/'
+const ART_VERSION = '?v=zhijian-experts-20261006'
 
-/** Whale role artwork per role keyword. */
-const ROLE_ART: ReadonlyArray<readonly [RegExp, string]> = [
-  [/resear|analys|investig|explor|data|study|研究|分析|数据|调查|探索|调研/, 'researcher.png'],
-  [/engineer|dev\b|server|backend|\bapi\b|runtime|watcher|contract|工程|后端|服务|接口|开发|代码|编程/, 'engineer.png'],
-  [/\bqa\b|test|verif|quality|测试|质量/, 'qa-engineer.png'],
-  [/design|\bui\b|\bux\b|front|theme|accessib|设计|前端|主题/, 'designer.png'],
-  [/secur|audit|risk|threat|review|安全|审计|审查|风险/, 'security-reviewer.png'],
-  [/docs|writer|product|spec|coordin|撰写|文案|写作|文档|协调/, 'docs-coordinator.png'],
-  [/release|\bbuild\b|deploy|\bops\b|\bci\b|ship|发布|构建|部署/, 'engineer.png'],
-]
-
-/** Captain artwork (always the lead whale). */
-export const LEAD_ART = `${ART_BASE}team-lead.png`
+/** Captain artwork (always the lead expert). */
+export const LEAD_ART = `${ART_BASE}team-lead.png${ART_VERSION}`
 
 /** Status action artwork per member activity. */
 export const ACTION_ART: Record<'working' | 'idle' | 'unknown', string> = {
-  working: `${ART_BASE}action-working.png`,
-  idle: `${ART_BASE}action-sleeping.png`,
-  unknown: `${ART_BASE}action-thinking.png`,
+  working: `${ART_BASE}action-working.png${ART_VERSION}`,
+  idle: `${ART_BASE}action-sleeping.png${ART_VERSION}`,
+  unknown: `${ART_BASE}action-thinking.png${ART_VERSION}`,
 }
 
 /**
- * Member artwork URL, or null when no role matches (initial-letter fallback).
+ * Named identity first, then a stable shared character appropriate to the role.
  * @param name - the member's display name.
  * @param role - the member's role text.
- * @returns the artwork URL, or null when unmatched.
+ * @returns an artwork URL even for a new pack with no declared portrait.
  */
-export function memberArtUrl(name: string, role: string): string | null {
-  const identity = `${name} ${role}`.toLowerCase()
-  for (const [pattern, art] of ROLE_ART) {
-    if (pattern.test(identity)) return `${ART_BASE}${art}`
-  }
-  return null
+export function memberArtUrl(name: string, role: string, expertId?: string, avatar = false): string | null {
+  const named = expertPortraitId({ name, role, expertId })
+  if (named) return expertPortraitUrl(named, avatar)
+  const shared = sharedPortraitId(expertId || name, role || name)
+  return expertPortraitUrl(shared, avatar && hasPortraitAvatar(shared))
+}
+
+/** Named artwork must never leave an empty member card if an asset fails to load. */
+export function memberArtFallback(event: { currentTarget: HTMLImageElement }): void {
+  const img = event.currentTarget
+  const fallback = `${ART_BASE}researcher.png${ART_VERSION}`
+  if (img.getAttribute('src') !== fallback) img.src = fallback
 }

@@ -10,7 +10,17 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 
 import { compileV1ScenarioExecutionPlan } from '../lib/v2/index.js'
-import { expandExecutionPlan } from '../lib/apply.js'
+import { expandExecutionPlan, memberProviderCallTools } from '../lib/apply.js'
+
+test('plan-approved data tasks expose the provider tool only to their assigned member', () => {
+  const plan = { tasks: [
+    { expertIds: ['data'], allowedCapabilities: ['realestate.indicators.catalog'] },
+    { expertIds: ['writer'], allowedCapabilities: [] },
+  ] }
+  assert.ok(memberProviderCallTools(plan, 'data').includes('expert_provider_call'))
+  assert.equal(memberProviderCallTools(plan, 'writer'), undefined)
+  assert.equal(memberProviderCallTools(plan, 'unassigned'), undefined)
+})
 
 /** Minimal V1 Expert fixture (same shape as the bridge tests). */
 function expert(id) {

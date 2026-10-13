@@ -1,11 +1,25 @@
-import { freezePlanModelRoutes, validateFrozenPlanModelRoutes } from './plan-models.ts'
+import { prepareResearchSubmission, submissionFingerprint } from './research-submission.ts'
+import { viewpointResearchProfile } from './viewpoint-research-plan.ts'
+import { compactResearchProfile } from './compact-research-plan.ts'
+import { isResearchV5, isV5WorkingTask, workingRelease, isCompactResearch, reviewedRelease, compactReviewer } from './research-release.ts'
+import { reviseTaskInputs } from './input-revision.ts'
+import { presetReportArtifactFlow } from './plan-artifact-flow.ts'
+import { checkDeepResearchPass, checkDeepResearchReviewer, checkCompactReviewAudit, inspectPdfPages } from './deep-research-gates.ts'
+import { currentTaskAction } from './task-actions.ts'
+import { occupiesMemberExecutionSlot } from './task-occupancy.ts'
+import { recordPlanExecutionBoundary } from './plan-execution-boundary.ts'
+import { requireReportOutline, requireStagedReportOutline, executionPlanDigest } from './plan-review.ts'
+import { applyPlanReview, validateCaptainPlanModel, freezePlanModelRoutes, validateFrozenPlanModelRoutes } from './plan-models.ts'
+import { checkTaskReassignment, taskInputDigest, taskScopeDigest } from './task-reassignment.ts'
 import { delegatedPlanApproval, requireAuthorizedReportPlan } from './plan-authorization.ts'
 import { inheritRetiredPlanGoalWait, persistPlanUserWait, resumePlanUserWait } from './goal-wait.ts'
 import { prepareCraftDelivery, saveCraftDelivery, requireCraftProducerDelivery, bindCraftReviewPreparation, requireCraftReviewPreparation } from './report-craft-delivery.ts'
 import { renderTaskRepairFeedback } from './repair-feedback.ts'
 import { isReportBundle, reportArtifactCheck, requireNewReportCraftSelection, requireCurrentSkillCraftSelection } from './report-bundle.ts'
-import { resolveSelectedSkillContract } from './skill-craft.ts'
+import { listScopedSkillCraftCatalog, resolveSelectedSkillContract } from './skill-craft.ts'
+import { DOMAIN_MATERIAL_PACK, requireCurrentTaskMaterialSelection, resolveTaskMaterialContract, prepareTaskMaterialDelivery, saveTaskMaterialDelivery, requireTaskMaterialDelivery } from './task-material-binding.ts'
 import { canonicalDigest } from './v2/digest.ts'
+import { issueReviewShareLink } from './host/review-share-link.ts'
 /**
  * The `expert_teams_*` model-facing tools.
  *
@@ -25,7 +39,7 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { readFile, realpath } from 'node:fs/promises'
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { appendTeamEvent, captainSessionOf } from './events.ts'
 import { prepareDependencyInputs } from './dependency-inputs.ts'
 import {
@@ -102,9 +116,13 @@ import { parseProfile, profileToExecutionPlan, type ExpertTeamProfile } from './
 import { PROFILE_SCHEMA, PROFILE_TASKS_SCHEMA, REPORT_BUNDLE_SCHEMA } from './profile-schema.ts'
 import { grantCapabilityTask, revokeCapabilityTask } from './capability-scope.ts'
 import { collectTaskEvidence, assertDurableQualityRun, reviewEvidenceForReplay } from './quality-runtime.ts'
-import { amendQualityRun, forkQualityRun, integrateQualityRun, requestQualityRepair, reviewQualityRun, validateAcceptanceResults, validateArtifactCheckFreshness, validateReviewRequest, QualityRunError, FINDING_SEVERITIES, REVIEW_VERDICTS, INDEPENDENT_REVIEW_AREA_IDS, type Finding, type QualityRun, type ReviewVerdict } from './quality-run.ts'
+import { recheckHostQualityRun } from './quality-run.ts'
+import { createQualityRun, amendQualityRun, forkQualityRun, integrateQualityRun, requestQualityRepair, reviewQualityRun, validateAcceptanceResults, validateArtifactCheckFreshness, validateReviewRequest, QualityRunError, FINDING_SEVERITIES, REVIEW_VERDICTS, INDEPENDENT_REVIEW_AREA_IDS, type Finding, type QualityRun, type ReviewVerdict } from './quality-run.ts'
 import { assertReviewedArtifactsCurrent } from './quality-artifacts.ts'
 import { resolveLibrary } from './expert-library/registry.ts'
+import { requirePlanExpertAvailability } from './active-experts.ts'
+import { validateDeepResearchPlan } from './deep-research-plan.ts'
+import { selectDeepResearchSubDag, parseDeepResearchSelection, selectDeepResearchMaterials } from './deep-research-selection.ts'
 import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
 import { knowledgeGuide } from './knowledge.ts'
 import { resolveSkill, skillDescriptionBlock } from './skills.ts'
@@ -116,12 +134,14 @@ import { applyExecutionPlan, compileErrorOf, expandExecutionPlan, type ApplyPlan
 import { captureSharedTaskContext } from './shared-task-context.ts'
 import { evaluateTaskCompletionGates, subjectWithQualityMark, taskGateBlockedError } from './task-gates.ts'
 import { compileV1ScenarioExecutionPlan, builtinLegacyPack } from './v2/compat.ts'
-import type { ExecutionPlan } from './v2/compiler.ts'
+import { compileExecutionPlan, type ExecutionPlan } from './v2/compiler.ts'
+import { buildZhijianDomainPack } from './v2/zhijian-pack.ts'
 import { resolveManagedRuntimePack } from './host/pack-runtime.ts'
 import { inspectExpertTeamsState } from './doctor.ts'
 import {
   addMemberCore,
   createTaskCore,
+  createDeepResearchVisualRevisionCore,
   createTeamCore,
   requireCaptainTeam,
   requireFreshCaptainTeam,
@@ -289,12 +309,9 @@ function currentPublishedDeliverables(task: TeamTask, run: QualityRun): TaskArti
   for (const artifact of task.publishedArtifacts ?? []) {
     if (artifact.reviewId !== undefined && artifact.attempt === task.attempt) latest.set(artifact.reviewId, artifact)
   }
-  for (const id of run.contract.deliverables.filter(id => id.startsWith('published:'))) {
-    if (!latest.has(id)) throw new Error(`PUBLISHED_ARTIFACT_MISSING: publish ${id.slice('published:'.length)} for current attempt ${task.attempt} before review`)
-  }
-  for (const id of latest.keys()) {
-    if (!run.contract.deliverables.includes(id)) throw new Error(`PUBLISHED_ARTIFACT_UNCOVERED: ${id} is not in the review contract`)
-  }
+  const missing = run.contract.deliverables.filter(id => id.startsWith('published:') && !latest.has(id))
+  const uncovered = [...latest.keys()].filter(id => !run.contract.deliverables.includes(id))
+  if (missing.length || uncovered.length) throw new Error(`${missing.length ? 'PUBLISHED_ARTIFACT_MISSING' : 'PUBLISHED_ARTIFACT_UNCOVERED'}: current attempt ${task.attempt}; missing=[${missing.join(', ')}]; uncovered=[${uncovered.join(', ')}]. Correct the complete list before submission; no review was advanced.`)
   return [...latest.values()]
 }
 
@@ -319,9 +336,9 @@ function reviewContractForStatus(team: TeamState, task: TeamTask, stateRoot?: st
   const nextAction = run.status === 'passed'
     ? `${task.status === 'claimed' ? 'The current owner must first move this same attempt to in_progress. Then ' : ''}The captain can call expert_teams_quality_integrate(task_id="${task.id}", actor="captain", complete_task=true) with a new integration event_id.`
     : run.status === 'blocked'
-      ? `The captain must call expert_teams_quality_repair(task_id="${task.id}", actor="captain") with a new repair event_id; preserve failed checks and repair the recorded findings before another independent review.`
+      ? `Integration remains blocked. First classify the failed acceptance item. Only for a correctable artifact or execution defect should the captain call expert_teams_quality_repair(task_id="${task.id}", actor="captain") with a new repair event_id, then provide corrected evidence and independent review. Reopening, republishing or switching actors does not fix an unchanged external service failure. If the approved acceptance includes a user-authorized conditional branch, verify every obligation of that exact branch; never reinterpret a mandatory data requirement or mark a failed check true. Otherwise report the external blocker and the recovery condition; do not spend repair attempts without new evidence.`
       : run.status === 'escalated'
-        ? 'The repair budget is exhausted. Report the durable blocker and obtain explicit resolution; do not retry pass or integration.'
+        ? `The content repair threshold is reached. Report the blocker and request an explicit user continuation decision; expert_teams_quality_continue preserves this task and history. If the user stops instead, the captain may call expert_teams_quality_closeout(task_id="${task.id}", event_id="<new-closeout-id>", reason="<disposition>") to preserve evidence and mark this attempt failed. Revised report source or craft contract requires a new confirmed staged plan.`
         : missing.length > 0 && (run.status === 'pending' || run.status === 'repairing')
           ? `Required current-attempt publications are missing: ${missing.join(', ')}. ${task.executionState === 'awaiting_review' ? `The captain must first call expert_teams_quality_reopen(task_id="${task.id}", event_id="<new-withdrawal-id>", reason="<missing-publication reason>") to withdraw this unreviewed submission without consuming another repair.` : run.status === 'repairing' ? 'The current owner must read the complete repair feedback, correct and verify the rejected work, then publish the corrected artifacts.' : 'The current owner must finish publishing first.'} Publish the original deliverable names for attempt ${run.attempt}, then submit awaiting_review; do not send an artificial failed review to unlock publication.`
         : `An independent reviewer must inspect the actual artifacts and call expert_teams_quality_review(task_id="${task.id}") with a new review event_id and one truthful passed boolean for every acceptance ID below. Include output-present if listed. The Host automatically binds task-output and current published versions; omit artifacts for these bindings and supply only other declared deliverables. Failed checks require needs_revision/reject and findings.`
@@ -428,13 +445,20 @@ async function enforceCompletionGates(stateRoot: string, team: TeamState, task: 
 }
 
 function requireReviewIdentity(team: TeamState, run: QualityRun, callerId: string, reviewer: string): string {
+  if (isCompactResearch(team)) {
+    const task = requireTask(team, run.contract.taskId)
+    if (compactReviewer(team, task) !== reviewer) throw new Error('RESEARCH_REVIEWER_REQUIRED: only the designated independent reviewer may accept this task')
+    if (task.status !== 'completed' && task.executionState !== 'awaiting_review') throw new Error('RESEARCH_SUBMISSION_REQUIRED')
+  }
   assertTeamRunnable(team)
   const identity = participantIdentityOf(team, callerId)
   if (identity === undefined || identity.name !== reviewer) {
     throw new Error('QUALITY_REVIEWER_IDENTITY: reviewer must match the authenticated calling participant; proxy reviews are not allowed')
   }
+  if (identity.kind === 'captain') throw new Error('QUALITY_REVIEWER_IDENTITY: the captain integrates results but cannot act as the independent reviewer')
   const task = requireCurrentQualityTask(team, run)
   if (identity.name === task.assignee) throw new Error('QUALITY_SELF_REVIEW: reviewer must differ from the task assignee')
+  checkDeepResearchReviewer(team, task, callerId)
   return identity.name
 }
 
@@ -492,7 +516,7 @@ async function requireFreshParticipant(
 function memberOpenTask(team: TeamState, memberName: string, exceptTaskId?: string): TeamTask | undefined {
   return team.tasks.find(task => task.id !== exceptTaskId
     && task.assignee === memberName
-    && (task.status === 'claimed' || task.status === 'in_progress'))
+    && occupiesMemberExecutionSlot(task))
 }
 
 /**
@@ -547,6 +571,7 @@ export async function scenarioApplyCore(
   plan_id?: string
   digest?: string
   revision?: number
+  review_url?: string
   team_name: string
   members: { expert_id: string; member_name: string; model: string }[]
   tasks: { task_id: string; subject: string; assignee?: string }[]
@@ -554,7 +579,7 @@ export async function scenarioApplyCore(
 }> {
   const staged = await scenarioStageCore(ctx, config, captain, args)
   const approved = await scenarioApproveCore(ctx, config, captain, staged.planId, signal, core, staged.digest, staged.revision)
-  if (approved.appliedTeamId === undefined) return { scenario_id: args.scenario, team_name: approved.runtime.teamName, status: 'waiting_user', plan_id: approved.planId, digest: approved.digest, revision: approved.revision, members: [], tasks: [], deliverable: 'Research plan saved. Waiting for user confirmation in the plan panel; end this turn without retrying approve.' }
+  if (approved.appliedTeamId === undefined) return { scenario_id: args.scenario, team_name: approved.runtime.teamName, status: 'waiting_user', plan_id: approved.planId, digest: approved.digest, revision: approved.revision, review_url: await issueReviewShareLink(stateRootOf(workspaceOf(captain), config), config.reviewPublicOrigin, { captainSessionId: captain.id, planId: approved.planId, gate: 'plan' }), members: [], tasks: [], deliverable: 'Research plan saved. Waiting for user confirmation in the plan panel; end this turn without retrying approve.' }
   const team = await readTeam(stateRootOf(workspaceOf(captain), config), approved.appliedTeamId)
   if (team === undefined) throw new Error('applied team not found')
   return {
@@ -566,8 +591,13 @@ export async function scenarioApplyCore(
 }
 
 interface ScenarioPlanArgs {
+  research_flow?: string
+  report_outline?: unknown
+  plan_models?: unknown
   report_bundle?: unknown
   scenario?: string
+  /** Explicit parameters for a managed DomainPack V2 TeamTemplate. */
+  scenario_params?: Record<string, unknown>
   /** A validated profile definition supplied explicitly at the plan boundary. */
   profile?: unknown
   /** Captain-mode task DAG generated during the staged planning step. */
@@ -616,8 +646,9 @@ interface ScenarioPlanDraft {
   readonly request: Readonly<Record<string, string | undefined>>
 }
 
-function runtimeFromApplyOptions(options: ApplyPlanOptions): StagedPlanRuntime {
+function runtimeFromApplyOptions(options: ApplyPlanOptions, plan: ExecutionPlan): StagedPlanRuntime {
   return {
+    executionDigest: executionPlanDigest(plan),
     teamName: options.teamName,
     description: options.description,
     ...(options.interpolations === undefined ? {} : { interpolations: { ...options.interpolations } }),
@@ -640,8 +671,18 @@ function applyOptionsFromRuntime(runtime: StagedPlanRuntime): ApplyPlanOptions {
   }
 }
 
+/** Review fields share the same compiler and approval digest on every entry. */
+async function compileScenarioDraft(ctx: Context, config: ToolsConfig, captain: Agent, args: ScenarioPlanArgs): Promise<ScenarioPlanDraft> {
+  const draft = await compileBaseScenarioDraft(ctx, config, captain, args)
+  return { ...draft, plan: await applyPlanReview(ctx, captain, draft.plan, args.report_outline, args.plan_models),
+    request: { ...draft.request,
+      ...(args.report_outline === undefined ? {} : { report_outline: JSON.stringify(args.report_outline) }),
+      ...(args.plan_models === undefined ? {} : { plan_models: JSON.stringify(args.plan_models) }),
+    } }
+}
+
 /** Compile a scenario for preview/stage without creating a team or a member. */
-async function compileScenarioDraft(
+async function compileBaseScenarioDraft(
   ctx: Context,
   config: ToolsConfig,
   captain: Agent,
@@ -653,7 +694,45 @@ async function compileScenarioDraft(
   const library = await resolveLibrary(ctx, workspace, config.knowledgeDir)
   const scenarioId = args.scenario.trim()
   const scenario = library.scenarios.get(scenarioId)
-  if (scenario === undefined) throw new Error(`unknown scenario "${scenarioId}" — available: ${[...library.scenarios.keys()].join(', ')}`)
+  if (scenario === undefined) {
+    const pack = (await resolveManagedRuntimePack(ctx, config, buildZhijianDomainPack())).pack
+    const managed = pack.scenarios.find(item => item.id === scenarioId)
+    if (managed === undefined) throw new Error(`unknown scenario "${scenarioId}" — available: ${[...library.scenarios.keys(), ...pack.scenarios.map(item => item.id)].join(', ')}`)
+    if (args.scenario_params === undefined) throw new Error(`SCENARIO_PARAMS_REQUIRED: "${scenarioId}" requires explicit TeamTemplate parameters`)
+    const compiled = compileExecutionPlan({
+      pack,
+      templateId: managed.teamTemplate,
+      scenarioId,
+      params: args.scenario_params,
+    })
+    if (!compiled.ok) throw compileErrorOf(compiled)
+    const bundle = args.report_bundle
+    if (bundle !== undefined && (!isReportBundle(bundle) || bundle.craft?.version !== 3)) {
+      throw new Error('DOMAIN_SCENARIO_REPORT_BUNDLE_INVALID: select enabled domain-pack skills with craft.version=3')
+    }
+    const finalProducers = [...new Set(compiled.plan.deliverables.flatMap(item => item.fromTasks))]
+    if (bundle !== undefined && finalProducers.length !== 1) throw new Error('DOMAIN_SCENARIO_FINAL_PRODUCER_AMBIGUOUS')
+    const plan = bundle === undefined ? compiled.plan : presetReportArtifactFlow({
+      ...compiled.plan,
+      tasks: compiled.plan.tasks.map(task => task.id === finalProducers[0] ? { ...task, reportBundle: structuredClone(bundle) } : task),
+    })
+    const teamName = args.team_name?.trim() || managed.id
+    const selectedPlan = await freezePlanModelRoutes(ctx, config, captain, await freezePlanCraftSelections(ctx, config, captain, plan))
+    return {
+      scenarioId,
+      deliverable: selectedPlan.deliverables.map(item => item.id).join(', '),
+      plan: selectedPlan,
+      options: { teamName, description: args.goal?.trim() || `${scenarioId}: ${JSON.stringify(args.scenario_params)}` },
+      request: {
+        compiled_source: `domain-pack.${scenarioId}`,
+        scenario: scenarioId,
+        scenario_params: JSON.stringify(args.scenario_params),
+        ...(bundle === undefined ? {} : { report_bundle: JSON.stringify(bundle) }),
+        ...(args.team_name === undefined ? {} : { team_name: args.team_name }),
+        ...(args.goal === undefined ? {} : { goal: args.goal }),
+      },
+    }
+  }
   if (scenario.reportTaskIndex !== undefined) {
     if (!Number.isSafeInteger(scenario.reportTaskIndex) || scenario.reportTaskIndex < 0 || scenario.reportTaskIndex >= scenario.tasks.length) throw new Error('SCENARIO_REPORT_TASK_INVALID')
     if (!isReportBundle(args.report_bundle) || args.report_bundle.craft?.version !== 3) throw new Error('SCENARIO_REPORT_BUNDLE_REQUIRED: this preset declares a final report producer. Supply report_bundle with MD/HTML/PDF/evidence and explicit enabled domain-pack skill selections using craft.version=3; the Host will not choose skills.')
@@ -681,9 +760,9 @@ async function compileScenarioDraft(
   const compiled = compileV1ScenarioExecutionPlan([...library.experts.values()], scenario, runtimePack)
   if (!compiled.ok) throw compileErrorOf(compiled)
   const reportBundle = isReportBundle(args.report_bundle) ? args.report_bundle : undefined
-  const selectedPlan = await freezePlanCraftSelections(ctx, config, captain, reportBundle === undefined ? compiled.plan : {
+  const selectedPlan = await freezePlanCraftSelections(ctx, config, captain, reportBundle === undefined ? compiled.plan : presetReportArtifactFlow({
     ...compiled.plan, tasks: compiled.plan.tasks.map((task, index) => index === scenario.reportTaskIndex ? { ...task, reportBundle: structuredClone(reportBundle) } : task),
-  })
+  }))
   const taskSuffixes: Record<string, string> = {}
   if (scenario.skill !== undefined) {
     const skillTaskIndex = scenario.skill.appliesToTaskIndex ?? (scenario.tasks.length - 1)
@@ -724,17 +803,25 @@ async function compileScenarioDraft(
   }
 }
 
-/** Bind every explicit report bundle at the common plan boundary, without choosing a skill. */
+/** Bind explicit report craft and task instructions at the common plan boundary. */
 async function freezePlanCraftSelections(ctx: Context, config: ToolsConfig, captain: Agent, input: ExecutionPlan): Promise<ExecutionPlan> {
   let plan = input
   for (const task of plan.tasks) requireNewReportCraftSelection(task.reportBundle)
-  if (plan.tasks.some(task => task.reportBundle?.craft?.version === 3)) {
+  if (plan.tasks.some(task => task.reportBundle?.craft?.version === 3 || task.skillBindings !== undefined)) {
+    const scopedSkills = plan.tasks.some(task => task.skillBindings?.some(skill => skill.packId === DOMAIN_MATERIAL_PACK))
+      ? (await listScopedSkillCraftCatalog(ctx, config, workspaceOf(captain)))
+        .filter(row => row.packId === DOMAIN_MATERIAL_PACK)
+        .map(row => ({ packId: DOMAIN_MATERIAL_PACK as typeof DOMAIN_MATERIAL_PACK, skillId: row.skillId, root: row.root, packVersion: row.packVersion })) : []
     const tasks = []
     for (const task of plan.tasks) {
       const selection = task.reportBundle?.craft?.version === 3
         ? await resolveSelectedSkillContract(ctx, config, workspaceOf(captain), task.reportBundle.craft.selections) : undefined
+      const taskMaterials = task.skillBindings === undefined ? undefined : resolveTaskMaterialContract(task.skillBindings, task.promptBinding!, scopedSkills)
       if (task.reportBundle !== undefined) reportArtifactCheck(task.reportBundle, selection)
-      tasks.push({ ...task, ...(selection === undefined ? {} : { frozenSkillCraftContract: selection }) })
+      tasks.push({ ...task,
+        ...(selection === undefined ? {} : { frozenSkillCraftContract: selection }),
+        ...(taskMaterials === undefined ? {} : { frozenTaskMaterialContract: taskMaterials }),
+      })
     }
     const digest = canonicalDigest({ compilerDigest: plan.digest, tasks })
     plan = { ...plan, tasks, digest, planId: `ep-${digest.slice(0, 16)}` }
@@ -760,7 +847,16 @@ async function compileProfileDraft(ctx: Context, config: ToolsConfig, captain: A
       taskPlanning: 'seed',
       tasks: args.tasks,
     }
-  const profile: ExpertTeamProfile = parseProfile(profileInput)
+  const parsedProfile = parseProfile(args.research_flow === 'viewpoint-v5' && typeof profileInput === 'object' && profileInput !== null ? {...profileInput,version:'5.0.0'} : profileInput)
+  const profile: ExpertTeamProfile = args.research_flow === 'viewpoint-v5' ? viewpointResearchProfile(parsedProfile) : args.research_flow === 'compact-v4' ? compactResearchProfile(parsedProfile) : parsedProfile
+  validateDeepResearchPlan(profile)
+  if (profile.id === '98wiki-deep-research' && /^2\./u.test(profile.version)) {
+    const library = await resolveLibrary(ctx, workspaceOf(captain), config.knowledgeDir)
+    for (const member of profile.members) {
+      if (member.expert !== undefined && !library.experts.has(member.expert))
+        throw new Error(`DEEP_RESEARCH_EXPERT_UNAVAILABLE: ${member.expert}`)
+    }
+  }
   const teamName = args.team_name?.trim() || profile.id
   const goal = args.goal?.trim() || profile.description
   let plan = profileToExecutionPlan(profile, { goal, team_name: teamName })
@@ -771,8 +867,8 @@ async function compileProfileDraft(ctx: Context, config: ToolsConfig, captain: A
     plan: await freezePlanModelRoutes(ctx, config, captain, plan),
     options: { teamName, description: goal, memberOrder: profile.members.map(member => member.id) },
     request: {
-      profile: JSON.stringify(args.profile),
-      ...(args.tasks === undefined ? {} : { tasks: JSON.stringify(args.tasks) }),
+      profile: JSON.stringify(profile),
+      ...(args.tasks === undefined || ['compact-v4','viewpoint-v5'].includes(args.research_flow ?? '') ? {} : { tasks: JSON.stringify(args.tasks) }),
       ...(args.team_name === undefined ? {} : { team_name: args.team_name }),
       ...(args.goal === undefined ? {} : { goal: args.goal }),
     },
@@ -781,9 +877,10 @@ async function compileProfileDraft(ctx: Context, config: ToolsConfig, captain: A
 
 export async function scenarioPreviewCore(ctx: Context, config: ToolsConfig, captain: Agent, args: ScenarioPlanArgs) {
   const draft = await compileScenarioDraft(ctx, config, captain, args)
+  requireStagedReportOutline(draft.plan)
   draft.options.sharedTaskContext = captureSharedTaskContext(captain)
   const expanded = expandExecutionPlan(draft.plan, draft.options)
-  const runtime = runtimeFromApplyOptions(draft.options)
+  const runtime = runtimeFromApplyOptions(draft.options, draft.plan)
   return {
     scenario_id: draft.scenarioId,
     team_name: draft.options.teamName,
@@ -793,6 +890,8 @@ export async function scenarioPreviewCore(ctx: Context, config: ToolsConfig, cap
     // runtime interpolation changes are included in the CAS digest.
     digest: stagedPlanDigest(draft.plan.digest, draft.request, runtime),
     compiler_digest: draft.plan.digest,
+    report_outline: draft.plan.reportOutline,
+    captain_model: draft.plan.captainModel,
     members: expanded.members.map(member => member.expertId),
     member_routes: draft.plan.roster.map(member => ({ expert_id: member.expertId, route: member.modelPolicy, source: member.modelRouteSource, fallback_index: member.modelRouteFallbackIndex })),
     tasks: expanded.tasks.map(task => ({
@@ -816,22 +915,26 @@ export async function scenarioStageCore(ctx: Context, config: ToolsConfig, capta
 export async function stageCompiledPlanCore(ctx: Context, config: ToolsConfig, captain: Agent,
   plan: ExecutionPlan, options: ApplyPlanOptions, request: Readonly<Record<string, string | undefined>>, alreadyFrozen = false,
 ): Promise<StagedPlan> {
-  const draft = { plan: alreadyFrozen ? plan : await freezePlanModelRoutes(ctx, config, captain, await freezePlanCraftSelections(ctx, config, captain, plan)), options, request }
+  const frozen = alreadyFrozen ? plan : await freezePlanModelRoutes(ctx, config, captain, await freezePlanCraftSelections(ctx, config, captain, plan))
+  const draft = { plan: alreadyFrozen ? frozen : await applyPlanReview(ctx, captain, frozen, request.report_outline === undefined ? undefined : JSON.parse(request.report_outline), request.plan_models === undefined ? undefined : JSON.parse(request.plan_models)), options, request }
+  requireStagedReportOutline(draft.plan)
   draft.options.sharedTaskContext = captureSharedTaskContext(captain)
   expandExecutionPlan(draft.plan, draft.options)
+  await requirePlanExpertAvailability(ctx, config, workspaceOf(captain), draft.plan)
   const stateRoot = stateRootOf(workspaceOf(captain), config)
   const existing = await findTeamByParticipant(stateRoot, captain.id)
   if (existing !== undefined) throw new Error(`you already belong to team "${existing.name}" — finish it before staging another plan`)
   let staged = createStagedPlan({
-    planId: `plan-${canonicalDigest({ captainSessionId: captain.id, digest: stagedPlanDigest(draft.plan.digest, draft.request, runtimeFromApplyOptions(draft.options)) }).slice(0, 32)}`,
+    planId: `plan-${canonicalDigest({ captainSessionId: captain.id, digest: stagedPlanDigest(draft.plan.digest, draft.request, runtimeFromApplyOptions(draft.options, draft.plan)) }).slice(0, 32)}`,
     plan: draft.plan,
     request: draft.request,
-    runtime: runtimeFromApplyOptions(draft.options),
+    runtime: runtimeFromApplyOptions(draft.options, draft.plan),
     createdBy: captain.id,
     sessionId: captain.session.id,
     expiresAt: Date.now() + 24 * 60 * 60 * 1000,
   })
   staged = await inheritRetiredPlanGoalWait(ctx, captain, stateRoot, staged)
+  await recordPlanExecutionBoundary(stateRoot, staged)
   return withStagedPlanLock(stateRoot, staged.planId, async () => {
     const previous = await readStagedPlan(stateRoot, staged.planId)
     if (previous !== undefined) {
@@ -855,9 +958,11 @@ export async function scenarioEditCore(
   config: ToolsConfig,
   captain: Agent,
   planId: string,
-  patch: Partial<Pick<ScenarioPlanArgs, 'team_name' | 'goal' | 'data' | 'city' | 'period' | 'profile' | 'tasks' | 'report_bundle'>>,
+  patch: Partial<Pick<ScenarioPlanArgs, 'team_name' | 'goal' | 'data' | 'city' | 'period' | 'profile' | 'tasks' | 'report_bundle' | 'report_outline' | 'plan_models'>> & { research_selection?: unknown; research_material_selection?: unknown },
   expectedDigest?: string,
   expectedRevision?: number,
+  recommendationReceipt?: { readonly reason: string; readonly model: string; readonly modelCallTokens?: { readonly input: number; readonly output: number } },
+  expectedContextSha256?: string,
 ): Promise<StagedPlan> {
   const stateRoot = stateRootOf(workspaceOf(captain), config)
   return withStagedPlanLock(stateRoot, planId, async () => {
@@ -872,8 +977,48 @@ export async function scenarioEditCore(
       await writeStagedPlan(stateRoot, live)
       throw new Error(`staged plan "${planId}" has expired`)
     }
-    if (current.request.compiled_source !== undefined) throw new Error('This domain preset is frozen. Discard it and restage the preset to change its inputs or models; approval remains available for this exact plan.')
+    if (expectedContextSha256 !== undefined && Object.keys(patch).length === 0) {
+      if (current.runtime.sharedTaskContext === undefined) throw new Error('SHARED_TASK_CONTEXT_INVALID: the original plan has no frozen user input')
+      const sharedTaskContext = captureSharedTaskContext(captain, current.runtime.sharedTaskContext)
+      if (sharedTaskContext.sha256 !== expectedContextSha256) throw new Error('SHARED_TASK_CONTEXT_CHANGED: direct-user input changed during review; inspect the latest context before retrying')
+      const updated = editStagedPlan(current, { plan: current.plan, request: current.request,
+        runtime: { ...current.runtime, sharedTaskContext }, fields: ['sharedTaskContext'], actor: captain.id })
+      if (updated === current) return current
+      await recordPlanExecutionBoundary(stateRoot, updated)
+      await writeStagedPlan(stateRoot, updated)
+      return updated
+    }
+    if (current.request.compiled_source !== undefined) {
+      if (Object.keys(patch).some(k => !['report_outline', 'plan_models'].includes(k))) throw new Error('PRESET_INPUT_FROZEN: edit outline/models here; restage to change preset inputs')
+      const revised = await applyPlanReview(ctx, captain, current.plan, patch.report_outline, patch.plan_models)
+      requireStagedReportOutline(revised)
+      const sharedTaskContext = captureSharedTaskContext(captain, current.runtime.sharedTaskContext)
+      if (expectedContextSha256 !== undefined && sharedTaskContext.sha256 !== expectedContextSha256) throw new Error('SHARED_TASK_CONTEXT_CHANGED: direct-user input changed during review; inspect the latest context before retrying')
+      const request = { ...current.request,
+        ...(patch.report_outline === undefined ? {} : { report_outline: JSON.stringify(patch.report_outline) }),
+        ...(patch.plan_models === undefined ? {} : { plan_models: JSON.stringify(patch.plan_models) }) }
+      const updated = editStagedPlan(current, { plan: revised, request,
+        runtime: { ...current.runtime, executionDigest: executionPlanDigest(revised), sharedTaskContext },
+        fields: [...Object.keys(patch), ...(sharedTaskContext.sha256 === current.runtime.sharedTaskContext?.sha256 ? [] : ['sharedTaskContext'])], actor: captain.id })
+      if (updated === current) return current
+      await recordPlanExecutionBoundary(stateRoot, updated)
+      await writeStagedPlan(stateRoot, updated)
+      return updated
+    }
+    if ((patch.research_selection !== undefined || patch.research_material_selection !== undefined)
+      && (patch.profile !== undefined || patch.tasks !== undefined))
+      throw new Error('DEEP_RESEARCH_SELECTION_INVALID: selection cannot be mixed with profile or task replacement')
     const request: ScenarioPlanArgs = { ...current.request, ...patch }
+    for (const key of ['report_outline', 'plan_models'] as const) {
+      if (patch[key] === undefined && current.request[key] !== undefined) request[key] = JSON.parse(current.request[key]) as unknown
+    }
+    if (patch.plan_models !== undefined && current.request.plan_models !== undefined && typeof patch.plan_models === 'object' && patch.plan_models !== null && !Array.isArray(patch.plan_models)) {
+      // A changed fan-out has a changed roster. Old research model keys may no
+      // longer exist, so the combined recommendation supplies the complete map.
+      request.plan_models = patch.research_selection === undefined
+        ? { ...JSON.parse(current.request.plan_models), ...patch.plan_models }
+        : patch.plan_models
+    }
     if (patch.report_bundle === undefined && current.request.report_bundle !== undefined) {
       try { request.report_bundle = JSON.parse(current.request.report_bundle) as unknown } catch { throw new Error('staged scenario report_bundle is invalid') }
     }
@@ -887,6 +1032,18 @@ export async function scenarioEditCore(
         throw new Error(`staged plan "${planId}" has an invalid profile definition`)
       }
       if (patch.profile === undefined) request.profile = previousProfile
+    }
+    if (patch.research_selection !== undefined) {
+      if (previousProfile === undefined) throw new Error('DEEP_RESEARCH_SELECTION_INVALID: a staged research profile is required')
+      request.profile = selectDeepResearchSubDag(parseProfile(previousProfile), parseDeepResearchSelection(patch.research_selection))
+      delete request.tasks
+      if (patch.plan_models === undefined) delete request.plan_models
+    }
+    if (patch.research_material_selection !== undefined) {
+      const materialProfile = patch.research_selection === undefined ? previousProfile : request.profile
+      if (materialProfile === undefined) throw new Error('DEEP_RESEARCH_SELECTION_INVALID: a staged research profile is required')
+      request.profile = selectDeepResearchMaterials(parseProfile(materialProfile), patch.research_material_selection)
+      delete request.tasks
     }
     if (request.profile !== undefined) {
       delete request.scenario
@@ -910,21 +1067,31 @@ export async function scenarioEditCore(
       }
     }
     const draft = await compileScenarioDraft(ctx, config, captain, request)
+    requireStagedReportOutline(draft.plan)
     draft.options.sharedTaskContext = captureSharedTaskContext(captain, current.runtime.sharedTaskContext)
+    if (expectedContextSha256 !== undefined && draft.options.sharedTaskContext.sha256 !== expectedContextSha256) throw new Error('SHARED_TASK_CONTEXT_CHANGED: direct-user input changed during review; inspect the latest context before retrying')
     expandExecutionPlan(draft.plan, draft.options)
+    const frozenRequest = recommendationReceipt === undefined ? draft.request : { ...draft.request,
+      research_recommendation: JSON.stringify({ ...recommendationReceipt, source: 'host-model-recommendation',
+        estimatedTaskStarts: draft.plan.tasks.filter(task => task.humanChoice === undefined).length,
+        maxRepairRoundsPerTask: draft.plan.reviewPolicy?.maxRepairRounds ?? 2 }) }
     const updated = editStagedPlan(current, {
       plan: draft.plan,
-      request: draft.request,
-      runtime: runtimeFromApplyOptions(draft.options),
-      fields: [...Object.keys(patch), ...(draft.options.sharedTaskContext.sha256 === current.runtime.sharedTaskContext?.sha256 ? [] : ['sharedTaskContext'])],
+      request: frozenRequest,
+      runtime: runtimeFromApplyOptions(draft.options, draft.plan),
+      fields: [...Object.keys(patch), ...(recommendationReceipt === undefined ? [] : ['research_recommendation']),
+        ...(draft.options.sharedTaskContext.sha256 === current.runtime.sharedTaskContext?.sha256 ? [] : ['sharedTaskContext'])],
       actor: captain.id,
     })
+    if (updated === current) return current
+    await recordPlanExecutionBoundary(stateRoot, updated)
     await writeStagedPlan(stateRoot, updated)
     return updated
   })
 }
 
 const HOST_USER_APPROVAL = Symbol('authenticated-host-user-plan-approval')
+const REVIEW_TOKEN_APPROVAL = Symbol('scoped-review-token-plan-approval')
 export async function scenarioApproveCore(ctx: Context, config: ToolsConfig, captain: Agent, planId: string,
   signal: AbortSignal, core: ExpertToolsCore, expectedDigest?: string, expectedRevision?: number): Promise<StagedPlan> {
   return approvePlanCore(ctx, config, captain, planId, signal, core, expectedDigest, expectedRevision)
@@ -933,6 +1100,12 @@ export async function scenarioApproveCore(ctx: Context, config: ToolsConfig, cap
 export async function scenarioApproveFromHost(ctx: Context, config: ToolsConfig, captain: Agent, planId: string,
   signal: AbortSignal, core: ExpertToolsCore, expectedDigest?: string, expectedRevision?: number): Promise<StagedPlan> {
   return approvePlanCore(ctx, config, captain, planId, signal, core, expectedDigest, expectedRevision, HOST_USER_APPROVAL)
+}
+/** A scoped bearer was issued by a signed Host user and exchanged once. */
+export async function scenarioApproveFromReviewToken(ctx: Context, config: ToolsConfig, captain: Agent, planId: string,
+  signal: AbortSignal, core: ExpertToolsCore, expectedDigest: string, expectedRevision: number, reviewTokenId: string): Promise<StagedPlan> {
+  if (!/^[a-f0-9]{24}$/u.test(reviewTokenId)) throw new Error('REVIEW_TOKEN_INVALID')
+  return approvePlanCore(ctx, config, captain, planId, signal, core, expectedDigest, expectedRevision, REVIEW_TOKEN_APPROVAL, reviewTokenId)
 }
 
 const stagedApprovalInFlight = new Map<string, Promise<StagedPlan>>()
@@ -953,7 +1126,8 @@ async function approvePlanCore(
   core: ExpertToolsCore,
   expectedDigest?: string,
   expectedRevision?: number,
-  authority?: typeof HOST_USER_APPROVAL,
+  authority?: typeof HOST_USER_APPROVAL | typeof REVIEW_TOKEN_APPROVAL,
+  reviewTokenId?: string,
 ): Promise<StagedPlan> {
   if (expectedDigest === undefined || expectedDigest.trim() === '') {
     throw new Error(`staged plan "${planId}" approval requires expected_digest for CAS`)
@@ -965,17 +1139,17 @@ async function approvePlanCore(
   // Include caller identity and the caller's CAS token. A stale or foreign
   // approval must not piggyback on an in-flight owner's promise and bypass
   // the createdBy/expected_digest/expected_revision checks in the lock.
-  const key = `${stateRoot}\u0000${planId}\u0000${captain.id}\u0000${expectedDigest}\u0000${expectedRevision}`
+  const key = `${stateRoot}\u0000${planId}\u0000${captain.id}\u0000${expectedDigest}\u0000${expectedRevision}\u0000${authority === REVIEW_TOKEN_APPROVAL ? `token:${reviewTokenId}` : authority === HOST_USER_APPROVAL ? 'host-user' : 'delegated'}`
   const existing = stagedApprovalInFlight.get(key)
   if (existing !== undefined) {
     const result = await existing
-    if (authority !== HOST_USER_APPROVAL || result.status !== 'staged') return result
+    if (authority === undefined || result.status !== 'staged') return result
     // The model may have reached waiting_user just before the user's click.
     // Continue that authenticated click after its read-only wait completes.
     if (stagedApprovalInFlight.get(key) === existing) stagedApprovalInFlight.delete(key)
-    return approvePlanCore(ctx, config, captain, planId, signal, core, expectedDigest, expectedRevision, authority)
+    return approvePlanCore(ctx, config, captain, planId, signal, core, expectedDigest, expectedRevision, authority, reviewTokenId)
   }
-  const operation = scenarioApproveCoreOnce(ctx, config, captain, planId, signal, core, expectedDigest, expectedRevision, authority)
+  const operation = scenarioApproveCoreOnce(ctx, config, captain, planId, signal, core, expectedDigest, expectedRevision, authority, reviewTokenId)
   stagedApprovalInFlight.set(key, operation)
   try {
     return await operation
@@ -993,7 +1167,8 @@ async function scenarioApproveCoreOnce(
   core: ExpertToolsCore,
   expectedDigest?: string,
   expectedRevision?: number,
-  authority?: typeof HOST_USER_APPROVAL,
+  authority?: typeof HOST_USER_APPROVAL | typeof REVIEW_TOKEN_APPROVAL,
+  reviewTokenId?: string,
 ): Promise<StagedPlan> {
   const stateRoot = stateRootOf(workspaceOf(captain), config)
   const reservation = await withStagedPlanLock(stateRoot, planId, async () => {
@@ -1033,20 +1208,30 @@ async function scenarioApproveCoreOnce(
     for (const task of live.plan.tasks) {
       requireNewReportCraftSelection(task.reportBundle)
       await requireCurrentSkillCraftSelection(ctx, config, workspaceOf(captain), task.reportBundle, task.frozenSkillCraftContract)
+      requireCurrentTaskMaterialSelection(task.skillBindings, task.promptBinding, task.frozenTaskMaterialContract)
     }
     await requireAuthorizedReportPlan(stateRoot, captain.id, captureSharedTaskContext(captain), live.plan)
     expandExecutionPlan(live.plan, applyOptionsFromRuntime(live.runtime))
+    await requirePlanExpertAvailability(ctx, config, workspaceOf(captain), live.plan)
+    // An incomplete draft must remain editable while awaiting a user. Only an
+    // actual approval attempt requires the final outline and execution route.
+    if (live.status === 'staged' && authority === undefined && await delegatedPlanApproval(stateRoot, live) === undefined) {
+      return { plan: await persistPlanUserWait(ctx, captain, stateRoot, live), owner: false }
+    }
+    requireReportOutline(live.plan)
+    await validateCaptainPlanModel(ctx, captain, live.plan, signal)
     await validateFrozenPlanModelRoutes(ctx, captain, live.plan, signal)
     if (live.runtime.sharedTaskContext !== undefined && captureSharedTaskContext(captain, live.runtime.sharedTaskContext).sha256 !== live.runtime.sharedTaskContext.sha256) {
       throw new Error(`SHARED_TASK_CONTEXT_CHANGED: direct-user input arrived while validating plan "${planId}". Edit the current staged plan before approval; no authorization was consumed and no team was created.`)
     }
-    const grant = live.status !== 'staged' || authority === HOST_USER_APPROVAL ? undefined : await delegatedPlanApproval(stateRoot, live, true)
-    if (live.status === 'staged' && authority !== HOST_USER_APPROVAL && grant === undefined) {
+    const grant = live.status !== 'staged' || authority !== undefined ? undefined : await delegatedPlanApproval(stateRoot, live, true)
+    if (live.status === 'staged' && authority === undefined && grant === undefined) {
       return { plan: await persistPlanUserWait(ctx, captain, stateRoot, live), owner: false }
     }
     const approved = live.status === 'staged' ? transitionStagedPlan(live, 'approved', {
-      actor: 'authenticated-host-user', approvalSource: authority === HOST_USER_APPROVAL ? 'authenticated-host-user' : 'delegated-host-authorization',
-      ...(grant === undefined ? {} : { authorizationRequestId: grant.requestId }),
+      actor: authority === REVIEW_TOKEN_APPROVAL ? 'scoped-review-token' : 'authenticated-host-user',
+      approvalSource: authority === REVIEW_TOKEN_APPROVAL ? 'scoped-review-token' : authority === HOST_USER_APPROVAL ? 'authenticated-host-user' : 'delegated-host-authorization',
+      ...(reviewTokenId !== undefined ? { authorizationRequestId: `review-token-${reviewTokenId}` } : grant === undefined ? {} : { authorizationRequestId: grant.requestId }),
       ...(live.runtime.sharedTaskContext === undefined ? {} : { contextSha256: live.runtime.sharedTaskContext.sha256 }),
     }) : live
     // Persist the approval receipt before entering the potentially long
@@ -1119,9 +1304,13 @@ export async function scenarioDiscardCore(config: ToolsConfig, captain: Agent, p
  * @returns the core dependencies for downstream tool families (Zhijian).
  */
 export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): ExpertToolsCore {
+  ctx.logger.info('expert-teams: compact-v4 transactions enabled; original DAG versions preserved')
   installRetiredMemberGuard(ctx, config.stateDir)
   const memberSelections = installMemberSelectionRuntime(ctx, config.stateDir)
-  const scheduler = installTeamScheduler(ctx, { stateDir: config.stateDir, get maxActiveMembers() { return config.maxActiveMembers } })
+  const scheduler = installTeamScheduler(ctx, { stateDir: config.stateDir,
+    get maxActiveMembers() { return config.maxActiveMembers },
+    get v5ResearchMaxActiveMembers() { return config.v5ResearchMaxActiveMembers },
+  })
 
   ctx.tools.register(defineTool({
     name: 'expert_teams_create',
@@ -1155,12 +1344,16 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
 
   ctx.tools.register(defineTool({
     name: 'expert_teams_plan_preview',
-    description: 'Compile an Expert Library scenario into a reviewable plan without writing team state, creating members, creating tasks, or waking agents.',
+    description: 'Compile an Expert Library scenario into a reviewable plan without writing team state, creating members, creating tasks, or waking agents. For a report with a known outline, generate every chapter in report_outline in this call; a task description alone does not create the outline.',
     parameters: {
-      scenario: { type: 'string', description: 'Legacy scenario id. Omit when supplying an explicit profile object.' },
+      scenario: { type: 'string', description: 'Legacy or active DomainPack scenario id. Omit when supplying an explicit profile object.' },
+      scenario_params: { type: 'object', additionalProperties: true, description: 'For active DomainPack scenarios, explicit TeamTemplate parameters. Rent pricing requires property (known facts and unknowns) and asOfDate (YYYY-MM-DD).' },
       profile: PROFILE_SCHEMA,
+      research_flow: { type: 'string', enum: ['viewpoint-v5', 'compact-v4', 'original'], description: 'For NEW research select viewpoint-v5: all selected experts contribute, choose viewpoints then evolve the outline; internal materials auto-advance, manuscript and delivery have independent review. compact-v4 retains the seven-task workflow. Original profiles and applied teams remain unchanged.' },
       tasks: PROFILE_TASKS_SCHEMA,
       report_bundle: REPORT_BUNDLE_SCHEMA,
+      report_outline: { type: 'object', additionalProperties: true, description: 'Required for report-producing plans at preview: generate all promised chapters now as {chapters:[{id,title,questions:[string],evidence:[string],taskIds:[logicalTaskId]}],attachments:[string]}. Only a reviewed outline.md gate or V5 viewpoint-first flow may defer it.' },
+      plan_models: { type: 'object', additionalProperties: true, description: 'Per-plan model choices keyed by roster expert id or captain: {provider,model,reasoningEffort}. No global changes or fallback. A changed captain route requires native session switching before approval.' },
       team_name: { type: 'string', description: 'Optional team name.' },
       goal: { type: 'string', description: 'Concrete goal.' },
       data: { type: 'string', description: 'Optional context data.' },
@@ -1181,12 +1374,16 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
 
   ctx.tools.register(defineTool({
     name: 'expert_teams_plan_stage',
-    description: 'Persist a compiled scenario as a staged plan. Staging does not create members, tasks, or live wakeups.',
+    description: 'Persist a compiled scenario as a staged plan. Report plans must include the complete structured report_outline in this call; missing chapters are rejected before a user-facing draft is saved. Staging does not create members, tasks, or live wakeups. Before freezing acceptance, preserve the original user requirements, including any explicitly authorized conditional-analysis branch for unavailable external sources. Require source-error evidence, limitations and bounded conclusions for such a branch; do not invent fallback permission or weaken a mandatory source requirement.',
     parameters: {
-      scenario: { type: 'string', description: 'Legacy scenario id. Omit when supplying an explicit profile object.' },
+      scenario: { type: 'string', description: 'Legacy or active DomainPack scenario id. Omit when supplying an explicit profile object.' },
+      scenario_params: { type: 'object', additionalProperties: true, description: 'For active DomainPack scenarios, explicit TeamTemplate parameters. Rent pricing requires property (known facts and unknowns) and asOfDate (YYYY-MM-DD).' },
       profile: PROFILE_SCHEMA,
+      research_flow: { type: 'string', enum: ['viewpoint-v5', 'compact-v4', 'original'], description: 'For NEW research select viewpoint-v5: all selected experts contribute, choose viewpoints then evolve the outline; internal materials auto-advance, manuscript and delivery have independent review. compact-v4 retains the seven-task workflow. Original profiles and applied teams remain unchanged.' },
       tasks: PROFILE_TASKS_SCHEMA,
       report_bundle: REPORT_BUNDLE_SCHEMA,
+      report_outline: { type: 'object', additionalProperties: true, description: 'Required for report-producing plans at staging: generate all promised chapters now as {chapters:[{id,title,questions:[string],evidence:[string],taskIds:[logicalTaskId]}],attachments:[string]}. Only a reviewed outline.md gate or V5 viewpoint-first flow may defer it.' },
+      plan_models: { type: 'object', additionalProperties: true, description: 'Per-plan model choices keyed by roster expert id or captain: {provider,model,reasoningEffort}. No global changes or fallback. A changed captain route requires native session switching before approval.' },
       team_name: { type: 'string', description: 'Optional team name.' },
       goal: { type: 'string', description: 'Concrete goal.' },
       data: { type: 'string', description: 'Optional context data.' },
@@ -1197,13 +1394,18 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       schema: { type: 'object', additionalProperties: true },
       render: (_args, value) => [{
         type: 'text',
-        text: `Staged plan ${toolJsonField(value, 'planId') ?? 'unknown'} (${toolJsonField(value, 'digest') ?? 'unknown'}), revision ${toolJsonField(value, 'revision') ?? 'unknown'}, status ${toolJsonField(value, 'status') ?? 'staged'}. ${planSizeSummary(value)} ${toolJsonField(value, 'waitingFor') === 'user-confirmation' ? 'Waiting for the user to confirm in the research plan panel. End this turn; do not retry approve.' : 'A matching Host delegation is present; review this exact revision before calling approve.'}`,
+        text: `Staged plan ${toolJsonField(value, 'planId') ?? 'unknown'} (${toolJsonField(value, 'digest') ?? 'unknown'}), revision ${toolJsonField(value, 'revision') ?? 'unknown'}, status ${toolJsonField(value, 'status') ?? 'staged'}. ${planSizeSummary(value)} ${toolJsonField(value, 'waitingFor') === 'user-confirmation' ? `Waiting for the user to confirm in the research plan panel.${toolJsonField(value, 'review_url') ? ` Independent page: ${toolJsonField(value, 'review_url')}.` : ''} End this turn; do not retry approve.` : 'A matching Host delegation is present; review this exact revision before calling approve.'}`,
       }],
     },
     async execute(args, exec) {
       const staged = await scenarioStageCore(ctx, config, requireCaptain(exec), args)
       if (staged.waitingFor === 'user-confirmation') exec.concludeTurn?.()
-      return asToolJsonObject(staged)
+      const output = asToolJsonObject(staged)
+      if (staged.waitingFor === 'user-confirmation') {
+        const url = await issueReviewShareLink(stateRootOf(workspaceOf(requireCaptain(exec)), config), config.reviewPublicOrigin, { captainSessionId: requireCaptain(exec).id, planId: staged.planId, gate: 'plan' })
+        if (url !== undefined) output.review_url = url
+      }
+      return output
     },
   }))
 
@@ -1220,8 +1422,11 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       city: { type: 'string', description: 'New city.' },
       period: { type: 'string', description: 'New period.' },
       profile: PROFILE_SCHEMA,
+      research_flow: { type: 'string', enum: ['viewpoint-v5', 'compact-v4', 'original'], description: 'For NEW research select viewpoint-v5: all selected experts contribute, choose viewpoints then evolve the outline; internal materials auto-advance, manuscript and delivery have independent review. compact-v4 retains the seven-task workflow. Original profiles and applied teams remain unchanged.' },
       tasks: PROFILE_TASKS_SCHEMA,
       report_bundle: REPORT_BUNDLE_SCHEMA,
+      report_outline: { type: 'object', additionalProperties: true, description: 'Structured report: {chapters:[{id,title,questions:[string],evidence:[string],taskIds:[logicalTaskId]}],attachments:[string]}. Ordered chapters are reviewed before report execution.' },
+      plan_models: { type: 'object', additionalProperties: true, description: 'Per-plan model choices keyed by roster expert id or captain: {provider,model,reasoningEffort}. No global changes or fallback. A changed captain route requires native session switching before approval.' },
     },
     output: {
       schema: { type: 'object', additionalProperties: true },
@@ -1240,6 +1445,8 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       if (args.profile !== undefined) patch.profile = args.profile
       if (args.tasks !== undefined) patch.tasks = args.tasks
       if (args.report_bundle !== undefined) patch.report_bundle = args.report_bundle
+      if (args.report_outline !== undefined) patch.report_outline = args.report_outline
+      if (args.plan_models !== undefined) patch.plan_models = args.plan_models
       return asToolJsonObject(await scenarioEditCore(ctx, config, requireCaptain(exec), args.plan_id, patch, args.expected_digest, args.expected_revision))
     },
   }))
@@ -1266,7 +1473,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             : ` Runtime task IDs (plan logical ID -> task_id): ${mapping}. Use the runtime task_id in task, quality and wait tools.`
         return [{
           type: 'text',
-          text: `Plan ${toolJsonField(value, 'planId') ?? 'unknown'} is ${toolJsonField(value, 'status') ?? 'unknown'}${appliedTeamId === undefined ? '' : ` as team ${appliedTeamId}`}. ${planSizeSummary(value)}${taskHint}`,
+          text: `Plan ${toolJsonField(value, 'planId') ?? 'unknown'} ${appliedTeamId === undefined ? `is ${toolJsonField(value, 'status') ?? 'unknown'}` : `is approved and applied as team ${appliedTeamId}; task execution and independent review are still separate requirements`}. ${planSizeSummary(value)}${taskHint}${appliedTeamId === undefined ? `${toolJsonField(value, 'review_url') ? ` Independent page: ${toolJsonField(value, 'review_url')}.` : ''}` : ' Read expert_teams_status, claim a ready captain-owned task and mark it in_progress with the returned attempt_id before doing its business work. Publish and review each dependency before starting downstream report production; coordinate assigned members instead of silently doing their tasks.'}`,
         }]
       },
     },
@@ -1275,6 +1482,10 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       const approved = await scenarioApproveCore(ctx, config, captain, args.plan_id, exec.signal, { memberSelections, scheduler }, args.expected_digest, args.expected_revision)
       if (approved.waitingFor === 'user-confirmation') exec.concludeTurn?.()
       const output = asToolJsonObject(approved)
+      if (approved.waitingFor === 'user-confirmation') {
+        const url = await issueReviewShareLink(stateRootOf(workspaceOf(captain), config), config.reviewPublicOrigin, { captainSessionId: captain.id, planId: approved.planId, gate: 'plan' })
+        if (url !== undefined) output.review_url = url
+      }
       if (approved.appliedTeamId !== undefined) {
         // Use the materialized planTask provenance, including fan-out. Do not
         // infer runtime IDs from ordering or change a completed apply receipt
@@ -1325,7 +1536,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         properties: {
           scenario_id: { type: 'string', required: true },
           team_id: { type: 'string' },
-          status: { type: 'string' }, plan_id: { type: 'string' }, digest: { type: 'string' }, revision: { type: 'number' },
+          status: { type: 'string' }, plan_id: { type: 'string' }, digest: { type: 'string' }, revision: { type: 'number' }, review_url: { type: 'string' },
           team_name: { type: 'string', required: true },
           members: {
             type: 'array',
@@ -1357,7 +1568,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         },
       },
       render: (_args, value) => {
-        if (value.status === 'waiting_user') return [{ type: 'text', text: `Research plan ${value.plan_id} is waiting for user confirmation. Open the research plan panel. No team or members were created; end this turn without repeating approve.` }]
+        if (value.status === 'waiting_user') return [{ type: 'text', text: `Research plan ${value.plan_id} is waiting for user confirmation. ${value.review_url ? `Independent page: ${value.review_url}. ` : 'Open the research plan panel. '}No team or members were created; end this turn without repeating approve.` }]
         const lines = [
           `Scenario "${value.scenario_id}" applied → team "${value.team_name}" (${value.team_id}).`,
           `Members (${value.members.length}): ${value.members.map(member => `${member.member_name} [${member.expert_id}] @ ${member.model}`).join(', ')}`,
@@ -1464,7 +1675,12 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         const member = requireMember(fresh, args.name)
         const requeued: string[] = []
         for (const task of fresh.tasks) {
-          if (task.assignee !== member.name || task.status === 'completed') continue
+          if (task.assignee !== member.name || TERMINAL_TASK_STATUSES.includes(task.status)) continue
+          const run = fresh.qualityRuns?.[task.id]
+            ?? (fresh.qualityRun?.contract.taskId === task.id ? fresh.qualityRun : undefined)
+          if (run?.status === 'escalated' && task.status !== 'failed' && task.status !== 'cancelled') {
+            throw new Error(`QUALITY_ESCALATED_CLOSEOUT_REQUIRED: close out ${task.id} before removing ${member.name}; the review evidence must remain attached to its attempt`)
+          }
           invalidateTaskAttempt(task)
           task.reassigning = false
           requeued.push(task.id)
@@ -1503,6 +1719,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         description: 'Task ids this task depends on (must be completed before this task can be claimed).',
       },
       assignee: { type: 'string', description: 'Optional active member name, or "captain" for the authenticated captain. The owner must claim the task before working.' },
+      produces: { type: 'array', items: { type: 'string' }, description: 'File publications expected from this task, e.g. ["report.md", "report-source-ledger.json", "research-evidence.md"]. Plain file names only. Compact dynamic tasks without a declaration register files atomically at their first submission before any review; subsequent attempts preserve that declaration.' },
       report_bundle: REPORT_BUNDLE_SCHEMA,
       revises_task_id: { type: 'string', description: 'For changes to a completed report with report_bundle, identify its integrated source task. Host adds its dependency, pins reviewed publications, and inherits report checks and acceptance. Ordinary task follow-ups use dependencies/input_artifacts instead. Omit input_artifacts; publish a new version in this new task. The old reviewed task remains immutable.' },
       input_artifacts: { type: 'array', items: { type: 'object', additionalProperties: false, properties: {
@@ -1535,6 +1752,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         ...args.description !== undefined ? { description: args.description } : {},
         ...args.dependencies !== undefined ? { dependencies: args.dependencies } : {},
         ...args.assignee !== undefined ? { assignee: args.assignee } : {},
+        ...args.produces !== undefined ? { produces: args.produces } : {},
         ...args.report_bundle === undefined ? {} : { reportBundle: args.report_bundle },
         ...args.revises_task_id === undefined ? {} : { revisesTaskId: args.revises_task_id },
         ...args.input_artifacts === undefined ? {} : { inputArtifacts: args.input_artifacts.map(ref => ({ sourceTaskId: ref.source_task_id, artifactId: ref.artifact_id, ...ref.purpose === undefined ? {} : { purpose: ref.purpose } })) },
@@ -1545,11 +1763,32 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
   }))
 
   ctx.tools.register(defineTool({
+    name: 'expert_teams_open_visual_revision',
+    description: 'Captain-only bounded v3 research recovery after an independently rejected hard visual review of an integrated renderer. Atomically creates render_revision_1 and visual_review_1, closes the old rejected review, and rewires unclaimed finalqa to the new reviewed version. This operation can run only once per team.',
+    parameters: {},
+    output: { schema: { type: 'object', additionalProperties: false, properties: {
+      render_task_id: { type: 'string', required: true },
+      visual_review_task_id: { type: 'string', required: true },
+      finalqa_task_id: { type: 'string', required: true },
+    } }, render: (_args, value) => [{ type: 'text', text: `Visual revision opened: ${value.render_task_id} → ${value.visual_review_task_id}; final QA ${value.finalqa_task_id} now depends on the new review.` }] },
+    async execute(_args, exec) {
+      const captain = requireCaptain(exec)
+      const result = await createDeepResearchVisualRevisionCore(ctx, config, captain)
+      const team = await requireCaptainTeam(workspaceOf(captain), config, captain)
+      await scheduler.kickTeam(workspaceOf(captain), team.id, captain)
+      return result
+    },
+  }))
+
+  ctx.tools.register(defineTool({
     name: 'expert_teams_publish_artifact',
     description: 'Snapshot an existing file from your current task project into an immutable published version. Returns the artifact id, SHA256 and version path; downstream tasks can pin this id without copying file contents into messages.',
     parameters: {
       task_id: { type: 'string', required: true }, attempt_id: { type: 'string', required: true },
-      source_path: { type: 'string', required: true, description: 'Clean path relative to the exact project.path in input/task.json, e.g. artifacts/report.md. Do not supply workspace-relative or absolute paths, ./ or ../. First copy a shared deliverable into your own task project, then publish that local file before awaiting_review.' },
+      source_path: { type: 'string', description: 'Clean path relative to the exact project.path in input/task.json, e.g. artifacts/report.md. Do not supply workspace-relative or absolute paths, ./ or ../. First copy a shared deliverable into your own task project, then publish that local file before awaiting_review.' },
+      reuse_artifact_id: { type: 'string', description: 'After a valid reassignment, explicitly adopt one previous-attempt artifact id instead of copying its file. Mutually exclusive with source_path. Host verifies SHA, unchanged input manifest and task scope; a fresh independent review is still required.' },
+      expected_sha256: { type: 'string', description: 'Required exact SHA256 for reuse_artifact_id.' },
+      reuse_reason: { type: 'string', description: 'Required explanation of why this previous artifact remains applicable.' },
       name: { type: 'string', required: true }, media_type: { type: 'string' }, description: { type: 'string' },
     },
     output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: `Published ${value.artifact_id} (${value.sha256}) at ${value.path}` }] },
@@ -1565,10 +1804,12 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         if (task.assignee !== identity.name) throw new Error('ARTIFACT_STALE_OWNER: only the current task owner/attempt can publish')
         if (TERMINAL_TASK_STATUSES.includes(task.status)) throw new Error(`ARTIFACT_STALE_OWNER: ${terminalTaskAdvice(task)}`)
         if (task.attemptId !== args.attempt_id || task.reassigning === true) throw new Error('ARTIFACT_STALE_OWNER: only the current task owner/attempt can publish')
+        if (task.waitReason?.startsWith('USER_PAUSED:')) throw new Error('TASK_PAUSED_BY_USER: wait for an explicit restart before publishing')
         if (task.status !== 'claimed' && task.status !== 'in_progress') throw new Error('Only unfinished tasks can publish a new version')
         if (task.project === undefined) throw new Error('Task has no isolated project')
         const run = team.qualityRuns?.[task.id] ?? (team.qualityRun?.contract.taskId === task.id ? team.qualityRun : undefined)
         if (run !== undefined) requireCraftProducerDelivery(team, task, run)
+        requireTaskMaterialDelivery(task, caller.id, task.attempt ?? 1, 'producer')
         if (run?.status === 'passed' || run?.status === 'integrated') throw new Error('Reopen quality review before publishing a revised deliverable')
         if (task.executionState === 'awaiting_review') throw new Error('Task is waiting for review; open repair/revision before writing new artifacts')
         const safeName = args.name.trim().replace(/[^a-zA-Z0-9._-]/g, '-')
@@ -1583,14 +1824,35 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             contract: { ...run.contract, deliverables: [...new Set([...run.contract.deliverables, reviewId])], changedPaths: [...new Set([...run.contract.changedPaths, artifactScope])] },
           }).run
         }
-        const parts = args.source_path.replaceAll('\\', '/').split('/')
-        if (isAbsolute(args.source_path) || parts.some(part => part === '..' || part === '.' || part === '')) throw new Error(`Artifact source must be a clean relative project path. projectRoot=${resolve(stateRoot, team.id, task.project.path)}; source_path="artifacts/report.md" means ${resolve(stateRoot, team.id, task.project.path, 'artifacts/report.md')}. First copy a shared file into this own project, then publish its relative path before awaiting_review. Absolute paths, ./ and ../ remain forbidden.`)
-        const project = await realpath(join(stateRoot, team.id, task.project.path))
-        const source = await realpath(join(project, ...parts))
-        const rel = relative(project, source)
-        if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error('Artifact source escapes the task project')
-        const artifact = await publishTaskArtifact(stateRoot, team, task, { name: args.name, content: await readFile(source), mediaType: args.media_type, description: args.description })
-        task.publishedArtifacts = [...(task.publishedArtifacts ?? []), artifact]
+        let content: Buffer
+        let reusedFrom: TaskArtifact['reusedFrom']
+        if (args.reuse_artifact_id !== undefined) {
+          if (args.source_path !== undefined || !args.reuse_reason?.trim() || args.reuse_reason.length > 2000 || !/^[a-f0-9]{64}$/u.test(args.expected_sha256 ?? '')) throw new Error('ARTIFACT_REUSE_INPUT: provide artifact id, exact SHA and applicability reason; omit source_path')
+          const previous = task.publishedArtifacts?.find(a => a.id === args.reuse_artifact_id)
+          const handoff = task.reassignmentHistory?.at(-1)
+          if (previous === undefined || handoff === undefined || !handoff.publicationIds.includes(previous.id)
+            || task.attempt !== handoff.previousAttempt + 1 || previous.attempt !== handoff.previousAttempt
+            || previous.reviewId !== reviewId || previous.sha256 !== args.expected_sha256
+            || handoff.inputDigest !== taskInputDigest(task) || handoff.scopeDigest !== taskScopeDigest(task)) throw new Error('ARTIFACT_REUSE_SCOPE_CHANGED: no matching verified handoff for these bytes, inputs and task scope')
+          const artifactRoot = await realpath(join(stateRoot, team.id, task.project.artifactsPath))
+          const source = await realpath(join(artifactRoot, previous.relativePath))
+          const rel = relative(artifactRoot, source)
+          if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error('ARTIFACT_REUSE_PATH_INVALID')
+          content = await readFile(source)
+          if (createHash('sha256').update(content).digest('hex') !== previous.sha256) throw new Error('ARTIFACT_REUSE_BYTES_CHANGED: old publication no longer matches its SHA')
+          reusedFrom = { artifactId: previous.id, attempt: previous.attempt, inputDigest: handoff.inputDigest, scopeDigest: handoff.scopeDigest, reason: args.reuse_reason.trim() }
+        } else {
+          if (args.source_path === undefined || args.expected_sha256 !== undefined || args.reuse_reason !== undefined) throw new Error('ARTIFACT_SOURCE_REQUIRED: provide source_path and name, or explicit reuse_artifact_id with SHA and reason')
+          const parts = args.source_path.replaceAll('\\', '/').split('/')
+          if (isAbsolute(args.source_path) || parts.some(part => part === '..' || part === '.' || part === '')) throw new Error(`Artifact source must be a clean relative project path. projectRoot=${resolve(stateRoot, team.id, task.project.path)}; source_path="artifacts/report.md" is relative to this own project. Absolute paths, ./ and ../ remain forbidden.`)
+          const project = await realpath(join(stateRoot, team.id, task.project.path))
+          const source = await realpath(join(project, ...parts))
+          const rel = relative(project, source)
+          if (rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error('Artifact source escapes the task project')
+          content = await readFile(source)
+        }
+        const artifact = await publishTaskArtifact(stateRoot, team, task, { name: args.name, content, mediaType: args.media_type, description: args.description, ...(reusedFrom === undefined ? {} : { reusedFrom }) })
+        if (!task.publishedArtifacts?.some(a => a.id === artifact.id)) task.publishedArtifacts = [...(task.publishedArtifacts ?? []), artifact]
         if (amendedRun !== undefined) setQualityRun(team, amendedRun)
         task.updatedAt = Date.now()
         await writeTeam(stateRoot, team)
@@ -1606,7 +1868,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       task_id: { type: 'string', required: true, description: 'Consumer task whose input manifest pins this upstream artifact; not the source task.' }, source_task_id: { type: 'string', required: true, description: 'Completed dependency named in the consumer input manifest.' }, artifact_id: { type: 'string', required: true, description: 'Immutable artifact UUID from that manifest, never a published:* review_artifact_id.' },
       offset: { type: 'number', description: 'Text character offset, default 0.' }, limit: { type: 'number', description: 'Maximum characters, default 4000, maximum 16000.' },
     },
-    output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: `${value.artifact_id} sha256=${value.sha256}\n${value.content}` }] },
+    output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }] },
     async execute(args, exec) {
       const caller = requireCaptain(exec)
       const workspace = workspaceOf(caller)
@@ -1625,16 +1887,25 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         const offset = args.offset ?? 0
         const limit = args.limit ?? 4000
         if (!Number.isSafeInteger(offset) || offset < 0 || !Number.isSafeInteger(limit) || limit < 1 || limit > 16000) throw new Error('Invalid artifact pagination')
-        return asToolJsonObject({ artifact_id: artifact.id, sha256: artifact.sha256, size_bytes: artifact.sizeBytes, content: content.slice(offset, offset + limit), next_offset: offset + limit < content.length ? offset + limit : null })
+        const page = content.slice(offset, offset + limit)
+        const nextOffset = offset + limit < content.length ? offset + limit : null
+        return asToolJsonObject({ artifact_id: artifact.id, sha256: artifact.sha256, size_bytes: artifact.sizeBytes,
+          offset, total_characters: content.length, returned_characters: page.length,
+          content: page, next_offset: nextOffset, eof: nextOffset === null,
+          notice: nextOffset === null
+            ? 'End of artifact. Do not increase offset. Use the content already read; start at offset 0 only if earlier pages are missing.'
+            : `Continue at next_offset=${nextOffset}. Offsets and lengths count JavaScript UTF-16 code units, not bytes.` })
       })
     },
   }))
 
   ctx.tools.register(defineTool({
     name: 'expert_teams_reassign_task',
-    description: 'Atomically retry, reassign, or let the captain take over any unfinished/failed task. The old attempt is revoked before its member is interrupted, so late updates cannot overwrite the new owner. Use assignee="captain" for captain takeover.',
+    description: 'Guarded retry or reassignment using current expected_attempt and expected_attempt_id. Running owners, recent publications, pending review and external blockers cannot be bypassed by takeover. Use the existing submission/review flow for finished work; assignee="captain" requests captain takeover only after admission.',
     parameters: {
       task_id: { type: 'string', required: true, description: 'Task to retry/reassign.' },
+      expected_attempt: { type: 'number', required: true, description: 'Current attempt from task status; stale observations cannot revoke new work.' },
+      expected_attempt_id: { type: 'string', description: 'Current attempt_id, required whenever the task has one.' },
       assignee: { type: 'string', required: true, description: 'Active member name, or "captain" for captain takeover.' },
       reason: { type: 'string', description: 'Why the task is being retried or reassigned.' },
     },
@@ -1663,13 +1934,16 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       const team = await requireCaptainTeam(workspace, config, captain)
       const target = args.assignee.trim()
       if (target === '') throw new Error('reassignment assignee must not be empty')
+      const reassignmentReason = args.reason?.trim()
 
       const revoked = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
         const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
         assertTeamRunnable(fresh)
         const task = requireTask(fresh, args.task_id)
+        if (task.humanChoice !== undefined) throw new Error('HUMAN_CHOICE_HOST_ONLY: selection nodes cannot be reassigned')
         if (task.status === 'completed') throw new Error(`completed task ${task.id} is immutable and cannot be reassigned`)
         if (task.reassigning === true) throw new Error(`task ${task.id} is already being reassigned`)
+        if (!reassignmentReason) throw new Error('REASSIGNMENT_REASON_REQUIRED: state the observed handoff reason')
         const targetMember = target === CAPTAIN_KEY ? undefined : requireMember(fresh, target)
         if (targetMember !== undefined) {
           const busy = memberOpenTask(fresh, targetMember.name, task.id)
@@ -1684,6 +1958,14 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           : fresh.members.find(member => member.name === task.assignee && member.status !== 'removed')
         const previousRun = fresh.qualityRuns?.[task.id]
           ?? (fresh.qualityRun?.contract.taskId === task.id ? fresh.qualityRun : undefined)
+        const owner = fresh.members.find(member => member.name === task.assignee && member.status !== 'removed')
+        const activity = owner === undefined ? 'idle' : ctx.agents.get(owner.id as SessionId)?.status
+          ?? (await memberActivity(ctx, fresh.captainSessionId)).get(owner.id) ?? 'unknown'
+        const observation = checkTaskReassignment(task, { expectedAttempt: args.expected_attempt,
+          expectedAttemptId: args.expected_attempt_id, member: owner, activity, quality: previousRun,
+          now: Date.now(), graceMs: config.reassignmentGraceMs })
+        if ((task.reassignmentHistory?.length ?? 0) >= 64) throw new Error('REASSIGNMENT_HISTORY_LIMIT: create a separately reviewed follow-up task')
+        task.reassignmentHistory = [...(task.reassignmentHistory ?? []), { ...observation, reason: reassignmentReason, target }]
         if (previousRun !== undefined) {
           const nextAttempt = (task.attempt ?? 0) + 1
           if (previousRun.attempt !== nextAttempt || previousRun.contract.assignee !== target || previousRun.status !== 'pending') {
@@ -1776,12 +2058,14 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           attempt: { type: 'number', required: true },
           attempt_id: { type: 'string' },
           craft_materials: { type: 'string' },
+          task_materials: { type: 'string' },
+          task_material_digest: { type: 'string' },
           repair_feedback: { type: 'string' },
         },
       },
       render: (args, value) => [{
         type: 'text',
-        text: `Task ${value.task_id} claimed by ${value.assignee} (attempt ${value.attempt}${value.attempt_id ? `, attempt_id ${value.attempt_id}` : ''}, status ${value.status}).${value.repair_feedback ? '\n\n' + value.repair_feedback : ''}${value.craft_materials ? '\n\n' + value.craft_materials : ''}`,
+        text: `Task ${value.task_id} claimed by ${value.assignee} (attempt ${value.attempt}${value.attempt_id ? `, attempt_id ${value.attempt_id}` : ''}, status ${value.status}).${value.repair_feedback ? '\n\n' + value.repair_feedback : ''}${value.craft_materials ? '\n\n' + value.craft_materials : ''}${value.task_materials ? '\n\n' + value.task_materials : ''}`,
       }],
     },
     async execute(args, exec) {
@@ -1793,6 +2077,11 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         const { team: fresh, identity } = await requireFreshParticipant(stateRoot, team.id, caller.id)
         assertTeamRunnable(fresh)
         const task = requireTask(fresh, args.task_id)
+        if (task.humanChoice !== undefined) throw new Error('HUMAN_CHOICE_HOST_ONLY: this task requires an authenticated user selection in the Host panel')
+        if (task.waitReason?.startsWith('USER_PAUSED:')) throw new Error('TASK_PAUSED_BY_USER: wait for an explicit restart before updating')
+        const quality = fresh.qualityRuns?.[task.id]
+          ?? (fresh.qualityRun?.contract.taskId === task.id ? fresh.qualityRun : undefined)
+        if (quality?.status === 'escalated') throw new Error('QUALITY_ESCALATED_CLOSEOUT_REQUIRED: close out the exhausted review before claiming this task')
         if (task.reassigning === true) {
           throw new Error(`task ${task.id} is being reassigned; wait for the handoff to finish`)
         }
@@ -1819,10 +2108,12 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             throw new Error(`task ${task.id} is already claimed by "${task.assignee ?? 'nobody'}"`)
           }
           const craft = prepareCraftDelivery(task, caller.id, task.attempt ?? 1, ['writer', 'renderer'], 'claim')
-          if (assignee === identity.name) { saveCraftDelivery(task, craft.receipts); await writeTeam(stateRoot, fresh) }
+          const taskMaterials = prepareTaskMaterialDelivery(task, caller.id, task.attempt ?? 1, 'producer', true)
+          if (assignee === identity.name) { saveCraftDelivery(task, craft.receipts); saveTaskMaterialDelivery(task, taskMaterials.receipt); await writeTeam(stateRoot, fresh) }
           await syncTaskProjectInput(stateRoot, fresh, task)
           return {
             ...(craft.content === '' || assignee !== identity.name ? {} : { craft_materials: craft.content }),
+            ...(taskMaterials.content === '' || assignee !== identity.name ? {} : { task_materials: taskMaterials.content, task_material_digest: taskMaterials.receipt?.digest }),
             ...repairFeedbackResult(fresh, task, stateRoot),
             task_id: task.id,
             status: task.status,
@@ -1848,8 +2139,10 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         }
         await prepareClaimInputs(stateRoot, fresh, task)
         const craft = prepareCraftDelivery(task, caller.id, (task.attempt ?? 0) + 1, ['writer', 'renderer'], 'claim')
+        const taskMaterials = prepareTaskMaterialDelivery(task, caller.id, (task.attempt ?? 0) + 1, 'producer', true)
         const attemptId = beginTaskAttempt(task, assignee)
         if (assignee === identity.name) saveCraftDelivery(task, craft.receipts)
+        if (assignee === identity.name) saveTaskMaterialDelivery(task, taskMaterials.receipt)
         await syncTaskProjectInput(stateRoot, fresh, task)
         const owner = assignee === CAPTAIN_KEY ? undefined : fresh.members.find(member => member.name === assignee)
         if (owner?.capabilityScope !== undefined) owner.capabilityScope = grantCapabilityTask(owner.capabilityScope, task.id)
@@ -1862,6 +2155,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         })
         return {
           ...(craft.content === '' || assignee !== identity.name ? {} : { craft_materials: craft.content }),
+          ...(taskMaterials.content === '' || assignee !== identity.name ? {} : { task_materials: taskMaterials.content, task_material_digest: taskMaterials.receipt?.digest }),
           ...repairFeedbackResult(fresh, task, stateRoot),
           task_id: task.id,
           status: task.status,
@@ -1877,6 +2171,8 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
     name: 'expert_teams_update_task',
     description: 'Update a task status/output. Members must supply the current attempt_id returned by claim_task; stale attempts are rejected after takeover/reassignment. Terminal results are immutable. A captain must use reassign_task(assignee="captain") before updating member-owned work. Completing a task runs the team plan\'s quality gates: a failing hard gate blocks the completion with gate id, reason and correction guidance (fix the output and retry); soft-gate warnings are returned as gate_warnings; the derived 0-100 quality score is stamped into the task title as 「质 NN」(「质 NN·硬门未过」 when a hard gate blocks).',
     parameters: {
+      submission_id: { type: 'string', description: 'Compact v4 atomic submission id. Use with publications, nonempty output, status=in_progress and execution_state=awaiting_review. Exact retries return the original receipt.' },
+      publications: { type: 'array', items: { type: 'object', additionalProperties: false, properties: { name: { type: 'string', required: true }, source_path: { type: 'string', required: true } } }, description: 'Every declared file, relative to this task project; Host publishes and submits all files in one transaction.' },
       task_id: { type: 'string', required: true, description: 'The task id to update.' },
       status: {
         type: 'string',
@@ -1931,6 +2227,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         const { team: fresh, identity } = await requireFreshParticipant(stateRoot, team.id, caller.id)
         assertTeamRunnable(fresh)
         const task = requireTask(fresh, args.task_id)
+        if (task.humanChoice !== undefined) throw new Error('HUMAN_CHOICE_HOST_ONLY: this task requires an authenticated user selection in the Host panel')
         if (identity.kind === 'captain'
           && task.assignee !== undefined
           && task.assignee !== CAPTAIN_KEY) {
@@ -1942,6 +2239,14 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           }
           if (task.attemptId !== undefined && args.attempt_id !== task.attemptId) {
             throw new Error(`stale attempt for task ${task.id}: expected the current attempt_id; stop work and request fresh assignment`)
+          }
+        }
+        const submitFingerprint = submissionFingerprint({ submission_id: args.submission_id, publications: args.publications, output: args.output, attempt_id: args.attempt_id, status: args.status, execution_state: args.execution_state, wait_reason: args.wait_reason })
+        if (args.submission_id !== undefined || args.publications !== undefined) {
+          if (!isCompactResearch(fresh) || !args.submission_id?.trim() || args.submission_id.length > 180 || !args.publications || args.status !== 'in_progress' || args.execution_state !== 'awaiting_review' || !args.output?.trim()) throw new Error('SUBMISSION_INPUT_INVALID: V4/V5 require submission_id, all publications, output, in_progress and awaiting_review')
+          if (task.submissionReceipt?.id === args.submission_id) {
+            if (task.submissionReceipt.fingerprint !== submitFingerprint || task.submissionReceipt.attempt !== task.attempt || args.attempt_id !== (task.attemptId ?? task.finalizedAttemptId)) throw new Error('SUBMISSION_IDEMPOTENCY_CONFLICT')
+            return { task_id: task.id, status: task.status, attempt: task.attempt ?? 0, output: task.output, execution_state: task.executionState, quality_score: task.qualityScore ?? null, repair_count: task.repairCount ?? 0 }
           }
         }
         if (TERMINAL_TASK_STATUSES.includes(task.status)) {
@@ -1961,14 +2266,20 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             repair_count: task.repairCount ?? 0,
           }
         }
+        if (isCompactResearch(fresh) && task.executionState === 'awaiting_review') throw new Error('RESEARCH_SUBMISSION_FROZEN: use an exact submission retry or an authorized quality repair')
+        const escalatedRun = fresh.qualityRuns?.[task.id]
+          ?? (fresh.qualityRun?.contract.taskId === task.id ? fresh.qualityRun : undefined)
+        if (escalatedRun?.status === 'escalated') throw new Error('QUALITY_ESCALATED_CLOSEOUT_REQUIRED: only the captain may close out this exhausted review')
         const craftRun = fresh.qualityRuns?.[task.id] ?? (fresh.qualityRun?.contract.taskId === task.id ? fresh.qualityRun : undefined)
         if (craftRun !== undefined && args.status !== 'failed' && args.status !== 'cancelled' && args.execution_state !== 'blocked_external') requireCraftProducerDelivery(fresh, task, craftRun)
+        if (args.status !== 'failed' && args.status !== 'cancelled' && args.execution_state !== 'blocked_external') requireTaskMaterialDelivery(task, caller.id, task.attempt ?? 1, 'producer')
         // Pre-update snapshot for the compensating commit below (project
         // files are restored from it when the team write fails).
         const snapshot: TeamTask = {
           ...task,
           ...task.project === undefined ? {} : { project: { ...task.project } },
         }
+        if (args.publications !== undefined) await prepareResearchSubmission(stateRoot, fresh, task, args.publications)
         if (args.execution_state !== undefined) {
           if (args.status !== undefined && args.status !== 'in_progress') throw new Error(`execution_state is only valid for unfinished work; task ${task.id} is ${task.status}/${task.executionState ?? 'active'}. Omit execution_state and wait_reason with terminal status=${args.status}; reviewed work must use captain quality_integrate(complete_task=true) after the owner advances the same attempt to in_progress`)
           if (args.execution_state === 'active' && task.executionState !== undefined && task.executionState !== 'active') throw new Error('Use captain resume_task or quality repair/reopen/acceptance to release waiting work')
@@ -1976,7 +2287,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           if (task.executionState === 'blocked_external' && args.execution_state !== 'blocked_external') throw new Error('Use captain resume_task to release externally blocked work')
           if (task.status !== 'claimed' && task.status !== 'in_progress') throw new Error('claim the task before setting execution_state')
           if (args.execution_state === 'blocked_external' && !args.wait_reason?.trim()) throw new Error('blocked_external requires a concrete wait_reason')
-          if (args.execution_state === 'awaiting_review' && !(args.output ?? task.output)?.trim()) throw new Error(`awaiting_review requires a submitted result. Call expert_teams_update_task(task_id=${JSON.stringify(task.id)}${task.attemptId === undefined ? '' : `, attempt_id=${JSON.stringify(task.attemptId)}`}, execution_state="awaiting_review", output="<nonempty summary/results>"). This tool writes managed output/result.json; editing that file directly does not set task.output.`)
+          if (args.execution_state === 'awaiting_review' && !(args.output ?? task.output)?.trim()) throw new Error(`awaiting_review requires a submitted result. Call expert_teams_update_task(task_id=${JSON.stringify(task.id)}${task.attemptId === undefined ? '' : `, attempt_id=${JSON.stringify(task.attemptId)}`}, execution_state="awaiting_review", output="<complete reviewable content>"). Quality structure gates inspect the task output field, not separately published files. This tool writes managed output/result.json; editing that file directly does not set task.output.`)
           if (args.execution_state === 'awaiting_review') {
             const run = fresh.qualityRuns?.[task.id] ?? (fresh.qualityRun?.contract.taskId === task.id ? fresh.qualityRun : undefined)
             if (run !== undefined) {
@@ -2005,6 +2316,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         // qualityScore: null / repairCount: 0 — the fields are ALWAYS present
         // (forced recovery, never left to the member's output).
         let gateWarnings: readonly string[] | undefined
+        if (args.status === 'completed' && isV5WorkingTask(fresh,task)) throw new Error('V5_ATOMIC_SUBMISSION_REQUIRED: submit declared publications with submission_id, in_progress and awaiting_review; Host validates and completes internal work atomically')
         if (args.status === 'completed') {
           const structuredRun = fresh.qualityRuns?.[task.id]
             ?? (fresh.qualityRun?.contract.taskId === task.id ? fresh.qualityRun : undefined)
@@ -2033,11 +2345,13 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             ? args.wait_reason?.trim() || 'Submitted; waiting for independent quality review.'
             : args.execution_state === 'blocked_external' ? args.wait_reason!.trim() : undefined
         }
+        if (args.submission_id && isV5WorkingTask(fresh,task)) { task.researchRelease=workingRelease(task); task.status='completed'; task.executionState=undefined; task.waitReason=undefined }
         if (gateWarnings !== undefined) task.gateWarnings = gateWarnings
         // Terminal work drops its live capability: stale-claim checks and
         // audit views must never see a lingering attemptId on dead work.
         finalizeTerminalTask(task)
         task.updatedAt = Date.now()
+        if (args.submission_id !== undefined) task.submissionReceipt = { id: args.submission_id, fingerprint: submitFingerprint, attempt: task.attempt!, artifactDigest: canonicalDigest((task.publishedArtifacts ?? []).filter(a => a.attempt === task.attempt)) }
         // Compensating commit: project output first, team record second, with
         // a snapshot rollback when the team write fails (see commitTaskUpdate).
         await commitTaskUpdate(stateRoot, fresh, task, snapshot)
@@ -2213,7 +2527,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         ))
         await scheduler.kickTeam(workspace, prepared.fresh.id, captain)
         const receipt = (await readMailbox(stateRoot, prepared.fresh.id, CAPTAIN_KEY)).find(message => message.id === prepared.message.id)
-        const delivered = receipt?.readAt !== undefined && receipt.discardedAt === undefined ? 'live' : 'mailbox'
+        const delivered = receipt?.deliveredAt !== undefined && receipt.discardedAt === undefined ? 'live' : 'mailbox'
         return { message_id: prepared.message.id, from: prepared.from, to: CAPTAIN_KEY, delivered }
       }
       // The scheduler owns dispatch admission, including mailbox-only turns,
@@ -2223,7 +2537,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       ))
       await scheduler.kickMember(workspace, prepared.fresh.id, prepared.recipient.name, captain)
       const receipt = (await readMailbox(stateRoot, prepared.fresh.id, prepared.recipient.name)).find(message => message.id === prepared.message.id)
-      const delivered = receipt?.readAt !== undefined && receipt.discardedAt === undefined ? 'wake' : 'mailbox'
+      const delivered = receipt?.deliveredAt !== undefined && receipt.discardedAt === undefined ? 'wake' : 'mailbox'
       return {
         message_id: prepared.message.id,
         from: prepared.from,
@@ -2302,7 +2616,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       ))
       await scheduler.kickMember(workspace, prepared.fresh.id, prepared.recipient.name, liveCaptain)
       const receipt = (await readMailbox(stateRoot, prepared.fresh.id, prepared.recipient.name)).find(message => message.id === prepared.message.id)
-      const delivered = receipt?.readAt !== undefined && receipt.discardedAt === undefined ? 'wake' : 'mailbox'
+      const delivered = receipt?.deliveredAt !== undefined && receipt.discardedAt === undefined ? 'wake' : 'mailbox'
       return {
         member: prepared.recipient.name,
         round: prepared.round,
@@ -2316,40 +2630,63 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
     name: 'expert_teams_quality_review',
     description: 'Review the structured quality run for a staged/profile team. Evidence is read from the task project and verification commands are executed from the durable contract; callers cannot self-certify hashes or exit codes.',
     parameters: {
+      repair_action: { type: 'string', enum: ['revise', 'wait_external'], description: 'Compact v4 needs_revision only: revise authorizes Host to atomically open the bounded same-task repair for a concrete correctable defect; wait_external preserves the failure until its external recovery condition changes. Never use revise for unchanged remote source failures.' },
+      review_audit: { type: 'string', description: 'Compact v4 writer PASS requires substantive per-chapter notes with 报告SHA256, 来源台账SHA256 and 结论: PASS. Renderer PASS requires json visual-audit with actual HTML/PDF hashes, checkedAt, method, blockers:0, dom/wide/narrow/interactions/accessibility and exact rendered first/middle/last PDF page hashes.' },
       event_id: { type: 'string', description: 'Operation-specific idempotency ID, e.g. review-t1-1-unique. Reuse only for an exact retry of this review and payload; repair and integration need different IDs.' },
       task_id: { type: 'string', description: 'Task whose quality run is being reviewed. Defaults to the root run.' },
-      reviewer: { type: 'string', required: true, description: 'Reviewer identity; it must differ from the task assignee.' },
+      reviewer: { type: 'string', description: 'Optional compatibility field; if supplied it must match the caller. Host derives reviewer identity from the authenticated session.' },
       verdict: { type: 'string', enum: [...REVIEW_VERDICTS], description: 'pass requires all acceptance/verification checks to pass and no hard finding. needs_revision/reject preserve truthful failing checks and require findings.' },
       artifacts: { type: 'array', description: 'Additional contract artifacts only. Omit task-output and published versions: Host binds them automatically. If supplied, use the exact review_artifact_id and Host-bound path shown in expert_teams_status; artifact_id is a different immutable version identifier.', items: { type: 'object', additionalProperties: false, properties: { id: { type: 'string', required: true }, path: { type: 'string', required: true } } } },
       acceptance_results: { type: 'array', description: 'Exactly one truthful boolean result for EVERY ID in the task review_contract.acceptance from expert_teams_status, including output-present when listed. Copy exact IDs, not statement text or invented acceptance-N aliases. Keep failed checks false when requesting revision or rejecting.', items: { type: 'object', additionalProperties: false, properties: { id: { type: 'string', required: true }, passed: { type: 'boolean', required: true }, detail: { type: 'string' } } } },
-      prepare_only: { type: 'boolean', description: 'For selected craft reports, first set true with task_id and reviewer only. Host returns complete frozen reviewer materials, artifact hashes and actual machine checks; this does not approve the task. Then inspect the actual files and submit a normal review.' },
+      prepare_only: { type: 'boolean', description: 'For selected report craft or fixed task Skill/Prompt, first set true with task_id and reviewer only. Host returns complete frozen reviewer materials, artifact hashes and machine checks; this does not approve the task.' },
       material_receipt: { type: 'string', description: 'Host receipt from prepare_only for this reviewer session, current attempt and exact artifact bytes.' },
+      task_material_receipt: { type: 'string', description: 'When task Skill/Prompt and report craft are both selected, submit the separate fixed task-material receipt returned by prepare_only.' },
       independent_review: { type: 'array', description: 'Supply every exact area ID returned by prepare_only (v3: selected domain contract; legacy v2: four fixed areas), each with scope, truthful status and located quotes/reasons from the exact declared Markdown artifact ID returned by preparation. All areas, including visual-and-format, require an MD anchor; HTML/PDF/ledger summaries belong in coverage/reason and cannot replace it. Quote visible prose or its exact Markdown source; preserve identifier punctuation and inline-code literals. These observations do not automatically prove semantic correctness.', items: { type: 'object', additionalProperties: false, properties: { id: { type: 'string', required: true }, status: { type: 'string', required: true, enum: ['passed','failed','unverified'] }, coverage: { type: 'string', required: true }, evidence: { type: 'array', required: true, items: { type: 'object', additionalProperties: false, properties: { artifactId: { type: 'string', required: true }, quote: { type: 'string', required: true }, reason: { type: 'string', required: true } } } } } } },
       changed_paths: { type: 'array', items: { type: 'string' } },
       findings: { type: 'array', items: { type: 'object', additionalProperties: false, properties: { id: { type: 'string', required: true }, code: { type: 'string', required: true }, severity: { type: 'string', required: true, enum: [...FINDING_SEVERITIES], description: 'info: observation; soft: nonblocking issue; hard: blocks pass/integration. Only info, soft, hard are accepted.' }, message: { type: 'string', required: true }, taskId: { type: 'string', required: true }, attempt: { type: 'number', required: true }, path: { type: 'string' } } } },
     },
-    output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: value.craft_materials ? JSON.stringify(value) : `Quality run ${value.runId ?? 'unknown'} is ${value.status ?? 'unknown'}. ${value.next_action ?? ''}` }] },
+    output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: value.craft_materials || value.task_materials ? JSON.stringify(value) : `Quality run ${value.runId ?? 'unknown'} is ${value.status ?? 'unknown'}. ${value.next_action ?? ''}` }] },
     async execute(args, exec) {
       const caller = requireCaptain(exec)
       const workspace = workspaceOf(caller)
       const stateRoot = stateRootOf(workspace, config)
       const team = await requireParticipantTeam(workspace, config, caller)
       const run = qualityRunFor(team, args.task_id)
-      requireReviewIdentity(team, run, caller.id, args.reviewer)
+      const reviewer = args.reviewer ?? participantIdentityOf(team, caller.id)?.name ?? ''
+      const reviewFingerprint = canonicalDigest(args)
+      const priorWait = requireTask(team,run.contract.taskId).technicalReviewWaits?.find(w=>w.eventId===args.event_id)
+      if (priorWait) {
+        if(priorWait.fingerprint!==reviewFingerprint||priorWait.reviewerSessionId!==caller.id) throw new Error('RESEARCH_EXTERNAL_WAIT_CONFLICT')
+        return {runId:run.runId,status:run.status,task_id:run.contract.taskId,replayed:true,next_action:'Technical wait already recorded; no content verdict or budget charge.'}
+      }
+      const priorReview = requireTask(team, run.contract.taskId).researchReviewTransactions?.[args.event_id ?? '']
+      if (isCompactResearch(team) && args.prepare_only !== true && priorReview !== undefined) {
+        if (priorReview.fingerprint !== reviewFingerprint || priorReview.reviewerSessionId !== caller.id || participantIdentityOf(team,caller.id)?.name !== reviewer) throw new Error('RESEARCH_REVIEW_IDEMPOTENCY_CONFLICT')
+        await scheduler.kickTeam(workspace,team.id)
+        return { runId: priorReview.runId, status: priorReview.status, task_id: run.contract.taskId, attempt: priorReview.attempt, replayed: true, next_action: 'This review transaction is already committed; inspect current status before further action.' }
+      }
+      if (args.repair_action !== undefined && (!isCompactResearch(team) || args.verdict !== 'needs_revision' || args.prepare_only === true)) throw new Error('RESEARCH_REPAIR_ACTION_INVALID')
+      requireReviewIdentity(team, run, caller.id, reviewer)
       if (args.prepare_only !== true) {
         if (args.event_id === undefined || args.verdict === undefined || args.acceptance_results === undefined) throw new Error('QUALITY_REVIEW_INPUT: event_id, verdict and acceptance_results are required for a normal review')
-        validateReviewRequest(run, { eventId: args.event_id, reviewer: args.reviewer, verdict: args.verdict as ReviewVerdict, findings: (args.findings ?? []) as Finding[] })
+        validateReviewRequest(run, { eventId: args.event_id, reviewer, verdict: args.verdict as ReviewVerdict, findings: (args.findings ?? []) as Finding[] })
       } else if (args.verdict !== undefined || args.acceptance_results !== undefined || args.independent_review !== undefined) throw new Error('QUALITY_PREPARE_ONLY: preparation cannot carry review decisions')
       const task = requireTask(team, run.contract.taskId)
-      if (task.reportBundle?.craft === undefined && (args.prepare_only === true || args.material_receipt !== undefined || args.independent_review !== undefined)) {
+      if (task.reportBundle?.craft === undefined && task.frozenTaskMaterialContract === undefined && (args.prepare_only === true || args.material_receipt !== undefined || args.task_material_receipt !== undefined || args.independent_review !== undefined)) {
         throw new Error('CRAFT_REVIEW_NOT_APPLICABLE: this task has no selected craft contract. Omit prepare_only, material_receipt and independent_review; submit the task review_contract acceptance_results with truthful verdict/findings. No evidence or review state was changed.')
       }
-      if (args.prepare_only !== true && args.independent_review !== undefined && !args.material_receipt?.trim()) {
+      if (args.prepare_only !== true && (args.independent_review !== undefined || task.frozenTaskMaterialContract !== undefined) && !args.material_receipt?.trim()) {
         throw new Error('CRAFT_REVIEW_RECEIPT_REQUIRED: prepare this craft review with prepare_only:true, inspect the returned exact artifacts/materials, then submit its material_receipt and all required independent_review areas.')
+      }
+      if (args.prepare_only !== true && task.reportBundle?.craft !== undefined && task.frozenTaskMaterialContract !== undefined && !args.task_material_receipt?.trim()) {
+        throw new Error('TASK_BINDING_REVIEW_RECEIPT_REQUIRED: this task has both report craft and fixed Skill/Prompt; submit both receipts from prepare_only')
       }
       if (task.project === undefined) throw new Error(`quality task "${run.contract.taskId}" has no durable project`)
       requireCurrentQualityTask(team, run)
       requireCraftProducerDelivery(team, task, run)
+      const producerSessionId = task.assignee === 'captain'
+        ? team.captainSessionId : team.members.find(member => member.name === task.assignee)?.id ?? ''
+      requireTaskMaterialDelivery(task, producerSessionId, run.attempt, 'producer')
       const acceptanceResults = args.prepare_only === true ? run.contract.acceptance.map(c => ({ id: c.id, passed: false, detail: 'Not yet independently reviewed; machine preflight only.' })) : args.acceptance_results!
       try {
         validateAcceptanceResults(run.contract, acceptanceResults)
@@ -2372,39 +2709,77 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         artifacts: artifactSpecs,
         acceptanceResults,
         ...(args.independent_review === undefined ? {} : { independentReview: { materialReceiptId: args.material_receipt ?? '', reviewerSessionId: caller.id, areas: args.independent_review } }),
-        artifactCheckOptions: { signal: exec.signal },
+        artifactCheckOptions: {
+          signal: exec.signal,
+          // Set by the trusted service environment. Customer DSH instances
+          // cannot traverse /root when ProtectHome is enabled.
+          ...(process.env.DSH_REPORT_BROWSER_EXECUTABLE
+            ? { browserExecutablePath: process.env.DSH_REPORT_BROWSER_EXECUTABLE }
+            : {}),
+          ...(process.env.DSH_REPORT_CRAFT_SCREENSHOT_ROOT
+            ? { screenshotRoot: process.env.DSH_REPORT_CRAFT_SCREENSHOT_ROOT }
+            : {}),
+        },
         changedPaths: [...new Set([...(args.changed_paths ?? artifactSpecs.map(item => item.path)), ...automatic.map(item => item.path)])],
       }
       const evidence = (args.prepare_only === true ? undefined : reviewEvidenceForReplay(run, args.event_id!, evidenceInput)) ?? await collectTaskEvidence(evidenceInput)
+      const reviewedArtifactDigest = canonicalDigest(evidence.artifacts.map(({ id, path, sha256 }) => ({ id, path, sha256 })))
       if (args.prepare_only === true) {
-        if (task.reportBundle?.craft === undefined) throw new Error('CRAFT_PREPARATION_NOT_APPLICABLE: this task has no selected craft contract')
-        const craft = prepareCraftDelivery(task, caller.id, run.attempt, ['reviewer'], 'review-preparation')
+        let visualAuditTemplate: Record<string, unknown> | undefined
+        if (isResearchV5(team) && task.planTask?.logicalId === 'renderer') {
+          const html = evidence.artifacts.find(artifact => artifact.id === 'published:report.html')
+          const pdf = evidence.artifacts.find(artifact => artifact.id === 'published:report.pdf')
+          if (!html || !pdf) throw new Error('V5_VISUAL_AUDIT_TEMPLATE: published HTML and PDF required')
+          const pageReceipt = await inspectPdfPages(await readFile(resolve(stateRoot, pdf.path)), 1)
+          visualAuditTemplate = {
+            verdict: '', checkedAt: '', method: '', blockers: null,
+            htmlSha256: html.sha256, pdfSha256: pdf.sha256,
+            pageCount: pageReceipt.pageCount,
+            pages: Object.fromEntries(Object.entries(pageReceipt.pages).map(([name, page]) => [name, { ...page, finding: '' }])),
+            dom: '', wide: '', narrow: '', accessibility: '', references: '', figures: '',
+          }
+        }
+        const craft = task.reportBundle?.craft === undefined ? undefined : prepareCraftDelivery(task, caller.id, run.attempt, ['reviewer'], 'review-preparation')
+        const taskMaterials = prepareTaskMaterialDelivery(task, caller.id, run.attempt, 'reviewer', true, reviewedArtifactDigest)
         await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
           const { team: fresh } = await requireFreshParticipant(stateRoot, team.id, caller.id)
           const current = qualityRunFor(fresh, args.task_id)
           if (current.runId !== run.runId || current.attempt !== run.attempt || JSON.stringify(current.contract) !== JSON.stringify(run.contract)) throw new Error('CRAFT_PREPARATION_STALE: task changed during preparation')
-          requireReviewIdentity(fresh, current, caller.id, args.reviewer)
+          requireReviewIdentity(fresh, current, caller.id, reviewer)
           const liveTask = requireCurrentQualityTask(fresh, current)
           requireCraftProducerDelivery(fresh, liveTask, current)
           await requireReviewedArtifactsCurrent(stateRoot, fresh, { ...current, latestEvidence: evidence })
-          saveCraftDelivery(liveTask, craft.receipts)
-          bindCraftReviewPreparation(liveTask, current, craft.receipts[0]!, evidence.artifacts)
+          if (craft !== undefined) { saveCraftDelivery(liveTask, craft.receipts); bindCraftReviewPreparation(liveTask, current, craft.receipts[0]!, evidence.artifacts) }
+          saveTaskMaterialDelivery(liveTask, taskMaterials.receipt)
           await writeTeam(stateRoot, fresh)
         })
         return asToolJsonObject({ runId: run.runId, status: 'prepared_for_independent_review', task_id: task.id, attempt: run.attempt,
-          material_receipt: craft.receipts[0]!.id, craft_materials: craft.content,
+          material_receipt: craft?.receipts[0]?.id ?? taskMaterials.receipt?.id, task_material_receipt: taskMaterials.receipt?.id, craft_materials: craft?.content, task_materials: taskMaterials.content,
           artifacts: evidence.artifacts.map(({ id, path, sha256 }) => ({ id, path, sha256 })), machine_checks: evidence.artifactCheckReceipts,
-          acceptance: run.contract.acceptance, independent_review_areas: independentReviewAreas(run), next_action: 'Inspect these exact files and check results. Submit a normal review with material_receipt, all acceptance_results and all selected independent_review areas listed here with real MD quotes/reasons. Every area (including visual/format) must use the frozen md artifact ID and actual prose; preserve underscores and inline code. Record HTML/PDF/ledger observations in coverage/reason, not as substitute quote artifacts. Failed/unverified required items prohibit pass; report needs_revision/reject and findings. Preparation is not acceptance.' })
+          ...(visualAuditTemplate === undefined ? {} : { visual_audit_template: visualAuditTemplate }),
+          acceptance: run.contract.acceptance,
+          ...(craft === undefined ? {} : { independent_review_areas: independentReviewAreas(run) }),
+          next_action: craft === undefined
+            ? 'Inspect the exact files, hashes and machine checks. Submit a normal review with this material_receipt and all truthful acceptance_results; changed artifact bytes require a new preparation. Preparation is not acceptance.'
+            : 'Inspect these exact files and check results. Submit a normal review with material_receipt, all acceptance_results and all selected independent_review areas listed here with real MD quotes/reasons. Every area (including visual/format) must use the frozen md artifact ID and actual prose; preserve underscores and inline code. Record HTML/PDF/ledger observations in coverage/reason, not as substitute quote artifacts. Failed/unverified required items prohibit pass; report needs_revision/reject and findings. Preparation is not acceptance.' })
       }
       requireCraftReviewPreparation(task, run, caller.id, args.material_receipt, evidence.artifacts)
+      requireTaskMaterialDelivery(task, caller.id, run.attempt, 'reviewer', args.task_material_receipt ?? args.material_receipt, reviewedArtifactDigest)
       const saved = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
         const { team: fresh } = await requireFreshParticipant(stateRoot, team.id, caller.id)
         const freshRun = qualityRunFor(fresh, args.task_id)
+        const committed = requireTask(fresh, freshRun.contract.taskId).researchReviewTransactions?.[args.event_id!]
+        if (isCompactResearch(fresh) && committed !== undefined) {
+          if (committed.fingerprint !== reviewFingerprint || committed.reviewerSessionId !== caller.id) throw new Error('RESEARCH_REVIEW_IDEMPOTENCY_CONFLICT')
+          return { run: freshRun, task: requireTask(fresh, freshRun.contract.taskId) }
+        }
+
         if (freshRun.runId !== run.runId || JSON.stringify(freshRun.contract) !== JSON.stringify(run.contract)) throw new Error('quality run changed while evidence was being collected; retry with a new event id')
-        requireReviewIdentity(fresh, freshRun, caller.id, args.reviewer)
+        requireReviewIdentity(fresh, freshRun, caller.id, reviewer)
         const freshTask = requireTask(fresh, freshRun.contract.taskId)
         requireCraftProducerDelivery(fresh, freshTask, freshRun)
         requireCraftReviewPreparation(freshTask, freshRun, caller.id, args.material_receipt, evidence.artifacts)
+        requireTaskMaterialDelivery(freshTask, caller.id, freshRun.attempt, 'reviewer', args.task_material_receipt ?? args.material_receipt, reviewedArtifactDigest)
         const freshTaskOutputPath = freshTask.project === undefined ? undefined : `${fresh.id}/${freshTask.project.outputPath}`.replaceAll('\\', '/')
         const reviewedOutput = evidence.artifacts.find((candidate) => (
           candidate.id === 'task-output'
@@ -2426,15 +2801,63 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         // Commands may have mutated a file after evidence collection; refuse
         // to freeze a snapshot that already differs from the current bytes.
         await requireReviewedArtifactsCurrent(stateRoot, fresh, { ...freshRun, latestEvidence: evidence })
+        if (args.verdict === 'pass') {
+          await checkDeepResearchPass(stateRoot, fresh, freshTask, evidence)
+          await checkCompactReviewAudit(stateRoot, fresh, freshTask, evidence, args.review_audit)
+        }
+        if (isCompactResearch(fresh) && freshTask.researchReviewAudits?.[args.event_id!] !== undefined && freshTask.researchReviewAudits[args.event_id!] !== (args.review_audit ?? '')) throw new Error('RESEARCH_REVIEW_AUDIT_CONFLICT')
+        const infrastructureWait = isResearchV5(fresh) && evidence.artifactCheckReceipts?.some(r=>r.results.some(c=>c.status==='unverified'))
+        if (isCompactResearch(fresh) && (args.repair_action === 'wait_external' || infrastructureWait)) {
+          const reason = infrastructureWait ? 'Host verification incomplete: '+evidence.artifactCheckReceipts!.flatMap(r=>r.results.filter(c=>c.status==='unverified').map(c=>c.id+': '+c.detail)).join('; ') : (args.findings ?? []).map(f => f.message).join('; ')
+          if (!reason.trim()) throw new Error('RESEARCH_EXTERNAL_WAIT_REASON_REQUIRED')
+          const prior = freshTask.technicalReviewWaits?.find(w => w.eventId === args.event_id)
+          if (prior && prior.fingerprint !== reviewFingerprint) throw new Error('RESEARCH_EXTERNAL_WAIT_CONFLICT')
+          if (!prior) freshTask.technicalReviewWaits = [...(freshTask.technicalReviewWaits ?? []), {eventId:args.event_id!,reviewerSessionId:caller.id,fingerprint:reviewFingerprint,reason,at:Date.now(),attempt:freshRun.attempt}]
+          freshTask.executionState = 'blocked_external'
+          freshTask.waitReason = reason
+          await writeTeam(stateRoot,fresh)
+          return {run:freshRun,task:freshTask}
+        }
         const mutation = reviewQualityRun(freshRun, {
           eventId: args.event_id!,
-          reviewer: args.reviewer,
+          reviewer,
           verdict: args.verdict as ReviewVerdict,
           findings: (args.findings ?? []) as Finding[],
           evidence,
         })
         assertDurableQualityRun(mutation.run)
         if (!mutation.applied) return { run: freshRun, task: freshTask }
+        if (isCompactResearch(fresh)) freshTask.researchReviewTransactions = { ...freshTask.researchReviewTransactions, [args.event_id!]: { fingerprint: reviewFingerprint, reviewerSessionId: caller.id, runId: mutation.run.runId, status: mutation.run.status, attempt: mutation.run.attempt } }
+        if (isCompactResearch(fresh) && mutation.run.status === 'blocked' && args.repair_action === 'revise') {
+          const snapshot = structuredClone(freshTask)
+          const repair = requestQualityRepair(mutation.run, { eventId: `host-repair:${args.event_id!}`, actor: CAPTAIN_KEY }).run
+          setQualityRun(fresh,repair)
+          invalidateTaskAttempt(freshTask,freshTask.assignee!)
+          freshTask.attempt = repair.attempt - 1
+          freshTask.researchReviewTransactions![args.event_id!]!.status = repair.status
+          freshTask.researchReviewTransactions![args.event_id!]!.attempt = repair.attempt
+          await syncTaskProjectInput(stateRoot,fresh,freshTask)
+          await commitTaskUpdate(stateRoot,fresh,freshTask,snapshot)
+          return { run: repair, task: freshTask }
+        }
+
+        if (isCompactResearch(fresh) && mutation.run.status === 'passed') {
+          if (freshTask.status !== 'in_progress' || freshTask.executionState !== 'awaiting_review') throw new Error('RESEARCH_SUBMISSION_REQUIRED: submit this attempt before independent acceptance')
+          const snapshot = structuredClone(freshTask)
+          const integrated = integrateQualityRun(mutation.run, { eventId: `host-integrate:${args.event_id!}`, actor: CAPTAIN_KEY }).run
+          // Completion gates must not commit counters before the acceptance transaction.
+          const gate = evaluateTaskCompletionGates(fresh, freshTask, freshTask.output)
+          if (gate?.blocked !== undefined) throw new Error(`RESEARCH_COMPLETION_BLOCKED: ${JSON.stringify(gate.blocked)}`)
+          freshTask.researchReviewAudits = { ...freshTask.researchReviewAudits, [args.event_id!]: args.review_audit ?? '' }
+          freshTask.researchRelease = reviewedRelease(freshTask, integrated)
+          setQualityRun(fresh, integrated)
+          freshTask.researchReviewTransactions![args.event_id!]!.status = 'integrated'
+          freshTask.status = 'completed'
+          finalizeTerminalTask(freshTask)
+          freshTask.updatedAt = Date.now()
+          await commitTaskUpdate(stateRoot, fresh, freshTask, snapshot)
+          return { run: integrated, task: freshTask }
+        }
         setQualityRun(fresh, mutation.run)
         freshTask.executionState = 'awaiting_review'
         freshTask.waitReason = mutation.run.status === 'passed'
@@ -2443,12 +2866,19 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         await writeTeam(stateRoot, fresh)
         return { run: qualityRunFor(fresh, args.task_id), task: freshTask }
       })
-      const nextAction = saved.run.status === 'passed'
+      if (isCompactResearch(team)) await scheduler.kickTeam(workspace, team.id)
+      const nextAction = saved.task.executionState === 'blocked_external'
+        ? 'External/technical blocker recorded without a content verdict or repair budget charge. Captain resumes only after the recorded cause changes; independent acceptance remains required.'
+        : saved.run.status === 'integrated' && isCompactResearch(team)
+        ? 'Host committed the independent review, immutable reviewed input bundle and task completion together. Downstream work is scheduled automatically; authenticated user gates still require user choice.'
+        : saved.run.status === 'repairing' && isCompactResearch(team)
+          ? 'Host recorded the failed independent review and opened a bounded repair on the same task. The owner receives the findings and next attempt; downstream remains blocked.'
+        : saved.run.status === 'passed'
         ? `${saved.task.status === 'claimed' ? `The current owner ${saved.task.assignee} must update this same attempt to in_progress; then the captain must` : 'The captain must'} call expert_teams_quality_integrate(task_id="${saved.task.id}", actor="captain", complete_task=true) with a new integration event_id, different from this review ID.`
         : saved.run.status === 'blocked'
-          ? `The captain must call expert_teams_quality_repair(task_id="${saved.task.id}", actor="captain") with a new repair event_id, then repair the findings, publish corrected evidence and request independent review. Negative checks remain recorded; integration is blocked.`
+          ? `Negative checks remain recorded; integration is blocked. First classify the failure. For a correctable artifact or execution defect, call expert_teams_quality_repair(task_id="${saved.task.id}", actor="captain") with a new repair event_id, correct and verify the work, publish evidence and request independent review. An unchanged external source failure is not repaired by more error notes, republication, takeover or another review. Check the approved acceptance for an explicitly user-authorized conditional branch; every obligation of that branch still needs evidence. Do not change the meaning of mandatory acceptance or make a failed check true. If no authorized branch can be satisfied, report the blocker and recovery condition instead of consuming repair attempts.`
           : saved.run.status === 'escalated'
-            ? 'The repair budget is exhausted. Report the durable blocker and request an explicit resolution; do not retry pass/integrate or change failing checks to true.'
+            ? `The content repair threshold is reached. Report the blocker and request an explicit user continuation decision; expert_teams_quality_continue preserves this task and history. If the user stops instead, the captain may call expert_teams_quality_closeout(task_id="${saved.task.id}", event_id="<new-closeout-id>", reason="<disposition>"). This preserves rejected evidence and marks the task failed; scope or craft changes still require the approved plan revision flow.`
             : `Quality status is ${saved.run.status}; no further review mutation was applied.`
       return { runId: saved.run.runId, status: saved.run.status, task_id: saved.task.id, task_status: saved.task.status, review_rounds: saved.run.reviewRounds, repair_rounds: saved.run.repairRounds, next_action: nextAction }
     },
@@ -2456,7 +2886,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
 
   ctx.tools.register(defineTool({
     name: 'expert_teams_quality_repair',
-    description: 'Open the next structured quality repair attempt after a blocked review. The repair budget is durable and capped by the contract.',
+    description: 'Open the next structured quality repair attempt after a blocked review only when there is a concrete correctable defect or new recovery evidence. The repair budget is durable and capped by the contract. Repeated remote failure without changed conditions, changing actors, or republishing the same evidence is not a repair and cannot make integration legal. Preserve failed checks; do not call this tool merely to allow another identical review.',
     parameters: { task_id: { type: 'string' }, event_id: { type: 'string', required: true, description: 'New repair-specific ID, e.g. repair-t1-1-unique. Reuse only for an exact retry; never reuse a review/integration ID.' }, actor: { type: 'string', required: true } },
     output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: `Quality run ${value.runId ?? 'unknown'} is ${value.status ?? 'unknown'} (attempt ${value.attempt ?? 'unknown'}).` }] },
     async execute(args, exec) {
@@ -2520,6 +2950,158 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
   }))
 
   ctx.tools.register(defineTool({
+    name: 'expert_teams_quality_closeout',
+    description: 'Captain-only audited closeout for an escalated quality run. Mark the task failed, preserve the rejected evidence and original output, release its execution slot, and keep dependent tasks blocked. A scope or craft changes still require the approved plan revision flow.',
+    parameters: {
+      task_id: { type: 'string', required: true },
+      event_id: { type: 'string', required: true, description: 'Unique closeout decision ID; reuse only for an exact retry.' },
+      reason: { type: 'string', required: true, description: 'Concrete disposition of the exhausted findings and next required source or contract correction.' },
+    },
+    output: {
+      schema: { type: 'object', additionalProperties: false, properties: {
+        task_id: { type: 'string', required: true },
+        task_status: { type: 'string', required: true },
+        quality_status: { type: 'string', required: true },
+        event_id: { type: 'string', required: true },
+        reason: { type: 'string', required: true },
+      } },
+      render: (_args, value) => [{ type: 'text', text: `Task ${value.task_id} closed as ${value.task_status}; quality remains ${value.quality_status}. Decision ${value.event_id}: ${value.reason}` }],
+    },
+    async execute(args, exec) {
+      const captain = requireCaptain(exec)
+      const workspace = workspaceOf(captain)
+      const stateRoot = stateRootOf(workspace, config)
+      const team = await requireCaptainTeam(workspace, config, captain)
+      const eventId = args.event_id.trim()
+      const reason = args.reason.trim()
+      if (!eventId || !reason) throw new Error('QUALITY_CLOSEOUT_REASON_REQUIRED: event_id and reason must be nonempty')
+      const closed = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
+        const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
+        const task = requireTask(fresh, args.task_id)
+        const run = qualityRunFor(fresh, task.id)
+        const receipt = task.qualityCloseout
+        if (receipt !== undefined) {
+          if (receipt.eventId !== eventId || receipt.reason !== reason || receipt.runId !== run.runId || task.status !== 'failed') {
+            throw new Error('QUALITY_CLOSEOUT_CONFLICT: this task already has a different closeout decision')
+          }
+          return { task_id: task.id, task_status: task.status, quality_status: run.status, event_id: eventId, reason, applied: false }
+        }
+        if (run.status !== 'escalated') throw new Error(`QUALITY_CLOSEOUT_NOT_ESCALATED: quality=${run.status}; use the normal review and repair flow`)
+        if (TERMINAL_TASK_STATUSES.includes(task.status)) throw new Error(`QUALITY_CLOSEOUT_TERMINAL: task ${task.id} is already ${task.status}`)
+        if (task.reassigning === true) throw new Error('QUALITY_CLOSEOUT_HANDOFF: finish the ownership handoff before closeout')
+        if (run.events.some(event => event.id === eventId)) throw new Error('QUALITY_CLOSEOUT_EVENT_CONFLICT: event_id is already used by this quality run')
+        const snapshot: TeamTask = { ...task, ...task.project === undefined ? {} : { project: { ...task.project } } }
+        task.qualityCloseout = { eventId, runId: run.runId, reason, closedAt: Date.now() }
+        task.status = 'failed'
+        finalizeTerminalTask(task)
+        await commitTaskUpdate(stateRoot, fresh, task, snapshot)
+        appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, captain.session), 'expert-teams/task-updated', {
+          teamId: fresh.id, taskId: task.id, status: task.status, assignee: task.assignee,
+        })
+        return { task_id: task.id, task_status: task.status, quality_status: run.status, event_id: eventId, reason, applied: true }
+      })
+      if (closed.applied) await scheduler.kickTeam(workspace, team.id, captain)
+      return { task_id: closed.task_id, task_status: closed.task_status, quality_status: closed.quality_status, event_id: closed.event_id, reason: closed.reason }
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'expert_teams_quality_continue',
+    description: 'Captain-only explicit USER policy decision after an exhausted review. Preserve all prior runs, findings, publications and closeout; open the next attempt of the same task. Does not pass any review or human gate. Supply the user decision verbatim; never self-authorize more rounds. Exact retries are idempotent.',
+    parameters: {
+      task_id: {type:'string',required:true}, expected_run_id:{type:'string',required:true},
+      event_id:{type:'string',required:true}, reason:{type:'string',required:true}, user_decision:{type:'string',required:true},
+      additional_repair_rounds:{type:'number',required:true,description:'Explicitly authorized content repair rounds after the new submission, 0–20. Use 0 for one technical correction and re-review.'},
+    },
+    output:{schema:{type:'object',additionalProperties:true},render:(_args,value)=>[{type:'text',text:JSON.stringify(value)}]},
+    async execute(args,exec) {
+      const captain=requireCaptain(exec), workspace=workspaceOf(captain), stateRoot=stateRootOf(workspace,config)
+      const team=await requireCaptainTeam(workspace,config,captain)
+      const result=await withTeamLock(teamLockKey(stateRoot,team.id),async()=>{
+        const fresh=await requireFreshCaptainTeam(stateRoot,team.id,captain.id)
+        assertTeamRunnable(fresh)
+        const task=requireTask(fresh,args.task_id), run=qualityRunFor(fresh,args.task_id)
+        const fingerprint=canonicalDigest(args)
+        const prior=task.qualityContinuations?.find(r=>r.eventId===args.event_id)
+        if(prior) {if(prior.fingerprint!==fingerprint) throw new Error('QUALITY_CONTINUATION_CONFLICT'); return prior}
+        if(!isCompactResearch(fresh)||task.humanChoice||task.reassigning||!task.assignee||run.status!=='escalated'||run.runId!==args.expected_run_id
+          || !['failed','in_progress'].includes(task.status)) throw new Error('QUALITY_CONTINUATION_NOT_EXHAUSTED')
+        if(!args.event_id.trim()||!args.reason.trim()||!args.user_decision.trim()||!Number.isSafeInteger(args.additional_repair_rounds)
+          ||args.additional_repair_rounds<0||args.additional_repair_rounds>20) throw new Error('QUALITY_CONTINUATION_DECISION_REQUIRED')
+        const owner=fresh.members.find(m=>m.name===task.assignee)
+        const live=ctx.agents.get((owner?.id??fresh.captainSessionId) as SessionId)
+        if(live && (live.status!=='idle'||live.inbox?.hasPending)) throw new Error('QUALITY_CONTINUATION_OWNER_BUSY')
+        if(memberOpenTask(fresh,task.assignee,task.id)) throw new Error('QUALITY_CONTINUATION_OWNER_OCCUPIED')
+        const next=createQualityRun({...run.contract,id:`continued-contract-${fingerprint}`,attempt:run.attempt+1,maxRepairRounds:args.additional_repair_rounds},`continued-${fingerprint}`)
+        const receipt={eventId:args.event_id,fingerprint,parentRunId:run.runId,runId:next.runId,reason:args.reason,userDecision:args.user_decision,
+          at:Date.now(),previousOutput:task.output,previousCloseout:task.qualityCloseout}
+        const snapshot=structuredClone(task)
+        replaceQualityRun(fresh,run,next)
+        task.qualityContinuations=[...(task.qualityContinuations??[]),receipt]
+        task.qualityCloseout=undefined
+        invalidateTaskAttempt(task,task.assignee)
+        task.attempt=next.attempt-1
+        task.submissionReceipt=undefined
+        // Keep the concrete recovery instruction with the dispatched task.
+        task.description+=`\nAudited continuation: ${args.reason}. User decision: ${args.user_decision}. Preserve prior publications; obtain a fresh independent review.`
+        await syncTaskProjectInput(stateRoot,fresh,task)
+        await commitTaskUpdate(stateRoot,fresh,task,snapshot)
+        return receipt
+      })
+      await scheduler.kickTeam(workspace,team.id,captain)
+      return JSON.parse(JSON.stringify(result)) as Record<string, JsonValue>
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'expert_teams_revise_inputs',
+    description: 'Captain-only audited replacement of one unfinished task dependency with its independently reviewed, integrated follow-up. Requires an idle owner and unreviewed pending quality run. For externally blocked input revisions, provide the exact expected_wait_reason to resolve the wait and replace inputs atomically; do not resume_task first, which dispatches old inputs. Validates frozen craft and publications before committing. Revokes an active attempt, preserves old manifests and review budget. Does not pass quality or human gates. Invoke separately for every affected unfinished consumer.',
+    parameters: {
+      task_id: { type: 'string', required: true },
+      source_task_id: { type: 'string', required: true },
+      replacement_task_id: { type: 'string', required: true },
+      expected_attempt: { type: 'number', required: true },
+      expected_attempt_id: { type: 'string' },
+      expected_wait_reason: { type: 'string', description: 'Exact current waitReason when the captain explicitly resolves an external wait as part of this input revision. A changed blocker, runtime block, busy owner or invalid input rejects the entire operation.' },
+      event_id: { type: 'string', required: true },
+      reason: { type: 'string', required: true },
+    },
+    output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }] },
+    async execute(args, exec) {
+      const captain = requireCaptain(exec)
+      const workspace = workspaceOf(captain)
+      const stateRoot = stateRootOf(workspace, config)
+      const team = await requireCaptainTeam(workspace, config, captain)
+      const result = await withTeamLock(teamLockKey(stateRoot, team.id), async () => {
+        const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
+        assertTeamRunnable(fresh)
+        const task = requireTask(fresh, args.task_id)
+        const owner = fresh.members.find(member => member.name === task.assignee && member.status !== 'removed')
+        if (task.assignee === CAPTAIN_KEY && task.attemptId) throw new Error('INPUT_REVISION_REJECTED: active captain-owned work requires a separate follow-up')
+        const liveOwner = owner === undefined ? undefined : ctx.agents.get(owner.id as SessionId)
+        const activity = liveOwner?.inbox?.hasPending === true ? 'running' : owner === undefined ? 'idle' : liveOwner?.status
+          ?? (await memberActivity(ctx, fresh.captainSessionId)).get(owner.id) ?? 'unknown'
+        const updated = await reviseTaskInputs(stateRoot, fresh, {
+          taskId: args.task_id, sourceTaskId: args.source_task_id, replacementTaskId: args.replacement_task_id,
+          expectedAttempt: args.expected_attempt, ...(args.expected_attempt_id === undefined ? {} : { expectedAttemptId: args.expected_attempt_id }),
+          ...(args.expected_wait_reason === undefined ? {} : { expectedWaitReason: args.expected_wait_reason }),
+          eventId: args.event_id, reason: args.reason,
+        }, activity)
+        if (updated.applied) {
+          await writeTeam(stateRoot, updated.team)
+        }
+        // Reconcile the projection on exact retries too, including a crash
+        // after the authoritative team commit but before task input sync.
+        await syncTaskProjectInput(stateRoot, updated.team, requireTask(updated.team, args.task_id))
+        return { applied: updated.applied, receipt: JSON.parse(JSON.stringify(updated.receipt)) as JsonValue }
+      })
+      // A retry also kicks scheduling after a crash between persistence and dispatch.
+      await scheduler.kickTeam(workspace, team.id, captain)
+      return result
+    },
+  }))
+
+  ctx.tools.register(defineTool({
     name: 'expert_teams_quality_reopen',
     description: 'Open a new review version for unfinished work. The captain can also withdraw a pending/repairing awaiting_review submission that has no review for its current attempt, so the owner can finish publishing before resubmission. This keeps the same task attempt and consumed repair budget. Reviewed revisions follow the normal budget; completed work requires a follow-up task.',
     parameters: {
@@ -2546,6 +3128,10 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
             && (run.status === 'pending' || run.status === 'repairing')
             && !run.evidenceHistory.some(evidence => evidence.attempt === run.attempt)
             && run.latestEvidence?.attempt !== run.attempt
+        if (run.revision?.eventId !== args.event_id && task.assignee !== CAPTAIN_KEY) {
+          const busy = memberOpenTask(fresh, task.assignee, task.id)
+          if (busy !== undefined) throw new Error(`member "${task.assignee}" is busy with ${busy.id}; finish it before reopening ${task.id}`)
+        }
         const mutation = forkQualityRun(run, { eventId: args.event_id, actor: CAPTAIN_KEY, reason: args.reason, assignee: task.assignee, attempt: task.attempt, ...(withdrawUnreviewed ? { withdrawUnreviewed: true } : {}) })
         assertDurableQualityRun(mutation.run)
         replaceQualityRun(fresh, run, mutation.run)
@@ -2587,13 +3173,15 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         const member = memberName === CAPTAIN_KEY ? undefined : requireMember(fresh, memberName)
         const sessionId = member?.id ?? fresh.captainSessionId
         const oldBlock = member?.runtimeBlock ?? (memberName === CAPTAIN_KEY ? fresh.captainRuntimeBlock : undefined)
-        const resumed = resumeRuntimeMember(fresh, sessionId, args.reason, args.expected_block_id)
-        if (resumed && oldBlock !== undefined) {
+        const oldActivationId = member?.activation?.id
+        const resumed = resumeRuntimeMember(fresh, sessionId, args.reason, args.expected_block_id,
+          { cold: ctx.agents.get(sessionId as SessionId) === undefined })
+        if (resumed && (oldBlock !== undefined || oldActivationId !== undefined)) {
           const tasks = fresh.tasks.filter(task => task.assignee === memberName && !TERMINAL_TASK_STATUSES.includes(task.status))
             .map(task => `${task.id} attempt=${task.attempt ?? 0} attempt_id=${task.attemptId ?? 'none'} state=${task.executionState ?? 'active'}`).join('; ')
           await appendMailbox(stateRoot, fresh.id, memberName, createMessage(CAPTAIN_KEY, memberName,
             `Explicit runtime recovery for session ${sessionId}: ${args.reason}. Continue the interrupted work or independent review. Preserve the current task attempt and awaiting_review state; inspect durable task/quality state before acting. ${tasks || 'No owned task; resume the interrupted mailbox/review request.'}`,
-            { idempotencyKey: `runtime-resume:${oldBlock.id}` }))
+            { idempotencyKey: `runtime-resume:${oldBlock?.id ?? oldActivationId}` }))
         }
         await writeTeam(stateRoot, fresh)
         return { member: memberName, session_id: sessionId, resumed, reason: args.reason }
@@ -2603,6 +3191,61 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         else await scheduler.kickMember(workspace, team.id, saved.member, captain)
       }
       return saved
+    },
+  }))
+
+  ctx.tools.register(defineTool({
+    name: 'expert_teams_quality_host_recheck',
+    description: 'Captain-only recovery for a diagnosed Host-only checker failure (legacy UTF-8 transport or controlled-browser cache permission). Re-runs Host checks on the unchanged reviewed bytes and opens independent re-review only if every check passes. Preserves failure evidence, attempt, publications and repair budget; never passes or integrates a review. Content findings require normal repair.',
+    parameters: {
+      task_id: { type: 'string', required: true }, expected_run_id: { type: 'string', required: true },
+      expected_review_event_id: { type: 'string', required: true }, event_id: { type: 'string', required: true },
+      reason: { type: 'string', required: true },
+    },
+    output: { schema: { type: 'object', additionalProperties: true }, render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }] },
+    async execute(args, exec) {
+      const captain = requireCaptain(exec)
+      const workspace = workspaceOf(captain), stateRoot = stateRootOf(workspace, config)
+      const team = await requireCaptainTeam(workspace, config, captain)
+      return withTeamLock(teamLockKey(stateRoot, team.id), async () => {
+        const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
+        assertTeamRunnable(fresh)
+        const run = qualityRunFor(fresh, args.task_id), task = requireTask(fresh, args.task_id)
+        if (run.runId !== args.expected_run_id) throw new Error('HOST_RECHECK_STALE_RUN')
+        const replay = run.hostRechecks?.find(r => r.eventId === args.event_id)
+        if (!replay && (task.executionState !== 'awaiting_review' || task.status !== 'in_progress'
+          || task.runtimeBlock || task.reassigning || task.humanChoice || run.status !== 'blocked')) throw new Error('HOST_RECHECK_NOT_A_BLOCKED_SUBMISSION')
+        const old = replay?.evidence ?? run.latestEvidence
+        if (!old) throw new Error('HOST_RECHECK_MISSING_EVIDENCE')
+        let evidence = old
+        if (!replay) {
+          await requireReviewedArtifactsCurrent(stateRoot, fresh, run)
+          evidence = await collectTaskEvidence({ workspaceRoot: stateRoot, contract: run.contract, attempt: run.attempt,
+            artifacts: old.artifacts.map(({id,path}) => ({id,path})), acceptanceResults: old.acceptanceResults,
+            independentReview: old.independentReview, changedPaths: old.changedPaths,
+            artifactCheckOptions: {
+              ...(process.env.DSH_REPORT_BROWSER_EXECUTABLE
+                ? { browserExecutablePath: process.env.DSH_REPORT_BROWSER_EXECUTABLE }
+                : {}),
+              ...(process.env.DSH_REPORT_CRAFT_SCREENSHOT_ROOT
+                ? { screenshotRoot: process.env.DSH_REPORT_CRAFT_SCREENSHOT_ROOT }
+                : {}),
+            },
+          })
+        }
+        const mutation = recheckHostQualityRun(run, {eventId:args.event_id,actor:CAPTAIN_KEY,reason:args.reason,
+          reviewEventId:args.expected_review_event_id,evidence})
+        assertDurableQualityRun(mutation.run)
+        if (mutation.applied) {
+          replaceQualityRun(fresh, run, mutation.run)
+          task.waitReason = 'Host checks recovered on unchanged publications. Await the bound independent reviewer; no author resubmission or budget charge.'
+          task.updatedAt = Date.now()
+          await writeTeam(stateRoot, fresh)
+        }
+        return {task_id:task.id,applied:mutation.applied,quality_status:mutation.run.status,attempt:mutation.run.attempt,
+          repair_rounds:mutation.run.repairRounds,checks:(evidence.artifactCheckReceipts??[]).flatMap(r=>r.results).map(r=>({id:r.id,status:r.status})),
+          next_action:'Ask the bound independent reviewer to prepare and submit a new truthful review event for these unchanged publications; integrate only after that review passes.'}
+      })
     },
   }))
 
@@ -2623,9 +3266,14 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         const task = requireTask(fresh, args.task_id)
         if (task.status !== 'claimed' && task.status !== 'in_progress' && !(task.status === 'pending' && task.executionState === 'blocked_external')) throw new Error('Only claimed/in-progress tasks or pending input-blocked tasks can resume')
         if (task.executionState === 'awaiting_review') throw new Error('Use quality_repair, quality_reopen or quality_integrate to resolve review waiting')
+        if (task.assignee !== undefined && task.assignee !== CAPTAIN_KEY) {
+          const busy = memberOpenTask(fresh, task.assignee, task.id)
+          if (busy !== undefined) throw new Error(`member "${task.assignee}" is busy with ${busy.id}; finish it before resuming ${task.id}`)
+        }
         const ownerSessionId = task.assignee === CAPTAIN_KEY ? fresh.captainSessionId : fresh.members.find(member => member.name === task.assignee && member.status !== 'removed')?.id
         if (ownerSessionId !== undefined) {
-          resumeRuntimeMember(fresh, ownerSessionId, args.reason, args.expected_block_id)
+          resumeRuntimeMember(fresh, ownerSessionId, args.reason, args.expected_block_id,
+            { cold: ctx.agents.get(ownerSessionId as SessionId) === undefined })
           if (fresh.runtimeWaits !== undefined) delete fresh.runtimeWaits[ownerSessionId]
         }
         task.executionState = 'active'
@@ -2774,14 +3422,19 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         wait_reason: task.waitReason ?? '',
         runtime_block: task.runtimeBlock === undefined ? null : { ...task.runtimeBlock },
         ...task.output !== undefined ? { output: task.output } : {},
+        quality_closeout: task.qualityCloseout ?? null,
         // Forced-recovery fields: always present in the report (null/0 when no
         // quality policy applies or the task was never gated).
         quality_score: task.qualityScore ?? null,
         repair_count: task.repairCount ?? 0,
         quality_status: team.qualityRuns?.[task.id]?.status ?? (team.qualityRun?.contract.taskId === task.id ? team.qualityRun.status : ''),
         review_contract: reviewContractForStatus(team, task, stateRoot) ?? null,
+        ...(task.researchRelease ? { reviewed_input_bundle: asToolJsonObject(task.researchRelease) } : {}),
+        ...(task.researchInputReleases ? { input_release_digests: { ...task.researchInputReleases } } : {}),
+        current_action: asToolJsonObject(currentTaskAction(team, task, identity.name)),
         ...repairFeedbackResult(team, task, stateRoot),
         input_artifact_manifest: (task.inputArtifactManifest ?? []).map(item => ({ ...item })),
+        input_source_overrides: task.inputSourceOverrides ?? {}, input_revisions: JSON.parse(JSON.stringify(task.inputRevisions ?? [])) as JsonValue,
         input_artifact_warnings: taskInputWarnings(task),
       }))
       const mailboxWarnings: string[] = []
@@ -2818,6 +3471,14 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
       const result = {
         team_id: team.id,
         team_name: team.name,
+        confirmation_links: identity.kind === 'captain' ? (await Promise.all(team.tasks.map(async task => {
+          if (task.status !== 'pending' || task.humanChoice === undefined) return []
+          const source = team.tasks.find(item => item.id === task.humanChoice?.sourceTaskId)
+          if (source?.status !== 'completed') return []
+          const gate = /outline|大纲/iu.test(`${task.planTask?.logicalId ?? ''} ${task.subject}`) ? 'outline' : 'body'
+          const url = await issueReviewShareLink(stateRoot, config.reviewPublicOrigin, { captainSessionId: team.captainSessionId, teamId: team.id, planId: team.planRef?.planId, gate, taskId: task.id })
+          return url === undefined ? [] : [{ gate, task_id: task.id, url }]
+        }))).flat() : [],
         description: team.description ?? '',
         halted: team.halted === true,
         halt_reason: team.haltReason ?? '',
@@ -2893,7 +3554,7 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
           if (member.status === 'removed') continue
           member.status = 'removed'
           for (const task of fresh.tasks) {
-            if (task.assignee === member.name && task.status !== 'completed') invalidateTaskAttempt(task)
+            if (task.assignee === member.name && !TERMINAL_TASK_STATUSES.includes(task.status)) invalidateTaskAttempt(task)
           }
         }
         await writeTeam(stateRoot, fresh)
@@ -2936,6 +3597,7 @@ function renderStatus(value: JsonValue): string {
     quality_status?: string
     captain_runtime_block?: { id: string; code: string; message: string } | null
     viewer: string
+    confirmation_links?: { gate: string; task_id: string; url: string }[]
     members: {
       name: string
       role: string
@@ -2946,7 +3608,7 @@ function renderStatus(value: JsonValue): string {
       activity: string
       runtime_block?: { id: string; code: string; message: string } | null
     }[]
-    tasks: { id: string; plan_logical_id?: string; subject: string; status: string; assignee: string; dependencies: string[]; attempt: number; attempt_id: string; finalized_attempt_id?: string; input_artifact_manifest?: unknown[]; input_artifact_warnings?: string[]; reassigning: boolean; execution_state?: string; wait_reason?: string; output?: string; quality_score: number | null; repair_count: number; quality_status?: string; repair_feedback?: string; review_contract?: ReturnType<typeof reviewContractForStatus> | null }[]
+    tasks: { id: string; plan_logical_id?: string; subject: string; status: string; assignee: string; dependencies: string[]; attempt: number; attempt_id: string; finalized_attempt_id?: string; input_artifact_manifest?: unknown[]; input_artifact_warnings?: string[]; reassigning: boolean; execution_state?: string; wait_reason?: string; output?: string; quality_score: number | null; repair_count: number; quality_status?: string; repair_feedback?: string; review_contract?: ReturnType<typeof reviewContractForStatus> | null; current_action?: ReturnType<typeof currentTaskAction> }[]
     inbox?: { id: string; from: string; content: string }[]
     inbox_pending_count?: number
     captain_inbox: { from: string; content: string }[]
@@ -2957,6 +3619,7 @@ function renderStatus(value: JsonValue): string {
   const lines: string[] = [
     `Team "${team.team_name}"${team.description ? ` — ${team.description}` : ''}`,
     `Viewing as: ${team.viewer}`,
+    ...(team.confirmation_links ?? []).map(link => `${link.gate === 'outline' ? 'Outline' : 'Body'} confirmation for ${link.task_id}: ${link.url}`),
     ...(team.halted ? [`HALTED: ${team.halt_reason || 'operator requested pause'}`] : []),
     ...(team.quality_status ? [`Quality run: ${team.quality_status}`] : []),
     ...(team.captain_runtime_block ? [`Captain BLOCKED: ${team.captain_runtime_block.code} — ${team.captain_runtime_block.message} (block ${team.captain_runtime_block.id}; explicit resume_member(member="captain") required)`] : []),
@@ -2981,6 +3644,7 @@ function renderStatus(value: JsonValue): string {
         + (task.input_artifact_warnings ?? []).map(warning => `\n      Input warning: ${warning}`).join('')
       const planId = task.plan_logical_id ? ` (plan: ${task.plan_logical_id})` : ''
       const qualityStatus = task.quality_status ? ` quality=${task.quality_status}` : ''
+      const action = task.current_action ? `\n      Your current action: ${JSON.stringify(task.current_action)}` : ''
       const contract = task.review_contract
       const repair = task.repair_feedback ? `\n      ${task.repair_feedback}` : ''
       const review = contract == null ? '' : [
@@ -2993,7 +3657,7 @@ function renderStatus(value: JsonValue): string {
         `Declared deliverables: ${JSON.stringify(contract.deliverables)}; Host verification commands: ${JSON.stringify(contract.verify)}`,
         `next_action: ${contract.next_action}`,
       ].map(line => `\n      ${line}`).join('')
-      return `  - ${task.id}${planId} [${task.status}] attempt ${task.attempt}${handoff}${waiting}${qualityStatus} ${task.subject} → ${task.assignee || 'unassigned'}${deps}${quality}${finalized}${inputs}${output}${repair}${review}`
+      return `  - ${task.id}${planId} [${task.status}] attempt ${task.attempt}${handoff}${waiting}${qualityStatus} ${task.subject} → ${task.assignee || 'unassigned'}${deps}${quality}${finalized}${inputs}${output}${repair}${review}${action}`
     }),
     `Your inbox (${(team.inbox ?? team.captain_inbox).length} shown / ${team.inbox_pending_count ?? team.captain_inbox.length} pending):`,
     ...(team.inbox ?? team.captain_inbox).map((message) => `  - [${message.from}] ${message.content}`),

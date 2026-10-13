@@ -1,0 +1,7 @@
+{
+  "id": "legacy-v1-view",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "name": "Legacy V1 registry view",
+  "description": "Derived projection of the V1 expert/scenario registry; not a source of truth."
+}

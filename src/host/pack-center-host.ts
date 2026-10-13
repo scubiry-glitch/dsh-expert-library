@@ -10,7 +10,8 @@ import { builtinLegacyPack } from '../v2/compat.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
 import { buildCollabDomainPack } from '../collab/templates.ts'
 import { resolveLibrary } from '../expert-library/registry.ts'
-import { preflightManagedActivation } from './pack-runtime.ts'
+import { preflightManagedActivation, pendingSnapshot } from './pack-runtime.ts'
+import { preflightResearchMaterials } from './pack-research-preflight.ts'
 import { createPackCenterAutoUpdate } from './pack-center-auto-update.ts'
 import { createPackCenterManager } from './pack-center-manager.ts'
 import { PackCenterClientError } from './pack-center-client.ts'
@@ -68,9 +69,18 @@ export function createPackCenterHost(ctx: Context, config: ToolsConfig, workspac
             const selection = { packsDir: config.packsDir, vendorPacksDir: config.vendorPacksDir,
               enabledPacks: config.enabledPacks ? [...config.enabledPacks] : undefined,
               packPriority: config.packPriority ? [...config.packPriority] : undefined }
-            try { await preflightManagedActivation(ctx, selection, await bases(), state) } catch (error) {
+            try {
+              await preflightManagedActivation(ctx, selection, await bases(), state)
+              const paths = [...new Set(workspaces().filter(Boolean))]
+              if (!paths.length) paths.push(process.cwd())
+              await preflightResearchMaterials(ctx, selection, pendingSnapshot(state), paths)
+            } catch (error) {
               // The generic SDK intentionally strips arbitrary callback errors.
               // Project our real resolver's known codes at this host boundary.
+              if (error instanceof Error && (error.message.startsWith('SKILL_CRAFT_') || error.message.startsWith('CENTER_CRAFT_UNAVAILABLE:')))
+                throw new PackCenterClientError('CENTER_CRAFT_UNAVAILABLE')
+              if (error instanceof Error && error.message.startsWith('TASK_BINDING_'))
+                throw new PackCenterClientError('CENTER_TASK_MATERIAL_UNAVAILABLE')
               throw new PackCenterClientError(sanitizePackOperationError(error))
             }
           },

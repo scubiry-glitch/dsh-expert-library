@@ -115,7 +115,7 @@ test('complete domain-pack builder --check preserves the authored craft closure'
   const receipt = JSON.parse(result.stdout.trim().split('\n').at(-1))
   assert.equal(receipt.status, 'PASS')
   assert.equal(receipt.packId, 'zhijian-realestate')
-  assert.equal(receipt.version, '1.3.1')
+  assert.equal(receipt.version, '1.4.0')
   assert.deepEqual(receipt.craftSkillIds, ['zhijian-designer-render', 'zhijian-report-craft'])
   assert.match(receipt.treeDigest, /^[a-f0-9]{64}$/)
 })

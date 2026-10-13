@@ -243,7 +243,7 @@ export async function runPresetSettingsHostSmoke(options = {}) {
   }
   try {
     await mkdir(workspace, { recursive: true }); await mkdir(probeRoot, { recursive: true })
-    await cp(join(repo, 'domain-packs', 'zhijian-realestate'), join(workspace, 'domain-packs', 'zhijian-realestate'), { recursive: true, errorOnExist: true, force: false })
+    await cp(join(repo, 'domain-packs', 'zhijian-realestate'), join(workspace, 'domain-packs', 'zhijian-realestate'), { recursive: true, dereference: true, errorOnExist: true, force: false })
     assert.deepEqual((await qualificationIdentity(workspace)).installedDomain, qualifiedBefore.domain, 'Installed fixture pack must match the candidate')
     await writeFile(join(probeRoot, 'package.json'), JSON.stringify({ name: 'preset-settings-host-probe', version: '0.0.0', type: 'module', main: 'index.mjs', dsh: { bundle: { patch: './cordis.patch.yml' } } }))
     await writeFile(join(probeRoot, 'index.mjs'), (options.probePlugin ?? probePlugin)(workspace, nonce))

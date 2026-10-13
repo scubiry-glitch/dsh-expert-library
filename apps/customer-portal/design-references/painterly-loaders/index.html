@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Painting Loaders</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+  <!-- Theme before first paint, so a dark reload never flashes light. The OS is
+       only the opening guess; once you press the toggle, your choice wins. -->
+  <script>
+    (function () {
+      let saved = null;
+      try { saved = localStorage.getItem('pl-theme'); } catch (e) {}
+      document.documentElement.dataset.theme =
+        saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    })();
+  </script>
+
+  <link rel="stylesheet" href="fonts/newsreader.css">
+
+  <style>
+    :root {
+      --paper: #f7f4ee;
+      --sunk: #efebe2;
+      --ink: #1b1a17;
+      --soft: #6f6a60;
+      --line: rgba(27, 26, 23, 0.12);
+      --shadow: 0 1px 2px rgba(27, 26, 23, 0.04), 0 12px 32px -18px rgba(27, 26, 23, 0.2);
+      --accent: #c2542a;
+      --r: 10px;   /* tiles */
+      --rb: 10px;  /* buttons */
+
+      /* One web font, used only for display — the h1 and the full-screen title.
+         Everything else is the reader's own UI font: the paintings carry the
+         character, the text just needs to name them and get out of the way. */
+      --display: 'Newsreader', Georgia, serif;
+      --body: system-ui, -apple-system, 'Geist', 'Segoe UI', Roboto, sans-serif;
+      --dw: 500;      /* display weight */
+      --dls: -0.01em; /* display letter-spacing */
+      --dtt: none;    /* display text-transform */
+      --dlh: 1.06;    /* display line-height */
+    }
+
+    /* Alternate display faces from the design. Swap one into :root — and put its
+       family in the fonts link above — to re-voice the headings. --body stays the
+       system stack in every case.
+       grotesk:  --display:'Space Grotesk',system-ui,sans-serif; --dw:500; --dls:-.035em; --dlh:1;
+       quiet:    --display:'Jost',system-ui,sans-serif;          --dw:300; --dls:.01em;   --dlh:1.08;
+       editorial:--display:'Instrument Serif',Georgia,serif;     --dw:400; --dls:-.015em; --dlh:1.02;
+       didone:   --display:'Bodoni Moda',Didot,serif;            --dw:400; --dls:-.01em;  --dlh:1.08;
+       mono:     --display:'JetBrains Mono',monospace;           --dw:400; --dls:-.04em;  --dlh:1.12;
+       stencil:  --display:'Jost',system-ui,sans-serif;          --dw:500; --dls:.14em;   --dtt:uppercase; --dlh:1.14; */
+
+    [data-theme="dark"] {
+      --paper: #0a0a0a;
+      --sunk: #161616;
+      --ink: #f2eee5;
+      --soft: #8b867d;
+      --line: rgba(242, 238, 229, 0.12);
+      --accent: #e0763f;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 18px 44px -22px rgba(0, 0, 0, 0.8);
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html, body { margin: 0; background: var(--paper); }
+    body {
+      min-height: 100vh; display: flex; flex-direction: column;
+      color: var(--ink); font-family: var(--body);
+      -webkit-font-smoothing: antialiased;
+      transition: background 350ms ease, color 350ms ease;
+    }
+    .display {
+      font-family: var(--display); font-weight: var(--dw);
+      letter-spacing: var(--dls); text-transform: var(--dtt); line-height: var(--dlh);
+    }
+    .shell { max-width: 1240px; width: 100%; margin: 0 auto; padding-inline: clamp(20px, 3.5vw, 48px); }
+
+    /* ---- top bar ----
+       Nothing but the theme toggle lives up here: the paintings introduce the
+       page better than a wordmark would. */
+    .topbar { display: flex; align-items: center; justify-content: flex-end; padding-block: 26px; }
+
+    button { font: inherit; color: inherit; cursor: pointer; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+      border: 1px solid var(--line); border-radius: var(--rb); background: transparent;
+      color: var(--ink); font: 500 13px/1 var(--body); padding: 12px 16px;
+      transition: background 200ms ease, border-color 200ms ease, color 200ms ease, transform 200ms ease;
+    }
+    .btn:hover { background: var(--sunk); border-color: var(--soft); }
+    .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .btn.quiet { color: var(--soft); font-size: 12px; padding: 9px 15px 9px 11px; }
+    .btn.quiet:hover { color: var(--ink); }
+
+    .theme-toggle {
+      width: 34px; height: 34px; padding: 0; border: none; background: transparent; color: var(--soft);
+    }
+    .theme-toggle:hover { background: transparent; border: none; color: var(--ink); }
+
+    /* ---- header ---- */
+    header { padding-top: 64px; display: flex; flex-direction: column; gap: 20px; align-items: center; text-align: center; }
+    h1 { margin: 0; max-width: 16ch; font-size: clamp(30px, 3.86vw, 54px); text-wrap: balance; }
+    header p { margin: 0; max-width: 54ch; font: 400 17px/1.6 var(--body); color: var(--soft); text-wrap: pretty; }
+
+    /* ---- grid ---- */
+    .grid {
+      padding-block: 64px 96px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 40px 24px;
+    }
+    .card { display: flex; flex-direction: column; gap: 14px; }
+
+    /* The tile is a fluid square. The live canvas is 600x600 internally and is
+       scaled down by CSS, so the brushwork is identical to the standalone file.
+       --ground is set per card to that style's paper colour, so a tile looks
+       like the painting it is about to hold before a stroke has landed. */
+    .tile {
+      position: relative; aspect-ratio: 1; overflow: hidden; cursor: pointer;
+      border: 1px solid var(--line); border-radius: var(--r);
+      background: var(--ground, var(--sunk)); box-shadow: var(--shadow);
+      transition: transform 200ms ease, border-color 200ms ease;
+    }
+    .card:hover .tile, .card:focus-within .tile { transform: translateY(-2px); }
+    .tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .tile canvas, .tile img { display: block; position: absolute; inset: 0; width: 100% !important; height: 100% !important; }
+    /* The finished painting, rendered ahead of time into stills/ and shipped as a
+       file. Fixed seeds make it identical to what a live repaint produces. */
+    .still { z-index: 0; object-fit: cover; }
+    /* The one live canvas layers over the still while this card is painting. */
+    .tile canvas:not(.still) { z-index: 1; }
+    /* Where the live canvas waits while nothing is painting. */
+    #staging { position: fixed; left: -9999px; top: 0; width: 1px; height: 1px; overflow: hidden; }
+
+    .card h2 { margin: 0; font: 500 16px/1.3 var(--body); letter-spacing: -0.01em; }
+    .status { font: 400 13px/1.3 var(--body); color: var(--soft); min-height: 1.3em; transition: opacity 250ms ease; }
+    .status.fade { opacity: 0; }
+    .actions { display: flex; gap: 8px; margin-top: auto; }
+    .copy { flex: 1; }
+    .expand { width: 42px; height: 42px; flex: none; padding: 0; color: var(--soft); }
+    .expand:hover { color: var(--ink); }
+
+    /* ---- footer ---- */
+    footer { margin-top: auto; border-top: 1px solid var(--line); }
+    .footer-inner {
+      padding-block: 26px; display: flex; flex-wrap: wrap; gap: 14px;
+      align-items: center; justify-content: space-between;
+      font: 400 13px/1.4 var(--body); color: var(--soft);
+    }
+    footer a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line); padding-bottom: 2px; }
+    footer a:hover { color: var(--accent); }
+
+    /* ---- detail view ---- */
+    @keyframes pl-fade { from { opacity: 0 } to { opacity: 1 } }
+    @keyframes pl-rise { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+
+    #detail {
+      position: fixed; inset: 0; z-index: 40; background: var(--paper);
+      display: flex; flex-direction: column; overflow: auto;
+      animation: pl-fade 400ms cubic-bezier(.2,.7,.3,1) both;
+    }
+    .detail-bar { display: flex; align-items: center; justify-content: space-between; padding: 26px clamp(20px, 3.5vw, 48px); }
+    .esc { font: 400 11px/1 var(--body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--soft); }
+    .detail-body {
+      flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: clamp(20px, 4vh, 38px); padding: 0 clamp(20px, 3.5vw, 48px) 40px;
+    }
+    .detail-stage {
+      display: flex; flex-direction: column; align-items: center; gap: 12px; flex: none;
+    }
+    #detail-tile {
+      width: min(36vh, 440px, 80vw); flex: none; cursor: default;
+      border-radius: calc(var(--r) + 4px);
+      animation: pl-rise 550ms cubic-bezier(.2,.7,.3,1) both;
+    }
+    #detail-tile:hover { transform: none; border-color: var(--line); }
+    .detail-text {
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      text-align: center; max-width: 46ch;
+      animation: pl-rise 550ms 80ms cubic-bezier(.2,.7,.3,1) both;
+    }
+    .detail-text h2 { margin: 0; font-size: clamp(26px, 2.7vw, 38px); }
+    .detail-text p { margin: 0; font: 400 15px/1.6 var(--body); color: var(--soft); text-wrap: pretty; }
+    #detail-status {
+      min-height: 1.3em; text-align: center;
+      animation: pl-rise 550ms 80ms cubic-bezier(.2,.7,.3,1) both;
+    }
+    #detail .copy { margin-top: 14px; flex: none; background: var(--sunk); padding: 14px 24px; font-size: 14px; }
+    #detail .copy:hover { transform: translateY(-1px); }
+
+    /* Step through the gallery without going back to it. The arrow keys do the
+       same thing; these put it where the cursor already is, on either edge. */
+    .detail-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 52px; height: 52px; flex: none; padding: 0;
+      border-radius: 50%; color: var(--soft);
+    }
+    .detail-nav:hover { color: var(--ink); }
+    #detail-prev { left: clamp(12px, 3.5vw, 48px); }
+    #detail-next { right: clamp(12px, 3.5vw, 48px); }
+
+    /* On a narrow screen the arrows would sit on top of the painting, so the
+       painting gives up the width instead. */
+    @media (max-width: 640px) {
+      #detail-tile { width: min(36vh, 440px, 62vw); }
+      .detail-nav { width: 44px; height: 44px; }
+    }
+
+    /* ---- boot ----
+       The wait is a painting too: six petals land one after another, a yellow
+       heart drops in last, and the whole bloom washes out and starts again. */
+    @keyframes pl-petal {
+      0%        { opacity: 0;    transform: scale(0.3); }
+      13%       { opacity: 0.92; transform: scale(1.05); }
+      21%, 66%  { opacity: 0.88; transform: scale(1); }
+      92%, 100% { opacity: 0;    transform: scale(0.94); }
+    }
+    @keyframes pl-heart {
+      0%        { opacity: 0;    transform: scale(0.2); }
+      10%       { opacity: 0.95; transform: scale(1.08); }
+      16%, 58%  { opacity: 0.92; transform: scale(1); }
+      84%, 100% { opacity: 0;    transform: scale(0.9); }
+    }
+
+    #boot {
+      position: fixed; inset: 0; z-index: 60; background: var(--paper);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+      transition: opacity 400ms ease;
+    }
+    #boot.gone { opacity: 0; pointer-events: none; }
+    #boot .bloom svg { display: block; overflow: visible; }
+    /* Wet paint over paper. On the dark theme there is no paper to soak into,
+       so the pastels are left to sit on top of it instead. */
+    [data-theme="light"] #boot .bloom { mix-blend-mode: multiply; }
+    #boot .petal, #boot .heart {
+      opacity: 0; transform-box: fill-box;
+      animation: pl-petal 2.6s cubic-bezier(.2,.7,.3,1) infinite;
+      animation-delay: calc(var(--i, 0) * 110ms);
+    }
+    /* A hair of blur keeps the petal edges wet rather than cut, and crossed petals
+       blend where they overlap — into the paper on light, off the dark on dark,
+       since multiplying pastels against black only makes mud. */
+    #boot .petal { fill: var(--petal); transform-origin: 50% 100%; filter: blur(0.4px); }
+    [data-theme="light"] #boot .petal { mix-blend-mode: multiply; }
+    [data-theme="dark"] #boot .petal { mix-blend-mode: screen; }
+    #boot .heart { fill: #f7e0a4; transform-origin: 50% 50%; animation-name: pl-heart; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+      .card:hover .tile, .card:focus-within .tile, #detail .copy:hover { transform: none; }
+      body, .btn, .tile, .status { transition: none; }
+      #boot .petal { opacity: 0.88; }
+      #boot .heart { opacity: 0.92; }
+    }
+  </style>
+
+  <!-- All deferred: nothing here is needed to show the page, only to repaint a
+       card on hover. Deferred scripts keep their order, and load order matters —
+       p5 first, then p5.brush, which registers itself as a p5 addon.
+
+       Both versions are pinned. The stills in public/stills/ were painted by
+       these exact ones, and a floating p5.brush that changed how a brush lays
+       down would leave every card's hover repaint disagreeing with the picture
+       it replaces. copycode.js emits the same pair. -->
+  <script defer src="vendor/p5.min.js"></script>
+  <script defer src="vendor/p5.brush.js"></script>
+  <script defer src="engine.js"></script>
+  <script defer src="style-impressionism.js"></script>
+  <script defer src="style-abstraction.js"></script>
+  <script defer src="copycode.js"></script>
+  <script defer src="gallery.js"></script>
+</head>
+<body>
+
+<div id="boot">
+  <span class="bloom" aria-hidden="true">
+    <svg viewBox="-40 -40 80 80" width="84" height="84">
+      <g>
+        <g transform="rotate(2) scale(1.02 0.98)"><path class="petal" style="--i:0;--petal:#f4b3cb" d="M0 2C-9-3-13-11-12-18-11-25-5-30 0-29 6-30 12-25 12-18 13-10 8-4 0 2Z"/></g>
+        <g transform="rotate(61) scale(0.96 1.03)"><path class="petal" style="--i:1;--petal:#ea8fb4" d="M0 2C-9-3-13-11-12-18-11-25-5-30 0-29 6-30 12-25 12-18 13-10 8-4 0 2Z"/></g>
+        <g transform="rotate(119) scale(1.04 0.97)"><path class="petal" style="--i:2;--petal:#f4b3cb" d="M0 2C-9-3-13-11-12-18-11-25-5-30 0-29 6-30 12-25 12-18 13-10 8-4 0 2Z"/></g>
+        <g transform="rotate(178) scale(0.98 1.02)"><path class="petal" style="--i:3;--petal:#d8679a" d="M0 2C-9-3-13-11-12-18-11-25-5-30 0-29 6-30 12-25 12-18 13-10 8-4 0 2Z"/></g>
+        <g transform="rotate(241) scale(1.03 0.96)"><path class="petal" style="--i:4;--petal:#ea8fb4" d="M0 2C-9-3-13-11-12-18-11-25-5-30 0-29 6-30 12-25 12-18 13-10 8-4 0 2Z"/></g>
+        <g transform="rotate(300) scale(0.97 1.04)"><path class="petal" style="--i:5;--petal:#f4b3cb" d="M0 2C-9-3-13-11-12-18-11-25-5-30 0-29 6-30 12-25 12-18 13-10 8-4 0 2Z"/></g>
+      </g>
+      <ellipse class="heart" style="--i:6" cx="0" cy="-1" rx="7.4" ry="6.6"/>
+    </svg>
+  </span>
+</div>
+
+<div class="topbar shell">
+  <button class="btn theme-toggle" id="theme" type="button" aria-label="Switch theme"></button>
+</div>
+
+<header class="shell">
+  <h1 class="display">Something to feel while you wait.</h1>
+  <p>Each one carries its own mood. Sit with it, or take it home in code.</p>
+</header>
+
+<main class="grid shell" id="grid"></main>
+
+<footer>
+  <div class="footer-inner shell">
+    <span>© 2026 Painting Loaders</span>
+    <span>Built by <a href="https://x.com/aleksksaa" target="_blank" rel="noopener noreferrer">Sasha</a></span>
+  </div>
+</footer>
+
+<div id="detail" hidden>
+  <div class="detail-bar">
+    <button class="btn quiet" id="detail-back" type="button">
+      <i data-icon="chevron-left"></i>Back to gallery
+    </button>
+    <span class="esc">esc</span>
+  </div>
+  <button class="btn detail-nav" id="detail-prev" type="button" aria-label="Previous painting">
+    <i data-icon="chevron-left" data-size="22"></i>
+  </button>
+  <button class="btn detail-nav" id="detail-next" type="button" aria-label="Next painting">
+    <i data-icon="chevron-right" data-size="22"></i>
+  </button>
+  <div class="detail-body">
+    <div class="detail-stage">
+      <div class="tile" id="detail-tile"></div>
+      <p class="status" id="detail-status" aria-live="polite"></p>
+    </div>
+    <div class="detail-text">
+      <h2 class="display" id="detail-label"></h2>
+      <p id="detail-note"></p>
+      <button class="btn copy" id="detail-copy" type="button">
+        <i data-icon="copy"></i><span class="copy-label">Copy code</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="staging" aria-hidden="true"></div>
+
+</body>
+</html>

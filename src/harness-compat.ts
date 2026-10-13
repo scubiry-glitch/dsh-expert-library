@@ -28,6 +28,7 @@ export interface MemberContinuableDescriptor {
   readonly label: string
   readonly agentProvider?: string
   readonly agentModel?: string
+  readonly toolFilter?: { readonly allow?: readonly string[]; readonly deny?: readonly string[] }
 }
 
 /**
@@ -67,6 +68,10 @@ export function memberContinuableDescriptor(
     mode: 'continuable', label: data.label,
     ...(typeof data.agentProvider === 'string' ? { agentProvider: data.agentProvider } : {}),
     ...(typeof data.agentModel === 'string' ? { agentModel: data.agentModel } : {}),
+    ...(record(data.toolFilter) ? { toolFilter: {
+      ...(Array.isArray(data.toolFilter.allow) ? { allow: [...data.toolFilter.allow] as string[] } : {}),
+      ...(Array.isArray(data.toolFilter.deny) ? { deny: [...data.toolFilter.deny] as string[] } : {}),
+    } } : {}),
   }
 }
 
@@ -295,9 +300,16 @@ export async function queueMemberPrompt(
   childId: SessionId,
   content: readonly unknown[],
   signal: AbortSignal,
+  delivery: 'queue' | 'steer' = 'queue',
 ): Promise<unknown> {
   const host = runtime as unknown as Host
   const source = { kind: 'plugin', plugin: 'dsh-expert-library' }
+  // Notifications join the next safe step of a running child. Assignments
+  // remain FIFO turns. The Host still checks the exact parent's authority.
+  if (delivery === 'steer' && typeof host[deliverPrompt] === 'function') {
+    return (host[deliverPrompt] as (this: unknown, ...args: unknown[]) => Promise<unknown>)
+      .call(runtime, parent, childId, content, source, signal, delivery)
+  }
   if (typeof host.followup === 'function') {
     return (host.followup as (this: unknown, ...args: unknown[]) => Promise<unknown>)
       .call(runtime, parent, childId, content, { source, signal })
@@ -309,7 +321,7 @@ export async function queueMemberPrompt(
       : 'missing deliverPrompt and legacy queue delivery')
   }
   return (deliver as (this: unknown, ...args: unknown[]) => Promise<unknown>)
-    .call(runtime, parent, childId, content, source, signal, 'queue')
+    .call(runtime, parent, childId, content, source, signal, delivery)
 }
 
 /**

@@ -12,6 +12,7 @@
  */
 
 import type { Context } from '@deepseek-ai/cordis'
+import { publicationNames } from './task-publications.ts'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import { isReportBundle, reportArtifactCheck, reportCheckDeliverables, reportBundleFromChecks, requireCurrentSkillCraftSelection, requireNewReportCraftSelection, type ReportBundle } from './report-bundle.ts'
 import { resolveSelectedSkillContract } from './skill-craft.ts'
@@ -51,12 +52,14 @@ import type { ExecutionPlan } from './v2/compiler.ts'
 import { captureSharedTaskContext } from './shared-task-context.ts'
 import type { TeamScheduler } from './scheduler.ts'
 import { resolveLibrary } from './expert-library/registry.ts'
+import { activatedExpert } from './active-experts.ts'
 import type { Expert, ExpertModelRoute } from './expert-library/types.ts'
 import { knowledgeGuide } from './knowledge.ts'
 import { skillsGuideSection } from './skills-discovery.ts'
 import { zhijianExpertPersona } from './zhijian/persona.ts'
 import { assertDurableQualityRun } from './quality-runtime.ts'
 import { createQualityRun } from './quality-run.ts'
+import { visualRevisionSources } from './deep-research-visual-revision.ts'
 import { feedbackGuideSection } from './zhijian/evaluations.ts'
 import { isZhijianExpertId, zhijianMetaById } from './zhijian/registry.ts'
 import { createCapabilityScope, grantCapabilityTask, memberWorkTools } from './capability-scope.ts'
@@ -80,6 +83,9 @@ export interface ToolsConfig {
   maxMembers: number
   /** Maximum concurrently active member inboxes; scheduler defaults to two. */
   maxActiveMembers?: number
+  /** Optional V5 independent research cap; ordinary work and review keep maxActiveMembers. */
+  v5ResearchMaxActiveMembers?: number
+  reassignmentGraceMs?: number
   /** Knowledge pack directory name under the captain's workspace. */
   knowledgeDir: string
   /** Domain pack directory name under each workspace root (read-only preview surface). */
@@ -93,6 +99,8 @@ export interface ToolsConfig {
   vendorPacksDir?: string
   /** Remote center origin and deployment-private inventory; changes require restart. */
   packCenterOrigin?: string
+  /** HTTPS browser origin used only for non-secret review deep links. */
+  reviewPublicOrigin?: string
   packCenterDir?: string
   /** 宿主侧半自动更新策略（热生效，见 pack-center-auto-update.ts）。 */
   packCenterUpdatePolicy?: PackCenterUpdatePolicy
@@ -299,7 +307,11 @@ export async function addMemberCore(
   let library = undefined
   if (expertId !== undefined && expertId !== '') {
     library = await resolveLibrary(ctx, workspace, config.knowledgeDir)
-    expert = library.experts.get(expertId)
+    // Profile members may name an expert supplied only by the activated V2
+    // domain pack. Prefer its current profile; retain V1 for legacy teams.
+    expert = args.profileId === undefined || config.getPackCenterSnapshot === undefined && library.experts.has(expertId)
+      ? library.experts.get(expertId) ?? await activatedExpert(ctx, config, expertId)
+      : await activatedExpert(ctx, config, expertId) ?? library.experts.get(expertId)
     if (expert === undefined) {
       throw new Error(`unknown expert "${expertId}" — available: ${[...library.experts.keys()].join(', ')}`)
     }
@@ -460,7 +472,7 @@ export async function createTaskCore(
   ctx: Context,
   config: ToolsConfig,
   captain: Agent,
-  args: { subject: string; description?: string; dependencies?: string[]; assignee?: string; inputArtifacts?: TaskArtifactRef[]; reportBundle?: ReportBundle; revisesTaskId?: string },
+  args: { subject: string; description?: string; dependencies?: string[]; assignee?: string; inputArtifacts?: TaskArtifactRef[]; reportBundle?: ReportBundle; revisesTaskId?: string; produces?: string[] },
   _signal: AbortSignal,
 ): Promise<{ task_id: string; subject: string; status: string; assignee?: string }> {
   const workspace = workspaceOf(captain)
@@ -470,6 +482,7 @@ export async function createTaskCore(
     const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
     const subject = args.subject.trim()
     if (subject === '') throw new Error('task subject must not be empty')
+    const produces = args.produces === undefined ? undefined : publicationNames(args.produces)
     let reportBundle = args.reportBundle
     let frozenSkillCraftContract: FrozenSkillCraftContract | undefined
     let inheritedAcceptance: { id: string; statement: string }[] | undefined
@@ -496,6 +509,7 @@ export async function createTaskCore(
       frozenSkillCraftContract = await resolveSelectedSkillContract(ctx, config, workspace, reportBundle.craft.selections)
     }
     await requireCurrentSkillCraftSelection(ctx, config, workspace, reportBundle, frozenSkillCraftContract)
+    if (reportBundle !== undefined && args.revisesTaskId === undefined) throw new Error('REPORT_PLAN_REVISION_REQUIRED: a new report requires its own staged plan with a confirmed outline, models and craft contract. Dynamic task creation cannot add an unapproved report. For a correction of integrated report work use revises_task_id to inherit its exact scope and contract.')
     if (reportBundle !== undefined && (fresh.planRef?.templateId.startsWith('profile:') !== true || fresh.structuredQualityPolicy?.required !== true)) throw new Error('REPORT_REVIEW_REQUIRED: report_bundle requires a staged profile team with structured independent review enabled')
     // Dependencies: reject duplicates loudly (deduped list is stored, so a
     // caller can never create an ambiguous DAG).
@@ -528,6 +542,7 @@ export async function createTaskCore(
       status: 'pending',
       assignee: args.assignee,
       dependencies,
+      ...(produces === undefined ? {} : { declaredPublications: produces }),
       ...(reportBundle === undefined ? {} : { reportBundle: structuredClone(reportBundle) }),
       ...(frozenSkillCraftContract === undefined ? {} : { frozenSkillCraftContract: structuredClone(frozenSkillCraftContract) }),
       ...(args.revisesTaskId === undefined ? {} : { revisesTaskId: args.revisesTaskId }),
@@ -560,8 +575,8 @@ export async function createTaskCore(
         outOfScope: [],
         acceptance: inheritedAcceptance ?? [{ id: 'output-present', statement: 'the task output is present and reviewable' }],
         verify: ['true'],
-        deliverables: ['task-output', ...(check === undefined ? [] : reportCheckDeliverables(check))],
-        changedPaths: [`${fresh.id}/${task.project?.path ?? `expert-tasks/${task.id}`}/output/**`, ...(check === undefined ? [] : [`${fresh.id}/${task.project?.path ?? `expert-tasks/${task.id}`}/artifacts/**`])],
+        deliverables: [...new Set(['task-output', ...(produces ?? []).map(name => `published:${name}`), ...(check === undefined ? [] : reportCheckDeliverables(check))])],
+        changedPaths: [`${fresh.id}/${task.project?.path ?? `expert-tasks/${task.id}`}/output/**`, ...(check === undefined && !produces?.length ? [] : [`${fresh.id}/${task.project?.path ?? `expert-tasks/${task.id}`}/artifacts/**`])],
         ...(check === undefined ? {} : { artifactChecks: [check] }),
         ...(args.revisesTaskId === undefined ? {} : { coverageOf: [args.revisesTaskId] }),
         maxRepairRounds: inheritedRepairBudget ?? fresh.structuredQualityPolicy?.maxRepairRounds ?? 2,
@@ -587,6 +602,104 @@ export async function createTaskCore(
     }
   })
   return created
+}
+
+/** Open the one approved v3 visual repair branch after a hard critic rejection.
+ * The old review is retained as failed audit evidence; finalqa is still
+ * unclaimed, so replacing its edges cannot invalidate an execution attempt. */
+export async function createDeepResearchVisualRevisionCore(
+  ctx: Context, config: ToolsConfig, captain: Agent,
+): Promise<{ render_task_id: string; visual_review_task_id: string; finalqa_task_id: string }> {
+  const stateRoot = stateRootOf(workspaceOf(captain), config)
+  const team = await requireCaptainTeam(workspaceOf(captain), config, captain)
+  return withTeamLock(teamLockKey(stateRoot, team.id), async () => {
+    const fresh = await requireFreshCaptainTeam(stateRoot, team.id, captain.id)
+    assertTeamRunnable(fresh)
+    const { renderer, rejectedReview, finalqa, renderDependencies } = visualRevisionSources(fresh)
+    const sourceRenderRun = fresh.qualityRuns![renderer.id]!
+    const sourceReviewRun = fresh.qualityRuns![rejectedReview.id]!
+    const renderId = `t${fresh.taskSeq + 1}`
+    const reviewId = `t${fresh.taskSeq + 2}`
+    const now = Date.now()
+    const render: TeamTask = {
+      id: renderId, subject: '视觉 blocker 修订版渲染 1',
+      description: `只修复独立视觉评审 ${rejectedReview.id} 的 hard blocker；保留已审 report.md 和图卡来源。原评审结论：${sourceReviewRun.findings.filter(row => row.severity === 'hard').map(row => `${row.code}: ${row.message}`).join('；').slice(0, 3000)}`,
+      status: 'pending', assignee: renderer.assignee,
+      dependencies: [renderer.id, ...renderDependencies.map(task => task.id)],
+      plannedArtifactInputs: [
+        { fromTask: 'renderer', artifact: 'report.html', purpose: '受阻的已审 HTML 版本', phase: 'work' },
+        { fromTask: 'renderer', artifact: 'report.pdf', purpose: '受阻的已审 PDF 版本', phase: 'work' },
+        ...(renderer.plannedArtifactInputs ?? []).map(item => ({ ...item })),
+      ],
+      reportBundle: structuredClone(renderer.reportBundle!),
+      frozenSkillCraftContract: structuredClone(renderer.frozenSkillCraftContract!),
+      skillBindings: structuredClone(renderer.skillBindings!),
+      promptBinding: structuredClone(renderer.promptBinding!),
+      frozenTaskMaterialContract: structuredClone(renderer.frozenTaskMaterialContract!),
+      revisesTaskId: renderer.id, planTask: { logicalId: 'render_revision_1' },
+      attempt: 0, createdAt: now, updatedAt: now,
+    }
+    const review: TeamTask = {
+      id: reviewId, subject: '视觉 blocker 修订版独立复核 1',
+      description: '独立检查修订版 HTML/PDF 的当前 DOM、宽窄屏、交互、可访问性及 PDF 首中末页；只能对当前修订版出具结论。',
+      status: 'pending', assignee: rejectedReview.assignee,
+      dependencies: [renderId],
+      plannedArtifactInputs: (rejectedReview.plannedArtifactInputs ?? []).map(item => ({ ...item, fromTask: 'render_revision_1' })),
+      skillBindings: structuredClone(rejectedReview.skillBindings!),
+      promptBinding: structuredClone(rejectedReview.promptBinding!),
+      frozenTaskMaterialContract: structuredClone(rejectedReview.frozenTaskMaterialContract!),
+      planTask: { logicalId: 'visual_review_1' }, attempt: 0, createdAt: now, updatedAt: now,
+    }
+    render.project = await createTaskProject(stateRoot, fresh.id, render)
+    review.project = await createTaskProject(stateRoot, fresh.id, review)
+    const forkRun = (source: typeof sourceRenderRun, task: TeamTask, repairBudget: number) => {
+      const projectRoot = task.project!.path
+      const contract = source.contract
+      const next = createQualityRun({ ...contract,
+        id: `${contract.id}-${task.id}`, taskId: task.id, attempt: 1, assignee: task.assignee!,
+        objective: task.description ?? task.subject,
+        inScope: [`${fresh.id}/${projectRoot}/**`],
+        changedPaths: [`${fresh.id}/${projectRoot}/output/**`, `${fresh.id}/${projectRoot}/artifacts/**`],
+        coverageOf: [source.contract.taskId], maxRepairRounds: repairBudget,
+      }, `quality-${fresh.planRef!.planId}-${task.id}`)
+      assertDurableQualityRun(next)
+      return next
+    }
+    fresh.qualityRuns = { ...fresh.qualityRuns,
+      [renderId]: forkRun(sourceRenderRun, render, 1),
+      [reviewId]: forkRun(sourceReviewRun, review, 0) }
+    fresh.taskSeq += 2
+    fresh.tasks.push(render, review)
+    for (const task of [render, review]) {
+      const owner = fresh.members.find(member => member.name === task.assignee)
+      if (owner?.capabilityScope !== undefined) owner.capabilityScope = grantCapabilityTask(owner.capabilityScope, task.id)
+    }
+    // The rejected review remains readable in the quality history, but it
+    // no longer holds the critic's single active-task slot.
+    rejectedReview.finalizedAttemptId = rejectedReview.attemptId
+    rejectedReview.attemptId = undefined
+    rejectedReview.status = 'failed'
+    rejectedReview.output = `Superseded by bounded visual revision ${renderId} → ${reviewId}; original rejection and findings retained.`
+    rejectedReview.qualityCloseout = {
+      eventId: `visual-revision-${renderId}-${reviewId}`, runId: sourceReviewRun.runId,
+      reason: 'Superseded by the one approved visual revision branch after an independent hard rejection.', closedAt: now,
+    }
+    rejectedReview.executionState = undefined
+    rejectedReview.waitReason = undefined
+    rejectedReview.dispatch = undefined
+    rejectedReview.updatedAt = now
+    finalqa.dependencies = finalqa.dependencies.map(id => id === renderer.id ? renderId : id === rejectedReview.id ? reviewId : id)
+    finalqa.plannedArtifactInputs = finalqa.plannedArtifactInputs?.map(item => ({ ...item,
+      fromTask: item.fromTask === 'renderer' ? 'render_revision_1' : item.fromTask === 'visual_review' ? 'visual_review_1' : item.fromTask }))
+    finalqa.updatedAt = now
+    for (const task of [render, review, finalqa]) await syncTaskProjectInput(stateRoot, fresh, task)
+    await writeTeam(stateRoot, fresh)
+    for (const task of [render, review]) appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, captain.session), 'expert-teams/task-created', {
+      teamId: fresh.id, taskId: task.id, subject: task.subject, dependencies: task.dependencies,
+      assignee: task.assignee,
+    })
+    return { render_task_id: renderId, visual_review_task_id: reviewId, finalqa_task_id: finalqa.id }
+  })
 }
 
 /**

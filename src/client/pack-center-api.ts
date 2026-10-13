@@ -19,6 +19,10 @@ const fields = (value: RecordValue, names: string[]) => names.every(name => stri
 const optionalFields = (value: RecordValue, names: string[]) => names.every(name => value[name] === undefined || string(value[name]))
 const array = (value: unknown, valid: (item: unknown) => boolean) => Array.isArray(value) && value.every(valid)
 const digest = (value: unknown) => string(value) && /^[a-f0-9]{64}$/.test(value)
+/** Optional center-side package classification; shape mirrors the host projection. */
+const classification = (value: unknown): boolean => value === undefined || (record(value) && integer(value.schemaVersion)
+  && array(value.types, item => string(item) && /^[a-z][a-z0-9-]{0,31}$/.test(item)) && (value.types as unknown[]).length <= 16
+  && array(value.scenarios, item => string(item) && /^[a-z][a-z0-9-]{0,31}$/.test(item)) && (value.scenarios as unknown[]).length <= 16)
 const safeCode = (value: unknown): string => string(value) && /^[A-Z][A-Z0-9_]{0,79}$/.test(value) ? value : 'REQUEST_FAILED'
 export const centerUiErrorCode = (error: unknown): string => error instanceof CenterUiError ? safeCode(error.code) : 'REQUEST_FAILED'
 /** Display-only eligibility; the host repeats the authoritative SemVer/identity checks. */
@@ -53,9 +57,11 @@ const summary = (value: unknown): boolean => record(value)
   && record(value.compatibility) && boolean(value.compatibility.compatible) && strings(value.compatibility.reasons)
   && record(value.downloadAvailability) && boolean(value.downloadAvailability.available) && optionalFields(value.downloadAvailability, ['code'])
   && array(value.dependencies, item => record(item) && fields(item, ['packId', 'releaseId', 'version']))
+  && classification(value.classification)
 const installed = (value: unknown): boolean => record(value)
   && fields(value, ['releaseId', 'packId', 'version', 'installedAt', 'artifactSha256', 'contentTreeSha256'])
   && optionalFields(value, ['centerId', 'ownerOrgId', 'previousReleaseId', 'errorCode', 'manifestSha256'])
+  && classification(value.classification)
   && ['center', 'legacy'].includes(String(value.source)) && boolean(value.active)
   && ['verified', 'unavailable'].includes(String(value.integrity))
 const snapshot = (value: RecordValue): boolean => nullableString(value.checkedAt) && boolean(value.hasSnapshot) && boolean(value.stale) && optionalFields(value, ['errorCode'])

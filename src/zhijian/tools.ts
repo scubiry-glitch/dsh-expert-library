@@ -1,3 +1,4 @@
+import { issueReviewShareLink } from '../host/review-share-link.ts'
 /**
  * Zhijian review tools: native expert-team routing for 智见点评.
  *
@@ -269,7 +270,7 @@ export function registerZhijianTools(
         additionalProperties: false,
         properties: {
           team_id: { type: 'string' },
-          status: { type: 'string' }, plan_id: { type: 'string' }, digest: { type: 'string' }, revision: { type: 'number' },
+          review_url: { type: 'string' }, status: { type: 'string' }, plan_id: { type: 'string' }, digest: { type: 'string' }, revision: { type: 'number' },
           team_name: { type: 'string', required: true },
           framework: { type: 'string', required: true },
           members: {
@@ -295,7 +296,7 @@ export function registerZhijianTools(
       },
       render: (_args, value) => [{
         type: 'text',
-        text: value.status === 'waiting_user' ? `研究计划 ${value.plan_id} 已保存，等待用户在研究计划面板确认。尚未创建团队或成员；请结束本回合，不要重复批准或绕过计划。` : `智见点评团队已组建：${value.team_name}（${value.team_id}），框架 ${value.framework}。\n成员：${value.members.join('、')}\n任务：${value.tasks.map(t => `${t.task_id}${t.assignee ? `(${t.assignee})` : ''} ${t.subject}`).join('；')}${value.note !== undefined ? `\n注意：${value.note}` : ''}`,
+        text: value.status === 'waiting_user' ? `研究计划 ${value.plan_id} 已保存，等待用户在研究计划面板确认。${value.review_url ? `独立确认页面：${value.review_url}。` : ''}尚未创建团队或成员；请结束本回合，不要重复批准或绕过计划。` : `智见点评团队已组建：${value.team_name}（${value.team_id}），框架 ${value.framework}。\n成员：${value.members.join('、')}\n任务：${value.tasks.map(t => `${t.task_id}${t.assignee ? `(${t.assignee})` : ''} ${t.subject}`).join('；')}${value.note !== undefined ? `\n注意：${value.note}` : ''}`,
       }],
     },
     async execute(args, exec) {
@@ -390,7 +391,7 @@ export function registerZhijianTools(
       const approved = await scenarioApproveCore(ctx, config, captain, staged.planId, signal, core, staged.digest, staged.revision)
       if (approved.appliedTeamId === undefined) {
         exec.concludeTurn?.()
-        return { status: 'waiting_user', plan_id: approved.planId, digest: approved.digest, revision: approved.revision,
+        return { status: 'waiting_user', review_url: await issueReviewShareLink(stateRootOf(workspaceOf(captain), config), config.reviewPublicOrigin, { captainSessionId: captain.id, planId: approved.planId, gate: 'plan' }), plan_id: approved.planId, digest: approved.digest, revision: approved.revision,
           team_name: teamName, framework: framework.id, members: [], tasks: [] }
       }
       const team = await readTeam(stateRootOf(workspaceOf(captain), config), approved.appliedTeamId)

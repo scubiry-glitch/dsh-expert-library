@@ -1,3 +1,4 @@
+import { normalizeReviewUi } from '../review-ui.ts'
 /**
  * Pure structural validator for V2 domain packs.
  *
@@ -739,6 +740,9 @@ export function validateDomainPack(input: unknown): ValidationResult<DomainPackV
     return { ok: false, diagnostics: diags.items }
   }
 
+  for(const [path,value] of [['pack',input['pack']],...(Array.isArray(input['teamTemplates'])?input['teamTemplates'].map((v,i)=>[`teamTemplates.${i}`,v]):[]),...(Array.isArray(input['scenarios'])?input['scenarios'].map((v,i)=>[`scenarios.${i}`,v]):[])]) {
+    if(isRecord(value))for(const issue of normalizeReviewUi(value['reviewUi']).issues)diags.add('review-ui-fallback',`${path}.reviewUi`,issue,'warning')
+  }
   const pack = input['pack']
   if (!isRecord(pack)) {
     diags.add('invalid-shape', 'pack.pack', 'pack metadata (pack.json) must be an object')

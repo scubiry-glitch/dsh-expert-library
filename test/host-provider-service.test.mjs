@@ -120,6 +120,26 @@ test('availableCredentials returns only refs that resolve (fail-closed gate)', (
   assert.ok(!available.includes('ZYT_API_KEY'), 'zyt key is not resolvable → excluded')
 })
 
+test('beike preferred CLI receives the verified rent argv and preserves listing caliber', async () => {
+  const calls = []
+  const service = new ProviderTransportService(minimalCtx, {
+    ...beikeOptions({ cliCommand: '/opt/beike', preferCli: true }),
+    credentials: fakeCredentials,
+    spawn: async options => {
+      calls.push(options)
+      return { exitCode: 0, stdout: JSON.stringify({ ok: true, data: '<12345678>{"摘要信息":{"租赁价格":"3200元/月"}}</12345678>' }), stderr: '', killed: false, truncated: null }
+    },
+  })
+  const binding = resolveBinding(service, 'realestate.rent.search')
+  assert.equal(binding.transportId, 'cli')
+  const envelope = await service.invoke({ binding, input: { city: '贵阳', period: '2026-10', query: '观山湖整租' } })
+  assert.equal(envelope.ok, true)
+  assert.deepEqual(calls[0].args, ['rent', 'search', '--city', '贵阳', '--query', '观山湖整租', '--json'])
+  assert.equal(calls[0].env.BEIKE_MCP_API_KEY, FAKE_SECRET)
+  assert.equal(envelope.data.data.list.length, 1)
+  assert.match(envelope.provenance.caliber, /非历史快照/)
+})
+
 /* ---------------------------------------------------------------------------
  * Wind invoke end-to-end via the fake spawn seam
  * ------------------------------------------------------------------------- */
@@ -168,6 +188,20 @@ test('missing credential fails closed before the spawn seam is reached', async (
   assert.equal(envelope.error.code, 'missing-credential')
   assert.equal(envelope.error.retry, 'never')
   assert.equal(spawnCalled, false)
+})
+
+test('Wind dotenv credential is reduced to the key value before spawning the CLI', async () => {
+  let forwarded
+  const service = new ProviderTransportService(minimalCtx, {
+    ...windOptions(),
+    credentials: () => 'WIND_API_KEY="test-value"\n',
+    spawn: async options => {
+      forwarded = options.env.WIND_API_KEY
+      return { exitCode: 1, stdout: JSON.stringify({ ok: false, code: 'backend_error', message: 'test' }), stderr: '', killed: false, truncated: null }
+    },
+  })
+  await service.invoke({ binding: resolveBinding(service, 'financial.stock.quote'), input: { windcode: '600519.SH' } })
+  assert.equal(forwarded, 'test-value')
 })
 
 test('missing binary surfaces as TRANSPORT_MISSING_BINARY (never)', async () => {
@@ -517,4 +551,23 @@ test('credential resolver reads env and file sources; missing files fail closed'
     else process.env.TEST_CRED_ENV = prev
     rmSync(tempDir, { recursive: true, force: true })
   }
+})
+
+test('beike dataset parameters reach native tool and preserve current-listing limitations', async () => {
+  const calls = []
+  const service = new ProviderTransportService(minimalCtx, { ...beikeOptions(), credentials: fakeCredentials, fetch: beikeFetchStub(calls) })
+  const binding = resolveBinding(service, 'realestate.rent.search')
+  const result = await service.invoke({ binding, input: { city: '上海', period: '2026-09' } })
+  assert.equal(result.ok, true)
+  assert.deepEqual(JSON.parse(calls[1].body).params.arguments, { city_name: '上海', query: '上海当前在租房源' })
+  assert.match(result.provenance.caliber, /非历史快照/)
+  assert.ok(result.warnings.some(w => w.code === 'beike.rent.current-listings-only'))
+  const count = calls.length
+  const invalid = await service.invoke({ binding, input: { city: '上海', query: 12 } })
+  assert.equal(invalid.error.code, 'INPUT_INVALID')
+  assert.equal(invalid.error.retry, 'never')
+  assert.equal(calls.length, count, 'bad input must not reach the network')
+  const policy = await service.invoke({ binding: resolveBinding(service, 'realestate.policy.search'), input: { city: '上海', topic: '首套住房首付' } })
+  assert.equal(policy.ok, true)
+  assert.deepEqual(JSON.parse(calls.at(-1).body).params.arguments, { city_name: '上海', query: '首套住房首付' })
 })

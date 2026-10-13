@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-06T17:21:47.158Z",
+  "scope": "Independent Expert Teams review UI status language",
+  "examples": [
+    [
+      "Review passed; waiting for captain acceptance.",
+      "评审已通过，等待研究队长验收。"
+    ],
+    [
+      "Submitted; waiting for independent quality review.",
+      "稿件已提交，等待独立评审专家审核。"
+    ],
+    [
+      "Review requires a quality repair decision.",
+      "评审提出了修改意见，等待研究队长安排修改。"
+    ]
+  ],
+  "behavior": [
+    "Cover, list, DAG and task picker share progress labels",
+    "Pending review/acceptance does not appear as working or complete",
+    "Original execution text stays folded",
+    "Unknown technical notices and API errors receive Chinese summaries",
+    "Durable task state and approval rules unchanged"
+  ],
+  "checks": [
+    "JS syntax passed",
+    "10 real messages and progress transitions passed",
+    "320/390/768/1440 browser layouts passed",
+    "Existing focus, outline and download regression passed",
+    "Public JS/CSS SHA256 match; public index uses new version"
+  ],
+  "assets": [
+    {
+      "file": "review.js",
+      "sha256": "6bc2703567e4be6a098a0b5374b2d00634738cf2bd777d637cc5bb6794138643"
+    },
+    {
+      "file": "review.css",
+      "sha256": "3837fdd7ba5f1b815919994827b0dd620a246c0e012ecf58b0934ddff9f66c8d"
+    }
+  ]
+}

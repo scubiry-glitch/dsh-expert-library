@@ -11,10 +11,14 @@ const legacy = { provider: 'deepseek-official', model: 'deepseek-v4-flash', reas
 const kimi = { provider: 'kimi-coding', model: 'kimi-for-coding' }
 
 function fixture(entry = {}) {
-  let service, section
+  let service, section, packCenter
   const calls = []
   const ctx = {
-    get(name) { assert.equal(name, 'settings'); return service },
+    get(name) {
+      if (name === 'settings') return service
+      if (name === 'expertLibraryPackCenterSnapshot') return packCenter
+      assert.fail(`unexpected service ${name}`)
+    },
     logger: { warn() {} },
     llm: {
       async resolveCallConfig(route) {
@@ -36,8 +40,22 @@ function fixture(entry = {}) {
     },
     set(value) { section = value },
     detach() { service = undefined },
+    setPackCenter(value) { packCenter = value },
   }
 }
+
+test('preset reads the Host verified pack snapshot live without inventing one', async () => {
+  const f = fixture()
+  assert.equal(f.config.getPackCenterSnapshot, undefined)
+  const first = { generation: 1, packs: [], suppressedLegacyPaths: [] }
+  f.setPackCenter({ activeSnapshot: async () => first })
+  assert.deepEqual(await f.config.getPackCenterSnapshot(), first)
+  const second = { generation: 2, packs: [], suppressedLegacyPaths: [] }
+  f.setPackCenter({ activeSnapshot: async () => second })
+  assert.deepEqual(await f.config.getPackCenterSnapshot(), second)
+  f.setPackCenter(undefined)
+  assert.equal(f.config.getPackCenterSnapshot, undefined)
+})
 
 test('standalone preset preserves entry fallback, including an empty modern route over a usable legacy route', () => {
   const f = fixture({ memberModel: legacy, defaultModel: {}, memberMaxDepth: 0, maxActiveMembers: 3,

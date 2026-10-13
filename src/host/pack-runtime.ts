@@ -48,7 +48,7 @@ export async function resolveManagedRuntimePack(
 }
 
 /** Convert a verified pending transaction into the same local runtime snapshot. */
-function pendingSnapshot(input: Readonly<PackCenterState> | RuntimeCenterSnapshot): RuntimeCenterSnapshot {
+export function pendingSnapshot(input: Readonly<PackCenterState> | RuntimeCenterSnapshot): RuntimeCenterSnapshot {
   const captured = JSON.parse(canonicalStateJson(input)) as Readonly<PackCenterState> | RuntimeCenterSnapshot
   if ('active' in captured) {
     validatePackCenterState(captured)

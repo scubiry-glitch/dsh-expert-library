@@ -1,7 +1,7 @@
 /** One compliant actual-package smoke: no business data, Host tools or model calls. */
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {cp,mkdtemp,rm} from 'node:fs/promises'
+import {cp,mkdtemp,rm,realpath} from 'node:fs/promises'
 import {join} from 'node:path'
 import {tmpdir} from 'node:os'
 import {fileURLToPath} from 'node:url'
@@ -11,7 +11,7 @@ const source=process.env.DSH_SKILL_CRAFT_SOURCE==='1'
 const {resolveSelectedSkillContract}=await import(source?'../src/skill-craft.ts':'../lib/skill-craft.js')
 const {evaluateSkillCraft}=await import(source?'../src/skill-craft-runtime.ts':'../lib/skill-craft-runtime.js')
 test('actual installed zhijian-realestate writer and renderer entrypoints pass a compliant synthetic four-artifact bundle',async t=>{
- const packSource=fileURLToPath(new URL('../domain-packs/zhijian-realestate',import.meta.url)),before=await hashContentDirectory(packSource)
+ const packSource=await realpath(fileURLToPath(new URL('../domain-packs/zhijian-realestate',import.meta.url))),before=await hashContentDirectory(packSource)
  const workspace=await mkdtemp(join(tmpdir(),'actual-skill-craft-'));t.after(()=>rm(workspace,{recursive:true,force:true}))
  const installed=join(workspace,'domain-packs','zhijian-realestate');await cp(packSource,installed,{recursive:true})
  assert.equal((await hashContentDirectory(installed)).contentTreeSha256,before.contentTreeSha256)

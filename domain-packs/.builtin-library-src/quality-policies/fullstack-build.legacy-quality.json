@@ -1,0 +1,8 @@
+{
+  "id": "fullstack-build.legacy-quality",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "gates": [],
+  "maxRepairRounds": 0,
+  "legacySource": "v1"
+}

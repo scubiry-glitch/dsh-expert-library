@@ -215,7 +215,7 @@ except Exception as e:fmt=result(2,'failed',str(e))
 # Host-owned evidence cache, never an artifact or caller-supplied path. All path
 # components are opened without symlink following. A lock makes quota admission
 # and atomic immutable publication consistent across concurrent inspections.
-SCREENSHOT_ROOT='/root/.cache/dsh-report-craft/evidence'
+SCREENSHOT_ROOT=payload['screenshotRoot']
 MAX_PNG_BYTES=8*1024*1024
 MAX_CACHE_BYTES=256*1024*1024
 MAX_CACHE_FILES=4096

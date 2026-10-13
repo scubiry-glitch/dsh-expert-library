@@ -1,6 +1,12 @@
 /** Pure Host-turn failure bookkeeping; no provider retries or model calls. */
 import type { RuntimeBlock, TeamState } from './types.ts'
 
+export function runtimeRecoveryGuidance(code: string): string {
+  return code === 'TOOL_LOOP_DETECTED'
+    ? 'Inspect the existing results and choose a different operation before explicitly resuming this member session; preserve its task attempt and review state'
+    : 'Restore this member provider/connection and explicitly resume this member session'
+}
+
 export function captureRuntimeTurn(team: TeamState, sessionId: string, turn: number, startedAt = Infinity): boolean {
   const member = team.members.find(item => item.id === sessionId && item.status !== 'removed')
   if (member === undefined || (member.runtimeTurn?.turn ?? -1) >= turn) return false
@@ -14,7 +20,8 @@ export function captureRuntimeTurn(team: TeamState, sessionId: string, turn: num
   return true
 }
 
-/** Called only for a terminal turn/end error, never transient request-error. */
+/** Called for a terminal turn/end error or a plugin-owned terminal stop
+ * decision, never a transient request-error. This writes plugin state only. */
 export function recordRuntimeFailure(
   team: TeamState, sessionId: string, turn: number,
   failure: { code: string; message: string; status?: number }, at: number, recoveryActivationId?: string,
@@ -46,11 +53,12 @@ export function recordRuntimeFailure(
     const task = team.tasks.find(item => item.id === owned.taskId && item.assignee === member.name
       && item.attemptId === owned.attemptId && (item.status === 'claimed' || item.status === 'in_progress'))
     if (task === undefined) continue
+    if (task.waitReason?.startsWith('USER_PAUSED:')) continue
     task.runtimeBlock = { ...block, attemptId: owned.attemptId }
     // A failed review worker must not erase a submitted result or review state.
     if (task.executionState !== 'awaiting_review') {
       task.executionState = 'blocked_external'
-      task.waitReason = `RUNTIME_${block.code}: ${block.message}. Restore this member route and explicitly resume session ${sessionId}.`
+      task.waitReason = `RUNTIME_${block.code}: ${block.message}. ${runtimeRecoveryGuidance(block.code)} (${sessionId}).`
     }
     task.updatedAt = at
   }

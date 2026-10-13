@@ -1,3 +1,4 @@
+import { isResearchRelease } from './research-release.ts'
 import { isCraftDeliveryReceipt, isCraftReviewPreparation } from './report-craft-delivery.ts'
 /**
  * Team state persistence and pure team-logic rules.
@@ -15,12 +16,15 @@ import { isCraftDeliveryReceipt, isCraftReviewPreparation } from './report-craft
  */
 
 import { createHash, randomUUID } from 'node:crypto'
+import { isDeepStrictEqual } from 'node:util'
 import { isReportBundle, isReportCraftBinding, REPORT_BUNDLE_GUIDANCE } from './report-bundle.ts'
+import { isTaskMaterialDeliveryReceipt, matchesTaskMaterialSelection } from './task-material-binding.ts'
 import { readFileSync } from 'node:fs'
 import { link, mkdir, open, readFile, readdir, realpath, rename, rm, stat, unlink, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { restoreCapabilityScope, restoreCapabilityScopeWithReport } from './capability-scope.ts'
 import { isQualityRun } from './quality-run.ts'
+import type { QualityRun } from './quality-run.ts'
 import type { TaskArtifact, TaskArtifactRef, TaskProject, TaskStatus, TeamMember, TeamMessage, TeamState, TeamTask } from './types.ts'
 import { TERMINAL_TASK_STATUSES } from './types.ts'
 import { isSharedTaskContext } from './shared-task-context.ts'
@@ -32,6 +36,121 @@ export const CAPTAIN_KEY = 'captain'
 export const MAILBOX_DELIVERY_LEASE_MS = 60_000
 /** Durable deny-list for Expert Teams members that must never be resumed. */
 const RETIRED_MEMBERS_FILE = 'retired-members.json'
+
+/** Deliberately lacks the fields required by writeTeam: an activity view must
+ * never be mistaken for a complete durable team record. */
+export type TeamActivityState = Pick<TeamState, 'id' | 'name' | 'description' | 'captainSessionId' | 'members' | 'tasks'>
+
+/** A team snapshot is immutable on disk until its next atomic write. Cache
+ * only the result of validating its exact bytes, never the parsed object: each
+ * caller still gets an independent record and every changed byte is checked. */
+const VALIDATED_TEAM_SNAPSHOTS_LIMIT = 32
+const validatedTeamSnapshots = new Map<string, { activity?: TeamActivityState }>()
+/** File-identity shortcut is only for the read-only activity display. It is
+ * never consulted by task execution, authorization, or state mutations. */
+const activityFileSnapshots = new Map<string, { identity: string; activity: TeamActivityState }>()
+/** Read-only customer routing metadata. Exact file identity invalidates the
+ * shortcut after an atomic team write; normal task mutations still use readTeam. */
+export type TeamRouteHeader = Pick<TeamState, 'id' | 'captainSessionId' | 'planRef'> & { halted: boolean; activeMemberIds: string[] }
+const teamRouteHeaders = new Map<string, { identity: string; header: TeamRouteHeader }>()
+const TEAM_ROUTE_HEADERS_LIMIT = 256
+
+/** Disk format 2 keeps one copy of each reviewed evidence and one root run.
+ * The public/in-memory TeamState contract is unchanged after hydration. */
+type CompactTeamState = Omit<TeamState, 'qualityRun' | 'qualityRuns' | 'qualityRunHistory'> & {
+  teamStorageFormat: 2
+  qualityRunTaskId?: string
+  qualityRun?: Partial<QualityRun>
+  qualityRuns?: Record<string, Partial<QualityRun>>
+  qualityRunHistory?: Record<string, Partial<QualityRun>[]>
+}
+
+function compactQualityRun(run: QualityRun): Partial<QualityRun> {
+  if (run.latestEvidence === undefined || !isDeepStrictEqual(run.latestEvidence, run.evidenceHistory.at(-1))) return run
+  const { latestEvidence: _duplicate, ...compact } = run
+  return compact
+}
+
+function serializeTeam(state: TeamState): string {
+  const disk: CompactTeamState = { ...state, teamStorageFormat: 2 }
+  if (state.qualityRuns) disk.qualityRuns = Object.fromEntries(
+    Object.entries(state.qualityRuns).map(([id, run]) => [id, compactQualityRun(run)]))
+  if (state.qualityRunHistory) disk.qualityRunHistory = Object.fromEntries(
+    Object.entries(state.qualityRunHistory).map(([id, runs]) => [id, runs.map(compactQualityRun)]))
+  if (state.qualityRun) {
+    const match = Object.entries(state.qualityRuns ?? {}).find(([, run]) =>
+      run === state.qualityRun || isDeepStrictEqual(run, state.qualityRun))
+    if (match) {
+      delete disk.qualityRun
+      disk.qualityRunTaskId = match[0]
+    } else disk.qualityRun = compactQualityRun(state.qualityRun)
+  }
+  return JSON.stringify(disk, null, 2)
+}
+
+function hydrateTeam(value: unknown): unknown {
+  if (value === null || typeof value !== 'object' || Array.isArray(value)) return value
+  const disk = value as Record<string, unknown>
+  if (disk.teamStorageFormat === undefined) return value // Legacy full record.
+  if (disk.teamStorageFormat !== 2) throw new Error('unsupported Expert Teams storage format')
+  const hydrateRun = (run: unknown): void => {
+    if (run === null || typeof run !== 'object' || Array.isArray(run)) return
+    const item = run as Record<string, unknown>
+    if (item.latestEvidence === undefined && Array.isArray(item.evidenceHistory) && item.evidenceHistory.length > 0)
+      item.latestEvidence = item.evidenceHistory.at(-1)
+  }
+  if (disk.qualityRuns && typeof disk.qualityRuns === 'object' && !Array.isArray(disk.qualityRuns))
+    Object.values(disk.qualityRuns).forEach(hydrateRun)
+  if (disk.qualityRunHistory && typeof disk.qualityRunHistory === 'object' && !Array.isArray(disk.qualityRunHistory))
+    for (const runs of Object.values(disk.qualityRunHistory)) if (Array.isArray(runs)) runs.forEach(hydrateRun)
+  hydrateRun(disk.qualityRun)
+  if (disk.qualityRunTaskId !== undefined) {
+    if (typeof disk.qualityRunTaskId !== 'string' || disk.qualityRun !== undefined
+      || disk.qualityRuns === null || typeof disk.qualityRuns !== 'object' || Array.isArray(disk.qualityRuns)
+      || !Object.hasOwn(disk.qualityRuns, disk.qualityRunTaskId))
+      throw new Error('invalid Expert Teams quality run reference')
+    disk.qualityRun = (disk.qualityRuns as Record<string, unknown>)[disk.qualityRunTaskId]
+  }
+  delete disk.teamStorageFormat
+  delete disk.qualityRunTaskId
+  return value
+}
+
+function teamFileIdentity(file: { dev: bigint; ino: bigint; size: bigint; mtimeNs: bigint; ctimeNs: bigint }): string {
+  return `${file.dev}:${file.ino}:${file.size}:${file.mtimeNs}:${file.ctimeNs}`
+}
+
+function teamSnapshotKey(expectedId: string, raw: string): string {
+  return `${expectedId}:${createHash('sha256').update(raw).digest('hex')}`
+}
+
+function isValidatedTeamSnapshot(value: unknown, expectedId: string, raw: string): value is TeamState {
+  const key = teamSnapshotKey(expectedId, raw)
+  const cached = validatedTeamSnapshots.get(key)
+  if (cached !== undefined) {
+    validatedTeamSnapshots.delete(key)
+    validatedTeamSnapshots.set(key, cached)
+    return true
+  }
+  if (!isTeamState(value, expectedId)) return false
+  validatedTeamSnapshots.set(key, {})
+  if (validatedTeamSnapshots.size > VALIDATED_TEAM_SNAPSHOTS_LIMIT) {
+    const oldest = validatedTeamSnapshots.keys().next().value
+    if (oldest !== undefined) validatedTeamSnapshots.delete(oldest)
+  }
+  return true
+}
+
+/** Activity needs tasks and members, not the large independent-review ledger.
+ * This projection is derived only from validated exact bytes and is never
+ * returned by reference, so callers cannot poison subsequent reads. */
+function activityProjection(state: TeamState): TeamActivityState {
+  return {
+    id: state.id, name: state.name, description: state.description,
+    captainSessionId: state.captainSessionId,
+    members: state.members, tasks: state.tasks,
+  }
+}
 
 /** In-process per-team mutation queues (promise chains). */
 const locks = new Map<string, Promise<unknown>>()
@@ -319,6 +438,7 @@ export function activateTaskAttempt(task: TeamTask, assignee: string): string {
   task.status = 'claimed'
   task.assignee = assignee
   task.attemptId = attemptId
+  task.attemptStartedAt = Date.now()
   task.finalizedAttemptId = undefined
   task.handoffId = undefined
   task.reassigning = false
@@ -426,7 +546,13 @@ export async function syncTaskProjectInput(stateRoot: string, team: TeamState, t
   await atomicWriteText(join(root, task.project.inputPath), JSON.stringify({
     taskId: task.id, subject: task.subject, description: task.description,
     dependencies: task.dependencies, inputArtifacts: task.inputArtifacts, createdAt: task.createdAt,
+    humanChoices: task.dependencies.flatMap(id => {
+      const source = team.tasks.find(candidate => candidate.id === id)
+      return source?.humanChoiceReceipt === undefined ? [] : [{ taskId: id, ...source.humanChoiceReceipt }]
+    }),
     inputArtifactBinding: task.inputArtifactBinding, inputArtifactManifest: task.inputArtifactManifest,
+    inputSourceOverrides: task.inputSourceOverrides, inputRevisions: task.inputRevisions,
+    researchRelease: task.researchRelease, researchInputReleases: task.researchInputReleases,
     inputArtifactWarnings: taskInputWarnings(task),
     attempt: task.attempt, attemptId: task.attemptId,
     project: { path: resolve(root, task.project.path), inputPath: resolve(root, task.project.inputPath),
@@ -436,10 +562,14 @@ export async function syncTaskProjectInput(stateRoot: string, team: TeamState, t
     acceptance: run?.contract.acceptance,
     repairFeedback: taskRepairFeedback(team, task),
     craftDeliveries: task.craftDeliveries,
+    skillBindings: task.skillBindings, promptBinding: task.promptBinding,
+    frozenTaskMaterialContract: task.frozenTaskMaterialContract,
+    taskMaterialDeliveries: task.taskMaterialDeliveries,
     reportBundle: task.reportBundle, revisesTaskId: task.revisesTaskId,
     frozenSkillCraftContract: task.frozenSkillCraftContract,
     artifactChecks: run?.contract.artifactChecks,
-    ...(task.reportBundle === undefined ? {} : { reportCheckGuidance: REPORT_BUNDLE_GUIDANCE, requiredPublications: run?.contract.deliverables.filter(id => id.startsWith('published:')) }),
+    requiredPublications: run?.contract.deliverables.filter(id => id.startsWith('published:')) ?? task.declaredPublications?.map(name=>`published:${name}`),
+    ...(task.reportBundle === undefined ? {} : { reportCheckGuidance: REPORT_BUNDLE_GUIDANCE }),
   }, null, 2))
 }
 
@@ -448,7 +578,7 @@ export async function publishTaskArtifact(
   stateRoot: string,
   team: TeamState,
   task: TeamTask,
-  input: { name: string; content: string | Uint8Array; mediaType?: string; description?: string },
+  input: { name: string; content: string | Uint8Array; mediaType?: string; description?: string; reusedFrom?: TaskArtifact['reusedFrom'] },
 ): Promise<TaskArtifact> {
   if (task.project === undefined) throw new Error('task has no Project; legacy tasks cannot publish artifacts')
   const safeName = input.name.trim().replace(/[^a-zA-Z0-9._-]/g, '-')
@@ -465,9 +595,19 @@ export async function publishTaskArtifact(
   if (rootRelative === '..' || rootRelative.startsWith(`..${sep}`) || isAbsolute(rootRelative)
     || projectRelative === '' || projectRelative === '..' || projectRelative.startsWith(`..${sep}`) || isAbsolute(projectRelative)) throw new Error('artifact project symlink escapes its allowed directory')
   const bytes = typeof input.content === 'string' ? Buffer.from(input.content, 'utf8') : Buffer.from(input.content)
+  const sha256 = createHash('sha256').update(bytes).digest('hex')
+  const latest = (task.publishedArtifacts ?? []).filter(a => a.attempt === task.attempt && a.reviewId === `published:${safeName}`).at(-1)
+  if (latest?.sha256 === sha256 && latest.mediaType === input.mediaType && latest.description === input.description
+    && JSON.stringify(latest.reusedFrom) === JSON.stringify(input.reusedFrom)) {
+    const version = await realpath(join(dir, latest.relativePath))
+    const within = relative(dir, version)
+    if (within === '..' || within.startsWith(`..${sep}`) || isAbsolute(within)
+      || createHash('sha256').update(await readFile(version)).digest('hex') !== latest.sha256) throw new Error('PUBLISHED_ARTIFACT_CHANGED: existing publication cannot be reused')
+    return latest
+  }
   const id = randomUUID()
   const versionDir = `attempt-${task.attempt ?? 0}-${id}`
-  const artifact: TaskArtifact = { id, reviewId: `published:${safeName}`, taskId: task.id, attempt: task.attempt ?? 0, relativePath: `${versionDir}/${safeName}`, ...(input.mediaType === undefined ? {} : { mediaType: input.mediaType }), ...(input.description === undefined ? {} : { description: input.description }), sha256: createHash('sha256').update(bytes).digest('hex'), sizeBytes: bytes.byteLength, createdAt: Date.now() }
+  const artifact: TaskArtifact = { id, reviewId: `published:${safeName}`, taskId: task.id, attempt: task.attempt ?? 0, relativePath: `${versionDir}/${safeName}`, ...(input.mediaType === undefined ? {} : { mediaType: input.mediaType }), ...(input.description === undefined ? {} : { description: input.description }), ...(input.reusedFrom === undefined ? {} : { reusedFrom: { ...input.reusedFrom } }), sha256, sizeBytes: bytes.byteLength, createdAt: Date.now() }
   // New publication identities always own new paths. A failed team commit may
   // leave an unreferenced version, but cannot overwrite an already pinned one.
   await mkdir(join(dir, versionDir))
@@ -499,35 +639,55 @@ export function resolveAllowedArtifact(team: TeamState, task: TeamTask, ref: Tas
 /** Read an allowlisted artifact and verify its manifest hash. */
 export async function readAllowedTaskArtifact(stateRoot: string, team: TeamState, task: TeamTask, ref: TaskArtifactRef): Promise<{ artifact: TaskArtifact; content: string; encoding?: 'base64' }> {
   const resolved = resolveAllowedArtifact(team, task, ref)
-  if (resolved.source.project === undefined) throw new Error('source task has no Project')
+  return readVerifiedPublishedArtifact(stateRoot, team, resolved.source, resolved.artifact, task.inputArtifactManifest, ref)
+}
+
+/** Read a current-attempt publication for its own task detail, including unfinished drafts. */
+export async function readCurrentTaskArtifact(stateRoot: string, team: TeamState, task: TeamTask, artifactId: string): Promise<{ artifact: TaskArtifact; content: string; encoding?: 'base64' }> {
+  if (!['claimed', 'in_progress', 'completed'].includes(task.status)) throw new Error('DOCUMENT_UNAVAILABLE')
+  const matches = task.publishedArtifacts?.filter(item => item.id === artifactId && item.attempt === task.attempt) ?? []
+  if (matches.length !== 1 || matches[0]!.taskId !== task.id) throw new Error('DOCUMENT_UNAVAILABLE')
+  const artifact = matches[0]!
+  const path = artifact.relativePath.replaceAll('\\', '/')
+  if (isAbsolute(path) || /^[A-Za-z]:/.test(path) || path.includes('\0')
+    || path.split('/').some(part => part === '' || part === '.' || part === '..')
+    || (artifact.reviewId !== undefined && !/^published:[a-zA-Z0-9._-]+$/.test(artifact.reviewId))
+    || !/^[a-f0-9]{64}$/i.test(artifact.sha256)
+    || !Number.isSafeInteger(artifact.sizeBytes) || artifact.sizeBytes < 0) throw new Error('DOCUMENT_UNAVAILABLE')
+  return readVerifiedPublishedArtifact(stateRoot, team, task, artifact)
+}
+
+async function readVerifiedPublishedArtifact(stateRoot: string, team: TeamState, source: TeamTask, artifact: TaskArtifact,
+  inputManifest?: TeamTask['inputArtifactManifest'], ref?: TaskArtifactRef): Promise<{ artifact: TaskArtifact; content: string; encoding?: 'base64' }> {
+  if (source.project === undefined) throw new Error('source task has no Project')
   const cleanPath = (path: string): boolean => !isAbsolute(path) && !/^[A-Za-z]:/.test(path)
     && !path.includes('\0') && path.replaceAll('\\', '/').split('/').every(part => part !== '' && part !== '.' && part !== '..')
   if (!cleanPath(team.id) || team.id.includes('/') || team.id.includes('\\')
-    || !cleanPath(resolved.source.project.path) || !cleanPath(resolved.source.project.artifactsPath)) throw new Error('unsafe artifact project path')
+    || !cleanPath(source.project.path) || !cleanPath(source.project.artifactsPath)) throw new Error('unsafe artifact project path')
   const root = await realpath(resolve(stateRoot))
-  const project = await realpath(join(root, team.id, resolved.source.project.path))
-  const dir = await realpath(join(root, team.id, resolved.source.project.artifactsPath))
-  const path = await realpath(join(dir, resolved.artifact.relativePath.replaceAll('\\', '/')))
+  const project = await realpath(join(root, team.id, source.project.path))
+  const dir = await realpath(join(root, team.id, source.project.artifactsPath))
+  const path = await realpath(join(dir, artifact.relativePath.replaceAll('\\', '/')))
   for (const [base, candidate] of [[root, project], [project, dir], [dir, path]] as const) {
     const rel = relative(base, candidate)
     if (rel === '' || rel === '..' || rel.startsWith(`..${sep}`) || isAbsolute(rel)) throw new Error('artifact path or symlink escapes its allowed directory')
   }
-  if (task.inputArtifactManifest !== undefined) {
-    const fixed = task.inputArtifactManifest.filter(item => item.sourceTaskId === ref.sourceTaskId && item.artifactId === ref.artifactId)
+  if (inputManifest !== undefined && ref !== undefined) {
+    const fixed = inputManifest.filter(item => item.sourceTaskId === ref.sourceTaskId && item.artifactId === ref.artifactId)
     const entry = fixed[0]
-    if (fixed.length !== 1 || entry === undefined || entry.attempt !== resolved.artifact.attempt
-      || entry.sha256 !== resolved.artifact.sha256 || entry.reviewArtifactId !== resolved.artifact.reviewId || entry.versionPath !== path) {
+    if (fixed.length !== 1 || entry === undefined || entry.attempt !== artifact.attempt
+      || entry.sha256 !== artifact.sha256 || entry.reviewArtifactId !== artifact.reviewId || entry.versionPath !== path) {
       throw new Error(`INPUT_VERSION_CHANGED: artifact ${ref.artifactId} differs from the consumer's fixed publication manifest`)
     }
   }
   if (!(await stat(path)).isFile()) throw new Error('artifact is not a regular file')
   const bytes = await readFile(path)
   const hash = createHash('sha256').update(bytes).digest('hex')
-  if (hash !== resolved.artifact.sha256 || bytes.byteLength !== resolved.artifact.sizeBytes) throw new Error(`artifact ${resolved.artifact.id} hash mismatch`)
+  if (hash !== artifact.sha256 || bytes.byteLength !== artifact.sizeBytes) throw new Error(`artifact ${artifact.id} hash mismatch`)
   const content = bytes.toString('utf8')
   return Buffer.from(content, 'utf8').equals(bytes)
-    ? { artifact: resolved.artifact, content }
-    : { artifact: resolved.artifact, content: bytes.toString('base64'), encoding: 'base64' }
+    ? { artifact, content }
+    : { artifact, content: bytes.toString('base64'), encoding: 'base64' }
 }
 /** Update the isolated project output and status without replacing team state. */
 export async function writeTaskProjectOutput(
@@ -605,7 +765,7 @@ export async function commitTaskUpdate(
 export async function createTeamDir(stateRoot: string, state: TeamState): Promise<void> {
   const dir = join(stateRoot, state.id)
   await mkdir(join(dir, 'inbox'), { recursive: true })
-  await atomicWriteText(join(dir, 'team.json'), JSON.stringify(state, null, 2))
+  await atomicWriteText(join(dir, 'team.json'), serializeTeam(state))
 }
 
 /** Normalize legacy/partial A5 scopes at every read boundary. Validation must
@@ -631,12 +791,103 @@ function normalizeMemberScopes(state: TeamState): void {
 export async function readTeam(stateRoot: string, teamId: string): Promise<TeamState | undefined> {
   try {
     const raw = await readFile(join(stateRoot, teamId, 'team.json'), 'utf8')
-    const value: unknown = JSON.parse(stripLeadingBom(raw))
-    if (!isTeamState(value, teamId)) {
+    const value: unknown = hydrateTeam(JSON.parse(stripLeadingBom(raw)))
+    if (!isValidatedTeamSnapshot(value, teamId, raw)) {
       throw new Error(`invalid Expert Teams state in team "${teamId}"`)
     }
     normalizeMemberScopes(value)
     return value
+  } catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return undefined
+    }
+    throw error
+  }
+}
+
+export async function readTeamRouteHeader(stateRoot: string, teamId: string): Promise<TeamRouteHeader | undefined> {
+  const path = join(stateRoot, teamId, 'team.json')
+  let before
+  try { before = await stat(path, { bigint: true }) }
+  catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') return undefined
+    throw error
+  }
+  const identity = teamFileIdentity(before)
+  const cached = teamRouteHeaders.get(path)
+  if (cached?.identity === identity) return structuredClone(cached.header)
+  const team = await readTeam(stateRoot, teamId)
+  if (!team) return undefined
+  const header: TeamRouteHeader = { id: team.id, captainSessionId: team.captainSessionId, planRef: team.planRef,
+    halted: team.halted === true, activeMemberIds: team.members.filter(member => member.status !== 'removed' && member.id !== '').map(member => member.id) }
+  const after = await stat(path, { bigint: true }).catch(() => undefined)
+  if (after && teamFileIdentity(after) === identity) {
+    teamRouteHeaders.delete(path)
+    teamRouteHeaders.set(path, { identity, header })
+    if (teamRouteHeaders.size > TEAM_ROUTE_HEADERS_LIMIT) teamRouteHeaders.delete(teamRouteHeaders.keys().next().value!)
+  }
+  return structuredClone(header)
+}
+
+export async function findTeamRouteHeaderByCaptain(stateRoot: string, captainSessionId: string): Promise<TeamRouteHeader | undefined> {
+  let entries
+  try { entries = await readdir(stateRoot, { withFileTypes: true }) }
+  catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') return undefined
+    throw error
+  }
+  let found: TeamRouteHeader | undefined
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue
+    const header = await readTeamRouteHeader(stateRoot, entry.name)
+    if (header?.captainSessionId !== captainSessionId) continue
+    if (found && found.id !== header.id) throw new Error(`captain session leads multiple active teams ("${found.id}", "${header.id}"); archive one before continuing`)
+    found = header
+  }
+  return found
+}
+
+/** Read the activity-panel fields from a previously validated snapshot. The
+ * durable team file stays authoritative: changed bytes miss the cache and
+ * receive full validation before a new projection is admitted. This is a
+ * read-only optimization, never an authorization or mutation input. */
+export async function readTeamActivity(stateRoot: string, teamId: string): Promise<TeamActivityState | undefined> {
+  try {
+    const path = join(stateRoot, teamId, 'team.json')
+    const before = await stat(path, { bigint: true })
+    const identity = teamFileIdentity(before)
+    const fileCached = activityFileSnapshots.get(path)
+    if (fileCached?.identity === identity) {
+      activityFileSnapshots.delete(path)
+      activityFileSnapshots.set(path, fileCached)
+      return structuredClone(fileCached.activity)
+    }
+    const raw = await readFile(path, 'utf8')
+    const key = teamSnapshotKey(teamId, raw)
+    const cached = validatedTeamSnapshots.get(key)
+    if (cached?.activity !== undefined) {
+      validatedTeamSnapshots.delete(key)
+      validatedTeamSnapshots.set(key, cached)
+      return structuredClone(cached.activity)
+    }
+    const value: unknown = hydrateTeam(JSON.parse(stripLeadingBom(raw)))
+    if (!isValidatedTeamSnapshot(value, teamId, raw)) {
+      throw new Error(`invalid Expert Teams state in team "${teamId}"`)
+    }
+    normalizeMemberScopes(value)
+    const activity = activityProjection(value)
+    const admitted = validatedTeamSnapshots.get(key)
+    if (admitted !== undefined) admitted.activity = activity
+    const after = await stat(path, { bigint: true })
+    if (teamFileIdentity(after) === identity) {
+      activityFileSnapshots.delete(path)
+      activityFileSnapshots.set(path, { identity, activity })
+      if (activityFileSnapshots.size > VALIDATED_TEAM_SNAPSHOTS_LIMIT) {
+        const oldest = activityFileSnapshots.keys().next().value
+        if (oldest !== undefined) activityFileSnapshots.delete(oldest)
+      }
+    }
+    return structuredClone(activity)
   } catch (error: unknown) {
     if (error instanceof Error && 'code' in error && (error as NodeJS.ErrnoException).code === 'ENOENT') {
       return undefined
@@ -657,8 +908,8 @@ export async function readTeam(stateRoot: string, teamId: string): Promise<TeamS
 export function readTeamSync(stateRoot: string, teamId: string): TeamState | undefined {
   try {
     const raw = readFileSync(join(stateRoot, teamId, 'team.json'), 'utf8')
-    const value: unknown = JSON.parse(stripLeadingBom(raw))
-    if (!isTeamState(value, teamId)) {
+    const value: unknown = hydrateTeam(JSON.parse(stripLeadingBom(raw)))
+    if (!isValidatedTeamSnapshot(value, teamId, raw)) {
       throw new Error(`invalid Expert Teams state in team "${teamId}"`)
     }
     normalizeMemberScopes(value)
@@ -677,7 +928,7 @@ export function readTeamSync(stateRoot: string, teamId: string): TeamState | und
  * @param state - the record to persist.
  */
 export async function writeTeam(stateRoot: string, state: TeamState): Promise<void> {
-  await atomicWriteText(join(stateRoot, state.id, 'team.json'), JSON.stringify(state, null, 2))
+  await atomicWriteText(join(stateRoot, state.id, 'team.json'), serializeTeam(state))
 }
 
 /** Explicitly pause a team. This is durable and cannot be cleared by a
@@ -712,7 +963,7 @@ export async function resumeTeam(stateRoot: string, teamId: string, reason: stri
 }
 
 /** Explicitly release one failed member route. Caller owns the team lock/write. */
-export function resumeRuntimeMember(team: TeamState, sessionId: string, reason: string, expectedBlockId?: string): boolean {
+export function resumeRuntimeMember(team: TeamState, sessionId: string, reason: string, expectedBlockId?: string, options?: { cold?: boolean }): boolean {
   if (reason.trim() === '') throw new Error('runtime resume reason must not be empty')
   if (team.captainSessionId === sessionId) {
     const block = team.captainRuntimeBlock
@@ -727,7 +978,18 @@ export function resumeRuntimeMember(team: TeamState, sessionId: string, reason: 
   if (member === undefined) throw new Error(`runtime member session ${sessionId} was not found`)
   if (expectedBlockId !== undefined && member.runtimeBlock?.id !== expectedBlockId) throw new Error(`RUNTIME_BLOCK_STALE: no state changed. Current member runtime_block.id=${JSON.stringify(member.runtimeBlock?.id ?? null)}. Copy the entire opaque ID, including every prefix; resume only after the cause has changed.`)
   const block = member.runtimeBlock
-  if (block === undefined) return false
+  if (block === undefined) {
+    // An explicitly resumed cold member can retain a mailbox-only admission
+    // (taskAttempts=[]). No live Host owns that reservation, but canReserve
+    // cannot infer permission to retire it from a task dispatch reset alone.
+    // Only the caller that has checked Host residency may release it here.
+    if (options?.cold !== true || member.activation === undefined) return false
+    member.activation = undefined
+    member.runtimeResumedAt = Date.now()
+    member.runtimeResumeReason = reason.trim()
+    if (team.runtimeWaits !== undefined) delete team.runtimeWaits[sessionId]
+    return true
+  }
   member.runtimeResolvedThroughTurn = Math.max(member.runtimeResolvedThroughTurn ?? -1, block.turn)
   member.runtimeBlock = undefined
   member.activation = undefined
@@ -1216,6 +1478,7 @@ export async function acknowledgeMailbox(
   teamId: string,
   agentKey: string,
   messageIds: readonly string[],
+  phase: 'consumed' | 'delivered' = 'consumed',
 ): Promise<void> {
   const now = Date.now()
   await mutateMailbox(stateRoot, teamId, agentKey, messageIds, async (message) => {
@@ -1242,8 +1505,7 @@ export async function acknowledgeMailbox(
     return {
       ...rest,
       deliveredAt: message.deliveredAt ?? now,
-      readAt: message.readAt ?? now,
-      consumedAt: now,
+      ...(phase === 'consumed' ? { readAt: message.readAt ?? now, consumedAt: message.consumedAt ?? now } : {}),
     }
   })
 }
@@ -1451,9 +1713,47 @@ function isTeamMember(value: unknown): value is TeamMember {
 /** Validate one task record at the durable JSON boundary. */
 function isTeamTask(value: unknown): value is TeamTask {
   if (!isRecord(value)) return false
-  return typeof value['id'] === 'string'
+  return (value['scheduling'] === undefined || (isRecord(value['scheduling'])
+    && isFiniteNumber(value['scheduling']['since'])
+    && ['ready', 'assigned'].includes(String(value['scheduling']['phase']))
+    && typeof value['scheduling']['reason'] === 'string' && typeof value['scheduling']['noticeKey'] === 'string'))
+    && (value['researchRelease'] === undefined || isResearchRelease(value['researchRelease']))
+    && (value['researchInputReleases'] === undefined || (isRecord(value['researchInputReleases']) && Object.values(value['researchInputReleases']).every(v => typeof v === 'string' && /^[a-f0-9]{64}$/u.test(v))))
+    && (value['researchReviewAudits'] === undefined || (isRecord(value['researchReviewAudits']) && Object.values(value['researchReviewAudits']).every(v => typeof v === 'string' && v.length <= 100_000)))
+    && (value['submissionReceipt'] === undefined || (isRecord(value['submissionReceipt']) && typeof value['submissionReceipt']['id'] === 'string' && Number.isSafeInteger(value['submissionReceipt']['attempt']) && /^[a-f0-9]{64}$/u.test(String(value['submissionReceipt']['fingerprint'])) && /^[a-f0-9]{64}$/u.test(String(value['submissionReceipt']['artifactDigest']))))
+    && (value['researchReviewTransactions'] === undefined || (isRecord(value['researchReviewTransactions']) && Object.values(value['researchReviewTransactions']).every(v => isRecord(v) && /^[a-f0-9]{64}$/u.test(String(v['fingerprint'])) && typeof v['reviewerSessionId'] === 'string' && typeof v['runId'] === 'string' && typeof v['status'] === 'string' && Number.isSafeInteger(v['attempt']))))
+    && typeof value['id'] === 'string'
     && typeof value['subject'] === 'string'
     && isOptionalString(value['description'])
+    && (value['humanChoice'] === undefined || (isRecord(value['humanChoice'])
+      && typeof value['humanChoice']['sourceTaskId'] === 'string'
+      && /^[A-Za-z0-9][A-Za-z0-9._-]{0,179}$/u.test(String(value['humanChoice']['artifact']))
+      && Array.isArray(value['humanChoice']['options'])
+      && value['humanChoice']['options'].length >= 1 && value['humanChoice']['options'].length <= 8
+      && value['humanChoice']['options'].every(option => typeof option === 'string' && option.trim() !== '')
+      && new Set(value['humanChoice']['options']).size === value['humanChoice']['options'].length))
+    && (value['humanChoiceReceipt'] === undefined || (value['humanChoice'] !== undefined
+      && value['status'] === 'completed' && isRecord(value['humanChoiceReceipt'])
+      && typeof value['humanChoiceReceipt']['choice'] === 'string'
+      && isRecord(value['humanChoice']) && Array.isArray(value['humanChoice']['options'])
+      && (value['humanChoiceReceipt']['choices'] === undefined
+        ? value['humanChoice']['options'].includes(value['humanChoiceReceipt']['choice'])
+        : (Array.isArray(value['humanChoiceReceipt']['choices'])
+          && value['humanChoiceReceipt']['choices'].length >= 1
+          && value['humanChoiceReceipt']['choices'].length <= value['humanChoice']['options'].length
+          && value['humanChoiceReceipt']['choices'].every((choice: unknown) => typeof choice === 'string' && ((value['humanChoice'] as Record<string, unknown>)['options'] as string[]).includes(choice))
+          && new Set(value['humanChoiceReceipt']['choices']).size === value['humanChoiceReceipt']['choices'].length
+          && value['humanChoiceReceipt']['choice'] === (value['humanChoiceReceipt']['choices'].length === 1
+            ? value['humanChoiceReceipt']['choices'][0]
+            : `主观点：${value['humanChoiceReceipt']['choices'][0]}；补充观点：${value['humanChoiceReceipt']['choices'].slice(1).join('；')}`)))
+      && typeof value['humanChoiceReceipt']['sourceArtifactId'] === 'string'
+      && /^[a-f0-9]{64}$/iu.test(String(value['humanChoiceReceipt']['sourceSha256']))
+      && Number.isSafeInteger(value['humanChoiceReceipt']['sourceAttempt'])
+      && isFiniteNumber(value['humanChoiceReceipt']['approvedAt'])
+      && (value['humanChoiceReceipt']['actor'] === 'authenticated-host-user'
+        || (value['humanChoiceReceipt']['actor'] === 'scoped-review-token'
+          && typeof value['humanChoiceReceipt']['reviewTokenId'] === 'string'
+          && /^[a-f0-9]{24}$/u.test(value['humanChoiceReceipt']['reviewTokenId'])))))
     && (value['status'] === 'pending'
       || value['status'] === 'claimed'
       || value['status'] === 'in_progress'
@@ -1463,12 +1763,24 @@ function isTeamTask(value: unknown): value is TeamTask {
     && isOptionalString(value['assignee'])
     && (value['reportBundle'] === undefined || isReportBundle(value['reportBundle']))
     && isReportCraftBinding(value['reportBundle'] as TeamTask['reportBundle'], value['frozenSkillCraftContract'])
+    && matchesTaskMaterialSelection(value['skillBindings'] as TeamTask['skillBindings'], value['promptBinding'] as TeamTask['promptBinding'], value['frozenTaskMaterialContract'])
+    && (value['taskMaterialDeliveries'] === undefined || Array.isArray(value['taskMaterialDeliveries']) && value['taskMaterialDeliveries'].every(isTaskMaterialDeliveryReceipt))
     && (value['craftDeliveries'] === undefined || Array.isArray(value['craftDeliveries']) && value['craftDeliveries'].every(isCraftDeliveryReceipt))
     && (value['craftReviewPreparations'] === undefined || Array.isArray(value['craftReviewPreparations']) && value['craftReviewPreparations'].every(isCraftReviewPreparation))
     && isOptionalString(value['revisesTaskId'])
     && Array.isArray(value['dependencies'])
     && value['dependencies'].every((dependency) => typeof dependency === 'string')
     && isOptionalString(value['output'])
+    && (value['inputSourceOverrides'] === undefined || (isRecord(value['inputSourceOverrides'])
+      && Object.values(value['inputSourceOverrides']).every(id => typeof id === 'string' && id.length > 0)))
+    && (value['inputRevisions'] === undefined || (Array.isArray(value['inputRevisions'])
+      && value['inputRevisions'].length <= 32 && value['inputRevisions'].every(row => isRecord(row)
+        && row['actor'] === 'captain' && typeof row['eventId'] === 'string' && typeof row['fingerprint'] === 'string'
+        && typeof row['logicalSource'] === 'string' && typeof row['replacementTaskId'] === 'string'
+        && isFiniteNumber(row['at']) && Number.isSafeInteger(row['nextAttempt'])
+        && Array.isArray(row['previousManifest']) && Array.isArray(row['nextManifest']))))
+    && (value['plannedArtifactInputs'] === undefined || (Array.isArray(value['plannedArtifactInputs'])
+      && value['plannedArtifactInputs'].every(input => isRecord(input) && ['fromTask', 'artifact', 'purpose'].every(key => typeof input[key] === 'string' && input[key].trim() !== '') && ['work', 'acceptance'].includes(input['phase'] as string))))
     && (value['inputArtifactBinding'] === undefined || (isRecord(value['inputArtifactBinding'])
       && value['inputArtifactBinding']['mode'] === 'dependency-default'
       && Number.isSafeInteger(value['inputArtifactBinding']['consumerAttempt']) && (value['inputArtifactBinding']['consumerAttempt'] as number) >= 1
@@ -1495,6 +1807,15 @@ function isTeamTask(value: unknown): value is TeamTask {
     && (value['attempt'] === undefined
       || (Number.isSafeInteger(value['attempt']) && (value['attempt'] as number) >= 0))
     && isOptionalString(value['attemptId'])
+    && (value['attemptStartedAt'] === undefined || (isFiniteNumber(value['attemptStartedAt']) && (value['attemptStartedAt'] as number) >= 0))
+    && (value['reassignmentHistory'] === undefined || (Array.isArray(value['reassignmentHistory']) && value['reassignmentHistory'].length <= 64
+      && value['reassignmentHistory'].every(row => isRecord(row) && isFiniteNumber(row['observedAt'])
+        && isFiniteNumber(row['lastProgressAt']) && isFiniteNumber(row['graceMs'])
+        && Number.isSafeInteger(row['previousAttempt']) && (row['previousAttempt'] as number) >= 0
+        && isOptionalString(row['previousAttemptId']) && isOptionalString(row['previousAssignee'])
+        && ['running', 'idle', 'ready', 'unknown'].includes(row['activity'] as string)
+        && typeof row['reason'] === 'string' && typeof row['target'] === 'string'
+        && Array.isArray(row['publicationIds']) && row['publicationIds'].every(id => typeof id === 'string'))))
     && isOptionalString(value['finalizedAttemptId'])
     && isOptionalString(value['handoffId'])
     && (value['reassigning'] === undefined || typeof value['reassigning'] === 'boolean')
@@ -1548,7 +1869,7 @@ function isTeamState(value: unknown, expectedId: string): value is TeamState {
       && typeof value['structuredQualityPolicy']['required'] === 'boolean'
       && Number.isSafeInteger(value['structuredQualityPolicy']['maxRepairRounds'])
       && (value['structuredQualityPolicy']['maxRepairRounds'] as number) >= 0
-      && (value['structuredQualityPolicy']['maxRepairRounds'] as number) <= 2
+      && (value['structuredQualityPolicy']['maxRepairRounds'] as number) <= 20
     ))
   if (!validShape) return false
 
@@ -1579,6 +1900,7 @@ function isTeamState(value: unknown, expectedId: string): value is TeamState {
     // stamps CAPTAIN_KEY — it is never a member name, so exempt it here or a
     // takeover would corrupt the whole team record's validity.
     if (task.assignee !== undefined && task.assignee !== CAPTAIN_KEY && !memberNames.has(task.assignee)) return false
+    if (task.humanChoice !== undefined && (task.assignee !== CAPTAIN_KEY || !task.dependencies.includes(task.humanChoice.sourceTaskId))) return false
     for (const dependency of task.dependencies) {
       if (!taskIds.has(dependency)) return false
     }

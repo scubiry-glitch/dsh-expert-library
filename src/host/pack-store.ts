@@ -449,7 +449,7 @@ export function createPackStore(rootInput: string, options: PackStoreOptions) {
           const previousReleaseId = state.installed[manifest.releaseId]!.previousReleaseId
           try { await switchActive(state, manifest.releaseId) } catch (error) {
             const code = error instanceof Error && 'code' in error ? String(error.code) : 'ACTIVATION_PREFLIGHT_FAILED'
-            if (!['INCOMPATIBLE_RELEASE', 'DEPENDENCY_BLOCKED', 'BUILTIN_DEPENDENCY_BLOCKED', 'DEPENDENCY_CYCLE', 'ENTITY_CONFLICT', 'CENTER_PACK_ID_CONFLICT', 'CENTER_ENTITY_CONFLICT', 'CENTER_MERGE_INVALID', 'ACTIVATION_PREFLIGHT_FAILED'].includes(code)) throw error
+            if (!['INCOMPATIBLE_RELEASE', 'DEPENDENCY_BLOCKED', 'BUILTIN_DEPENDENCY_BLOCKED', 'DEPENDENCY_CYCLE', 'ENTITY_CONFLICT', 'CENTER_PACK_ID_CONFLICT', 'CENTER_ENTITY_CONFLICT', 'CENTER_MERGE_INVALID', 'ACTIVATION_PREFLIGHT_FAILED', 'CENTER_CRAFT_UNAVAILABLE', 'CENTER_TASK_MATERIAL_UNAVAILABLE'].includes(code)) throw error
             // The verified download is retained, but a failed activation never
             // changes the old active mapping or reports operation success.
             state.active = priorActive

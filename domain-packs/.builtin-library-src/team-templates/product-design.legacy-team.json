@@ -1,0 +1,86 @@
+{
+  "id": "product-design.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.designer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.docs-coordinator",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.researcher",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.researcher",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "product-design.legacy-output",
+      "retryPolicy": "never",
+      "subject": "用户与场景调研",
+      "description": "明确目标用户、核心场景、痛点和约束条件。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.designer",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "product-design.legacy-output",
+      "retryPolicy": "never",
+      "subject": "设计方向与交互流程",
+      "description": "基于调研产出设计方向（视觉基调、信息架构）与核心交互流程，附取舍理由。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t2"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "product-design.legacy-output",
+      "retryPolicy": "never",
+      "subject": "设计说明文档",
+      "description": "把设计整理成可实施说明：页面/组件清单、状态与边界、验收要点。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "product-design.deliverable",
+      "outputTemplate": "product-design.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

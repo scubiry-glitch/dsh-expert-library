@@ -35,6 +35,28 @@ async function grant(f, requestId = 'user-authorization-1') {
   return authorizePlanExecution(f.stateRoot, f.captain.id, context, { requestId, expectedInputSha256: planInputSha256(context), reason: 'User explicitly authorized this isolated rerun.', scope: 'single-plan-for-direct-user-input' })
 }
 
+test('approved plans require a live captain task before business work while workflow tools remain available', async t => {
+  const { planExecutionDenial } = await import('../lib/plan-execution-boundary.js')
+  const f = await fixture(t)
+  const p = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile({
+    tasks: [{ id: 'collect', subject: 'Collect independent evidence', owner: 'captain', artifactInputs: [], produces: [] }],
+  }) })
+  await approve(f, p, true)
+  const denial = name => planExecutionDenial({ agent: f.captain, name }, f.config)
+  assert.match(await denial('bash'), /PLAN_TASK_EXECUTION_REQUIRED.*t1/)
+  for (const name of ['expert_teams_claim_task', 'expert_teams_update_task', 'expert_teams_quality_review', 'expert_teams_send_message', 'read']) {
+    assert.equal(await denial(name), undefined, name)
+  }
+  const exec = { agent: f.captain, signal: new AbortController().signal }
+  const claim = await f.tools.get('expert_teams_claim_task').execute({ task_id: 't1', assignee: 'captain' }, exec)
+  assert.match(await denial('bash'), /in_progress/)
+  await f.tools.get('expert_teams_update_task').execute({ task_id: 't1', attempt_id: claim.attempt_id, status: 'in_progress' }, exec)
+  assert.equal(await denial('bash'), undefined)
+  await f.tools.get('expert_teams_update_task').execute({ task_id: 't1', attempt_id: claim.attempt_id, status: 'in_progress',
+    execution_state: 'awaiting_review', wait_reason: 'Independent review required', output: 'Submitted evidence.' }, exec)
+  assert.match(await denial('bash'), /PLAN_TASK_EXECUTION_REQUIRED/)
+})
+
 test('preset and profile routes freeze settings priority before approval; later settings do not change execution', async t => {
   const f = await fixture(t, { config: { memberModel: { provider: 'test', model: 'plugin' }, expertModelOverrides: { researcher: { provider: 'test', model: 'user-research' } } } })
   const p = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile() })
@@ -199,13 +221,13 @@ test('authenticated reviewed-report requirement blocks ad-hoc and report-free pl
   assert.equal(f.starts.length, 0)
   assert.deepEqual((await readdir(f.stateRoot)).filter(path => !['plans', '.locks'].includes(path)), [])
   await revokePlanExecution(f.stateRoot, f.captain.id, input.requestId)
-  assert.ok((await create()).team_id)
+  await assert.rejects(create, /REVIEWED_REPORT_PLAN_REQUIRED/, 'revocation removes delegation, not the report requirement')
 })
 
 for (const [policyLabel, review] of [['explicit', { required: true }], ['empty-default', {}], ['omitted-default', undefined]]) {
 test('reviewed-report requirement accepts current approved plan with ' + policyLabel + ' review policy', async t => {
   const f = await fixture(t)
-  await cp(new URL('../domain-packs/zhijian-realestate', import.meta.url), join(f.workspace, 'domain-packs', 'zhijian-realestate'), { recursive: true })
+  await cp(new URL('../domain-packs/.zhijian-realestate-v15-src', import.meta.url), join(f.workspace, 'domain-packs', 'zhijian-realestate'), { recursive: true, dereference: true })
   f.config.enabledPacks = ['zhijian-realestate']
   const context = captureSharedTaskContext(f.captain)
   await authorizePlanExecution(f.stateRoot, f.captain.id, context, { requestId: 'full-report', expectedInputSha256: planInputSha256(context), reason: 'Full reviewed report required', scope: 'single-plan-for-direct-user-input', requireReviewedReport: true })
@@ -213,7 +235,7 @@ test('reviewed-report requirement accepts current approved plan with ' + policyL
     { packId: 'zhijian-realestate', skillId: 'zhijian-report-craft', reason: 'Engineering fixture content choice' },
     { packId: 'zhijian-realestate', skillId: 'zhijian-designer-render', variant: 'credit-policy', reason: 'Engineering fixture render choice' },
   ] } }
-  const p = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile({ review, tasks: [{ id: 'draft', subject: 'Final report', owner: 'author', reportBundle }] }) })
+  const p = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile({ review, tasks: [{ id: 'draft', subject: 'Final report', owner: 'author', artifactInputs: [], reportBundle }] }), report_outline: { chapters: [{ id: 'main', title: 'Synthetic analysis', questions: ['What is supported?'], evidence: ['Original source'], taskIds: ['draft'] }], attachments: [] } })
   await assert.rejects(() => requireAuthorizedTeamCreation(f.stateRoot, f.captain.id, context, p.plan), /REVIEWED_REPORT_APPROVAL_REQUIRED/)
   assert.throws(() => assertReviewedReportPlan({ ...p.plan, reviewPolicy: { required: false } }), /REVIEWED_REPORT_PLAN_REQUIRED/)
   const done = await approve(f, p)
@@ -238,4 +260,122 @@ test('expired approval does not silently drop the matching delivery requirement;
   await assert.rejects(() => requireAuthorizedTeamCreation(f.stateRoot, f.captain.id, context), /REVIEWED_REPORT_PLAN_REQUIRED/)
   f.events.push({ type: 'user/message', seq: 2, data: { id: 'next-task', source: { kind: 'user' }, content: [{ type: 'text', text: 'A different task' }] } })
   await requireAuthorizedTeamCreation(f.stateRoot, f.captain.id, captureSharedTaskContext(f.captain))
+})
+
+
+test('outline and per-role model edits persist one version, reject stale approval, and reach actual task materialization', async t => {
+  const f = await fixture(t)
+  const outline = { chapters: [{ id: 'evidence', title: 'Evidence first', questions: ['What is observed?'], evidence: ['Primary observations'], taskIds: ['draft'] }], attachments: ['Raw data'] }
+  const first = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile(), report_outline: outline })
+  assert.deepEqual(planToWire(first).preview.reportOutline, outline)
+  const revisedOutline = { ...outline, chapters: [{ ...outline.chapters[0], title: 'Revised evidence', questions: ['Which observations remain uncertain?'] }] }
+  const edited = await scenarioEditCore(f.ctx, f.config, f.captain, first.planId, { report_outline: revisedOutline, plan_models: { author: { provider: 'test', model: 'edited-model', reasoningEffort: 'high' } } }, first.digest, first.revision)
+  assert.notEqual(edited.digest, first.digest)
+  assert.equal(edited.revision, first.revision + 1)
+  assert.deepEqual((await readStagedPlan(f.stateRoot, first.planId)).plan.reportOutline, revisedOutline)
+  await assert.rejects(() => approve(f, first, true), /stale/)
+  assert.equal(f.starts.length, 0)
+  const done = await approve(f, edited, true)
+  const team = JSON.parse(await readFile(join(f.stateRoot, done.appliedTeamId, 'team.json'), 'utf8'))
+  assert.equal(team.members[0].model, 'edited-model')
+  assert.equal(team.members[0].reasoningEffort, 'high')
+  assert.match(team.tasks[0].description, /Which observations remain uncertain/)
+  assert.doesNotMatch(team.tasks[0].description, /What is observed/)
+})
+
+test('invalid outline, unknown role and unavailable chosen model leave the editable plan unchanged', async t => {
+  const f = await fixture(t, { unavailable: new Set(['missing-model']) })
+  const p = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile() })
+  for (const patch of [
+    { report_outline: { chapters: [{ id: 'bad', title: 'Bad', questions: ['Question'], evidence: ['Evidence'], taskIds: ['absent'] }], attachments: [] } },
+    { plan_models: { unknown: { provider: 'test', model: 'm' } } },
+    { plan_models: { author: { provider: 'test', model: 'missing-model' } } },
+  ]) {
+    await assert.rejects(() => scenarioEditCore(f.ctx, f.config, f.captain, p.planId, patch, p.digest, p.revision))
+    assert.equal((await readStagedPlan(f.stateRoot, p.planId)).digest, p.digest)
+    assert.equal(f.starts.length, 0)
+  }
+})
+
+test('captain model changes require a real native route switch, never a display-only override', async t => {
+  const f = await fixture(t)
+  const p = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile(), plan_models: { captain: { provider: 'test', model: 'execution-model' } } })
+  await assert.rejects(() => approve(f, p, true), /PLAN_CAPTAIN_MODEL_SWITCH_REQUIRED/)
+  assert.equal(f.starts.length, 0)
+  assert.equal((await readStagedPlan(f.stateRoot, p.planId)).status, 'staged')
+  f.events.push({type:'model/selection',data:{provider:'test',model:'execution-model'}})
+  assert.equal((await approve(f, p, true)).status, 'completed')
+  const { planExecutionDenial } = await import('../lib/plan-execution-boundary.js')
+  assert.match(await planExecutionDenial({agent:f.captain,name:'bash'},f.config),/PLAN_EXECUTION_MODEL_MISMATCH/, 'the old planning request still cannot execute business tools')
+  f.captain.session.requestHeader = () => ({ config: { provider: 'test', model: 'execution-model' } })
+  assert.match(await planExecutionDenial({agent:f.captain,name:'bash'},f.config),/PLAN_TASK_EXECUTION_REQUIRED/)
+})
+
+test('captain business tools stay blocked before approval, after restart, and after route drift', async t => {
+  const { planExecutionDenial } = await import('../lib/plan-execution-boundary.js')
+  const f = await fixture(t)
+  const denial = name => planExecutionDenial({agent:f.captain,name},f.config)
+  assert.equal(await denial('bash'),undefined,'ordinary unplanned work keeps its meaning')
+  const staged=await scenarioStageCore(f.ctx,f.config,f.captain,{profile:profile()})
+  for(const name of ['bash','exec_command','run_code','expert_provider_call','web_search','subagent']) assert.match(await denial(name),/PLAN_EXECUTION_APPROVAL_REQUIRED/,name)
+  for(const name of ['read_file','expert_teams_plan_edit','expert_teams_plan_approve','expert_library_doctor']) assert.equal(await denial(name),undefined,name)
+  const coldCaptain=structuredClone({id:f.captain.id,options:f.captain.options})
+  coldCaptain.session=f.captain.session
+  assert.match(await planExecutionDenial({agent:coldCaptain,name:'bash'},f.config),/PLAN_EXECUTION_APPROVAL_REQUIRED/)
+  await approve(f,staged,true)
+  assert.match(await denial('bash'),/PLAN_TASK_EXECUTION_REQUIRED/)
+  f.captain.session.requestHeader=()=>({config:{provider:'test',model:'unapproved'}})
+  assert.match(await denial('expert_provider_call'),/PLAN_EXECUTION_MODEL_MISMATCH/)
+})
+
+test('captain review of submitted member work remains possible; waiting and failed work do not authorize production', async t => {
+  const { planExecutionDenial } = await import('../lib/plan-execution-boundary.js')
+  const { readTeam, writeTeam } = await import('../lib/state.js')
+  const f = await fixture(t)
+  const p = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile() })
+  const applied = await approve(f, p, true)
+  const team = await readTeam(f.stateRoot, applied.appliedTeamId)
+  const task = team.tasks[0]
+  const denial = () => planExecutionDenial({ agent: f.captain, name: 'bash' }, f.config)
+  assert.match(await denial(), /PLAN_TASK_EXECUTION_REQUIRED/)
+  task.status = 'in_progress'; task.executionState = 'awaiting_review'; task.attemptId = 'review-attempt'
+  await writeTeam(f.stateRoot, team)
+  assert.equal(await denial(), undefined, 'captain can inspect the submitted member artifact')
+  task.executionState = 'blocked_external'; task.waitReason = 'Missing source'; await writeTeam(f.stateRoot, team)
+  assert.match(await denial(), /PLAN_TASK_EXECUTION_REQUIRED/)
+  task.status = 'failed'; delete task.executionState; delete task.attemptId; await writeTeam(f.stateRoot, team)
+  assert.match(await denial(), /PLAN_TASK_EXECUTION_REQUIRED/)
+  task.status = 'completed'; await writeTeam(f.stateRoot, team)
+  assert.equal(await denial(), undefined, 'completed tasks allow final delivery packaging')
+})
+
+test('explicit report requirement blocks business before staging and survives delegation revocation', async t => {
+  const { planExecutionDenial } = await import('../lib/plan-execution-boundary.js')
+  const f=await fixture(t),context=captureSharedTaskContext(f.captain)
+  await authorizePlanExecution(f.stateRoot,f.captain.id,context,{requestId:'boundary-before-stage',expectedInputSha256:planInputSha256(context),reason:'Require reviewed report',scope:'single-plan-for-direct-user-input',requireReviewedReport:true})
+  assert.match(await planExecutionDenial({agent:f.captain,name:'bash'},f.config),/PLAN_EXECUTION_APPROVAL_REQUIRED/)
+  await revokePlanExecution(f.stateRoot,f.captain.id,'boundary-before-stage')
+  assert.match(await planExecutionDenial({agent:f.captain,name:'expert_provider_call'},f.config),/PLAN_EXECUTION_APPROVAL_REQUIRED/)
+})
+
+
+test('persisted executable content cannot drift behind an unchanged approval digest', async t => {
+  const f=await fixture(t)
+  const outline={chapters:[{id:'main',title:'Observations',questions:['What is supported?'],evidence:['Primary evidence'],taskIds:['draft']}],attachments:[]}
+  const p=await scenarioStageCore(f.ctx,f.config,f.captain,{profile:profile(),report_outline:outline})
+  const path=join(f.stateRoot,'plans',p.planId+'.json'),original=await readFile(path,'utf8')
+  for(const change of [row=>row.plan.reportOutline.chapters[0].questions=['Different approved question'],row=>row.plan.roster[0].modelPolicy.model='unapproved',row=>row.plan.tasks[0].acceptance=['Weaker check']]) {
+    const row=JSON.parse(original);change(row);await writeFile(path,JSON.stringify(row))
+    await assert.rejects(readStagedPlan(f.stateRoot,p.planId),/invalid staged plan/)
+    await writeFile(path,original)
+  }
+  assert.equal((await readStagedPlan(f.stateRoot,p.planId)).digest,p.digest)
+})
+
+test('editing another role keeps prior per-plan model choices',async t=>{
+ const f=await fixture(t)
+ const first=await scenarioStageCore(f.ctx,f.config,f.captain,{profile:profile(),plan_models:{author:{provider:'test',model:'author-choice'}}})
+ const next=await scenarioEditCore(f.ctx,f.config,f.captain,first.planId,{plan_models:{captain:{provider:'test',model:'captain-choice'}}},first.digest,first.revision)
+ assert.equal(next.plan.roster[0].modelPolicy.model,'author-choice')
+ assert.equal(next.plan.captainModel.model,'captain-choice')
 })

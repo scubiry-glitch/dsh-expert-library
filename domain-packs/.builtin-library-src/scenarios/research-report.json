@@ -1,0 +1,30 @@
+{
+  "id": "research-report",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "research-report-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "researcher",
+      "bk-004",
+      "bk-007",
+      "docs-coordinator"
+    ]
+  },
+  "teamTemplate": "research-report.legacy-team",
+  "outputTemplate": "research-report.legacy-output",
+  "qualityPolicy": "research-report.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

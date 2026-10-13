@@ -52,6 +52,7 @@ import {
   zytPlanFromOperation,
 } from '../v2/providers/zyt.ts'
 import {
+  BeikeInputError,
   beikeCliArgv,
   beikeMCPCallParams,
   buildBeikeManifest,
@@ -92,10 +93,12 @@ import { normalizeToolMode, type ToolExecutionConfig } from '../settings.ts'
 
 /** Per-provider Host configuration (paths/endpoints resolved by probes). */
 export interface ProviderServiceOptions {
+  /** Customer instance grant. Undefined only outside customer mode; [] denies every provider. */
+  readonly allowedProviders?: readonly string[]
   readonly wind?: { readonly cliPath: string }
   readonly zyt?: { readonly baseUrl: string; readonly cliCommand?: string; readonly preferCli?: boolean }
   readonly beike?: { readonly baseUrl: string; readonly cliCommand?: string; readonly preferCli?: boolean }
-  readonly rongcheng?: { readonly adapterBaseUrl: string; readonly engineBaseUrl: string }
+  readonly rongcheng?: { readonly adapterBaseUrl: string; readonly engineBaseUrl: string; readonly v2BaseUrl?: string }
   /** Local SQLite databases (validated + deduped by {@link resolveProviderServiceOptions}). */
   readonly localdb?: { readonly databases: readonly LocalDbDatabase[]; readonly runnerPath: string }
   /** `toolExecution` settings overlays, keyed by provider id. */
@@ -121,7 +124,7 @@ export interface ProviderConfigInput {
     readonly wind?: { readonly cliPath?: string }
     readonly zyt?: { readonly baseUrl?: string; readonly cliCommand?: string; readonly preferCli?: boolean }
     readonly beike?: { readonly baseUrl?: string; readonly cliCommand?: string; readonly preferCli?: boolean }
-    readonly rongcheng?: { readonly adapterBaseUrl?: string; readonly engineBaseUrl?: string }
+    readonly rongcheng?: { readonly adapterBaseUrl?: string; readonly engineBaseUrl?: string; readonly v2BaseUrl?: string }
     /** 本地 SQLite 数据库灵活注册：显式列表 + 目录扫描（缺省关）。 */
     readonly localdb?: {
       readonly databases?: readonly {
@@ -181,6 +184,12 @@ export function windCliPathCandidate(input: ProviderConfigInput): string {
  * endpoints, and their optional CLI transports only when a binary is found.
  */
 export function resolveProviderServiceOptions(input: ProviderConfigInput): ProviderServiceOptions {
+  // Customer instances must opt in to each provider. A missing or malformed
+  // grant is deny-all even when credentials happen to be present in HOME.
+  const customerMode = Boolean(process.env.DSH_CUSTOMER_WORKSPACE_DIR)
+  const allowedProviders = customerMode
+    ? (process.env.DSH_CUSTOMER_ALLOWED_PROVIDERS ?? '').split(',').map(id => id.trim()).filter(id => /^(wind|zyt|beike|rongcheng|localdb)$/.test(id))
+    : undefined
   const windCliPath = windCliPathCandidate(input)
   const wind = windCliPath !== undefined && existsSync(windCliPath) ? { cliPath: windCliPath } : undefined
 
@@ -194,10 +203,11 @@ export function resolveProviderServiceOptions(input: ProviderConfigInput): Provi
 
   const beikeBaseUrl = input.providers?.beike?.baseUrl ?? process.env.BEIKE_MCP_BASE_URL ?? DEFAULT_BEIKE_ENDPOINT
   const beikeCli = input.providers?.beike?.cliCommand ?? process.env.BEIKE_CLI ?? resolveExecutable('beike')
+  const beikePreferCli = input.providers?.beike?.preferCli ?? (process.env.BEIKE_PREFER_CLI === '1' || process.env.BEIKE_PREFER_CLI === 'true')
   const beike: ProviderServiceOptions['beike'] = {
     baseUrl: beikeBaseUrl,
     ...(beikeCli !== undefined ? { cliCommand: beikeCli } : {}),
-    ...(input.providers?.beike?.preferCli !== undefined ? { preferCli: input.providers.beike.preferCli } : {}),
+    preferCli: beikePreferCli,
   }
 
   // 容诚在线估价（housevalue.*）：本机部署的伙伴服务，默认绑定 localhost；
@@ -207,6 +217,9 @@ export function resolveProviderServiceOptions(input: ProviderConfigInput): Provi
       input.providers?.rongcheng?.adapterBaseUrl ?? process.env.RONGCHENG_ADAPTER_URL ?? DEFAULT_RONGCHENG_ADAPTER_URL,
     engineBaseUrl:
       input.providers?.rongcheng?.engineBaseUrl ?? process.env.RONGCHENG_ENGINE_URL ?? DEFAULT_RONGCHENG_ENGINE_URL,
+    ...((input.providers?.rongcheng?.v2BaseUrl ?? process.env.RONGCHENG_V2_URL)
+      ? { v2BaseUrl: input.providers?.rongcheng?.v2BaseUrl ?? process.env.RONGCHENG_V2_URL }
+      : {}),
   }
 
   // 本地 SQLite 灵活注册：config `providers.localdb.databases` > env
@@ -228,6 +241,7 @@ export function resolveProviderServiceOptions(input: ProviderConfigInput): Provi
     const id = typeof record['id'] === 'string' ? record['id'] : ''
     const path = typeof record['path'] === 'string' ? expandHome(record['path']) : ''
     if (!isValidLocalDbId(id) || path === '' || !existsSync(path)) continue
+    if (customerMode && record['sensitivity'] === 'internal') continue
     admitDb({
       id,
       path,
@@ -236,14 +250,16 @@ export function resolveProviderServiceOptions(input: ProviderConfigInput): Provi
       ...(record['sensitivity'] === 'internal' ? { sensitivity: 'internal' as const } : {}),
     })
   }
-  for (const dir of input.providers?.localdb?.scanDirs ?? []) {
+  // Customer instances require an explicitly classified file grant. Directory
+  // discovery loses sensitivity labels and could otherwise expose internal DBs.
+  for (const dir of customerMode ? [] : input.providers?.localdb?.scanDirs ?? []) {
     for (const found of scanLocalDbDir(expandHome(dir))) admitDb(found)
   }
   const localdb: ProviderServiceOptions['localdb'] = localdbDatabases.size > 0
     ? { databases: [...localdbDatabases.values()], runnerPath: defaultLocalDbRunnerPath(import.meta.url) }
     : undefined
 
-  return { wind, zyt, beike, rongcheng, localdb, overlays: input.toolExecution }
+  return { wind, zyt, beike, rongcheng, localdb, overlays: input.toolExecution, ...(allowedProviders === undefined ? {} : { allowedProviders }) }
 }
 
 /** Parse the optional `LOCALDB_DATABASES` env JSON (same shape as config). */
@@ -351,6 +367,19 @@ function credentialOf(credentials: CredentialFn, transport: ToolTransport): Cred
   return { ok: true, value }
 }
 
+/** Wind's user config is dotenv text; the child receives only the key value. */
+function windApiKey(raw: string): string | undefined {
+  const assignment = /^\s*WIND_API_KEY\s*=\s*(.*)$/m.exec(raw)
+  if (assignment) {
+    let value = assignment[1]!.trim()
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) value = value.slice(1, -1)
+    else value = value.split(' #', 1)[0]!.trim()
+    return value || undefined
+  }
+  const trimmed = raw.trim()
+  return trimmed && !trimmed.includes('\n') && !/^[A-Za-z_][A-Za-z0-9_]*\s*=/.test(trimmed) ? trimmed : undefined
+}
+
 function transportOf(manifest: ToolProviderManifest, transportId: string | undefined): ToolTransport {
   if (transportId !== undefined) {
     const found = manifest.transports.find(transport => transport.id === transportId)
@@ -439,7 +468,9 @@ function createWindInvoker(manifest: ToolProviderManifest, transports: ProviderT
         return planError(error, provenance)
       }
       const input: Record<string, unknown> = { args: plan.args }
-      if (cred.ok && cred.value !== '') input['env'] = { WIND_API_KEY: cred.value }
+      const key = windApiKey(cred.value)
+      if (!key) return missingCredential('wind', request.operation, 'WIND_API_KEY', transport.id)
+      input['env'] = { WIND_API_KEY: key }
       try {
         const raw = await transports.run(transport, { operation: request.operation, input, signal: request.signal, context: request.context })
         const exitCode = raw.exitCode ?? 1
@@ -520,13 +551,26 @@ function createBeikeInvoker(manifest: ToolProviderManifest, transports: Provider
           beikeHeaders['X-Beike-Cli-Version'] = manifest.version
           input['headers'] = beikeHeaders
           const raw = await transports.run(transport, { operation: request.operation, input, signal: request.signal, context: request.context })
-          return normalizeBeikeMCPHttpOutput({ status: raw.status ?? 0, body: raw.body ?? '' }, options)
+          const envelope = normalizeBeikeMCPHttpOutput({ status: raw.status ?? 0, body: raw.body ?? '' }, options)
+          if (call.params.name === 'rent_house_search') {
+            return { ...envelope, provenance: { ...envelope.provenance, caliber: '当前在租挂牌房源检索；非成交租金统计、非历史快照' },
+              warnings: [...envelope.warnings, { code: 'beike.rent.current-listings-only', severity: 'warning',
+                message: '仅返回查询时的在租挂牌房源；input.period 是研究参考期，接口未按该期过滤，不能作为该期成交租金或历史快照。' }] }
+          }
+          return envelope
         }
         const input: Record<string, unknown> = { args: beikeCliArgv(request.operation, request.input) }
         if (key !== undefined) input['env'] = { BEIKE_MCP_API_KEY: key }
         const raw = await transports.run(transport, { operation: request.operation, input, signal: request.signal, context: request.context })
-        return normalizeBeikeCliOutput({ exitCode: raw.exitCode ?? 1, stdout: raw.stdout ?? '', stderr: raw.stderr }, options)
+        const envelope = normalizeBeikeCliOutput({ exitCode: raw.exitCode ?? 1, stdout: raw.stdout ?? '', stderr: raw.stderr }, options)
+        if (request.operation === 'beike.rent_house_search') {
+          return { ...envelope, provenance: { ...envelope.provenance, caliber: '当前在租挂牌房源检索；非成交租金统计、非历史快照' },
+            warnings: [...envelope.warnings, { code: 'beike.rent.current-listings-only', severity: 'warning',
+              message: '仅返回查询时的在租挂牌房源；input.period 是研究参考期，接口未按该期过滤，不能作为该期成交租金或历史快照。' }] }
+        }
+        return envelope
       } catch (error) {
+        if (error instanceof BeikeInputError) return failEnvelope({ code: 'INPUT_INVALID', retry: 'never', correction: error.message }, provenance)
         return transportError(error, provenance)
       }
     },
@@ -539,7 +583,9 @@ function createRongchengInvoker(manifest: ToolProviderManifest, transports: Prov
   const paths = new Map<string, { path: string; method: string }>()
   for (const capability of manifest.capabilities) {
     if (capability.transportId !== undefined && capability.operation.startsWith('rongcheng')) {
-      paths.set(capability.operation, { path: capability.operation.slice('rongcheng'.length), method: 'POST' })
+      const path = capability.operation.slice('rongcheng'.length)
+      paths.set(capability.operation, { path,
+        method: path.endsWith('/job.status') || path.endsWith('/file.get') ? 'GET' : 'POST' })
     }
   }
   return {
@@ -556,10 +602,14 @@ function createRongchengInvoker(manifest: ToolProviderManifest, transports: Prov
         }, { provider: 'rongcheng', operation: request.operation, transportId: transport.id })
       }
       try {
+        const requestBody = isRequestBody(request.input) ? request.input : {}
         const input: Record<string, unknown> = {
           method: op.method,
           path: op.path,
-          body: isRequestBody(request.input) ? request.input : {},
+          ...(op.method === 'GET'
+            ? { query: Object.fromEntries(Object.entries(requestBody).filter(([, value]) =>
+                typeof value === 'string' || typeof value === 'number').map(([key, value]) => [key, String(value)])) }
+            : { body: requestBody }),
         }
         const raw = await transports.run(transport, { operation: request.operation, input, signal: request.signal, context: request.context })
         const envelope = normalizeRongchengHttpOutput(
@@ -776,12 +826,13 @@ export class ProviderTransportService {
       enabled.push(manifest.id)
     }
     const overlay = (id: string): ToolExecutionConfig | undefined => this.options.overlays?.[id]
+    const allowed = (id: string): boolean => this.options.allowedProviders === undefined || this.options.allowedProviders.includes(id)
 
-    if (this.options.wind !== undefined) {
+    if (allowed('wind') && this.options.wind !== undefined) {
       const manifest = applyToolExecutionOverlay(buildWindManifest({ cliPath: this.options.wind.cliPath }), overlay('wind'))
       register(manifest, createWindInvoker(manifest, this.transports, this.credentials, this.options.wind.cliPath))
     }
-    if (this.options.zyt !== undefined) {
+    if (allowed('zyt') && this.options.zyt !== undefined) {
       const opts = this.options.zyt
       const manifest = applyToolExecutionOverlay(
         buildZytManifest({ baseUrl: opts.baseUrl, cliCommand: opts.cliCommand, preferCli: opts.preferCli }),
@@ -789,7 +840,7 @@ export class ProviderTransportService {
       )
       register(manifest, createZytInvoker(manifest, this.transports, this.credentials))
     }
-    if (this.options.beike !== undefined) {
+    if (allowed('beike') && this.options.beike !== undefined) {
       const opts = this.options.beike
       const manifest = applyToolExecutionOverlay(
         buildBeikeManifest({ baseUrl: opts.baseUrl, cliCommand: opts.cliCommand, preferCli: opts.preferCli }),
@@ -797,15 +848,16 @@ export class ProviderTransportService {
       )
       register(manifest, createBeikeInvoker(manifest, this.transports, this.credentials))
     }
-    if (this.options.rongcheng !== undefined) {
+    if (allowed('rongcheng') && this.options.rongcheng !== undefined) {
       const opts = this.options.rongcheng
       const manifest = applyToolExecutionOverlay(
-        buildRongchengManifest({ adapterBaseUrl: opts.adapterBaseUrl, engineBaseUrl: opts.engineBaseUrl }),
+        buildRongchengManifest({ adapterBaseUrl: opts.adapterBaseUrl, engineBaseUrl: opts.engineBaseUrl,
+          ...(opts.v2BaseUrl ? { v2BaseUrl: opts.v2BaseUrl } : {}) }),
         overlay('rongcheng'),
       )
       register(manifest, createRongchengInvoker(manifest, this.transports))
     }
-    if (this.options.localdb !== undefined && this.options.localdb.databases.length > 0) {
+    if (allowed('localdb') && this.options.localdb !== undefined && this.options.localdb.databases.length > 0) {
       const opts = this.options.localdb
       const manifest = applyToolExecutionOverlay(
         buildLocalDbManifest(opts.databases, { runnerPath: opts.runnerPath }),

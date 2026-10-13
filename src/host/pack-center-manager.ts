@@ -12,6 +12,7 @@ import {
 import type {
   CenterManageService, CenterConnectionView, CenterCatalogView, CenterReleaseSummary, CenterReleaseDetail,
   CenterInstallationsView, CenterInstalledRelease, CenterUpdatesView, CenterOperationInput,
+  CenterPackClassification,
 } from '../pack-center-wire.ts'
 import { createPackCenterClient, PackCenterClientError, type PackCenterClient, type PackCenterClientOptions } from './pack-center-client.ts'
 import { createPackCenterConnectionStore, publicView } from './pack-center-connection.ts'
@@ -39,6 +40,10 @@ const object = (value: unknown): Record<string, unknown> => value && typeof valu
 const code = (error: unknown) => sanitizePackOperationError(error)
 const emptyCatalog = (): CenterCatalogView => ({ items: [], nextCursor: null, checkedAt: null, hasSnapshot: false, stale: true })
 const emptyUpdates = (generation = 0): CenterUpdatesView => ({ items: [], generation, checkedAt: null, hasSnapshot: false, stale: true })
+/** This manage surface is domain-pack version management: every center view is
+ * scoped to domain packs and other package types stay invisible here. */
+const CATALOG_TYPE = 'domain-pack'
+type PackClass = 'domain-pack' | 'other' | 'unknown'
 
 export function createPackCenterManager(options: PackCenterManagerOptions): CenterManageService & { activeSnapshot(): Promise<LocalActiveSnapshot> } {
   if (!isAbsolute(options.root) || resolve(options.root) !== options.root || options.root === parse(options.root).root
@@ -49,10 +54,11 @@ export function createPackCenterManager(options: PackCenterManagerOptions): Cent
   const configuredOrigin = options.origin?.trim() ? normalizePackCenterOrigin(options.origin.trim(), options.allowLoopbackHttp) : null
   const connections = createPackCenterConnectionStore(connectionRoot, { allowLoopbackHttp: options.allowLoopbackHttp })
   const catalogCache = new Map<string, { revision: number; value: CenterCatalogView }>()
+  const classificationCache = new Map<string, { revision: number; value: { kind: PackClass; classification?: CenterPackClassification } }>()
   let updateCache: { revision: number; value: CenterUpdatesView } | undefined
   let startupError: string | undefined
   let closed = false
-  const clearCache = () => { catalogCache.clear(); updateCache = undefined }
+  const clearCache = () => { catalogCache.clear(); classificationCache.clear(); updateCache = undefined }
 
   async function client(): Promise<PackCenterClient> {
     const snapshot = await connections.read()
@@ -85,17 +91,39 @@ export function createPackCenterManager(options: PackCenterManagerOptions): Cent
       artifactSha256: row.manifest.artifactSha256, contentTreeSha256: row.manifest.contentTreeSha256,
       compatibility: clone(row.compatibility), downloadAvailability: clone(row.downloadAvailability),
       dependencies: row.manifest.dependencyLock.map(item => ({ packId: item.packId, releaseId: item.releaseId, version: item.version })),
+      ...(row.classification ? { classification: clone(row.classification) as CenterPackClassification } : {}),
     }
+  }
+  /** Classify a pack from its visible center releases. 'unknown' covers an
+   * unreachable center and packs without visible releases; callers hide both,
+   * so a pack the center cannot vouch for stays out of this surface. */
+  async function packClass(sdk: PackCenterClient, packId: string, revision: number) {
+    const cached = classificationCache.get(packId)
+    if (cached?.revision === revision) return cached.value
+    const value = await (async (): Promise<{ kind: PackClass; classification?: CenterPackClassification }> => {
+      try {
+        const classification = (await sdk.listReleases({ packId, limit: 1 })).items[0]?.classification
+        if (classification?.types.includes(CATALOG_TYPE)) return { kind: 'domain-pack', classification }
+        if (classification?.types.length) return { kind: 'other' }
+      } catch { /* unreachable center or hidden pack: 'unknown' */ }
+      return { kind: 'unknown' }
+    })()
+    if (classificationCache.size >= 256 && !classificationCache.has(packId)) classificationCache.delete(classificationCache.keys().next().value!)
+    classificationCache.set(packId, { revision, value })
+    return value
   }
   async function catalog(input: { packId?: string; limit?: number; beforeId?: string } = {}): Promise<CenterCatalogView> {
     const captured = clone(input), revision = (await connections.read()).revision
-    const cacheKey = JSON.stringify([captured.packId ?? null, captured.limit ?? 50, captured.beforeId ?? null])
+    const cacheKey = JSON.stringify([CATALOG_TYPE, captured.packId ?? null, captured.limit ?? 50, captured.beforeId ?? null])
     try {
       requireRemote()
-      const reply = await (await client()).listReleases(captured)
+      const reply = await (await client()).listReleases({ ...captured, type: CATALOG_TYPE })
       if ((await connections.read()).revision !== revision) fail('REVISION_CONFLICT')
-      const value: CenterCatalogView = { items: reply.items.map(summary), nextCursor: reply.nextCursor,
-        checkedAt: now(), hasSnapshot: true, stale: false }
+      // The center filters server-side; the second look drops rows from a
+      // center that ignored the type parameter but did send classification.
+      const value: CenterCatalogView = { items: reply.items.map(summary).filter(item =>
+        item.classification === undefined || item.classification.types.includes(CATALOG_TYPE)),
+        nextCursor: reply.nextCursor, checkedAt: now(), hasSnapshot: true, stale: false }
       if (catalogCache.size >= 32 && !catalogCache.has(cacheKey)) catalogCache.delete(catalogCache.keys().next().value!)
       catalogCache.set(cacheKey, { revision, value })
       return clone(value)
@@ -123,14 +151,25 @@ export function createPackCenterManager(options: PackCenterManagerOptions): Cent
   async function installations(): Promise<CenterInstallationsView> {
     const read = await state()
     if (!read) return { generation: 0, mode: 'normal', items: [] }
-    const sdk = await client(), items: CenterInstalledRelease[] = []
+    const sdk = await client(), revision = (await connections.read()).revision
+    const items: CenterInstalledRelease[] = []
     for (const record of Object.values(read.state.installed)) {
+      // Domain-pack version management: a center pack stays invisible unless
+      // the center vouches for it as a domain pack. Legacy receipts are not
+      // center apps and keep their existing surface.
+      let classification: CenterPackClassification | undefined
+      if (record.source === 'center') {
+        const classified = await packClass(sdk, record.packId, revision)
+        if (classified.kind !== 'domain-pack') continue
+        classification = classified.classification
+      }
       const item: CenterInstalledRelease = {
         releaseId: record.releaseId, packId: record.packId, version: record.version, source: record.source,
         ...(record.centerId ? { centerId: record.centerId } : {}), ...(record.ownerOrgId ? { ownerOrgId: record.ownerOrgId } : {}),
         installedAt: record.installedAt, active: read.state.active[record.packId] === record.releaseId,
         ...(record.previousReleaseId ? { previousReleaseId: record.previousReleaseId } : {}),
-        artifactSha256: record.artifactSha256, contentTreeSha256: record.contentTreeSha256, integrity: 'unavailable',
+        artifactSha256: record.artifactSha256, contentTreeSha256: record.contentTreeSha256,
+        ...(classification ? { classification: clone(classification) } : {}), integrity: 'unavailable',
       }
       try {
         if (record.source === 'center') {

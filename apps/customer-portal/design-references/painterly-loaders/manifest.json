@@ -1,0 +1,310 @@
+{
+  "source": "https://painterly.design-tools.workers.dev/",
+  "archivedAt": "2026-10-12T15:37:56.077Z",
+  "galleryStyles": [
+    {
+      "key": "impressionism-garden",
+      "movement": "Impressionism",
+      "label": "Garden",
+      "note": "Warm and a little too much, in the best way."
+    },
+    {
+      "key": "impressionism-dawn",
+      "movement": "Impressionism",
+      "label": "Dawn",
+      "note": "Quiet, like nothing has happened yet."
+    },
+    {
+      "key": "impressionism-willow",
+      "movement": "Impressionism",
+      "label": "Willow",
+      "note": "Cool and wistful, the kind of quiet you don’t want to leave."
+    },
+    {
+      "key": "impressionism-wisteria",
+      "movement": "Impressionism",
+      "label": "Wisteria",
+      "note": "Delicate in a way that already feels like a memory."
+    },
+    {
+      "key": "impressionism-orchard",
+      "movement": "Impressionism",
+      "label": "Orchard",
+      "note": "Light and a little giddy, spring before it’s sure of itself."
+    },
+    {
+      "key": "impressionism-irises",
+      "movement": "Impressionism",
+      "label": "Irises",
+      "note": "Purple standing at attention, politely."
+    },
+    {
+      "key": "impressionism-poppies",
+      "movement": "Impressionism",
+      "label": "Poppies",
+      "note": "Red that refuses to be background."
+    },
+    {
+      "key": "impressionism-koi",
+      "movement": "Impressionism",
+      "label": "Koi",
+      "note": "Stillness is just movement too slow to notice."
+    },
+    {
+      "key": "impressionism-roses",
+      "movement": "Impressionism",
+      "label": "Roses",
+      "note": "Everything opens at its own speed."
+    },
+    {
+      "key": "impressionism-oranges",
+      "movement": "Impressionism",
+      "label": "Oranges",
+      "note": "Ripening is just time becoming sweet."
+    },
+    {
+      "key": "impressionism-sail",
+      "movement": "Impressionism",
+      "label": "Sail",
+      "note": "A boat is mostly waiting for wind."
+    },
+    {
+      "key": "abstraction-dusk",
+      "movement": "Abstraction",
+      "label": "Dusk",
+      "note": "The hour when color stops trying to be anything specific."
+    }
+  ],
+  "files": [
+    {
+      "file": "build-archive.mjs",
+      "bytes": 3250,
+      "sha256": "df3f39d21992ab09730b06bf847745be6c16cf018ff68a1cd6ae31ebce518381"
+    },
+    {
+      "file": "copycode.js",
+      "bytes": 5851,
+      "sha256": "c6c9c9567c04a84358d2723210f54f0b11080a5e4e94d14b8bcea413961daa5a"
+    },
+    {
+      "file": "engine.js",
+      "bytes": 14913,
+      "sha256": "cb79a05683f8f37b016f15dc6f5ef5808a2210a2e46533b5a5ecb66348dda170"
+    },
+    {
+      "file": "favicon.svg",
+      "bytes": 1515,
+      "sha256": "7534b433654f4b888ed0ee4dda170e6565a27c66a6df680fcd2fecd18bcead55"
+    },
+    {
+      "file": "fonts/0aa0ffe3a23a.woff2",
+      "bytes": 132000,
+      "sha256": "6e4f2958c3a7c4a80acde4e5a679abe7e01bc1e30b92be3c7a8b696ef401d101"
+    },
+    {
+      "file": "fonts/2ea959f8de26.woff2",
+      "bytes": 86608,
+      "sha256": "45683de03de37187604102316c0b42c0cb2d8dc9c4140a20ad471c3148cc1278"
+    },
+    {
+      "file": "fonts/fbf8852dceed.woff2",
+      "bytes": 27248,
+      "sha256": "6d0543f06b9d5393afe5baaeb040817e85af372bf5609d5d55746b1eb56b4010"
+    },
+    {
+      "file": "fonts/newsreader.css",
+      "bytes": 3258,
+      "sha256": "194a17a256c6ffa0aeed5d7c4c6f9da04c82c7f0001b2dcbfb0706540306bdca"
+    },
+    {
+      "file": "fonts/OFL.txt",
+      "bytes": 4394,
+      "sha256": "fdfad38143ec470553cae82a1e45320bdd1b9ec70415d37bd0171051d8a4ded8"
+    },
+    {
+      "file": "gallery.js",
+      "bytes": 11911,
+      "sha256": "5858ce1635ef3223adb16f4bbaf5afb06678ec464e7420a3fef4bd003e771107"
+    },
+    {
+      "file": "index.html",
+      "bytes": 16427,
+      "sha256": "ce1d695ef21f556f528ebca68161b3235210b866dab55b571dc230050d3a0cf5"
+    },
+    {
+      "file": "original/index.html",
+      "bytes": 16704,
+      "sha256": "265aaf2f975021551fdcb2f80c4524bff81eeead7aad2a058b707147bfc8497b"
+    },
+    {
+      "file": "preview.png",
+      "bytes": 485375,
+      "sha256": "77c92ec78aa39f049462cc7aa8a44cb0e787877c40493c60ed26c33299acd5d0"
+    },
+    {
+      "file": "README.md",
+      "bytes": 2243,
+      "sha256": "1068fac32d333a42764a364067d1298b24fb9b688409e6fc18eb9a4cf6ec391c"
+    },
+    {
+      "file": "standalone/abstraction-dusk.html",
+      "bytes": 20275,
+      "sha256": "42b05c8592861c513194e0c2c8b50fdc9f97bdb221eb1b017837840937e5d03e"
+    },
+    {
+      "file": "standalone/impressionism-dawn.html",
+      "bytes": 26404,
+      "sha256": "ff1713b617c9f9c3ad707fedd641505d4cc9034ef32a4e6b80167101df58e429"
+    },
+    {
+      "file": "standalone/impressionism-garden.html",
+      "bytes": 23252,
+      "sha256": "4ea9168c15de891aad57c81548d47e697d165d5742a9e9f92f598554790c1024"
+    },
+    {
+      "file": "standalone/impressionism-irises.html",
+      "bytes": 25569,
+      "sha256": "32dafcc0a7d2c5443e0f489a2695451eefe0371b76a0c7239d79167000497f6b"
+    },
+    {
+      "file": "standalone/impressionism-koi.html",
+      "bytes": 23444,
+      "sha256": "20e507489adbef529f814685e60840abf2346c2cb3f2f7519bbb65f7d0d13cb7"
+    },
+    {
+      "file": "standalone/impressionism-oranges.html",
+      "bytes": 22890,
+      "sha256": "b8a8c69e6c2d6fc011fc185d228095ac8ca586fe94dc169e5e32698627529288"
+    },
+    {
+      "file": "standalone/impressionism-orchard.html",
+      "bytes": 24843,
+      "sha256": "f894364a16a2f33ba251284bc0c1274ecb0dd92f3fa551bcbdd3fb6fa8521d09"
+    },
+    {
+      "file": "standalone/impressionism-poppies.html",
+      "bytes": 25643,
+      "sha256": "af19f3ba8e63bc64a39e651fe2f785cfc21584d4d5a1870b3d98b97affcf438f"
+    },
+    {
+      "file": "standalone/impressionism-roses.html",
+      "bytes": 23566,
+      "sha256": "34c79a2b4f77594d1de96105d0cfcbe204df1a8f30c8e8c7708bb5d9f7c93171"
+    },
+    {
+      "file": "standalone/impressionism-sail.html",
+      "bytes": 21270,
+      "sha256": "380a2022494b8b2b54ef9f1598974d54c3447f6bc737d565545820ac364f30d2"
+    },
+    {
+      "file": "standalone/impressionism-willow.html",
+      "bytes": 26680,
+      "sha256": "53a444334612bb25d085b1f56213741113e320786ec149786a48eaa27aac4b0a"
+    },
+    {
+      "file": "standalone/impressionism-wisteria.html",
+      "bytes": 23630,
+      "sha256": "23961f97f8ee1f550e879c1f6cce37982dfa89b4ac6c88cc4f952215a51312a8"
+    },
+    {
+      "file": "stills/abstraction-dusk.webp",
+      "bytes": 21774,
+      "sha256": "1d5b7a0d0551dfe5c0b35e4fb494b87c80d7277e67bf31af055a5ee2f8bf0519"
+    },
+    {
+      "file": "stills/impressionism-dawn.webp",
+      "bytes": 31496,
+      "sha256": "75f3f3d88ec27fe94213f3c7b2908414feee39c06d0ac423d33dc298d7e6d472"
+    },
+    {
+      "file": "stills/impressionism-garden.webp",
+      "bytes": 29244,
+      "sha256": "e1b938d53b27bcd6260b48ec1963f699cdc6a1066d60fca3ab3106b03e5f6c96"
+    },
+    {
+      "file": "stills/impressionism-irises.webp",
+      "bytes": 36610,
+      "sha256": "7387c40aef2b239ef95772e4f3d9750f5eca71b7ae135d18803673c19345512c"
+    },
+    {
+      "file": "stills/impressionism-koi.webp",
+      "bytes": 20712,
+      "sha256": "c878262b56828a7a714a562feb081016167c33419c48af27e72e26d3d81f046f"
+    },
+    {
+      "file": "stills/impressionism-oranges.webp",
+      "bytes": 40816,
+      "sha256": "08bef32ecf21b3e6caa99e079f51a6aa2580bfa40239df6ebf4ffec75d33d815"
+    },
+    {
+      "file": "stills/impressionism-orchard.webp",
+      "bytes": 30264,
+      "sha256": "8a7ccd1c5b9a140112ab484073aec8e734fc1f78654c35d8431aa6e7e3a16508"
+    },
+    {
+      "file": "stills/impressionism-poppies.webp",
+      "bytes": 37686,
+      "sha256": "1cc09fe30b3561d8de87309ddcb2be094378ec7dc2a9f135b758f7eb6da2c750"
+    },
+    {
+      "file": "stills/impressionism-roses.webp",
+      "bytes": 20852,
+      "sha256": "0a72e6c5710ca51185547c7d687a2c9afd12875860300492a841feb29da67765"
+    },
+    {
+      "file": "stills/impressionism-sail.webp",
+      "bytes": 17640,
+      "sha256": "f2c4c753701b5e57acdde52029763f89a71163a273e79d26843f1bb573fe3784"
+    },
+    {
+      "file": "stills/impressionism-willow.webp",
+      "bytes": 48976,
+      "sha256": "3c780cdad9fb94b548d40510e4b906346d86573781240a8c938d4ce24f69b1ba"
+    },
+    {
+      "file": "stills/impressionism-wisteria.webp",
+      "bytes": 29534,
+      "sha256": "530d8f828bfd98233ffcf211a2cd9d98a4ccb3a84bed889b612cd9f64b9efc3b"
+    },
+    {
+      "file": "style-abstraction.js",
+      "bytes": 13113,
+      "sha256": "ca3c4281abd27f283a6ad5ddc7ac09c2b44df502c39e2806a72e1d9193bfd7d2"
+    },
+    {
+      "file": "style-impressionism.js",
+      "bytes": 75602,
+      "sha256": "93c7abcb4f66d8cac03af441c8127d84ab0b638f25b3b3227e902e6fb855bc80"
+    },
+    {
+      "file": "vendor/p5-license.txt",
+      "bytes": 24480,
+      "sha256": "eb2f25f8f165d5f20682c1ce7e99ce69144ecfd80fbed8c17dfd327ecd8b6cb6"
+    },
+    {
+      "file": "vendor/p5-package.json",
+      "bytes": 3924,
+      "sha256": "07e454791b72c59ea5cf0dc59c21b4f55e480d7848946e27fd13216ffc4b39aa"
+    },
+    {
+      "file": "vendor/p5.brush-license.txt",
+      "bytes": 1084,
+      "sha256": "cabbece1a276329fa28ab40f1c99af3af2b7852a329551a9a485b2199616583a"
+    },
+    {
+      "file": "vendor/p5.brush-package.json",
+      "bytes": 1583,
+      "sha256": "1be8f6f558792b519aba0e8e9280e5e676713944df39daba5e22417463698d94"
+    },
+    {
+      "file": "vendor/p5.brush.js",
+      "bytes": 72062,
+      "sha256": "9bc2266ac761c685691de2db9cdbf63ba4854df3002576713e6f8136149dbc21"
+    },
+    {
+      "file": "vendor/p5.min.js",
+      "bytes": 990372,
+      "sha256": "3f8a0c739bd3c6350e239ff7187d38656ed2247e30a2b8084fd16a91e6e843ac"
+    }
+  ]
+}

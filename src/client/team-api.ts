@@ -20,10 +20,9 @@ import type {
   TeamWireResponse as SharedTeamWireResponse,
   TeamAction,
 } from '../team-wire.ts'
-import { TEAM_WIRE_VERSION as SHARED_TEAM_WIRE_VERSION } from '../team-wire.ts'
 import { manageHeaders } from './manage-client.ts'
 
-export const TEAM_WIRE_VERSION = SHARED_TEAM_WIRE_VERSION
+export const TEAM_WIRE_VERSION: typeof import('../team-wire.ts').TEAM_WIRE_VERSION = 1
 
 export type TeamWireTaskStatus = SharedTeamWireTask['status']
 export type TeamWireAcceptance = NonNullable<SharedTeamWireTask['acceptance']>[number]
@@ -36,6 +35,7 @@ export type TeamWire = Omit<SharedTeamWire, 'members' | 'tasks'> & { readonly me
 /** PlanWire is the canonical host/client contract. UI helpers below adapt its
  * JSON-safe request record into fields suitable for form controls. */
 export type TeamPlanWire = PlanWire
+export type TeamModelOption = { readonly provider: string; readonly model: string; readonly name: string; readonly reasoningEffort?: string }
 
 /** Values returned by `planToWire` are JSON-safe and may carry arrays encoded
  * by legacy staged plans as strings. The parser below is intentionally narrow;
@@ -52,13 +52,19 @@ export type TeamPlanMember = {
 }
 
 export type TeamPlanTask = {
+  readonly produces?: readonly string[]
+  readonly humanChoice?: PlanWire['preview']['tasks'][number]['humanChoice']
+  readonly artifactInputs?: readonly import('../plan-artifact-flow.ts').PlannedArtifactInput[]
   readonly id?: string
   readonly subject?: string
   readonly description?: string
   readonly assignee?: string
+  readonly sourceExpertIds?: readonly string[]
   readonly dependencies?: readonly string[]
   readonly acceptance?: readonly TeamWireAcceptance[]
   readonly reportCraft?: PlanWire['preview']['tasks'][number]['reportCraft']
+  readonly taskMaterials?: PlanWire['preview']['tasks'][number]['taskMaterials']
+  readonly materialRecipe?: PlanWire['preview']['tasks'][number]['materialRecipe']
 }
 
 export interface TeamPlanRequest {
@@ -110,6 +116,9 @@ export interface TeamWireMutation {
   readonly expectedRevision?: number
   readonly patch?: Record<string, unknown>
   readonly reason?: string
+  readonly taskId?: string
+  readonly choice?: string
+  readonly expectedSha256?: string
   readonly signal?: AbortSignal
 }
 
@@ -146,16 +155,19 @@ export function normalizePlan(plan: TeamPlanWire): TeamPlanWire {
 
 export function planTaskPreview(plan: TeamPlanWire | null | undefined): readonly TeamPlanTask[] {
   if (plan === null || plan === undefined) return []
+  const expertBySlot = new Map((plan.preview?.members ?? []).map(member => [member.slotId, member.sourceExpertId ?? member.expertId]))
   if (plan.preview?.tasks !== undefined && plan.preview.tasks.length > 0) return plan.preview.tasks.map((task) => ({
     id: task.id, subject: task.subject, description: task.description,
-    dependencies: task.dependsOn, acceptance: task.acceptance, reportCraft: task.reportCraft,
+    assignee: task.expertIds.length > 0 ? task.expertIds.join('、') : task.role === 'captain' ? '队长' : undefined,
+    sourceExpertIds: task.expertIds.map(id => expertBySlot.get(id) ?? id),
+    dependencies: task.dependsOn, acceptance: task.acceptance, reportCraft: task.reportCraft, taskMaterials: task.taskMaterials, materialRecipe: task.materialRecipe, produces: task.produces, artifactInputs: task.artifactInputs, humanChoice: task.humanChoice,
   }))
   return planRequest(plan).tasks ?? []
 }
 
 export function planMemberPreview(plan: TeamPlanWire | null | undefined): readonly TeamPlanMember[] {
   if (plan?.preview?.members !== undefined && plan.preview.members.length > 0) return plan.preview.members.map((member) => ({
-    id: member.slotId, name: member.expertId, role: member.role,
+    id: member.slotId, name: member.sourceExpertId ?? member.expertId, role: member.role,
     provider: member.route?.provider, model: member.route?.model, routeSource: member.routeSource, routeFallbackIndex: member.routeFallbackIndex,
   }))
   const tasks = planTaskPreview(plan)
@@ -192,12 +204,25 @@ export async function fetchTeamWire(query: TeamWireQuery): Promise<TeamWireEnvel
   return envelope.plan === undefined || envelope.plan === null ? envelope : { ...envelope, plan: normalizePlan(envelope.plan) }
 }
 
+export async function fetchTeamModelCatalog(captainSessionId: string, planId: string, signal?: AbortSignal): Promise<readonly TeamModelOption[]> {
+  const params = new URLSearchParams({ captainSessionId, planId, models: '1' })
+  const response = await fetch(`${TEAM_API_URL}?${params}`, {
+    cache: 'no-store', credentials: 'same-origin', mode: 'same-origin', redirect: 'error',
+    referrerPolicy: 'same-origin', headers: manageHeaders({ accept: 'application/json' }), signal,
+  })
+  const body = await parseJson<{ version?: number; models?: TeamModelOption[]; error?: TeamWireError }>(response)
+  if (!response.ok || body?.version !== TEAM_WIRE_VERSION || !Array.isArray(body.models)) {
+    throw new TeamWireRequestError(body?.error?.code ?? `HTTP_${response.status}`, '模型目录读取失败', response.status)
+  }
+  return body.models
+}
+
 export async function mutateTeam(request: TeamWireMutation): Promise<TeamWireMutationResponse> {
   const body: Record<string, unknown> = {
     action: request.action,
     captainSessionId: request.captainSessionId,
   }
-  for (const key of ['teamId', 'planId', 'expectedDigest', 'expectedRevision', 'patch', 'reason'] as const) {
+  for (const key of ['teamId', 'planId', 'expectedDigest', 'expectedRevision', 'patch', 'reason', 'taskId', 'choice', 'expectedSha256'] as const) {
     const value = request[key]
     if (value !== undefined) body[key] = value
   }
@@ -220,7 +245,16 @@ export class TeamWireRequestError extends Error {
   readonly code: string
   readonly status: number
   constructor(code: string, message: string, status = 0) {
-    super(message)
+    const help: Record<string, string> = {
+      PLAN_CAPTAIN_MODEL_SWITCH_REQUIRED: '队长实际模型与计划不同。请在会话模型选择器切换后刷新，再确认本计划。',
+      PLAN_MODEL_UNAVAILABLE: '所选模型或推理强度不可用。请修改配置并重新保存。',
+      PLAN_MODELS_INVALID: '模型配置不完整。请填写提供方、模型和有效的推理强度。',
+      PLAN_ARTIFACT_INPUTS_REQUIRED: '报告任务需要声明输入。请在任务配置中填写 artifactInputs；独立任务填写空数组，并为依赖注明所需产物和用途。',
+      PLAN_ARTIFACT_CYCLE: '产物或验收条件形成循环依赖。请调整交付归属和依赖顺序后再保存。',
+      PLAN_DEPENDENCY_UNJUSTIFIED: '任务依赖缺少所需产物及用途。请补齐输入声明，或移除不必要的依赖。',
+      TEAM_CAS_CONFLICT: '计划已被更新。请刷新并审阅最新版本后再操作。',
+    }
+    super(help[code] ?? (code.startsWith('PLAN_OUTLINE_') || code === 'PLAN_REVIEW_INVALID' ? '大纲不完整。每章需要标题、核心问题、所需证据和负责的任务；报告生成任务也必须关联章节。' : message))
     this.name = 'TeamWireRequestError'
     this.code = code
     this.status = status

@@ -91,7 +91,7 @@
     "build:builtin": "node scripts/build-builtin-pack.mjs",
     "check:builtin": "node scripts/build-builtin-pack.mjs --check",
     "test": "pnpm build && node --test --test-concurrency=1 'test/**/*.test.mjs'",
-    "test:pack-center": "pnpm build && node --test --test-concurrency=1 packages/pack-contract/test/*.test.mjs packages/pack-artifact/test/*.test.mjs test/host-pack-source.test.mjs test/v2-runtime-pack.test.mjs test/v2-no-network.test.mjs test/update-policy-schema.test.mjs test/pack-center-update-policy.test.mjs test/host-pack-center-auto-update.test.mjs test/host-pack-center-routes-policy.test.mjs",
+    "test:pack-center": "pnpm build && node --test --test-concurrency=1 packages/pack-contract/test/*.test.mjs packages/pack-artifact/test/*.test.mjs test/host-pack-source.test.mjs test/v2-runtime-pack.test.mjs test/v2-no-network.test.mjs test/update-policy-schema.test.mjs test/pack-center-update-policy.test.mjs test/host-pack-center-auto-update.test.mjs test/host-pack-center-catalog-type.test.mjs test/host-pack-center-routes-policy.test.mjs",
     "check:craft": "node knowledge/skills/zhijian-report-craft/scripts/build-materials.mjs --check",
     "build:craft": "node knowledge/skills/zhijian-report-craft/scripts/build-materials.mjs --write",
     "prepack": "npm run check:craft && npm run check:report-domain",

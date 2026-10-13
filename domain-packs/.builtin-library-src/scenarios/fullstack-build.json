@@ -1,0 +1,29 @@
+{
+  "id": "fullstack-build",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "fullstack-build-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "designer",
+      "engineer",
+      "qa-engineer"
+    ]
+  },
+  "teamTemplate": "fullstack-build.legacy-team",
+  "outputTemplate": "fullstack-build.legacy-output",
+  "qualityPolicy": "fullstack-build.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

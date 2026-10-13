@@ -1,0 +1,64 @@
+{
+  "objective": "在仅备份插件代码并保留现有修改的前提下，结合车公庄置换和A股研判两次会话的证据，修复dsh-expert-library中导致通信丢失、重复唤醒、并发版本漂移、审核失配和任务无法收尾的问题；通过故障回放、多成员完整任务流程及隔离真实Host重启恢复验证，使任务从派单到交付可靠收敛，并交付可复验结果和回滚材料。",
+  "inputs": [
+    "HANDOFF-DIAGNOSIS.md",
+    "为什么用了这么多token-诊断报告.md"
+  ],
+  "acceptance": [
+    {
+      "id": "backup",
+      "requirement": "备份仅含插件代码及必要构建测试资源，每文件哈希可验证，不包含知识库报告会话依赖目录"
+    },
+    {
+      "id": "waiting",
+      "requirement": "等待审核/外部条件的任务在idle、重复kick和重启后不被当作异常中断重派"
+    },
+    {
+      "id": "communication",
+      "requirement": "成员和队长离线投递可恢复；瞬时失败无需额外用户消息即可有界重试，超时不挂死队列；持续失败明确阻断且保留代次；幂等重试不重复业务效果，状态预览不吞未展示消息"
+    },
+    {
+      "id": "versioning",
+      "requirement": "新版本不覆写旧发布字节；已声明的上游产物在派单前核验；旧attempt不能发布/更新新代工作"
+    },
+    {
+      "id": "quality",
+      "requirement": "实物漂移阻断验收；真实产物存在时摘要调整不误阻断；修订/重派保留历史并可重新审核"
+    },
+    {
+      "id": "completion",
+      "requirement": "验收与任务完成可原子收尾，下游解锁，不依赖成员再次响应；硬失败不会因预算耗尽放行"
+    },
+    {
+      "id": "verification",
+      "requirement": "定向故障测试、多成员依赖闭环及真实Host加载/重启恢复通过，并标明模拟模型与真实运行的证据边界"
+    },
+    {
+      "id": "delivery",
+      "requirement": "提供构建、部署加载验证、备份/回滚位置与剩余限制，不把未验证的降本估算当实测"
+    }
+  ],
+  "scopeLimits": [
+    "不重写两次业务报告或清理它们的审计记录",
+    "不把全局并发时段用量归因到一个团队",
+    "不凭字节估算声称真实费用节省比例",
+    "不把任意shell文件写入视作已由插件工具完全隔离"
+  ],
+  "backupManifest": "/root/zhijian/backups/dsh-expert-library-code-20261003-010630/manifest.json",
+  "evidence": {
+    "firstSession": "docs/evidence/team-reliability-20261003/cgz-usage.json",
+    "secondSession": "docs/evidence/team-reliability-20261003/second-session-usage.json",
+    "secondSessionCorrections": [
+      "原报告以累计output推导当前上下文73%占比不成立，存在reasoning和compaction/prune，需用当前surface重建",
+      "按team.json成员id可归因当前两个成员，不能因账本无parentSessionId就认为成员完全不可归因",
+      "缓存输入和新输入属于不同计价桶；压缩调用应单列，不能仅计assistant/message",
+      "两份报告的字节占比和反事实节省率均非实测费用归因"
+    ],
+    "productionReload": "docs/evidence/team-reliability-20261003/production-reload.json",
+    "completionAudit": "docs/evidence/team-reliability-20261003/completion-audit.json",
+    "productionIndependentCheck": "docs/evidence/team-reliability-20261003/production-independent-check.json"
+  },
+  "productionAuthorization": "用户：先暂停，再重载",
+  "goalStatus": "complete",
+  "completedAt": "2026-10-03T01:39:43.336227+00:00"
+}

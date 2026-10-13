@@ -35,6 +35,7 @@ export type StagedPlanStatus =
 
 /** Runtime values needed to apply a compiled plan after a restart. */
 export interface StagedPlanRuntime {
+  readonly executionDigest?: string
   readonly teamName: string
   readonly description: string
   readonly interpolations?: Readonly<Record<string, string>>
@@ -80,7 +81,7 @@ export interface StagedPlan {
     readonly revision: number
     readonly approvedAt: number
     readonly approvedBy: string
-    readonly source?: 'authenticated-host-user' | 'delegated-host-authorization'
+    readonly source?: 'authenticated-host-user' | 'delegated-host-authorization' | 'scoped-review-token'
     readonly authorizationRequestId?: string
     readonly contextSha256?: string
   }
@@ -118,6 +119,7 @@ export interface TaskProject {
 
 /** A published artifact owned by one task attempt. */
 export interface TaskArtifact {
+  readonly reusedFrom?: { readonly artifactId: string; readonly attempt: number; readonly inputDigest: string; readonly scopeDigest: string; readonly reason: string }
   readonly id: string
   /** Stable logical deliverable identity across immutable published versions. */
   readonly reviewId?: string
@@ -233,15 +235,34 @@ export interface StampedQualityPlan {
 
 /** One task of a team's task list. */
 export interface TeamTask {
+  /** Durable handoff observation; never grants an attempt or bypasses gates. */
+  scheduling?: { since: number; phase: 'ready' | 'assigned'; reason: string; noticeKey: string }
+  /** Immutable Host receipt for a compact workflow acceptance. */
+  researchRelease?: import('./research-release.ts').ResearchRelease
+  researchReviewTransactions?: Record<string, { fingerprint: string; reviewerSessionId: string; runId: string; status: string; attempt: number }>
+  researchReviewAudits?: Record<string, string>
+  researchInputReleases?: Record<string, string>
+  submissionReceipt?: { id: string; fingerprint: string; attempt: number; artifactDigest: string }
+  /** Explicit dynamic-task file declaration; omitted legacy declarations may bind on first submission. */
+  declaredPublications?: string[]
+
   /** Stable task id within the team (`t1`, `t2`, …). */
   id: string
   /** Brief title for the task. */
   subject: string
   /** What needs to be done. */
   description?: string
+  /** Host-only human selection gate; sourceTaskId is a physical task id. */
+  humanChoice?: { sourceTaskId: string; artifact: string; options: string[] }
+  /** Bound to the immutable source publication selected by the user. */
+  humanChoiceReceipt?: { sourceReleaseDigest?: string; choice: string; choices?: string[]; sourceArtifactId: string; sourceSha256: string; sourceAttempt: number; approvedAt: number; actor: 'authenticated-host-user' | 'scoped-review-token'; reviewTokenId?: string }
   /** Explicit report workflow; ordinary tasks omit this field. */
   reportBundle?: import('./report-bundle.ts').ReportBundle
   frozenSkillCraftContract?: import('./skill-craft-types.ts').FrozenSkillCraftContract
+  skillBindings?: import('./task-material-binding.ts').TaskSkillBinding[]
+  promptBinding?: import('./task-material-binding.ts').TaskPromptBinding
+  frozenTaskMaterialContract?: import('./task-material-binding.ts').FrozenTaskMaterialContract
+  taskMaterialDeliveries?: import('./task-material-binding.ts').TaskMaterialDeliveryReceipt[]
   craftDeliveries?: import('./report-craft-delivery.ts').CraftDeliveryReceipt[]
   craftReviewPreparations?: import('./report-craft-delivery.ts').CraftReviewPreparation[]
   /** A new task revising an integrated source; source remains immutable. */
@@ -261,12 +282,21 @@ export interface TeamTask {
   dependencies: string[]
   /** The worker's written result, set when the task completes or fails. */
   output?: string
+  /** Captain's audited decision to close an exhausted quality run as failed. */
+  qualityContinuations?: { eventId: string; fingerprint: string; parentRunId: string; runId: string; reason: string; userDecision: string; at: number; previousOutput?: string; previousCloseout?: TeamTask['qualityCloseout'] }[]
+  technicalReviewWaits?: { eventId: string; reviewerSessionId: string; fingerprint: string; reason: string; at: number; attempt: number }[]
+  qualityCloseout?: { eventId: string; runId: string; reason: string; closedAt: number }
   /** Isolated project metadata; optional for legacy tasks. */
   project?: TaskProject
   /** Artifacts this task explicitly publishes; optional for legacy tasks. */
   publishedArtifacts?: TaskArtifact[]
   /** Upstream artifacts this task is explicitly allowed to read. */
   inputArtifacts?: TaskArtifactRef[]
+  /** Captain-audited replacement sources; original plan and old pins remain in receipts. */
+  inputSourceOverrides?: Record<string, string>
+  inputRevisions?: import('./input-revision.ts').InputRevisionReceipt[]
+  /** Approved logical input requirements; controls automatic publication selection. */
+  plannedArtifactInputs?: import('./plan-artifact-flow.ts').PlannedArtifactInput[]
   /** Omission selects reviewed dependency publications; explicit [] selects none.
    * An automatic selection may change only for an explicit new consumer attempt. */
   inputArtifactBinding?: { mode: 'dependency-default'; consumerAttempt: number; legacyUnpinnedSources?: string[]; reviewDisabled?: true }
@@ -276,6 +306,10 @@ export interface TeamTask {
   attempt?: number
   /** Capability for the current claimed/in-progress attempt. Members must present it when updating. */
   attemptId?: string
+  /** Host-owned attempt activation time; status polling is not execution progress. */
+  attemptStartedAt?: number
+  /** Successful guarded transfers, retained separately from attempt capabilities. */
+  reassignmentHistory?: (ReturnType<typeof import('./task-reassignment.ts').checkTaskReassignment> & { reason: string; target: string })[]
   /** Capability id retired when the task became terminal; retained so a completion message
    * emitted just before finalization can still be admitted without reviving the task. */
   finalizedAttemptId?: string
@@ -433,6 +467,7 @@ export interface TeamState {
   /** Scenario id this team was assembled from (Expert Library), when any. */
   scenarioId?: string
   /** Provenance: the compiled ExecutionPlan this team was assembled from (apply bridge). */
+  reviewSnapshot?: { ui?: import('./review-ui.ts').ReviewUi; roster?: import('./v2/compiler.ts').ExecutionPlan['roster']; deliverables: import('./v2/compiler.ts').ExecutionPlan['deliverables']; gates: import('./v2/compiler.ts').ExecutionPlan['gates'] }
   planRef?: {
     planId: string
     digest: string

@@ -44,11 +44,12 @@ async function fixture(t, specs) {
   const counts = () => ({ pauses, resumes, concludes, goal })
   return { ...selected, workspace, stateRoot, registered, starts, deliveries, routes, ctx, config, captain, core, bundle, call, counts }
 }
+const outline = task => ({ chapters: [{ id: 'evidence', title: 'Synthetic evidence', questions: ['What do the fixture sources establish?'], evidence: ['Fixture observations'], taskIds: [task] }], attachments: [] })
 const cases = [
   ['debate', () => ({ topic: 'Synthetic topic', pro_expert: 'researcher', con_expert: 'data-analyst' })],
   ['roundtable', () => ({ topic: 'Synthetic topic', experts: ['researcher', 'data-analyst'] })],
   ['ppt', () => ({ topic: 'Synthetic topic', content_experts: ['researcher'] })],
-  ['report', f => ({ topic: 'Synthetic topic', experts: ['researcher', 'data-analyst'], report_bundle: f.bundle })],
+  ['report', f => ({ topic: 'Synthetic topic', experts: ['researcher', 'data-analyst'], report_bundle: f.bundle, report_outline: outline('t4') })],
 ]
 const approve = (f, plan, host = true) => (host ? scenarioApproveFromHost : scenarioApproveCore)(f.ctx, f.config, f.captain, plan.planId, new AbortController().signal, f.core, plan.digest, plan.revision)
 async function grant(f) {
@@ -123,14 +124,14 @@ test('report rejects absent, malformed and legacy contracts before any plan/team
 
 test('single and multi expert reports bind the exact selected pack to the final producer and quality run', async t => {
   for (const experts of [['researcher'], ['researcher', 'data-analyst']]) {
-    const f = await fixture(t), result = await f.call('report', { topic: 'Synthetic topic', experts, report_bundle: f.bundle })
+    const f = await fixture(t), result = await f.call('report', { topic: 'Synthetic topic', experts, report_bundle: f.bundle, report_outline: outline(experts.length === 1 ? 't3' : 't4') })
     const plan = await readStagedPlan(f.stateRoot, result.plan_id)
     const bound = plan.plan.tasks.filter(task => task.reportBundle !== undefined)
     assert.equal(bound.length, 1)
     assert.equal(bound[0].id, experts.length === 1 ? 't3' : 't4')
     assert.deepEqual(bound[0].reportBundle, f.bundle)
     assert.deepEqual(bound[0].frozenSkillCraftContract.packs.map(pack => pack.packId), ['fixture-policy'])
-    await assert.rejects(scenarioEditCore(f.ctx, f.config, f.captain, plan.planId, { goal: 'Different' }, plan.digest, plan.revision), /Discard.*restage/)
+    await assert.rejects(scenarioEditCore(f.ctx, f.config, f.captain, plan.planId, { goal: 'Different' }, plan.digest, plan.revision), /PRESET_INPUT_FROZEN.*restage/)
     const done = await approve(f, plan)
     const team = JSON.parse(await readFile(join(f.stateRoot, done.appliedTeamId, 'team.json'), 'utf8'))
     const finalTask = team.tasks.find(task => task.planTask.logicalId === bound[0].id)
@@ -142,9 +143,9 @@ test('single and multi expert reports bind the exact selected pack to the final 
 
 test('report refuses partial skill coverage and changed selected pack bytes without implicit extra selection', async t => {
   const partial = await fixture(t, [{ id: 'writer-only', artifactRoles: ['md', 'evidence'] }])
-  await assert.rejects(partial.call('report', { topic: 'Synthetic topic', experts: ['researcher'], report_bundle: partial.bundle }), /OUTPUT_COVERAGE/)
+  await assert.rejects(partial.call('report', { topic: 'Synthetic topic', experts: ['researcher'], report_bundle: partial.bundle, report_outline: outline('t3') }), /OUTPUT_COVERAGE/)
   assert.equal(partial.starts.length, 0)
-  const f = await fixture(t), result = await f.call('report', { topic: 'Synthetic topic', experts: ['researcher'], report_bundle: f.bundle })
+  const f = await fixture(t), result = await f.call('report', { topic: 'Synthetic topic', experts: ['researcher'], report_bundle: f.bundle, report_outline: outline('t3') })
   const plan = await readStagedPlan(f.stateRoot, result.plan_id)
   await writeFile(join(f.root, 'references', 'compose.md'), 'Modified after the reviewable draft.')
   await assert.rejects(approve(f, plan), /DRIFT|CONTRACT_CHANGED/)
@@ -162,4 +163,16 @@ test('PPT keeps an explicitly requested legacy skill as a labelled reference, wi
   assert.match(plan.runtime.description, /not-installed-synthetic-skill/)
   assert.ok(plan.plan.tasks.every(task => task.reportBundle === undefined))
   assert.equal(f.starts.length, 0)
+})
+
+test('report call requires an outline before creating a user-facing staged plan', async t => {
+  const f = await fixture(t)
+  await assert.rejects(f.call('report', { topic: 'Synthetic topic', experts: ['researcher'], report_bundle: f.bundle }), /missing required property "report_outline"/)
+  assert.equal(f.starts.length, 0)
+  assert.deepEqual(await readdir(join(f.stateRoot, 'plans')).catch(error => error.code === 'ENOENT' ? [] : Promise.reject(error)), [])
+  const result = await f.call('report', { topic: 'Synthetic topic', experts: ['researcher'], report_bundle: f.bundle, report_outline: outline('t3') })
+  assert.equal(result.status, 'waiting_user')
+  const plan = await readStagedPlan(f.stateRoot, result.plan_id)
+  assert.equal(plan.plan.reportOutline.chapters.length, 1)
+  assert.equal((await approve(f, plan)).status, 'completed')
 })

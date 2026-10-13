@@ -253,6 +253,22 @@ test('new human constraints after stage cannot be silently ignored by approval o
   assert.notEqual(edited.digest, staged.digest)
 })
 
+test('context-only revision rejects input arriving after the reviewer read it and never starts a team', async t => {
+  const f = await fixture(t)
+  const staged = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile() })
+  f.events.push(human(20, 'First new requirement to review.'))
+  const reviewed = captureSharedTaskContext(f.captain, staged.runtime.sharedTaskContext)
+  f.events.push(human(21, 'Later requirement must not be silently included.'))
+  await assert.rejects(() => scenarioEditCore(f.ctx, f.config, f.captain, staged.planId, {}, staged.digest, staged.revision, undefined, reviewed.sha256), /SHARED_TASK_CONTEXT_CHANGED/)
+  assert.equal((await readStagedPlan(f.stateRoot, staged.planId)).revision, staged.revision)
+  const latest = captureSharedTaskContext(f.captain, staged.runtime.sharedTaskContext)
+  const revised = await scenarioEditCore(f.ctx, f.config, f.captain, staged.planId, {}, staged.digest, staged.revision, undefined, latest.sha256)
+  assert.equal(revised.revision, staged.revision + 1)
+  assert.deepEqual(texts(revised.runtime.sharedTaskContext), f.events.map(event => event.data.content[0].text))
+  assert.equal(revised.status, 'staged')
+  assert.equal(f.starts.length, 0)
+})
+
 test('approval persists the same source SHA and profile protocol into every member persona and each exact task input', async t => {
   const f = await fixture(t)
   const staged = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile() })

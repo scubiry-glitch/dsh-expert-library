@@ -19,6 +19,7 @@ import { isSafeSkillId } from '../skills.ts'
 import { BUILTIN_EXPERT_BY_ID } from './builtin-experts.ts'
 import { BUILTIN_SCENARIO_BY_ID } from './builtin-scenarios.ts'
 import { ZHIJIAN_EXPERT_BY_ID } from '../zhijian/registry.ts'
+import { pluginKnowledgeRoot } from '../skills-discovery.ts'
 import type { Expert, ExpertLibrary, Scenario, ScenarioSkillBinding } from './types.ts'
 
 /** Root of a captain's knowledge packs (resolved against the workspace). */
@@ -206,6 +207,20 @@ export async function resolveLibrary(
   // plugin data, merged below builtins so a user pack can still override.
   for (const [id, expert] of ZHIJIAN_EXPERT_BY_ID) {
     experts.set(id, expert)
+  }
+
+  // Bundled design personas are available to every workspace. Workspace
+  // definitions are loaded afterwards so a captain can still override them.
+  const bundledKnowledge = await pluginKnowledgeRoot()
+  if (bundledKnowledge !== undefined) {
+    await loadJsonPacks(ctx, join(bundledKnowledge, 'experts'), (id, value) => {
+      const expert = parseExpert(value)
+      if (expert === undefined) {
+        ctx.logger.warn(`expert-library: skipped invalid bundled expert pack "${id}"`)
+        return
+      }
+      experts.set(expert.id, expert)
+    }, 'expert')
   }
 
   await loadJsonPacks(ctx, expertsDir, (id, value) => {

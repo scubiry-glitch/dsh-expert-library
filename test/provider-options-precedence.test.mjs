@@ -16,6 +16,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 
 import {
+  ProviderTransportService,
   resolveProviderServiceOptions,
   windCliPathCandidate,
 } from '../lib/host/provider-service.js'
@@ -47,6 +48,7 @@ const CLEAN_ENV = {
   ZYT_CLI: undefined,
   BEIKE_MCP_BASE_URL: undefined,
   BEIKE_CLI: undefined,
+  BEIKE_PREFER_CLI: undefined,
 }
 
 test('zyt baseUrl: input > env > probe default', async () => {
@@ -70,7 +72,11 @@ test('beike baseUrl: input > env > probe default; preferCli passthrough', async 
   await withEnv(CLEAN_ENV, () => {
     const resolved = resolveProviderServiceOptions({})
     assert.equal(resolved.beike.baseUrl, 'https://building.ke.com/mcp')
-    assert.equal(resolved.beike.preferCli, undefined)
+    assert.equal(resolved.beike.preferCli, false)
+  })
+  await withEnv({ ...CLEAN_ENV, BEIKE_PREFER_CLI: '1' }, () => {
+    assert.equal(resolveProviderServiceOptions({}).beike.preferCli, true)
+    assert.equal(resolveProviderServiceOptions({ providers: { beike: { preferCli: false } } }).beike.preferCli, false)
   })
 })
 
@@ -94,6 +100,29 @@ test('wind cliPath: input > env > default probe; registration gated on existence
       // Default probe path: ends with the skill suffix; registered only when present.
       const candidate = windCliPathCandidate({})
       assert.match(candidate, /\.agents\/skills\/wind-mcp-skill\/scripts\/cli\.mjs$/)
+    })
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+})
+
+test('customer provider grant is deny-all by default and only registers opted-in sources', async () => {
+  const dir = mkdtempSync(join(tmpdir(), 'customer-provider-grant-'))
+  try {
+    const database = join(dir, 'private.sqlite')
+    writeFileSync(database, '')
+    const input = { providers: { localdb: { databases: [{ id: 'private', path: database, sensitivity: 'internal' }] } } }
+    const ctx = { get: () => undefined }
+    await withEnv({ DSH_CUSTOMER_WORKSPACE_DIR: dir, DSH_CUSTOMER_ALLOWED_PROVIDERS: undefined }, () => {
+      const options = resolveProviderServiceOptions(input)
+      assert.deepEqual(options.allowedProviders, [])
+      assert.equal(options.localdb, undefined)
+      assert.deepEqual(new ProviderTransportService(ctx, options).providers, [])
+    })
+    await withEnv({ DSH_CUSTOMER_WORKSPACE_DIR: dir, DSH_CUSTOMER_ALLOWED_PROVIDERS: 'beike,zyt,unknown' }, () => {
+      const options = resolveProviderServiceOptions(input)
+      assert.deepEqual(options.allowedProviders, ['beike', 'zyt'])
+      assert.deepEqual(new ProviderTransportService(ctx, options).providers, ['zyt', 'beike'])
     })
   } finally {
     rmSync(dir, { recursive: true, force: true })

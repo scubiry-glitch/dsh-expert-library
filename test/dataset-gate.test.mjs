@@ -161,6 +161,20 @@ test('applyDatasetRequest substitutes the pinned capability and stamps dataset m
   assert.ok(gated.dataset.signature.length > 0)
 })
 
+test('Wind macro dataset follows the installed CLI time-parameter contract', () => {
+  const valid = resolveDatasetRequest({ dataset: 'financial.macro', input: { question: '中国 CPI 同比', observation: 6 } })
+  assert.equal(valid.definition?.version, '1.1')
+  for (const input of [
+    { metric: 'CPI', period: '2026-09' },
+    { question: '中国 CPI 同比' },
+    { question: '中国 CPI 同比', observation: 6, beginDate: '2026-01-01', endDate: '2026-09-30' },
+    { question: '中国 CPI 同比', beginDate: '2026-09-30' },
+  ]) {
+    const result = resolveDatasetRequest({ dataset: 'financial.macro', input })
+    assert.ok(result.error)
+  }
+})
+
 test('applyDatasetRequest fails closed on contradictions, missing input, and missing ids', () => {
   const contradiction = applyDatasetRequest({
     dataset: 'financial.stock.quote',

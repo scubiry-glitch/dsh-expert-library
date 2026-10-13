@@ -256,7 +256,7 @@ export interface ContractAmendmentInput {
 
 export interface QualityEvent {
   readonly id: string
-  readonly type: 'amendment' | 'review' | 'repair' | 'integration'
+  readonly type: 'amendment' | 'review' | 'repair' | 'integration' | 'host_recheck'
   readonly at: number
   readonly actor: string
   readonly fingerprint: string
@@ -282,6 +282,8 @@ export interface QualityRun {
   readonly contractFrozenAt?: number
   /** A fresh run supersedes, rather than rewrites, an earlier review. */
   readonly revision?: QualityRunRevision
+  /** Host transport recovery receipts; these never constitute a review. */
+  readonly hostRechecks?: readonly { eventId: string; reason: string; reviewEventId: string; evidence: TaskEvidence }[]
 }
 
 export interface QualityMutation {
@@ -530,7 +532,7 @@ export function createQualityContract(input: QualityContractInput): QualityContr
     if (!pathClean(path)) fail('invalid_contract', `unsafe path scope: ${path}`)
   }
   const maxRepairRounds = input.maxRepairRounds ?? 2
-  if (!Number.isSafeInteger(maxRepairRounds) || maxRepairRounds < 0 || maxRepairRounds > 2) fail('invalid_contract', 'maxRepairRounds must be between 0 and 2')
+  if (!Number.isSafeInteger(maxRepairRounds) || maxRepairRounds < 0 || maxRepairRounds > 20) fail('invalid_contract', 'maxRepairRounds must be between 0 and 20')
   return {
     ...input,
     outOfScope: [...(input.outOfScope ?? [])],
@@ -822,6 +824,56 @@ export function reviewQualityRun(run: QualityRun, input: ReviewInput): QualityMu
   }
 }
 
+/** Re-open review after a verified Host-only checker fix, without altering producer work. */
+export function recheckHostQualityRun(run: QualityRun, input: {
+  eventId: string; actor: string; reason: string; reviewEventId: string; evidence: TaskEvidence
+}): QualityMutation {
+  if (input.actor !== 'captain' || !nonEmpty(input.reason) || !nonEmpty(input.eventId) || !nonEmpty(input.reviewEventId))
+    fail('host_recheck_invalid', 'captain, reason, event and reviewed event identity are required')
+  const digest = fingerprint({ type: 'host_recheck', actor: input.actor, payload: { reason: input.reason, reviewEventId: input.reviewEventId } })
+  const duplicate = run.events.find(e => e.id === input.eventId)
+  if (duplicate) {
+    if (duplicate.type !== 'host_recheck' || duplicate.fingerprint !== digest) fail('idempotency_conflict', 'host recheck event conflict')
+    return { run, applied: false }
+  }
+  if ((run.hostRechecks?.length ?? 0) >= 8) fail('host_recheck_invalid', 'host recheck history limit reached')
+  const review = run.events.filter(e => e.type === 'review').at(-1)
+  const old = run.latestEvidence
+  if (run.status !== 'blocked' || !old || review?.id !== input.reviewEventId || old.attempt !== run.attempt)
+    fail('host_recheck_invalid', 'only the current blocked reviewed attempt can be rechecked')
+  const hard = run.findings.filter(f => f.attempt === run.attempt && f.severity === 'hard')
+  const transportFailure = hard.length > 0 && hard.every(f => f.code === 'HOST_ARTIFACT_CHECK_INPUT_MISMATCH_BLOCKS_PASS')
+  const browserHostFailure = hard.length > 0 && hard.every(f => f.code === 'craft-browser-check-blocked-by-host-cache-permission')
+  if (!transportFailure && !browserHostFailure)
+    fail('host_recheck_invalid', 'substantive or unrelated findings require normal repair')
+  const failures = (old.artifactCheckReceipts ?? []).flatMap(r => r.results).filter(r => r.status !== 'passed')
+  if (!failures.length || failures.some(r => transportFailure
+    ? r.status !== 'failed' || r.detail !== 'V2 input invalid: artifact bytes/hash mismatch'
+    : r.id !== 'report-craft-browser' || r.status !== 'unverified' || ![
+      'Browser inspection unavailable: controlled browser executable unavailable',
+      "Browser inspection unavailable: [Errno 13] Permission denied: 'root'",
+    ].includes(r.detail)))
+    fail('host_recheck_invalid', 'only the diagnosed Host checker failure is eligible')
+  if (JSON.stringify(old.artifacts.map(({id,path,sha256}) => ({id,path,sha256})))
+    !== JSON.stringify(input.evidence.artifacts.map(({id,path,sha256}) => ({id,path,sha256}))))
+    fail('host_recheck_invalid', 'all original reviewed artifact identities must be unchanged')
+  if (JSON.stringify(old.acceptanceResults) !== JSON.stringify(input.evidence.acceptanceResults)
+    || JSON.stringify(old.independentReview) !== JSON.stringify(input.evidence.independentReview))
+    fail('host_recheck_invalid', 'host recovery must preserve the independent reviewer observations')
+  validateTaskEvidenceIntegrity(run.contract, input.evidence, run.attempt)
+  validateIndependentReview(run.contract, input.evidence, true, true)
+  // Failed acceptance booleans from the prior reviewer remain untouched:
+  // only that reviewer can revise their verdict after seeing this receipt.
+  if (input.evidence.commandsRun.some(c => !c.passed)
+    || !input.evidence.artifactCheckReceipts?.length
+    || input.evidence.artifactCheckReceipts.some(r => r.results.some(result => result.status !== 'passed')))
+    fail('host_recheck_invalid', 'fresh Host commands and every machine result must pass')
+  validateArtifactCheckFreshness(input.evidence)
+  const event: QualityEvent = { id: input.eventId, type: 'host_recheck', actor: input.actor, at: Date.now(), fingerprint: digest }
+  return { applied: true, run: { ...run, status: 'reviewing',
+    events: [...run.events,event], hostRechecks: [...(run.hostRechecks ?? []), {eventId:input.eventId,reason:input.reason,reviewEventId:input.reviewEventId,evidence:copyEvidence(input.evidence)}] } }
+}
+
 /** Open the next repair attempt after a blocked review. */
 export function requestQualityRepair(run: QualityRun, input: RepairInput): QualityMutation {
   if (!nonEmpty(input.eventId) || !nonEmpty(input.actor)) fail('invalid_repair', 'eventId and actor are required')
@@ -950,7 +1002,7 @@ function isQualityContract(value: unknown): value is QualityContract {
     || (value.coverageOf !== undefined && !stringList(value.coverageOf))
     || !Number.isSafeInteger(value.maxRepairRounds)
     || (value.maxRepairRounds as number) < 0
-    || (value.maxRepairRounds as number) > 2
+    || (value.maxRepairRounds as number) > 20
     || [...(value.inScope as readonly string[]), ...(value.outOfScope as readonly string[]), ...(value.changedPaths as readonly string[])].some(path => !safePath(path))) return false
   return !value.acceptance.some(item => !record(item)
     || !nonEmptyString(item.id)
@@ -978,7 +1030,7 @@ function isQualityRevision(value: unknown): value is QualityRunRevision {
     && nonEmptyString(value.fingerprint)
     && Number.isSafeInteger(value.budgetCharged)
     && (value.budgetCharged as number) >= 0
-    && (value.budgetCharged as number) <= 2
+    && (value.budgetCharged as number) <= 21
     && (value.withdrawUnreviewed === undefined || value.withdrawUnreviewed === true)
 }
 
@@ -999,6 +1051,9 @@ export function isQualityRun(value: unknown): value is QualityRun {
     || (value.revision !== undefined && !isQualityRevision(value.revision))
     || (value.contractFrozenAt !== undefined && !finite(value.contractFrozenAt))
     || (value.latestEvidence !== undefined && !isTaskEvidence(value.latestEvidence))
+    || (value.hostRechecks !== undefined && (!Array.isArray(value.hostRechecks) || value.hostRechecks.length > 8
+      || value.hostRechecks.some(r => !record(r) || !nonEmptyString(r.eventId) || !nonEmptyString(r.reason)
+        || !nonEmptyString(r.reviewEventId) || !isTaskEvidence(r.evidence))))
     || (value.lastVerdict !== undefined && !(REVIEW_VERDICTS as readonly string[]).includes(value.lastVerdict as string))) return false
   if (value.findings.some(finding => !record(finding)
     || !nonEmptyString(finding.id)
@@ -1015,7 +1070,7 @@ export function isQualityRun(value: unknown): value is QualityRun {
     || !nonEmptyString(event.id)
     || !nonEmptyString(event.actor)
     || !finite(event.at)
-    || !(event.type === 'amendment' || event.type === 'review' || event.type === 'repair' || event.type === 'integration')
+    || !(event.type === 'amendment' || event.type === 'review' || event.type === 'repair' || event.type === 'integration' || event.type === 'host_recheck')
     || !nonEmptyString(event.fingerprint)
     || eventIds.has(event.id as string)
     || (eventIds.add(event.id as string), false))) return false
@@ -1025,10 +1080,20 @@ export function isQualityRun(value: unknown): value is QualityRun {
   if (value.reviewRounds > 0 && value.latestEvidence === undefined) return false
   if (value.status === 'integrated' && !value.events.some(event => event.type === 'integration')) return false
   if (value.status === 'passed' && value.lastVerdict !== 'pass') return false
+  const rechecks = (value.hostRechecks ?? []) as NonNullable<QualityRun['hostRechecks']>
+  const checkedEvents = value.events as unknown as QualityEvent[]
+  if (rechecks.length !== checkedEvents.filter(e => e.type === 'host_recheck').length
+    || new Set(rechecks.map(r => r.eventId)).size !== rechecks.length
+    || rechecks.some(r => !checkedEvents.some(e => e.id === r.eventId && e.type === 'host_recheck' && e.actor === 'captain')
+      || !checkedEvents.some(e => e.id === r.reviewEventId && e.type === 'review'))) return false
   // These checks cross-reference the persisted contract, artifacts and receipt
   // identities. Known historical checker versions stay readable; freshness is
   // enforced at new review/integration mutations, not while loading history.
   try {
+    for (const recheck of rechecks) {
+      validateTaskEvidenceIntegrity(value.contract as QualityContract, recheck.evidence, recheck.evidence.attempt)
+      if (!recheck.evidence.artifactCheckReceipts?.length || recheck.evidence.artifactCheckReceipts.some(r => r.results.some(x => x.status !== 'passed'))) return false
+    }
     for (const evidence of value.evidenceHistory as TaskEvidence[]) {
       validateArtifactCheckReceipts(value.contract as QualityContract, evidence, evidence.attempt)
       validateIndependentReview(value.contract as QualityContract, evidence, true)

@@ -25,6 +25,10 @@ const fixture = `
     };
     const first=consume(captain,'captain',new AbortController().signal);
     await until(()=>queueActive===1,'first actual provider stream entered');
+    const queueUrl='http://'+req.headers.host+'/plugins/dsh-expert-library/request-queue';
+    const diagnostic=async()=>{const response=await fetch(queueUrl,{headers:{cookie:req.headers.cookie??''}});assert.equal(response.status,200);return response.json()};
+    assert.equal((await fetch(queueUrl)).status,401,'queue diagnostics require native Host authentication');
+    assert.equal((await fetch(queueUrl,{method:'POST',headers:{cookie:req.headers.cookie??''}})).status,405,'queue diagnostics must be read-only');
     const beforeMemberRequests=requests.length;
     queueProbeEnabled=true;
     const second=wake(captain,researcher,kimi,'kimi-researcher');second.catch(()=>{});
@@ -34,9 +38,15 @@ const fixture = `
     await pause(30);
     assert.deepEqual(queueEntries,['captain'],'scoped member must wait behind captain; canceled request must not dispatch');
     assert.equal(requests.length,beforeMemberRequests,'real member request must not reach adapter while captain owns capacity');
+    let queuedSnapshot;
+    await until(async()=>{queuedSnapshot=await diagnostic();return queuedSnapshot.requests.some(row=>row.sessionId===researcher.member_id&&row.status==='waiting')},'actual member queue timing');
+    assert.ok(queuedSnapshot.requests.some(row=>row.sessionId===captain.id&&row.status==='active'));
     releaseQueueFirst();await Promise.all([first,second]);queueProbeEnabled=false;
     assert.deepEqual(queueEntries,['captain','member']);assert.equal(queueMax,1);assert.equal(queueActive,0);
-    const queueProbe={actualHostWaterfall:true,hostSettingsConsumed:true,captainAndMemberScopesShareLimit:true,fifo:true,canceledRequestNeverDispatched:true,maxConcurrentAdapterStreams:queueMax,dispatchOrder:queueEntries.slice(),modelNetworkCalls:0};
+    const completedSnapshot=await diagnostic(),timing=completedSnapshot.requests.find(row=>row.sessionId===researcher.member_id&&row.sequence===queuedSnapshot.requests.find(row=>row.sessionId===researcher.member_id&&row.status==='waiting').sequence);
+    assert.equal(timing.status,'finished');assert.ok(timing.waitMs>0&&timing.streamMs>=0);
+    assert.ok(completedSnapshot.requests.some(row=>row.status==='canceled'&&row.admittedAt===undefined));
+    const queueProbe={actualHostWaterfall:true,hostSettingsConsumed:true,captainAndMemberScopesShareLimit:true,fifo:true,canceledRequestNeverDispatched:true,maxConcurrentAdapterStreams:queueMax,dispatchOrder:queueEntries.slice(),modelNetworkCalls:0,authenticatedReadOnlyTimings:true,memberTiming:timing,diagnosticsGeneration:completedSnapshot.generation};
 `
 function enhanced(workspace, nonce) {
   let source = probePlugin(workspace, nonce)
@@ -44,6 +54,8 @@ function enhanced(workspace, nonce) {
     if(source.split(anchor).length !== 2)throw Error('QUEUE_PROBE_ANCHOR_CHANGED')
     source=source.replace(anchor,value)
   }
+  replace('const exercise=async()=>{','const exercise=async(req)=>{')
+  replace('run??=exercise();','run??=exercise(req);')
   replace('  let captainSessionId;', '  let captainSessionId,queueActive=0,queueMax=0,releaseQueueFirst,queueProbeEnabled=false; const queueEntries=[];')
   replace('    async *stream(options){', '    async *stream(options){'+adapter+`
       if(queueProbeEnabled && options.sessionId!==captainSessionId){assert.equal(queueActive,0,'real member adapter overlaps captain');queueMax=Math.max(queueMax,queueActive+1);queueEntries.push('member')}

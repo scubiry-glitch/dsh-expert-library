@@ -1,3 +1,6 @@
+import { isCompactResearch, isResearchV5, isV5WorkingTask } from './research-release.ts'
+import { validatePlanArtifactFlow } from './plan-artifact-flow.ts'
+import { outlineTaskGuidance } from './plan-review.ts'
 /**
  * ExecutionPlan → TeamRuntime apply bridge.
  *
@@ -48,9 +51,11 @@
 
 import type { Context } from '@deepseek-ai/cordis'
 import type { Agent } from '@deepseek-ai/dsh-agent'
+import { memberWorkTools } from './capability-scope.ts'
 import { CAPTAIN_KEY, readTeam, withTeamLock, writeTeam, syncTaskProjectInput } from './state.ts'
 import type { SharedTaskContext } from './types.ts'
 import { reportArtifactCheck, reportCheckDeliverables, isReportCraftBinding, requireCurrentSkillCraftSelection, requireNewReportCraftSelection } from './report-bundle.ts'
+import { matchesTaskMaterialSelection, requireCurrentTaskMaterialSelection } from './task-material-binding.ts'
 import {
   addMemberCore,
   createTaskCore,
@@ -205,8 +210,10 @@ function buildDescription(
  * the same `ExpandedPlan` (golden property).
  */
 export function expandExecutionPlan(plan: ExecutionPlan, opts: ApplyPlanOptions): ExpandedPlan {
+  validatePlanArtifactFlow(plan.tasks)
   for (const task of plan.tasks) {
     if (!isReportCraftBinding(task.reportBundle, task.frozenSkillCraftContract)) throw new Error('SKILL_CRAFT_CONTRACT_MISMATCH: compiled task selections require a matching Host-frozen contract')
+    if (!matchesTaskMaterialSelection(task.skillBindings, task.promptBinding, task.frozenTaskMaterialContract)) throw new Error(`TASK_BINDING_CONTRACT: ${task.id}`)
   }
   // 1. Roster → members, deduped by expertId (first occurrence wins).
   const seen = new Set<string>()
@@ -268,7 +275,7 @@ export function expandExecutionPlan(plan: ExecutionPlan, opts: ApplyPlanOptions)
         logicalId: logical.id,
         ...(logical.owner === 'captain' ? { assignee: CAPTAIN_KEY } : {}),
         subject: interpolate(logical.subject ?? '', values),
-        ...buildDescription(logical.description, values, opts.taskSuffixes?.[id]),
+        ...buildDescription(logical.description, values, (opts.taskSuffixes?.[id] ?? '') + outlineTaskGuidance(plan, logical.id)),
         dependsOn: [...deps],
       })
     } else {
@@ -283,7 +290,7 @@ export function expandExecutionPlan(plan: ExecutionPlan, opts: ApplyPlanOptions)
           logicalId: logical.id,
           fanOutIndex: index,
           subject: interpolate(logical.subject ?? '', values),
-          ...buildDescription(logical.description, values, opts.taskSuffixes?.[id]),
+          ...buildDescription(logical.description, values, (opts.taskSuffixes?.[id] ?? '') + outlineTaskGuidance(plan, logical.id)),
           dependsOn: [...deps],
           assigneeExpertId: expertId,
         })
@@ -300,6 +307,13 @@ export function expandExecutionPlan(plan: ExecutionPlan, opts: ApplyPlanOptions)
     ...(plan.scenario?.id === undefined ? {} : { scenarioId: plan.scenario.id }),
   }
   return { members, tasks, planRef }
+}
+
+/** Grant the provider tool only to members with an assigned, plan-approved data capability. */
+export function memberProviderCallTools(plan: ExecutionPlan, expertId: string): readonly string[] | undefined {
+  return plan.tasks.some(task => task.expertIds.includes(expertId) && task.allowedCapabilities.length > 0)
+    ? [...memberWorkTools(), 'expert_provider_call']
+    : undefined
 }
 
 /**
@@ -324,6 +338,7 @@ export async function applyExecutionPlan(
   for (const task of plan.tasks) {
     requireNewReportCraftSelection(task.reportBundle)
     await requireCurrentSkillCraftSelection(ctx, config, workspace, task.reportBundle, task.frozenSkillCraftContract)
+    requireCurrentTaskMaterialSelection(task.skillBindings, task.promptBinding, task.frozenTaskMaterialContract)
   }
   const expanded = expandExecutionPlan(plan, opts)
   await validateFrozenPlanModelRoutes(ctx, captain, plan, signal)
@@ -342,6 +357,7 @@ export async function applyExecutionPlan(
     const memberNameByExpert = new Map<string, string>()
     const members: ApplyPlanResult['members'] = []
     for (const member of expanded.members) {
+      const allowedTools = memberProviderCallTools(plan, member.expertId)
       const added = await addMemberCore(ctx, config, captain, {
         // Template-compiled members carry only expertId (compiler `memberOf`
         // never sets sourceExpertId); profile-backed members carry the library
@@ -352,6 +368,7 @@ export async function applyExecutionPlan(
         ...(member.displayName === undefined ? {} : { name: member.displayName }),
         ...(member.role === undefined ? {} : { role: member.role }),
         ...(member.maxDepth === undefined ? {} : { maxDepth: member.maxDepth }),
+        ...(allowedTools === undefined ? {} : { allowedTools }),
         ...(member.modelPolicy === undefined ? {} : {
           provider: member.modelPolicy.provider,
           model: member.modelPolicy.model,
@@ -391,6 +408,22 @@ export async function applyExecutionPlan(
       const fresh = await readTeam(stateRoot, team.team_id)
       if (fresh === undefined) return
       fresh.planRef = expanded.planRef
+      fresh.reviewSnapshot = structuredClone({ ...(plan.reviewUi ? { ui: plan.reviewUi } : {}), roster: plan.roster, deliverables: plan.deliverables, gates: plan.gates })
+      for (const task of fresh.tasks) {
+        const logical = plan.tasks.find(candidate => candidate.id === taskPlanMap.get(task.id)?.logicalId)
+        task.planTask = taskPlanMap.get(task.id)
+        if(isResearchV5(fresh) && logical?.produces) task.declaredPublications = [...logical.produces]
+        if (logical?.humanChoice !== undefined) {
+          const sources = expanded.tasks.filter(candidate => candidate.logicalId === logical.humanChoice!.sourceTaskId)
+          if (sources.length !== 1 || !task.dependencies.includes(sources[0]!.id)) throw new Error('HUMAN_CHOICE_SOURCE_NOT_UNIQUE')
+          task.humanChoice = { sourceTaskId: sources[0]!.id, artifact: logical.humanChoice.artifact, options: [...logical.humanChoice.options] }
+        }
+        if (logical?.frozenTaskMaterialContract !== undefined) {
+          task.skillBindings = [...structuredClone(logical.skillBindings!)]
+          task.promptBinding = structuredClone(logical.promptBinding!)
+          task.frozenTaskMaterialContract = structuredClone(logical.frozenTaskMaterialContract)
+        }
+      }
       fresh.planProvenance = { params: { ...plan.params }, compile: plan.provenance }
       // Runtime capability scoping: persist each logical task's
       // `allowedCapabilities` so `expert_provider_call` can enforce the plan
@@ -408,13 +441,14 @@ export async function applyExecutionPlan(
       if (opts.structuredQuality === true) {
         const structuredQualityPolicy = {
           required: plan.reviewPolicy?.required !== false,
-          maxRepairRounds: Math.min(plan.reviewPolicy?.maxRepairRounds ?? 2, 2),
+          maxRepairRounds: isCompactResearch(fresh) ? (plan.reviewPolicy?.maxRepairRounds ?? 2) : Math.min(plan.reviewPolicy?.maxRepairRounds ?? 2, 2),
         }
         fresh.structuredQualityPolicy = structuredQualityPolicy
       }
       if (opts.structuredQuality === true && fresh.structuredQualityPolicy?.required !== false && fresh.tasks.length > 0) {
         const qualityRuns: Record<string, ReturnType<typeof createQualityRun>> = {}
         for (const task of fresh.tasks) {
+          if (task.humanChoice !== undefined || isV5WorkingTask(fresh,task)) continue
           const projectRoot = task.project?.path ?? `expert-tasks/${task.id}`
           const compiledTask = plan.tasks.find(logical => logical.id === taskPlanMap.get(task.id)?.logicalId)
           const reportBundle = compiledTask?.reportBundle
@@ -439,8 +473,8 @@ export async function applyExecutionPlan(
                 .map((statement, index) => ({ id: `profile-acceptance-${index + 1}`, statement })),
             ],
             verify: ['true'],
-            deliverables: ['task-output', ...(check === undefined ? [] : reportCheckDeliverables(check))],
-            changedPaths: [`${team.team_id}/${projectRoot}/output/**`, ...(check === undefined ? [] : [`${team.team_id}/${projectRoot}/artifacts/**`])],
+            deliverables: [...new Set(['task-output', ...(compiledTask?.produces ?? []).map(name => `published:${name}`), ...(check === undefined ? [] : reportCheckDeliverables(check))])],
+            changedPaths: [`${team.team_id}/${projectRoot}/output/**`, ...(check === undefined && !compiledTask?.produces?.length ? [] : [`${team.team_id}/${projectRoot}/artifacts/**`])],
             ...(check === undefined ? {} : { artifactChecks: [check] }),
             maxRepairRounds: fresh.structuredQualityPolicy?.maxRepairRounds ?? 2,
           })
@@ -453,6 +487,8 @@ export async function applyExecutionPlan(
       for (const task of fresh.tasks) {
         const planTask = taskPlanMap.get(task.id)
         if (planTask !== undefined) task.planTask = planTask
+        const flow = plan.tasks.find(logical => logical.id === planTask?.logicalId)?.artifactInputs
+        if (flow !== undefined) task.plannedArtifactInputs = flow.map(input => ({ ...input }))
         await syncTaskProjectInput(stateRoot, fresh, task)
       }
       await writeTeam(stateRoot, fresh)

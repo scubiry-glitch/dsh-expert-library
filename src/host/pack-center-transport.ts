@@ -86,8 +86,9 @@ function checkedPath(path: string, method: 'GET' | 'POST', download = false): st
     if (!list || !rawQuery || /%(?![0-9a-f]{2})/i.test(rawQuery)) throw error('CENTER_INVALID_REQUEST')
     const parameters = new URLSearchParams(rawQuery)
     for (const [key, value] of parameters) {
-      if (!['limit', 'beforeId', 'packId'].includes(key) || parameters.getAll(key).length !== 1
-        || (key === 'limit' ? !/^[1-9][0-9]?$|^100$/.test(value) : !safeId(value))) throw error('CENTER_INVALID_REQUEST')
+      if (!['limit', 'beforeId', 'packId', 'type'].includes(key) || parameters.getAll(key).length !== 1
+        || (key === 'limit' ? !/^[1-9][0-9]?$|^100$/.test(value)
+          : key === 'type' ? !/^[a-z][a-z0-9-]{0,31}$/.test(value) : !safeId(value))) throw error('CENTER_INVALID_REQUEST')
     }
   }
   return path

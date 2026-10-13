@@ -120,3 +120,17 @@ test('profile runtime adapter produces deterministic seed and captain execution 
   assert.deepEqual(dynamic.tasks, [])
   assert.equal(dynamic.roster.length, captain.members.length)
 })
+
+test('seed task provider grants stay on the task and an explicit empty list denies access', () => {
+  const seed = parseProfile({
+    ...base,
+    members: [{ name: 'researcher', capabilities: ['realestate.rent.search'] }],
+    tasks: [
+      { id: 'probe', subject: '目录探针', owner: 'researcher', allowedCapabilities: ['realestate.indicators.catalog'] },
+      { id: 'closed', subject: '整理证据', owner: 'researcher', allowedCapabilities: [] },
+    ],
+  })
+  const plan = profileToExecutionPlan(seed)
+  assert.deepEqual(plan.tasks.map(task => task.allowedCapabilities), [['realestate.indicators.catalog'], []])
+  assert.throws(() => parseProfile({ ...base, tasks: [{ id: 'bad', subject: '坏授权', allowedCapabilities: 'realestate.indicators.catalog' }] }), /allowedCapabilities/)
+})

@@ -33,6 +33,30 @@ test('real child receives four hash-bound bytes, fixed protocol and no producer 
  console.log(JSON.stringify(input.resultIds.toReversed().map(id=>({id,status:'passed',detail:'bytes verified'}))));`)
  const results=await evaluateSkillCraft(f.artifacts,f.spec);all(results,'passed');assert.deepEqual(results.map(r=>r.id),['qa-first','qa-second'])
 })
+
+test('legacy chunk-by-chunk runner preserves multilingual bytes and metadata across every possible UTF-8 split',async t=>{
+ // Deliberately emulate the frozen CLI bug at the worst boundary: one byte
+ // per string conversion. This fails deterministically with raw UTF-8 stdin.
+ const f=await fixture(t,`import {createHash} from 'node:crypto';
+ let raw='';for await(const chunk of process.stdin)for(const byte of chunk)raw+=Buffer.from([byte]);
+ const input=JSON.parse(raw);
+ if(!input.selections.some(s=>s.reason==='中文复核 🐺 café'))throw Error('metadata corrupted');
+ for(const a of Object.values(input.artifacts)){
+  if(a.encoding!=='base64'||createHash('sha256').update(Buffer.from(a.content,a.encoding)).digest('hex')!==a.sha256)throw Error('hash mismatch');
+ }
+ console.log(JSON.stringify(input.resultIds.map(id=>({id,status:'passed',detail:'Exact multilingual bytes survived legacy stdin chunk decoding'}))));`)
+ // Resolve a genuinely frozen contract with the Unicode selection reason.
+ const selection=await resolveSelectedSkillContract({}, {packsDir:'domain-packs',enabledPacks:[f.installed.packId]},f.workspace,
+  f.installed.selections.map(s=>({...s,reason:'中文复核 🐺 café'})))
+ for (const index of [0,1,3]) {
+  const content='上海租赁成交 🐺 café\r\n'.repeat(12000)+String(index)
+  Object.assign(f.artifacts[index],{content,encoding:'utf8',sha256:sha(Buffer.from(content))})
+ }
+ // Evidence has the smaller 256 KiB limit.
+ f.artifacts[3].content='中文证据 🐺'.repeat(1000)
+ f.artifacts[3].sha256=sha(Buffer.from(f.artifacts[3].content))
+ all(await evaluateSkillCraft(f.artifacts,{...f.spec,selection},{timeoutMs:15000}),'passed')
+})
 test('two explicitly selected skills execute declared checks with disjoint exact result sets',async t=>{
  const f=await fixture(t,success,[{id:'render',runnerCode:success,resultIds:['qa-render']}]);const results=await evaluateSkillCraft(f.artifacts,f.spec);all(results,'passed');assert.deepEqual(results.map(r=>r.id),['qa-first','qa-second','qa-render'])
 })

@@ -7,7 +7,7 @@ import type { PlanExecutionAuthorization } from '../plan-authorization.ts'
 const PREFIX = '/plugins/dsh-expert-library/teams'
 const MAX_BODY = 128 * 1024
 const MAX_TEXT = 16 * 1024
-const PATCH_FIELDS = new Set(['team_name', 'goal', 'data', 'city', 'period', 'profile', 'tasks', 'report_bundle'])
+const PATCH_FIELDS = new Set(['team_name', 'goal', 'data', 'city', 'period', 'profile', 'tasks', 'report_bundle', 'report_outline', 'plan_models', 'research_selection', 'research_material_selection'])
 
 export interface TeamRouteRequest {
   readonly action: TeamAction
@@ -16,8 +16,19 @@ export interface TeamRouteRequest {
   readonly planId?: string
   readonly expectedDigest?: string
   readonly expectedRevision?: number
+  /** Host-internal context CAS for an explicitly reviewed context-only revision. */
+  readonly expectedContextSha256?: string
   readonly patch?: Record<string, unknown>
   readonly reason?: string
+  readonly taskId?: string
+  readonly expectedAttemptId?: string
+  readonly expectedWaitReason?: string
+  readonly choice?: string
+  readonly choices?: readonly string[]
+  readonly expectedSha256?: string
+  /** Host-internal only; never parsed from the public team route body. */
+  readonly actor?: 'scoped-review-token'
+  readonly reviewTokenId?: string
 }
 export interface TeamRouteTarget {
   readonly stateRoot: string
@@ -36,6 +47,8 @@ export interface TeamRouteRuntime {
   readonly read: (target: TeamRouteTarget) => Promise<TeamWireResponse>
   readonly action: (target: TeamRouteTarget, request: TeamRouteRequest) => Promise<TeamWireResponse>
   readonly authorization?: (captain: string, action: 'read' | 'authorize' | 'revoke', input?: Record<string, unknown>) => Promise<PlanExecutionAuthorization | undefined>
+  /** Read-only catalog of registered routes. Never includes credentials or provider settings. */
+  readonly modelCatalog?: (captainSessionId: string) => Promise<readonly { provider: string; model: string; name: string; reasoningEffort?: string }[]>
 }
 
 function reply(res: ServerResponse, status: number, value: unknown): void {
@@ -82,17 +95,22 @@ async function body(req: IncomingMessage): Promise<Record<string, unknown> | und
 function parseRequest(input: Record<string, unknown>): TeamRouteRequest | undefined {
   const action = input.action
   const captainSessionId = input.captainSessionId
-  if (!['edit', 'approve', 'discard', 'halt', 'resume', 'archive'].includes(String(action)) || !validId(captainSessionId)) return undefined
+  if (!['edit', 'recommend', 'approve', 'discard', 'halt', 'resume', 'archive', 'choose'].includes(String(action)) || !validId(captainSessionId)) return undefined
   if ((input.teamId !== undefined && !validId(input.teamId)) || (input.planId !== undefined && !validId(input.planId))) return undefined
   const patch = input.patch
   if (patch !== undefined && (typeof patch !== 'object' || patch === null || Array.isArray(patch))) return undefined
+  if (action === 'recommend' && (patch !== undefined || input.teamId !== undefined || input.taskId !== undefined || input.choice !== undefined)) return undefined
   if (patch !== undefined && Object.keys(patch as Record<string, unknown>).some(key => !PATCH_FIELDS.has(key))) return undefined
   for (const value of Object.values((patch ?? {}) as Record<string, unknown>)) if (typeof value === 'string' && value.length > MAX_TEXT) return undefined
   const expectedRevision = Number.isSafeInteger(input.expectedRevision) ? input.expectedRevision as number : undefined
   const expectedDigest = typeof input.expectedDigest === 'string' && input.expectedDigest.trim() !== '' ? input.expectedDigest.trim() : undefined
-  if ((action === 'edit' || action === 'approve' || action === 'discard')
+  if ((action === 'edit' || action === 'recommend' || action === 'approve' || action === 'discard')
     && (!validId(input.planId) || expectedDigest === undefined || expectedRevision === undefined || expectedRevision < 0)) return undefined
-  return { action: action as TeamAction, captainSessionId, ...(validId(input.teamId) ? { teamId: input.teamId } : {}), ...(validId(input.planId) ? { planId: input.planId } : {}), ...(expectedDigest === undefined ? {} : { expectedDigest }), ...(expectedRevision === undefined ? {} : { expectedRevision }), ...(patch === undefined ? {} : { patch: patch as Record<string, unknown> }), ...(typeof input.reason === 'string' ? { reason: input.reason.slice(0, MAX_TEXT) } : {}) }
+  const singleChoice = typeof input.choice === 'string' && input.choice.length > 0 && input.choice.length <= 80 && input.choices === undefined
+  const multipleChoices = input.choice === undefined && Array.isArray(input.choices) && input.choices.length > 0 && input.choices.length <= 8
+    && input.choices.every(choice => typeof choice === 'string' && choice.length > 0 && choice.length <= 200)
+  if (action === 'choose' && (!validId(input.teamId) || !validId(input.taskId) || (!singleChoice && !multipleChoices) || !/^[a-f0-9]{64}$/iu.test(String(input.expectedSha256)))) return undefined
+  return { action: action as TeamAction, captainSessionId, ...(validId(input.teamId) ? { teamId: input.teamId } : {}), ...(validId(input.planId) ? { planId: input.planId } : {}), ...(expectedDigest === undefined ? {} : { expectedDigest }), ...(expectedRevision === undefined ? {} : { expectedRevision }), ...(patch === undefined ? {} : { patch: patch as Record<string, unknown> }), ...(typeof input.reason === 'string' ? { reason: input.reason.slice(0, MAX_TEXT) } : {}), ...(action === 'choose' ? { taskId: input.taskId as string, ...(singleChoice ? { choice: input.choice as string } : { choices: input.choices as string[] }), expectedSha256: input.expectedSha256 as string } : {}) }
 }
 
 /** Handle `/plugins/dsh-expert-library/teams` and its subpaths. */
@@ -123,6 +141,11 @@ export async function handleTeamRoutes(req: IncomingMessage, res: ServerResponse
     }
     const target = await runtime.resolve(captain, teamId, planId)
     if (target === undefined || target.captainSessionId !== captain) { error(res, 404, 'TEAM_NOT_FOUND'); return true }
+    if (url.searchParams.get('models') === '1') {
+      if (planId === undefined || teamId !== undefined || runtime.modelCatalog === undefined) { error(res, 400, 'TEAM_INVALID_INPUT'); return true }
+      try { reply(res, 200, { version: 1, models: await runtime.modelCatalog(captain) }) } catch { error(res, 400, 'TEAM_MODEL_CATALOG_UNAVAILABLE') }
+      return true
+    }
     try { reply(res, 200, await runtime.read(target)) } catch { error(res, 400, 'TEAM_ACTION_FAILED') }
     return true
   }
@@ -139,12 +162,14 @@ export async function handleTeamRoutes(req: IncomingMessage, res: ServerResponse
   }
   const request = parseRequest(parsed)
   if (request === undefined) { error(res, 400, 'TEAM_INVALID_INPUT'); return true }
+  if (request.action === 'choose' && runtime.hostAuth === undefined) { error(res, 403, 'TEAM_FORBIDDEN'); return true }
   const target = await runtime.resolve(request.captainSessionId, request.teamId, request.planId)
   if (target === undefined || target.captainSessionId !== request.captainSessionId) { error(res, 404, 'TEAM_NOT_FOUND'); return true }
   try { reply(res, 200, { ok: true, ...(await runtime.action(target, request)) }) } catch (cause: unknown) {
     const message = cause instanceof Error ? cause.message : ''
-    const code = /digest|revision|CAS|stale/u.test(message) ? 'TEAM_CAS_CONFLICT' : /not found/u.test(message) ? 'TEAM_NOT_FOUND' : 'TEAM_ACTION_FAILED'
-    error(res, code === 'TEAM_CAS_CONFLICT' ? 409 : code === 'TEAM_NOT_FOUND' ? 404 : 400, code)
+    const reviewCode = /^(PLAN_(?:OUTLINE_[A-Z_]+|ARTIFACT_[A-Z_]+|DEPENDENCY_UNJUSTIFIED|REVIEW_INVALID|MODELS_INVALID|CAPTAIN_MODEL_SWITCH_REQUIRED|MODEL_UNAVAILABLE)|RESEARCH_RECOMMENDATION_[A-Z_]+|DEEP_RESEARCH_SELECTION_INVALID)/u.exec(message)?.[1]
+    const code = reviewCode ?? (/cannot resolve a usable member LLM route/u.test(message) ? 'PLAN_MODEL_UNAVAILABLE' : /digest|revision|CAS|stale/u.test(message) ? 'TEAM_CAS_CONFLICT' : /not found/u.test(message) ? 'TEAM_NOT_FOUND' : 'TEAM_ACTION_FAILED')
+    error(res, code === 'TEAM_CAS_CONFLICT' || code === 'RESEARCH_RECOMMENDATION_STALE' ? 409 : code === 'TEAM_NOT_FOUND' ? 404 : 400, code)
   }
   return true
 }

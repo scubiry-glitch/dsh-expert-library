@@ -1,0 +1,25 @@
+[Unit]
+Description=Zhijian residential v2 frozen demo adapter for account C
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=zhijian-dsh-demo-c
+Group=zhijian-dsh-demo-c
+WorkingDirectory=/var/lib/zhijian/customer-dsh-zhijian-demo-c/private-runtime
+Environment=RESIDENTIAL_V2_ROOT=/var/lib/zhijian/customer-dsh-zhijian-demo-c/private-runtime/fz_single_property_toolkit_20261008_v2
+Environment=RESIDENTIAL_V2_JOBS=/var/lib/zhijian/customer-dsh-zhijian-demo-c/private-runtime/cases/jobs
+Environment=RESIDENTIAL_V2_PORT=8793
+ExecStart=/opt/zhijian/customer-portal/node /opt/zhijian/residential-v2-adapter-c/server.mjs
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/zhijian/customer-dsh-zhijian-demo-c/private-runtime/cases/jobs
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target

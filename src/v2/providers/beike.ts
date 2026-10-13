@@ -11,12 +11,8 @@
  * binary, so failures carry a stable fallback code and **never** an invented
  * retry directive.
  *
- * ⚠ The binary (`beike` v0.2.24, macOS arm64) is **not executable on this
- * Linux host**; the command surface was recovered by static analysis
- * (strings/symbols). Operation→tool-name/argv mappings and the live response
- * schema/caliber are therefore **unverified** — marked as such in the manifest
- * caveats and compensated by fail-closed invocation when the binary or key is
- * unavailable.
+ * The Linux beike 0.2.26 CLI supports a subset of the MCP read surface.
+ * Unsupported capabilities remain on MCP HTTP even when CLI is preferred.
  * @module dsh-expert-library/v2/providers/beike
  */
 
@@ -32,7 +28,7 @@ import type { ToolCapability, ToolProviderManifest, ToolTransport } from '../typ
 import { SCHEMA_VERSION } from '../types.ts'
 
 /* ------------------------------------------------------------------ *
- *  Operation tables (UNVERIFIED — static-analysis derived).
+ *  Operation tables.
  * ------------------------------------------------------------------ */
 
 /** Read operations (bind the read-only MCP HTTP transport). */
@@ -85,7 +81,7 @@ export const BEIKE_OPERATION_BY_OPERATION: Readonly<Record<string, string>> = Ob
 
 const BEIKE_CAVEATS: readonly string[] = [
   '【实测 2026-08-22】MCP 端点 building.ke.com/mcp（serverInfo 布丁MCP服务 3.4.6，protocolVersion 2025-03-26），Authorization: Bearer 认证，17 个工具枚举核对；工具名与 CLI 静态分析推导不同，以本表实测名为准',
-  'CLI 二进制为 macOS arm64，本机 Linux 不可执行；CLI transport 仅在配置了可用二进制时声明',
+  '【实测 2026-10-08】Linux beike 0.2.26 CLI 支持 buy/rent/policy search；仅这些已映射的只读能力在 preferCli 时走 CLI，其余继续走 MCP HTTP',
   '无稳定业务错误码（clap 参数错 exit 2，panic 101）；以 --json 输出与 stderr 判定成败，retry 由调用方决定',
   '写/敏感操作（rent appoint / agent contact / decor contact → wecom_add_contact_qrcode，涉个人信息）readOnly=false，必须审批',
   '统计口径（成交/均价）由服务端定义；逐响应 schema 已实测可解析，DataGate 口径规则随业务使用固化',
@@ -111,14 +107,15 @@ export interface BeikeManifestOptions {
   readonly cliCommand?: string
   /** Bind read capabilities to the CLI transport instead of MCP HTTP. */
   readonly preferCli?: boolean
-  /** Provider manifest version (default `0.2.24`). */
+  /** Provider manifest version (default `0.2.26`). */
   readonly version?: string
   /** Per-call timeout in milliseconds (default 60_000). */
   readonly timeoutMs?: number
 }
 
 /**
- * Build the beike manifest. Reads bind the read-only `mcp-http` transport;
+ * Build the beike manifest. CLI-supported reads may bind `cli`; other reads
+ * bind the read-only `mcp-http` transport;
  * writes bind the dedicated `mcp-http-write` transport (same endpoint,
  * `readOnly: false`) so the registry's write gate and approval flow apply.
  * An optional `cli` transport is added when a binary is configured.
@@ -138,22 +135,16 @@ export function buildBeikeManifest(options: BeikeManifestOptions = {}): ToolProv
       kind: 'local-cli',
       id: 'cli',
       command: cliCommand,
-      args: ['--json'],
       timeoutMs,
       readOnly: true,
-      auth: { credentialRef: 'BEIKE_MCP_API_KEY', source: 'env' },
+      auth,
     })
   }
-  // 读取绑定固定走 mcp-http：能力表里的工具名（house_search/rent_house_search
-  // 等）是贝壳 MCP 服务端工具名，不是 CLI 子命令；local-cli transport 的全局
-  // `--json` 拼装会被 CLI 拒绝（unexpected argument '--json'）。修复
-  // 2026-09-28（上海租赁报告 v5 回填实测：cli 绑定全部报 BEIKE_ERROR）。
-  const readBind = 'mcp-http'
   const capabilities: ToolCapability[] = [
     ...Object.entries(BEIKE_READ_OPERATIONS).map(([capability, tool]) => ({
       capability,
       operation: `beike.${tool}`,
-      transportId: readBind,
+      transportId: preferCli && cliCommand && CLI_READ_TOOLS.has(tool) ? 'cli' : 'mcp-http',
       caliber: '贝壳线上实时数据（口径由服务端定义，待实测）',
       freshness: 'realtime' as const,
     })),
@@ -187,33 +178,76 @@ export interface BeikeMCPCall {
   readonly params: { readonly name: string; readonly arguments: Readonly<Record<string, unknown>> }
 }
 
-/**
- * Build the MCP `tools/call` request for one operation. The tool name is the
- * static-analysis-derived dotted id (e.g. `buy.search`) — **unverified**
- * against the live proxy; the arguments are passed through verbatim.
- */
+/** Parameter errors are caller-correctable and must not become transport retries. */
+export class BeikeInputError extends Error {}
+
+/** Map dataset field names to the live MCP schema (verified 2026-10-06). */
 export function beikeMCPCallParams(operation: string, input: unknown): BeikeMCPCall {
   const tool = BEIKE_OPERATION_BY_OPERATION[operation] ?? BEIKE_OPERATION_TOOLS[operation]
   if (tool === undefined) throw new Error(`unknown beike operation: ${operation}`)
-  return { method: 'tools/call', params: { name: tool, arguments: isRecord(input) ? input : {} } }
+  if (tool !== 'rent_house_search' && tool !== 'policy_search')
+    return { method: 'tools/call', params: { name: tool, arguments: isRecord(input) ? input : {} } }
+  if (!isRecord(input)) throw new BeikeInputError('input must be an object')
+  const fields = new Set(['city', 'city_name', 'query', ...(tool === 'policy_search' ? ['topic'] : ['period', 'business_types'])])
+  const unknown = Object.keys(input).filter(key => !fields.has(key))
+  if (unknown.length) throw new BeikeInputError(`Unsupported ${tool} fields: ${unknown.join(', ')}; express search constraints in query`)
+  const text = (key: string): string | undefined => {
+    const value = input[key]
+    if (value === undefined) return undefined
+    if (typeof value !== 'string' || !value.trim()) throw new BeikeInputError(`${key} must be a nonempty string`)
+    return value.trim()
+  }
+  const city = text('city'), nativeCity = text('city_name')
+  if (city && nativeCity && city !== nativeCity) throw new BeikeInputError('city and city_name conflict')
+  const cityName = nativeCity ?? city
+  if (!cityName) throw new BeikeInputError('city or city_name is required')
+  const query = text('query'), topic = text('topic')
+  text('period') // A research period is metadata, never a historical filter.
+  if (tool === 'policy_search' && !query && !topic) throw new BeikeInputError('topic or query is required')
+  const args: Record<string, unknown> = { city_name: cityName,
+    query: tool === 'policy_search' ? [topic, query].filter((value, i, all) => value && all.indexOf(value) === i).join('；')
+      : query ?? `${cityName}当前在租房源` }
+  if (input.business_types !== undefined) {
+    if (!Array.isArray(input.business_types) || input.business_types.some(value => value !== '省心租' && value !== '普租'))
+      throw new BeikeInputError('business_types must be an array containing only 省心租 / 普租')
+    args.business_types = input.business_types
+  }
+  return { method: 'tools/call', params: { name: tool, arguments: args } }
 }
 
 /**
- * Build the one-shot CLI argv for one operation (`buy search …`, `rent
- * search …`), appending input keys as `--key value` flags. **Unverified**
- * against the binary — compensated by fail-closed invocation.
+ * Build argv for the verified Linux CLI read subset. `--json` belongs after
+ * the subcommand; MCP tool names are never passed as CLI subcommands.
  */
+const CLI_READ_TOOLS = new Set(['house_search', 'rent_house_search', 'policy_search'])
+
 export function beikeCliArgv(operation: string, input: unknown): string[] {
   const tool = BEIKE_OPERATION_BY_OPERATION[operation] ?? BEIKE_OPERATION_TOOLS[operation]
   if (tool === undefined) throw new Error(`unknown beike operation: ${operation}`)
-  const parts = tool.split('.')
-  const argv = [parts[0]!, ...(parts[1] !== undefined ? [parts[1]] : [])]
-  if (isRecord(input)) {
-    for (const [key, value] of Object.entries(input)) {
-      if (typeof value === 'string' && value !== '') argv.push(`--${key}`, value)
-    }
+  if (!CLI_READ_TOOLS.has(tool)) throw new BeikeInputError(`CLI does not support ${tool}`)
+  if (!isRecord(input)) throw new BeikeInputError('input must be an object')
+  const allowed = new Set(['city', 'city_name', 'query', ...(tool === 'policy_search' ? ['topic'] : tool === 'rent_house_search' ? ['period'] : [])])
+  const unknown = Object.keys(input).filter(key => !allowed.has(key))
+  if (unknown.length) throw new BeikeInputError(`Unsupported ${tool} CLI fields: ${unknown.join(', ')}`)
+  const value = (key: string): string | undefined => {
+    const raw = input[key]
+    if (raw === undefined) return undefined
+    if (typeof raw !== 'string' || !raw.trim()) throw new BeikeInputError(`${key} must be a nonempty string`)
+    return raw.trim()
   }
-  return argv
+  const city = value('city'), nativeCity = value('city_name')
+  if (city && nativeCity && city !== nativeCity) throw new BeikeInputError('city and city_name conflict')
+  const cityName = nativeCity ?? city
+  if (!cityName) throw new BeikeInputError('city or city_name is required')
+  const query = value('query')
+  value('period') // Research metadata, never a historical filter.
+  if (tool === 'policy_search') {
+    const topic = value('topic')
+    if (!topic && !query) throw new BeikeInputError('topic or query is required')
+    return ['policy', 'search', '--city', cityName, '--query', [topic, query].filter((part, i, parts) => part && parts.indexOf(part) === i).join('；'), '--json']
+  }
+  if (tool === 'rent_house_search') return ['rent', 'search', '--city', cityName, '--query', query ?? `${cityName}当前在租房源`, '--json']
+  return ['buy', 'search', '--city', cityName, '--query', query ?? `${cityName}二手房`, '--house-type', 'second', '--json']
 }
 
 /* ------------------------------------------------------------------ *
@@ -266,7 +300,20 @@ export function normalizeBeikeCliOutput(raw: BeikeCliResult, options: BeikeNorma
   } catch {
     json = undefined
   }
-  return normalizeBeikeEnvelope({ exitCode: raw.exitCode, json, stderr: raw.stderr } as BeikeRawResult, options)
+  const result = normalizeBeikeEnvelope({ exitCode: raw.exitCode, json, stderr: raw.stderr } as BeikeRawResult, options)
+  if (!result.ok || !isRecord(result.data) || typeof result.data['data'] !== 'string') return result
+  const text = result.data['data'] as string
+  const entries: Record<string, unknown>[] = []
+  for (const match of text.matchAll(/<(\d{8,})>\s*(\{[\s\S]*?\})\s*<\/\1>/g)) {
+    try {
+      const entity: unknown = JSON.parse(match[2]!)
+      if (!isRecord(entity)) continue
+      const summary = isRecord(entity['摘要信息']) ? entity['摘要信息'] : entity
+      entries.push({ id: match[1], ...summary })
+    } catch { /* Keep the raw response if one entity is malformed. */ }
+  }
+  if (!entries.length) return result
+  return { ...result, data: { ...result.data, data: { list: entries, text } } }
 }
 
 /**

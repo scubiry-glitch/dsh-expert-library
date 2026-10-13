@@ -21,9 +21,9 @@
  * - {@link buildZytManifest}: `http-api` transport (direct `/openapi/v1/*`)
  *   plus an optional `local-cli` transport when a `zyt` binary is configured.
  *
- * ⚠ Live schema/caliber of the backend responses are **unverified** — the
- * request-plan contract is verified offline against the upstream golden cases,
- * but actual response shapes/calibers require a live key.
+ * Live HTTP checks verified catalog, Beijing SH_VOL series, and two-city
+ * SH_VOL compare in the internal view; external-license view still needs its
+ * own account-level acceptance check.
  * @module dsh-expert-library/v2/providers/zyt
  */
 
@@ -461,7 +461,10 @@ export function zytPlanFromOperation(operation: string, input: unknown): ZytRequ
   const opts: Record<string, string> = {}
   for (const key of Object.keys(o)) {
     // canonical query keys are strings; coerce numbers (e.g. batch `limit`)
-    const value = typeof o[key] === 'number' ? String(o[key]) : stringOf(o[key])
+    const value = key === 'cities' && Array.isArray(o[key])
+      ? (o[key] as unknown[]).every(city => typeof city === 'string' && city.trim() !== '')
+        ? (o[key] as string[]).join(',') : undefined
+      : typeof o[key] === 'number' ? String(o[key]) : stringOf(o[key])
     if (value !== undefined) opts[key] = value
   }
   switch (command) {
@@ -612,7 +615,9 @@ export function buildZytManifest(options: ZytManifestOptions = {}): ToolProvider
       args: ['--json'],
       timeoutMs,
       readOnly: true,
-      auth: { credentialRef: 'ZYT_API_KEY', source: 'env' },
+      // Resolve from the account's private config, then pass the extracted
+      // apiKey to the CLI as an ephemeral env value in createZytInvoker.
+      auth: { credentialRef: 'ZYT_API_KEY', source: 'file', hint: '~/.config/zyt/config.json' },
     })
   }
   const bindTo = preferCli && cliCommand !== undefined && cliCommand !== '' ? 'cli' : 'http'
@@ -633,7 +638,7 @@ export function buildZytManifest(options: ZytManifestOptions = {}): ToolProvider
       'dataView：internal=真实绝对量；external=量类指数化（首值=100，勿当绝对量）',
       '退出码：0 成功 / 1 业务参数错 / 2 鉴权 / 3 网络或 5xx',
       'market-snapshot 联调 500，勿作硬依赖',
-      '⚠ 响应 schema/口径待实测（本机无 zyt 二进制，契约按源码 + 离线用例验证）',
+      '内部授权口径已实测；外部客户口径需按各账号许可单独验收',
     ],
   }
 }

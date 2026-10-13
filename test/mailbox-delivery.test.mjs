@@ -63,6 +63,18 @@ test('member mailbox filters IDs independently and ignores forged receipts in bo
   assert.equal(f.calls.length, 3)
 })
 
+test('idle member with a stranded next-step receipt gets a real queued turn', async () => {
+  const f = fixture()
+  f.child.status = 'idle'
+  f.child.inbox.nextStep.push({
+    source: { kind: 'plugin', plugin: 'dsh-expert-library' },
+    content: [{ type: 'text', text: `${prefix}["stranded"]\n\nOld steer` }],
+  })
+  assert.equal(await f.deliver([message('stranded')]), true)
+  assert.equal(f.calls.length, 1)
+  assert.equal(f.child.inbox.nextTurn.length, 1)
+})
+
 test('member mailbox permits cold delivery and retries failed or canceled unconsumed messages', async () => {
   const f = fixture()
   f.setLive(false)

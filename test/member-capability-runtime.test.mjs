@@ -571,3 +571,47 @@ test('legacy setup registration must expose its actual disposal contract', () =>
   assert.equal(disposed, 1)
   assert.throws(() => installContinuableMemberSetup({ subagents: { registerContinuableSetup() {} } }, () => () => {}), /has no disposer/)
 })
+
+test('cold legacy descriptor restores only the durably authorized provider tool', async t => {
+  const f = provisioningFixture(t)
+  const app = sharedApplication(t)
+  app.owner()
+  const descriptor = { ...f.descriptor, toolFilter: { allow: ['read'], deny: [] } }
+  const child = { ...f.child, session: { ...f.child.session, ownEvents: () => [{ type: 'subagent/descriptor', data: descriptor }] } }
+  const dir = join(f.workspace, 'expert-teams', 'team-fixture')
+  mkdirSync(dir, { recursive: true })
+  const team = { id: 'team-fixture', name: 'fixture', captainSessionId: f.identity.parentSessionId, createdAt: 1, taskSeq: 0, tasks: [],
+    members: [{ id: child.id, name: 'worker', joinedAt: 1, status: 'idle', ...f.selection, capabilityScope: scope(['read', 'expert_provider_call']) }] }
+  const save = () => writeFileSync(join(dir, 'team.json'), JSON.stringify(team))
+  save()
+  const captain = { id: f.identity.parentSessionId }
+  const definition = { name: 'expert_provider_call', execute: () => 'original guarded execution' }
+  app.root.ctx.agents = { get: id => id === captain.id ? captain : undefined }
+  app.root.ctx.tools.get = (name, parent) => name === definition.name && parent === captain ? definition : undefined
+  const fresh = () => {
+    const fixture = context(child)
+    const registered = []
+    fixture.ctx.tools.register = def => { registered.push(def); return () => registered.splice(registered.indexOf(def), 1) }
+    return { ...fixture, registered }
+  }
+  const resumed = fresh()
+  const stop = app.setup(resumed.ctx)
+  assert.deepEqual(resumed.registered.map(x => x.name), ['expert_provider_call'])
+  assert.equal(resumed.registered[0].execute, definition.execute)
+  assert.equal(resumed.guards[0]({ name: 'expert_provider_call' }), undefined)
+  assert.match(resumed.guards[0]({ name: 'expert_teams_quality_integrate' }), /scope/)
+  assert.deepEqual(descriptor.toolFilter.allow, ['read'], 'immutable historical descriptor is untouched')
+  stop()
+  assert.equal(resumed.registered.length, 0)
+  team.members[0].capabilityScope = scope(['read'])
+  save()
+  const revoked = fresh()
+  app.setup(revoked.ctx)()
+  assert.equal(revoked.registered.length, 0)
+  team.members[0].capabilityScope = scope(['expert_provider_call'])
+  save()
+  app.root.ctx.tools.get = () => undefined
+  const missing = fresh()
+  assert.throws(() => app.setup(missing.ctx), /authorized provider tool unavailable/)
+  assert.equal(missing.guards.length, 0, 'failed setup disposes its boundary')
+})

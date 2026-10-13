@@ -1,3 +1,4 @@
+import { executionPlanDigest } from './plan-review.ts'
 /**
  * Durable staged-plan storage and lifecycle rules.
  *
@@ -13,6 +14,7 @@ import { findTeamByPlanId, replaceFileAtomicOrDirect, withTeamLock } from './sta
 import { canonicalDigest } from './v2/digest.ts'
 import { isSharedTaskContext } from './shared-task-context.ts'
 import { isReportBundle, isReportCraftBinding } from './report-bundle.ts'
+import { matchesTaskMaterialSelection } from './task-material-binding.ts'
 import type { ExecutionPlan } from './v2/compiler.ts'
 import type {
   StagedPlan,
@@ -108,6 +110,7 @@ function isRequest(value: unknown): value is Record<string, string | undefined> 
 }
 
 function isRuntime(value: unknown): value is StagedPlanRuntime {
+  if (isRecord(value) && value['executionDigest'] !== undefined && (typeof value['executionDigest'] !== 'string' || !/^[a-f0-9]{64}$/u.test(value['executionDigest']))) return false
   if (!isRecord(value) || typeof value['teamName'] !== 'string' || typeof value['description'] !== 'string') return false
   if (value['interpolations'] !== undefined && !isStringRecord(value['interpolations'])) return false
   if (value['taskSuffixes'] !== undefined && !isStringRecord(value['taskSuffixes'])) return false
@@ -143,6 +146,7 @@ export function stagedPlanDigest(
 
 function normalizeRuntime(runtime: StagedPlanRuntime): StagedPlanRuntime {
   return {
+    ...(runtime.executionDigest === undefined ? {} : { executionDigest: runtime.executionDigest }),
     teamName: runtime.teamName,
     description: runtime.description,
     ...(runtime.interpolations === undefined ? {} : { interpolations: { ...runtime.interpolations } }),
@@ -211,7 +215,10 @@ export function isStagedPlan(value: unknown): value is StagedPlan {
     && isRecord(plan)
     && Array.isArray(plan['tasks']) && plan['tasks'].every(task => isRecord(task)
       && (task['reportBundle'] === undefined || isReportBundle(task['reportBundle']))
-      && isReportCraftBinding(task['reportBundle'] as import('./report-bundle.ts').ReportBundle | undefined, task['frozenSkillCraftContract']))
+      && isReportCraftBinding(task['reportBundle'] as import('./report-bundle.ts').ReportBundle | undefined, task['frozenSkillCraftContract'])
+      && matchesTaskMaterialSelection(task['skillBindings'] as import('./task-material-binding.ts').TaskSkillBinding[] | undefined,
+        task['promptBinding'] as import('./task-material-binding.ts').TaskPromptBinding | undefined, task['frozenTaskMaterialContract']))
+    && (runtime.executionDigest === undefined || runtime.executionDigest === executionPlanDigest(plan as unknown as ExecutionPlan))
     && plan['planId'] === value['planId']
     && typeof plan['digest'] === 'string'
     && plan['digest'].trim() !== ''
@@ -406,6 +413,9 @@ export function editStagedPlan(
   if (plan.status !== 'staged') throw new Error(`only staged plans can be edited; current status is "${plan.status}"`)
   const now = input.now ?? Date.now()
   const stagedDigest = stagedPlanDigest(input.plan.digest, input.request, input.runtime)
+  // Identical input is a retry, not a new approval version or execution progress.
+  // Context/model/outline changes participate in this digest and still revise.
+  if (stagedDigest === plan.digest) return plan
   const edit: StagedPlanEdit = {
     revision: plan.revision + 1,
     at: now,

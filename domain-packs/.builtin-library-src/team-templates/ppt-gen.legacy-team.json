@@ -1,0 +1,102 @@
+{
+  "id": "ppt-gen.legacy-team",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "slots": [
+    {
+      "id": "role.bk-024",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.designer",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    {
+      "id": "role.docs-coordinator",
+      "capabilities": [],
+      "cardinality": {
+        "min": 0,
+        "max": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "id": "t1",
+      "role": "role.docs-coordinator",
+      "dependsOn": [],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "ppt-gen.legacy-output",
+      "retryPolicy": "never",
+      "subject": "内容架构",
+      "description": "确定听众、目标与篇幅（页数/时长），输出 PPT 大纲：章节结构 + 每页标题与要点。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t2",
+      "role": "role.bk-024",
+      "dependsOn": [
+        "t1"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "ppt-gen.legacy-output",
+      "retryPolicy": "never",
+      "subject": "领域内容供给",
+      "description": "按大纲供给关键数据、结论与案例（数字带口径与来源），标注每页建议引用。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t3",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t1",
+        "t2"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "ppt-gen.legacy-output",
+      "retryPolicy": "never",
+      "subject": "逐页文案生成",
+      "description": "按大纲与内容产出逐页文案：封面/目录/每页标题+要点（每页≤5 条）/图表建议/演讲备注，markdown 结构化输出。",
+      "legacySource": "v1"
+    },
+    {
+      "id": "t4",
+      "role": "role.docs-coordinator",
+      "dependsOn": [
+        "t3"
+      ],
+      "inputs": [],
+      "allowedCapabilities": [],
+      "outputSchema": "ppt-gen.legacy-output",
+      "retryPolicy": "never",
+      "subject": "渲染和出图",
+      "description": "将逐页文案渲染为交付成品：① 先按 finesse-ui 技能（SKILL.md 路径以权威渠道 GET /plugins/dsh-expert-library/skills 返回的 path 为准，含 references/）的规范产出高工艺 HTML 幻灯片（product register、craft floor、反 cheapness；需要动效参考 gsap-* 技能，同渠道检索）；② 用 pptfast 技能（~/.agents/skills 或 pptfast CLI）把内容转为 PPTX；③ 需要视频时用 video-shotcraft 技能（SKILL.md 路径以权威渠道返回的 path 为准，Ink Press 模板在 template/ 目录）拍产品视频。技能引用规则：技能存在性以 GET /plugins/dsh-expert-library/skills 为准（永远存在，返回 id/绝对 path）；内容本体在插件 bundled knowledge/skills/<id>/，勿用相对路径 knowledge/skills/ 猜测——子代理 cwd 下的 knowledge/ 无 skills/ 目录；domain-packs/*/skills/ 与 source/skills/ 是分发副本，不是查找基准。模板支持：模板可由用户在 goal/data 参数中指定（scenario apply 无独立 template 参数）——若调用方指定了模板，严格按指定模板渲染；未指定时用 finesse 规范自选并说明理由。",
+      "legacySource": "v1"
+    }
+  ],
+  "gates": [],
+  "deliverables": [
+    {
+      "id": "ppt-gen.deliverable",
+      "outputTemplate": "ppt-gen.legacy-output",
+      "fromTasks": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ]
+    }
+  ],
+  "legacySource": "v1"
+}

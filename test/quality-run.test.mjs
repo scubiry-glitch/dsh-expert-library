@@ -168,7 +168,7 @@ test('third failed review escalates instead of silently exceeding two repair rou
 
 test('quality policy cannot raise the repair budget above the design cap', () => {
   assert.throws(
-    () => createQualityContract(contract({ maxRepairRounds: 3 })),
+    () => createQualityContract(contract({ maxRepairRounds: 21 })),
     (error) => error instanceof QualityRunError && error.code === 'invalid_contract',
   )
   let run = createQualityRun(contract({ maxRepairRounds: 0 }), 'run-no-repair')

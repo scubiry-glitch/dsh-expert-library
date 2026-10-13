@@ -505,6 +505,8 @@ export interface ApprovalPolicy {
 
 /** V2 scenario: task intent, references — no inline execution detail. */
 export interface ScenarioV2 {
+  /** Optional standalone review presentation; absent uses plugin defaults. */
+  readonly reviewUi?: import('../review-ui.ts').ReviewUi
   readonly id: SafeId
   readonly version: VersionString
   readonly schemaVersion: typeof SCHEMA_VERSION
@@ -591,6 +593,8 @@ export interface DeliverableBinding {
 
 /** Declarative team composition: slots + DAG + gates + deliverables. */
 export interface TeamTemplate {
+  /** Optional standalone review presentation; absent uses plugin defaults. */
+  readonly reviewUi?: import('../review-ui.ts').ReviewUi
   readonly id: SafeId
   readonly version: VersionString
   readonly schemaVersion: typeof SCHEMA_VERSION
@@ -806,6 +810,8 @@ export interface PackProvenance {
 
 /** Pack-level metadata (pack.json). */
 export interface PackMeta {
+  /** Optional standalone review presentation; absent uses plugin defaults. */
+  readonly reviewUi?: import('../review-ui.ts').ReviewUi
   readonly id: SafeId
   readonly version: VersionString
   readonly schemaVersion: typeof SCHEMA_VERSION

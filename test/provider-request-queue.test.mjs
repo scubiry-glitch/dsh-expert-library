@@ -3,6 +3,25 @@ import assert from 'node:assert/strict'
 import { ProviderRequestQueue } from '../lib/provider-request-queue.js'
 
 const tick = () => new Promise(resolve => setImmediate(resolve))
+test('timings distinguish queued, active, canceled and finished streams without retaining content', async () => {
+  const q = new ProviderRequestQueue(() => 1), firstPermit = await q.acquire('p')
+  const options = { provider: 'p', model: 'm', sessionId: 'owned-session', messages: [{ secret: 'NEVER_STORE' }] }
+  const consume = async (input) => { for await (const _ of q.stream(input, async function* () { yield { type: 'done' } })) {} }
+  const pending = consume(options); await tick()
+  assert.equal(q.snapshot().requests[0].status, 'waiting')
+  const abort = new AbortController(), canceled = consume({ ...options, signal: abort.signal })
+  const rejected = assert.rejects(canceled, /canceled fixture/); abort.abort(new Error('canceled fixture')); await rejected
+  const view = q.snapshot(); view.requests[0].status = 'failed'
+  assert.equal(q.snapshot().requests[0].status, 'waiting', 'diagnostics cannot mutate admission records')
+  firstPermit(); await pending
+  const snapshot = q.snapshot(), [done, cancellation] = snapshot.requests
+  assert.equal(done.status, 'finished'); assert.equal(done.sessionId, 'owned-session')
+  assert.ok(done.waitMs >= 0 && done.streamMs >= 0 && done.admittedAt >= done.queuedAt)
+  assert.equal(cancellation.status, 'canceled'); assert.equal(cancellation.admittedAt, undefined)
+  assert.equal(JSON.stringify(snapshot).includes('NEVER_STORE'), false)
+  for (let i=0;i<2050;i++) await consume(options)
+  assert.equal(q.snapshot().requests.length, 2048); assert.equal(q.snapshot().evicted, 4)
+})
 test('one provider shares FIFO capacity across captain/member requests; other providers continue', async () => {
   const q = new ProviderRequestQueue(p => p === 'limited' ? 1 : undefined)
   const first = await q.acquire('limited'), entered = []

@@ -1,0 +1,349 @@
+{
+  "at": "2026-10-06T15:31:14.331624+00:00",
+  "taskId": "t16",
+  "status": "in_progress",
+  "executionState": "active",
+  "attempt": 2,
+  "inputSourceOverrides": {
+    "writer": "t19",
+    "point_figures": "t20"
+  },
+  "inputs": [
+    {
+      "sourceTaskId": "t19",
+      "artifactId": "1ca99b08-8458-4f6e-b8cf-1cdc371844a7",
+      "reviewArtifactId": "published:report.md",
+      "attempt": 1,
+      "sha256": "5f7f87652cbbe092414b226f53b4a24ec1681c85c1ad0b25f9177e8c3a008ea5",
+      "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t19/artifacts/attempt-1-1ca99b08-8458-4f6e-b8cf-1cdc371844a7/report.md"
+    },
+    {
+      "sourceTaskId": "t13",
+      "artifactId": "46210fcb-9730-4398-9624-31ee65b55a06",
+      "reviewArtifactId": "published:review-notes.md",
+      "attempt": 2,
+      "sha256": "58d6ef33e6b1b8f3f8027087952fdcba2eb494b93bd8fec8ca3d0614c12b1fda",
+      "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t13/artifacts/attempt-2-46210fcb-9730-4398-9624-31ee65b55a06/review-notes.md"
+    },
+    {
+      "sourceTaskId": "t20",
+      "artifactId": "8bf6da34-0364-4ef8-b194-becbce2c3963",
+      "reviewArtifactId": "published:figure-fragments.html",
+      "attempt": 1,
+      "sha256": "93482973bce16d6490209a66bc61a4d019669ca3490eaee24d58e41d4064ed8a",
+      "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t20/artifacts/attempt-1-8bf6da34-0364-4ef8-b194-becbce2c3963/figure-fragments.html"
+    },
+    {
+      "sourceTaskId": "t20",
+      "artifactId": "ea629a66-9344-447a-ba77-cdcac4828369",
+      "reviewArtifactId": "published:figure-spec.md",
+      "attempt": 1,
+      "sha256": "2bec9601702314f8a83125ddc93e08eab2dc030fa1f3446e837c213c6ee044ea",
+      "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t20/artifacts/attempt-1-ea629a66-9344-447a-ba77-cdcac4828369/figure-spec.md"
+    },
+    {
+      "sourceTaskId": "t6",
+      "artifactId": "5ad78632-3068-467c-8a51-e1e57fc3e7a5",
+      "reviewArtifactId": "published:OUTLINE.md",
+      "attempt": 1,
+      "sha256": "5ebaed0c94f4071b5210ff0ec2bea78f4e2f6b7f22634dc3c0a71cdd618df144",
+      "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t6/artifacts/attempt-1-5ad78632-3068-467c-8a51-e1e57fc3e7a5/OUTLINE.md"
+    }
+  ],
+  "revision": {
+    "taskId": "t16",
+    "sourceTaskId": "t15",
+    "replacementTaskId": "t20",
+    "expectedAttempt": 1,
+    "expectedAttemptId": "4a6aa397-f399-43b2-ae9b-4c889883076a",
+    "expectedWaitReason": "缺少 t16 输入重钉（point_figures 从 t15 旧图卡 fragments 6aabda31…／spec c2c996db… 改钉到 t20 新图卡 fragments 93482973…／spec 2bec9601…）。责任方＝队长（revise_inputs）。解除条件：收到重钉完成通知或等价评审/集成事件；届时立即重跑 build_t16 → build_ledger → run_checker 并发布五件产物。",
+    "eventId": "t16-figures-t20-atomic-20261006",
+    "reason": "用户要求修复 T16 卡住：将已独立评审并集成的 T20 图卡替换旧 T15 输入，与解除这次输入阻塞同一事务完成，保留旧输入和质量历史。",
+    "fingerprint": "2909104d27cb6c27655aa46367f22631f0b44d8eeb6c3575861acaf787338c4c",
+    "actor": "captain",
+    "at": 1791300616756,
+    "logicalSource": "point_figures",
+    "nextAttempt": 2,
+    "previousDependencies": [
+      "t19",
+      "t13",
+      "t15",
+      "t6"
+    ],
+    "previousInputs": [
+      {
+        "sourceTaskId": "t19",
+        "artifactId": "1ca99b08-8458-4f6e-b8cf-1cdc371844a7"
+      },
+      {
+        "sourceTaskId": "t13",
+        "artifactId": "46210fcb-9730-4398-9624-31ee65b55a06"
+      },
+      {
+        "sourceTaskId": "t15",
+        "artifactId": "84a8530a-2ce5-4dc6-9936-a48c0e6799e4"
+      },
+      {
+        "sourceTaskId": "t15",
+        "artifactId": "039693c5-2fca-4a58-a347-fd3178e10216"
+      },
+      {
+        "sourceTaskId": "t6",
+        "artifactId": "5ad78632-3068-467c-8a51-e1e57fc3e7a5"
+      }
+    ],
+    "previousManifest": [
+      {
+        "sourceTaskId": "t19",
+        "artifactId": "1ca99b08-8458-4f6e-b8cf-1cdc371844a7",
+        "reviewArtifactId": "published:report.md",
+        "attempt": 1,
+        "sha256": "5f7f87652cbbe092414b226f53b4a24ec1681c85c1ad0b25f9177e8c3a008ea5",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t19/artifacts/attempt-1-1ca99b08-8458-4f6e-b8cf-1cdc371844a7/report.md"
+      },
+      {
+        "sourceTaskId": "t13",
+        "artifactId": "46210fcb-9730-4398-9624-31ee65b55a06",
+        "reviewArtifactId": "published:review-notes.md",
+        "attempt": 2,
+        "sha256": "58d6ef33e6b1b8f3f8027087952fdcba2eb494b93bd8fec8ca3d0614c12b1fda",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t13/artifacts/attempt-2-46210fcb-9730-4398-9624-31ee65b55a06/review-notes.md"
+      },
+      {
+        "sourceTaskId": "t15",
+        "artifactId": "84a8530a-2ce5-4dc6-9936-a48c0e6799e4",
+        "reviewArtifactId": "published:figure-spec.md",
+        "attempt": 2,
+        "sha256": "c2c996dbb8fd25eba13acf1fa0a96f605a6bf1b62bdc894ceeae1e8a7ddd92bb",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t15/artifacts/attempt-2-84a8530a-2ce5-4dc6-9936-a48c0e6799e4/figure-spec.md"
+      },
+      {
+        "sourceTaskId": "t15",
+        "artifactId": "039693c5-2fca-4a58-a347-fd3178e10216",
+        "reviewArtifactId": "published:figure-fragments.html",
+        "attempt": 2,
+        "sha256": "6aabda31df1e524012c96362fa7d72d8486cd887812733addf7c8987cdf8c4fa",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t15/artifacts/attempt-2-039693c5-2fca-4a58-a347-fd3178e10216/figure-fragments.html"
+      },
+      {
+        "sourceTaskId": "t6",
+        "artifactId": "5ad78632-3068-467c-8a51-e1e57fc3e7a5",
+        "reviewArtifactId": "published:OUTLINE.md",
+        "attempt": 1,
+        "sha256": "5ebaed0c94f4071b5210ff0ec2bea78f4e2f6b7f22634dc3c0a71cdd618df144",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t6/artifacts/attempt-1-5ad78632-3068-467c-8a51-e1e57fc3e7a5/OUTLINE.md"
+      }
+    ],
+    "nextManifest": [
+      {
+        "sourceTaskId": "t19",
+        "artifactId": "1ca99b08-8458-4f6e-b8cf-1cdc371844a7",
+        "reviewArtifactId": "published:report.md",
+        "attempt": 1,
+        "sha256": "5f7f87652cbbe092414b226f53b4a24ec1681c85c1ad0b25f9177e8c3a008ea5",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t19/artifacts/attempt-1-1ca99b08-8458-4f6e-b8cf-1cdc371844a7/report.md"
+      },
+      {
+        "sourceTaskId": "t13",
+        "artifactId": "46210fcb-9730-4398-9624-31ee65b55a06",
+        "reviewArtifactId": "published:review-notes.md",
+        "attempt": 2,
+        "sha256": "58d6ef33e6b1b8f3f8027087952fdcba2eb494b93bd8fec8ca3d0614c12b1fda",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t13/artifacts/attempt-2-46210fcb-9730-4398-9624-31ee65b55a06/review-notes.md"
+      },
+      {
+        "sourceTaskId": "t20",
+        "artifactId": "8bf6da34-0364-4ef8-b194-becbce2c3963",
+        "reviewArtifactId": "published:figure-fragments.html",
+        "attempt": 1,
+        "sha256": "93482973bce16d6490209a66bc61a4d019669ca3490eaee24d58e41d4064ed8a",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t20/artifacts/attempt-1-8bf6da34-0364-4ef8-b194-becbce2c3963/figure-fragments.html"
+      },
+      {
+        "sourceTaskId": "t20",
+        "artifactId": "ea629a66-9344-447a-ba77-cdcac4828369",
+        "reviewArtifactId": "published:figure-spec.md",
+        "attempt": 1,
+        "sha256": "2bec9601702314f8a83125ddc93e08eab2dc030fa1f3446e837c213c6ee044ea",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t20/artifacts/attempt-1-ea629a66-9344-447a-ba77-cdcac4828369/figure-spec.md"
+      },
+      {
+        "sourceTaskId": "t6",
+        "artifactId": "5ad78632-3068-467c-8a51-e1e57fc3e7a5",
+        "reviewArtifactId": "published:OUTLINE.md",
+        "attempt": 1,
+        "sha256": "5ebaed0c94f4071b5210ff0ec2bea78f4e2f6b7f22634dc3c0a71cdd618df144",
+        "versionPath": "/root/.openclaw/workspace/98wiki/expert-teams/98wiki-上海与一线租赁市场见底研判-v3-1-材料绑定修正版/expert-tasks/t6/artifacts/attempt-1-5ad78632-3068-467c-8a51-e1e57fc3e7a5/OUTLINE.md"
+      }
+    ]
+  },
+  "quality": "pending",
+  "build": "PASS",
+  "tests": {
+    "passed": 39,
+    "failed": 0
+  },
+  "submissionVerifiedAt": "2026-10-06T15:36:03.045017+00:00",
+  "publishedArtifacts": [
+    {
+      "artifact": "published:report.md",
+      "attempt": 2,
+      "sha256": "5f7f87652cbbe092414b226f53b4a24ec1681c85c1ad0b25f9177e8c3a008ea5",
+      "bytes": 46442
+    },
+    {
+      "artifact": "published:report.html",
+      "attempt": 2,
+      "sha256": "35097216439506990f6238d348333c13395d5524228454a9fb203d1bd02a7c9c",
+      "bytes": 119645
+    },
+    {
+      "artifact": "published:report.pdf",
+      "attempt": 2,
+      "sha256": "266ef5ab889338de3ea26f3edb91646a64bef3781d4fb683262436a804f9173e",
+      "bytes": 1000215
+    },
+    {
+      "artifact": "published:craft-evidence.json",
+      "attempt": 2,
+      "sha256": "3ffdb52cc53ed3bf7023970fdd47b3b96d22687f5a98a7fe80dfcdbc17b4f1d2",
+      "bytes": 74288
+    },
+    {
+      "artifact": "published:reference-map.json",
+      "attempt": 2,
+      "sha256": "b3eacdec35bc97ceeaab5487bd43aad720a9af69ce3d2e0c93505ad5f6d2aa2e",
+      "bytes": 874
+    }
+  ],
+  "observedStatus": "awaiting_review",
+  "restartRecovery": "Independent service restart at 23:31:44; original captain resumed same member and attempt via native resume_member.",
+  "restartNotice": {
+    "at": "2026-10-06T15:46:42.001Z",
+    "pid": 1524961,
+    "accepted": true,
+    "coldMembers": [
+      {
+        "member": "毒舌·尖尖",
+        "activationId": "758865af-1ff6-4aea-b3b1-fabc6ecb66ab"
+      }
+    ],
+    "tasks": [
+      {
+        "id": "t16",
+        "status": "in_progress",
+        "executionState": "awaiting_review",
+        "attempt": 2,
+        "assignee": "巧手·阿妙"
+      },
+      {
+        "id": "t17",
+        "status": "pending",
+        "attempt": 0,
+        "assignee": "毒舌·尖尖"
+      },
+      {
+        "id": "t18",
+        "status": "pending",
+        "attempt": 0,
+        "assignee": "毒舌·尖尖"
+      }
+    ]
+  },
+  "reviewRoleTests": {
+    "passed": 37,
+    "failed": 0
+  },
+  "reviewRoleDeployment": {
+    "pid": 1524961,
+    "startedAt": "2026-10-06T23:43:38+08:00"
+  },
+  "lastObservedAt": "2026-10-06T15:48:31.757342+00:00",
+  "lastTasks": [
+    {
+      "id": "t16",
+      "status": "in_progress",
+      "executionState": "awaiting_review",
+      "attempt": 2,
+      "quality": "pending"
+    },
+    {
+      "id": "t17",
+      "status": "pending",
+      "executionState": null,
+      "attempt": 0,
+      "quality": "pending"
+    },
+    {
+      "id": "t18",
+      "status": "pending",
+      "executionState": null,
+      "attempt": 0,
+      "quality": "pending"
+    }
+  ],
+  "lastRuntime": {
+    "at": "2026-10-06T15:48:29.942Z",
+    "pid": 1524961,
+    "agents": [
+      {
+        "id": "session-bdf4fe75-fc8d-4cde-90d7-78f7d84ffd0f",
+        "status": "idle"
+      },
+      {
+        "id": "3a29c666-09c8-4a05-8e4e-4593b6f23ffa",
+        "status": "running"
+      }
+    ],
+    "stageFields": [
+      "scenario",
+      "profile",
+      "research_flow",
+      "tasks",
+      "report_bundle",
+      "report_outline",
+      "plan_models",
+      "team_name",
+      "goal",
+      "data",
+      "city",
+      "period"
+    ],
+    "submitFields": [
+      "submission_id",
+      "publications",
+      "task_id",
+      "status",
+      "output",
+      "attempt_id",
+      "execution_state",
+      "wait_reason"
+    ],
+    "reviewFields": [
+      "repair_action",
+      "review_audit",
+      "event_id",
+      "task_id",
+      "reviewer",
+      "verdict",
+      "artifacts",
+      "acceptance_results",
+      "prepare_only",
+      "material_receipt",
+      "task_material_receipt",
+      "independent_review",
+      "changed_paths",
+      "findings"
+    ],
+    "revisionFields": [
+      "task_id",
+      "source_task_id",
+      "replacement_task_id",
+      "expected_attempt",
+      "expected_attempt_id",
+      "expected_wait_reason",
+      "event_id",
+      "reason"
+    ]
+  }
+}

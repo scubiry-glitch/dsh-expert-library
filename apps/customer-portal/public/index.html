@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>智见 · 专家协作室</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="/assets/marked.umd.js" defer></script>
+  <script src="/assets/purify.min.js" defer></script>
+  <script type="module" src="/assets/app.js"></script>
+</head>
+<body>
+  <div id="bootView" class="bootView" role="status" aria-live="polite">
+    <span class="paintLoader" aria-hidden="true"><svg viewBox="0 0 88 88" width="76" height="76" focusable="false">
+      <path class="paintWash paintWashOne" d="M15 52c5-18 21-32 39-30 15 2 23 14 20 29-3 15-20 24-38 20C21 68 12 62 15 52Z"/>
+      <path class="paintWash paintWashTwo" d="M25 63c-5-11-1-25 9-35 10-9 24-11 32-4 11 9 8 27-3 39-9 11-30 12-38 0Z"/>
+      <path class="paintStem" pathLength="1" d="M22 62c13-4 22-15 28-25 4-7 8-11 16-15"/>
+      <path class="paintLeaf paintLeafOne" d="M43 46c-9 0-15-5-17-14 9-1 17 4 19 11Z"/>
+      <path class="paintLeaf paintLeafTwo" d="M52 36c-1-9 4-16 13-20 2 8-1 16-10 21Z"/>
+      <circle class="paintDot" cx="26" cy="60" r="2.2"/>
+    </svg></span>
+    <span class="brandMark" aria-hidden="true">见</span>
+    <strong>智见 · 专家协作室</strong>
+    <span>正在恢复会话…</span>
+  </div>
+  <section id="loginView" class="loginView" aria-label="客户登录" hidden>
+    <header class="mast">
+      <div class="brand"><span class="brandMark">见</span><span><small>ZHJIAN · EXPERT TEAMS</small><strong>专家协作室</strong></span></div>
+      <span class="mastNote">让好问题，遇见好答案。</span>
+    </header>
+    <div class="loginStory">
+      <span class="eyebrow">A LITTLE WONDER. A BETTER ANSWER.</span>
+      <h1>让好问题，<br>遇见<span>好答案。</span></h1>
+      <p>一群有想法的伙伴，一份认真展开的研究。<br>把方向交给你，把探索交给智见。</p>
+      <div class="storyArt" aria-hidden="true"><div class="artPage"><small>智见 · 研究手札</small><strong>每一个答案，<br>都从好奇开始。</strong><i></i><i></i></div><img src="/assets/coordinator.webp" width="260" height="260" alt=""></div>
+      <div class="journey"><span>01 对话</span><span>02 查数</span><span>03 研究</span><span>04 报告</span></div>
+    </div>
+    <div class="loginPanel">
+      <div class="loginBox"><span class="eyebrow">访问验证</span><h2>进入专家协作室</h2>
+        <p>登录后查看自己的会话、查询数据，并从一个新问题开始研究。</p>
+        <div class="idpList" aria-label="登录方式">
+          <button id="developerLogin" type="button" disabled><span class="idpIcon">合</span><span>使用合作伙伴中心账号继续</span><small id="developerLoginState">接入中</small></button>
+        </div>
+        <p id="loginStatus" class="loginFoot" role="status">正在检查服务状态…</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="previewView" class="appFrame" hidden>
+    <aside class="sessionSidebar" aria-label="研究会话">
+      <div class="sessionSidebarHead">
+        <div><small>智见 · 我的研究</small><h2>研究会话</h2></div>
+        <button id="closeSidebar" type="button" aria-label="关闭会话列表">×</button>
+      </div>
+      <p class="sessionSidebarHint">登录后，这里显示当前账号下的全部会话。</p>
+      <nav class="sessionListViews" aria-label="会话列表分类"><button id="allSessionsButton" type="button" aria-pressed="true">全部</button><button id="favoriteSessionsButton" type="button" aria-pressed="false">收藏 <span id="favoriteSessionCount">0</span></button><button id="runningSessionsButton" type="button" aria-pressed="false">执行中 <span id="runningSessionCount">0</span></button></nav>
+      <button id="archivedSessionsButton" class="sessionArchiveView" type="button" aria-pressed="false">归档箱 <span id="archivedSessionCount">0</span></button>
+      <nav class="sessionList" aria-label="我的会话"><div class="sessionListEmpty"><span>◌</span><strong>正在读取会话列表</strong><small>随后恢复上次打开的会话。</small></div></nav>
+      <div class="sessionSidebarActions"><button id="newSessionButton" type="button" disabled>＋ 新建会话</button><small id="newSessionHint">账号接入完成后开放</small></div>
+      <div class="sessionSettings"><button id="usageButton" type="button" disabled>⚙ 设置与用量</button><button id="logoutButton" type="button" hidden>退出登录</button></div>
+      <p class="sessionSidebarFoot">会话、数据与报告按账号授权访问。</p>
+    </aside>
+    <button id="scrim" class="sidebarScrim" type="button" aria-label="关闭会话列表" hidden></button>
+    <main class="main">
+      <header class="topbar">
+        <div class="studioIdentity"><button id="menuButton" class="sidebarToggle" type="button" aria-label="打开研究会话列表" aria-expanded="false">☰</button><div><h1 id="studioSessionTitle" title="从一个问题开始">从一个问题开始</h1></div></div>
+        <nav class="viewSwitch" aria-label="协作室视图">
+          <button type="button" data-tab="conversation" aria-pressed="true"><span class="tabIcon" aria-hidden="true">▢</span><strong>会话</strong><small>与智见小秘书沟通</small></button>
+          <button type="button" data-tab="workspace" aria-pressed="false"><span class="tabIcon" aria-hidden="true">▤</span><strong>工作区</strong><small>计划 · 大纲 · 成果</small></button>
+          <button type="button" data-tab="data" aria-pressed="false"><span class="tabIcon" aria-hidden="true">▦</span><strong>数据</strong><small>清单 · 表格</small></button>
+        </nav>
+        <div class="studioActions"><div id="currentSessionActions" class="currentSessionActions" hidden><button id="topbarRename" type="button" title="修改会话标题" aria-label="修改会话标题"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2 2 0 0 0-4-4L4 16v4ZM13.5 6.5l4 4"/></svg><span>改标题</span></button><button id="topbarFavorite" type="button" title="收藏会话" aria-label="收藏会话" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.5 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9L12 2.5Z"/></svg><span>收藏</span></button><button id="topbarShare" type="button" title="分享会话" aria-label="分享会话"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7M21 3l-9 9M19 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h6"/></svg><span>分享</span></button></div><span class="phaseBadge">界面预览</span></div>
+      </header>
+      <section id="actionCenter" class="actionCenter" aria-label="待我处理" hidden>
+        <div class="actionCenterHead"><h2>待我处理 <span id="actionCount"></span></h2><span>当前会话需要你的决定</span></div>
+        <div id="actionItems" class="actionItems"></div>
+        <form id="questionCard" class="questionPreview questionCard" aria-label="智见小秘书的提问" hidden></form>
+        <section id="approvalCard" class="approvalCard" aria-label="报告生成确认" hidden></section>
+      </section>
+      <div class="portalContent">
+        <p class="previewNotice" role="status">页面结构预览 · 尚未接入客户账号、对话和研究数据。</p>
+        <section id="conversationPanel" class="conversationSection" aria-label="与智见小秘书的对话">
+          <div id="conversationMessages" class="conversationMessages" role="log" aria-label="对话内容">
+            <div class="conversationEmpty"><img src="/assets/coordinator.webp" width="112" height="112" alt=""><div><span class="eyebrow">智见小秘书</span><h2>先聊聊你想研究什么</h2><p>可以从议题、范围、交付目标开始；需要时再 @ 数据源、领域包或专家。确认方案后，研究进度会进入工作区。</p></div></div>
+          </div>
+          <button id="conversationLatest" class="conversationLatest" type="button" hidden>返回最新消息 ↓</button>
+          <div id="conversationActivity" class="conversationActivity" role="status" aria-live="polite" hidden>
+            <div class="activityIllustration" aria-hidden="true"><span class="activityRoute"></span><span class="activityPaper"></span><img src="/assets/coordinator-avatar.webp" width="34" height="34" alt=""></div>
+            <div class="activityCopy"><div class="activityHeadline"><strong id="activityTitle">正在传递消息</strong><span class="activityTyping" aria-hidden="true"><i></i><i></i><i></i></span></div><span id="activityDetail">正在送往智见小秘书…</span></div>
+            <span id="activityElapsed" class="activityElapsed" aria-hidden="true"></span>
+          </div>
+          <div class="questionPreview" aria-label="提问卡样式预览"><span class="eyebrow">提问卡样式预览</span><strong>希望先明确哪些内容？</strong><p>正式会话中的提问会使用勾选项，最后一行可自行补充。</p><label><input type="checkbox" disabled> 研究地区与时间范围</label><label><input type="checkbox" disabled> 希望使用的数据源</label><label><input type="checkbox" disabled> <span>其他：<input type="text" placeholder="输入你的补充要求" disabled></span></label></div>
+          <div id="conversationCompose" class="conversationCompose"><label for="conversationInput">发给智见小秘书</label><p id="conversationSendStatus" class="conversationSendStatus" role="status" aria-live="polite"></p><button id="questionShortcut" class="questionShortcut" type="button" hidden>先回答上方的问题 ↑</button><textarea id="conversationInput" rows="1" placeholder="描述研究议题，或输入 @ 选择对象…" aria-describedby="mentionHint" aria-controls="mentionMenu" aria-haspopup="listbox" aria-autocomplete="list" aria-expanded="false" disabled></textarea><div id="mentionMenu" class="mentionMenu" role="listbox" aria-label="可提及的对象" hidden></div><div class="conversationComposeControls"><div class="conversationModelRow"><span id="conversationWorkspace" title="当前账号绑定的工作空间">工作空间 · 加载中</span><div class="conversationModelPicker"><select id="conversationModelSelect" aria-hidden="true" tabindex="-1" hidden disabled><option>读取中…</option></select><button id="conversationModelTrigger" class="modelPickerTrigger" type="button" aria-label="选择当前会话模型" aria-haspopup="listbox" aria-controls="conversationModelMenu" aria-expanded="false" disabled><span class="modelPickerTriggerLabel">模型</span><strong id="conversationModelName">读取中…</strong><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg></button><div id="conversationModelMenu" class="modelPickerMenu" role="listbox" aria-label="当前会话可选模型" hidden><div class="modelPickerMenuHead"><strong>选择模型</strong><small>仅影响当前会话的后续回复</small></div><div id="conversationModelOptions" class="modelPickerOptions"></div></div></div><small id="conversationModelStatus" role="status" aria-live="polite"></small></div><button id="sendMessageButton" type="button" disabled>发送</button></div><div class="conversationComposeFoot"><span id="mentionHint">输入 @ 先选类别，再选对象 · Ctrl/⌘ + Enter 发送</span></div></div>
+        </section>
+        <section id="workspacePanel" class="workspaceSection" aria-label="研究工作区" hidden>
+          <div class="workspaceOverview"><div class="heroCopy"><span id="workspacePhase" class="eyebrow">当前研究</span><h1 id="workspaceTitle">等待生成研究方案</h1><p id="workspaceDescription">先在会话中确认研究主题和交付目标。</p><button id="workspacePrimary" type="button">返回会话 <span aria-hidden="true">↗</span></button></div>
+          <nav class="workspaceSteps" aria-label="研究阶段"><button type="button" data-workspace-tab="plan" aria-current="true"><b>○</b><strong>研究计划</strong><small id="workspacePlan">目标、边界与材料</small></button><button type="button" data-workspace-tab="outline" aria-current="false"><b>○</b><strong>研究大纲</strong><small id="workspaceOutline">章节和论证路线</small></button><button type="button" data-workspace-tab="team" aria-current="false"><b>○</b><strong>团队进展</strong><small id="workspaceTeam">专家任务和确认点</small></button><button type="button" data-workspace-tab="results" aria-current="false"><b>○</b><strong>研究成果</strong><small id="workspaceResult">预览、修订与下载</small></button></nav>
+          <div class="heroScene" aria-label="专家协作状态"><span>专家协作</span><div class="heroPaper" aria-hidden="true"><i></i><i></i><i></i></div><div id="workspaceExperts" class="workspaceExperts"></div><small id="workspaceSceneStatus">等待研究任务</small></div></div>
+          <p id="workspaceStatus" class="workspaceStatus" role="status" aria-live="polite"></p>
+          <div id="workspacePlanPanel" class="workspaceDetail"></div>
+          <div id="workspaceOutlinePanel" class="workspaceDetail" hidden></div>
+          <div id="workspaceTeamPanel" class="workspaceDetail" hidden></div>
+          <div id="workspaceResultsPanel" class="workspaceDetail" hidden></div>
+          <dialog id="workspaceDocumentDialog" class="workspaceDocumentDialog" aria-labelledby="workspaceDocumentTitle"><header><div><span class="eyebrow">研究档案</span><h2 id="workspaceDocumentTitle">产出物</h2></div><button id="workspaceDocumentClose" type="button">关闭</button></header><div id="workspaceDocumentBody"></div><footer><a id="workspaceDocumentDownload" class="download" hidden>下载原文件</a></footer></dialog>
+        </section>
+        <section id="dataPanel" class="dataSection" aria-label="研究数据" hidden>
+          <div class="sectionHead"><div><span class="eyebrow">研究数据</span><h1>查询结果</h1><p>会话中查到的数据先进入清单，点击后再看表格、来源与口径。</p></div></div>
+          <div class="dataLayout">
+            <div id="dataList" class="dataList isCollapsed">
+              <div class="dataHead"><strong>本会话数据清单</strong><small id="dataCount">0 项结果</small></div>
+              <button id="dataListToggle" class="dataListToggle" type="button" aria-expanded="false" aria-controls="dataListBody" hidden><span>选择一项结果查看</span><b aria-hidden="true">⌄</b></button>
+              <div id="dataListBody" class="dataListBody"><div id="dataItems" class="dataItems" role="region" tabindex="0" aria-label="查询结果清单"></div><button id="dataMore" class="dataMore" type="button" hidden>加载更多结果</button></div>
+              <div id="dataEmpty" class="dataEmpty"><span>▦</span><strong>还没有查询结果</strong><small>会话中完成已授权数据集查询后，结果会自动留在这里。</small></div>
+            </div>
+            <div id="tablePane" class="tablePane" tabindex="-1"><span class="eyebrow">数据表格</span><h2>选择一项结果查看</h2><p>这里将展示查询时间、数据源、口径和可用表格。</p></div>
+          </div>
+        </section>
+        <dialog id="usageDialog" class="usageDialog" aria-labelledby="usageTitle"><header><div><span class="eyebrow">账号设置</span><h2 id="usageTitle">用量</h2></div><button id="usageClose" type="button">关闭</button></header><div id="usageBody" role="status" aria-live="polite">正在读取用量…</div><footer><button id="usageRefresh" type="button">刷新用量</button></footer></dialog>
+        <dialog id="sessionRenameDialog" class="sessionRenameDialog" aria-labelledby="sessionRenameTitle"><form id="sessionRenameForm"><h2 id="sessionRenameTitle">修改会话标题</h2><label for="sessionRenameInput">标题</label><input id="sessionRenameInput" name="title" maxlength="100" required autocomplete="off"><p id="sessionRenameError" role="status" aria-live="polite"></p><div class="sessionRenameActions"><button id="sessionRenameCancel" type="button">取消</button><button type="submit">保存</button></div></form></dialog>
+        <dialog id="sessionShareDialog" class="sessionShareDialog" aria-labelledby="sessionShareTitle"><div class="sessionShareHead"><div><span class="eyebrow">会话访问</span><h2 id="sessionShareTitle">分享会话</h2></div><button id="sessionShareClose" type="button" aria-label="关闭分享界面">×</button></div><p>持有链接的人无需登录。仅能访问这一个会话；链接到期或被撤销后立即失效。协作操作计入当前账号用量。</p><form id="sessionShareForm"><label for="sessionSharePermission">访问权限</label><select id="sessionSharePermission"><option value="read">只读 · 查看会话、工作区与数据</option><option value="collaborate">协作 · 可发消息并操作工作区</option></select><label for="sessionShareDays">有效期（天）</label><input id="sessionShareDays" type="number" min="1" max="365" step="1" value="7" required><button id="sessionShareCreate" type="submit">生成分享链接</button></form><p id="sessionShareStatus" class="sessionShareStatus" role="status" aria-live="polite"></p><div id="sessionShareCreated" class="sessionShareCreated" hidden><label for="sessionShareUrl">分享链接</label><div><input id="sessionShareUrl" type="text" readonly><button id="sessionShareCopy" type="button">复制</button></div><small>此链接仅在创建时显示，请妥善保存。</small></div><div class="sessionShareExisting"><h3>已创建的链接</h3><div id="sessionShareList"></div></div></dialog>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

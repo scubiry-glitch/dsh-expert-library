@@ -31,7 +31,7 @@ import {
   relatedTaskIds,
   usesParallelTaskGrid,
 } from './activity-model.ts'
-import { ACTION_ART, LEAD_ART, memberArtUrl } from './artwork.ts'
+import { ACTION_ART, LEAD_ART, memberArtUrl, memberArtFallback } from './artwork.ts'
 import { OPEN_PANEL_EVENT } from './AgentTeamsCard.tsx'
 import type { ExpertTeamsOpenPanelDetail } from './AgentTeamsCard.tsx'
 import type { ExpertTeamsCardData } from './agent-teams-card-definition.ts'
@@ -69,6 +69,7 @@ export interface MemberDocument {
 /** One member row of a host snapshot. */
 export interface ActivityMember {
   readonly id: string
+  readonly expertId?: string
   readonly name: string
   readonly role: string
   readonly status?: 'idle' | 'working' | 'removed'
@@ -83,6 +84,7 @@ export interface ActivityMember {
 
 /** One task row of a host snapshot. */
 export interface ActivityTask {
+  readonly scheduling?: { readonly since: number; readonly phase: 'ready' | 'assigned'; readonly reason: string }
   readonly id: string
   readonly subject: string
   readonly status: string
@@ -275,8 +277,8 @@ function MemberDocumentsView({ team, member, onBack, onTranscript }: {
           <IconChevronLeftOutline14 />
         </button>
         <span className={css.documentsExpert}>
-          {memberArtUrl(member.name, member.role) !== null ? (
-            <img className={css.documentsArt} src={memberArtUrl(member.name, member.role) ?? ''} alt="" aria-hidden />
+          {memberArtUrl(member.name, member.role, member.expertId) !== null ? (
+            <img className={css.documentsArt} src={memberArtUrl(member.name, member.role, member.expertId) ?? ''} onError={memberArtFallback} alt="" aria-hidden />
           ) : (
             <span className={css.documentsInitial} style={{ background: accentOf(member.id) }}>{memberInitial(member.name)}</span>
           )}
@@ -498,6 +500,14 @@ function DependencyMap({ tasks }: { readonly tasks: readonly ActivityTask[] }) {
                   : `等待 ${waitingOn.join('、')}`}
             </span>
             <span className={css.taskDetailMeta}>{dependents.length === 0 ? '无下游任务' : `完成后解锁 ${dependents.map((task) => task.id).join('、')}`}</span>
+            {detailTask.scheduling && <span className={css.taskDetailMeta}>
+              等待开始 {Math.max(0, Math.floor((Date.now() - detailTask.scheduling.since) / 1000))} 秒 · {({
+                member_busy: '成员仍在执行上一轮', member_input_queued: '通知已排队，等待成员处理',
+                activation_pending: '等待成员会话恢复', captain_unavailable: '队长会话未连接',
+                member_runtime_block: '成员执行异常，等待恢复', member_unavailable: '负责成员不可用',
+                capacity: '等待执行名额', previous_task: '等待上一项任务处理完毕', ready: '前置已就绪，等待领取',
+              } as Record<string, string>)[detailTask.scheduling.reason] ?? detailTask.scheduling.reason}
+            </span>}
             {detailTask.qualityScore !== undefined && (
               <span className={css.taskDetailMeta}>
                 质量分 {detailTask.qualityScore ?? '—'} ｜ 修复 {detailTask.repairCount ?? 0} 轮
@@ -510,12 +520,14 @@ function DependencyMap({ tasks }: { readonly tasks: readonly ActivityTask[] }) {
   )
 }
 
-function TeamSection({ team, onNavigate, onOpenDocuments, historic = false, detail, onMutate }: {
+function TeamSection({ team, onNavigate, onOpenDocuments, onOpenReview, onCopyReview, historic = false, detail, onMutate }: {
   readonly team: ActivityTeam
   /** Navigate to a member transcript (floater hides immediately). */
   readonly onNavigate: (id: SessionId) => void
   /** Jump to one expert's output documents list. */
   readonly onOpenDocuments: (member: ActivityMember) => void
+  readonly onOpenReview?: () => void
+  readonly onCopyReview?: () => void
   readonly historic?: boolean
   readonly detail?: TeamDetailState
   readonly onMutate?: (request: Omit<TeamWireMutation, 'captainSessionId' | 'teamId'>) => Promise<TeamWireMutationResponse | void>
@@ -578,8 +590,8 @@ function TeamSection({ team, onNavigate, onOpenDocuments, historic = false, deta
                     title={`查看 ${member.name} 的产出文档`}
                   >
                     <span className={css.memberAvatar} data-unread={member.unread > 0}>
-                      {memberArtUrl(member.name, member.role) !== null ? (
-                        <img className={css.memberArt} src={memberArtUrl(member.name, member.role) ?? ''} alt="" aria-hidden />
+                      {memberArtUrl(member.name, member.role, member.expertId) !== null ? (
+                        <img className={css.memberArt} src={memberArtUrl(member.name, member.role, member.expertId, true) ?? ''} onError={memberArtFallback} alt="" aria-hidden />
                       ) : (
                         <span className={css.memberInitial} style={{ background: accentOf(member.id) }}>{memberInitial(member.name)}</span>
                       )}
@@ -638,6 +650,8 @@ function TeamSection({ team, onNavigate, onOpenDocuments, historic = false, deta
           error={detail?.error}
           stale={detail?.error !== undefined || (detail?.envelope?.plan?.expiresAt !== undefined && new Date(detail.envelope.plan.expiresAt).getTime() <= Date.now())}
           canMutate={detail?.envelope?.team?.captainSessionId === team.captainSessionId}
+          onOpenReview={onOpenReview}
+          onCopyReview={onCopyReview}
           onMutate={onMutate}
         />
       )}
@@ -717,6 +731,84 @@ export function ActivityPanel({ sessionsList, openSession }: {
   ).current
   const currentRef = useRef(current)
   useEffect(() => { currentRef.current = current }, [current])
+  const issueReviewLink = async (target: { captainSessionId: string; planId?: string; teamId?: string }): Promise<string> => {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 15000)
+    try {
+    const response = await fetch('/plugins/dsh-expert-library/review/api/issue', {
+      signal: controller.signal,
+      method: 'POST', credentials: 'same-origin', cache: 'no-store',
+      headers: { accept: 'application/json', 'content-type': 'application/json' },
+      body: JSON.stringify(target),
+    })
+    if (response.status === 401) throw new Error('工作区登录已失效，请刷新工作区并重新登录后重试')
+    const result = await response.json().catch(() => { throw new Error('分享服务暂时不可用，请稍后重试') }) as { ok?: boolean; token?: string; path?: string; error?: string }
+    if (!response.ok || result.ok !== true || result.token === undefined || result.path === undefined) throw new Error(result.error ?? `HTTP ${response.status}`)
+    const url = new URL(result.path, window.location.origin)
+    if (target.planId !== undefined && target.teamId === undefined) {
+      url.searchParams.set('captain', target.captainSessionId)
+      url.searchParams.set('plan', target.planId)
+      url.searchParams.set('gate', 'plan')
+    }
+    url.hash = `share=${result.token}`
+    return url.toString()
+    } finally { clearTimeout(timeout) }
+  }
+  const openReview = (target: { captainSessionId: string; planId?: string; teamId?: string }): void => {
+    const popup = window.open('about:blank', '_blank', 'width=1180,height=900')
+    if (popup !== null) {
+      popup.opener = null
+      popup.document.title = '正在打开 Expert Teams 独立审阅页…'
+      popup.document.body.textContent = '正在准备研究页面…'
+    }
+    void (async () => {
+      try {
+        const link = await issueReviewLink(target)
+        if (popup !== null && !popup.closed) popup.location.replace(link)
+        else window.location.assign(link)
+      } catch (cause) {
+        const message = `独立页打开失败：${cause instanceof Error ? cause.message : '未知错误'}`
+        if (popup !== null && !popup.closed) popup.document.body.textContent = message
+        else window.alert(message)
+      }
+    })()
+  }
+  const showReviewLink = (link: string): void => {
+    const dialog = document.createElement('dialog')
+    dialog.setAttribute('aria-label', '复制分享链接')
+    dialog.style.cssText = 'max-width:calc(100vw - 32px);width:520px;border:1px solid #c9c6b9;border-radius:16px;padding:24px;background:#faf8ef;color:#343b31'
+    const title = document.createElement('h3')
+    title.textContent = '长按或全选复制分享链接'
+    const note = document.createElement('p')
+    note.textContent = '24 小时内有效，最多可在 10 个浏览器中兑换登录。'
+    const input = document.createElement('textarea')
+    input.value = link; input.readOnly = true
+    input.setAttribute('aria-label', '分享链接')
+    input.style.cssText = 'width:100%;height:100px;box-sizing:border-box;overflow-wrap:anywhere'
+    const open = document.createElement('a')
+    open.href = link; open.textContent = '直接打开'; open.target = '_blank'; open.rel = 'noopener noreferrer'
+    const close = document.createElement('button')
+    close.textContent = '关闭'; close.style.marginLeft = '24px'
+    close.onclick = () => dialog.remove()
+    dialog.addEventListener('close', () => dialog.remove(), { once: true })
+    dialog.append(title, note, input, open, close); document.body.append(dialog)
+    if (typeof dialog.showModal === 'function') dialog.showModal()
+    else { dialog.setAttribute('open', ''); dialog.style.cssText += ';position:fixed;top:20%;z-index:2147483647' }
+    input.focus(); input.select()
+  }
+  const copyReview = (target: { captainSessionId: string; planId?: string; teamId?: string }): void => {
+    void (async () => {
+      try {
+        const link = await issueReviewLink(target)
+        if (navigator.clipboard?.writeText === undefined) { showReviewLink(link); return }
+        try { await navigator.clipboard.writeText(link) }
+        catch { showReviewLink(link); return }
+        window.alert('分享链接已复制，24 小时内有效，最多可在 10 个浏览器中兑换登录。')
+      } catch (cause) {
+        window.alert(`复制访问链接失败：${cause instanceof Error ? cause.message : '未知错误'}`)
+      }
+    })()
+  }
   const mountedAtRef = useRef(performance.now())
   const expanded = activityPanelExpandedForSession(open, openOwner, current)
 
@@ -842,6 +934,32 @@ export function ActivityPanel({ sessionsList, openSession }: {
     [plans, current, teams, archivedTeams],
   )
   const visibleCount = visibleTeams.length + visibleArchived.length + visibleHistoric.length + visiblePlans.length
+  // A newly ready human gate must be visible even when the activity drawer
+  // was closed earlier. Remember each source revision so polling does not
+  // reopen a drawer that the user deliberately closes after seeing it.
+  const presentedGates = useRef(new Set<string>())
+  useEffect(() => {
+    if (current === undefined) return
+    const pending: string[] = []
+    for (const team of visibleTeams) {
+      const detail = teamDetails.get(`${team.captainSessionId}:${team.teamId}`)
+      if (detail?.error || detail?.envelope?.archived) continue
+      for (const task of detail?.envelope?.team?.tasks ?? []) {
+        if (task.status === 'pending' && task.humanChoice?.sha256) {
+          pending.push(`${current}:${team.teamId}:${task.id}:${task.humanChoice.sha256}`)
+        }
+      }
+    }
+    for (const item of visiblePlans) {
+      if (item.plan.status === 'staged') pending.push(`${current}:${item.plan.planId}:${item.plan.digest}`)
+    }
+    if (!pending.some(key => !presentedGates.current.has(key))) return
+    for (const key of pending) presentedGates.current.add(key)
+    setDocsFocus(null)
+    setOpenOwner(current)
+    setOpen(true)
+    setAutoOpened(true)
+  }, [current, visibleTeams, visiblePlans, teamDetails])
   const detailTargets = useMemo(() => [...visibleTeams, ...visibleArchived], [visibleTeams, visibleArchived])
   const detailTargetSignature = useMemo(() => detailTargets.map((team) => `${team.captainSessionId}:${team.teamId}`).sort().join('|'), [detailTargets])
   useEffect(() => {
@@ -1021,13 +1139,16 @@ export function ActivityPanel({ sessionsList, openSession }: {
                     const plan = detail?.envelope?.plan ?? item.plan
                     return <TeamPlanPanel
                       key={key}
+                      captainSessionId={item.captainSessionId}
                       plan={plan}
                       wire={detail?.envelope?.team ?? undefined}
                       loading={detail?.loading ?? false}
                       error={detail?.error}
                       stale={detail?.error !== undefined || (plan.expiresAt !== undefined && new Date(plan.expiresAt).getTime() <= Date.now())}
                       canMutate={item.captainSessionId === current}
-                      onMutate={async (request) => { await mutateTeam({ ...request, captainSessionId: item.captainSessionId, planId: item.plan.planId }) }}
+                      onOpenReview={() => { openReview({ captainSessionId: item.captainSessionId, planId: item.plan.planId }) }}
+                      onCopyReview={() => { copyReview({ captainSessionId: item.captainSessionId, planId: item.plan.planId }) }}
+                      onMutate={(request) => mutateTeam({ ...request, captainSessionId: item.captainSessionId, planId: item.plan.planId })}
                     />
                   })}
                   {visibleTeams.map((team) => (
@@ -1036,9 +1157,19 @@ export function ActivityPanel({ sessionsList, openSession }: {
                       team={team}
                       onNavigate={navigateToSession}
                       onOpenDocuments={(member) => { setDocsFocus({ teamId: team.teamId, memberName: member.name }) }}
+                      onOpenReview={() => { openReview({ captainSessionId: team.captainSessionId, teamId: team.teamId }) }}
+                      onCopyReview={() => { copyReview({ captainSessionId: team.captainSessionId, teamId: team.teamId }) }}
                       detail={teamDetails.get(`${team.captainSessionId}:${team.teamId}`)}
                       onMutate={async (request) => {
-                        await mutateTeam({ ...request, captainSessionId: team.captainSessionId, teamId: team.teamId })
+                        const result = await mutateTeam({ ...request, captainSessionId: team.captainSessionId, teamId: team.teamId })
+                        if (result.team !== undefined) {
+                          const key = `${team.captainSessionId}:${team.teamId}`
+                          setTeamDetails(previous => new Map(previous).set(key, {
+                            envelope: { version: 1, team: result.team ?? null, plan: result.plan ?? null, archived: result.archived === true },
+                            loading: false, fetchedAt: Date.now(),
+                          }))
+                        }
+                        return result
                       }}
                     />
                   ))}

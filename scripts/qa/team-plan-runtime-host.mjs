@@ -112,6 +112,8 @@ export function apply(ctx){
     planned.tasks[0].reportBundle={md:'report.md',html:'report.html',pdf:'report.pdf',craft:{version:3,evidence:'craft-evidence.json',selections:[
       {packId:'zhijian-realestate',skillId:'zhijian-report-craft',reason:'Local fixture explicitly selects content craft'},
       {packId:'zhijian-realestate',skillId:'zhijian-designer-render',variant:'credit-policy',reason:'Local fixture explicitly selects rendering craft'}]}};
+    planned.tasks[0].artifactInputs=[];
+    planned.report_outline={chapters:[{id:'evidence',title:'Synthetic evidence',questions:['What is supported?'],evidence:['Fixture observations'],taskIds:['gate']}],attachments:[]};
     const staged=await call(captain,'plan_stage',planned);
     assert.equal(staged.waitingFor,undefined,'authorized exact input should not wait for another user approval');
     const approved=await call(captain,'plan_approve',{plan_id:staged.planId,expected_digest:staged.digest,expected_revision:staged.revision});
@@ -287,10 +289,20 @@ export function apply(ctx){
         const tasks=[{id:'gate',subject:'Captain-controlled gate',owner:'captain',dependencies:[],acceptance:['Fixture acceptance for gate']},
           ...specs.map(s=>({id:'work-'+s.id,subject:'Work '+s.id,owner:s.id,dependencies:['gate'],acceptance:['Fixture acceptance for work-'+s.id],...(s.id==='delta'?{reportBundle}:{})}))];
         const initialProfile={...profile,members:specs.map(({route,...member})=>member)};
-        const args={profile:initialProfile,tasks,team_name:teamId,goal:profile.description};
+        for(const task of tasks) task.artifactInputs=(task.dependencies??task.dependsOn??[]).map(fromTask=>({fromTask,artifact:'task-output',purpose:'Required reviewed fixture control result',phase:'work'}));
+        const args={profile:initialProfile,tasks,team_name:teamId,goal:profile.description,report_outline:{chapters:[{id:'evidence',title:'Synthetic evidence',questions:['What is supported?'],evidence:['Fixture observations'],taskIds:['work-delta']}],attachments:[]}};
         const preview=await call(captain,'plan_preview',args);assert.equal(preview.members.length,5);assert.equal(new Set(preview.members).size,5);
         assert.deepEqual(preview.tasks.map(t=>t.depends_on),[[],...specs.map(()=>['t1'])]);
         let staged=await call(captain,'plan_stage',args);assert.equal(staged.status,'staged');assert.equal(requests.length,beforeStaging);
+        const unchangedJournalPath=join(workspace,'expert-teams','plans',staged.planId+'.journal.jsonl');
+        const unchangedJournal=await readFile(unchangedJournalPath,'utf8');
+        for(let repeat=0;repeat<3;repeat++){
+          const unchanged=await call(captain,'plan_edit',{plan_id:staged.planId,expected_digest:staged.digest,expected_revision:staged.revision,tasks:args.tasks});
+          assert.equal(unchanged.revision,staged.revision,'identical edits must not manufacture revisions');
+          assert.equal(unchanged.digest,staged.digest);assert.equal(unchanged.updatedAt,staged.updatedAt);
+          assert.deepEqual(unchanged.editLog,staged.editLog);
+          assert.equal(await readFile(unchangedJournalPath,'utf8'),unchangedJournal,'identical edits must not append audit events');
+        }
         assert.equal(staged.plan.tasks.length,6);
         assert.deepEqual(staged.plan.tasks.map(t=>t.dependsOn),[[],...specs.map(()=>['gate'])]);
         assert.ok(staged.plan.tasks.every(t=>!Object.hasOwn(t,'dependencies')),'staged plan must store canonical dependency fields');

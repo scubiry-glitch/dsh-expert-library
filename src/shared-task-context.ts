@@ -3,6 +3,7 @@ import type { Agent } from '@deepseek-ai/dsh-agent'
 import { sessionOwnEvents } from './harness-compat.ts'
 import { canonicalDigest } from './v2/digest.ts'
 import type { SharedTaskContext } from './types.ts'
+import { CUSTOMER_MENTION_CONTEXT_PREFIX } from './host/customer-mentions.ts'
 
 export const MAX_SHARED_TASK_CONTEXT_BYTES = 32_768
 export const MAX_SHARED_TASK_CONTEXT_MESSAGES = 64
@@ -40,15 +41,20 @@ export function isSharedTaskContext(value: unknown): value is SharedTaskContext 
  * retained verbatim and later direct-user corrections are appended, never
  * substituted by a model summary or a standalone approval. */
 export function captureSharedTaskContext(captain: ContextCaptain, previous?: SharedTaskContext): SharedTaskContext {
-  if (previous !== undefined && (!isSharedTaskContext(previous) || previous.captainSessionId !== captain.id)) {
-    throw new Error('SHARED_TASK_CONTEXT_INVALID: context digest or captain identity does not match')
-  }
   const session = captain.session as unknown as { ownEvents?: unknown; events?: unknown }
   const header = captain.session?.header
   if (header?.id !== undefined && header.id !== captain.id) throw new Error('SHARED_TASK_CONTEXT_SOURCE_INVALID: captain and source session identity differ')
   let events: readonly unknown[] = []
   const available = typeof session?.ownEvents === 'function' || Array.isArray(session?.events)
   if (available) events = sessionOwnEvents(captain.session)
+  return captureSharedTaskContextFromEvents(captain.id, events, previous, available)
+}
+
+/** Same source-bound capture for a cold, read-only session observation. */
+export function captureSharedTaskContextFromEvents(captainSessionId: string, events: readonly unknown[], previous?: SharedTaskContext, available = true): SharedTaskContext {
+  if (previous !== undefined && (!isSharedTaskContext(previous) || previous.captainSessionId !== captainSessionId)) {
+    throw new Error('SHARED_TASK_CONTEXT_INVALID: context digest or captain identity does not match')
+  }
   const eligible: SourceMessage[] = []
   let boundary = -1
   for (const value of events) {
@@ -61,7 +67,8 @@ export function captureSharedTaskContext(captain: ContextCaptain, previous?: Sha
     if (typeof data.id !== 'string' || !data.id || !Number.isSafeInteger(value.seq) || (value.seq as number) < 0 || !Array.isArray(data.content)) {
       throw new Error('SHARED_TASK_CONTEXT_SOURCE_INVALID: admitted user input lacks a durable message id/sequence')
     }
-    const text = data.content.filter(item => record(item) && item.type === 'text' && typeof item.text === 'string').map(item => (item as { text: string }).text).join('\n')
+    const text = data.content.filter(item => record(item) && item.type === 'text' && typeof item.text === 'string'
+      && !(item.text as string).startsWith(CUSTOMER_MENTION_CONTEXT_PREFIX)).map(item => (item as { text: string }).text).join('\n')
     if (!text.trim()) continue
     eligible.push({ id: data.id, seq: value.seq as number, text })
   }
@@ -81,8 +88,8 @@ export function captureSharedTaskContext(captain: ContextCaptain, previous?: Sha
   const messages = [...retained.map(message => ({ ...message })), ...fresh]
   if (!withinBudget(messages)) throw new Error(`SHARED_TASK_CONTEXT_TOO_LARGE: ${messages.reduce((size, message) => size + Buffer.byteLength(message.text, 'utf8'), 0)} UTF-8 bytes/${messages.length} direct-user messages exceed the ${MAX_SHARED_TASK_CONTEXT_BYTES}-byte/${MAX_SHARED_TASK_CONTEXT_MESSAGES}-message limit; no trailing constraints were discarded. Use a narrower new session with a complete direct-user task request.`)
   const value: Omit<SharedTaskContext, 'sha256'> = messages.length > 0
-    ? { schemaVersion: 1, status: 'captured', captainSessionId: captain.id, messages }
-    : { schemaVersion: 1, status: 'unavailable', captainSessionId: captain.id, messages: [], unavailableReason: available ? 'no_own_direct_user_input' : 'host_user_history_unavailable' }
+    ? { schemaVersion: 1, status: 'captured', captainSessionId, messages }
+    : { schemaVersion: 1, status: 'unavailable', captainSessionId, messages: [], unavailableReason: available ? 'no_own_direct_user_input' : 'host_user_history_unavailable' }
   const result = { ...value, sha256: digest(value) }
   if (!isSharedTaskContext(result)) throw new Error('SHARED_TASK_CONTEXT_SOURCE_INVALID: duplicate or inconsistent user provenance')
   return result

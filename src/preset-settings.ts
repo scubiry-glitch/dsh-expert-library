@@ -3,6 +3,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import { join } from 'node:path'
 import type { Config } from './index.ts'
 import type { ToolsConfig } from './team-core.ts'
+import type { RuntimeCenterSnapshot } from './v2/runtime-pack.ts'
 import {
   effectiveMemberModel,
   EXPERT_LIBRARY_SETTINGS_NAMESPACE,
@@ -50,6 +51,15 @@ export function presetToolsConfig(ctx: Context, entry: Config): ToolsConfig {
     },
     get packCenterOrigin() { return value('packCenterOrigin') },
     get packCenterDir() { return value('packCenterDir') },
+    // Human-gate share links are issued from the tool layer; without this the
+    // preset omits the origin and `plan_stage` silently returns no review_url.
+    get reviewPublicOrigin() { return value('reviewPublicOrigin') },
+    get getPackCenterSnapshot() {
+      const host = ctx.get('expertLibraryPackCenterSnapshot') as
+        | { activeSnapshot: () => Promise<RuntimeCenterSnapshot> }
+        | undefined
+      return host === undefined ? undefined : () => host.activeSnapshot()
+    },
     get packCenterUpdatePolicy() { return normalizeUpdatePolicy(value('packCenterUpdatePolicy')) },
     get packSourceAllowlist() { return value('packSourceAllowlist') },
   }

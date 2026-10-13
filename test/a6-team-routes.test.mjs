@@ -54,6 +54,19 @@ test('cold GET does not require a live-agent callback', async () => {
   assert.equal(res.status, 200)
 })
 
+test('model catalog stays readable for a staged plan after its agent is unloaded, with native Host auth', async () => {
+  const url = new URL('http://x/plugins/dsh-expert-library/teams?captainSessionId=captain&planId=plan&models=1')
+  const cold = response()
+  await handleTeamRoutes(request({ url: url.pathname + url.search }), cold, url, {
+    ...runtime, modelCatalog: async () => [{ provider: 'fixture', model: 'stub', name: 'Stub' }],
+  })
+  assert.equal(cold.status, 200)
+  assert.deepEqual(JSON.parse(cold.body).models, [{ provider: 'fixture', model: 'stub', name: 'Stub' }])
+  const denied = response()
+  await handleTeamRoutes(request({ url: url.pathname + url.search }), denied, url, { ...runtime, hostAuth: () => 401 })
+  assert.equal(denied.status, 401)
+})
+
 test('native authenticated public authority does not require a manage token', async () => {
   const res = response()
   const req = request()
@@ -61,4 +74,19 @@ test('native authenticated public authority does not require a manage token', as
   req.socket.remoteAddress = '127.0.0.1'
   await handleTeamRoutes(req, res, new URL('http://public.example.test/plugins/dsh-expert-library/teams?captainSessionId=captain'), runtime)
   assert.equal(res.status, 200)
+})
+
+test('human choice requires native Host auth, exact task and source digest', async () => {
+  const source = 'a'.repeat(64)
+  const payload = { action: 'choose', captainSessionId: 'captain', teamId: 'team', taskId: 't2', choice: 'B', expectedSha256: source }
+  const legacy = response()
+  await handleTeamRoutes(request({ method: 'POST', body: payload }), legacy, new URL('http://x/plugins/dsh-expert-library/teams'), { ...runtime, hostAuth: undefined, getToken: () => 'token' })
+  assert.equal(legacy.status, 403)
+  const malformed = response()
+  await handleTeamRoutes(request({ method: 'POST', body: { ...payload, expectedSha256: 'stale' } }), malformed, new URL('http://x/plugins/dsh-expert-library/teams'), runtime)
+  assert.equal(malformed.status, 400)
+  const accepted = response()
+  await handleTeamRoutes(request({ method: 'POST', body: payload }), accepted, new URL('http://x/plugins/dsh-expert-library/teams'), runtime)
+  assert.equal(accepted.status, 200)
+  assert.equal(JSON.parse(accepted.body).action, 'choose')
 })

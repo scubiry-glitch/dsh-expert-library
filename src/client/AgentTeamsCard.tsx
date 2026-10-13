@@ -15,7 +15,7 @@ import type { PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots
 import type { SessionId } from '@deepseek-ai/dsh-session/types'
 import type { ActivityTeam } from './ActivityPanel.tsx'
 import type { ExpertTeamsCardData } from './agent-teams-card-definition.ts'
-import { LEAD_ART, memberArtUrl } from './artwork.ts'
+import { LEAD_ART, memberArtUrl, memberArtFallback } from './artwork.ts'
 import css from './AgentTeamsCard.module.css'
 
 /** Window event name the floater listens for to open itself. */
@@ -104,7 +104,7 @@ export function ExpertTeamsCard({ node, openSession, currentSessionId }: ExpertT
     ...data,
     captainSessionId: snapshot?.captainSessionId ?? owner,
     teamName: snapshot?.name ?? data.teamName,
-    members: snapshot?.members.map((member) => ({ id: member.id, name: member.name, role: member.role })) ?? data.members,
+    members: snapshot?.members.map((member) => ({ id: member.id, name: member.name, role: member.role, expertId: member.expertId })) ?? data.members,
   }), [data, owner, snapshot])
   return (
     <section className={css.root} data-expert-teams-card data-team-id={resolved.teamId}>
@@ -132,8 +132,8 @@ export function ExpertTeamsCard({ node, openSession, currentSessionId }: ExpertT
               onClick={() => { openActivityPanel(resolved, member.name) }}
               title={member.role === '' ? `查看 ${member.name} 的产出文档` : `查看 ${member.name}（${member.role}）的产出文档`}
             >
-              {memberArtUrl(member.name, member.role) !== null ? (
-                <img className={css.memberArt} src={memberArtUrl(member.name, member.role) ?? ''} alt="" aria-hidden />
+              {memberArtUrl(member.name, member.role, member.expertId) !== null ? (
+                <img className={css.memberArt} src={memberArtUrl(member.name, member.role, member.expertId, true) ?? ''} onError={memberArtFallback} alt="" aria-hidden />
               ) : (
                 <span className={css.memberInitial}>{member.name.trim().slice(0, 1).toUpperCase() || '?'}</span>
               )}

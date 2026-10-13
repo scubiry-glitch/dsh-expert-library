@@ -44,6 +44,9 @@ const MEMBER_DENIED_TOOLS = [
   'expert_teams_scenario_apply',
   'expert_teams_quality_repair',
   'expert_teams_quality_reopen',
+  'expert_teams_quality_continue',
+  'expert_teams_quality_host_recheck',
+    'expert_teams_revise_inputs',
   'expert_teams_quality_integrate',
   'expert_teams_resume_task',
   'expert_teams_resume_member',
@@ -458,6 +461,19 @@ function createMemberRuntimeCoordinator(ctx: Context, releaseRoot: () => void): 
           )
         }
         disposers.push(installMemberToolBoundary(childCtx, memberToolFilter(scope), (scope?.maxDepth ?? 0) === 0))
+        // Durable authorization can be amended after a child's immutable
+        // descriptor was created. Restore this one governed tool into the
+        // child's scope; the provider tool rechecks live task/provider grants
+        // on every execution. Never rewrite history or copy captain-only tools.
+        if (scope?.allowedTools.includes('expert_provider_call')
+          && descriptor.toolFilter?.allow !== undefined
+          && !descriptor.toolFilter.allow.includes('expert_provider_call')
+          && !descriptor.toolFilter.deny?.includes('expert_provider_call')) {
+          const parent = ctx.agents.get(parentSessionId)
+          const definition = parent === undefined ? undefined : ctx.tools.get('expert_provider_call', parent)
+          if (definition === undefined) throw new Error('expert-teams: authorized provider tool unavailable from durable captain')
+          disposers.push(childCtx.tools.register({ ...definition }))
+        }
         disposers.push(installIdleMemberBootstrap(childCtx, child.id, {
           idle: () => { idleBoots.set(child.id, parentSessionId) },
           working: () => { idleBoots.delete(child.id) },
@@ -748,6 +764,7 @@ export async function deliverToMember(
   childId: string,
   text: string,
   signal: AbortSignal,
+  delivery: 'queue' | 'steer' = 'queue',
 ): Promise<boolean> {
   if (signal.aborted) return false
   const controller = new AbortController()
@@ -763,7 +780,7 @@ export async function deliverToMember(
   timer.unref?.()
   try {
     await Promise.race([
-      queueMemberPrompt(ctx.subagents, captain, brandedSessionId(childId), [{ type: 'text', text }], controller.signal),
+      queueMemberPrompt(ctx.subagents, captain, brandedSessionId(childId), [{ type: 'text', text }], controller.signal, delivery),
       aborted,
     ])
     return true

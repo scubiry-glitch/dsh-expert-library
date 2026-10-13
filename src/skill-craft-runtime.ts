@@ -39,7 +39,10 @@ function artifactInput(artifacts: readonly ArtifactEvidence[], id: string, max: 
   if (typeof a.content !== 'string' || a.content.length > max * 2 || (a.encoding !== undefined && a.encoding !== 'utf8' && a.encoding !== 'base64')) throw new Error('artifact encoding/size invalid')
   const bytes = Buffer.from(a.content, a.encoding ?? 'utf8')
   if (bytes.length > max || (a.encoding === 'base64' && bytes.toString('base64') !== a.content) || hash(bytes) !== a.sha256) throw new Error('artifact byte identity mismatch')
-  return { id, sha256: a.sha256, content: a.content, encoding: a.encoding ?? 'utf8' }
+  // Older frozen runners concatenate Buffer chunks as strings without a
+  // streaming UTF-8 decoder. Preserve exact artifact bytes using the protocol's
+  // existing base64 encoding, even when the collector supplied UTF-8 text.
+  return { id, sha256: a.sha256, content: bytes.toString('base64'), encoding: 'base64' }
 }
 function validResults(value: unknown, ids: readonly string[]): value is SkillCraftCheckResult[] {
   if (!Array.isArray(value) || value.length !== ids.length) return false
@@ -83,7 +86,12 @@ async function execute(entry: string, cwd: string, input: SkillCraftRunnerInput,
         finish(ids.map(id => value.find(item => item.id === id)!))
       } catch { finish(uniform(ids, 'unverified', 'Selected-skill checker returned malformed JSON results')) }
     })
-    child.stdin.end(JSON.stringify(input))
+    // Keep metadata (including non-ASCII IDs/reasons/paths) chunk-safe too.
+    // Escaping UTF-16 code units is standard JSON and round-trips surrogate
+    // pairs unchanged. Artifact payloads above are bounded base64, so this
+    // cannot inflate large text artifacts into six-byte Unicode escapes.
+    child.stdin.end(JSON.stringify(input).replace(/[\u007f-\uffff]/g,
+      char => `\\u${char.charCodeAt(0).toString(16).padStart(4, '0')}`))
   })
 }
 

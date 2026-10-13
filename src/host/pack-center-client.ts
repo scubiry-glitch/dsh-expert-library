@@ -52,7 +52,7 @@ export interface BindPackCenterInput {
   /** Obtained independently, BEFORE exchanging the one-use code. */
   trustedSigningKeys: Record<string, string>
 }
-export interface PackCenterListInput { packId?: string; beforeId?: string; limit?: number; signal?: AbortSignal }
+export interface PackCenterListInput { packId?: string; beforeId?: string; limit?: number; type?: string; signal?: AbortSignal }
 export interface RemotePackInstallInput extends PackOperationInput {
   releaseId: string; signal?: AbortSignal
   target?: { manifestSha256: string; artifactSha256: string; contentTreeSha256: string }
@@ -181,6 +181,19 @@ export function createPackCenterClient(options: PackCenterClientOptions) {
     if (source.available === false && source.code === code) return { available: false as const, code }
     return fail('CENTER_RESPONSE_INVALID')
   }
+  /** Informational only: absent or malformed classification degrades to
+   * undefined rather than failing the reply, so pre-rollout centers keep working. */
+  function classification(value: unknown) {
+    if (value === undefined || value === null) return undefined
+    if (typeof value !== 'object' || Array.isArray(value)) return undefined
+    const row = value as Record<string, unknown>
+    const tokens = (input: unknown) => Array.isArray(input) && input.length <= 16 && input
+      .every(item => typeof item === 'string' && /^[a-z][a-z0-9-]{0,31}$/.test(item)) ? [...input] : undefined
+    const types = tokens(row.types), scenarios = tokens(row.scenarios)
+    if (types === undefined || scenarios === undefined || typeof row.schemaVersion !== 'number'
+      || !Number.isSafeInteger(row.schemaVersion) || row.schemaVersion < 0) return undefined
+    return { schemaVersion: row.schemaVersion, types, scenarios }
+  }
   function releaseView(value: unknown, centerId: string) {
     const row = record(value)
     if (!validateCatalogRelease(row.manifest).ok) fail('CENTER_RESPONSE_INVALID')
@@ -193,6 +206,7 @@ export function createPackCenterClient(options: PackCenterClientOptions) {
       distribution: assertContract('scope', row.distribution),
       downloadAvailability: availability(row.downloadAvailability, 'DEPENDENCY_UNAVAILABLE'),
       compatibility: checkCompatibility(manifest, capabilities),
+      classification: classification(row.classification),
     }
   }
   function localOperation<T extends PackOperationInput>(input: T, fields: string[]) {
@@ -374,10 +388,15 @@ export function createPackCenterClient(options: PackCenterClientOptions) {
     async listReleases(input: PackCenterListInput = {}) {
       return guarded(async () => {
         const { signal, ...fields } = input, request = capture(fields)
-        keysExactly(request, [], ['packId', 'beforeId', 'limit'])
+        keysExactly(request, [], ['packId', 'beforeId', 'limit', 'type'])
         const query = new URLSearchParams()
         if (request.packId !== undefined) query.set('packId', id(request.packId))
         if (request.beforeId !== undefined) query.set('beforeId', id(request.beforeId))
+        if (request.type !== undefined) {
+          // Syntactic bound only; the center owns the package-type vocabulary.
+          if (typeof request.type !== 'string' || !/^[a-z][a-z0-9-]{0,31}$/.test(request.type)) fail('CENTER_INVALID_INPUT')
+          query.set('type', request.type)
+        }
         if (request.limit !== undefined) {
           if (!Number.isSafeInteger(request.limit) || request.limit < 1 || request.limit > 100) fail('CENTER_INVALID_INPUT')
           query.set('limit', String(request.limit))

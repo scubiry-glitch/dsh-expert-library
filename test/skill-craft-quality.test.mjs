@@ -12,8 +12,8 @@ export function syntheticSelection(){
  const body={version:1,artifactRoles:['md','html','pdf','evidence'],selections:[{packId:'qa-craft',skillId:'writer',reason:'Explicit test choice',skillVersion:'1.0.0',skillDigest:'a'.repeat(64),declarationPath:'skills/writer/craft.json',declarationDigest:'b'.repeat(64)}],packs:[{packId:'qa-craft',version:'1.0.0',root:'/tmp/qa-uninstalled-craft-package',treeDigest:'c'.repeat(64)}],materials:[{packId:'qa-craft',skillId:'writer',id:'instructions',path:'skills/writer/SKILL.md',sha256:'d'.repeat(64),bytes:20,roles:['writer','reviewer']}],checks:[{packId:'qa-craft',id:'qa-structure',entrypoint:'skills/writer/check.mjs',sha256:'e'.repeat(64),version:'3.7.0',resultIds:['qa-part-a','qa-part-b']}],reviewAreas:[{id:'domain-evidence',description:'Domain-specific factual limitations'},{id:'domain-reasoning',description:'Domain-specific reasoning'}]}
  return {...body,digest:canonicalDigest(body)}
 }
-function setup(){
- const selection=syntheticSelection();assert.equal(isFrozenSkillCraftContract(selection),true)
+function setup(browser=false){
+ const selection=syntheticSelection();if(browser){selection.checks[0].resultIds[1]='report-craft-browser';const{digest,...body}=selection;selection.digest=canonicalDigest(body)}assert.equal(isFrozenSkillCraftContract(selection),true)
  const spec={id:'selected-skill-craft-v1',md:'published:r.md',html:'published:r.html',pdf:'published:r.pdf',craftEvidence:'published:e.json',selection}
  const ids=[spec.md,spec.html,spec.pdf,spec.craftEvidence]
  const contract=q.createQualityContract({id:'qa-v3',taskId:'t1',attempt:1,assignee:'writer',kind:'implementation',objective:'Synthetic v3 contract integrity',inScope:['artifacts/**'],acceptance:[{id:'present',statement:'Artifacts verified'}],verify:['true'],deliverables:ids,changedPaths:['artifacts/**'],artifactChecks:[spec]})
@@ -62,4 +62,69 @@ test('typed quality contract cannot admit content-only selected skills as a four
  selection.artifactRoles=['md','evidence'];const{digest,...body}=selection;selection.digest=canonicalDigest(body)
  assert.equal(isFrozenSkillCraftContract(selection),true)
  assert.throws(()=>q.createQualityContract(contract),errorCode('invalid_contract'))
+})
+
+function transportBlocked(){
+ const{contract,evidence}=setup(),negative=structuredClone(evidence)
+ for(const receipt of negative.artifactCheckReceipts)for(const r of receipt.results)Object.assign(r,{status:'failed',detail:'V2 input invalid: artifact bytes/hash mismatch'})
+ const run=q.reviewQualityRun(q.createQualityRun(contract),{eventId:'bad-transport-review',reviewer:'reviewer',verdict:'needs_revision',evidence:negative,
+ findings:[{id:'transport',code:'HOST_ARTIFACT_CHECK_INPUT_MISMATCH_BLOCKS_PASS',severity:'hard',message:'Synthetic transport failure; artifact bytes unchanged',taskId:'t1',attempt:1}]}).run
+ return{run,evidence,args:{eventId:'recheck-1',actor:'captain',reason:'UTF-8 transport repaired',reviewEventId:'bad-transport-review',evidence}}
+}
+function browserBlocked(){
+ const{contract,evidence}=setup(true),negative=structuredClone(evidence)
+ Object.assign(negative.artifactCheckReceipts[0].results[1],{status:'unverified',detail:'Browser inspection unavailable: controlled browser executable unavailable'})
+ negative.acceptanceResults[0].passed=false
+ const run=q.reviewQualityRun(q.createQualityRun(contract),{eventId:'browser-host-review',reviewer:'reviewer',verdict:'needs_revision',evidence:negative,
+ findings:[{id:'browser-host',code:'craft-browser-check-blocked-by-host-cache-permission',severity:'hard',message:'Host browser cache was inaccessible',taskId:'t1',attempt:1}]}).run
+ const refreshed=structuredClone(evidence);refreshed.acceptanceResults[0].passed=false
+ return{run,args:{eventId:'browser-host-recheck',actor:'captain',reason:'Host browser and isolated cache verified',reviewEventId:'browser-host-review',evidence:refreshed}}
+}
+test('Host browser-cache recovery reopens unchanged work for independent review without consuming repair budget',()=>{
+ const{run,args}=browserBlocked(),before=structuredClone(run)
+ const next=q.recheckHostQualityRun(run,args).run
+ assert.deepEqual(run,before);assert.equal(next.status,'reviewing');assert.equal(next.repairRounds,run.repairRounds)
+ assert.equal(next.latestEvidence.artifactCheckReceipts[0].results[1].status,'unverified')
+ assert.equal(next.hostRechecks[0].evidence.artifactCheckReceipts[0].results[1].status,'passed')
+ assert.equal(next.hostRechecks[0].evidence.acceptanceResults[0].passed,false)
+ runtime.assertDurableQualityRun(next)
+ const defect=browserBlocked();defect.run.findings[0].code='actual-visual-defect'
+ assert.throws(()=>q.recheckHostQualityRun(defect.run,defect.args),/substantive|unrelated/)
+})
+test('Host recheck preserves failed reviewer acceptance for a fresh independent decision',()=>{
+ const f=transportBlocked()
+ f.run.latestEvidence.acceptanceResults[0].passed=false
+ f.run.evidenceHistory[0].acceptanceResults[0].passed=false
+ f.args.evidence.acceptanceResults[0].passed=false
+ const next=q.recheckHostQualityRun(f.run,f.args).run
+ runtime.assertDurableQualityRun(next)
+ assert.equal(next.latestEvidence.acceptanceResults[0].passed,false)
+ assert.equal(next.hostRechecks[0].evidence.acceptanceResults[0].passed,false)
+ assert.equal(next.status,'reviewing')
+})
+test('Host recheck retains failed evidence and budget, and only opens independent review on identical bytes',()=>{
+ const{run,args,evidence}=transportBlocked(),before=structuredClone(run)
+ const next=q.recheckHostQualityRun(run,args).run
+ assert.deepEqual(run,before);assert.equal(next.status,'reviewing');assert.equal(next.attempt,run.attempt)
+ assert.equal(next.repairRounds,0);assert.equal(next.contract.maxRepairRounds,run.contract.maxRepairRounds)
+ assert.deepEqual(next.findings,run.findings);assert.deepEqual(next.evidenceHistory,run.evidenceHistory)
+ assert.deepEqual(next.latestEvidence,run.latestEvidence);assert.equal(next.hostRechecks.length,1)
+ runtime.assertDurableQualityRun(JSON.parse(JSON.stringify(next)))
+ assert.throws(()=>q.integrateQualityRun(next,{eventId:'premature',actor:'captain'}),/passed/)
+ const passed=q.reviewQualityRun(next,{eventId:'actual-independent-new-review',reviewer:'reviewer',verdict:'pass',evidence}).run
+ assert.equal(q.integrateQualityRun(passed,{eventId:'real-integration',actor:'captain'}).run.status,'integrated')
+ assert.equal(q.recheckHostQualityRun(passed,args).applied,false)
+ assert.throws(()=>q.recheckHostQualityRun(next,{...args,reason:'conflict'}),/conflict/)
+})
+for(const[label,mutate]of[
+ ['changed bytes',f=>{f.args.evidence.artifacts[0].sha256='0'.repeat(64)}],
+ ['changed review identity',f=>{f.args.reviewEventId='older-review'}],
+ ['non-captain',f=>{f.args.actor='reviewer'}],
+ ['substantive finding',f=>{f.run.findings[0].code='REAL_REPORT_DEFECT'}],
+ ['other machine failure',f=>{f.run.latestEvidence.artifactCheckReceipts[0].results[0].detail='Actual clipped text'}],
+ ['still failing',f=>{f.args.evidence.artifactCheckReceipts[0].results[0].status='failed'}],
+ ['changed reviewer judgement',f=>{f.args.evidence.independentReview.areas[0].coverage='different'}],
+])test('Host recheck rejects '+label+' without state changes',()=>{
+ const f=transportBlocked();mutate(f);const before=structuredClone(f.run)
+ assert.throws(()=>q.recheckHostQualityRun(f.run,f.args));assert.deepEqual(f.run,before)
 })

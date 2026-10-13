@@ -1,0 +1,22 @@
+--- nginx-before.conf
++++ /etc/nginx/conf.d/yy.meizu.life.conf
+@@ -117,6 +117,19 @@
+     }
+ 
+     # ===== 默认反代：缓冲开启，sub_filter 改写插件 loopback 地址 =====
++    # Scoped review API validates the real browser origin and its own review cookie.
++    location ^~ /plugins/dsh-expert-library/review {
++        proxy_pass http://127.0.0.1:3080;
++        proxy_http_version 1.1;
++        proxy_set_header Host $host;
++        proxy_set_header Origin $http_origin;
++        proxy_set_header X-Forwarded-Proto https;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_buffering off;
++        proxy_cache off;
++        proxy_read_timeout 60s;
++    }
++
+     location ^~ /plugins/ {
+         proxy_pass http://127.0.0.1:3080;
+         proxy_http_version 1.1;

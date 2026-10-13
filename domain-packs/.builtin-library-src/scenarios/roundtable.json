@@ -1,0 +1,30 @@
+{
+  "id": "roundtable",
+  "version": "0.0.0-legacy",
+  "schemaVersion": 2,
+  "domain": "legacy.v1",
+  "intents": [
+    "roundtable-team"
+  ],
+  "requiredCapabilities": [],
+  "routingPolicy": {
+    "candidateHints": [
+      "bk-004",
+      "bk-005",
+      "bk-008",
+      "docs-coordinator"
+    ]
+  },
+  "teamTemplate": "roundtable.legacy-team",
+  "outputTemplate": "roundtable.legacy-output",
+  "qualityPolicy": "roundtable.legacy-quality",
+  "knowledgePolicy": {
+    "required": [
+      "local-knowledge"
+    ]
+  },
+  "toolPolicy": {
+    "allowed": []
+  },
+  "legacySource": "v1"
+}

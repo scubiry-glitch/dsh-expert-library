@@ -85,6 +85,12 @@ export function apply(ctx) {
         requests.at(-1).unselectedMaterialsAbsent=true;
       }
       if(mode==='quota')throw new LlmError('Controlled fixture balance failure','QUOTA',{status:402});
+      if(mode==='admission-review'){
+        const current=await state(),gate=current.tasks.find(t=>t.assignee==='captain');
+        const reviewer=ctx.agents.get(options.sessionId);assert.ok(reviewer,'accepted reviewer request must have a live Agent');
+        await call(reviewer,'quality_review',{task_id:gate.id,event_id:'fixture-gate-review',verdict:'pass',acceptance_results:current.qualityRuns[gate.id].contract.acceptance.map(a=>({id:a.id,passed:true,detail:'Synthetic runtime admission verified.'}))});
+        modes.delete(options.sessionId);
+      }
       if(mode==='probe'){
         assert.ok(options.tools.some(tool=>tool.name==='read_image'),'image inspection must be in actual member tool schema');
         if(!imageCalled.has(options.sessionId)){
@@ -180,12 +186,16 @@ export function apply(ctx) {
         result={actualAgentProbe:true,waitTool:true,resumeMember:true};
       }else if(action==='prepare'&&req.method==='POST'){
         await checkpoint('prepare-start');
+        await writeFile(join(workspace,'AGENTS.md'),'# Local Host fixture instructions\\nKeep this test isolated.\\n');
         await writeFile(join(workspace,'review-image.png'),Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAEUlEQVR4nGP40KDwH4QZYAwAXJQKPRTh2pAAAAAASUVORK5CYII=','base64'));
         const handle=await captainHandle('probe-captain-'+randomUUID());const captain=handle.agent;
         await checkpoint('prepare-captain-created');
         const profile={schemaVersion:1,id:'member-craft-probe',version:'1',description:'Isolated member runtime and complete craft material validation',protocol:['Only local deterministic fixture calls'],
           members:['worker','blocked-worker'].map(name=>({id:name,name,role:'local fixture',route:{provider:'round2-probe',model:'stub'},maxDepth:0})),taskPlanning:'captain',review:{required:true,maxRepairRounds:2}};
-        const staged=await call(captain,'plan_stage',{profile,team_name:teamId,goal:profile.description,tasks:[{id:'gate',subject:'Captain fixture gate',owner:'captain',dependsOn:[],acceptance:['Synthetic gate; no business deliverable']}]});
+        const staged=await call(captain,'plan_stage',{profile,team_name:teamId,goal:profile.description,
+          report_outline:{chapters:[{id:'evidence',title:'Synthetic evidence',questions:['What is supported?'],evidence:['Local fixture observations'],taskIds:['report']}],attachments:[]},
+          tasks:[{id:'gate',subject:'Captain fixture gate',owner:'captain',dependsOn:[],artifactInputs:[],acceptance:['Synthetic gate; no business deliverable']},
+            {id:'report',subject:'Synthetic selected domain craft delivery',owner:'worker',dependsOn:['gate'],artifactInputs:[{fromTask:'gate',artifact:'task-output',purpose:'Complete independent fixture admission review before material delivery',phase:'work'}],reportBundle:{md:'report.md',html:'report.html',pdf:'report.pdf',craft:{version:3,selections,evidence:'craft-evidence.json'}},acceptance:['Local fixture report protocol']} ]});
         await checkpoint('prepare-plan-staged');
         const waiting=await call(captain,'plan_approve',{plan_id:staged.planId,expected_digest:staged.digest,expected_revision:staged.revision});assert.equal(waiting.waitingFor,'user-confirmation');
         const approved=await approveAsUser(captain,staged,req);assert.equal(approved.status,'completed');
@@ -207,8 +217,18 @@ export function apply(ctx) {
         assert.ok(!bootState.captainRuntimeBlock&&!bootState.members.some(m=>m.runtimeBlock),'bootstrap must not create runtime blocks');
         assert.equal(requests.length,0,'idle bootstrap must not request member or captain model: '+JSON.stringify(requests));
         await checkpoint('prepare-bootstrap-verified',{modelRequests:requests.length});
+        const late=await call(captain,'add_member',{name:'late-reviewer',provider:'round2-probe',model:'stub'});
+        const lateChild=ctx.agents.get(late.member_id);assert.ok(lateChild,'new member must have a live bootstrap session');
+        await lateChild.whenIdle();
+        assert.ok(lateChild.inbox.nextStep.some(message=>message.source?.kind==='agent-instructions'&&message.source?.baseline===true),'fixture must reproduce the passive instruction residue');
+        const lateMail=await call(captain,'send_message',{to:'late-reviewer',content:'Review this local fixture without an assigned task.'});
+        assert.equal(lateMail.delivered,'wake','a new member must wake with passive bootstrap instructions still pending');
+        await until(()=>requests.some(request=>request.sessionId===late.member_id),'new member mailbox turn');
+        await lateChild.whenIdle();
+        await checkpoint('prepare-late-member-woke',{memberId:late.member_id});
         const gate=bootState.tasks.find(task=>task.assignee==='captain');
         await call(captain,'claim_task',{task_id:gate.id,assignee:'captain'});
+        await call(captain,'update_task',{task_id:gate.id,status:'in_progress'});
         await call(captain,'update_task',{task_id:gate.id,execution_state:'blocked_external',wait_reason:'Synthetic fixture gate is intentionally held until local validation ends'});
         await checkpoint('prepare-gate-blocked');
         modes.set(healthy.member_id,'probe');await wake(captain,healthy.member_id);
@@ -221,7 +241,11 @@ export function apply(ctx) {
         await checkpoint('prepare-selection-resolved',{selectionDigest:expectedSelection.digest});
         modes.set(healthy.member_id,'probe');craftMembers.add(healthy.member_id);initialCraftAssignment.add(healthy.member_id);
         boundaries.delete(healthy.member_id);
-        await call(captain,'create_task',{subject:'Synthetic selected domain craft delivery',assignee:'worker',report_bundle:{md:'report.md',html:'report.html',pdf:'report.pdf',craft:{version:3,selections,evidence:'craft-evidence.json'}}});
+        await assert.rejects(call(captain,'create_task',{subject:'Unreviewed report bypass',assignee:'worker',report_bundle:{md:'other.md',html:'other.html',pdf:'other.pdf',craft:{version:3,selections,evidence:'other-evidence.json'}}}),/REPORT_PLAN_REVISION_REQUIRED/);
+        await call(captain,'resume_task',{task_id:gate.id,reason:'Local admission checks completed; release the intentional fixture block for independent review.'});
+        await call(captain,'update_task',{task_id:gate.id,execution_state:'awaiting_review',output:'Local fixture admission checks completed; ready for independent review.'});
+        modes.set(failing.member_id,'admission-review');await wake(captain,failing.member_id);
+        await call(captain,'quality_integrate',{task_id:gate.id,event_id:'fixture-gate-integrate',actor:'captain',complete_task:true});
         await checkpoint('prepare-selected-task-created');
         await until(()=>boundaries.has(healthy.member_id),'actual assignment request with full craft system bodies');
         assert.equal((await state()).tasks.find(t=>t.reportBundle?.craft!==undefined).frozenSkillCraftContract.digest,expectedSelection.digest);
@@ -271,6 +295,8 @@ export function apply(ctx) {
 
 runTeamCommunicationHostSmoke({
   probePlugin, kind: 'team-member-real-host-runtime', preserveFailure: true,
+  // Includes authenticated plan approval, independent admission review and actual member turns.
+  probeTimeoutMs: 180_000,
   afterInitialStop: async ({workspace,stoppedPid}) => {
     let gone=false;
     try { process.kill(stoppedPid,0); } catch(error) { if(error.code==='ESRCH')gone=true;else throw error; }

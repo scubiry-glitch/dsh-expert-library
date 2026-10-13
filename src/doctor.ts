@@ -119,6 +119,26 @@ function inspectTeamShape(team: TeamState, teamPath: string, findings: DoctorFin
   }
 }
 
+/** A ready assigned task should gain its first attempt promptly after apply. */
+function inspectUnclaimedReadyTasks(team: TeamState, teamPath: string, findings: DoctorFinding[], now: number): void {
+  if (team.halted === true) return
+  const warningAgeMs = 5 * 60_000
+  for (const task of team.tasks) {
+    if (task.status !== 'pending' || (task.attempt ?? 0) !== 0 || task.reassigning === true
+      || task.executionState === 'blocked_external' || task.assignee === undefined || task.assignee === 'captain') continue
+    const member = team.members.find(candidate => candidate.name === task.assignee && candidate.status !== 'removed')
+    if (member === undefined) continue
+    const dependencies = task.dependencies.map(id => team.tasks.find(candidate => candidate.id === id))
+    if (dependencies.some(dependency => dependency?.status !== 'completed')) continue
+    const readyAt = Math.max(task.updatedAt, ...dependencies.map(dependency => dependency!.updatedAt))
+    if (now - readyAt < warningAgeMs) continue
+    const minutes = Math.floor((now - readyAt) / 60_000)
+    finding(findings, 'task.ready_unclaimed', 'warning', `${teamPath}:task:${task.id}`,
+      `ready task assigned to ${task.assignee} has remained at attempt 0 for ${minutes} minutes`,
+      'Inspect the member session inbox and scheduler admission. A mailbox receipt or reassignment alone does not prove that a member turn started.')
+  }
+}
+
 async function inspectTeamDirectory(
   stateRoot: string,
   teamId: string,
@@ -141,6 +161,7 @@ async function inspectTeamDirectory(
     return
   }
   inspectTeamShape(loaded, teamPath, findings)
+  if (!archived) inspectUnclaimedReadyTasks(loaded, teamPath, findings, now)
   const knownKeys = new Set(['captain', ...loaded.members.map(member => member.name)])
   const inbox = join(base, 'inbox')
   try {

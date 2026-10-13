@@ -61,7 +61,7 @@ async function buildCompletePack() {
   for (const id of CRAFT_SKILLS) {
     const manifest = JSON.parse(await readFile(join(PACK_DIR, 'skill-packages', `${id}.json`), 'utf8'))
     const expected = {
-      id, name: id, version: id === 'zhijian-designer-render' ? '1.1.1' : '1.1.0', schemaVersion: 2,
+      id, name: id, version: id === 'zhijian-designer-render' ? '1.2.0' : '1.1.0', schemaVersion: 2,
       source: { kind: 'workspace', root: `skills/${id}`, digest: await canonicalSkillDigest(join(PACK_DIR, 'skills', id), manifest) },
       contributions: {}, permissions: { execScripts: ['scripts/check.mjs'], internalOnly: true },
       craft: { path: `craft/${id}.json` },
@@ -71,7 +71,7 @@ async function buildCompletePack() {
   }
   return {
     ...projected,
-    pack: { ...projected.pack, version: '1.3.1', description: projected.pack.description + ' 1.3.0：领域包闭环多工艺由 AI 选择，计算单位与资金平衡、政策原文证据绑定及独立审核。 1.3.1：可选包内 MD 单源生成与锚点清单，独立审核门禁保持。' },
+    pack: { ...projected.pack, version: '1.4.0', description: projected.pack.description + ' 1.3.0：领域包闭环多工艺由 AI 选择，计算单位与资金平衡、政策原文证据绑定及独立审核。 1.3.1：可选包内 MD 单源生成与锚点清单，独立审核门禁保持。 1.4.0：精确证据绑定及中文PDF文本提取，生成器与独立检查保持一致。' },
     skillPackages: [...projected.skillPackages, ...additions],
   }
 }
@@ -142,7 +142,7 @@ test('round-trip: complete release equals the exact base projection plus the two
 test('pack.json is metadata-only; entity sections live in directories', async () => {
   const packJson = JSON.parse(await readFile(join(PACK_DIR, 'pack.json'), 'utf8'))
   assert.equal(packJson.id, 'zhijian-realestate')
-  assert.equal(packJson.version, '1.3.1')
+  assert.equal(packJson.version, '1.4.0')
   assert.equal(packJson.schemaVersion, 2)
   for (const key of ['experts', 'scenarios', 'teamTemplates', 'outputTemplates', 'qualityPolicies', 'methodPacks']) {
     assert.ok(!(key in packJson), `pack.json must stay metadata-only (no ${key} inline)`)

@@ -51,7 +51,7 @@ async function fixture(t, options = {}) {
     attempt: run ? run.attempt - 1 : 0, dependencies: [], createdAt: 1, updatedAt: 1 }
   task.project = await createTaskProject(stateRoot, 'team', task)
   const captain = { id: 'captain-id', status: 'idle', session: { header: { cwd: workspace }, events: [] }, inbox: { nextTurn: [], nextStep: [] } }
-  const worker = { id: 'worker-id', status: 'idle', session: { header: { cwd: workspace }, events: [] }, inbox: { hasPending: false } }
+  const worker = { id: 'worker-id', status: 'idle', session: { header: { cwd: workspace }, events: [] }, inbox: { hasPending: false, nextTurn: [], nextStep: [] } }
   const calls = [], disposers = []
   const ctx = {
     agents: { get: id => id === captain.id ? captain : id === worker.id ? worker : undefined },

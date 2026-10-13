@@ -90,6 +90,8 @@ export interface ExpertLibrarySettings {
   vendorPacksDir?: string
   /** HTTPS center origin; changing this or packCenterDir requires plugin restart. */
   packCenterOrigin?: string
+  /** HTTPS browser origin for human review links returned at confirmation gates. */
+  reviewPublicOrigin?: string
   /** Private deployment-local storage; defaults under DSH_HOME, never the plugin tree. */
   packCenterDir?: string
   /** 宿主侧半自动更新策略；manual（默认）永不后台检查。见 {@link PackCenterUpdatePolicy}。 */
@@ -102,6 +104,10 @@ export interface ExpertLibrarySettings {
   memberMaxDepth?: number
   /** Maximum concurrently active team members, including reviewers (default 2). */
   maxActiveMembers?: number
+  /** Optional higher cap for V5 independent viewpoint and evidence tasks only. */
+  v5ResearchMaxActiveMembers?: number
+  /** Minimum idle grace after attempt activation, accepted dispatch or publication. */
+  reassignmentGraceMs?: number
   /** Host-local concurrent model streams per provider; absent providers are unlimited. */
   providerRequestConcurrency?: Record<string, number>
   /** Team size cap in members. */
@@ -176,12 +182,15 @@ export const ExpertLibrarySettingsSchema: z<ExpertLibrarySettings> = z.object({
   packsDir: z.string(),
   vendorPacksDir: z.string(),
   packCenterOrigin: z.string(),
+  reviewPublicOrigin: z.string(),
   packCenterDir: z.string(),
   packCenterUpdatePolicy: PackCenterUpdatePolicySchema,
   packSourceAllowlist: z.array(z.string()),
   memberProvider: z.string(),
   memberMaxDepth: z.natural(),
   maxActiveMembers: z.natural().min(1),
+  v5ResearchMaxActiveMembers: z.natural().min(1),
+  reassignmentGraceMs: z.natural().min(1000).max(3600000),
   providerRequestConcurrency: z.dict(z.natural().min(1)),
   maxMembers: z.natural(),
   promptSectionOrder: z.natural(),

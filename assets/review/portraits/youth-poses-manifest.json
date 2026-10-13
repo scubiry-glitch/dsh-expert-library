@@ -1,0 +1,247 @@
+{
+  "version": 1,
+  "generator": "built-in image_gen",
+  "prompts": "youth-poses-prompts.json",
+  "assets": [
+    {
+      "id": "pose-coordinator-discuss",
+      "role": "coordinator",
+      "label": "侧身讲解",
+      "source": "source/pose-coordinator-discuss.png",
+      "file": "pose-coordinator-discuss.webp",
+      "avatar": "pose-coordinator-discuss-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 57910,
+      "avatarBytes": 15964,
+      "sha256": "1ba91160bc27a9e36329c704f9a46b2ba4c408c2df3b533a21e1f2f29f4ceb38"
+    },
+    {
+      "id": "pose-coordinator-listen",
+      "role": "coordinator",
+      "label": "倾听讨论",
+      "source": "source/pose-coordinator-listen.png",
+      "file": "pose-coordinator-listen.webp",
+      "avatar": "pose-coordinator-listen-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 47568,
+      "avatarBytes": 12298,
+      "sha256": "93fad38ddaa9845adb0d3adad75678c90c9b78f1d0f39a595b4101b951746905"
+    },
+    {
+      "id": "pose-finance-laptop",
+      "role": "finance",
+      "label": "抱电脑交流",
+      "source": "source/pose-finance-laptop.png",
+      "file": "pose-finance-laptop.webp",
+      "avatar": "pose-finance-laptop-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 49238,
+      "avatarBytes": 12354,
+      "sha256": "3d64d0fcc543959d623f61e616f4ae93e3d6a5504076b7f7a7dd91c35f7dc2d8"
+    },
+    {
+      "id": "pose-finance-think",
+      "role": "finance",
+      "label": "托腮推演",
+      "source": "source/pose-finance-think.png",
+      "file": "pose-finance-think.webp",
+      "avatar": "pose-finance-think-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 56018,
+      "avatarBytes": 14178,
+      "sha256": "136b5188e5ec4c44fe41d33de44565c00120a3fb6cac7ea4c4b0c5a30d00c14f"
+    },
+    {
+      "id": "pose-policy-read",
+      "role": "policy",
+      "label": "侧身翻阅",
+      "source": "source/pose-policy-read.png",
+      "file": "pose-policy-read.webp",
+      "avatar": "pose-policy-read-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 54800,
+      "avatarBytes": 15044,
+      "sha256": "8cae876523b46b9ab6d981323e99a2394c07da517831a8295c33d9f881afc1bf"
+    },
+    {
+      "id": "pose-policy-explain",
+      "role": "policy",
+      "label": "手势说明",
+      "source": "source/pose-policy-explain.png",
+      "file": "pose-policy-explain.webp",
+      "avatar": "pose-policy-explain-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 51890,
+      "avatarBytes": 11634,
+      "sha256": "e36653ec568144fa7d6ecead3d7510e7fb9ccc5e11996ab2e6894e8202446b5d"
+    },
+    {
+      "id": "pose-market-survey",
+      "role": "market",
+      "label": "观察记录",
+      "source": "source/pose-market-survey.png",
+      "file": "pose-market-survey.webp",
+      "avatar": "pose-market-survey-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 52604,
+      "avatarBytes": 12392,
+      "sha256": "7911bc8d265d96fc38540900b157a0a50427a9224984169753afde5e302234dc"
+    },
+    {
+      "id": "pose-market-map",
+      "role": "market",
+      "label": "展开地图",
+      "source": "source/pose-market-map.png",
+      "file": "pose-market-map.webp",
+      "avatar": "pose-market-map-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 68250,
+      "avatarBytes": 13896,
+      "sha256": "4adc7985b402aab77d7a5ce98b36e7d55c494108791211cb1fde85af7a167ce0"
+    },
+    {
+      "id": "pose-engineer-type",
+      "role": "engineer",
+      "label": "操作电脑",
+      "source": "source/pose-engineer-type.png",
+      "file": "pose-engineer-type.webp",
+      "avatar": "pose-engineer-type-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 55710,
+      "avatarBytes": 15572,
+      "sha256": "9a3d2276abc95143a6c1db8bf260570c2283f2d2f3d811c4942e04d5b70786e9"
+    },
+    {
+      "id": "pose-engineer-sketch",
+      "role": "engineer",
+      "label": "侧身构思",
+      "source": "source/pose-engineer-sketch.png",
+      "file": "pose-engineer-sketch.webp",
+      "avatar": "pose-engineer-sketch-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 61250,
+      "avatarBytes": 13212,
+      "sha256": "a4ef32a6d6d46d014179c4fc4defe0596211db74e22ca0082844243153eaf6e8"
+    },
+    {
+      "id": "pose-reviewer-check",
+      "role": "reviewer",
+      "label": "低头核对",
+      "source": "source/pose-reviewer-check.png",
+      "file": "pose-reviewer-check.webp",
+      "avatar": "pose-reviewer-check-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 50146,
+      "avatarBytes": 13336,
+      "sha256": "3f4777767889f873946882030107c9a486e12b22187e1896cf017d82c96d897f"
+    },
+    {
+      "id": "pose-reviewer-discuss",
+      "role": "reviewer",
+      "label": "开放评议",
+      "source": "source/pose-reviewer-discuss.png",
+      "file": "pose-reviewer-discuss.webp",
+      "avatar": "pose-reviewer-discuss-avatar.webp",
+      "width": 512,
+      "height": 512,
+      "avatarSize": 192,
+      "crop": {
+        "left": 288,
+        "top": 0,
+        "width": 677,
+        "height": 677
+      },
+      "bytes": 48738,
+      "avatarBytes": 10864,
+      "sha256": "f92b76a899a807a9ded46f32726d4625d85d8a205a2c46cad6396a7d0a2e625d"
+    }
+  ]
+}

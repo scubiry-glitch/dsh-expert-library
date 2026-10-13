@@ -113,6 +113,25 @@ test('apply creates two sessions from one persona plus a custom member and retai
   validateAcceptanceResults(contract, [{ id: 'output-present', passed: true }, { id: 'profile-acceptance-1', passed: true }])
 })
 
+test('apply materializes the Host-only choice node and omits its worker quality run', async t => {
+  const f = await fixture(t)
+  const declared = profile({ tasks: [
+    { id: 'candidates', subject: 'Three outlines', owner: 'author', dependsOn: [], artifactInputs: [], produces: ['outline-candidates.md'] },
+    { id: 'choose', subject: 'User picks one', owner: 'captain', dependsOn: ['candidates'], artifactInputs: [{ fromTask: 'candidates', artifact: 'outline-candidates.md', purpose: 'user review', phase: 'work' }], humanChoice: { sourceTaskId: 'candidates', artifact: 'outline-candidates.md', options: ['A', 'B', 'C'] } },
+    { id: 'write', subject: 'Write selected direction', owner: 'author', dependsOn: ['choose'], artifactInputs: [{ fromTask: 'choose', artifact: 'task-output', purpose: 'selected direction', phase: 'work' }] },
+  ] })
+  const plan = profileToExecutionPlan(parseProfile(declared))
+  const result = await applyExecutionPlan(f.ctx, f.config, f.captain, plan, { teamName: 'Choice fixture', description: 'G', structuredQuality: true, kick: false }, new AbortController().signal, { ...f.core, memberSelections: { withPending: (...args) => args.find(arg => typeof arg === 'function')() } })
+  const team = JSON.parse(await readFile(join(f.stateRoot, result.team_id, 'team.json'), 'utf8'))
+  const gate = team.tasks.find(task => task.planTask?.logicalId === 'choose')
+  const source = team.tasks.find(task => task.planTask?.logicalId === 'candidates')
+  const writer = team.tasks.find(task => task.planTask?.logicalId === 'write')
+  assert.deepEqual(gate.humanChoice, { sourceTaskId: source.id, artifact: 'outline-candidates.md', options: ['A', 'B', 'C'] })
+  assert.ok(writer.dependencies.includes(gate.id))
+  assert.equal(team.qualityRuns[gate.id], undefined)
+  assert.ok(team.qualityRuns[source.id])
+})
+
 test('failed-plan recovery gives a usable new-plan action and never resets terminal receipts', async t => {
   const f = await fixture(t)
   const staged = await scenarioStageCore(f.ctx, f.config, f.captain, { profile: profile() })

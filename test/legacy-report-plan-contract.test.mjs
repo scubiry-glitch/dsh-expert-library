@@ -28,7 +28,7 @@ async function fixture(t) {
   const core = registerExpertTeamsTools(ctx, config), stateRoot = join(workspace, config.stateDir)
   const bundle = { md: 'report.md', html: 'report.html', pdf: 'report.pdf', craft: { version: 3, selections: selected.selections, evidence: 'proof.json' } }
   const signal = new AbortController().signal
-  const args = { scenario: 'research-report', team_name: 'synthetic-report-team', goal: 'Synthetic bounded request', report_bundle: bundle }
+  const args = { scenario: 'research-report', team_name: 'synthetic-report-team', goal: 'Synthetic bounded request', report_bundle: bundle, report_outline: { chapters: [{ id: 'analysis', title: 'Synthetic analysis', questions: ['What follows from the evidence?'], evidence: ['Primary source observations'], taskIds: ['t5'] }], attachments: [] } }
   return { ...selected, workspace, stateRoot, starts, registered, captain, ctx, config, core, bundle, signal, args }
 }
 const stage = (f, args = f.args) => scenarioStageCore(f.ctx, f.config, f.captain, args)
@@ -38,7 +38,7 @@ const apply = (f, args) => scenarioApplyCore(f.ctx, f.config, f.captain, args, f
 test('declared legacy report preset rejects absent, v1 and v2 bundles at preview/stage/apply without side effects', async t => {
   const variants = [undefined, { md: 'r.md', html: 'r.html', pdf: 'r.pdf' }, { md: 'r.md', html: 'r.html', pdf: 'r.pdf', craft: { version: 2, style: 'designer-paper', evidence: 'proof.json' } }]
   for (const op of [preview, stage, apply]) for (const bundle of variants) {
-    const f = await fixture(t), args = { scenario: 'research-report', ...(bundle === undefined ? {} : { report_bundle: bundle }) }
+    const f = await fixture(t), args = { scenario: 'research-report', ...(bundle === undefined ? {} : { report_bundle: bundle, report_outline: { chapters: [{ id: 'analysis', title: 'Synthetic analysis', questions: ['What follows from the evidence?'], evidence: ['Primary source observations'], taskIds: ['t5'] }], attachments: [] } }) }
     await assert.rejects(op(f, args), /REPORT_SKILL_SELECTION_REQUIRED|report_bundle|reportBundle/)
     assert.equal(f.starts.length, 0)
     assert.deepEqual(await readdir(f.stateRoot).catch(error => error.code === 'ENOENT' ? [] : Promise.reject(error)), [])
@@ -69,6 +69,16 @@ test('legacy report preview, stage, edit and approval bind the AI-selected combi
   assert.deepEqual(team.qualityRuns[final.id].contract.artifactChecks[0].selection, revised.plan.tasks.find(task => task.id === 't5').frozenSkillCraftContract)
   assert.equal(team.qualityRuns[final.id].status, 'pending')
   assert.equal((await readStagedPlan(f.stateRoot, first.planId)).status, 'completed')
+})
+
+test('report preview and staging require the complete outline before saving a user-facing plan', async t => {
+  const f = await fixture(t)
+  const { report_outline: _outline, ...incomplete } = f.args
+  await assert.rejects(preview(f, incomplete), /PLAN_OUTLINE_REQUIRED/)
+  await assert.rejects(stage(f, incomplete), /PLAN_OUTLINE_REQUIRED/)
+  assert.deepEqual(await readdir(join(f.stateRoot, 'plans')).catch(error => error.code === 'ENOENT' ? [] : Promise.reject(error)), [])
+  const complete = await stage(f)
+  assert.equal(complete.plan.reportOutline.chapters.length, 1)
 })
 
 test('ordinary legacy scenario is not reclassified by report keywords in a user goal', async t => {

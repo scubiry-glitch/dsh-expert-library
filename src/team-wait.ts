@@ -70,7 +70,12 @@ export function registerTeamWaitTool(ctx: Context, config: ToolsConfig, core: Ex
           && task.executionState !== 'awaiting_review' && task.executionState !== 'blocked_external')
         if (ownedActive !== undefined) throw new Error(`Task ${ownedActive.id} is still active under your ownership. Save output and its actual awaiting_review or blocked_external state before waiting.`)
         const unread = await readUnreadMailbox(stateRoot, team.id, key)
-        if (unread.length > 0 || agent.inbox?.hasPending === true) {
+        // next-turn input cannot be consumed at a step boundary. Refusing to
+        // conclude here would keep that input queued forever and retain the
+        // member's activation slot while its independent reviewer waits.
+        // Leave both queues untouched; the Host admits next-turn input after
+        // concludeTurn, through the normal admission/Goal resumption hooks.
+        if (unread.length > 0 || (agent.inbox?.nextStep.length ?? 0) > 0) {
           return { waiting: false, reason, task_ids: taskIds, next_action: 'New input is already pending. Process the inbox/status messages before waiting; no wait was persisted.' }
         }
         team.runtimeWaits = { ...team.runtimeWaits, [agent.id]: { reason, taskIds, since: Date.now() } }

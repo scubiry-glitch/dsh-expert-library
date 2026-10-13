@@ -2,7 +2,9 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync, renameSync, symlinkSync, unlinkSync, lstatSync } from 'node:fs'
+import { existsSync, readFileSync, renameSync, symlinkSync, unlinkSync, lstatSync, mkdtempSync, rmSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 const source = process.env.DSH_CRAFT_V2_SOURCE === '1'
 const { evaluateReportCraftV2, REPORT_CRAFT_V2_CHECKER_VERSION, REPORT_CRAFT_V2_DEFAULT_BROWSER } = await import(source ? '../src/report-craft-checker-v2.ts' : '../lib/report-craft-checker-v2.js')
 const browserPath = process.env.DSH_CRAFT_QA_BROWSER ?? REPORT_CRAFT_V2_DEFAULT_BROWSER
@@ -19,6 +21,14 @@ for (const style of ['credit-policy','designer-paper']) test('actual MD HTML PDF
  const r=await run(fixture({style}),browserOptions);assert.equal(r.length,7);assert.ok(r.every(x=>x.status==='passed'),JSON.stringify(r))
  const b=JSON.parse(find(r,'browser').detail);assert.deepEqual(b.metrics.map(x=>x.viewport),[1280,375]);assert.deepEqual(b.blockedRequestSchemes,[]);assert.equal(b.screenshots.length,2)
  for(const shot of b.screenshots){assert.ok(shot.path.startsWith('/root/.cache/dsh-report-craft/evidence/'));assert.equal(lstatSync(shot.path).isSymbolicLink(),false);const png=readFileSync(shot.path);assert.equal(hash(png),shot.viewportScreenshotSha256);assert.equal(png.length,shot.bytes);assert.equal(png.subarray(0,8).toString('hex'),'89504e470d0a1a0a');assert.equal(shot.height,900);assert.match(shot.coverage,/initial viewport only/);assert.equal(shot.browserSha256,b.browserSha256)}
+})
+test('trusted Host screenshot root works outside /root cache',{skip:!existsSync(browserPath)},async()=>{
+ const screenshotRoot=mkdtempSync(join(dirname(fileURLToPath(import.meta.url)),'.craft-host-cache-'))
+ try {
+  const r=await run(fixture(),{...browserOptions,screenshotRoot})
+  assert.equal(find(r,'browser').status,'passed',find(r,'browser').detail)
+  for(const shot of JSON.parse(find(r,'browser').detail).screenshots){assert.ok(shot.path.startsWith(screenshotRoot+'/'));assert.ok(existsSync(shot.path))}
+ } finally {rmSync(screenshotRoot,{recursive:true,force:true})}
 })
 test('R9 F1 gold small text and pale disclaimer fail actual AA in both viewports',{skip:!existsSync(browserPath)},async()=>{
  const r=await run(fixture({css:'#yield-base{color:#a9741f;background:white;font-size:16px}#ch1-risk{color:#8a9994;background:white;font-size:10px}'}),browserOptions)

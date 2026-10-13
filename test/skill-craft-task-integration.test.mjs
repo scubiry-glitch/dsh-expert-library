@@ -35,9 +35,9 @@ async function fixture(t, specs = [{ id: 'compose', artifactRoles: ['md','eviden
   const profile={schemaVersion:1,id:'v3-generic',version:'1',description:'Selected local policy report',protocol:['Use selected materials'],
     members:[{id:'author',name:'author',role:'Writer'},{id:'reviewer',name:'reviewer',role:'Independent reviewer'}],
     taskPlanning:'captain',review:{required:true,maxRepairRounds:2}}
-  const args={profile,tasks:[{id:'report',subject:'Synthetic report',owner:'captain',dependsOn:[],acceptance:['Synthetic files reviewed'],reportBundle:bundle}],team_name:'v3-team'}
+  const args={profile,tasks:[{id:'report',subject:'Synthetic report',owner:'captain',dependsOn:[],artifactInputs:[],acceptance:['Synthetic files reviewed'],reportBundle:bundle}],team_name:'v3-team'}
   const call=(name,args,agent=captain)=>registered.get('expert_teams_'+name).execute(args,{agent,session:agent.session,signal:new AbortController().signal})
-  const stage=()=>tools.scenarioStageCore(ctx,config,captain,args)
+  const stage=()=>tools.scenarioStageCore(ctx,config,captain,{...args,report_outline:{chapters:[{id:'evidence',title:'Synthetic evidence',questions:['What is supported?'],evidence:['Fixture observations'],taskIds:['report']}],attachments:[]}})
   const approve=staged=>tools.scenarioApproveFromHost(ctx,config,captain,staged.planId,new AbortController().signal,core,staged.digest,staged.revision)
   const read=()=>state.readTeam(stateRoot,'v3-team')
   return {workspace,stateRoot,...pack,agents,registered,starts,dispatches,ctx,config,core,captain,bundle,profile,args,call,stage,approve,read}
@@ -93,13 +93,13 @@ test('stage rejects output-role undercoverage without auto-selecting a renderer 
   assert.deepEqual(frozen.artifactRoles,['md','evidence'])
   assert.equal(report.isReportCraftBinding(f.bundle,frozen),false)
   await assert.rejects(f.stage(),/OUTPUT_COVERAGE.*html, pdf/)
-  const plan={tasks:[{reportBundle:f.bundle,frozenSkillCraftContract:frozen}]}
+  const plan={tasks:[{id:'report',dependsOn:[],reportBundle:f.bundle,frozenSkillCraftContract:frozen}]}
   assert.throws(()=>expandExecutionPlan(plan,{}),/SKILL_CRAFT_CONTRACT_MISMATCH/)
   assert.equal(f.starts.length,0)
 })
 
 test('stage/edit preserve DAG plus exact selected contract, and reason changes are digest-visible',async t=>{
-  const f=await fixture(t);f.args.tasks.unshift({id:'gate',subject:'Gate',owner:'captain',dependsOn:[]});f.args.tasks[1].dependsOn=['gate']
+  const f=await fixture(t);f.args.tasks.unshift({id:'gate',subject:'Gate',owner:'captain',dependsOn:[],artifactInputs:[]});f.args.tasks[1].dependsOn=['gate'];f.args.tasks[1].artifactInputs=[{fromTask:'gate',artifact:'task-output',purpose:'Reviewed control result',phase:'work'}]
   const first=await f.stage(),cold=await plans.readStagedPlan(f.stateRoot,first.planId)
   assert.deepEqual(cold,first)
   const check=report.reportArtifactCheck(first.plan.tasks[1].reportBundle,first.plan.tasks[1].frozenSkillCraftContract)
@@ -182,8 +182,9 @@ test('explicit revisions inherit selected contract and remaining repair budget w
   assert.deepEqual(team.qualityRuns[sourceTask.id],sourceRun)
   const different=structuredClone(f.bundle);different.craft.selections[0].reason='Different selected rationale'
   await assert.rejects(f.call('create_task',{subject:'Cannot change revision selection',assignee:'captain',revises_task_id:sourceTask.id,report_bundle:different}),/CONTRACT_REQUIRED|MISMATCH/)
-  const ordinary=await f.call('create_task',{subject:'Independent new report',assignee:'captain',report_bundle:f.bundle})
-  assert.equal((await f.read()).qualityRuns[ordinary.task_id].contract.maxRepairRounds,2)
+  const beforeNewReport=await f.read()
+  await assert.rejects(f.call('create_task',{subject:'Independent new report',assignee:'captain',report_bundle:f.bundle}),/REPORT_PLAN_REVISION_REQUIRED/)
+  assert.deepEqual(await f.read(),beforeNewReport)
 })
 
 test('omitted craft does not select skills, while v1 and v2 keep their original check interpretation',async t=>{

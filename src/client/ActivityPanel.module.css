@@ -1486,9 +1486,34 @@
 
 .controlsHead {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 7px;
 }
+
+.reviewWindowButton {
+  flex: none;
+  border: 1px solid var(--dsw-alias-line-normal);
+  border-radius: 7px;
+  background: var(--dsw-alias-bg-module-platform);
+  color: var(--dsw-alias-state-business-primary);
+  padding: 5px 8px;
+  font: inherit;
+  font-size: 10.5px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.reviewWindowButton:hover { border-color: var(--dsw-alias-state-business-primary); }
+.planReviewEntry { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 10px; padding: 12px; border: 1px solid var(--dsw-alias-line-normal); border-radius: 10px; background: var(--dsw-alias-bg-module-platform); }
+.planReviewEntry > div { flex: 1 1 180px; min-width: 0; }
+.planReviewEntry strong { font-size: 12px; }
+.planReviewEntry p { margin: 5px 0 0; font-size: 11px; line-height: 1.6; }
+.planReviewEntry button { font-size: 12px; padding: 8px 10px; }
+.reviewLink { padding: 12px 14px; border: 1px solid #cde4df; border-radius: 10px; background: #f2faf7; }
+.reviewLink a { color: #117e74; font-weight: 650; text-decoration: none; }
+.reviewLink a:hover { text-decoration: underline; }
+.reviewLink small { display: block; margin-top: 5px; color: #687e83; overflow-wrap: anywhere; font-size: 10px; }
 
 .controlsToggle {
   display: flex;
@@ -1626,6 +1651,7 @@
 }
 
 .planFields input,
+.planFields select,
 .planFields textarea,
 .pauseSection input {
   min-width: 0;
@@ -1642,6 +1668,7 @@
 }
 
 .planFields input:focus-visible,
+.planFields select:focus-visible,
 .planFields textarea:focus-visible,
 .pauseSection input:focus-visible {
   outline: 2px solid var(--dsw-alias-state-business-primary);
@@ -1649,10 +1676,30 @@
 }
 
 .planFields input:disabled,
+.planFields select:disabled,
 .planFields textarea:disabled,
 .pauseSection input:disabled {
   cursor: not-allowed;
   opacity: .58;
+}
+
+[data-plan-subdag-selector] label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+[data-plan-subdag-selector] select {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--dsw-alias-line-normal);
+  border-radius: 6px;
+  padding: 6px;
+  background: var(--dsw-alias-bg-module);
+  color: var(--dsw-alias-label-primary);
+  font: inherit;
 }
 
 .planFieldGrid {
@@ -1816,6 +1863,11 @@
 .taskReviewTop b[data-state='failed'] { color: var(--dsw-alias-state-danger); }
 .taskReviewTop b[data-state='in_progress'] { color: var(--dsw-alias-state-business-primary); }
 
+.taskReviewRow:has(.taskReviewBindings) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(120px, .8fr); column-gap: 8px; }
+.taskReviewRow:has(.taskReviewBindings) > :not(.taskReviewBindings) { grid-column: 1; }
+.taskReviewBindings { grid-column: 2; grid-row: 1 / span 8; display: flex; flex-direction: column; gap: 2px; min-width: 0; border-left: 1px solid var(--dsw-alias-line-normal); padding-left: 7px; overflow-wrap: anywhere; white-space: normal; }
+.taskReviewBindings strong { color: var(--dsw-alias-label-primary); }
+
 .acceptanceList {
   display: flex;
   flex-direction: column;
@@ -1859,3 +1911,30 @@
   min-width: 0;
   padding-top: 2px;
 }
+
+/* Plan review uses the existing form vocabulary and adapts inside the sidebar. */
+.outlineList { margin: 0; padding: 0; list-style: none; }
+.outlineChapter { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; border-bottom: 1px solid var(--dsw-alias-line-normal); }
+.outlineTasks, .modelRoute { margin: 0; padding: 8px 0; border: 0; min-width: 0; }
+.outlineTasks legend, .modelRoute legend { color: var(--dsw-alias-label-primary); font-size: 11px; font-weight: 600; }
+.outlineTasks label { flex-direction: row; align-items: center; margin: 4px 0; }
+.outlineTasks input { flex: none; accent-color: var(--dsw-alias-state-business-primary); }
+.modelRoute .planFieldGrid { grid-template-columns: 1fr; gap: 6px; }
+.dagGraphViewport {
+  overflow: auto;
+  max-height: 380px;
+  border: 1px solid var(--dsw-alias-line-normal);
+  border-radius: 8px;
+  margin: 8px 0 12px;
+  background: var(--dsw-alias-bg-module);
+}
+.dagGraphEdge { fill: none; stroke: var(--dsw-alias-line-strong); stroke-width: 1.5; }
+.dagGraphNode { fill: var(--dsw-alias-bg-fill-neutral); stroke: var(--dsw-alias-line-strong); }
+.dagGraphGate { fill: color-mix(in srgb, var(--dsw-alias-state-business-primary) 12%, var(--dsw-alias-bg-module)); stroke: var(--dsw-alias-state-business-primary); }
+.dagGraphId { fill: var(--dsw-alias-label-primary); font-size: 11px; font-weight: 700; }
+.dagGraphRole { fill: var(--dsw-alias-label-secondary); font-size: 10px; }
+
+/* Zhijian's full transparent robot silhouettes replace the old whale tiles. */
+.leadAvatar,.memberArt { object-fit: contain; border: 0; border-radius: 8px; background: transparent; }
+.memberArt { border-radius: 50%; }
+.stateArt { object-fit: contain; border: 0; border-radius: 5px; background: transparent; }

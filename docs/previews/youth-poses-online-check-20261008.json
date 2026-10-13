@@ -1,0 +1,174 @@
+{
+  "checkedAt": "2026-10-07T16:18:05.880Z",
+  "origin": "https://yy.meizu.life/plugins/dsh-expert-library/review",
+  "results": [
+    {
+      "file": "pose-coordinator-discuss.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "1ba91160bc27a9e36329c704f9a46b2ba4c408c2df3b533a21e1f2f29f4ceb38"
+    },
+    {
+      "file": "pose-coordinator-listen.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "93fad38ddaa9845adb0d3adad75678c90c9b78f1d0f39a595b4101b951746905"
+    },
+    {
+      "file": "pose-coordinator-listen-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "5ced547da81ed0379e0ffc3a87b2ea6c96ea247dfcafe11c6bdb52473bb77aa1"
+    },
+    {
+      "file": "pose-coordinator-discuss-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "17ddcf6db17da02e5c7ad0c1d727bcd855a48eb51cdd63bf5ef5a368eba4cba1"
+    },
+    {
+      "file": "pose-finance-laptop.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "3d64d0fcc543959d623f61e616f4ae93e3d6a5504076b7f7a7dd91c35f7dc2d8"
+    },
+    {
+      "file": "pose-finance-laptop-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "06e0eb2a027ef5dae49f88dfa314a20fa24ab0ac3925a64af9b4e6336adee5e3"
+    },
+    {
+      "file": "pose-finance-think.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "136b5188e5ec4c44fe41d33de44565c00120a3fb6cac7ea4c4b0c5a30d00c14f"
+    },
+    {
+      "file": "pose-finance-think-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "aa151658d9fa5bdb98fda102347a7dfe1efbf54c961c97484662505a1be0a8c7"
+    },
+    {
+      "file": "pose-policy-read.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "8cae876523b46b9ab6d981323e99a2394c07da517831a8295c33d9f881afc1bf"
+    },
+    {
+      "file": "pose-market-survey.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "7911bc8d265d96fc38540900b157a0a50427a9224984169753afde5e302234dc"
+    },
+    {
+      "file": "pose-policy-explain.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "e36653ec568144fa7d6ecead3d7510e7fb9ccc5e11996ab2e6894e8202446b5d"
+    },
+    {
+      "file": "pose-policy-read-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "34b097295cce71e55f32eeb0db62b019cfdc3f30526df179f0b755d207dea19c"
+    },
+    {
+      "file": "pose-policy-explain-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "0659cd2371250cf17df83630c3b141c8404ce8427bb508d6ff371fd6fe28a7fd"
+    },
+    {
+      "file": "pose-market-survey-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "dce711732ae3ed19594a6a4e1b8b6b5d8819ef92d14f97660623e76dcd4e9e3b"
+    },
+    {
+      "file": "pose-market-map.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "4adc7985b402aab77d7a5ce98b36e7d55c494108791211cb1fde85af7a167ce0"
+    },
+    {
+      "file": "pose-market-map-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "97b7c9864686f9d34e0d88f3f82763a017afe4026f9649ee6e24e417b609d6ed"
+    },
+    {
+      "file": "pose-engineer-type.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "9a3d2276abc95143a6c1db8bf260570c2283f2d2f3d811c4942e04d5b70786e9"
+    },
+    {
+      "file": "pose-reviewer-check.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "3f4777767889f873946882030107c9a486e12b22187e1896cf017d82c96d897f"
+    },
+    {
+      "file": "pose-engineer-sketch.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "a4ef32a6d6d46d014179c4fc4defe0596211db74e22ca0082844243153eaf6e8"
+    },
+    {
+      "file": "pose-engineer-type-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "f26e94caef12706532a1cb48ff19b23999bb325804a2bdeef582ace975fdf63a"
+    },
+    {
+      "file": "pose-engineer-sketch-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "f1cdd4ecf9c7c16e279fbf658922ecaee59565efcf4f28c67ece4b06ffa7a08d"
+    },
+    {
+      "file": "pose-reviewer-check-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "633805ed7c3bdcd07c47552d4b396a260e7925d8c12639f9e13e621ad205ea92"
+    },
+    {
+      "file": "pose-reviewer-discuss.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "f92b76a899a807a9ded46f32726d4625d85d8a205a2c46cad6396a7d0a2e625d"
+    },
+    {
+      "file": "pose-reviewer-discuss-avatar.webp",
+      "status": 200,
+      "type": "image/webp",
+      "same": true,
+      "sha256": "284e7fc7ce7212a81d4b3b6b03482817397c5f729f8da5ecf05c84deff066305"
+    }
+  ]
+}

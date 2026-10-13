@@ -58,7 +58,10 @@ async function fixture(t, initialGoal) {
   }
   registerTeamWaitTool(ctx, { stateDir: 'expert-teams' },
     { scheduler: { async kickTeam() { kicks++ } } })
-  const agent = { id: 'captain', session: { header: { cwd: workspace } }, inbox: { hasPending: false } }
+  const agent = { id: 'captain', session: { header: { cwd: workspace } }, inbox: {
+    nextTurn: [], nextStep: [],
+    get hasPending() { return this.nextTurn.length > 0 || this.nextStep.length > 0 },
+  } }
   const exec = { agent, signal: new AbortController().signal, concludeTurn() { conclusions++ } }
   return { tool, team, agent, exec, stateRoot, ctx, changes, warnings, goals, sessions,
     get flushes() { return flushes },
@@ -272,12 +275,42 @@ test('a durable unread result prevents parking before it is processed', async t 
   assert.equal((await f.read()).runtimeWaits, undefined)
 })
 
-test('already queued Host input is not hidden by a persisted wait', async t => {
+test('next-step Host input is processed before parking', async t => {
   const f = await fixture(t)
-  f.agent.inbox.hasPending = true
+  f.agent.inbox.nextStep.push({ source: { kind: 'user' }, content: [] })
   assert.equal((await f.tool.execute({ reason: 'Await reviewer' }, f.exec)).waiting, false)
   assert.equal(f.conclusions, 0)
   assert.equal((await f.read()).runtimeWaits, undefined)
+})
+
+test('a waiting worker concludes its turn without consuming queued next-turn input', async t => {
+  const f = await fixture(t, activeGoal)
+  f.agent.id = 'worker-session'
+  f.team.tasks[0].executionState = 'awaiting_review'
+  await f.save()
+  const queued = { source: { kind: 'user' }, content: [{ type: 'text', text: 'Inspect the reviewed result next turn' }] }
+  f.agent.inbox.nextTurn.push(queued)
+  assert.equal(f.agent.inbox.hasPending, true)
+  const result = await f.tool.execute({ reason: 'Independent review pending', task_ids: ['t1'] }, f.exec)
+  assert.equal(result.waiting, true)
+  assert.equal(f.conclusions, 1)
+  assert.deepEqual(f.agent.inbox.nextTurn, [queued], 'the Host owns admission of the queued turn')
+  const saved = await f.read()
+  assert.equal(saved.tasks[0].executionState, 'awaiting_review')
+  assert.equal(saved.tasks[0].attemptId, 'attempt-current')
+  assert.equal(saved.goalWaits['worker-session'].pausedRevision, f.goal.revision)
+  assert.equal(f.goal.phase, 'paused')
+})
+
+test('next-step input takes precedence when both Host inbox queues contain messages', async t => {
+  const f = await fixture(t, activeGoal)
+  f.agent.inbox.nextTurn.push({ source: { kind: 'user' }, content: [] })
+  f.agent.inbox.nextStep.push({ source: teamSource, content: [] })
+  assert.equal((await f.tool.execute({ reason: 'Await reviewer' }, f.exec)).waiting, false)
+  assert.equal(f.conclusions, 0)
+  assert.equal(f.goal.phase, 'active')
+  assert.equal(f.agent.inbox.nextTurn.length, 1)
+  assert.equal(f.agent.inbox.nextStep.length, 1)
 })
 
 test('a worker must save an actual review/blocker state before concluding unfinished work', async t => {

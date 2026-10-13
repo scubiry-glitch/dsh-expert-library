@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "style": "暖色手绘、纸张质感、透明背景",
+  "generator": "built-in image_gen",
+  "prompts": "prompts.json",
+  "assets": [
+    {
+      "id": "coordinator",
+      "role": "统筹协调",
+      "file": "coordinator.webp",
+      "source": "source/coordinator.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 42966,
+      "sha256": "54ee59a4a05810324d13b6e000adfdcb62b9bb8c7f3d96b7c64d54302cc42c61"
+    },
+    {
+      "id": "finance",
+      "role": "金融经营",
+      "file": "finance.webp",
+      "source": "source/finance.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 45672,
+      "sha256": "010aa79c884a864c75d5e55e9a6a66bb72a961858208a107ebf2d14e7a713c6b"
+    },
+    {
+      "id": "policy",
+      "role": "政策制度",
+      "file": "policy.webp",
+      "source": "source/policy.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 44282,
+      "sha256": "0e89edfb959a7a177ab43454b33f0da5e79e07313b6ead95a6095e176412ab23"
+    },
+    {
+      "id": "market",
+      "role": "市场研究",
+      "file": "market.webp",
+      "source": "source/market.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 46482,
+      "sha256": "ec92b950fa2098855e2458aef5f84397fdee860934530b61621260eab47873aa"
+    },
+    {
+      "id": "engineer",
+      "role": "技术工程",
+      "file": "engineer.webp",
+      "source": "source/engineer.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 40424,
+      "sha256": "7e75952a0759873a0b85af00faed4fd2ff513dfd479d655831e85582dc01ac7b"
+    },
+    {
+      "id": "reviewer",
+      "role": "评审质检",
+      "file": "reviewer.webp",
+      "source": "source/reviewer.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 40812,
+      "sha256": "3aa18a2f047d38eea00eed7d5bb1c6bffcbbff63060a3e7216a40d866ed66f8f"
+    }
+  ]
+}

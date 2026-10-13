@@ -1,0 +1,211 @@
+{
+  "createdAt": "2026-10-03T03:37:17.834480+00:00",
+  "status": "complete",
+  "objective": "修复此前及本轮真实运行暴露的可靠性缺口，部署后在 real 新建Session重跑原车公庄业务，按真实端到端交付验收而非仅测试通过。",
+  "backup": {
+    "path": "/root/zhijian/backups/dsh-expert-library-code-20261003-110817-round2",
+    "codeFiles": 288,
+    "manifestSha256": "e797aaa086b3d75baedb602783ce5bfb854aedb99884e0be9469b9e26cab2588"
+  },
+  "scope": [
+    "Explicit member work tools with preserved narrow grants",
+    "Host-compatible member setup and delegation enforcement",
+    "Dormant roster until work is ready",
+    "Scheduler-enforced maxActiveMembers=2 for work and review",
+    "Durable typed runtime blocks with session-specific recovery",
+    "Truthful negative review evidence and discoverable tool preconditions",
+    "Event-driven terminal wait with no polling LLM loop"
+  ],
+  "completionRequires": [
+    "Actual new Session under real with candidate runtime hash recorded",
+    "Core original task and output requirements preserved, changed run controls declared",
+    "No operator schema tips, task-state rewriting or repeated manual unblocking during accepted success run",
+    "All required tasks and independent reviews complete; final MD/HTML/PDF exist and correspond to accepted current artifacts",
+    "Observed invocation, usage, concurrency, task, mailbox and artifact evidence saved",
+    "External terminal failures persist visible bounded blockers; no automatic repeat churn"
+  ],
+  "currentPhase": "round9_reliability_iteration_completed_report_quality_findings_recorded",
+  "notYetClaimed": [
+    "Full original report business/content/craft acceptance",
+    "Token reduction or monetary savings percentage",
+    "yy live runtime reloaded to the round9 build"
+  ],
+  "phaseUpdatedAt": "2026-10-03T11:15:26.234418+00:00",
+  "candidateRuntimeSha256": "adf1c867c4aeaf3d930983eed4a12fe7ac3aeb1a38308afa47b6242b7b594f96",
+  "round3Backup": {
+    "path": "/root/zhijian/backups/dsh-expert-library-code-20261003-123235-round3",
+    "fileCount": 297,
+    "manifestSha256": "137c59a71ee86fd2e10f282d04f360fdab9891c9d19a7a343b3822919b4f2c66",
+    "archiveVerified": true
+  },
+  "previousRun": {
+    "sessionId": "session-3000b8f3-0809-4d0e-81c3-67e8f172cf9f",
+    "title": "车公庄置换｜第二轮可靠性实跑 2026-10-03 f172cf9f",
+    "teamName": "车公庄置换重跑2-20261003-f172cf9f",
+    "startedAt": "2026-10-03T04:17:54.956532+00:00",
+    "outputRelativePath": "work/cgz-swap-rerun2-20261003",
+    "status": "paused_for_next_optimization"
+  },
+  "round4Backup": {
+    "path": "/root/zhijian/backups/dsh-expert-library-code-20261003-130647-round4",
+    "fileCount": 302,
+    "manifestSha256": "35c7de3c7c6216a24ad9d2ef2d9fcb4757f0d7e28e716df7ed97592c9b3b76ad",
+    "archiveVerified": true
+  },
+  "pausedRuns": [
+    {
+      "sessionId": "session-2f384da2-eb76-4c87-90ff-cb42057fec35",
+      "title": "车公庄置换｜第三轮可靠性实跑 2026-10-03 057fec35",
+      "startedAt": "2026-10-03T04:57:11.815267+00:00",
+      "status": "paused_for_next_optimization",
+      "runtimeSha256": "d4a1ef929e27f62d78e8015af7f66b1b97087d6ddc6f423c90d7dc747df62c02",
+      "teamName": "车公庄置换重跑3-20261003-057fec35",
+      "outputRelativePath": "work/cgz-swap-rerun3-20261003"
+    },
+    {
+      "sessionId": "session-a7c5e5ae-9927-44fa-b622-95a7a5c0e34f",
+      "title": "车公庄置换｜第四轮可靠性实跑 2026-10-03 a5c0e34f",
+      "startedAt": "2026-10-03T05:21:41.364294+00:00",
+      "status": "paused_for_next_optimization",
+      "runtimeSha256": "0f0685b4267b8ef7a1627861acb427126662ec3da1697a2810891787b2458fa0",
+      "teamName": "车公庄置换重跑4-20261003-a5c0e34f",
+      "outputRelativePath": "work/cgz-swap-rerun4-20261003"
+    },
+    {
+      "sessionId": "session-e3effc9f-a4c7-426b-bf98-81b6d75ad21b",
+      "title": "车公庄置换｜第五轮可靠性实跑 2026-10-03 d75ad21b",
+      "startedAt": "2026-10-03T06:01:30.809911+00:00",
+      "status": "paused_for_next_optimization",
+      "teamName": "车公庄置换重跑5-20261003-d75ad21b",
+      "outputRelativePath": "work/cgz-swap-rerun5-20261003",
+      "runtimeSha256": "d0049d55bd8c5ebbdbffe87d8af881d0805c3e6ee5a8da34a79821e59fa57bc4"
+    },
+    {
+      "sessionId": "session-4a29c2be-ee47-4fb1-b047-e48d1ebeba2f",
+      "title": "车公庄置换｜第六轮可靠性实跑 2026-10-03 1ebeba2f",
+      "startedAt": "2026-10-03T07:17:38.275188+00:00",
+      "status": "paused_for_next_optimization",
+      "teamName": "车公庄置换重跑6-20261003-1ebeba2f",
+      "outputRelativePath": "work/cgz-swap-rerun6-20261003",
+      "runtimeSha256": "adf1c867c4aeaf3d930983eed4a12fe7ac3aeb1a38308afa47b6242b7b594f96"
+    },
+    {
+      "sessionId": "session-9b95e915-2d93-4002-934e-d0ba05d7eb3f",
+      "title": "车公庄置换｜第七轮可靠性实跑 2026-10-03 05d7eb3f",
+      "startedAt": "2026-10-03T08:28:17.982617+00:00",
+      "status": "paused_for_next_optimization",
+      "teamName": "车公庄置换重跑7-20261003-05d7eb3f",
+      "outputRelativePath": "work/cgz-swap-rerun7-20261003",
+      "runtimeSha256": "44433b5ca71adfb4edfad82f68c68aa11f59f0d5eedd8f4041951fac6b1dc1b8"
+    }
+  ],
+  "activeRun": {
+    "sessionId": "session-cbf2a33a-2a34-400c-b6a9-fc0b809d4d8b",
+    "teamName": "车公庄置换重跑9-20261003-809d4d8b",
+    "title": "车公庄置换｜第九轮可靠性实跑 2026-10-03 809d4d8b",
+    "status": "completed_runtime_with_report_quality_findings",
+    "startedAt": "2026-10-03T10:17:47.435231+00:00",
+    "createdAt": "2026-10-03T10:17:02.857975+00:00",
+    "runtimeSha256": "f5d748cbd2f3f6176f5bdc070f8ca5b0c1be1fe577c30213f9441e418af2b2f4",
+    "instanceId": "a3e84078-decc-4439-9acc-e51ff1c97290",
+    "tenantId": "54485b72-c5b9-4fbd-be13-bc0c2c82e0a5",
+    "evidence": "docs/evidence/team-reliability-round9-20261003/real-rerun",
+    "completedAt": "2026-10-03T10:55:34.617603+00:00",
+    "completionEvidence": "docs/evidence/team-reliability-round9-20261003/real-rerun/completion-receipt.json",
+    "artifactAcceptanceVerified": false,
+    "artifactAuditEvidence": "/root/zhijian/dsh-expert-library/docs/evidence/team-reliability-round9-20261003/artifact-audit-final.json",
+    "runtimeAcceptanceVerified": true
+  },
+  "round5Backup": {
+    "path": "/root/zhijian/backups/dsh-expert-library-code-20261003-133322-round5",
+    "fileCount": 304,
+    "manifestSha256": "1660309a4b7fa1b29e6a2a0a82e6ac348ea7fff6b35d9abc033092c3d3513ac8",
+    "archiveVerified": true
+  },
+  "round6Backup": {
+    "path": "/root/zhijian/backups/dsh-expert-library-code-20261003-141127-round6",
+    "fileCount": 307,
+    "manifestSha256": "12df94539769f327c217bfc1d2dfaae94b07ec1446bf98f471e579df524eb151",
+    "archiveVerified": true,
+    "runtimeSha256": "d0049d55bd8c5ebbdbffe87d8af881d0805c3e6ee5a8da34a79821e59fa57bc4"
+  },
+  "pendingCandidate": {
+    "path": "/tmp/dsh-expert-craft-gates-candidate-waud6bwd",
+    "state": "validated_promoted_reloaded_real_round9_completed_with_report_quality_findings",
+    "baselineRuntimeSha256": "d45f5d681233453dd67aa7d74fd0eb39eb6f0a17986af15a29fea54b46c196c0",
+    "backupEvidence": "docs/evidence/team-reliability-round9-20261003/backup.json",
+    "scope": [
+      "explicit report bundle checks on immutable published MD/HTML/PDF",
+      "carry checks and reviewed input dependencies to follow-up revisions"
+    ],
+    "limits": [
+      "structural subset only; semantic and visual review remains independent",
+      "no inference of workflow from arbitrary user text",
+      "round8 communication closed successfully; remaining gaps are report acceptance"
+    ],
+    "runtimeSha256": "f5d748cbd2f3f6176f5bdc070f8ca5b0c1be1fe577c30213f9441e418af2b2f4",
+    "hostReports": 4,
+    "validation": "docs/evidence/team-reliability-round9-20261003/validation.json"
+  },
+  "round7Backup": {
+    "path": "/root/zhijian/backups/dsh-expert-library-code-20261003-153513-round7",
+    "codeFiles": 314,
+    "manifestSha256": "f8e3198f9f55ef3137850524e60a138ee52ca6e762492f1bcf20393a63149ce1",
+    "archiveVerified": true,
+    "runtimeSha256": "adf1c867c4aeaf3d930983eed4a12fe7ac3aeb1a38308afa47b6242b7b594f96",
+    "excludes": [
+      "docs",
+      "knowledge",
+      "domainpacks",
+      "work",
+      "node_modules",
+      ".git",
+      "__pycache__"
+    ]
+  },
+  "nextCandidate": {
+    "path": "/tmp/dsh-expert-craft-gates-candidate-waud6bwd",
+    "state": "validated_promoted_reloaded_real_round9_completed_with_report_quality_findings",
+    "baselineRuntimeSha256": "d45f5d681233453dd67aa7d74fd0eb39eb6f0a17986af15a29fea54b46c196c0",
+    "backupEvidence": "docs/evidence/team-reliability-round9-20261003/backup.json",
+    "scope": [
+      "explicit report bundle checks on immutable published MD/HTML/PDF",
+      "carry checks and reviewed input dependencies to follow-up revisions"
+    ],
+    "limits": [
+      "structural subset only; semantic and visual review remains independent",
+      "no inference of workflow from arbitrary user text",
+      "round8 communication closed successfully; remaining gaps are report acceptance"
+    ],
+    "runtimeSha256": "f5d748cbd2f3f6176f5bdc070f8ca5b0c1be1fe577c30213f9441e418af2b2f4"
+  },
+  "updatedAt": "2026-10-03T11:15:26.234418+00:00",
+  "completedRuntimeRuns": [
+    {
+      "sessionId": "session-c072f554-ec53-4907-ac53-aa8ae4c41dad",
+      "title": "车公庄置换｜第八轮可靠性实跑 2026-10-03 e4c41dad",
+      "startedAt": "2026-10-03T09:00:31.302131+00:00",
+      "status": "completed_runtime_with_craft_gaps",
+      "teamName": "车公庄置换重跑8-20261003-e4c41dad",
+      "outputRelativePath": "work/cgz-swap-rerun8-20261003",
+      "runtimeSha256": "d45f5d681233453dd67aa7d74fd0eb39eb6f0a17986af15a29fea54b46c196c0",
+      "actualTeamId": "cgz-swap-rerun8",
+      "actualTeamPath": "/var/lib/dsh-server-login/users/54485b72-c5b9-4fbd-be13-bc0c2c82e0a5/ws/main/bank/expert-teams/cgz-swap-rerun8/team.json",
+      "teamBindingEvidence": "docs/evidence/team-reliability-round8-20261003/real-rerun/actual-team-binding-checkpoint.json",
+      "completionEvidence": "docs/evidence/team-reliability-round8-20261003/real-rerun/completion-receipt.json",
+      "finalArtifactAudit": "docs/evidence/team-reliability-round8-20261003/artifact-audit-final.json"
+    }
+  ],
+  "previousCandidates": [
+    {
+      "path": "/tmp/dsh-expert-repair-replay-candidate-jwi_pw3w",
+      "runtimeSha256": "d45f5d681233453dd67aa7d74fd0eb39eb6f0a17986af15a29fea54b46c196c0",
+      "state": "round8_runtime_completed_craft_gaps_audited",
+      "hostReports": 4,
+      "validation": "docs/evidence/team-reliability-round8-20261003/validation.json"
+    }
+  ],
+  "completedAt": "2026-10-03T11:15:26.234418+00:00",
+  "completionScope": "Requested plugin reliability optimization, fresh real Session rerun and observation are complete. This is not certification that the original report passed every business/content/craft acceptance requirement.",
+  "completionEvidence": "/root/zhijian/dsh-expert-library/docs/evidence/team-reliability-round9-20261003/iteration-result.json"
+}

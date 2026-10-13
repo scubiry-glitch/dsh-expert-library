@@ -31,7 +31,8 @@ export async function managerFixture(t, changes = {}) {
     token: `dpc_token_${randomBytes(32).toString('base64url')}`, bindingCode: `dpc_bind_${randomBytes(32).toString('base64url')}`,
     grant: randomBytes(32).toString('base64url'), exchanges: 0,
   }
-  async function addRelease({ releaseId, version, packId = 'demo.review', availability = { available: true }, ...extra }) {
+  async function addRelease({ releaseId, version, packId = 'demo.review', availability = { available: true },
+    classification = { schemaVersion: 1, types: ['domain-pack'], scenarios: ['deepseek-harness'] }, ...extra }) {
     const content = join(directory, 'payloads', releaseId), tar = join(directory, `${releaseId}.tar`)
     await mkdir(content, { recursive: true, mode: 0o700 })
     await writeFile(join(content, 'pack.json'), template.replaceAll('demo.review', packId).replaceAll('1.0.0', version), { mode: 0o600 })
@@ -44,7 +45,7 @@ export async function managerFixture(t, changes = {}) {
       packSchemaVersion: 2, requiresPlugin: { minVersion: '0.1.0' }, dependencyLock: [], builtinDependencies: [],
       sizeBytes: artifact.sizeBytes, fileCount: artifact.fileCount, approvedSubmissionId: `submission.${releaseId}`, signingKeyId: 'test.key', ...extra,
     }
-    const value = { manifest, envelope: signReleaseManifest(manifest, key.privateKey), archive: await readFile(tar), availability }
+    const value = { manifest, envelope: signReleaseManifest(manifest, key.privateKey), archive: await readFile(tar), availability, classification }
     releases.set(releaseId, value)
     return value
   }
@@ -52,7 +53,7 @@ export async function managerFixture(t, changes = {}) {
     const m = value.manifest
     return { releaseId: m.releaseId, packId: m.packId, ownerOrgId: m.ownerOrgId, version: m.version, manifest: m,
       name: 'Manager fixture', publishedAt: '2026-01-01T00:00:00.000Z', distribution: { kind: 'organization' },
-      downloadAvailability: value.availability }
+      downloadAvailability: value.availability, classification: value.classification }
   }
   function json(res, value, status = 200) {
     const bytes = Buffer.from(JSON.stringify(value))
@@ -75,7 +76,13 @@ export async function managerFixture(t, changes = {}) {
     assert.ok(req.headers.authorization === `Bearer ${wire.token}`, 'Private machine authorization is correct')
     if (url.pathname === '/api/v1/releases') {
       if (wire.catalogError) { json(res, { error: { code: wire.catalogError } }, wire.catalogError === 'UNAUTHENTICATED' ? 401 : 503); return }
-      let rows = [...releases.values()].filter(value => !url.searchParams.has('packId') || value.manifest.packId === url.searchParams.get('packId'))
+      const type = url.searchParams.get('type')
+      if (type !== null && !['domain-pack', 'agent', 'dashboard', 'tool', 'topic', 'expert'].includes(type)) {
+        json(res, { error: { code: 'INVALID_INPUT' } }, 400); return
+      }
+      let rows = [...releases.values()]
+        .filter(value => !url.searchParams.has('packId') || value.manifest.packId === url.searchParams.get('packId'))
+        .filter(value => type === null || value.classification.types.includes(type))
       const before = url.searchParams.get('beforeId')
       if (before) rows = rows.slice(rows.findIndex(value => value.manifest.releaseId === before) + 1)
       const limit = Number(url.searchParams.get('limit') ?? 50), selected = rows.slice(0, limit)
