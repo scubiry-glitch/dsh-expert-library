@@ -54,7 +54,13 @@
         "artifactsPath": "expert-tasks/t1/artifacts",
         "version": 1
       },
-      "reassigning": false
+      "reassigning": false,
+      "scheduling": {
+        "since": 1791438148322,
+        "phase": "ready",
+        "reason": "captain_unavailable",
+        "noticeKey": "handoff:t1:2:周期灯塔:ready"
+      }
     },
     {
       "id": "t2",
@@ -73,7 +79,13 @@
         "artifactsPath": "expert-tasks/t2/artifacts",
         "version": 1
       },
-      "reassigning": false
+      "reassigning": false,
+      "scheduling": {
+        "since": 1791438148322,
+        "phase": "ready",
+        "reason": "captain_unavailable",
+        "noticeKey": "handoff:t2:2:周期司南:ready"
+      }
     },
     {
       "id": "t3",
@@ -92,7 +104,13 @@
         "artifactsPath": "expert-tasks/t3/artifacts",
         "version": 1
       },
-      "reassigning": false
+      "reassigning": false,
+      "scheduling": {
+        "since": 1791438148322,
+        "phase": "ready",
+        "reason": "captain_unavailable",
+        "noticeKey": "handoff:t3:1:周期账房:ready"
+      }
     },
     {
       "id": "t4",
