@@ -1,6 +1,6 @@
 {
   "id": "bank-property-value",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "schemaVersion": 2,
   "domain": "banking",
   "intents": ["银行房产价值评估", "房产价值报告", "房产价值咨询报告", "抵押物房产参考价值"],

@@ -1,7 +1,7 @@
 {
   "id": "bank-property-value",
   "name": "bank-property-value",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "schemaVersion": 2,
   "source": {
     "kind": "builtin",

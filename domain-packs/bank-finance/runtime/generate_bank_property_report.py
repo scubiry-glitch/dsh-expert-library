@@ -76,6 +76,27 @@ def community_evidence(beike, city, name):
     return candidates[0]
 
 
+def community_detail(beike, city, name, community_id):
+    """Fetch the matching community's structured details and public reviews."""
+    try:
+        response = cli([beike, "buy", "detail", "-c", city, "-t", "resblock",
+                        "--id", str(community_id), "--json"])[0]
+    except (RuntimeError, subprocess.TimeoutExpired):
+        return {"unavailable": True}
+    data = response.get("data", "")
+    if response.get("ok") is not True or f"<{name}>" not in data:
+        return {"unavailable": True}
+    details = {}
+    for item in json_values(data):
+        for key in ("基本信息", "周边配套概览", "用户点评", "小区缺点"):
+            if key in item and key not in details:
+                details[key] = item[key]
+    basic = details.get("基本信息") or {}
+    if basic.get("小区名称") != name or str(basic.get("小区ID")) != str(community_id):
+        return {"unavailable": True}
+    return details
+
+
 def listing_evidence(beike, city, name, area):
     responses = cli([beike, "buy", "search", "-c", city, "-q", f"{name} {area:g}平方米 二手房", "--json"])
     comparables = []
@@ -167,7 +188,36 @@ def set_cell(table, row, column, value):
         node.text = ""
 
 
-def render_xml(name, city, area, bank, branch, company, community, comps, zyt_community, zyt_city):
+def qualitative_fields(detail):
+    basic = detail.get("基本信息") or {}
+    nearby = detail.get("周边配套概览") or {}
+    reviews = detail.get("用户点评") or []
+    fields = {}
+    safety = basic.get("小区安全性", "")
+    if "非人车分流" in safety:
+        fields[4] = "关注项：平台资料标注小区未实行人车分流；实际人车动线及影响需现场核验。"
+    else:
+        fields[4] = "平台未提供可核实的小区缺点；需现场核验。"
+    fields[5] = (f"平台收录{len(reviews)}条用户点评，部分评价提及生活便利；"
+                 "邻里关系与社区活动缺少独立资料，待现场访谈。" if reviews else
+                 "社区活动和邻里关系暂无可核实资料，待现场访谈。")
+    fee = basic.get("物业费用")
+    fields[6] = f"平台登记物业费{fee}；实际服务水平待现场核验。" if fee else "物业服务情况待现场核验。"
+    fields[8] = (f"平台登记安全设施：{safety.replace('/', '、')}；治安事件情况待核。" if safety else
+                 "治安事件及安防设施待现场核验。")
+    parking = basic.get("车位详情")
+    rent = basic.get("租车位费")
+    fields[9] = (f"平台登记{parking}；{rent}。实际空位与租金待核。" if parking and rent else
+                 f"平台登记{parking or rent}；实际空位与租金待核。" if parking or rent else "车位数量与使用情况待核。")
+    fields[10] = "住户构成暂无可靠统计，待物业或现场访谈核实。"
+    for row, category in ((12, "医疗"), (13, "商业")):
+        places = nearby.get(category) or []
+        fields[row] = "；".join(places[:2]) + "（平台步行距离，待核）" if places else "周边配套待核。"
+    fields[14] = "-"  # A property company name must not be inferred from a template or reviews.
+    return fields
+
+
+def render_xml(name, city, area, bank, branch, company, community, detail, comps, zyt_community, zyt_city):
     if hashlib.sha256(TEMPLATE.read_bytes()).hexdigest() != TEMPLATE_SHA256:
         raise RuntimeError("Word 模板哈希不匹配")
     with ZipFile(TEMPLATE) as archive:
@@ -212,11 +262,12 @@ def render_xml(name, city, area, bank, branch, company, community, comps, zyt_co
     set_cell(second, 1, 1, f"{city}{zone.group(1)}（详细地址待核）" if zone else "待核")
     set_cell(second, 2, 1, community.get("小区信息") or "-")
     set_cell(second, 3, 1, community.get("区位交通") or "-")
-    for row in (4, 5, 6, 8, 9, 10, 12, 13, 14):
-        set_cell(second, row, 1, "-")
+    for row, value in qualitative_fields(detail).items():
+        set_cell(second, row, 1, value)
     set_cell(second, 7, 1, community.get("小区环境") or "-")
     set_cell(second, 11, 1, community.get("区位交通") or "-")
-    set_cell(second, 15, 1, "住宅（建筑类型待核）")
+    building = (detail.get("基本信息") or {}).get("建筑类型")
+    set_cell(second, 15, 1, f"住宅（{building}）" if building else "住宅（建筑类型待核）")
     year = re.search(r"(\d{4}(?:-\d{4})?)年建成", community.get("小区信息", ""))
     set_cell(second, 16, 1, year.group(1) if year else "-")
     ratio = re.search(r"容积率\s*([\d.]+)", community.get("小区信息", ""))
@@ -226,6 +277,7 @@ def render_xml(name, city, area, bank, branch, company, community, comps, zyt_co
     latest = (zyt_community.get("series") or zyt_city.get("series") or [])
     level = "小区" if zyt_community.get("series") else "城市"
     note += f"政研通 SH_PRICE 为{level}成交均价时序，最新数据期 {latest[-1].get('period')}；{'城市数据未用于本小区估值。' if level == '城市' else '未替代个案勘查。'}" if latest else "政研通 SH_PRICE 无可用时序。"
+    note += "小区定性信息与周边步行距离来自贝壳小区详情及公开点评，未经现场核验；公开点评属于个人意见。"
     text_nodes(note_cell)[-1].text = (text_nodes(note_cell)[-1].text or "") + note
     xml = etree.tostring(root, encoding="UTF-8", xml_declaration=True, standalone=True)
     if "北京友谱" in xml.decode() or "碧兴园" in xml.decode() and name != "碧兴园":
@@ -251,10 +303,11 @@ def main():
         if len(value) > 120 or any(ord(character) < 32 for character in value):
             parser.error("文字参数含非法字符或过长")
     community = community_evidence(args.beike_cli, args.city, args.community)
+    detail = community_detail(args.beike_cli, args.city, args.community, community.get("小区ID"))
     comps = listing_evidence(args.beike_cli, args.city, args.community, args.area)
     zyt_community, zyt_city = timeseries(args.zyt_cli, args.city, args.community)
     xml, unit, total = render_xml(args.community, args.city, args.area, args.bank, args.branch,
-                                  args.company, community, comps, zyt_community, zyt_city)
+                                  args.company, community, detail, comps, zyt_community, zyt_city)
     target = Path(args.output).expanduser().resolve()
     target.parent.mkdir(parents=True, exist_ok=True)
     with ZipFile(TEMPLATE) as source, ZipFile(target, "w") as output:
@@ -262,7 +315,9 @@ def main():
             output.writestr(entry, xml if entry.filename == "word/document.xml" else source.read(entry.filename))
     evidence = {"generated_at": datetime.now(timezone.utc).isoformat(), "city": args.city,
                 "community": args.community, "area_sqm": args.area,
-                "beike_resblock": community, "beike_asking_comparables": comps,
+                "beike_resblock": community, "beike_resblock_detail": detail,
+                "qualitative_field_sources": {str(row): "beike_resblock_detail" for row in qualitative_fields(detail)},
+                "beike_asking_comparables": comps,
                 "zyt_community_SH_PRICE": zyt_community, "zyt_city_SH_PRICE": zyt_city,
                 "valuation_method": "matched asking-price median; preliminary reference only" if unit is not None else "unavailable",
                 "unit_yuan_sqm": unit, "total_yuan": str(total) if total is not None else None}

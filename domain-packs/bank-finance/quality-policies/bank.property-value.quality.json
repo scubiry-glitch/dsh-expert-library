@@ -1,6 +1,6 @@
 {
   "id": "bank.property-value.quality",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "schemaVersion": 2,
   "maxRepairRounds": 1,
   "gates": [
