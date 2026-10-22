@@ -192,28 +192,39 @@ def qualitative_fields(detail):
     basic = detail.get("基本信息") or {}
     nearby = detail.get("周边配套概览") or {}
     reviews = detail.get("用户点评") or []
-    fields = {}
+    review_text = "\n".join(item.get("点评", "") for item in reviews if isinstance(item, dict))
+    fields = {row: "" for row in (4, 5, 6, 8, 9, 10, 12, 13, 14)}
     safety = basic.get("小区安全性", "")
     if "非人车分流" in safety:
-        fields[4] = "关注项：平台资料标注小区未实行人车分流；实际人车动线及影响需现场核验。"
-    else:
-        fields[4] = "平台未提供可核实的小区缺点；需现场核验。"
-    fields[5] = (f"平台收录{len(reviews)}条用户点评，部分评价提及生活便利；"
-                 "邻里关系与社区活动缺少独立资料，待现场访谈。" if reviews else
-                 "社区活动和邻里关系暂无可核实资料，待现场访谈。")
+        fields[4] = "平台资料显示人车未分流。"
+    elif "半人车分流" in safety:
+        fields[4] = "平台资料显示半人车分流。"
+    defect = re.search(r"小区缺点\s*[:：]\s*([^\n\r。；]+)", review_text)
+    if defect:
+        statement = re.split(r"[，,]", defect.group(1), maxsplit=1)[0].strip()
+        if statement:
+            fields[4] += f"有用户点评称“{statement}”。"
+    if "人文气息浓厚" in review_text:
+        fields[5] = "有用户点评称小区人文气息浓厚。"
+    elif "老人小孩活动" in review_text:
+        fields[5] = "有用户点评提及老人和儿童活动空间。"
+    elif "社区活动" in review_text:
+        fields[5] = "有用户点评提及社区活动。"
     fee = basic.get("物业费用")
-    fields[6] = f"平台登记物业费{fee}；实际服务水平待现场核验。" if fee else "物业服务情况待现场核验。"
-    fields[8] = (f"平台登记安全设施：{safety.replace('/', '、')}；治安事件情况待核。" if safety else
-                 "治安事件及安防设施待现场核验。")
+    fields[6] = f"平台登记物业费{fee}。" if fee else ""
+    if "基本服务到位" in review_text:
+        fields[6] += "有用户点评称物业基本服务到位。"
+    elif "物业管理好" in review_text:
+        fields[6] += "有用户点评称物业管理较好。"
+    fields[8] = f"平台登记安防设施：{safety.replace('/', '、')}。" if safety else ""
     parking = basic.get("车位详情")
     rent = basic.get("租车位费")
-    fields[9] = (f"平台登记{parking}；{rent}。实际空位与租金待核。" if parking and rent else
-                 f"平台登记{parking or rent}；实际空位与租金待核。" if parking or rent else "车位数量与使用情况待核。")
-    fields[10] = "住户构成暂无可靠统计，待物业或现场访谈核实。"
+    fields[9] = "；".join(part for part in (parking, rent) if part)
+    if fields[9]:
+        fields[9] = f"平台登记{fields[9]}。"
     for row, category in ((12, "医疗"), (13, "商业")):
         places = nearby.get(category) or []
-        fields[row] = "；".join(places[:2]) + "（平台步行距离，待核）" if places else "周边配套待核。"
-    fields[14] = "-"  # A property company name must not be inferred from a template or reviews.
+        fields[row] = "；".join(places[:2])
     return fields
 
 
@@ -232,9 +243,9 @@ def render_xml(name, city, area, bank, branch, company, community, detail, comps
     if len(comps) >= 3:
         unit = int(Decimal(statistics.median(c["asking_unit_yuan_sqm"] for c in comps)).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
         total = (Decimal(unit) * Decimal(str(area))).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
-    value_unit = f"{unit:.2f}" if unit is not None else "待核"
-    value_total = f"{total:.2f}" if total is not None else "待核"
-    value_upper = upper_money(int(total)) if total is not None else "待核"
+    value_unit = f"{unit:.2f}" if unit is not None else ""
+    value_total = f"{total:.2f}" if total is not None else ""
+    value_upper = upper_money(int(total)) if total is not None else ""
     set_node(elements[2], 0, bank)
     set_node(elements[2], 2, branch)
     if not bank and not branch:
@@ -254,30 +265,33 @@ def render_xml(name, city, area, bank, branch, company, community, detail, comps
     set_node(elements[14], 10, f"{today.day:02d}")
 
     first, second = tables
-    for row, column, value in [(0, 1, name), (1, 1, "-"), (2, 1, "-"), (2, 3, "-"),
-                               (3, 1, f"{area:.2f}㎡"), (3, 3, "-"), (4, 2, value_unit), (5, 2, value_total)]:
+    for row, column, value in [(0, 1, name), (1, 1, ""), (2, 1, ""), (2, 3, ""),
+                               (3, 1, f"{area:.2f}㎡"), (3, 3, ""), (4, 2, value_unit), (5, 2, value_total)]:
         set_cell(first, row, column, value)
     set_cell(second, 0, 1, name)
     zone = re.search(r"位于([^，]+)", community.get("小区信息", ""))
-    set_cell(second, 1, 1, f"{city}{zone.group(1)}（详细地址待核）" if zone else "待核")
-    set_cell(second, 2, 1, community.get("小区信息") or "-")
-    set_cell(second, 3, 1, community.get("区位交通") or "-")
+    set_cell(second, 1, 1, f"{city}{zone.group(1)}" if zone else "")
+    set_cell(second, 2, 1, community.get("小区信息") or "")
+    set_cell(second, 3, 1, community.get("区位交通") or "")
     for row, value in qualitative_fields(detail).items():
         set_cell(second, row, 1, value)
-    set_cell(second, 7, 1, community.get("小区环境") or "-")
-    set_cell(second, 11, 1, community.get("区位交通") or "-")
+    set_cell(second, 7, 1, community.get("小区环境") or "")
+    set_cell(second, 11, 1, community.get("区位交通") or "")
     building = (detail.get("基本信息") or {}).get("建筑类型")
-    set_cell(second, 15, 1, f"住宅（{building}）" if building else "住宅（建筑类型待核）")
+    set_cell(second, 15, 1, f"住宅（{building}）" if building else "住宅")
     year = re.search(r"(\d{4}(?:-\d{4})?)年建成", community.get("小区信息", ""))
-    set_cell(second, 16, 1, year.group(1) if year else "-")
+    set_cell(second, 16, 1, year.group(1) if year else "")
     ratio = re.search(r"容积率\s*([\d.]+)", community.get("小区信息", ""))
-    set_cell(second, 17, 1, ratio.group(1) if ratio else "-")
+    set_cell(second, 17, 1, ratio.group(1) if ratio else "")
     note_cell = second.xpath("./w:tr", namespaces=NS)[18].xpath("./w:tc", namespaces=NS)[1]
-    note = "⑦本报告单价取同小区、面积偏差不超过20%的在售房源挂牌单价中位数；挂牌价并非成交价，未查获该小区成交序列，故本结果仅作内部初步参考，不得作为正式抵押估价。" if unit is not None else "⑦同小区有效挂牌样本不足3套，单价与总价待核，不得作为正式抵押估价。"
+    note = "⑦本报告单价取同小区、面积偏差不超过20%的在售房源挂牌单价中位数；挂牌价并非成交价，结果仅作内部参考，不得作为正式抵押估价。" if unit is not None else "⑦同小区有效挂牌样本不足3套，本报告不提供价值结论。"
     latest = (zyt_community.get("series") or zyt_city.get("series") or [])
     level = "小区" if zyt_community.get("series") else "城市"
-    note += f"政研通 SH_PRICE 为{level}成交均价时序，最新数据期 {latest[-1].get('period')}；{'城市数据未用于本小区估值。' if level == '城市' else '未替代个案勘查。'}" if latest else "政研通 SH_PRICE 无可用时序。"
-    note += "小区定性信息与周边步行距离来自贝壳小区详情及公开点评，未经现场核验；公开点评属于个人意见。"
+    if latest:
+        note += f"政研通 SH_PRICE 为{level}成交均价时序，最新数据期 {latest[-1].get('period')}。"
+        if level == "城市":
+            note += "城市数据未用于本小区估值。"
+    note += "小区定性信息与周边步行距离来自贝壳小区详情及公开点评；点评反映个体意见。"
     text_nodes(note_cell)[-1].text = (text_nodes(note_cell)[-1].text or "") + note
     xml = etree.tostring(root, encoding="UTF-8", xml_declaration=True, standalone=True)
     if "北京友谱" in xml.decode() or "碧兴园" in xml.decode() and name != "碧兴园":

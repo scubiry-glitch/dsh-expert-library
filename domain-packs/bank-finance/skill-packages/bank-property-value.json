@@ -1,18 +1,27 @@
 {
   "id": "bank-property-value",
   "name": "bank-property-value",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "schemaVersion": 2,
   "source": {
     "kind": "builtin",
     "root": "skills/bank-property-value",
-    "digest": "ed5c3655734d846b140f31049471b2da5fd3fb4abc976944419e14f2cf344364",
+    "digest": "5f1766f09e864133ec3f4d7d1693339d1e665a90843584b0305ccdd0a36dad77",
     "license": "UNLICENSED"
   },
   "contributions": {
-    "outputTemplates": ["bank.output.property-value"],
-    "qualityPolicies": ["bank.property-value.quality"],
-    "teamTemplates": ["bank.team.property-value"]
+    "outputTemplates": [
+      "bank.output.property-value"
+    ],
+    "qualityPolicies": [
+      "bank.property-value.quality"
+    ],
+    "teamTemplates": [
+      "bank.team.property-value"
+    ]
   },
-  "permissions": {"execScripts": [], "internalOnly": true}
+  "permissions": {
+    "execScripts": [],
+    "internalOnly": true
+  }
 }

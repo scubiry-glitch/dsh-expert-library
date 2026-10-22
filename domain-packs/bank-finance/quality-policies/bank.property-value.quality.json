@@ -1,12 +1,74 @@
 {
   "id": "bank.property-value.quality",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "schemaVersion": 2,
   "maxRepairRounds": 1,
   "gates": [
-    {"id":"input-completeness","kind":"deterministic","appliesTo":["deliverable"],"severity":"hard","phase":"structure","config":{"rules":["城市、小区和建筑面积存在且合法","支行和评估公司未提供时不从模板继承旧值"]}},
-    {"id":"evidence-match","kind":"deterministic","appliesTo":["deliverable"],"severity":"hard","phase":"data","config":{"rules":["贝壳小区检索必须精确匹配","挂牌样本必须同小区且面积偏差不超过20%","政研通小区序列为空时不得用城市均价直接估算小区价格","挂牌价与成交价严格区分"]}},
-    {"id":"docx-template","kind":"deterministic","appliesTo":["deliverable"],"severity":"hard","phase":"structure","config":{"rules":["原始模板SHA256一致","DOCX内两表行数和原样式保持","生成件无碧兴园和北京友谱模板残留（碧兴园为本次指定小区时例外）","输出文件哈希与证据回执一致"]}},
-    {"id":"download","kind":"deterministic","appliesTo":["deliverable"],"severity":"hard","phase":"final","config":{"rules":["下载地址返回DOCX MIME和attachment文件名","链接在账号C登录态可访问","不把本地路径或纯文件名冒充下载链接"]}}
+    {
+      "id": "input-completeness",
+      "kind": "deterministic",
+      "appliesTo": [
+        "deliverable"
+      ],
+      "severity": "hard",
+      "phase": "structure",
+      "config": {
+        "rules": [
+          "城市、小区和建筑面积存在且合法",
+          "支行和评估公司未提供时不从模板继承旧值"
+        ]
+      }
+    },
+    {
+      "id": "evidence-match",
+      "kind": "deterministic",
+      "appliesTo": [
+        "deliverable"
+      ],
+      "severity": "hard",
+      "phase": "data",
+      "config": {
+        "rules": [
+          "贝壳小区检索必须精确匹配",
+          "挂牌样本必须同小区且面积偏差不超过20%",
+          "政研通小区序列为空时不得用城市均价直接估算小区价格",
+          "挂牌价与成交价严格区分"
+        ]
+      }
+    },
+    {
+      "id": "docx-template",
+      "kind": "deterministic",
+      "appliesTo": [
+        "deliverable"
+      ],
+      "severity": "hard",
+      "phase": "structure",
+      "config": {
+        "rules": [
+          "原始模板SHA256一致",
+          "DOCX内两表行数和原样式保持",
+          "生成件无碧兴园和北京友谱模板残留（碧兴园为本次指定小区时例外）",
+          "输出文件哈希与证据回执一致",
+          "报告正文不出现待审核、待调研、待核或现场核验等过程占位文字；无依据的栏目留空"
+        ]
+      }
+    },
+    {
+      "id": "download",
+      "kind": "deterministic",
+      "appliesTo": [
+        "deliverable"
+      ],
+      "severity": "hard",
+      "phase": "final",
+      "config": {
+        "rules": [
+          "下载地址返回DOCX MIME和attachment文件名",
+          "链接在账号C登录态可访问",
+          "不把本地路径或纯文件名冒充下载链接"
+        ]
+      }
+    }
   ]
 }
