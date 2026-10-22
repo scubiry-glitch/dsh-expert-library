@@ -1,0 +1,20 @@
+{
+  "id": "bank-property-value",
+  "version": "1.2.0",
+  "schemaVersion": 2,
+  "domain": "banking",
+  "intents": ["银行房产价值评估", "房产价值报告", "房产价值咨询报告", "抵押物房产参考价值"],
+  "requiredCapabilities": [{"capability":"bank.review","minProficiency":1,"cardinality":1}],
+  "routingPolicy": {"candidateHints":["bank-09"],"assertions":["小区、城市、建筑面积必填；支行和评估公司可留空。只把可核验的贝壳/政研通数据写入模板；缺成交证据不得宣称正式抵押估价。"]},
+  "teamTemplate": "bank.team.property-value",
+  "outputTemplate": "bank.output.property-value",
+  "qualityPolicy": "bank.property-value.quality",
+  "knowledgePolicy": {"required":["bank-expert-memory"]},
+  "toolPolicy": {"allowed":["expert_provider_call"]},
+  "tasks": [
+    {"subject":"核对小区与面积","expert":"bank-09","dependsOn":[],"description":"读取 bank-property-value 技能，校验城市、小区、建筑面积；支行/评估公司可为空。不得沿用模板样例的地点、日期、数值。"},
+    {"subject":"查询账号 C 的贝壳与政研通","expert":"bank-09","dependsOn":[0],"description":"贝壳小区精确匹配与同小区面积偏差20%内在售样本；政研通先查小区 SH_PRICE，再查城市 SH_PRICE。保存实际过滤条件和数据期，不把挂牌价当成交价。"},
+    {"subject":"按原 Word 模板生成","expert":"bank-09","dependsOn":[1],"description":"调用包内 runtime/generate_bank_property_report.py，使用包内校验哈希的 DOCX 模板，生成 DOCX 和 evidence.json；无有效样本时金额写待核。"},
+    {"subject":"核验并提供可点击下载入口","expert":"bank-09","dependsOn":[2],"description":"验证 DOCX ZIP 结构、原模板两表结构、示例值清除、证据回执与 SHA256。把 DOCX 上传到本会话受控附件存储，返回真正可点击的 .docx 下载 URL；禁止只发文件名或服务器本地路径。"}
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "gsap-timeline",
+  "name": "gsap-timeline",
+  "version": "0.0.0-local",
+  "schemaVersion": 2,
+  "source": {
+    "kind": "builtin",
+    "root": "skills/gsap-timeline",
+    "digest": "cb546be614feaa0844d7b758179a3851fdfe00bc8bf50cb6caee220d918e918c",
+    "license": "MIT"
+  },
+  "contributions": {},
+  "permissions": {
+    "execScripts": []
+  }
+}

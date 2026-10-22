@@ -1,0 +1,30 @@
+{
+  "id": "bank.team.property-value",
+  "version": "1.2.0",
+  "schemaVersion": 2,
+  "parameters": {
+    "type":"object",
+    "properties": {
+      "city":{"type":"string"},
+      "community":{"type":"string"},
+      "area_sqm":{"type":"number","minimum":5,"maximum":1000},
+      "bank":{"type":"string"},
+      "branch":{"type":"string"},
+      "company":{"type":"string"}
+    },
+    "required":["city","community","area_sqm"]
+  },
+  "slots":[{"id":"role.bank-property","capabilities":["bank.review"],"cardinality":{"min":1,"max":1}}],
+  "tasks":[
+    {"id":"query","role":"role.bank-property","dependsOn":[],"inputs":[{"kind":"parameter","ref":"city"},{"kind":"parameter","ref":"community"},{"kind":"parameter","ref":"area_sqm"}],"allowedCapabilities":["realestate.resblock.profile","realestate.listing.search","realestate.indicators.timeseries"],"outputSchema":"bank.output.property-value","retryPolicy":"provider-only","subject":"核验小区并读取两源证据","description":"在账号 C 的私有身份下调用贝壳和政研通。小区精确匹配，保留过滤条件；城市级时序不得冒充小区时序。"},
+    {"id":"render","role":"role.bank-property","dependsOn":["query"],"inputs":[{"kind":"task-output","ref":"query"}],"allowedCapabilities":[],"outputSchema":"bank.output.property-value","retryPolicy":"quality-repair","subject":"填充原 Word 模板","description":"用包内确定性生成器输出 .docx 和证据 JSON；银行、支行、评估公司缺省时留空。"},
+    {"id":"deliver","role":"role.bank-property","dependsOn":["render"],"inputs":[{"kind":"task-output","ref":"render"}],"allowedCapabilities":[],"outputSchema":"bank.output.property-value","retryPolicy":"never","subject":"校验原始 DOCX 并返回下载链接","description":"把文件上传到当前会话的受控附件服务，再返回可点击 .docx 链接与哈希；不可返回纯文件名。"}
+  ],
+  "gates":[
+    {"policy":"bank.property-value.quality","gate":"input-completeness"},
+    {"policy":"bank.property-value.quality","gate":"evidence-match"},
+    {"policy":"bank.property-value.quality","gate":"docx-template"},
+    {"policy":"bank.property-value.quality","gate":"download"}
+  ],
+  "deliverables":[{"id":"bank-property-value-docx","type":"file","format":"docx"},{"id":"bank-property-evidence","type":"file","format":"json"}]
+}

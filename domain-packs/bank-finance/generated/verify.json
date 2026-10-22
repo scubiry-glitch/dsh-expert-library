@@ -5,13 +5,13 @@
   "diagnostics": [],
   "entityCounts": {
     "experts": 6,
-    "scenarios": 3,
-    "teamTemplates": 1,
-    "outputTemplates": 3,
-    "qualityPolicies": 1,
+    "scenarios": 4,
+    "teamTemplates": 2,
+    "outputTemplates": 4,
+    "qualityPolicies": 2,
     "knowledgeProviders": 4,
     "domainKnowledge": 4,
     "methodPacks": 10,
-    "skillPackages": 7
+    "skillPackages": 8
   }
 }

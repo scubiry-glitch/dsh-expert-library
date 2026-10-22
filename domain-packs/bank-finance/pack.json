@@ -1,9 +1,9 @@
 {
   "id": "bank-finance",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "schemaVersion": 2,
   "name": "银行金融领域包",
-  "description": "6 位银行金融领域专家基线（bank-09 零售操盘 + e13-* 江苏银行高层，零售金融/银行经营/江苏银行高层）。V2 投影源为 src/bank/data/experts.generated.ts + routing 表；复用 zhijian-realestate 的模板/质量/方法构建器（bank 前缀）。",
+  "description": "银行金融领域包 v1.2：保留零售金融与经营专家，新增基于用户提供 Word 模板的房产价值咨询流程。小区和建筑面积为必填，贝壳及政研通取数，脚本生成原样式 DOCX 与证据回执；未获成交数据时仅给挂牌参考值。",
   "dependsOn": [
     "zhijian-realestate"
   ],

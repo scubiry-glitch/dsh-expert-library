@@ -1,0 +1,12 @@
+{
+  "id": "bank.output.property-value",
+  "version": "1.2.0",
+  "schemaVersion": 2,
+  "media": ["markdown"],
+  "sections": [
+    {"id":"报告下载","required":true,"requires":["source"]},
+    {"id":"参考结果与口径","required":true,"requires":["source","caliber"]},
+    {"id":"证据缺口","required":true,"requires":["source","caliber"]}
+  ],
+  "renderModes": {"final": {"anonymize": false}}
+}

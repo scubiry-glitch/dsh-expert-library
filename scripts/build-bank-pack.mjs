@@ -21,7 +21,7 @@
 import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 import { buildBankDomainPack, BANK_PACK_ID, BANK_PACK_VERSION } from '../lib/v2/bank-pack.js'
 import { BANK_EXPERTS } from '../lib/bank/data/experts.generated.js'
@@ -237,6 +237,16 @@ export async function emitBankPack(outDir, options = {}) {
     } catch (error) {
       if (!(error instanceof PackGenError && error.errors.some(e => e.code === 'source-manifest-missing'))) throw error
     }
+  }
+
+  // Bank property-value v1.2 is authored as a reviewed overlay. Keep it in
+  // the deterministic emitter so a routine bank-pack rebuild cannot remove
+  // the DOCX generator, template or scenario shipped to Pack Center.
+  const propertyOverlay = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'bank-property-value-overlay')
+  const overlayFiles = await copyTree(propertyOverlay, outDir)
+  if (overlayFiles > 0) written.push(`bank-property-value-overlay/ (${overlayFiles} files)`)
+  for (const key of ['scenarios', 'teamTemplates', 'outputTemplates', 'qualityPolicies', 'skillPackages']) {
+    entityCounts[key] += 1
   }
 
   // self-verification through the real loader + tree digest
