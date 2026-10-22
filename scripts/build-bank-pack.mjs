@@ -193,7 +193,7 @@ export async function emitBankPack(outDir, options = {}) {
     if (srcDir !== undefined) {
       await rm(outDir, { recursive: true, force: true })
     } else {
-      for (const part of ['pack.json', 'README.md', 'experts', 'scenarios', 'team-templates', 'output-templates', 'quality-policies', 'knowledge-providers', 'domain-knowledge', 'method-packs', 'routing', 'generated']) {
+      for (const part of ['pack.json', 'README.md', 'experts', 'scenarios', 'team-templates', 'output-templates', 'quality-policies', 'knowledge-providers', 'domain-knowledge', 'method-packs', 'skill-packages', 'routing', 'generated']) {
         await rm(join(outDir, part), { recursive: true, force: true })
       }
     }

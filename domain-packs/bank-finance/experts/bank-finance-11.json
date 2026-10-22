@@ -1,5 +1,5 @@
 {
-  "id": "bank-11",
+  "id": "bank-finance-11",
   "version": "1.1.0",
   "schemaVersion": 2,
   "display": {
@@ -182,11 +182,11 @@
   "knowledgeBindings": [
     {
       "providerId": "zhijian-expert-memory",
-      "scope": "experts/bank-11"
+      "scope": "experts/bank-finance-11"
     },
     {
       "providerId": "local-knowledge",
-      "scope": "experts/bank-11"
+      "scope": "experts/bank-finance-11"
     },
     {
       "providerId": "bank-99wiki",

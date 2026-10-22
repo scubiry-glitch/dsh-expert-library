@@ -9,9 +9,9 @@
     "teamTemplates": 2,
     "outputTemplates": 4,
     "qualityPolicies": 2,
-    "knowledgeProviders": 4,
+    "knowledgeProviders": 3,
     "domainKnowledge": 4,
     "methodPacks": 10,
-    "skillPackages": 8
+    "skillPackages": 4
   }
 }

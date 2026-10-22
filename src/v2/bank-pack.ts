@@ -63,18 +63,12 @@ export const BANK_SKILL_BASELINE_VERSION = '0.0.0-local'
 
 /** bank-finance 包捆绑技能（内容在 `domain-packs/bank-finance/source/skills/<id>/`，
  * 发射时保留为包内 `skills/<id>/`；SKILL.md 树为内容本体，manifest 为声明）。
- * finesse-ui / gsap-* 为渲染增强技能（同 zhijian-realestate 域，内容从插件
- * bundled knowledge/skills/ 复制到本域 source/skills/ 随包分发——技能引用规则
- * 见 src/skills-discovery.ts：权威路径以 GET /plugins/dsh-expert-library/skills
- * 为准，包内副本仅供打包分发）。 */
+ * 通用渲染技能由依赖的 zhijian-realestate 包提供，避免同一运行实例的
+ * 两个领域包声明相同的实体 ID。 */
 export const BANK_SKILL_PACKAGES: readonly { id: string; name: string; version: string; license?: string; internalOnly?: boolean }[] = [
   { id: 'bank-retail-finance-analysis', name: 'bank-retail-finance-analysis', version: BANK_SKILL_BASELINE_VERSION, license: 'UNLICENSED', internalOnly: true },
-    { id: 'bank-activity-eval', name: 'bank-activity-eval', version: BANK_SKILL_BASELINE_VERSION, license: 'UNLICENSED', internalOnly: true },
+  { id: 'bank-activity-eval', name: 'bank-activity-eval', version: BANK_SKILL_BASELINE_VERSION, license: 'UNLICENSED', internalOnly: true },
   { id: 'strategy-consulting', name: 'strategy-consulting', version: BANK_SKILL_BASELINE_VERSION, license: 'UNLICENSED', internalOnly: true },
-  { id: 'finesse-ui', name: 'finesse-ui', version: '0.20.0', license: 'MIT' },
-  { id: 'gsap-core', name: 'gsap-core', version: BANK_SKILL_BASELINE_VERSION, license: 'MIT' },
-  { id: 'gsap-scrolltrigger', name: 'gsap-scrolltrigger', version: BANK_SKILL_BASELINE_VERSION, license: 'MIT' },
-  { id: 'gsap-timeline', name: 'gsap-timeline', version: BANK_SKILL_BASELINE_VERSION, license: 'MIT' },
 ]
 
 /**
@@ -183,15 +177,6 @@ function bankScenarioV2(scenario: ZhijianRouteScenario, packVersion: string): Sc
 /** Knowledge provider manifests the bank pack binds to. */
 function bankKnowledgeProviders(packVersion: string): KnowledgeProviderManifest[] {
   return [
-    {
-      id: 'local-knowledge',
-      version: packVersion,
-      schemaVersion: SCHEMA_VERSION,
-      kind: 'files',
-      capabilities: ['read'],
-      freshness: 'static',
-      scopes: ['experts', 'scenarios', 'shared'],
-    },
     {
       id: 'bank-expert-memory',
       version: packVersion,
@@ -779,7 +764,10 @@ export function buildBankDomainPack(options: BuildBankPackOptions = {}): DomainP
   return {
     pack,
     experts: BANK_EXPERTS.map(meta => {
-      const expert = zhijianMetaToExpertV2(meta, { packVersion, modelPolicy })
+      // The shared beike workspace also ships bank-11. Keep this package's
+      // expert independent while giving its entity a pack-owned identifier.
+      const scopedMeta = meta.id === 'bank-11' ? { ...meta, id: 'bank-finance-11' } : meta
+      const expert = zhijianMetaToExpertV2(scopedMeta, { packVersion, modelPolicy })
       return {
         ...expert,
         // 银行专家统一声明通用评审能力 bank.review（bankScenarioV2 的
