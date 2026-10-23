@@ -333,6 +333,16 @@ function manuscript(content) {
       link.target = '_blank'; link.rel = 'noopener noreferrer'; link.referrerPolicy = 'no-referrer'
     } else if (/^\/api\/residential-v2\/files\/rv2-[0-9a-f]{24}\/(?:price_full|price_external|rent_full|rent_external)-[0-9a-f]{12}$/.test(href)) {
       link.setAttribute('download', '')
+    } else if (href.startsWith('/plugins/dsh-expert-library/workspace-file?')) {
+      const url = new URL(href, location.origin)
+      const keys = [...url.searchParams.keys()].sort()
+      const session = url.searchParams.get('sessionId') ?? ''
+      const path = url.searchParams.get('path') ?? ''
+      if (url.origin === location.origin && url.pathname === '/plugins/dsh-expert-library/workspace-file'
+        && keys.join(',') === 'path,sessionId'
+        && /^session-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(session)
+        && path.toLowerCase().endsWith('.docx')) link.setAttribute('download', '')
+      else link.removeAttribute('href')
     } else link.removeAttribute('href')
   }
   for (const table of root.querySelectorAll('table')) {

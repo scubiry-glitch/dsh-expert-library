@@ -5,7 +5,11 @@ import { basename, join, sep } from 'node:path'
 const ACCOUNT = /^[a-z0-9][a-z0-9-]{0,63}$/
 const SESSION = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const ID = /^[a-z0-9][a-z0-9-]{0,79}$/
-const MEDIA = { '.md': 'text/markdown', '.pdf': 'application/pdf' }
+const MEDIA = {
+  '.md': 'text/markdown',
+  '.pdf': 'application/pdf',
+  '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+}
 const MAX_BYTES = 8 * 1024 * 1024
 const DEFAULT_ROOT = '/var/lib/zhijian/customer-portal-deliverables'
 

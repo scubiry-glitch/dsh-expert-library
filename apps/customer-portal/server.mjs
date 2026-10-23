@@ -56,7 +56,7 @@ const WORKSPACE_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace$/i
 const WORKSPACE_MODELS_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/models$/i
 const CONVERSATION_MODEL_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/model$/i
 const WORKSPACE_ACTION_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/action$/i
-const WORKSPACE_DOCUMENT_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/documents\/([^/]+)\/([^/]+)(?:\/(preview))?$/i
+const WORKSPACE_DOCUMENT_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/documents\/([^/]+)\/([^/]+)(?:\/(preview|download))?$/i
 const QUESTION_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/question$/i
 const APPROVAL_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/approval$/i
 const SESSION_METADATA_PATH = /^\/api\/sessions\/([0-9a-f-]{36})$/i
@@ -206,6 +206,29 @@ export function createPortalServer(config, services = {}) {
     try { pathname = new URL(req.url ?? '/', config.publicOrigin).pathname } catch {
       send(res, 400, 'Bad Request', 'text/plain; charset=utf-8')
       return
+    }
+    // Older DSH replies link to its loopback-only workspace-file route. Resolve
+    // those links solely against files explicitly published for this session.
+    if (pathname === '/plugins/dsh-expert-library/workspace-file') {
+      if (req.method !== 'GET') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
+      const principal = authReady ? store.resolveBrowserSession(cookieValue(req, '__Host-zhijian-session')) : undefined
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      const params = new URL(req.url ?? '/', config.publicOrigin).searchParams
+      const dshId = params.get('sessionId') ?? ''
+      const match = /^session-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/i.exec(dshId)
+      const rawPath = params.get('path') ?? ''
+      const segments = rawPath.split('/')
+      if (!match || !rawPath || rawPath.length > 512 || segments.some(part => !part || part === '.' || part === '..' || part.includes('\\')))
+        return json(res, 404, { error: 'DOCUMENT_NOT_FOUND' })
+      const row = store.getResearchSession(principal, match[1])
+      if (!row?.dsh_session_id || row.dsh_session_id !== dshId)
+        return json(res, 404, { error: 'DOCUMENT_NOT_FOUND' })
+      const name = segments.at(-1)
+      const published = (await deliverables.list(principal.slug, row.id)).find(item =>
+        item.name === name && item.mediaType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+      if (!published) return json(res, 404, { error: 'DOCUMENT_NOT_FOUND' })
+      const location = `/api/sessions/${row.id}/workspace/documents/conversation/${published.id}/download`
+      return send(res, 302, '', 'text/plain; charset=utf-8', { location })
     }
     if (pathname === '/healthz') {
       if (req.method !== 'GET') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
@@ -547,8 +570,25 @@ export function createPortalServer(config, services = {}) {
           ? await deliverables.document(principal.slug, row.id, taskId, artifactId) : undefined
         if (taskId === 'conversation' && !local) return json(res, 404, { error: 'DOCUMENT_NOT_FOUND' })
         const result = local ? { document: local } : await gateway.document(runtime, row.dsh_session_id, taskId, artifactId)
-        if (workspaceDocumentMatch[4]) {
-          const item = result?.document
+        const item = result?.document
+        const binaryPreview = workspaceDocumentMatch[4] === 'preview'
+          && item?.mediaType === 'application/pdf' && /\.pdf$/i.test(item.name)
+        if (workspaceDocumentMatch[4] === 'download' || binaryPreview) {
+          if (typeof item?.content !== 'string' || typeof item.name !== 'string')
+            return json(res, 404, { error: 'DOCUMENT_NOT_FOUND' })
+          const bytes = item.encoding === 'base64' ? Buffer.from(item.content, 'base64') : Buffer.from(item.content, 'utf8')
+          const name = item.name.split(/[\\/]/).at(-1).slice(0, 180).replace(/[\x00-\x1f\x7f"\\;]/g, '_') || 'document'
+          const fallback = name.replace(/[^\x20-\x7e]/g, '_')
+          const encodedName = encodeURIComponent(name).replace(/['()*]/g, char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`)
+          const mediaType = binaryPreview ? 'application/pdf'
+            : /^[\w.+-]+\/[\w.+-]+$/.test(item.mediaType) ? item.mediaType : 'application/octet-stream'
+          return send(res, 200, bytes, mediaType, {
+            'content-length': String(bytes.length),
+            'content-disposition': `${binaryPreview ? 'inline' : 'attachment'}; filename="${fallback}"; filename*=UTF-8''${encodedName}`,
+            ...(binaryPreview ? { 'x-frame-options': 'SAMEORIGIN' } : {}),
+          })
+        }
+        if (workspaceDocumentMatch[4] === 'preview') {
           if (item?.mediaType !== 'text/html' || !/\.html$/i.test(item.name) || typeof item.content !== 'string')
             return json(res, 404, { error: 'DOCUMENT_NOT_FOUND' })
           const content = item.encoding === 'base64' ? Buffer.from(item.content, 'base64') : item.content
