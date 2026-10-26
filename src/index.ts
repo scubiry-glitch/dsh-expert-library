@@ -8,6 +8,8 @@ import { customerCapabilityMentions, registerCustomerMentionTool } from './host/
 import { CustomerQuestionHub, registerCustomerQuestionTool } from './host/customer-questions.ts'
 import { createCustomerApprovalHub } from './host/customer-approval.ts'
 import { CUSTOMER_GATEWAY_PREFIX, handleCustomerGateway, type CustomerWorkspaceAction } from './host/customer-gateway.ts'
+import { readCustomerUsage } from './host/customer-usage.ts'
+import { removeCustomerUpload, saveCustomerUpload } from './host/customer-uploads.ts'
 import { listCustomerDatasets, readCustomerDataset } from './host/customer-datasets.ts'
 import { createReviewEventHub } from './host/review-event-hub.ts'
 import { installPlanExecutionBoundary } from './plan-execution-boundary.ts'
@@ -104,6 +106,7 @@ import {
   installExpertLibrarySettings,
   normalizeUpdatePolicy,
   PackCenterUpdatePolicySchema,
+  EXPERT_LIBRARY_SETTINGS_NAMESPACE,
   type ExpertLibrarySettings,
   type PackCenterUpdatePolicy,
   type ToolExecutionConfig,
@@ -988,6 +991,8 @@ export function apply(ctx: Context, config: Config): void {
             return owned
           },
           sendMessage: (sessionId, content, requestId, mentions) => sendReviewMessage(ctx, sessionId, content, requestId, mentions),
+          uploadAttachment: (sessionId, name, data) => saveCustomerUpload(customerRoot, sessionId, name, data),
+          removeAttachment: (sessionId, path) => removeCustomerUpload(customerRoot, sessionId, path),
           conversation: (sessionId, after, latest, before) => readReviewConversation(ctx, sessionId, after, latest, before),
           listDatasets: (sessionId, before) => listCustomerDatasets(customerHome, sessionId, before),
           readDataset: (sessionId, datasetId, offset) => readCustomerDataset(customerHome, sessionId, datasetId, offset),
@@ -1056,6 +1061,81 @@ export function apply(ctx: Context, config: Config): void {
           answerQuestion: (sessionId, requestId, answers) => customerQuestionHub?.answer(sessionId, requestId, answers) ?? false,
           pendingApproval: (sessionId) => customerApprovalHub.read(sessionId),
           answerApproval: (sessionId, id, decision) => customerApprovalHub.answer(sessionId, id, decision),
+          adminSettings: async () => {
+            const settings = ctx.get('settings') as Context['settings'] | undefined
+            const descriptor = settings?.describe({ redactSecrets: true }).find(row => row.ns === EXPERT_LIBRARY_SETTINGS_NAMESPACE)
+            const value = (descriptor?.value ?? current()) as ExpertLibrarySettings
+            return { writable: !!settings?.writable && !!descriptor, revision: descriptor?.revision ?? 0,
+              value: {
+                providers: value.providers ?? {}, toolExecution: value.toolExecution ?? {},
+                packCenterUpdatePolicy: normalizeUpdatePolicy(value.packCenterUpdatePolicy),
+                defaultModel: value.defaultModel ?? null, expertModelOverrides: value.expertModelOverrides ?? {},
+                runtime: {
+                  stateDir: value.stateDir ?? '', knowledgeDir: value.knowledgeDir ?? '',
+                  memberProvider: value.memberProvider ?? '', maxMembers: value.maxMembers ?? null,
+                  memberMaxDepth: value.memberMaxDepth ?? null, promptSectionOrder: value.promptSectionOrder ?? null,
+                  announceToAgent: value.announceToAgent ?? true,
+                },
+              } }
+          },
+          adminModels: () => adminModelCatalog(),
+          adminUsage: days => readCustomerUsage(customerHome, days),
+          updateAdminSettings: async (section, value, revision) => {
+            const settings = ctx.get('settings') as Context['settings'] | undefined
+            if (!settings?.writable) throw new Error('settings unavailable')
+            const fields = ['providers', 'toolExecution', 'packCenterUpdatePolicy', 'defaultModel', 'expertModelOverrides', 'runtime']
+            if (!fields.includes(section)) throw new Error('invalid section')
+            const row = value as Record<string, unknown>
+            const plain = (input: unknown, limit = 2048): input is string => typeof input === 'string' && input.length <= limit && !/[\u0000-\u001f]/u.test(input)
+            const object = (input: unknown): input is Record<string, unknown> => !!input && typeof input === 'object' && !Array.isArray(input)
+            const selected = (input: Record<string, unknown>, keys: string[]) => Object.keys(input).every(key => keys.includes(key))
+            let valid = false
+            if (section === 'providers') valid = selected(row, ['wind', 'zyt', 'beike'])
+              && Object.entries(row).every(([key, item]) => object(item) && selected(item, key === 'wind' ? ['cliPath'] : ['baseUrl', 'cliCommand', 'preferCli'])
+                && Object.entries(item).every(([field, entry]) => field === 'preferCli' ? typeof entry === 'boolean' : plain(entry)))
+            if (section === 'toolExecution') valid = selected(row, ['wind', 'zyt', 'beike'])
+              && Object.values(row).every(item => object(item) && selected(item, ['mode', 'readOnly'])
+                && (item.mode === undefined || ['auto', 'api', 'cli'].includes(String(item.mode)))
+                && (item.readOnly === undefined || typeof item.readOnly === 'boolean'))
+            if (section === 'packCenterUpdatePolicy') valid = selected(row, ['mode', 'perPack'])
+              && ['manual', 'download', 'patch_auto'].includes(String(row.mode)) && object(row.perPack ?? {})
+              && Object.entries(row.perPack as Record<string, unknown> ?? {}).every(([key, mode]) => /^[a-z0-9][a-z0-9._-]{0,63}$/i.test(key)
+                && !key.includes('..') && !['__proto__', 'constructor', 'prototype'].includes(key)
+                && ['manual', 'download', 'patch_auto'].includes(String(mode)))
+            const route = (item: unknown) => object(item) && selected(item, ['provider', 'model', 'reasoningEffort'])
+              && plain(item.provider, 80) && !!item.provider && plain(item.model, 128) && !!item.model
+              && (item.reasoningEffort === undefined || plain(item.reasoningEffort, 40))
+            if (section === 'defaultModel') valid = Object.keys(row).length === 0 || route(row)
+            if (section === 'expertModelOverrides') valid = Object.keys(row).length <= 200
+              && Object.entries(row).every(([key, item]) => /^[a-z0-9][a-z0-9._:-]{0,127}$/i.test(key)
+                && !key.includes('..') && !['__proto__', 'constructor', 'prototype'].includes(key) && route(item))
+            if (section === 'runtime') {
+              const dir = (input: unknown) => input === '' || (typeof input === 'string'
+                && /^[a-z0-9][a-z0-9._-]{0,63}$/i.test(input) && !input.includes('..'))
+              const integer = (input: unknown, min: number, max: number) => input === null
+                || (Number.isSafeInteger(input) && (input as number) >= min && (input as number) <= max)
+              valid = selected(row, ['stateDir', 'knowledgeDir', 'memberProvider', 'maxMembers', 'memberMaxDepth', 'promptSectionOrder', 'announceToAgent'])
+                && dir(row.stateDir ?? '') && dir(row.knowledgeDir ?? '')
+                && ['', 'spawn', 'fork'].includes(String(row.memberProvider ?? ''))
+                && integer(row.maxMembers ?? null, 1, 64) && integer(row.memberMaxDepth ?? null, 0, 8)
+                && integer(row.promptSectionOrder ?? null, 0, 1000)
+                && (row.announceToAgent === undefined || typeof row.announceToAgent === 'boolean')
+            }
+            if (!valid) throw new Error('invalid settings')
+            // Only touch the three editable providers. localdb belongs to the
+            // instance configuration and must survive a browser settings write.
+            const ops = section === 'providers' ? ['wind', 'zyt', 'beike'].map(key => Object.hasOwn(row, key)
+              ? { op: 'set' as const, path: ['providers', key], value: row[key] }
+              : { op: 'unset' as const, path: ['providers', key] })
+              : section === 'runtime' ? Object.entries(row).map(([key, entry]) => entry === '' || entry === null
+              ? { op: 'unset' as const, path: [key] } : { op: 'set' as const, path: [key], value: entry })
+              : [Object.keys(row).length === 0
+                ? { op: 'unset' as const, path: [section] } : { op: 'set' as const, path: [section], value }]
+            await settings.mutate(EXPERT_LIBRARY_SETTINGS_NAMESPACE, ops, revision)
+            const descriptor = settings.describe({ redactSecrets: true }).find(item => item.ns === EXPERT_LIBRARY_SETTINGS_NAMESPACE)
+            return { revision: descriptor?.revision ?? revision + 1,
+              value: section === 'runtime' ? row : (descriptor?.value as Record<string, unknown>)?.[section] ?? value }
+          },
         }),
       }), 'customer gateway: one-account DSH service route')
     }
@@ -1151,6 +1231,14 @@ export function apply(ctx: Context, config: Config): void {
         if (rows.length >= 200) break
       }
       return rows
+    }
+    const adminModelCatalog = async () => {
+      const models = await availableModelCatalog()
+      return Promise.all(models.map(async model => {
+        const reasoning = await ctx.llm.resolveModelInfo(model.provider, model.model)
+          .then(info => info.reasoning).catch(() => undefined)
+        return { ...model, reasoningEfforts: reasoning?.efforts.map(item => ({ id: String(item.id), name: item.name })) ?? [] }
+      }))
     }
     const actionTeamRoute = async (target: TeamRouteTarget, request: TeamRouteRequest): Promise<TeamWireResponse> => {
       if (target.archived) throw new Error('archived team is read-only')

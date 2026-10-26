@@ -29,6 +29,9 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
       if (text.includes('@未知')) throw Object.assign(new Error('unavailable'), { code: 'MENTION_UNAVAILABLE' })
       calls.push(['message', runtime.origin, sessionId, text]); return { accepted: true }
     },
+    uploadAttachment: async (runtime, sessionId, name, data) => { calls.push(['upload', runtime.origin, sessionId, name, data]);
+      return { name, path: `customer-uploads/${sessionId}/stored.txt`, sizeBytes: 5 } },
+    removeAttachment: async (runtime, sessionId, path) => { calls.push(['remove', runtime.origin, sessionId, path]); return { removed: true } },
     conversation: async (runtime, sessionId) => { calls.push(['read', runtime.origin, sessionId]); return { messages: [], nextCursor: -1, hasMore: false } },
     listDatasets: async (runtime, sessionId) => { calls.push(['datasets', runtime.origin, sessionId]); return { items: [{ id: '1234567890123-11111111-1111-4111-8111-111111111111' }], hasMore: false } },
     readDataset: async (runtime, sessionId, id) => { calls.push(['table', runtime.origin, sessionId, id]); return { id, rows: [[1]] } },
@@ -44,7 +47,8 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
     workspaceAction: async (runtime, sessionId, action) => { calls.push(['workspace-action', runtime.origin, sessionId, action.action]); return { plan: null, team: null, action: action.action } },
     document: async (runtime, sessionId, taskId, artifactId) => { calls.push(['document', runtime.origin, sessionId, taskId, artifactId]); return { document: artifactId === 'html'
       ? { name: 'report.html', mediaType: 'text/html', content: '<style>body{color:green}</style><script>alert(1)</script><h1>Private report</h1>' }
-      : { name: 'report.md', mediaType: 'text/markdown', content: 'Private report' } } },
+      : artifactId === 'pdf' ? { name: '研究报告.pdf', mediaType: 'application/pdf', encoding: 'base64', content: Buffer.from('%PDF-1.7\nprivate report\n%%EOF').toString('base64') }
+        : { name: 'report.md', mediaType: 'text/markdown', content: 'Private report' } } },
     pendingQuestion: async (runtime, sessionId) => { calls.push(['question', runtime.origin, sessionId]); return { question: {
       requestId: '11111111-1111-4111-8111-111111111111', questions: [{ id: 'scope', question: '研究哪个范围？', options: [], multiSelect: false }] } } },
     answerQuestion: async (runtime, sessionId, requestId, answers) => { calls.push(['answer', runtime.origin, sessionId, requestId, answers]); return { accepted: true } },
@@ -66,6 +70,28 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
   const create = await fetch(`${base}/api/sessions`, { method: 'POST', headers: as(loginA), body: JSON.stringify({ requestId: 'stable-request-1' }) })
   assert.equal(create.status, 201)
   const session = (await create.json()).session
+  assert.equal((await fetch(`${base}/api/session-groups`, { method: 'POST', headers: as(loginB),
+    body: JSON.stringify({ name: 'A 的分组' }) })).status, 201)
+  assert.equal((await fetch(`${base}/api/session-groups`, { method: 'POST', headers: { cookie: as(loginA).cookie },
+    body: JSON.stringify({ name: '无 CSRF' }) })).status, 403)
+  assert.equal((await fetch(`${base}/api/session-groups`, { method: 'POST', headers: as(loginA),
+    body: JSON.stringify({ name: 42 }) })).status, 400)
+  const groupResponse = await fetch(`${base}/api/session-groups`, { method: 'POST', headers: as(loginA),
+    body: JSON.stringify({ name: '市场研究' }) })
+  assert.equal(groupResponse.status, 201)
+  const group = (await groupResponse.json()).group
+  assert.equal((await fetch(`${base}/api/session-groups/${group.id}`, { method: 'PATCH', headers: as(loginB),
+    body: JSON.stringify({ name: '越权' }) })).status, 404)
+  const moved = await fetch(`${base}/api/sessions/${session.id}`, { method: 'PATCH', headers: as(loginA),
+    body: JSON.stringify({ groupId: group.id }) })
+  assert.equal(moved.status, 200)
+  assert.equal((await moved.json()).session.groupId, group.id)
+  const grouped = await (await fetch(`${base}/api/sessions`, { headers: as(loginA) })).json()
+  assert.equal(grouped.groups.some(item => item.id === group.id), true)
+  assert.equal(grouped.sessions.find(item => item.id === session.id).groupId, group.id)
+  assert.equal((await fetch(`${base}/api/session-groups/${group.id}`, { method: 'DELETE', headers: as(loginA) })).status, 200)
+  assert.equal((await (await fetch(`${base}/api/sessions`, { headers: as(loginA) })).json()).sessions
+    .find(item => item.id === session.id).groupId, null)
   const duplicate = await fetch(`${base}/api/sessions`, { method: 'POST', headers: as(loginA), body: JSON.stringify({ requestId: 'stable-request-1' }) })
   assert.equal((await duplicate.json()).session.id, session.id)
   const listB = await (await fetch(`${base}/api/sessions`, { headers: as(loginB) })).json()
@@ -87,6 +113,15 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
   assert.deepEqual((await (await fetch(`${base}/api/mentions`, { headers: as(loginB) })).json()).items, [])
   const foreignRead = await fetch(`${base}/api/sessions/${session.id}/messages`, { headers: as(loginB) })
   assert.equal(foreignRead.status, 404)
+  const attachmentUrl = `${base}/api/sessions/${session.id}/attachments`
+  const attachmentBody = JSON.stringify({ name: 'notes.txt', data: 'aGVsbG8=' })
+  assert.equal((await fetch(attachmentUrl, { method: 'POST', headers: as(loginB), body: attachmentBody })).status, 404)
+  assert.equal((await fetch(attachmentUrl, { method: 'POST', headers: { cookie: as(loginA).cookie, origin: config.publicOrigin },
+    body: attachmentBody })).status, 403)
+  assert.equal((await fetch(attachmentUrl, { method: 'POST', headers: as(loginA), body: attachmentBody })).status, 201)
+  const removeBody = JSON.stringify({ path: `customer-uploads/session-${session.id}/stored.txt` })
+  assert.equal((await fetch(attachmentUrl, { method: 'DELETE', headers: as(loginB), body: removeBody })).status, 404)
+  assert.equal((await fetch(attachmentUrl, { method: 'DELETE', headers: as(loginA), body: removeBody })).status, 200)
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/datasets`, { headers: as(loginB) })).status, 404)
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/workspace`, { headers: as(loginB) })).status, 404)
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/workspace/models`, { headers: as(loginB) })).status, 404)
@@ -101,6 +136,8 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
     body: JSON.stringify(syncContext) })).status, 404)
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/workspace/documents/task-1/output`, { headers: as(loginB) })).status, 404)
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/workspace/documents/task-1/html/preview`, { headers: as(loginB) })).status, 404)
+  assert.equal((await fetch(`${base}/api/sessions/${session.id}/workspace/documents/task-1/pdf/download`, { headers: as(loginB) })).status, 404)
+  assert.equal((await fetch(`${base}/api/sessions/${session.id}/workspace/documents/task-1/pdf/preview`, { headers: as(loginB) })).status, 404)
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/question`, { headers: as(loginB) })).status, 404)
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/question`, { method: 'POST', headers: as(loginB),
     body: JSON.stringify({ requestId: '11111111-1111-4111-8111-111111111111', answers: [] }) })).status, 404)
@@ -128,6 +165,22 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/workspace/action`, { method: 'POST', headers: as(loginA),
     body: JSON.stringify(syncContext) })).status, 200)
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/workspace/documents/task-1/output`, { headers: as(loginA) })).status, 200)
+  const downloadUrl = `${base}/api/sessions/${session.id}/workspace/documents/task-1/pdf/download`
+  assert.equal((await fetch(downloadUrl)).status, 401)
+  const download = await fetch(downloadUrl, { headers: as(loginA) })
+  assert.equal(download.status, 200)
+  assert.equal(download.headers.get('content-type'), 'application/pdf')
+  assert.equal(download.headers.get('content-length'), String(Buffer.byteLength('%PDF-1.7\nprivate report\n%%EOF')))
+  assert.match(download.headers.get('content-disposition'), /^attachment; filename="_+\.pdf"; filename\*=UTF-8''/)
+  assert.equal(Buffer.from(await download.arrayBuffer()).toString(), '%PDF-1.7\nprivate report\n%%EOF')
+  const pdfPreviewUrl = `${base}/api/sessions/${session.id}/workspace/documents/task-1/pdf/preview`
+  assert.equal((await fetch(pdfPreviewUrl)).status, 401)
+  const pdfPreview = await fetch(pdfPreviewUrl, { headers: as(loginA) })
+  assert.equal(pdfPreview.status, 200)
+  assert.equal(pdfPreview.headers.get('content-type'), 'application/pdf')
+  assert.match(pdfPreview.headers.get('content-disposition'), /^inline; filename="_+\.pdf"; filename\*=UTF-8''/)
+  assert.equal(pdfPreview.headers.get('x-frame-options'), 'SAMEORIGIN')
+  assert.equal(Buffer.from(await pdfPreview.arrayBuffer()).toString(), '%PDF-1.7\nprivate report\n%%EOF')
   const preview = await fetch(`${base}/api/sessions/${session.id}/workspace/documents/task-1/html/preview`, { headers: as(loginA) })
   assert.equal(preview.status, 200)
   assert.match(preview.headers.get('content-security-policy'), /sandbox;.*script-src 'none'; style-src 'unsafe-inline'/)
@@ -147,12 +200,13 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
   assert.equal((await unavailable.json()).error, 'MENTION_UNAVAILABLE')
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/messages`, { headers: as(loginA) })).status, 200)
   assert.equal(calls.filter(call => call[0] === 'create').length, 2)
-  assert.deepEqual(calls.filter(call => call[0] === 'message').map(call => call[1]), ['http://127.0.0.1:3101'])
+  assert.deepEqual(calls.filter(call => ['message', 'upload', 'remove'].includes(call[0])).map(call => call[1]),
+    ['http://127.0.0.1:3101', 'http://127.0.0.1:3101', 'http://127.0.0.1:3101'])
   assert.deepEqual(calls.filter(call => call[0] === 'read').map(call => call[1]), ['http://127.0.0.1:3101'])
   assert.deepEqual(calls.filter(call => call[0] === 'datasets' || call[0] === 'table').map(call => call[1]), ['http://127.0.0.1:3101', 'http://127.0.0.1:3101'])
   assert.deepEqual(calls.filter(call => call[0] === 'question' || call[0] === 'answer').map(call => call[1]), ['http://127.0.0.1:3101', 'http://127.0.0.1:3101'])
   assert.deepEqual(calls.filter(call => call[0] === 'workspace-action' || call[0] === 'document').map(call => call[1]),
-    Array(5).fill('http://127.0.0.1:3101'))
+    Array(7).fill('http://127.0.0.1:3101'))
   assert.deepEqual(calls.filter(call => call[0] === 'workspace-action').map(call => call[3]), ['approve', 'sync-context'])
   assert.deepEqual(calls.filter(call => call[0] === 'models').map(call => call[1]), ['http://127.0.0.1:3101'])
 

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>智见 · 会话恢复动效演示</title>
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="stylesheet" href="/demo/loading.css">
+  <script src="/demo/loading.js" defer></script>
+</head>
+<body>
+  <div class="page">
+    <header class="pageHead">
+      <a class="brand" href="/preview" aria-label="返回专家协作室预览"><span class="brandMark">见</span><span><small>ZHJIAN / DESIGN STUDY 01</small><strong>会话恢复动效</strong></span></a>
+      <span class="demoTag">静态演示 · 无真实数据</span>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="demoTitle">
+        <div><p class="eyebrow">A MOMENT BETWEEN ARRIVING AND CONTINUING</p><h1 id="demoTitle">让等待，<em>轻一点。</em></h1><p class="introText">先呈现会话，再恢复最近消息；工作区留到需要时读取。这里比较三种轻量动效在协作室里的观感。</p></div>
+        <div class="introSide"><span>01 / 03</span><p>点击方案可切换样式；点击「重播」查看分段恢复过程。</p></div>
+      </section>
+
+      <section class="study" aria-label="动效方案与页面预览">
+        <aside class="choices" aria-label="选择动效方案">
+          <div class="sectionLabel"><span>方案选择</span><small>03 STUDIES</small></div>
+          <button class="choice isSelected" type="button" data-style="flora" aria-pressed="true"><span class="choiceNumber">01</span><span class="choiceArt floraArt" aria-hidden="true"><span class="miniFlower">✳</span></span><span class="choiceCopy"><strong>花枝轻绘</strong><small>与现有「见」字和纸张配色衔接</small></span><span class="choiceArrow" aria-hidden="true">↗</span></button>
+          <button class="choice" type="button" data-style="wash" aria-pressed="false"><span class="choiceNumber">02</span><span class="choiceArt washArt" aria-hidden="true"><i></i><i></i><i></i></span><span class="choiceCopy"><strong>水彩晕染</strong><small>色块缓慢生长，强调研究展开</small></span><span class="choiceArrow" aria-hidden="true">↗</span></button>
+          <button class="choice" type="button" data-style="paper" aria-pressed="false"><span class="choiceNumber">03</span><span class="choiceArt paperArt" aria-hidden="true"><i></i><i></i><i></i></span><span class="choiceCopy"><strong>纸面微光</strong><small>无具象图形，适合频繁切换会话</small></span><span class="choiceArrow" aria-hidden="true">↗</span></button>
+          <div class="choiceNote"><span class="noteMark" aria-hidden="true">※</span><p>三种方案都只使用 CSS / SVG 动画。关闭动画偏好后会显示静态画面。</p></div>
+        </aside>
+
+        <div class="previewWrap">
+          <div class="previewHead"><div><span class="eyebrow">IN CONTEXT</span><h2>放进协作室里看看</h2></div><button id="replay" type="button"><span aria-hidden="true">↻</span> 重播加载</button></div>
+          <div class="appMock" id="appMock" data-style="flora" data-phase="0">
+            <div class="mockSidebar" aria-hidden="true"><div class="mockBrand"><span class="brandMark">见</span><strong>我的研究</strong></div><small class="sidebarCaption">研究会话</small><div class="mockSession active"><span class="sessionDot"></span><span><b>当前研究会话</b><i>正在恢复</i></span></div><div class="mockSession"><span class="sessionDot"></span><span><b>之前的研究</b><i>最近更新</i></span></div><div class="mockSession"><span class="sessionDot"></span><span><b>新的问题</b><i>尚未开始</i></span></div><div class="sidebarBottom">＋ 新建会话</div></div>
+            <div class="mockMain"><div class="mockTop"><div><span class="mobileMark">见</span><strong>当前研究会话</strong></div><span>会话 <i></i> 工作区 <i></i> 数据</span></div>
+              <div class="mockBody">
+                <div class="recoveryCard" role="status" aria-live="polite">
+                  <div class="artField" aria-hidden="true">
+                    <svg class="floraIllustration" viewBox="0 0 140 140" focusable="false"><path class="floraWash one" d="M26 84c-8-24 16-54 43-55 29-2 50 22 44 47-4 22-34 40-60 33-13-4-22-11-27-25Z"/><path class="floraWash two" d="M39 98c-12-18-2-43 19-57 17-11 37-7 47 8 12 20-2 48-25 56-20 8-33 5-41-7Z"/><path class="floraStem" pathLength="1" d="M37 106c29-15 39-34 62-63"/><path class="floraLeaf first" d="M65 79c-17 1-26-8-28-24 16-2 28 7 30 21Z"/><path class="floraLeaf second" d="M83 61c-2-17 7-29 23-33 4 16-3 29-20 34Z"/><circle class="floraDot" cx="40" cy="103" r="4"/></svg>
+                    <div class="washIllustration"><span></span><span></span><span></span></div>
+                    <div class="paperIllustration"><span></span><span></span><span></span></div>
+                  </div>
+                  <div class="recoveryCopy"><span class="recoveryEyebrow">正在为你准备</span><h3 id="phaseTitle">正在恢复会话</h3><p id="phaseDetail">先取回会话信息，随后显示最近消息。</p><div class="stageTrack" aria-label="演示加载阶段"><span class="stage isActive">会话信息</span><span class="stage">最近消息</span><span class="stage">按需内容</span></div></div>
+                </div>
+                <div class="messageArea" aria-hidden="true"><div class="messageSkeleton"><span></span><span></span></div><div class="messageSkeleton short"><span></span><span></span></div><div class="sampleMessage"><small>你</small><p>我想把一个复杂问题梳理清楚。</p></div><div class="sampleMessage reply"><small>智见小秘书</small><p>我会先整理方向，再和你确认下一步。</p></div></div>
+              </div>
+              <div class="mockCompose"><span id="composeHint">会话可用后即可继续提问</span><span aria-hidden="true">↗</span></div>
+            </div>
+          </div>
+          <div class="previewFoot"><span class="liveDot" aria-hidden="true"></span><span id="footerPhase">演示：正在读取会话信息</span><span class="footRight">仅为视觉稿，不连接会话接口</span></div>
+        </div>
+      </section>
+      <footer class="pageFoot"><span>ZHJIAN · EXPERT COLLABORATION ROOM</span><span>轻量动效 / 分段呈现 / 支持减少动画</span></footer>
+    </main>
+  </div>
+</body>
+</html>

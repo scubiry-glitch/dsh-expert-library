@@ -41,6 +41,9 @@ const usageBody = document.getElementById('usageBody')
 const newSessionButton = document.getElementById('newSessionButton')
 const sendMessageButton = document.getElementById('sendMessageButton')
 const conversationInput = document.getElementById('conversationInput')
+const attachmentButton = document.getElementById('attachmentButton')
+const attachmentInput = document.getElementById('attachmentInput')
+const conversationAttachments = document.getElementById('conversationAttachments')
 const conversationWorkspace = document.getElementById('conversationWorkspace')
 const conversationModelSelect = document.getElementById('conversationModelSelect')
 const conversationModelTrigger = document.getElementById('conversationModelTrigger')
@@ -78,6 +81,10 @@ const workspacePanels = Object.fromEntries(['plan', 'outline', 'team', 'results'
 const workspaceDocumentDialog = document.getElementById('workspaceDocumentDialog')
 let currentSessionId
 let sessionListFilter = 'all'
+let availableGroups = []
+let sessionGroupMode = 'time'
+let sessionDense = false
+let collapsedSessionGroups = new Set()
 let sessionActivityKnown = false
 let sessionActivityUnknown = false
 let sessionActivityLoading = false
@@ -191,6 +198,7 @@ let workspaceModelCatalog = []
 let workspaceModelError = ''
 let workspaceDocumentUrl
 let workspaceDocumentRequest = 0
+let workspaceDocumentDownloadDoc
 let workspacePrimaryAction = () => selectView('conversation')
 let workspaceActionUncertain = false
 let teamView = 'route'
@@ -206,6 +214,7 @@ let questionSubmitting = false
 const pendingBySession = new Map()
 const failuresBySession = new Map()
 const draftsBySession = new Map()
+const attachmentsBySession = new Map()
 const selectedMentionsBySession = new Map()
 let composeNotice = ''
 let composeNoticeKind = 'info'
@@ -381,6 +390,33 @@ function wsButton(value, onClick, primary = false) {
   return button
 }
 
+function workspaceDocumentDownloadPath(doc, sessionId = currentSessionId) {
+  return `/api/sessions/${sessionId}/workspace/documents/${encodeURIComponent(doc.taskId)}/${encodeURIComponent(doc.id)}/download`
+}
+
+function workspaceDocumentPreviewPath(doc, sessionId = currentSessionId) {
+  return `/api/sessions/${sessionId}/workspace/documents/${encodeURIComponent(doc.taskId)}/${encodeURIComponent(doc.id)}/preview`
+}
+
+function workspaceReadAction(doc, label = '预览', primary = false) {
+  if (!shareMode && /\.pdf$/i.test(doc.name || '')) {
+    const link = wsNode('a', label, primary ? 'primary' : '')
+    link.href = workspaceDocumentPreviewPath(doc)
+    link.target = '_blank'
+    link.rel = 'noopener'
+    return link
+  }
+  return wsButton(label, () => void openWorkspaceDocument(doc), primary)
+}
+
+function workspaceDownloadAction(doc, label = '下载') {
+  if (shareMode) return wsButton(label, () => void downloadWorkspaceDocument(doc))
+  const link = wsNode('a', label)
+  link.href = workspaceDocumentDownloadPath(doc)
+  link.download = doc.name || 'document'
+  return link
+}
+
 function setWorkspaceStatus(value, kind = 'info') {
   workspaceStatus.textContent = value
   workspaceStatus.dataset.kind = kind
@@ -422,6 +458,22 @@ function workspaceFormalGroups(documents) {
   }
   const rank = doc => /\.pdf$/i.test(doc.name) ? 0 : /\.html?$/i.test(doc.name) ? 1 : /\.md$/i.test(doc.name) ? 2 : 3
   return [...groups.values()].map(items => items.sort((a, b) => rank(a) - rank(b) || (b.createdAt ?? 0) - (a.createdAt ?? 0)))
+}
+
+function workspaceProcessArchiveDocuments(state) {
+  const documents = Array.isArray(state.documents) ? state.documents : []
+  const formal = workspaceFormalGroups(documents).flat()
+  const formalIds = new Set(formal.map(doc => `${doc.taskId}:${doc.id}`))
+  const formalNames = new Set(formal.map(doc => String(doc.name).toLowerCase()))
+  const latest = new Map()
+  for (const doc of documents.filter(item => !item.formal && item.source !== 'conversation')) {
+    if (formalIds.has(`${doc.taskId}:${doc.id}`) || formalNames.has(String(doc.name).toLowerCase())) continue
+    if (!doc.draft && !['manuscript', 'evidence', 'outline', 'key'].includes(doc.resultKind)
+      && !state.team?.tasks?.some(task => task.id === doc.taskId && task.status === 'completed')) continue
+    const key = doc.resultKey || `${doc.taskId}:${doc.name}`
+    if (!latest.has(key) || (doc.createdAt ?? 0) > (latest.get(key).createdAt ?? 0)) latest.set(key, doc)
+  }
+  return [...latest.values()].sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))
 }
 
 function focusWorkspaceAction(tab, taskId) {
@@ -1053,9 +1105,12 @@ function renderWorkspaceExperts(state) {
     : '确认计划后，专家按分工协作'
 }
 
+function workspaceTaskUserDescription(description) {
+  return String(description || '').split(/Approved artifact flow:|Approved report outline(?:\s*\([^)]*\))?:|\{\s*"(?:artifacts|outputs|reportBundle|requiredInputs|requiredPublications|chapters)"/i)[0].trim()
+}
+
 function workspaceTaskSummary(description) {
-  const clean = String(description || '').split(/Approved artifact flow:|\{\s*"(?:artifacts|outputs|reportBundle)"/i)[0]
-    .replace(/\s+/g, ' ').trim()
+  const clean = workspaceTaskUserDescription(description).replace(/\s+/g, ' ')
   return clean.length > 115 ? `${clean.slice(0, 112).trimEnd()}…` : clean
 }
 
@@ -1066,11 +1121,25 @@ function workspaceTaskDetail(state, task) {
   box.append(wsNode('p', `负责人：${task.assignee || '待分配'} · 状态：${workspaceStatusLabel(task.status)}`))
   if (task.waitReason) box.append(wsNode('p', `阻塞或等待原因：${task.waitReason}`))
   if (quality) box.append(wsNode('p', `质量检查：${workspaceStatusLabel(quality.status)}${quality.reviewRounds ? ` · ${quality.reviewRounds} 轮评审` : ''}`))
-  const source = task.description || ''
+  const source = workspaceTaskUserDescription(task.description)
   if (source) {
-    const details = workspaceDetails(`task-requirement:${team.id}:${task.id}`, '完整任务要求', false, 'workspaceTechnical')
+    const details = workspaceDetails(`task-requirement:${team.id}:${task.id}`, '任务说明', false, 'workspaceTechnical')
     details.append(wsNode('pre', source))
     box.append(details)
+  }
+  const files = [...workspaceFormalGroups(state.documents ?? []).flat(), ...workspaceProcessArchiveDocuments(state)]
+    .filter(doc => doc.taskId === task.id)
+  if (files.length) {
+    const section = wsNode('section', undefined, 'workspaceTaskDocuments')
+    section.append(wsNode('h5', `任务产物 · ${files.length} 份`))
+    for (const doc of files) {
+      const row = wsNode('div', undefined, 'workspaceFileRow')
+      const label = wsNode('div')
+      label.append(wsNode('strong', doc.name), wsNode('small', doc.formal ? '正式交付' : doc.draft ? '过程稿' : '过程档案'))
+      row.append(label, workspaceActions(workspaceReadAction(doc), workspaceDownloadAction(doc)))
+      section.append(row)
+    }
+    box.append(section)
   }
   return box
 }
@@ -1431,7 +1500,10 @@ function renderWorkspaceResults(state) {
       const label = wsNode('div')
       label.append(wsNode('strong', names[file.role] || file.role),
         wsNode('small', `${file.name} · ${Math.ceil(file.sizeBytes / 1024)} KB`))
-      row.append(label, workspaceActions(wsButton('下载 Word', () => location.assign(file.href), true)))
+      const download = wsNode('a', '下载 Word', 'primary')
+      download.href = file.href
+      download.download = file.name
+      row.append(label, workspaceActions(download))
       root.append(row)
     }
   }
@@ -1454,15 +1526,15 @@ function renderWorkspaceResults(state) {
         wsNode('h4', files[0].resultLabel || '研究报告'))
       if (files[0].createdAt) card.append(wsNode('small', `发布于 ${new Date(files[0].createdAt).toLocaleString('zh-CN')}`))
       const primary = files.find(doc => /\.pdf$/i.test(doc.name)) || files[0]
-      const actions = workspaceActions(wsButton(historical ? '阅读原始报告'
+      const actions = workspaceActions(workspaceReadAction(primary, historical ? '阅读原始报告'
         : /\.pdf$/i.test(primary.name) ? '阅读 PDF 报告' : `阅读 ${primary.name}`,
-      () => void openWorkspaceDocument(primary), true))
+      true))
       card.append(actions)
       const formats = workspaceDetails(`report-formats:${files[0].resultKey || 'report'}`, '其他格式与下载', false, 'workspaceReportFormats')
       for (const doc of files) {
         const row = wsNode('div', undefined, 'workspaceFileRow')
-        row.append(wsNode('span', doc.name), workspaceActions(wsButton('预览', () => void openWorkspaceDocument(doc)),
-          wsButton('下载', () => void downloadWorkspaceDocument(doc))))
+        row.append(wsNode('span', doc.name), workspaceActions(workspaceReadAction(doc),
+          workspaceDownloadAction(doc)))
         formats.append(row)
       }
       card.append(formats)
@@ -1482,13 +1554,13 @@ function renderWorkspaceResults(state) {
       card.append(wsNode('span', '会话生成 · 待正式复核', 'workspaceDeliveryTag'),
         wsNode('h4', files[0].resultLabel || '会话报告'))
       if (files[0].createdAt) card.append(wsNode('small', `归档于 ${new Date(files[0].createdAt).toLocaleString('zh-CN')}`))
-      card.append(workspaceActions(wsButton(/\.pdf$/i.test(files[0].name) ? '阅读 PDF 报告' : `阅读 ${files[0].name}`,
-        () => void openWorkspaceDocument(files[0]), true)))
+      card.append(workspaceActions(workspaceReadAction(files[0], /\.pdf$/i.test(files[0].name)
+        ? '阅读 PDF 报告' : `阅读 ${files[0].name}`, true)))
       const formats = workspaceDetails(`conversation-report:${files[0].resultKey}`, '其他格式与下载', false, 'workspaceReportFormats')
       for (const doc of files) {
         const row = wsNode('div', undefined, 'workspaceFileRow')
-        row.append(wsNode('span', doc.name), workspaceActions(wsButton('预览', () => void openWorkspaceDocument(doc)),
-          wsButton('下载', () => void downloadWorkspaceDocument(doc))))
+        row.append(wsNode('span', doc.name), workspaceActions(workspaceReadAction(doc),
+          workspaceDownloadAction(doc)))
         formats.append(row)
       }
       card.append(formats)
@@ -1496,26 +1568,17 @@ function renderWorkspaceResults(state) {
     }
   }
   const team = state.team
-  const latest = new Map()
-  const formalIds = new Set(formalGroups.flat().map(doc => `${doc.taskId}:${doc.id}`))
-  const formalNames = new Set(formalGroups.flat().map(doc => String(doc.name).toLowerCase()))
-  for (const doc of documents.filter(item => !item.formal && item.source !== 'conversation')) {
-    if (formalIds.has(`${doc.taskId}:${doc.id}`) || formalNames.has(String(doc.name).toLowerCase())) continue
-    if (!doc.draft && !['manuscript', 'evidence', 'outline', 'key'].includes(doc.resultKind)
-      && !team?.tasks?.some(task => task.id === doc.taskId && task.status === 'completed')) continue
-    const key = doc.resultKey || `${doc.taskId}:${doc.name}`
-    if (!latest.has(key) || (doc.createdAt ?? 0) > (latest.get(key).createdAt ?? 0)) latest.set(key, doc)
-  }
-  if (latest.size) {
-    const archive = workspaceDetails(`process-archive:${team?.id || 'none'}`, `过程档案 · ${latest.size} 份`, false, 'workspaceArchive')
+  const archiveDocuments = workspaceProcessArchiveDocuments(state)
+  if (archiveDocuments.length) {
+    const archive = workspaceDetails(`process-archive:${team?.id || 'none'}`, `过程档案 · ${archiveDocuments.length} 份`, false, 'workspaceArchive')
     archive.append(wsNode('p', '保留每类当前稿件和必要记录；正式报告已在上方集中展示。'))
-    for (const doc of [...latest.values()].sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0))) {
+    for (const doc of archiveDocuments) {
       const row = wsNode('div', undefined, 'workspaceFileRow')
       const source = team?.tasks?.find(task => task.id === doc.taskId)?.subject
       const copy = wsNode('div')
       copy.append(wsNode('strong', doc.resultLabel || doc.name), wsNode('small', `${doc.draft ? '过程稿' : '研究档案'} · ${doc.name}${source ? ` · ${source}` : ''}`))
-      row.append(copy, workspaceActions(wsButton('预览', () => void openWorkspaceDocument(doc)),
-        wsButton('下载', () => void downloadWorkspaceDocument(doc))))
+      row.append(copy, workspaceActions(workspaceReadAction(doc),
+        workspaceDownloadAction(doc)))
       archive.append(row)
     }
     root.append(archive)
@@ -1523,25 +1586,45 @@ function renderWorkspaceResults(state) {
 }
 
 async function fetchWorkspaceDocument(doc, sessionId) {
-  const response = await apiFetch(`/api/sessions/${sessionId}/workspace/documents/${encodeURIComponent(doc.taskId)}/${encodeURIComponent(doc.id)}`,
-    { credentials: 'same-origin', cache: 'no-store' })
-  if (!response.ok) throw new Error('document unavailable')
-  const { document: item } = await response.json()
-  if (!item || typeof item.content !== 'string' || typeof item.name !== 'string') throw new Error('invalid document')
-  return item
+  const path = `/api/sessions/${sessionId}/workspace/documents/${encodeURIComponent(doc.taskId)}/${encodeURIComponent(doc.id)}`
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const controller = new AbortController()
+    const timer = window.setTimeout(() => controller.abort(), 20_000)
+    try {
+      const response = await apiFetch(path, { credentials: 'same-origin', cache: 'no-store', signal: controller.signal })
+      if (!response.ok) throw Object.assign(new Error('document unavailable'), { nonRetryable: true })
+      const { document: item } = await response.json()
+      if (!item || typeof item.content !== 'string' || typeof item.name !== 'string') throw new Error('invalid document')
+      return item
+    } catch (error) {
+      if (error.nonRetryable || attempt === 1) throw error
+    } finally { window.clearTimeout(timer) }
+  }
 }
 
 async function downloadWorkspaceDocument(doc) {
   if (!currentSessionId) return
   const sessionId = currentSessionId, epoch = workspaceEpoch
   try {
-    const item = await fetchWorkspaceDocument(doc, sessionId)
+    const path = workspaceDocumentDownloadPath(doc, sessionId)
+    let file
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (sessionId !== currentSessionId || epoch !== workspaceEpoch) return
+      try {
+        const response = await apiFetch(path, { credentials: 'same-origin', cache: 'no-store' })
+        if (!response.ok) throw Object.assign(new Error('document unavailable'), { nonRetryable: true })
+        file = await response.blob()
+        break
+      } catch (error) {
+        if (error.nonRetryable || attempt === 2) throw error
+        await new Promise(resolve => window.setTimeout(resolve, 350 * (attempt + 1)))
+      }
+    }
     if (sessionId !== currentSessionId || epoch !== workspaceEpoch) return
-    const bytes = item.encoding === 'base64' ? Uint8Array.from(atob(item.content), char => char.charCodeAt(0)) : item.content
-    const url = URL.createObjectURL(new Blob([bytes], { type: item.mediaType || 'application/octet-stream' }))
+    const url = URL.createObjectURL(file)
     const link = wsNode('a')
     link.href = url
-    link.download = item.name
+    link.download = doc.name || 'document'
     document.body.append(link)
     link.click()
     link.remove()
@@ -1551,6 +1634,10 @@ async function downloadWorkspaceDocument(doc) {
 
 async function openWorkspaceDocument(doc) {
   if (!currentSessionId) return
+  if (!shareMode && /\.pdf$/i.test(doc.name || '')) {
+    location.assign(workspaceDocumentPreviewPath(doc))
+    return
+  }
   const sessionId = currentSessionId, epoch = workspaceEpoch
   const request = ++workspaceDocumentRequest
   document.getElementById('workspaceDocumentTitle').textContent = doc.name
@@ -1558,6 +1645,7 @@ async function openWorkspaceDocument(doc) {
   body.replaceChildren(wsNode('p', '正在读取档案…'))
   const download = document.getElementById('workspaceDocumentDownload')
   download.hidden = true
+  workspaceDocumentDownloadDoc = undefined
   if (!workspaceDocumentDialog.open) workspaceDocumentDialog.showModal()
   try {
     const item = await fetchWorkspaceDocument(doc, sessionId)
@@ -1585,7 +1673,8 @@ async function openWorkspaceDocument(doc) {
     } else if (item.mediaType === 'text/markdown' || /\.md$/i.test(item.name)) {
       body.append(manuscript(typeof bytes === 'string' ? bytes : new TextDecoder().decode(bytes)))
     } else body.append(wsNode('pre', typeof bytes === 'string' ? bytes : '二进制文件，请下载查看。'))
-    download.href = workspaceDocumentUrl
+    workspaceDocumentDownloadDoc = doc
+    download.href = workspaceDocumentDownloadPath(doc, sessionId)
     download.download = item.name
     download.hidden = false
   } catch {
@@ -1594,8 +1683,14 @@ async function openWorkspaceDocument(doc) {
 }
 
 document.getElementById('workspaceDocumentClose').addEventListener('click', () => workspaceDocumentDialog.close())
+document.getElementById('workspaceDocumentDownload').addEventListener('click', event => {
+  if (!shareMode || !workspaceDocumentDownloadDoc) return
+  event.preventDefault()
+  void downloadWorkspaceDocument(workspaceDocumentDownloadDoc)
+})
 workspaceDocumentDialog.addEventListener('close', () => {
   workspaceDocumentRequest++
+  workspaceDocumentDownloadDoc = undefined
   if (workspaceDocumentUrl) URL.revokeObjectURL(workspaceDocumentUrl)
   workspaceDocumentUrl = undefined
   document.getElementById('workspaceDocumentBody').replaceChildren()
@@ -1903,6 +1998,94 @@ archivedSessionsButton.addEventListener('click', () => {
   renderSessionList(availableSessions)
 })
 
+const sessionSearch = document.getElementById('sessionSearch')
+const sessionGroupModeSelect = document.getElementById('sessionGroupMode')
+const sessionDensityButton = document.getElementById('sessionDensity')
+const sessionGroupDialog = document.getElementById('sessionGroupDialog')
+const sessionGroupForm = document.getElementById('sessionGroupForm')
+const sessionGroupInput = document.getElementById('sessionGroupInput')
+const sessionGroupError = document.getElementById('sessionGroupError')
+function saveSessionView() {
+  if (!currentAccountName || shareMode) return
+  try { localStorage.setItem(`zhijian-session-view:${currentAccountName}`, JSON.stringify({
+    mode: sessionGroupMode, dense: sessionDense, collapsed: [...collapsedSessionGroups] })) } catch { /* private mode */ }
+}
+function restoreSessionView() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(`zhijian-session-view:${currentAccountName}`) || '{}')
+    sessionGroupMode = saved.mode === 'custom' ? 'custom' : 'time'
+    sessionDense = saved.dense === true
+    collapsedSessionGroups = new Set(Array.isArray(saved.collapsed) ? saved.collapsed.filter(item => typeof item === 'string') : [])
+  } catch { sessionGroupMode = 'time'; sessionDense = false; collapsedSessionGroups = new Set() }
+  sessionGroupModeSelect.value = sessionGroupMode
+  sessionDensityButton.setAttribute('aria-pressed', String(sessionDense))
+  document.querySelector('.sessionSidebar').classList.toggle('dense', sessionDense)
+}
+sessionSearch.addEventListener('input', () => renderSessionList(availableSessions, false))
+sessionGroupModeSelect.addEventListener('change', () => {
+  sessionGroupMode = sessionGroupModeSelect.value
+  saveSessionView()
+  renderSessionList(availableSessions, false)
+})
+sessionDensityButton.addEventListener('click', () => {
+  sessionDense = !sessionDense
+  document.querySelector('.sessionSidebar').classList.toggle('dense', sessionDense)
+  sessionDensityButton.setAttribute('aria-pressed', String(sessionDense))
+  saveSessionView()
+})
+function openSessionGroupDialog(group = null) {
+  sessionGroupDialog.dataset.groupId = group?.id || ''
+  document.getElementById('sessionGroupTitle').textContent = group ? '编辑分组' : '新建分组'
+  document.getElementById('sessionGroupDelete').hidden = !group
+  sessionGroupInput.value = group?.name || ''
+  sessionGroupError.textContent = ''
+  sessionGroupDialog.showModal()
+  sessionGroupInput.focus()
+  if (group) sessionGroupInput.select()
+}
+document.getElementById('newSessionGroup').addEventListener('click', () => openSessionGroupDialog())
+document.getElementById('sessionGroupCancel').addEventListener('click', () => sessionGroupDialog.close())
+async function sessionGroupRequest(path, method, body) {
+  const response = await apiFetch(path, { method, credentials: 'same-origin',
+    headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
+    ...(body ? { body: JSON.stringify(body) } : {}) })
+  if (!response.ok) throw new Error(response.status === 409 ? '同名分组已存在。' : '保存失败，请重试。')
+  return response.json()
+}
+sessionGroupForm.addEventListener('submit', async event => {
+  event.preventDefault()
+  const name = sessionGroupInput.value.trim()
+  if (!name) { sessionGroupError.textContent = '请输入分组名称。'; return }
+  const id = sessionGroupDialog.dataset.groupId
+  const button = sessionGroupForm.querySelector('[type="submit"]')
+  button.disabled = true
+  try {
+    const { group } = await sessionGroupRequest(id ? `/api/session-groups/${id}` : '/api/session-groups',
+      id ? 'PATCH' : 'POST', { name })
+    if (id) availableGroups = availableGroups.map(item => item.id === id ? group : item)
+    else availableGroups.push(group)
+    sessionGroupMode = 'custom'
+    sessionGroupModeSelect.value = 'custom'
+    saveSessionView()
+    renderSessionList(availableSessions, false)
+    sessionGroupDialog.close()
+  } catch (error) { sessionGroupError.textContent = error.message }
+  finally { button.disabled = false }
+})
+document.getElementById('sessionGroupDelete').addEventListener('click', async event => {
+  const id = sessionGroupDialog.dataset.groupId
+  if (!id || !window.confirm('删除这个分组？组内会话将移到“未分组”。')) return
+  event.currentTarget.disabled = true
+  try {
+    await sessionGroupRequest(`/api/session-groups/${id}`, 'DELETE')
+    availableGroups = availableGroups.filter(group => group.id !== id)
+    for (const session of availableSessions) if (session.groupId === id) session.groupId = null
+    renderSessionList(availableSessions, false)
+    sessionGroupDialog.close()
+  } catch (error) { sessionGroupError.textContent = error.message }
+  finally { event.currentTarget.disabled = false }
+})
+
 async function refreshSessionActivity() {
   if (shareMode || !researchReady || !availableSessions.length || sessionActivityLoading) return
   sessionActivityLoading = true
@@ -1956,6 +2139,9 @@ function sessionAction(session, kind, label, symbol, onClick) {
   button.setAttribute('aria-label', `${label}：${session.title || '未命名研究'}`)
   if (kind !== 'rename') button.setAttribute('aria-pressed', String(!!session[kind]))
   button.innerHTML = symbol
+  const text = document.createElement('span')
+  text.textContent = label
+  button.append(text)
   button.addEventListener('click', async () => {
     if (kind === 'rename') { openSessionRename(session); return }
     button.disabled = true
@@ -1979,15 +2165,18 @@ function renderSessionList(sessions, saveCache = true) {
   document.getElementById('favoriteSessionCount').textContent = String(activeSessions.filter(session => session.favorite).length)
   document.getElementById('runningSessionCount').textContent = String(activeSessions.filter(session => session.running).length)
   document.getElementById('archivedSessionCount').textContent = String(sessions.length - activeSessions.length)
-  if (!sessions.length) {
+  if (!sessions.length && !(sessionGroupMode === 'custom' && availableGroups.length)) {
     showSessionListState('还没有研究会话', '新建会话后，会从第一问开始留存。')
     return
   }
-  const visibleSessions = sessionListFilter === 'archive' ? sessions.filter(session => session.archived)
+  const filteredSessions = sessionListFilter === 'archive' ? sessions.filter(session => session.archived)
     : sessionListFilter === 'favorite' ? activeSessions.filter(session => session.favorite)
     : sessionListFilter === 'running' ? activeSessions.filter(session => session.running) : activeSessions
-  if (!visibleSessions.length) {
-    if (sessionListFilter === 'archive') showSessionListState('归档箱为空', '归档会话后，可在这里恢复。')
+  const query = sessionSearch.value.trim().toLocaleLowerCase()
+  const visibleSessions = query ? filteredSessions.filter(session => (session.title || '').toLocaleLowerCase().includes(query)) : filteredSessions
+  if (!visibleSessions.length && (query || sessionListFilter !== 'all' || sessionGroupMode !== 'custom' || !availableGroups.length)) {
+    if (query) showSessionListState('没有匹配的会话', '试试标题中的其他关键词。')
+    else if (sessionListFilter === 'archive') showSessionListState('归档箱为空', '归档会话后，可在这里恢复。')
     else if (sessionListFilter === 'all') showSessionListState('没有未归档会话', '可从归档箱恢复，或新建一个会话。')
     else if (sessionListFilter === 'running') showSessionListState(
       !sessionActivityKnown ? '正在检查执行状态' : sessionActivityUnknown ? '执行状态未完全确认' : '当前没有执行中的会话',
@@ -1995,7 +2184,71 @@ function renderSessionList(sessions, saveCache = true) {
     else showSessionListState('还没有收藏的会话', '打开会话后，点右上角的收藏按钮即可加入这里。')
     return
   }
-  for (const session of visibleSessions) {
+  const pinned = visibleSessions.filter(session => session.pinned && !session.archived)
+  const rest = visibleSessions.filter(session => !pinned.includes(session))
+  const groups = []
+  if (pinned.length) groups.push({ key: 'pinned', name: '置顶', items: pinned })
+  if (sessionGroupMode === 'custom') {
+    for (const group of availableGroups) {
+      const items = rest.filter(session => session.groupId === group.id)
+      if (items.length || sessionListFilter === 'all' && !query) groups.push({ key: `group:${group.id}`, name: group.name, items, group })
+    }
+    const ungrouped = rest.filter(session => !availableGroups.some(group => group.id === session.groupId))
+    if (ungrouped.length || sessionListFilter === 'all' && !query) groups.push({ key: 'ungrouped', name: '未分组', items: ungrouped })
+  } else {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
+    const buckets = [
+      { key: 'today', name: '今天', items: [] },
+      { key: 'yesterday', name: '昨天', items: [] },
+      { key: 'week', name: '近 7 天', items: [] },
+      { key: 'older', name: '更早', items: [] },
+    ]
+    for (const session of rest) {
+      const created = Number(session.createdAt)
+      const bucket = created >= today ? 0 : created >= today - 86400000 ? 1 : created >= today - 7 * 86400000 ? 2 : 3
+      buckets[bucket].items.push(session)
+    }
+    groups.push(...buckets.filter(group => group.items.length))
+  }
+  for (const group of groups) {
+    const section = document.createElement('section')
+    section.className = 'sessionGroup'
+    const heading = document.createElement('div')
+    heading.className = 'sessionGroupHead'
+    const toggle = document.createElement('button')
+    toggle.type = 'button'
+    toggle.className = 'sessionGroupToggle'
+    toggle.textContent = `${collapsedSessionGroups.has(group.key) ? '▸' : '⌄'} ${group.name} `
+    const count = document.createElement('span')
+    count.textContent = String(group.items.length)
+    toggle.append(count)
+    const body = document.createElement('div')
+    body.className = 'sessionGroupBody'
+    body.hidden = collapsedSessionGroups.has(group.key)
+    toggle.setAttribute('aria-expanded', String(!body.hidden))
+    toggle.addEventListener('click', () => {
+      if (body.hidden) collapsedSessionGroups.delete(group.key)
+      else collapsedSessionGroups.add(group.key)
+      body.hidden = !body.hidden
+      toggle.setAttribute('aria-expanded', String(!body.hidden))
+      toggle.firstChild.textContent = `${body.hidden ? '▸' : '⌄'} ${group.name} `
+      saveSessionView()
+    })
+    heading.append(toggle)
+    if (group.group) {
+      const edit = document.createElement('button')
+      edit.type = 'button'
+      edit.className = 'sessionGroupEdit'
+      edit.textContent = '⋯'
+      edit.title = `编辑分组：${group.name}`
+      edit.setAttribute('aria-label', edit.title)
+      edit.addEventListener('click', () => openSessionGroupDialog(group.group))
+      heading.append(edit)
+    }
+    section.append(heading, body)
+    list.append(section)
+    for (const session of group.items) {
     const row = document.createElement('div')
     row.className = 'sessionRow'
     const button = document.createElement('button')
@@ -2027,9 +2280,14 @@ function renderSessionList(sessions, saveCache = true) {
     detail.textContent = sessionListDetail(session, current)
     button.append(head, title, detail)
     button.addEventListener('click', () => { void selectSession(session) })
-    const actions = document.createElement('div')
-    actions.className = 'sessionRowActions'
-    actions.append(
+    const actions = document.createElement('details')
+    actions.className = 'sessionRowMenu'
+    const summary = document.createElement('summary')
+    summary.textContent = '⋯'
+    summary.setAttribute('aria-label', `操作：${session.title || '未命名研究'}`)
+    const menu = document.createElement('div')
+    menu.className = 'sessionRowMenuBody'
+    menu.append(
       sessionAction(session, 'pinned', session.pinned ? '取消置顶' : '置顶', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8l-1.5 5.5 2.5 2.5v2H7v-2l2.5-2.5L8 3ZM12 13v8"/></svg>', () => updateSessionMetadata(session, { pinned: !session.pinned })),
       sessionAction(session, 'favorite', session.favorite ? '取消收藏' : '收藏', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.5 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9L12 2.5Z"/></svg>', () => updateSessionMetadata(session, { favorite: !session.favorite })),
       sessionAction(session, 'archived', session.archived ? '恢复会话' : '归档会话', session.archived
@@ -2037,9 +2295,31 @@ function renderSessionList(sessions, saveCache = true) {
         : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v4H4zM6 8v12h12V8M12 10v7m-3-3 3 3 3-3"/></svg>', () => toggleSessionArchive(session)),
       sessionAction(session, 'rename', '修改标题', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11a2 2 0 0 0-4-4L4 16v4ZM13.5 6.5l4 4"/></svg>'),
     )
+    if (availableGroups.length) {
+      const label = document.createElement('label')
+      label.textContent = '移至分组'
+      const select = document.createElement('select')
+      select.setAttribute('aria-label', `将${session.title || '未命名研究'}移至分组`)
+      for (const [id, name] of [[null, '未分组'], ...availableGroups.map(group => [group.id, group.name])]) {
+        const option = document.createElement('option')
+        option.value = id || ''
+        option.textContent = name
+        select.append(option)
+      }
+      select.value = session.groupId || ''
+      select.addEventListener('change', async () => {
+        select.disabled = true
+        try { await updateSessionMetadata(session, { groupId: select.value || null }) }
+        catch { select.value = session.groupId || ''; select.disabled = false; showMessage('移动分组失败，请重试。') }
+      })
+      label.append(select)
+      menu.append(label)
+    }
+    actions.append(summary, menu)
     row.append(button)
     if (!shareMode) row.append(actions)
-    list.append(row)
+    body.append(row)
+    }
   }
 }
 
@@ -2097,6 +2377,97 @@ function syncSessionUrl(id, mode = 'push') {
   history[mode === 'replace' ? 'replaceState' : 'pushState'](null, '', url)
 }
 function pendingMessages(id = currentSessionId) { return pendingBySession.get(id) ?? [] }
+
+function sessionAttachments(id = currentSessionId) { return attachmentsBySession.get(id) ?? [] }
+function renderAttachments() {
+  conversationAttachments.replaceChildren()
+  const editable = researchReady && !!currentSessionId && !previewActive && !sharedReadOnly() && !activeQuestion
+    && document.getElementById('conversationCompose').getAttribute('aria-busy') !== 'true'
+  attachmentButton.disabled = !editable
+  for (const item of sessionAttachments()) {
+    const chip = document.createElement('span')
+    chip.className = 'conversationAttachment'
+    chip.dataset.state = item.state
+    const label = document.createElement('span')
+    label.textContent = `${item.name}${item.state === 'uploading' ? ' · 上传中…' : item.state === 'removing' ? ' · 移除中…' : ''}`
+    chip.append(label)
+    if (item.state === 'ready' && editable) {
+      const remove = document.createElement('button')
+      remove.type = 'button'
+      remove.setAttribute('aria-label', `移除附件 ${item.name}`)
+      remove.textContent = '×'
+      remove.addEventListener('click', async () => {
+        const sessionId = currentSessionId
+        item.state = 'removing'
+        renderAttachments()
+        try {
+          const response = await apiFetch(`/api/sessions/${sessionId}/attachments`, { method: 'DELETE', credentials: 'same-origin',
+            headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
+            body: JSON.stringify({ path: item.path }) })
+          if (!response.ok) throw new Error('remove failed')
+          attachmentsBySession.set(sessionId, sessionAttachments(sessionId).filter(value => value.id !== item.id))
+          if (currentSessionId === sessionId) renderAttachments()
+        } catch {
+          item.state = 'ready'
+          if (currentSessionId === sessionId) renderAttachments()
+          if (currentSessionId === sessionId) setComposeNotice('移除附件失败，请重试。', 'error')
+        }
+      })
+      chip.append(remove)
+    }
+    conversationAttachments.append(chip)
+  }
+}
+
+function removeSentAttachments(sessionId, ids) {
+  const queue = sessionAttachments(sessionId).filter(item => !ids.includes(item.id))
+  attachmentsBySession.set(sessionId, queue)
+  if (currentSessionId === sessionId) renderAttachments()
+}
+
+function readFileBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(String(reader.result).split(',', 2)[1] ?? '')
+    reader.onerror = () => reject(reader.error)
+    reader.readAsDataURL(file)
+  })
+}
+
+attachmentButton.addEventListener('click', () => attachmentInput.click())
+attachmentInput.addEventListener('change', async () => {
+  const files = [...attachmentInput.files]
+  attachmentInput.value = ''
+  const sessionId = currentSessionId
+  if (!sessionId || attachmentButton.disabled) return
+  for (const file of files) {
+    const queue = sessionAttachments(sessionId)
+    if (queue.length >= 4) { if (currentSessionId === sessionId) setComposeNotice('每次最多添加 4 份附件。', 'error'); break }
+    if (!/\.(?:pdf|docx|xlsx|txt|md|csv|png|jpe?g|webp)$/i.test(file.name) || file.size < 1 || file.size > 8 * 1024 * 1024) {
+      if (currentSessionId === sessionId) setComposeNotice('请选择 PDF、Word、Excel、文本或图片；单份不超过 8 MB。', 'error')
+      continue
+    }
+    const item = { id: crypto.randomUUID(), name: file.name, state: 'uploading' }
+    queue.push(item)
+    attachmentsBySession.set(sessionId, queue)
+    if (currentSessionId === sessionId) renderAttachments()
+    try {
+      const data = await readFileBase64(file)
+      const response = await apiFetch(`/api/sessions/${sessionId}/attachments`, { method: 'POST', credentials: 'same-origin',
+        headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
+        body: JSON.stringify({ name: file.name, data }) })
+      if (!response.ok) throw new Error('upload failed')
+      const uploaded = await response.json()
+      if (uploaded.name !== file.name || !/^customer-uploads\/session-[0-9a-f-]+\/[0-9a-f-]+-[^/]+$/i.test(uploaded.path)) throw new Error('invalid upload')
+      item.path = uploaded.path
+      item.state = 'ready'
+      if (currentSessionId === sessionId) setComposeNotice('附件已添加，发送消息后智见小秘书即可读取。', 'success')
+    } catch {
+      attachmentsBySession.set(sessionId, sessionAttachments(sessionId).filter(value => value.id !== item.id))
+      if (currentSessionId === sessionId) setComposeNotice(`“${file.name}”上传失败，请重试。`, 'error')
+    } finally { if (currentSessionId === sessionId) renderAttachments() }
+  }
+})
 function latestPending() { return pendingMessages().findLast(item => item.state !== 'replied' && item.state !== 'failed') }
 function nearBottom() { return conversationMessages.scrollHeight - conversationMessages.scrollTop - conversationMessages.clientHeight < 90 }
 function scrollToLatest() { conversationMessages.scrollTop = conversationMessages.scrollHeight; conversationLatest.hidden = true }
@@ -2109,6 +2480,21 @@ async function copyMessage(text, button) {
     button.textContent = '已复制'
   } catch { button.textContent = '复制失败' }
   window.setTimeout(() => { button.textContent = '复制' }, 1800)
+}
+
+function userMessageContent(text) {
+  const marker = '\n\n附件文件（位于当前会话工作空间，请先读取）：\n'
+  const at = text.lastIndexOf(marker)
+  if (at < 0) return wsNode('p', text)
+  const rows = text.slice(at + marker.length).split('\n')
+  const names = rows.map(row => /^- (.+)：customer-uploads\/session-[0-9a-f-]+\/[0-9a-f-]+-[^/]+$/i.exec(row)?.[1])
+  if (!names.length || names.length > 4 || names.some(name => !name)) return wsNode('p', text)
+  const content = document.createDocumentFragment()
+  content.append(wsNode('p', text.slice(0, at)))
+  const files = wsNode('div', undefined, 'conversationMessageAttachments')
+  for (const name of names) files.append(wsNode('span', `▧ ${name}`))
+  content.append(files)
+  return content
 }
 
 function createMessage(message, arriving = false) {
@@ -2157,7 +2543,7 @@ function createMessage(message, arriving = false) {
     long.append(summary, content)
     bubble.append(long)
   } else {
-    const content = message.role === 'assistant' ? manuscript(message.text) : wsNode('p', message.text)
+    const content = message.role === 'assistant' ? manuscript(message.text) : userMessageContent(message.text)
     bubble.append(content)
   }
   const copy = document.createElement('button')
@@ -2347,7 +2733,8 @@ function appendConversationMessage(message, live) {
       }
       setReceipt(pending.node, 'recorded')
       if (composeNotice.includes('无法确认是否发送成功')) setComposeNotice('')
-      if (conversationInput.value.trim() === pending.text) {
+      removeSentAttachments(currentSessionId, pending.attachmentIds ?? [])
+      if (conversationInput.value.trim() === (pending.draftText ?? pending.text)) {
         conversationInput.value = ''
         resizeConversationInput()
         draftsBySession.set(currentSessionId, '')
@@ -2471,10 +2858,12 @@ function showQuestion(question) {
   if (!question) {
     conversationInput.disabled = !researchReady || previewActive || sharedReadOnly()
     sendMessageButton.disabled = !researchReady || previewActive || sharedReadOnly()
+    renderAttachments()
     return
   }
   conversationInput.disabled = true
   sendMessageButton.disabled = true
+  renderAttachments()
   const eyebrow = document.createElement('span')
   eyebrow.className = 'eyebrow'
   eyebrow.textContent = '智见小秘书想确认'
@@ -2852,6 +3241,7 @@ async function selectSession(session, urlMode = 'push') {
   showApproval(null)
   renderWorkspace({ plan: null, team: null, documents: [], datasets: [], presentation: null })
   conversationInput.value = draftsBySession.get(session.id) ?? ''
+  renderAttachments()
   resizeConversationInput()
   conversationEpoch++
   conversationCursor = -1
@@ -3402,12 +3792,17 @@ conversationInput.addEventListener('keydown', event => {
 conversationInput.addEventListener('blur', () => window.setTimeout(closeMentionMenu, 120))
 
 async function sendConversationMessage() {
-  const text = conversationInput.value.trim()
+  const draftText = conversationInput.value.trim()
+  const attachments = sessionAttachments().filter(item => item.state === 'ready')
+  if (sessionAttachments().some(item => item.state !== 'ready')) { setComposeNotice('请等附件操作完成后再发送。', 'error'); return }
+  const text = attachments.length
+    ? `${draftText || '请阅读以下附件并根据内容继续。'}\n\n附件文件（位于当前会话工作空间，请先读取）：\n${attachments.map(item => `- ${item.name}：${item.path}`).join('\n')}`
+    : draftText
   if (!researchReady || !currentSessionId || !text || sendMessageButton.disabled || previewActive || sharedReadOnly()) return
   const sessionId = currentSessionId
   const mentions = (selectedMentionsBySession.get(sessionId) ?? []).filter(item => text.includes(`@${item.name}`))
   const existing = pendingMessages(sessionId).find(item => item.state === 'uncertain' && item.text === text && item.userSeq === undefined)
-  const pending = existing ?? { text, requestId: crypto.randomUUID(), afterSeq: conversationCursor, startedAt: Date.now() }
+  const pending = existing ?? { text, draftText, attachmentIds: attachments.map(item => item.id), requestId: crypto.randomUUID(), afterSeq: conversationCursor, startedAt: Date.now() }
   pending.state = 'sending'
   if (!existing) {
     const queue = pendingMessages(sessionId)
@@ -3426,6 +3821,7 @@ async function sendConversationMessage() {
   sendMessageButton.textContent = '送达中…'
   conversationInput.disabled = true
   document.getElementById('conversationCompose').setAttribute('aria-busy', 'true')
+  renderAttachments()
   try {
     const response = await apiFetch(`/api/sessions/${sessionId}/messages`, { method: 'POST', credentials: 'same-origin',
       headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
@@ -3435,16 +3831,17 @@ async function sendConversationMessage() {
     if (!response.ok || result.accepted !== true) throw new Error('send failed')
     applyAutomaticSessionTitle(sessionId, result.sessionTitle)
     selectedMentionsBySession.delete(sessionId)
+    removeSentAttachments(sessionId, pending.attachmentIds ?? [])
     if (pending.state !== 'replied') pending.state = pending.userSeq === undefined ? 'accepted' : 'recorded'
     setReceipt(pending.node, pending.state)
     if (currentSessionId === sessionId) {
-      if (conversationInput.value.trim() === text) conversationInput.value = ''
+      if (conversationInput.value.trim() === draftText) conversationInput.value = ''
       resizeConversationInput()
       draftsBySession.set(sessionId, conversationInput.value)
       renderActivity()
       updateComposeStatus()
       await loadConversation(sessionId)
-    } else if ((draftsBySession.get(sessionId) ?? '').trim() === text) draftsBySession.set(sessionId, '')
+    } else if ((draftsBySession.get(sessionId) ?? '').trim() === draftText) draftsBySession.set(sessionId, '')
   } catch (error) {
     if (error?.message === 'mention_unavailable') {
       const queue = pendingMessages(sessionId)
@@ -3467,6 +3864,7 @@ async function sendConversationMessage() {
       sendMessageButton.textContent = '发送'
       conversationInput.disabled = !researchReady || !!activeQuestion || previewActive || sharedReadOnly()
       document.getElementById('conversationCompose').setAttribute('aria-busy', 'false')
+      renderAttachments()
     }
   }
 }
@@ -3540,17 +3938,21 @@ async function showAuthenticatedApp(data) {
   bootView.hidden = true
   logoutButton.hidden = shareMode
   usageButton.disabled = shareMode
+  document.getElementById('capabilityManagementLink').hidden = shareMode || data.user.role !== 'admin' || data.researchReady !== true
   menuButton.setAttribute('aria-expanded', String(!isCompact()))
   document.querySelector('.phaseBadge').textContent = shareMode
     ? sharePermission === 'collaborate' ? '协作分享' : '只读分享' : data.user.accountName
   currentAccountName = data.user.accountName
+  if (!shareMode) restoreSessionView()
   researchReady = data.researchReady === true
   showMessage(shareMode ? `当前为${sharePermission === 'collaborate' ? '协作' : '只读'}分享链接 · 到期时间：${new Date(data.share.expiresAt).toLocaleString('zh-CN')}`
     : researchReady ? '' : '研究会话正在开通。')
   document.querySelector('.sessionSidebarHint').textContent = shareMode ? '通过分享链接访问的会话'
     : `${data.user.displayName} · ${data.user.accountName} 下的研究会话`
   newSessionButton.disabled = !researchReady || shareMode
+  document.getElementById('newSessionGroup').disabled = shareMode
   document.getElementById('newSessionHint').textContent = researchReady ? '点击创建空白研究会话' : '隔离研究环境开通后可新建'
+  document.getElementById('newSessionHint').hidden = researchReady || shareMode
   document.querySelector('.questionPreview:not(.questionCard)').hidden = true
   conversationInput.placeholder = '描述研究议题，或输入 @ 选择可用对象…'
   document.getElementById('mentionHint').textContent = '输入 @ 先选类别，再选对象 · Ctrl/⌘ + Enter 发送'
@@ -3570,8 +3972,8 @@ async function showAuthenticatedApp(data) {
     if (!response.ok) throw new Error('session_list_unavailable')
     const body = await response.json()
     if (!Array.isArray(body.sessions)) throw new Error('invalid_session_list')
-    return body.sessions
-  })().then(sessions => ({ sessions }), error => ({ error }))
+    return { sessions: body.sessions, groups: Array.isArray(body.groups) ? body.groups : [] }
+  })().then(result => result, error => ({ error }))
   if (!shareMode) {
     const cached = await sessionCache.read(currentAccountName, 'sessions', '')
     if (Array.isArray(cached) && cached.every(session => typeof session?.id === 'string' && typeof session.title === 'string')) {
@@ -3586,6 +3988,7 @@ async function showAuthenticatedApp(data) {
     const result = await serverList
     if (result.error) throw result.error
     sessions = result.sessions
+    availableGroups = result.groups
     renderSessionList(sessions)
   } catch {
     if (availableSessions.length) {

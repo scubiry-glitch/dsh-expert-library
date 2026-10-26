@@ -35,6 +35,7 @@ import type { Context } from '@deepseek-ai/cordis'
 import { defineTool, type InferValue } from '@deepseek-ai/dsh-tools'
 import { join } from 'node:path'
 import { saveCustomerDataset } from './customer-datasets.ts'
+import { recordCustomerUsage } from './customer-usage.ts'
 import { appendTeamEvent, captainSessionOf } from '../events.ts'
 import { findTeamByParticipant } from '../state.ts'
 import type { ExpertTeamsProviderCalledData } from '../event-types.ts'
@@ -607,6 +608,11 @@ async function executeProviderCall(
         }]
       }
     }
+  }
+  if (safeResult.ok && envelope.ok && safeResult.provider) {
+    const sessionId = caller.team?.captainSessionId ?? caller.sessionId
+    if (sessionId) await recordCustomerUsage({ kind: 'source', id: safeResult.provider,
+      sessionId, workspace: caller.workspace }).catch(() => undefined)
   }
   // 事件与调用方观察同一份结果；审计失败本身不阻断数据回执。
   try {

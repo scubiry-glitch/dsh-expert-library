@@ -230,6 +230,50 @@ test('zytPlanFromOperation maps capability inputs to plans and validates require
   assert.throws(() => zytPlanFromOperation('unknown.zyt.op', {}), /unknown zyt operation/)
 })
 
+test('zyt exposes the nine city report and CREIS operations on both transports', () => {
+  const cases = [
+    ['zyt.city-report2026.city', ['城市专报', '城市级'], '/openapi/v1/city-report2026/city'],
+    ['zyt.city-report2026.area', ['城市专报', '面积'], '/openapi/v1/city-report2026/area'],
+    ['zyt.city-report2026.district', ['城市专报', '城区'], '/openapi/v1/city-report2026/district'],
+    ['zyt.city-report2026.total-price', ['城市专报', '总价'], '/openapi/v1/city-report2026/total-price'],
+    ['zyt.creis.land-market', ['中指', '土地统计'], '/openapi/v1/creis/land-market'],
+    ['zyt.creis.land-transaction', ['中指', '土地明细'], '/openapi/v1/creis/land-transaction'],
+    ['zyt.creis.new-home-market', ['中指', '新房统计'], '/openapi/v1/creis/new-home-market'],
+    ['zyt.creis.new-home-project', ['中指', '新房项目'], '/openapi/v1/creis/new-home-project'],
+    ['zyt.creis.resale-market', ['中指', '二手统计'], '/openapi/v1/creis/resale-market'],
+  ]
+  for (const [operation, command, path] of cases) {
+    const landTransaction = operation === 'zyt.creis.land-transaction'
+    const input = landTransaction ? { city: '北京' } : { city: '北京', ym: '202609' }
+    const plan = zytPlanFromOperation(operation, input)
+    assert.equal(plan.path, path)
+    assert.deepEqual(plan.query, input)
+    assert.deepEqual(zytCliArgvFromPlan(plan), [
+      ...command, '--city', '北京', ...(landTransaction ? [] : ['--ym', '202609']),
+    ])
+    assert.equal(new URL(zytHttpRequestFromPlan(plan, 'https://dss.ke.com').url).pathname, path)
+    assert.deepEqual(buildZytRequestPlan([...command, '--城市', '北京', ...(landTransaction ? [] : ['--年月', '202609'])]), plan)
+  }
+  const district = zytPlanFromOperation('zyt.city-report2026.district', { city: '北京', ym: '202609', district: '朝阳区' })
+  assert.deepEqual(district.query, { city: '北京', ym: '202609', district: '朝阳区' })
+  assert.deepEqual(zytCliArgvFromPlan(district), ['城市专报', '城区', '--city', '北京', '--ym', '202609', '--district', '朝阳区'])
+  assert.throws(() => zytPlanFromOperation('zyt.creis.resale-market', { city: '北京', ym: '202613' }), /YYYYMM/)
+  assert.throws(() => zytPlanFromOperation('zyt.creis.resale-market', { city: '北京' }), /ym\/年月/)
+
+  for (const preferCli of [false, true]) {
+    const manifest = buildZytManifest({ cliCommand: 'zyt', preferCli })
+    const registry = new ProviderRegistry([manifest])
+    const resolver = new CapabilityResolver(registry)
+    for (const [operation] of cases) {
+      const capability = operation.replace(/^zyt\./, 'realestate.')
+      const result = resolver.resolve({ capability })
+      assert.equal(result.status, 'bound', capability)
+      assert.equal(result.binding.operation, operation)
+      assert.equal(result.binding.transportId, preferCli ? 'cli' : 'http')
+    }
+  }
+})
+
 test('zytCliArgvFromPlan and zytHttpRequestFromPlan derive from one plan', () => {
   const plan = buildZytRequestPlan(['指标时序', '--城市', '北京', '--指标', 'SH_PRICE', '--期数', '6'])
   // canonical plan → canonical (English) flags — both alias sets are valid per contract

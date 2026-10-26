@@ -1,8 +1,10 @@
 # 智见客户门户
 
-这是独立于 DSH 插件构建与部署的客户应用。公网已启用合作伙伴中心 OIDC 登录；三个已开通的测试账号使用各自隔离实例，访问会话、数据、工作区和报告。其他身份进入待开通队列。`/preview` 只展示无客户数据的布局预览。当前客户页的轮询、工作区读取和页面验证见 [2026-10-11 优化记录](../../docs/deployment/customer-portal/OPTIMIZATION-20261011.md)。
+这是独立于 DSH 插件构建与部署的客户应用。公网已启用合作伙伴中心 OIDC 登录；三个已开通的测试账号使用各自隔离实例，访问会话、数据、工作区和报告。其他身份进入待开通队列。`/preview` 只展示无客户数据的布局预览；`/demo/loading` 展示不连接会话接口的恢复动效候选方案，见 [静态演示记录](../../docs/deployment/customer-portal/LOADING-DEMO-20261018.md)。当前客户页的轮询、工作区读取和页面验证见 [2026-10-11 优化记录](../../docs/deployment/customer-portal/OPTIMIZATION-20261011.md)。
 
 “设置与用量”从模型网关实时读取登录账号的日 token 额度及最近七天有调用的记录。部署时将 `MODEL_USAGE_URL` 设为模型网关 loopback HTTP origin，并将 `MODEL_USAGE_TOKEN_FILE` 指向双方服务账号可读、浏览器不可读的只读接口凭据文件；两项须同时配置。详细验收见 `../../docs/deployment/customer-portal/S5-USAGE-20261008.md`。
+
+账号管理员从 `/app` 左下角进入 `/manage`，按智见数据、领域包、专家库三个分区管理当前账号的独立实例。管理 API 每次验证登录角色、实例绑定及写入 CSRF，分享链接不能使用。实现与部署见 [`CAPABILITY-MANAGEMENT-20261023.md`](../../docs/deployment/customer-portal/CAPABILITY-MANAGEMENT-20261023.md)。
 
 ## 运行
 
@@ -38,6 +40,10 @@ S1 认证需要同时设置 `OIDC_ISSUER`、`OIDC_CLIENT_ID`、`ACCOUNT_DB_PATH`
 `npm run build` 从现有 `assets/review/portraits/coordinator.webp` 复制已使用的插画到独立产物；配色与排版沿用现有协作室及已确认的用户层 demo。构建产物在 `dist/`，运行时不读取旧页面源码。`npm run package` 生成可单独复制到客户页服务器的 `release/` 目录，包含服务器、OIDC 依赖、配置模块和静态产物。
 
 客户会话区沿用原审阅页的头像、左右气泡、消息入场、传递纸片、等待回复动效、逐条回执、复制和长回复展开。客户端按游标追加消息，切换会话时重置视图；HTTP 接收、会话写入和助手回复是不同状态，发送结果不确定时保留原文和请求 ID 以便幂等重试。@ 菜单从当前账号实例的已授权数据源目录读取；@智见指智见数据源，未配置凭据时不可选。领域包与专家能力由账号实例的版本和授权决定。模型通过 `customer_ask_question` 提问时，客户页可勾选并补充自由文本，再回到同一轮对话。数据页从已验证的数据快照读取清单和表格；未配置数据源时保持空清单。当前 S2 状态见 [数据快照与提问卡记录](../../docs/deployment/customer-portal/S2-DATA-SNAPSHOTS-20261008.md)。
+
+会话输入框可添加最多 4 份附件，支持 PDF、DOCX、XLSX、TXT、MD、CSV、PNG、JPG 和 WebP，单份上限 8 MiB。上传先写入当前账号 DSH 实例中当前会话的 `customer-uploads/<session-id>/`；用户发送消息时才把文件路径交给 Agent，发送前移除附件会删除对应文件。上传与删除接口同时检查浏览器写权限和 DSH 会话归属；只读分享与历史预览不能操作附件。生产 Nginx 仅对附件接口允许 12 MiB 请求体，以容纳 base64 JSON 编码。
+
+左侧会话列表支持标题搜索、按时间或自定义分组显示，并可切换紧凑排列。置顶会话独立显示在最上方；自定义分组及会话归属存于账号数据库，删除分组仅把会话移回“未分组”。排列密度、分组方式和折叠状态保存在浏览器中，按账号区分。会话的置顶、收藏、归档、改名和移动分组从行内“⋯”菜单操作。
 
 合成 OSA 会话的气泡下可显示结构化服务资料卡。BFF 只在 `zhijian-demo-c`、`客户专家Agent` 会话标题和可信的 `【CAgent 场景初始化】` 客户计划同时成立时附加卡片；旧版林女士初始化格式有定向兼容。卡片来源于 `osa-service-cards.mjs` 中带版本与有效期的演示资料快照，不触发 MCP 检索、贷款申请、客户转交或预约。普通 `/app` 会话不附卡；修改演示资料时须同步更新该快照和 `test/osa-service-cards*.test.mjs`，正式产品条件仍以机构核验为准。
 

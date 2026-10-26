@@ -2,6 +2,7 @@ import { timingSafeEqual } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { verifyCustomerMentionSelections, type CustomerMention, type CustomerMentionSelection } from './customer-mentions.ts'
 import type { CustomerQuestionAnswer, CustomerQuestionCard } from './customer-questions.ts'
+import { CUSTOMER_UPLOAD_MAX_BYTES, validCustomerUpload } from './customer-uploads.ts'
 
 export const CUSTOMER_GATEWAY_PREFIX = '/plugins/dsh-expert-library/customer-gateway'
 const SESSION_ID = /^session-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -13,6 +14,8 @@ export interface CustomerGatewayRuntime {
   createSession(sessionId: string): Promise<{ sessionId: string }>
   ownsSession(sessionId: string): Promise<boolean>
   sendMessage(sessionId: string, text: string, requestId: string, mentions?: CustomerMentionSelection[]): Promise<{ accepted: true }>
+  uploadAttachment?(sessionId: string, name: string, data: string): Promise<{ name: string; path: string; sizeBytes: number }>
+  removeAttachment?(sessionId: string, path: string): Promise<void>
   conversation(sessionId: string, after: number, latest?: boolean, before?: number): Promise<unknown>
   listDatasets?(sessionId: string, before?: string): Promise<unknown>
   readDataset?(sessionId: string, datasetId: string, offset: number): Promise<unknown>
@@ -29,6 +32,10 @@ export interface CustomerGatewayRuntime {
   answerQuestion?(sessionId: string, requestId: string, answers: CustomerQuestionAnswer[]): boolean
   pendingApproval?(sessionId: string): { id: string; toolName: string; reason: string } | null
   answerApproval?(sessionId: string, id: string, decision: 'allowed-once' | 'rejected'): boolean
+  adminSettings?(): Promise<unknown>
+  adminModels?(): Promise<unknown>
+  adminUsage?(days: 7 | 30): Promise<unknown>
+  updateAdminSettings?(section: string, value: unknown, revision: number): Promise<unknown>
 }
 
 export type CustomerWorkspaceAction =
@@ -110,6 +117,34 @@ export async function handleCustomerGateway(req: IncomingMessage, res: ServerRes
   const suffix = url.pathname.slice(CUSTOMER_GATEWAY_PREFIX.length)
   if (!url.pathname.startsWith(CUSTOMER_GATEWAY_PREFIX) || (suffix && !suffix.startsWith('/'))) return send(res, 404, { error: 'NOT_FOUND' })
   if (suffix === '/health' && req.method === 'GET') return send(res, 200, { ok: true })
+  if (suffix === '/admin/settings') {
+    if (req.method === 'GET') {
+      try { return send(res, 200, await runtime.adminSettings?.() ?? { writable: false }) }
+      catch { return send(res, 503, { error: 'SETTINGS_UNAVAILABLE' }) }
+    }
+    if (req.method !== 'PUT') return send(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+    const body = await jsonBody(req, 32_000)
+    if (!body || Object.keys(body).some(key => !['section', 'value', 'revision'].includes(key))
+      || !['providers', 'toolExecution', 'packCenterUpdatePolicy', 'defaultModel', 'expertModelOverrides', 'runtime'].includes(String(body.section))
+      || !Number.isSafeInteger(body.revision) || (body.revision as number) < 0
+      || !body.value || typeof body.value !== 'object' || Array.isArray(body.value)
+      || !runtime.updateAdminSettings) return send(res, 400, { error: 'INVALID_SETTINGS' })
+    try { return send(res, 200, await runtime.updateAdminSettings(body.section as string, body.value, body.revision as number)) }
+    catch (error) { return send(res, error instanceof Error && error.name === 'SettingsConflictError' ? 409 : 400,
+      { error: error instanceof Error && error.name === 'SettingsConflictError' ? 'SETTINGS_CONFLICT' : 'INVALID_SETTINGS' }) }
+  }
+  if (suffix === '/admin/models' && req.method === 'GET') {
+    try { return send(res, 200, { models: await runtime.adminModels?.() ?? [] }) }
+    catch { return send(res, 503, { error: 'MODELS_UNAVAILABLE' }) }
+  }
+  if (suffix === '/admin/usage') {
+    if (req.method !== 'GET') return send(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+    const days = url.searchParams.get('days') ?? '7'
+    if (url.searchParams.size > 1 || (days !== '7' && days !== '30')) return send(res, 400, { error: 'INVALID_RANGE' })
+    if (!runtime.adminUsage) return send(res, 503, { error: 'USAGE_UNAVAILABLE' })
+    try { return send(res, 200, await runtime.adminUsage(Number(days) as 7 | 30)) }
+    catch { return send(res, 503, { error: 'USAGE_UNAVAILABLE' }) }
+  }
   if (suffix === '/mentions' && req.method === 'GET') {
     try { return send(res, 200, { items: await runtime.mentions?.() ?? [] }) }
     catch { return send(res, 503, { error: 'MENTIONS_UNAVAILABLE' }) }
@@ -142,6 +177,30 @@ export async function handleCustomerGateway(req: IncomingMessage, res: ServerRes
       if (created.sessionId !== body.sessionId) throw new Error('session id mismatch')
       return send(res, 200, { sessionId: created.sessionId })
     } catch { return send(res, 503, { error: 'SESSION_UNAVAILABLE' }) }
+  }
+  const attachmentMatch = /^\/sessions\/(session-[0-9a-f-]+)\/attachments$/i.exec(suffix)
+  if (attachmentMatch?.[1] && SESSION_ID.test(attachmentMatch[1])) {
+    if (req.method !== 'POST' && req.method !== 'DELETE') return send(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+    if (!await runtime.ownsSession(attachmentMatch[1]).catch(() => false)) return send(res, 404, { error: 'NOT_FOUND' })
+    if (req.method === 'DELETE') {
+      if (!runtime.removeAttachment) return send(res, 503, { error: 'ATTACHMENT_UNAVAILABLE' })
+      const body = await jsonBody(req, 1024)
+      if (!body || Object.keys(body).some(key => key !== 'path') || typeof body.path !== 'string')
+        return send(res, 400, { error: 'INVALID_ATTACHMENT' })
+      try { await runtime.removeAttachment(attachmentMatch[1], body.path); return send(res, 200, { removed: true }) }
+      catch (error) {
+        const missing = error instanceof Error && (error.message.startsWith('INVALID_ATTACHMENT')
+          || (error as NodeJS.ErrnoException).code === 'ENOENT')
+        return send(res, missing ? 404 : 503, { error: missing ? 'ATTACHMENT_NOT_FOUND' : 'ATTACHMENT_UNAVAILABLE' })
+      }
+    }
+    if (!runtime.uploadAttachment) return send(res, 503, { error: 'ATTACHMENT_UNAVAILABLE' })
+    const body = await jsonBody(req, Math.ceil(CUSTOMER_UPLOAD_MAX_BYTES / 3) * 4 + 1024)
+    if (!body || !validCustomerUpload(body.name, body.data) || Object.keys(body).some(key => !['name', 'data'].includes(key)))
+      return send(res, 400, { error: 'INVALID_ATTACHMENT' })
+    try { return send(res, 201, await runtime.uploadAttachment(attachmentMatch[1], body.name as string, body.data)) }
+    catch (error) { return send(res, error instanceof Error && error.message === 'INVALID_ATTACHMENT' ? 400 : 503,
+      { error: error instanceof Error && error.message === 'INVALID_ATTACHMENT' ? 'INVALID_ATTACHMENT' : 'ATTACHMENT_UNAVAILABLE' }) }
   }
   const approvalMatch = /^\/sessions\/(session-[0-9a-f-]+)\/approval$/i.exec(suffix)
   if (approvalMatch?.[1] && SESSION_ID.test(approvalMatch[1])) {

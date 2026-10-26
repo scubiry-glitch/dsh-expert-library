@@ -1,0 +1,24 @@
+[Unit]
+Description=Send C account usage ranking screenshot to WeCom
+Wants=network-online.target
+After=network-online.target zhijian-customer-portal.service zhijian-dsh-demo-c.service
+StartLimitIntervalSec=30min
+StartLimitBurst=4
+
+[Service]
+Type=oneshot
+User=zhijian-portal
+Group=zhijian-portal
+WorkingDirectory=/opt/zhijian/customer-portal
+EnvironmentFile=/etc/zhijian/customer-portal.env
+LoadCredential=usage-webhook:/etc/zhijian/customer-usage-webhook.url
+ExecStart=/opt/zhijian/customer-portal/node /opt/zhijian/customer-portal/scripts/daily-usage-report.mjs --send
+TimeoutStartSec=90
+Restart=on-failure
+RestartSec=5min
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/zhijian/customer-portal/usage-reports

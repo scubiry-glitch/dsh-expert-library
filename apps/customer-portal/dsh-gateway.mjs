@@ -28,6 +28,10 @@ export function createDshGateway(config, fetcher = fetch) {
     return response.json()
   }
   return {
+    adminSettings: runtime => call(runtime, 'GET', '/admin/settings'),
+    adminModels: runtime => call(runtime, 'GET', '/admin/models', undefined, 30_000),
+    adminUsage: (runtime, days) => call(runtime, 'GET', `/admin/usage?days=${days}`),
+    updateAdminSettings: (runtime, body) => call(runtime, 'PUT', '/admin/settings', body),
     mentions: runtime => call(runtime, 'GET', '/mentions'),
     pendingQuestion: (runtime, sessionId) => call(runtime, 'GET', `/sessions/${encodeURIComponent(sessionId)}/question`),
     pendingApproval: (runtime, sessionId) => call(runtime, 'GET', `/sessions/${encodeURIComponent(sessionId)}/approval`),
@@ -35,6 +39,10 @@ export function createDshGateway(config, fetcher = fetch) {
     answerQuestion: (runtime, sessionId, requestId, answers) => call(runtime, 'POST',
       `/sessions/${encodeURIComponent(sessionId)}/question`, { requestId, answers }),
     createSession: (runtime, sessionId) => call(runtime, 'POST', '/sessions', { sessionId }),
+    uploadAttachment: (runtime, sessionId, name, data) => call(runtime, 'POST', `/sessions/${encodeURIComponent(sessionId)}/attachments`,
+      { name, data }, 30_000),
+    removeAttachment: (runtime, sessionId, path) => call(runtime, 'DELETE', `/sessions/${encodeURIComponent(sessionId)}/attachments`,
+      { path }),
     sendMessage: (runtime, sessionId, text, requestId, mentions = []) => call(runtime, 'POST', `/sessions/${encodeURIComponent(sessionId)}/messages`,
       { text, requestId, ...(mentions.length ? { mentions } : {}) }),
     conversation: (runtime, sessionId, after, latest = false, before) => call(runtime, 'GET',

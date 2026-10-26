@@ -54,7 +54,7 @@ test('session pin, favorite, archive and title stay account scoped and persist a
   const reopened = new AccountStore(path)
   try {
     assert.deepEqual({ ...reopened.sessionPreference(loginA.principal, first.id) },
-      { titleOverride: '新标题', pinned: 1, favorite: 1, archived: 1 })
+      { titleOverride: '新标题', pinned: 1, favorite: 1, archived: 1, groupId: null })
     assert.equal(reopened.sessionPreference(loginB.principal, first.id), undefined)
   } finally { reopened.close() }
   assert.equal((await patch(first.id, loginA, { archived: false })).status, 200)

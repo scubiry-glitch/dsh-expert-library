@@ -13,6 +13,9 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
     createSession: async sessionId => { calls.push(['create', sessionId]); return { sessionId } },
     ownsSession: async sessionId => sessionId === owned,
     sendMessage: async (sessionId, text, requestId) => { calls.push(['message', sessionId, text, requestId]); return { accepted: true } },
+    uploadAttachment: async (sessionId, name, data) => { calls.push(['upload', sessionId, name, data]);
+      return { name, path: `customer-uploads/${sessionId}/stored.txt`, sizeBytes: 5 } },
+    removeAttachment: async (sessionId, path) => { calls.push(['remove', sessionId, path]) },
     conversation: async (sessionId, after, latest, before) => {
       calls.push(['conversation', sessionId, after, latest, before])
       return { messages: [{ role: 'assistant', text: sessionId }], nextCursor: 1, hasMore: false }
@@ -33,6 +36,10 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
       questions: [{ id: 'scope', question: '研究哪个范围？', options: [{ label: '贵阳' }], multiSelect: false }] } : null,
     answerQuestion: (sessionId, requestId, answers) => sessionId === owned
       && requestId === '11111111-1111-4111-8111-111111111111' && answers?.[0]?.selected?.[0] === '贵阳',
+    adminSettings: async () => ({ writable: true, revision: 3, value: { providers: {} } }),
+    adminModels: async () => [{ provider: 'sample', model: 'sample-model', name: 'Sample', reasoningEfforts: [{ id: 'low', name: 'Low' }] }],
+    adminUsage: async days => ({ days, rankings: { expert: [{ id: 'e', calls: 2, sessions: 1 }] } }),
+    updateAdminSettings: async (section, value, revision) => { calls.push(['admin-settings', section, value, revision]); return { revision: revision + 1 } },
   }
   const server = createServer((req, res) => { void handleCustomerGateway(req, res, runtime) })
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve))
@@ -42,6 +49,21 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   assert.equal((await fetch(`${base}/health`)).status, 401)
   assert.equal((await fetch(`${base}/health`, { headers: { authorization: 'Bearer wrong' } })).status, 401)
   assert.equal((await fetch(`${base}/health`, { headers: auth })).status, 200)
+  assert.equal((await fetch(`${base}/admin/settings`)).status, 401)
+  assert.equal((await (await fetch(`${base}/admin/settings`, { headers: auth })).json()).revision, 3)
+  assert.equal((await fetch(`${base}/admin/models`)).status, 401)
+  assert.deepEqual((await (await fetch(`${base}/admin/models`, { headers: auth })).json()).models,
+    [{ provider: 'sample', model: 'sample-model', name: 'Sample', reasoningEfforts: [{ id: 'low', name: 'Low' }] }])
+  assert.equal((await fetch(`${base}/admin/usage?days=30`)).status, 401)
+  assert.equal((await fetch(`${base}/admin/usage?days=31`, { headers: auth })).status, 400)
+  assert.deepEqual((await (await fetch(`${base}/admin/usage?days=30`, { headers: auth })).json()).rankings.expert,
+    [{ id: 'e', calls: 2, sessions: 1 }])
+  assert.equal((await fetch(`${base}/admin/settings`, { method: 'PUT', headers: auth,
+    body: JSON.stringify({ section: 'arbitrary', value: {}, revision: 3 }) })).status, 400)
+  assert.equal((await fetch(`${base}/admin/settings`, { method: 'PUT', headers: auth,
+    body: JSON.stringify({ section: 'providers', value: {}, revision: 3 }) })).status, 200)
+  assert.equal((await fetch(`${base}/admin/settings`, { method: 'PUT', headers: auth,
+    body: JSON.stringify({ section: 'runtime', value: { maxMembers: 4 }, revision: 4 }) })).status, 200)
   assert.equal((await fetch(`${base}/mentions`)).status, 401)
   assert.deepEqual((await (await fetch(`${base}/mentions`, { headers: auth })).json()).items,
     [{ name: '智见', kind: 'data-source', provider: 'zyt' }])
@@ -50,6 +72,20 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   const created = await fetch(`${base}/sessions`, { method: 'POST', headers: auth, body: JSON.stringify({ sessionId: owned, workspace: '/other' }) })
   assert.equal(created.status, 200)
   assert.equal((await fetch(`${base}/sessions/${foreign}/messages`, { headers: auth })).status, 404)
+  assert.equal((await fetch(`${base}/sessions/${foreign}/attachments`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ name: 'notes.txt', data: 'aGVsbG8=' }) })).status, 404)
+  assert.equal((await fetch(`${base}/sessions/${owned}/attachments`, { method: 'POST',
+    body: JSON.stringify({ name: 'notes.txt', data: 'aGVsbG8=' }) })).status, 401)
+  assert.equal((await fetch(`${base}/sessions/${owned}/attachments`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ name: '../notes.txt', data: 'aGVsbG8=' }) })).status, 400)
+  assert.equal((await fetch(`${base}/sessions/${owned}/attachments`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ name: 'notes.exe', data: 'aGVsbG8=' }) })).status, 400)
+  assert.equal((await fetch(`${base}/sessions/${owned}/attachments`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ name: 'notes.txt', data: 'aGVsbG8=' }) })).status, 201)
+  assert.equal((await fetch(`${base}/sessions/${foreign}/attachments`, { method: 'DELETE', headers: auth,
+    body: JSON.stringify({ path: 'customer-uploads/other/stored.txt' }) })).status, 404)
+  assert.equal((await fetch(`${base}/sessions/${owned}/attachments`, { method: 'DELETE', headers: auth,
+    body: JSON.stringify({ path: `customer-uploads/${owned}/stored.txt` }) })).status, 200)
   assert.equal((await fetch(`${base}/sessions/${foreign}/datasets`, { headers: auth })).status, 404)
   assert.equal((await fetch(`${base}/sessions/${foreign}/question`, { headers: auth })).status, 404)
   assert.equal((await fetch(`${base}/sessions/${foreign}/workspace`, { headers: auth })).status, 404)
@@ -113,7 +149,7 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   assert.equal((await fetch(`${base}/sessions/${owned}/messages`, { method: 'POST', headers: auth,
     body: JSON.stringify({ text: '@智见 查询数据', requestId: 'request-33333333' }) })).status, 202)
   assert.equal(mentionReads, readsBeforePlainMessage + 2)
-  assert.deepEqual(calls, [['create', owned], ['activity-batch', [owned]], ['select-model', owned, 'sample', 'sample-model'], ['workspace-action', owned, 'approve'], ['workspace-action', owned, 'sync-context'],
+  assert.deepEqual(calls, [['admin-settings', 'providers', {}, 3], ['admin-settings', 'runtime', { maxMembers: 4 }, 4], ['create', owned], ['upload', owned, 'notes.txt', 'aGVsbG8='], ['remove', owned, `customer-uploads/${owned}/stored.txt`], ['activity-batch', [owned]], ['select-model', owned, 'sample', 'sample-model'], ['workspace-action', owned, 'approve'], ['workspace-action', owned, 'sync-context'],
     ['conversation', owned, -1, false, Number.MAX_SAFE_INTEGER], ['conversation', owned, -1, true, Number.MAX_SAFE_INTEGER], ['conversation', owned, -1, true, 12],
     ['message', owned, 'First question', 'request-11111111'], ['message', owned, '@智见 查询数据', 'request-33333333']])
 })

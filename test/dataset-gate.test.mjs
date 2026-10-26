@@ -89,6 +89,30 @@ test('datasetDefinition resolves known ids and rejects unknown ones', () => {
   assert.equal(datasetDefinition('nobody.serves.this'), undefined)
 })
 
+test('city report and CREIS datasets bind all nine new zyt capabilities with the right month rule', () => {
+  const ids = [
+    'realestate.city-report2026.city', 'realestate.city-report2026.area',
+    'realestate.city-report2026.district', 'realestate.city-report2026.total-price',
+    'realestate.creis.land-market', 'realestate.creis.land-transaction',
+    'realestate.creis.new-home-market', 'realestate.creis.new-home-project',
+    'realestate.creis.resale-market',
+  ]
+  for (const dataset of ids) {
+    const cityOnly = dataset === 'realestate.creis.land-transaction'
+    const input = cityOnly ? { city: '北京' } : { city: '北京', ym: '202609' }
+    const result = resolveDatasetRequest({ dataset, input })
+    assert.ok('binding' in result, dataset)
+    assert.equal(result.binding.id, dataset)
+    assert.equal(result.definition.providerPreference[0], 'zyt')
+    assert.equal(result.definition.version, '1.0')
+    if (!cityOnly) {
+      const missing = resolveDatasetRequest({ dataset, input: { city: '北京' } })
+      assert.equal(missing.error?.code, 'CALIBER_MISSING')
+      assert.deepEqual(missing.error?.details?.missing, ['ym'])
+    }
+  }
+})
+
 test('resolveDatasetRequest binds the first pinned capability and validates caliber', () => {
   const resolved = resolveDatasetRequest({
     dataset: 'realestate.city.market',

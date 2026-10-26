@@ -7,6 +7,7 @@ import { defineTool } from '@deepseek-ai/dsh-tools'
 import type { CustomerCapabilityMention, CustomerMention } from './customer-mentions.ts'
 import { resolveManagedRuntimePack, type ManagedRuntimePackSelection } from './pack-runtime.ts'
 import { buildZhijianDomainPack } from '../v2/zhijian-pack.ts'
+import { recordCustomerUsage } from './customer-usage.ts'
 import type { DomainPackV2, ExpertV2, ModelPolicy } from '../v2/types.ts'
 
 interface CapabilityConfig extends ManagedRuntimePackSelection {
@@ -126,6 +127,8 @@ export function registerCustomerMentionTool(ctx: Context, config: CapabilityConf
       if (!expert) {
         const methods = pack.methodPacks.slice(0, 4).map(method => `${method.name}（${method.id}@${method.version}）\n${method.body.slice(0, 2800)}`)
         const scenarios = pack.scenarios.slice(0, 12).map(scenario => `${scenario.id}@${scenario.version}: ${scenario.intents.join('、')}`)
+        await recordCustomerUsage({ kind: 'pack', id: pack.pack.id, version: pack.pack.version,
+          sessionId: agent.id, workspace }).catch(() => undefined)
         return { kind: mention.kind, id: mention.id, version: mention.version, name: mention.name,
           pack: pack.pack.id, packVersion: pack.pack.version,
           answer: `包说明：${pack.pack.description ?? ''}\n适用场景：${scenarios.join('；') || '未声明'}\n方法：${methods.join('\n\n') || '未声明'}\n请仅据这些实际内容回答问题；缺失口径应追问。` }
@@ -147,6 +150,10 @@ export function registerCustomerMentionTool(ctx: Context, config: CapabilityConf
         answer = result.output.filter(block => block.type === 'text').map(block => block.text).join('\n').trim()
         if (!answer) throw new Error('CUSTOMER_EXPERT_EMPTY_ANSWER')
       } finally { await run.dispose() }
+      await Promise.allSettled([
+        recordCustomerUsage({ kind: 'expert', id: expert.id, version: expert.version, sessionId: agent.id, workspace }),
+        recordCustomerUsage({ kind: 'pack', id: pack.pack.id, version: pack.pack.version, sessionId: agent.id, workspace }),
+      ])
       return { kind: mention.kind, id: mention.id, version: mention.version, name: mention.name,
         pack: pack.pack.id, packVersion: pack.pack.version, answer,
         provider: model.provider, model: model.model }

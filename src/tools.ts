@@ -20,6 +20,7 @@ import { listScopedSkillCraftCatalog, resolveSelectedSkillContract } from './ski
 import { DOMAIN_MATERIAL_PACK, requireCurrentTaskMaterialSelection, resolveTaskMaterialContract, prepareTaskMaterialDelivery, saveTaskMaterialDelivery, requireTaskMaterialDelivery } from './task-material-binding.ts'
 import { canonicalDigest } from './v2/digest.ts'
 import { issueReviewShareLink } from './host/review-share-link.ts'
+import { recordCustomerUsage } from './host/customer-usage.ts'
 /**
  * The `expert_teams_*` model-facing tools.
  *
@@ -2147,6 +2148,21 @@ export function registerExpertTeamsTools(ctx: Context, config: ToolsConfig): Exp
         const owner = assignee === CAPTAIN_KEY ? undefined : fresh.members.find(member => member.name === assignee)
         if (owner?.capabilityScope !== undefined) owner.capabilityScope = grantCapabilityTask(owner.capabilityScope, task.id)
         await writeTeam(stateRoot, fresh)
+        const customerEvents = []
+        const occurrence = createHash('sha256').update(`${fresh.id}:${task.id}:${task.attempt ?? 1}`).digest('hex')
+        if (owner?.capabilityScope?.expertId) customerEvents.push(recordCustomerUsage({ kind: 'expert',
+          id: owner.capabilityScope.expertId, sessionId: fresh.captainSessionId, workspace, occurrence }))
+        if (assignee === identity.name && taskMaterials.receipt) {
+          for (const skill of task.frozenTaskMaterialContract?.skills ?? []) {
+            customerEvents.push(recordCustomerUsage({ kind: 'skill', id: skill.skillId,
+              version: skill.packVersion, sessionId: fresh.captainSessionId, workspace,
+              occurrence: createHash('sha256').update(`${occurrence}:${skill.packId}:${skill.skillId}`).digest('hex') }))
+            if (skill.packId !== 'dsh-expert-library') customerEvents.push(recordCustomerUsage({ kind: 'pack',
+              id: skill.packId, version: skill.packVersion, sessionId: fresh.captainSessionId, workspace,
+              occurrence: createHash('sha256').update(`${occurrence}:${skill.packId}`).digest('hex') }))
+          }
+        }
+        await Promise.allSettled(customerEvents)
         appendTeamEvent(ctx, captainSessionOf(ctx, fresh.captainSessionId, caller.session), 'expert-teams/task-updated', {
           teamId: fresh.id,
           taskId: task.id,

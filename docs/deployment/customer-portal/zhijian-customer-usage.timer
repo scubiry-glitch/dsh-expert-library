@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily C account usage ranking screenshot
+
+[Timer]
+OnCalendar=*-*-* 09:00:00 Asia/Shanghai
+Persistent=true
+AccuracySec=1min
+Unit=zhijian-customer-usage.service
+
+[Install]
+WantedBy=timers.target

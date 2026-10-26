@@ -27,6 +27,8 @@ for (const name of await readdir(portraits)) if (/^[a-z0-9-]+\.webp$/i.test(name
 const versionedAssets = new Map([
   ['/assets/style.css', 'style.css'],
   ['/assets/app.js', 'app.js'],
+  ['/assets/manage.css', 'manage.css'],
+  ['/assets/manage.js', 'manage.js'],
   ['/assets/marked.umd.js', 'assets/marked.umd.js'],
   ['/assets/purify.min.js', 'assets/purify.min.js'],
 ])
@@ -38,5 +40,9 @@ for (const [path, file] of versionedAssets) {
 const indexPath = fileURLToPath(new URL('../dist/index.html', import.meta.url))
 const index = await readFile(indexPath, 'utf8')
 await writeFile(indexPath, index.replace(/((?:src|href)=")(\/assets\/[a-z0-9.-]+)(")/gi,
+  (match, prefix, path, suffix) => versions.has(path) ? `${prefix}${path}?v=${versions.get(path)}${suffix}` : match))
+const managePath = fileURLToPath(new URL('../dist/manage.html', import.meta.url))
+const manage = await readFile(managePath, 'utf8')
+await writeFile(managePath, manage.replace(/((?:src|href)=")(\/assets\/[a-z0-9.-]+)(")/gi,
   (match, prefix, path, suffix) => versions.has(path) ? `${prefix}${path}?v=${versions.get(path)}${suffix}` : match))
 process.stdout.write(`Built ${appRoot}dist\n`)

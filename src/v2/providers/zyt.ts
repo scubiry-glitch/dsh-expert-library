@@ -58,6 +58,7 @@ const VALUE_FLAGS: Readonly<Record<string, string>> = {
   '--code': 'code', '--指标': 'code',
   '--cities': 'cities', '--城市列表': 'cities',
   '--period': 'period', '--月份': 'period',
+  '--ym': 'ym', '--年月': 'ym',
   '--period-end': 'periodEnd', '--截止月': 'periodEnd',
   '--limit': 'limit', '--期数': 'limit',
   '--granularity': 'granularity', '--粒度': 'granularity',
@@ -175,6 +176,13 @@ function requireCity(opts: Record<string, string>): string {
   const city = opts['city']
   if (!city) throw new Error('缺少必填参数 city/城市')
   return city
+}
+
+function requireYm(opts: Record<string, string>): string {
+  const ym = opts['ym']
+  if (!ym) throw new Error('缺少必填参数 ym/年月（格式 YYYYMM）')
+  if (!/^\d{4}(0[1-9]|1[0-2])$/.test(ym)) throw new Error('ym/年月格式错误，应为 YYYYMM（如 202609）')
+  return ym
 }
 
 function requireKey(opts: Record<string, string>, key: string, label: string): string {
@@ -315,6 +323,45 @@ function marketPlan(opts: Record<string, string>): ZytRequestPlan {
   }
 }
 
+function cityReportPlan(sub: string | undefined, opts: Record<string, string>): ZytRequestPlan {
+  const routes: Readonly<Record<string, readonly [string, string]>> = {
+    city: ['城市专报城市级', 'city'], 城市级: ['城市专报城市级', 'city'],
+    area: ['城市专报面积结构', 'area'], 面积: ['城市专报面积结构', 'area'],
+    district: ['城市专报城区级', 'district'], 城区: ['城市专报城区级', 'district'],
+    'total-price': ['城市专报总价结构', 'total-price'], 总价: ['城市专报总价结构', 'total-price'],
+  }
+  const route = routes[sub ?? '']
+  if (!route) throw new Error(`未知城市专报子命令: ${sub}（可选：city/area/district/total-price）`)
+  return {
+    command: route[0], method: 'GET', path: `/openapi/v1/city-report2026/${route[1]}`,
+    query: queryOf([
+      ['city', requireCity(opts)], ['ym', requireYm(opts)],
+      ...(route[1] === 'district' ? [['district', opts['district']] as const] : []),
+    ]),
+    body: null,
+  }
+}
+
+function creisPlan(sub: string | undefined, opts: Record<string, string>): ZytRequestPlan {
+  const routes: Readonly<Record<string, readonly [string, string]>> = {
+    'land-market': ['中指土地统计', 'land-market'], 土地统计: ['中指土地统计', 'land-market'],
+    'land-transaction': ['中指土地明细', 'land-transaction'], 土地明细: ['中指土地明细', 'land-transaction'],
+    'new-home-market': ['中指新房统计', 'new-home-market'], 新房统计: ['中指新房统计', 'new-home-market'],
+    'new-home-project': ['中指新房项目', 'new-home-project'], 新房项目: ['中指新房项目', 'new-home-project'],
+    'resale-market': ['中指二手统计', 'resale-market'], 二手统计: ['中指二手统计', 'resale-market'],
+  }
+  const route = routes[sub ?? '']
+  if (!route) throw new Error(`未知中指子命令: ${sub}（可选：land-market/land-transaction/new-home-market/new-home-project/resale-market）`)
+  return {
+    command: route[0], method: 'GET', path: `/openapi/v1/creis/${route[1]}`,
+    query: queryOf([
+      ['city', requireCity(opts)],
+      ...(route[1] === 'land-transaction' ? [] : [['ym', requireYm(opts)] as const]),
+    ]),
+    body: null,
+  }
+}
+
 function reportDetailPlan(id: string | undefined): ZytRequestPlan {
   if (!id) throw new Error('缺少报告 id')
   return { command: '报告详情', method: 'GET', path: `/openapi/v1/reports/${quotePathSegment(id)}`, query: {}, body: null }
@@ -357,6 +404,12 @@ export function buildZytRequestPlan(argv: readonly string[]): ZytRequestPlan {
   }
   if (t0 === 'market-snapshot' || t0 === '市场快照') {
     return marketPlan(opts)
+  }
+  if (t0 === 'city-report2026' || t0 === '城市专报') {
+    return cityReportPlan(t1, opts)
+  }
+  if (t0 === 'creis' || t0 === '中指') {
+    return creisPlan(t1, opts)
   }
 
   switch (t0) {
@@ -441,6 +494,15 @@ export const ZYT_OPERATION_COMMANDS: Readonly<Record<string, string>> = {
   'zyt.reports.list': '报告列表',
   'zyt.policies.list': '政策列表',
   'zyt.market-snapshot': '市场快照',
+  'zyt.city-report2026.city': '城市专报城市级',
+  'zyt.city-report2026.area': '城市专报面积结构',
+  'zyt.city-report2026.district': '城市专报城区级',
+  'zyt.city-report2026.total-price': '城市专报总价结构',
+  'zyt.creis.land-market': '中指土地统计',
+  'zyt.creis.land-transaction': '中指土地明细',
+  'zyt.creis.new-home-market': '中指新房统计',
+  'zyt.creis.new-home-project': '中指新房项目',
+  'zyt.creis.resale-market': '中指二手统计',
 }
 
 function stringOf(value: unknown): string | undefined {
@@ -490,6 +552,24 @@ export function zytPlanFromOperation(operation: string, input: unknown): ZytRequ
       return { command: '政策列表', method: 'GET', path: '/openapi/v1/policies', query: queryOf([['city', opts['city']], ['category', opts['category']]]), body: null }
     case '市场快照':
       return marketPlan(opts)
+    case '城市专报城市级':
+      return cityReportPlan('city', opts)
+    case '城市专报面积结构':
+      return cityReportPlan('area', opts)
+    case '城市专报城区级':
+      return cityReportPlan('district', opts)
+    case '城市专报总价结构':
+      return cityReportPlan('total-price', opts)
+    case '中指土地统计':
+      return creisPlan('land-market', opts)
+    case '中指土地明细':
+      return creisPlan('land-transaction', opts)
+    case '中指新房统计':
+      return creisPlan('new-home-market', opts)
+    case '中指新房项目':
+      return creisPlan('new-home-project', opts)
+    case '中指二手统计':
+      return creisPlan('resale-market', opts)
     default:
       // unreachable: command always comes from ZYT_OPERATION_COMMANDS
       throw new Error(`unknown zyt operation: ${operation}`)
@@ -503,6 +583,7 @@ export function zytPlanFromOperation(operation: string, input: unknown): ZytRequ
 const QUERY_TO_FLAG: Readonly<Record<string, string>> = {
   city: '--city', code: '--code', cities: '--cities', period: '--period',
   periodEnd: '--period-end', limit: '--limit', granularity: '--granularity',
+  ym: '--ym',
   district: '--district', bizcircle: '--bizcircle', community: '--community',
   caliber: '--caliber', geoId: '--geo-id', q: '--q', category: '--category',
   queries: '--queries',
@@ -515,7 +596,14 @@ const QUERY_TO_FLAG: Readonly<Record<string, string>> = {
  */
 export function zytCliArgvFromPlan(plan: ZytRequestPlan): string[] {
   if (plan.local === true) return []
-  const argv = [plan.command]
+  const compoundCommands: Readonly<Record<string, readonly [string, string]>> = {
+    城市专报城市级: ['城市专报', '城市级'], 城市专报面积结构: ['城市专报', '面积'],
+    城市专报城区级: ['城市专报', '城区'], 城市专报总价结构: ['城市专报', '总价'],
+    中指土地统计: ['中指', '土地统计'], 中指土地明细: ['中指', '土地明细'],
+    中指新房统计: ['中指', '新房统计'], 中指新房项目: ['中指', '新房项目'],
+    中指二手统计: ['中指', '二手统计'],
+  }
+  const argv = [...(compoundCommands[plan.command] ?? [plan.command])]
   if (plan.command === '批量时序' && isRecord(plan.body)) {
     const body = plan.body as Record<string, unknown>
     if (typeof body['city'] === 'string') argv.push('--city', body['city'])
@@ -588,6 +676,15 @@ const ZYT_CAPABILITIES: ReadonlyArray<{ readonly capability: string; readonly op
   { capability: 'realestate.reports.search', operation: 'zyt.reports.list', freshness: 'monthly' },
   { capability: 'realestate.policies.search', operation: 'zyt.policies.list', freshness: 'daily' },
   { capability: 'realestate.market.snapshot', operation: 'zyt.market-snapshot', freshness: 'monthly' },
+  { capability: 'realestate.city-report2026.city', operation: 'zyt.city-report2026.city', freshness: 'monthly' },
+  { capability: 'realestate.city-report2026.area', operation: 'zyt.city-report2026.area', freshness: 'monthly' },
+  { capability: 'realestate.city-report2026.district', operation: 'zyt.city-report2026.district', freshness: 'monthly' },
+  { capability: 'realestate.city-report2026.total-price', operation: 'zyt.city-report2026.total-price', freshness: 'monthly' },
+  { capability: 'realestate.creis.land-market', operation: 'zyt.creis.land-market', freshness: 'monthly' },
+  { capability: 'realestate.creis.land-transaction', operation: 'zyt.creis.land-transaction', freshness: 'monthly' },
+  { capability: 'realestate.creis.new-home-market', operation: 'zyt.creis.new-home-market', freshness: 'monthly' },
+  { capability: 'realestate.creis.new-home-project', operation: 'zyt.creis.new-home-project', freshness: 'monthly' },
+  { capability: 'realestate.creis.resale-market', operation: 'zyt.creis.resale-market', freshness: 'monthly' },
 ]
 
 /**

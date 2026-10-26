@@ -6,6 +6,7 @@ import { AccountStore } from './account-store.mjs'
 import { resolveAccountBackend } from './backend-routing.mjs'
 import { readConfig } from './config.mjs'
 import { createDshGateway } from './dsh-gateway.mjs'
+import { createCapabilityManagement } from './capability-management.mjs'
 import { createLoginAttempts } from './login-attempts.mjs'
 import { createModelUsageClient } from './model-usage.mjs'
 import { createOidcClient } from './oidc-client.mjs'
@@ -24,7 +25,13 @@ const assets = new Map([
   ['/app', ['index.html', 'text/html; charset=utf-8']],
   ['/share', ['index.html', 'text/html; charset=utf-8']],
   ['/preview', ['index.html', 'text/html; charset=utf-8']],
+  ['/manage', ['manage.html', 'text/html; charset=utf-8']],
+  ['/demo/loading', ['loader-demo.html', 'text/html; charset=utf-8']],
+  ['/demo/loading.css', ['loader-demo.css', 'text/css; charset=utf-8']],
+  ['/demo/loading.js', ['loader-demo.js', 'text/javascript; charset=utf-8']],
   ['/assets/app.js', ['app.js', 'text/javascript; charset=utf-8']],
+  ['/assets/manage.js', ['manage.js', 'text/javascript; charset=utf-8']],
+  ['/assets/manage.css', ['manage.css', 'text/css; charset=utf-8']],
   ['/assets/style.css', ['style.css', 'text/css; charset=utf-8']],
   ['/assets/marked.umd.js', ['assets/marked.umd.js', 'text/javascript; charset=utf-8']],
   ['/assets/purify.min.js', ['assets/purify.min.js', 'text/javascript; charset=utf-8']],
@@ -51,6 +58,8 @@ const sessionCookie = (token, age) => `__Host-zhijian-session=${token}; Path=/; 
 const attemptCookie = (token, age) => `__Host-zhijian-login=${token}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${age}`
 const csrfCookie = (token, age) => `__Host-zhijian-csrf=${token}; Path=/; Secure; SameSite=Strict; Max-Age=${age}`
 const SESSION_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/messages$/i
+const ATTACHMENT_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/attachments$/i
+const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
 const DATA_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/datasets(?:\/(\d{13}-[0-9a-f-]{36}))?$/i
 const WORKSPACE_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace$/i
 const WORKSPACE_MODELS_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/models$/i
@@ -60,6 +69,7 @@ const WORKSPACE_DOCUMENT_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/d
 const QUESTION_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/question$/i
 const APPROVAL_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/approval$/i
 const SESSION_METADATA_PATH = /^\/api\/sessions\/([0-9a-f-]{36})$/i
+const SESSION_GROUP_PATH = /^\/api\/session-groups\/([0-9a-f-]{36})$/i
 const SESSION_SHARES_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/shares$/i
 const SHARE_PATH = /^\/api\/shares\/([0-9a-f-]{36})$/i
 const RESIDENTIAL_V2_FILE_PATH = /^\/api\/residential-v2\/files\/(rv2-[0-9a-f]{24})\/((?:price_full|price_external|rent_full|rent_external)-[0-9a-f]{12})$/
@@ -87,7 +97,8 @@ async function precedingConversation(gateway, runtime, sessionId, firstSeq, firs
 function decorateSession(store, principal, session) {
   const preference = store.sessionPreference(principal, session.id)
   return { ...session, title: preference?.titleOverride ?? session.title,
-    pinned: !!preference?.pinned, favorite: !!preference?.favorite, archived: !!preference?.archived }
+    pinned: !!preference?.pinned, favorite: !!preference?.favorite, archived: !!preference?.archived,
+    groupId: preference?.groupId ?? null }
 }
 
 function sortSessions(sessions) {
@@ -115,6 +126,7 @@ export function createPortalServer(config, services = {}) {
   const authReady = !!(store && oidc)
   const phase = authReady ? (config.researchEnabledBackends?.length ? 'S1-research' : 'S1-auth') : 'S0'
   const gateway = services.gateway ?? createDshGateway(config)
+  const capabilityManagement = services.capabilityManagement ?? createCapabilityManagement(config)
   const usage = services.usage ?? createModelUsageClient(config)
   const preview = services.preview ?? createCustomerPreview()
   const historicalPreviews = services.historicalPreviews ?? createCustomerHistoricalPreviews()
@@ -260,6 +272,63 @@ export function createPortalServer(config, services = {}) {
       try { return json(res, 200, { accountName: principal.slug, ...(await usage(runtime.backendRef)) }) }
       catch { return json(res, 503, { error: 'USAGE_UNAVAILABLE' }) }
     }
+    if (pathname === '/api/capabilities/settings' || pathname.startsWith('/api/capabilities/')) {
+      if (req.headers.authorization) return json(res, 403, { error: 'SHARE_SCOPE_DENIED' })
+      const principal = authReady ? store.resolveBrowserSession(cookieValue(req, '__Host-zhijian-session')) : undefined
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      if (principal.role !== 'admin') return json(res, 403, { error: 'ADMIN_REQUIRED' })
+      if (!['GET', 'PUT', 'POST', 'DELETE'].includes(req.method ?? '')) return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+      if (req.method !== 'GET' && !canWrite(req, principal)) return json(res, 403, { error: 'CSRF_INVALID' })
+      let runtime
+      try { runtime = resolveAccountBackend(principal, config) } catch { return json(res, 503, { error: 'CAPABILITY_BACKEND_UNAVAILABLE' }) }
+      const name = pathname.slice('/api/capabilities/'.length)
+      if (name === 'settings') {
+        if (req.method === 'GET') {
+          try { return json(res, 200, await gateway.adminSettings(runtime)) }
+          catch { return json(res, 503, { error: 'SETTINGS_UNAVAILABLE' }) }
+        }
+        if (req.method !== 'PUT') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+        const body = await readJson(req, 32_000)
+        if (!body || !Number.isSafeInteger(body.revision) || typeof body.section !== 'string'
+          || !body.value || typeof body.value !== 'object' || Array.isArray(body.value)) return json(res, 400, { error: 'INVALID_SETTINGS' })
+        try { return json(res, 200, await gateway.updateAdminSettings(runtime, body)) }
+        catch (error) { return json(res, error?.status === 409 ? 409 : 400, { error: error?.status === 409 ? 'SETTINGS_CONFLICT' : 'INVALID_SETTINGS' }) }
+      }
+      if (name === 'models') {
+        if (req.method !== 'GET') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+        try { return json(res, 200, await gateway.adminModels(runtime)) }
+        catch { return json(res, 503, { error: 'MODELS_UNAVAILABLE' }) }
+      }
+      if (name === 'usage') {
+        if (req.method !== 'GET') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+        const url = new URL(req.url, config.publicOrigin)
+        const days = url.searchParams.get('days') ?? '7'
+        if (url.searchParams.size > 1 || !['7', '30'].includes(days)) return json(res, 400, { error: 'INVALID_RANGE' })
+        try { return json(res, 200, await gateway.adminUsage(runtime, Number(days))) }
+        catch { return json(res, 503, { error: 'USAGE_UNAVAILABLE' }) }
+      }
+      if (name === 'skills-install') {
+        if (req.method !== 'POST') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+        const body = await readJson(req, 22_400_000)
+        if (!body || typeof body.id !== 'string' || typeof body.data !== 'string'
+          || Object.keys(body).some(key => !['id', 'data'].includes(key))) return json(res, 400, { error: 'INVALID_SKILL' })
+        try { const result = await capabilityManagement.uploadSkill(runtime, body.id, body.data)
+          return json(res, result.status, result.data) }
+        catch { return json(res, 400, { error: 'INVALID_SKILL' }) }
+      }
+      if (req.method === 'GET' ? !capabilityManagement.readable(name) : !capabilityManagement.writable(name, req.method))
+        return json(res, 404, { error: 'CAPABILITY_ROUTE_UNKNOWN' })
+      const url = new URL(req.url, config.publicOrigin)
+      const id = req.method === 'DELETE' || name === 'pack-preview' ? url.searchParams.get('id') : undefined
+      if ((req.method === 'DELETE' || name === 'pack-preview') && (!id || url.searchParams.size !== 1))
+        return json(res, 400, { error: 'CAPABILITY_INVALID_ID' })
+      const body = req.method === 'GET' || req.method === 'DELETE' ? undefined : await readJson(req, 64_000)
+      if (req.method !== 'GET' && req.method !== 'DELETE' && !body) return json(res, 400, { error: 'CAPABILITY_INVALID_BODY' })
+      try {
+        const result = await capabilityManagement.call(runtime, req.method, name, body, id)
+        return json(res, result.status, result.data)
+      } catch { return json(res, 503, { error: 'CAPABILITY_UNAVAILABLE' }) }
+    }
     if (pathname === '/api/auth/start') {
       if (req.method !== 'GET') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
       if (!authReady) return json(res, 503, { error: 'LOGIN_UNAVAILABLE' })
@@ -348,7 +417,8 @@ export function createPortalServer(config, services = {}) {
         const availablePreviews = await Promise.all(previews.map(async item =>
           item.visible(principal) && await item.available() ? item.session : null))
         const sessions = [...store.listResearchSessions(principal), ...availablePreviews.filter(Boolean)]
-        return json(res, 200, { sessions: sortSessions(sessions.map(session => decorateSession(store, principal, session))) })
+        return json(res, 200, { sessions: sortSessions(sessions.map(session => decorateSession(store, principal, session))),
+          groups: store.listSessionGroups(principal) })
       }
       if (req.method !== 'POST') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
       if (principal.shareId) return json(res, 403, { error: 'SHARE_SCOPE_DENIED' })
@@ -367,6 +437,35 @@ export function createPortalServer(config, services = {}) {
         return json(res, 201, { session: { id: row.id, title: row.title, createdAt: row.created_at } })
       } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
     }
+    if (pathname === '/api/session-groups' || SESSION_GROUP_PATH.test(pathname)) {
+      if (req.headers.authorization) return json(res, 403, { error: 'SHARE_SCOPE_DENIED' })
+      const token = cookieValue(req, '__Host-zhijian-session')
+      const principal = authReady ? store.resolveBrowserSession(token) : undefined
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      if (req.headers.origin !== config.publicOrigin || !store.verifyCsrf(token, req.headers['x-csrf-token']))
+        return json(res, 403, { error: 'CSRF_INVALID' })
+      const groupId = pathname.match(SESSION_GROUP_PATH)?.[1]
+      if (!groupId && req.method !== 'POST' || groupId && !['PATCH', 'DELETE'].includes(req.method))
+        return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+      if (req.method === 'DELETE') {
+        if (!store.deleteSessionGroup(principal, groupId)) return json(res, 404, { error: 'GROUP_NOT_FOUND' })
+        return json(res, 200, { deleted: true })
+      }
+      const body = await readJson(req, 1_000)
+      const name = typeof body?.name === 'string' ? body.name.trim() : ''
+      if (!name || name.length > 40 || /[\u0000-\u001f\u007f]/.test(name))
+        return json(res, 400, { error: 'INVALID_GROUP_NAME' })
+      try {
+        if (groupId) {
+          if (!store.renameSessionGroup(principal, groupId, name)) return json(res, 404, { error: 'GROUP_NOT_FOUND' })
+          return json(res, 200, { group: { id: groupId, name } })
+        }
+        return json(res, 201, { group: store.createSessionGroup(principal, name) })
+      } catch (error) {
+        if (String(error).includes('UNIQUE constraint failed')) return json(res, 409, { error: 'GROUP_NAME_EXISTS' })
+        throw error
+      }
+    }
     const metadataMatch = pathname.match(SESSION_METADATA_PATH)
     if (metadataMatch) {
       if (req.method !== 'PATCH') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
@@ -383,14 +482,18 @@ export function createPortalServer(config, services = {}) {
         : previewItem && await previewItem.available() ? previewItem.session : undefined
       if (!session) return json(res, 404, { error: 'SESSION_NOT_FOUND' })
       const changes = await readJson(req, 2_000)
-      if (!changes || !Object.keys(changes).length || Object.keys(changes).some(key => !['title', 'pinned', 'favorite', 'archived'].includes(key))
+      if (!changes || !Object.keys(changes).length || Object.keys(changes).some(key => !['title', 'pinned', 'favorite', 'archived', 'groupId'].includes(key))
         || (Object.hasOwn(changes, 'title') && (typeof changes.title !== 'string'
           || !changes.title.trim() || changes.title.trim().length > 100 || /[\u0000-\u001f\u007f]/.test(changes.title)))
         || (Object.hasOwn(changes, 'pinned') && typeof changes.pinned !== 'boolean')
         || (Object.hasOwn(changes, 'favorite') && typeof changes.favorite !== 'boolean')
-        || (Object.hasOwn(changes, 'archived') && typeof changes.archived !== 'boolean'))
+        || (Object.hasOwn(changes, 'archived') && typeof changes.archived !== 'boolean')
+        || (Object.hasOwn(changes, 'groupId') && changes.groupId !== null &&
+          (typeof changes.groupId !== 'string' || !/^[0-9a-f-]{36}$/i.test(changes.groupId))))
         return json(res, 400, { error: 'INVALID_SESSION_METADATA' })
       if (Object.hasOwn(changes, 'title')) changes.title = changes.title.trim()
+      if (changes.groupId && !store.listSessionGroups(principal).some(group => group.id === changes.groupId))
+        return json(res, 400, { error: 'GROUP_NOT_FOUND' })
       store.updateSessionPreference(principal, id, changes)
       return json(res, 200, { session: decorateSession(store, principal, session) })
     }
@@ -671,6 +774,31 @@ export function createPortalServer(config, services = {}) {
       return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
     }
     const conversationMatch = SESSION_PATH.exec(pathname)
+    const attachmentMatch = ATTACHMENT_PATH.exec(pathname)
+    if (attachmentMatch) {
+      if (req.method !== 'POST' && req.method !== 'DELETE') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
+      const principal = requestAccess(req)
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      const row = accessibleSession(principal, attachmentMatch[1])
+      if (!row?.dsh_session_id) return json(res, 404, { error: 'SESSION_NOT_FOUND' })
+      if (!canWrite(req, principal)) return json(res, 403, { error: principal.shareId ? 'READ_ONLY_SHARE' : 'CSRF_INVALID' })
+      let runtime
+      try { runtime = resolveAccountBackend(principal, config) } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
+      if (req.method === 'DELETE') {
+        const body = await readJson(req, 1024)
+        if (!body || Object.keys(body).some(key => key !== 'path') || typeof body.path !== 'string')
+          return json(res, 400, { error: 'INVALID_ATTACHMENT' })
+        try { return json(res, 200, await gateway.removeAttachment(runtime, row.dsh_session_id, body.path)) }
+        catch (error) { return json(res, error?.status === 404 ? 404 : 503,
+          { error: error?.status === 404 ? 'ATTACHMENT_NOT_FOUND' : 'ATTACHMENT_UNAVAILABLE' }) }
+      }
+      const body = await readJson(req, Math.ceil(MAX_ATTACHMENT_BYTES / 3) * 4 + 1024)
+      if (!body || Object.keys(body).some(key => !['name', 'data'].includes(key))
+        || typeof body.name !== 'string' || typeof body.data !== 'string') return json(res, 400, { error: 'INVALID_ATTACHMENT' })
+      try { return json(res, 201, await gateway.uploadAttachment(runtime, row.dsh_session_id, body.name, body.data)) }
+      catch (error) { return json(res, error?.status === 400 ? 400 : 503,
+        { error: error?.status === 400 ? 'INVALID_ATTACHMENT' : 'ATTACHMENT_UNAVAILABLE' }) }
+    }
     if (conversationMatch) {
       const principal = requestAccess(req)
       if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
@@ -771,7 +899,7 @@ export function createPortalServer(config, services = {}) {
       const hash = createHash('sha256').update(data).digest('hex')
       const etag = `"${hash}"`
       const version = new URL(req.url, config.publicOrigin).searchParams.get('v')
-      const staticAsset = pathname.startsWith('/assets/') || pathname === '/favicon.ico'
+      const staticAsset = pathname.startsWith('/assets/') || pathname === '/favicon.ico' || pathname === '/demo/loading.css' || pathname === '/demo/loading.js'
       const cacheControl = !staticAsset ? 'no-store' : version === hash.slice(0, 12)
         ? 'public, max-age=31536000, immutable' : 'public, no-cache'
       const headers = { ...baseHeaders, 'cache-control': cacheControl, etag, 'content-type': item[1] }

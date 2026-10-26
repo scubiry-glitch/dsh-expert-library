@@ -48,6 +48,12 @@ export class AccountStore {
         created_at INTEGER NOT NULL, UNIQUE(account_id,request_id)
       );
       CREATE INDEX IF NOT EXISTS sessions_by_account ON research_sessions(account_id,created_at DESC);
+      CREATE TABLE IF NOT EXISTS session_groups (
+        id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id),
+        name TEXT NOT NULL, created_at INTEGER NOT NULL,
+        UNIQUE(account_id,name)
+      );
+      CREATE INDEX IF NOT EXISTS session_groups_by_account ON session_groups(account_id,created_at);
       CREATE TABLE IF NOT EXISTS session_preferences (
         account_id TEXT NOT NULL REFERENCES accounts(id), session_id TEXT NOT NULL,
         title_override TEXT, pinned INTEGER NOT NULL DEFAULT 0 CHECK(pinned IN (0,1)),
@@ -68,6 +74,8 @@ export class AccountStore {
     `)
     if (!this.db.prepare('PRAGMA table_info(session_preferences)').all().some(column => column.name === 'archived'))
       this.db.exec('ALTER TABLE session_preferences ADD COLUMN archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0,1))')
+    if (!this.db.prepare('PRAGMA table_info(session_preferences)').all().some(column => column.name === 'group_id'))
+      this.db.exec('ALTER TABLE session_preferences ADD COLUMN group_id TEXT')
   }
 
   close() { this.db.close() }
@@ -205,21 +213,59 @@ export class AccountStore {
 
   sessionPreference(principal, id) {
     if (!this.resolveMember(principal)) return undefined
-    return this.db.prepare('SELECT title_override AS titleOverride,pinned,favorite,archived FROM session_preferences WHERE account_id=? AND session_id=?')
+    return this.db.prepare('SELECT title_override AS titleOverride,pinned,favorite,archived,group_id AS groupId FROM session_preferences WHERE account_id=? AND session_id=?')
       .get(principal.accountId, id)
+  }
+
+  listSessionGroups(principal) {
+    if (!this.resolveMember(principal)) return []
+    return this.db.prepare('SELECT id,name FROM session_groups WHERE account_id=? ORDER BY created_at,id').all(principal.accountId)
+  }
+
+  createSessionGroup(principal, name) {
+    if (!this.resolveMember(principal)) throw new Error('account unavailable')
+    const id = randomUUID()
+    this.db.prepare('INSERT INTO session_groups(id,account_id,name,created_at) VALUES (?,?,?,?)')
+      .run(id, principal.accountId, name, Date.now())
+    return { id, name }
+  }
+
+  renameSessionGroup(principal, id, name) {
+    if (!this.resolveMember(principal)) throw new Error('account unavailable')
+    const result = this.db.prepare('UPDATE session_groups SET name=? WHERE id=? AND account_id=?')
+      .run(name, id, principal.accountId)
+    return result.changes > 0
+  }
+
+  deleteSessionGroup(principal, id) {
+    if (!this.resolveMember(principal)) throw new Error('account unavailable')
+    const group = this.db.prepare('SELECT id FROM session_groups WHERE id=? AND account_id=?').get(id, principal.accountId)
+    if (!group) return false
+    this.db.exec('BEGIN')
+    try {
+      this.db.prepare('UPDATE session_preferences SET group_id=NULL WHERE account_id=? AND group_id=?')
+        .run(principal.accountId, id)
+      this.db.prepare('DELETE FROM session_groups WHERE id=? AND account_id=?').run(id, principal.accountId)
+      this.db.exec('COMMIT')
+      return true
+    } catch (error) { this.db.exec('ROLLBACK'); throw error }
   }
 
   updateSessionPreference(principal, id, changes) {
     if (!this.resolveMember(principal)) throw new Error('account unavailable')
-    const previous = this.sessionPreference(principal, id) ?? { titleOverride: null, pinned: 0, favorite: 0, archived: 0 }
+    const previous = this.sessionPreference(principal, id) ?? { titleOverride: null, pinned: 0, favorite: 0, archived: 0, groupId: null }
     const title = Object.hasOwn(changes, 'title') ? changes.title : previous.titleOverride
     const pinned = Object.hasOwn(changes, 'pinned') ? Number(changes.pinned) : previous.pinned
     const favorite = Object.hasOwn(changes, 'favorite') ? Number(changes.favorite) : previous.favorite
     const archived = Object.hasOwn(changes, 'archived') ? Number(changes.archived) : previous.archived
-    this.db.prepare(`INSERT INTO session_preferences(account_id,session_id,title_override,pinned,favorite,archived) VALUES (?,?,?,?,?,?)
+    const groupId = Object.hasOwn(changes, 'groupId') ? changes.groupId : previous.groupId
+    if (groupId !== null && !this.db.prepare('SELECT id FROM session_groups WHERE id=? AND account_id=?').get(groupId, principal.accountId))
+      throw new Error('group unavailable')
+    this.db.prepare(`INSERT INTO session_preferences(account_id,session_id,title_override,pinned,favorite,archived,group_id) VALUES (?,?,?,?,?,?,?)
       ON CONFLICT(account_id,session_id) DO UPDATE SET title_override=excluded.title_override,
-      pinned=excluded.pinned,favorite=excluded.favorite,archived=excluded.archived`).run(principal.accountId, id, title, pinned, favorite, archived)
-    return { titleOverride: title, pinned: !!pinned, favorite: !!favorite, archived: !!archived }
+      pinned=excluded.pinned,favorite=excluded.favorite,archived=excluded.archived,group_id=excluded.group_id`)
+      .run(principal.accountId, id, title, pinned, favorite, archived, groupId)
+    return { titleOverride: title, pinned: !!pinned, favorite: !!favorite, archived: !!archived, groupId }
   }
 
   createShareLink(principal, sessionId, { permission = 'read', days = 7, preview = false } = {}) {

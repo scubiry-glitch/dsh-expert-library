@@ -71,3 +71,29 @@ test('runtime provisioning is atomic and prevents two customers sharing a backen
       { dshBackends: { default: 'http://127.0.0.1:3080' } }))
   } finally { store.close() }
 })
+
+test('session groups are account scoped and deleting a group keeps its sessions', () => {
+  const store = new AccountStore()
+  try {
+    const a = store.provisionAccount({ slug: 'group-a' })
+    const b = store.provisionAccount({ slug: 'group-b' })
+    store.provisionMember({ accountId: a, issuer: 'https://issuer.test', subject: 'a', displayName: 'A' })
+    store.provisionMember({ accountId: b, issuer: 'https://issuer.test', subject: 'b', displayName: 'B' })
+    const principalA = store.issueBrowserSession({ issuer: 'https://issuer.test', subject: 'a', accountId: a }).principal
+    const principalB = store.issueBrowserSession({ issuer: 'https://issuer.test', subject: 'b', accountId: b }).principal
+    const session = store.createResearchSession({ principal: principalA, requestId: 'group-session' })
+    store.bindDshSession(principalA, session.id, 'dsh-group-session')
+    const group = store.createSessionGroup(principalA, '市场研究')
+    assert.deepEqual(store.listSessionGroups(principalB), [])
+    assert.equal(store.renameSessionGroup(principalB, group.id, '越权'), false)
+    assert.throws(() => store.updateSessionPreference(principalA, session.id, { groupId: 'not-a-group' }))
+    store.updateSessionPreference(principalA, session.id, { groupId: group.id })
+    assert.equal(store.sessionPreference(principalA, session.id).groupId, group.id)
+    assert.equal(store.deleteSessionGroup(principalB, group.id), false)
+    assert.equal(store.renameSessionGroup(principalA, group.id, '行业研究'), true)
+    assert.equal(store.listSessionGroups(principalA)[0].name, '行业研究')
+    assert.equal(store.deleteSessionGroup(principalA, group.id), true)
+    assert.equal(store.sessionPreference(principalA, session.id).groupId, null)
+    assert.equal(store.listResearchSessions(principalA).length, 1)
+  } finally { store.close() }
+})

@@ -1,10 +1,9 @@
-import { cp, mkdir, rm } from 'node:fs/promises'
+import { cp, mkdir, readdir, rm } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
 const root = new URL('../', import.meta.url)
 const release = new URL('../release/', import.meta.url)
-const files = ['server.mjs', 'config.mjs', 'model-usage.mjs', 'dsh-backend.mjs', 'dsh-gateway.mjs', 'backend-routing.mjs', 'account-store.mjs', 'session-deliverables.mjs',
-  'login-attempts.mjs', 'oidc-client.mjs', 'osa-service-cards.mjs', 'package.json', 'package-lock.json']
+const files = [...(await readdir(root)).filter(name => name.endsWith('.mjs')), 'package.json', 'package-lock.json']
 
 await rm(release, { recursive: true, force: true })
 await mkdir(release, { recursive: true })
