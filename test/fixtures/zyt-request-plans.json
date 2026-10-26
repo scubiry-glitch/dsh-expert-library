@@ -17,5 +17,18 @@
   { "argv": ["报告详情", "rep-1"], "plan": { "command": "报告详情", "method": "GET", "path": "/openapi/v1/reports/rep-1", "query": {}, "body": null } },
   { "argv": ["政策列表", "--城市", "北京", "--分类", "限购"], "plan": { "command": "政策列表", "method": "GET", "path": "/openapi/v1/policies", "query": { "city": "北京", "category": "限购" }, "body": null } },
   { "argv": ["geo", "search", "--city", "北京", "--q", "望京"], "plan": { "command": "地理搜索", "method": "GET", "path": "/openapi/v1/geo/search", "query": { "city": "北京", "q": "望京" }, "body": null } },
-  { "argv": ["reports", "get", "rep-1"], "plan": { "command": "报告详情", "method": "GET", "path": "/openapi/v1/reports/rep-1", "query": {}, "body": null } }
+  { "argv": ["reports", "get", "rep-1"], "plan": { "command": "报告详情", "method": "GET", "path": "/openapi/v1/reports/rep-1", "query": {}, "body": null } },
+  { "argv": ["城市专报", "城市级", "--城市", "北京", "--年月", "202609"], "plan": { "command": "城市专报城市级", "method": "GET", "path": "/openapi/v1/city-report2026/city", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["city-report2026", "city", "--city", "北京", "--ym", "202609"], "plan": { "command": "城市专报城市级", "method": "GET", "path": "/openapi/v1/city-report2026/city", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["城市专报", "面积", "--城市", "北京", "--年月", "202609"], "plan": { "command": "城市专报面积结构", "method": "GET", "path": "/openapi/v1/city-report2026/area", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["城市专报", "城区", "--城市", "北京", "--年月", "202609", "--城区", "朝阳区"], "plan": { "command": "城市专报城区级", "method": "GET", "path": "/openapi/v1/city-report2026/district", "query": { "city": "北京", "ym": "202609", "district": "朝阳区" }, "body": null } },
+  { "argv": ["city-report2026", "district", "--city", "北京", "--ym", "202609"], "plan": { "command": "城市专报城区级", "method": "GET", "path": "/openapi/v1/city-report2026/district", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["城市专报", "总价", "--城市", "北京", "--年月", "202609"], "plan": { "command": "城市专报总价结构", "method": "GET", "path": "/openapi/v1/city-report2026/total-price", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["中指", "土地统计", "--城市", "北京", "--年月", "202609"], "plan": { "command": "中指土地统计", "method": "GET", "path": "/openapi/v1/creis/land-market", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["creis", "land-market", "--city", "北京", "--ym", "202609"], "plan": { "command": "中指土地统计", "method": "GET", "path": "/openapi/v1/creis/land-market", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["中指", "土地明细", "--城市", "北京"], "plan": { "command": "中指土地明细", "method": "GET", "path": "/openapi/v1/creis/land-transaction", "query": { "city": "北京" }, "body": null } },
+  { "argv": ["creis", "land-transaction", "--city", "北京"], "plan": { "command": "中指土地明细", "method": "GET", "path": "/openapi/v1/creis/land-transaction", "query": { "city": "北京" }, "body": null } },
+  { "argv": ["中指", "新房统计", "--城市", "北京", "--年月", "202609"], "plan": { "command": "中指新房统计", "method": "GET", "path": "/openapi/v1/creis/new-home-market", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["中指", "新房项目", "--城市", "北京", "--年月", "202609"], "plan": { "command": "中指新房项目", "method": "GET", "path": "/openapi/v1/creis/new-home-project", "query": { "city": "北京", "ym": "202609" }, "body": null } },
+  { "argv": ["中指", "二手统计", "--城市", "北京", "--年月", "202609"], "plan": { "command": "中指二手统计", "method": "GET", "path": "/openapi/v1/creis/resale-market", "query": { "city": "北京", "ym": "202609" }, "body": null } }
 ]

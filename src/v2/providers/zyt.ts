@@ -61,11 +61,12 @@ const VALUE_FLAGS: Readonly<Record<string, string>> = {
   '--period-end': 'periodEnd', '--截止月': 'periodEnd',
   '--limit': 'limit', '--期数': 'limit',
   '--granularity': 'granularity', '--粒度': 'granularity',
-  '--district': 'district', '--行政区': 'district',
+  '--district': 'district', '--行政区': 'district', '--城区': 'district',
   '--bizcircle': 'bizcircle', '--商圈': 'bizcircle',
   '--community': 'community', '--小区': 'community',
   '--caliber': 'caliber', '--口径': 'caliber',
   '--geo-id': 'geoId', '--地理编码': 'geoId',
+  '--ym': 'ym', '--年月': 'ym',
   '--q': 'q', '--query': 'q', '--关键词': 'q',
   '--category': 'category', '--分类': 'category',
   '--queries': 'queries', '--查询': 'queries',
@@ -175,6 +176,14 @@ function requireCity(opts: Record<string, string>): string {
   const city = opts['city']
   if (!city) throw new Error('缺少必填参数 city/城市')
   return city
+}
+
+/** 城市专报2026 / 中指 CREIS 的年月：紧凑格式 YYYYMM（如 202609）。 */
+function requireYm(opts: Record<string, string>): string {
+  const ym = opts['ym']
+  if (!ym) throw new Error('缺少必填参数 ym/年月（格式 YYYYMM）')
+  if (!/^\d{4}(0[1-9]|1[0-2])$/.test(ym)) throw new Error('ym/年月格式错误，应为 YYYYMM（如 202609）')
+  return ym
 }
 
 function requireKey(opts: Record<string, string>, key: string, label: string): string {
@@ -352,6 +361,12 @@ export function buildZytRequestPlan(argv: readonly string[]): ZytRequestPlan {
   if (t0 === 'policies' || t0 === '政策列表') {
     return { command: '政策列表', method: 'GET', path: '/openapi/v1/policies', query: queryOf([['city', opts['city']], ['category', opts['category']]]), body: null }
   }
+  if (t0 === 'city-report2026' || t0 === '城市专报') {
+    return cityReportPlan(t1 ?? '', opts)
+  }
+  if (t0 === 'creis' || t0 === '中指') {
+    return creisPlan(t1 ?? '', opts)
+  }
   if (t0 === 'districts' || t0 === '行政区分布') {
     return districtsPlan(opts)
   }
@@ -426,6 +441,57 @@ function reportsPlan(tokens: readonly string[], opts: Record<string, string>): Z
   return reportDetailPlan(sub)
 }
 
+/** 城市专报2026：城市级 / 面积 / 城区 / 总价（city、ym 必填；城区 district 可选）。 */
+function cityReportPlan(sub: string, opts: Record<string, string>): ZytRequestPlan {
+  const cityYm: ReadonlyArray<readonly [string, string | undefined]> = [
+    ['city', requireCity(opts)],
+    ['ym', requireYm(opts)],
+  ]
+  switch (sub) {
+    case 'city':
+    case '城市级':
+      return { command: '城市专报城市级', method: 'GET', path: '/openapi/v1/city-report2026/city', query: queryOf(cityYm), body: null }
+    case 'area':
+    case '面积':
+      return { command: '城市专报面积结构', method: 'GET', path: '/openapi/v1/city-report2026/area', query: queryOf(cityYm), body: null }
+    case 'district':
+    case '城区':
+      return { command: '城市专报城区级', method: 'GET', path: '/openapi/v1/city-report2026/district', query: queryOf([...cityYm, ['district', opts['district']]]), body: null }
+    case 'total-price':
+    case '总价':
+      return { command: '城市专报总价结构', method: 'GET', path: '/openapi/v1/city-report2026/total-price', query: queryOf(cityYm), body: null }
+    default:
+      throw new Error(`未知城市专报子命令: ${sub}（可选：city/area/district/total-price）`)
+  }
+}
+
+/** 中指 CREIS：土地明细仅按 city，其余子命令 city、ym 必填。 */
+function creisPlan(sub: string, opts: Record<string, string>): ZytRequestPlan {
+  if (sub === 'land-transaction' || sub === '土地明细') {
+    return { command: '中指土地明细', method: 'GET', path: '/openapi/v1/creis/land-transaction', query: queryOf([['city', requireCity(opts)]]), body: null }
+  }
+  const cityYm: ReadonlyArray<readonly [string, string | undefined]> = [
+    ['city', requireCity(opts)],
+    ['ym', requireYm(opts)],
+  ]
+  switch (sub) {
+    case 'land-market':
+    case '土地统计':
+      return { command: '中指土地统计', method: 'GET', path: '/openapi/v1/creis/land-market', query: queryOf(cityYm), body: null }
+    case 'new-home-market':
+    case '新房统计':
+      return { command: '中指新房统计', method: 'GET', path: '/openapi/v1/creis/new-home-market', query: queryOf(cityYm), body: null }
+    case 'new-home-project':
+    case '新房项目':
+      return { command: '中指新房项目', method: 'GET', path: '/openapi/v1/creis/new-home-project', query: queryOf(cityYm), body: null }
+    case 'resale-market':
+    case '二手统计':
+      return { command: '中指二手统计', method: 'GET', path: '/openapi/v1/creis/resale-market', query: queryOf(cityYm), body: null }
+    default:
+      throw new Error(`未知中指子命令: ${sub}（可选：land-market/land-transaction/new-home-market/new-home-project/resale-market）`)
+  }
+}
+
 /* ------------------------------------------------------------------ *
  *  Operation → plan (capability input, used by the Host invoker).
  * ------------------------------------------------------------------ */
@@ -441,6 +507,15 @@ export const ZYT_OPERATION_COMMANDS: Readonly<Record<string, string>> = {
   'zyt.reports.list': '报告列表',
   'zyt.policies.list': '政策列表',
   'zyt.market-snapshot': '市场快照',
+  'zyt.city-report2026.city': '城市专报城市级',
+  'zyt.city-report2026.area': '城市专报面积结构',
+  'zyt.city-report2026.district': '城市专报城区级',
+  'zyt.city-report2026.total-price': '城市专报总价结构',
+  'zyt.creis.land-market': '中指土地统计',
+  'zyt.creis.land-transaction': '中指土地明细',
+  'zyt.creis.new-home-market': '中指新房统计',
+  'zyt.creis.new-home-project': '中指新房项目',
+  'zyt.creis.resale-market': '中指二手统计',
 }
 
 function stringOf(value: unknown): string | undefined {
@@ -487,6 +562,24 @@ export function zytPlanFromOperation(operation: string, input: unknown): ZytRequ
       return { command: '政策列表', method: 'GET', path: '/openapi/v1/policies', query: queryOf([['city', opts['city']], ['category', opts['category']]]), body: null }
     case '市场快照':
       return marketPlan(opts)
+    case '城市专报城市级':
+      return cityReportPlan('city', opts)
+    case '城市专报面积结构':
+      return cityReportPlan('area', opts)
+    case '城市专报城区级':
+      return cityReportPlan('district', opts)
+    case '城市专报总价结构':
+      return cityReportPlan('total-price', opts)
+    case '中指土地统计':
+      return creisPlan('land-market', opts)
+    case '中指土地明细':
+      return creisPlan('land-transaction', opts)
+    case '中指新房统计':
+      return creisPlan('new-home-market', opts)
+    case '中指新房项目':
+      return creisPlan('new-home-project', opts)
+    case '中指二手统计':
+      return creisPlan('resale-market', opts)
     default:
       // unreachable: command always comes from ZYT_OPERATION_COMMANDS
       throw new Error(`unknown zyt operation: ${operation}`)
@@ -502,7 +595,7 @@ const QUERY_TO_FLAG: Readonly<Record<string, string>> = {
   periodEnd: '--period-end', limit: '--limit', granularity: '--granularity',
   district: '--district', bizcircle: '--bizcircle', community: '--community',
   caliber: '--caliber', geoId: '--geo-id', q: '--q', category: '--category',
-  queries: '--queries',
+  queries: '--queries', ym: '--ym',
 }
 
 /**
@@ -510,9 +603,26 @@ const QUERY_TO_FLAG: Readonly<Record<string, string>> = {
  * invoker prepends the transport's static `['--json']` args. Local
  * (`配置`) plans are not invocable through the API — they return `[]`.
  */
+/**
+ * Two-level commands whose single `command` label expands to a Chinese
+ * parent + sub token pair on the CLI (e.g. 城市专报城市级 → `城市专报 城市级`).
+ */
+const TWO_LEVEL_COMMAND_ARGV: Readonly<Record<string, readonly string[]>> = {
+  城市专报城市级: ['城市专报', '城市级'],
+  城市专报面积结构: ['城市专报', '面积'],
+  城市专报城区级: ['城市专报', '城区'],
+  城市专报总价结构: ['城市专报', '总价'],
+  中指土地统计: ['中指', '土地统计'],
+  中指土地明细: ['中指', '土地明细'],
+  中指新房统计: ['中指', '新房统计'],
+  中指新房项目: ['中指', '新房项目'],
+  中指二手统计: ['中指', '二手统计'],
+}
+
 export function zytCliArgvFromPlan(plan: ZytRequestPlan): string[] {
   if (plan.local === true) return []
-  const argv = [plan.command]
+  const head = TWO_LEVEL_COMMAND_ARGV[plan.command]
+  const argv: string[] = head !== undefined ? [...head] : [plan.command]
   if (plan.command === '批量时序' && isRecord(plan.body)) {
     const body = plan.body as Record<string, unknown>
     if (typeof body['city'] === 'string') argv.push('--city', body['city'])
@@ -585,6 +695,15 @@ const ZYT_CAPABILITIES: ReadonlyArray<{ readonly capability: string; readonly op
   { capability: 'realestate.reports.search', operation: 'zyt.reports.list', freshness: 'monthly' },
   { capability: 'realestate.policies.search', operation: 'zyt.policies.list', freshness: 'daily' },
   { capability: 'realestate.market.snapshot', operation: 'zyt.market-snapshot', freshness: 'monthly' },
+  { capability: 'realestate.cityreport.city', operation: 'zyt.city-report2026.city', caliber: '城市专报2026 城市级指标；ym 入参为紧凑 YYYYMM（如 202609）', freshness: 'monthly' },
+  { capability: 'realestate.cityreport.area', operation: 'zyt.city-report2026.area', caliber: '城市专报2026 面积段二手成交套数；ym 为 YYYYMM', freshness: 'monthly' },
+  { capability: 'realestate.cityreport.district', operation: 'zyt.city-report2026.district', caliber: '城市专报2026 城区级指标，district 可选；ym 为 YYYYMM', freshness: 'monthly' },
+  { capability: 'realestate.cityreport.total-price', operation: 'zyt.city-report2026.total-price', caliber: '城市专报2026 总价段二手成交套数；ym 为 YYYYMM', freshness: 'monthly' },
+  { capability: 'realestate.creis.land-market', operation: 'zyt.creis.land-market', caliber: '中指 CREIS 土地市场统计；ym 为 YYYYMM，对应表 year_month INT', freshness: 'monthly' },
+  { capability: 'realestate.creis.land-transaction', operation: 'zyt.creis.land-transaction', caliber: '中指 CREIS 土地成交明细，仅按 city 查询（无年月），按成交日期倒序', freshness: 'monthly' },
+  { capability: 'realestate.creis.new-home-market', operation: 'zyt.creis.new-home-market', caliber: '中指 CREIS 新房市场统计；ym 为 YYYYMM', freshness: 'monthly' },
+  { capability: 'realestate.creis.new-home-project', operation: 'zyt.creis.new-home-project', caliber: '中指 CREIS 新房项目成交/上市/可售明细；ym 为 YYYYMM', freshness: 'monthly' },
+  { capability: 'realestate.creis.resale-market', operation: 'zyt.creis.resale-market', caliber: '中指 CREIS 二手房市场统计；ym 为 YYYYMM', freshness: 'monthly' },
 ]
 
 /**
