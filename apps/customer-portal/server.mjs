@@ -13,6 +13,7 @@ import { createOidcClient } from './oidc-client.mjs'
 import { createCustomerPreview } from './c-preview.mjs'
 import { createCustomerHistoricalPreviews } from './c-historical-previews.mjs'
 import { createSessionDeliverables } from './session-deliverables.mjs'
+import { hasTaskReply, taskRequest, taskView } from './session-task-request.mjs'
 import { createResidentialDemoWorkspace } from './residential-demo-workspace.mjs'
 import { readSessionActivity } from './session-activity.mjs'
 import { titleFromUserMessage } from './session-title.mjs'
@@ -62,6 +63,7 @@ const ATTACHMENT_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/attachments$/i
 const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
 const DATA_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/datasets(?:\/(\d{13}-[0-9a-f-]{36}))?$/i
 const WORKSPACE_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace$/i
+const TASKS_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/tasks$/i
 const WORKSPACE_MODELS_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/models$/i
 const CONVERSATION_MODEL_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/model$/i
 const WORKSPACE_ACTION_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/action$/i
@@ -255,7 +257,8 @@ export function createPortalServer(config, services = {}) {
         try { resolveAccountBackend(principal, config); researchReady = true } catch { /* not provisioned */ }
       }
       json(res, 200, { authenticated: !!principal, loginProviders: authReady ? ['developer-center'] : [],
-        phase, researchReady, ...(principal ? { user: {
+        phase, researchReady, taskKinds: principal?.backendRef === 'zhijian-demo-c'
+          ? ['bank-property-value', 'custom'] : ['custom'], ...(principal ? { user: {
           displayName: principal.shareId ? '共享访客' : principal.displayName,
           accountName: principal.slug, role: principal.shareId ? 'guest' : principal.role,
         }, ...(principal.shareId ? { share: { permission: principal.permission, expiresAt: principal.expiresAt } } : {}) } : {}) })
@@ -583,6 +586,54 @@ export function createPortalServer(config, services = {}) {
       }
       return json(res, 404, { error: 'NOT_FOUND' })
     }
+    const tasksMatch = TASKS_PATH.exec(pathname)
+    if (tasksMatch) {
+      if (req.method !== 'GET' && req.method !== 'POST') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+      const principal = requestAccess(req)
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      const row = accessibleSession(principal, tasksMatch[1])
+      if (!row?.dsh_session_id) return json(res, 404, { error: 'SESSION_NOT_FOUND' })
+      let runtime
+      try { runtime = resolveAccountBackend(principal, config) } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
+      if (req.method === 'GET') {
+        try {
+          const rows = store.listSessionTasks(principal, row.id)
+          if (!rows.length) return json(res, 200, { tasks: [] })
+          const [workspace, localDocuments, conversation, activity] = await Promise.all([
+            gateway.workspace(runtime, row.dsh_session_id), deliverables.list(principal.slug, row.id),
+            gateway.conversation(runtime, row.dsh_session_id, -1, true), gateway.activity(runtime, row.dsh_session_id),
+          ])
+          const documents = [...(workspace.documents ?? []), ...localDocuments]
+          const messages = Array.isArray(conversation.messages) ? conversation.messages : []
+          for (const task of rows) if (!task.replySeen && hasTaskReply(task, messages)) {
+            store.markSessionTaskReplied(principal, row.id, task.id)
+            task.replySeen = 1
+          }
+          return json(res, 200, { tasks: rows.map(task => taskView(task, documents, messages, activity.running)) })
+        } catch { return json(res, 503, { error: 'TASKS_UNAVAILABLE' }) }
+      }
+      if (!canWrite(req, principal)) return json(res, 403, { error: principal.shareId ? 'READ_ONLY_SHARE' : 'CSRF_INVALID' })
+      const input = taskRequest(await readJson(req, 8_000))
+      if (!input) return json(res, 400, { error: 'INVALID_TASK' })
+      if (input.kind === 'bank-property-value' && principal.backendRef !== 'zhijian-demo-c')
+        return json(res, 403, { error: 'TASK_CAPABILITY_UNAVAILABLE' })
+      try {
+        const last = await gateway.conversation(runtime, row.dsh_session_id, -1, true)
+        const baselineSeq = Math.max(-1, ...(last.messages ?? []).map(item => Number.isSafeInteger(item.seq) ? item.seq : -1))
+        const task = store.createSessionTask(principal, row.id, { ...input, baselineSeq })
+        if (task.dispatch_state !== 'accepted') {
+          try {
+            const receipt = await gateway.sendMessage(runtime, row.dsh_session_id, task.prompt, task.request_id)
+            if (receipt.accepted !== true) throw new Error('TASK_MESSAGE_NOT_ACCEPTED')
+            store.setSessionTaskDispatch(principal, row.id, task.id, 'accepted')
+          } catch { store.setSessionTaskDispatch(principal, row.id, task.id, 'uncertain')
+            return json(res, 503, { error: 'TASK_DISPATCH_UNCERTAIN', requestId: task.request_id }) }
+        }
+        return json(res, 202, { task: { id: task.id, requestId: task.request_id, kind: task.kind,
+          title: task.title, status: 'running', createdAt: task.created_at } })
+      } catch (error) { return json(res, String(error).includes('conflict') ? 409 : 503,
+        { error: String(error).includes('conflict') ? 'TASK_REQUEST_CONFLICT' : 'TASK_UNAVAILABLE' }) }
+    }
     const workspaceMatch = WORKSPACE_PATH.exec(pathname)
     if (workspaceMatch) {
       if (req.method !== 'GET') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
@@ -671,7 +722,12 @@ export function createPortalServer(config, services = {}) {
       try {
         const local = taskId === 'conversation'
           ? await deliverables.document(principal.slug, row.id, taskId, artifactId) : undefined
-        if (taskId === 'conversation' && !local) return json(res, 404, { error: 'DOCUMENT_NOT_FOUND' })
+        if (taskId === 'conversation' && !local) {
+          const state = await gateway.workspace(runtime, row.dsh_session_id)
+          if (!Array.isArray(state.documents)
+            || !state.documents.some(item => item.taskId === taskId && item.id === artifactId))
+            return json(res, 404, { error: 'DOCUMENT_NOT_FOUND' })
+        }
         const result = local ? { document: local } : await gateway.document(runtime, row.dsh_session_id, taskId, artifactId)
         const item = result?.document
         const binaryPreview = workspaceDocumentMatch[4] === 'preview'

@@ -39,6 +39,10 @@ const usageButton = document.getElementById('usageButton')
 const usageDialog = document.getElementById('usageDialog')
 const usageBody = document.getElementById('usageBody')
 const newSessionButton = document.getElementById('newSessionButton')
+const taskLauncher = document.getElementById('taskLauncher')
+const taskDialog = document.getElementById('taskDialog')
+const taskForm = document.getElementById('taskForm')
+const taskStrip = document.getElementById('taskStrip')
 const sendMessageButton = document.getElementById('sendMessageButton')
 const conversationInput = document.getElementById('conversationInput')
 const attachmentButton = document.getElementById('attachmentButton')
@@ -80,6 +84,10 @@ const workspacePanels = Object.fromEntries(['plan', 'outline', 'team', 'results'
   [tab, document.getElementById(`workspace${tab[0].toUpperCase()}${tab.slice(1)}Panel`)]))
 const workspaceDocumentDialog = document.getElementById('workspaceDocumentDialog')
 let currentSessionId
+let bankTaskAvailable = false
+let pendingSessionRequestId = crypto.randomUUID()
+let taskRequestId = crypto.randomUUID()
+let taskEpoch = 0
 let sessionListFilter = 'all'
 let availableGroups = []
 let sessionGroupMode = 'time'
@@ -581,7 +589,7 @@ function renderWorkspace(state) {
     workspacePrimaryAction = () => selectWorkspaceTab('team')
   } else if (conversationReports.length) {
     phase.textContent = '会话报告已生成'
-    description.textContent = '当前会话的报告已归档，可在研究成果中阅读和下载；正式交付仍需独立质量检查。'
+    description.textContent = '当前会话的报告已归档，可在研究成果中阅读和下载。'
     primary.firstChild.textContent = '查看研究成果 '
     workspacePrimaryAction = () => selectWorkspaceTab('results')
   } else {
@@ -1529,6 +1537,8 @@ function renderWorkspaceResults(state) {
       const actions = workspaceActions(workspaceReadAction(primary, historical ? '阅读原始报告'
         : /\.pdf$/i.test(primary.name) ? '阅读 PDF 报告' : `阅读 ${primary.name}`,
       true))
+      const word = files.find(doc => /\.docx$/i.test(doc.name))
+      if (word) actions.append(workspaceDownloadAction(word, '下载 Word'))
       card.append(actions)
       const formats = workspaceDetails(`report-formats:${files[0].resultKey || 'report'}`, '其他格式与下载', false, 'workspaceReportFormats')
       for (const doc of files) {
@@ -1551,11 +1561,13 @@ function renderWorkspaceResults(state) {
     for (const files of groups.values()) {
       files.sort((a, b) => Number(/\.pdf$/i.test(b.name)) - Number(/\.pdf$/i.test(a.name)))
       const card = wsNode('section', undefined, 'workspaceFormalReport')
-      card.append(wsNode('span', '会话生成 · 待正式复核', 'workspaceDeliveryTag'),
+      card.append(wsNode('span', '会话生成', 'workspaceDeliveryTag'),
         wsNode('h4', files[0].resultLabel || '会话报告'))
       if (files[0].createdAt) card.append(wsNode('small', `归档于 ${new Date(files[0].createdAt).toLocaleString('zh-CN')}`))
-      card.append(workspaceActions(workspaceReadAction(files[0], /\.pdf$/i.test(files[0].name)
-        ? '阅读 PDF 报告' : `阅读 ${files[0].name}`, true)))
+      const word = files.find(doc => /\.docx$/i.test(doc.name))
+      card.append(workspaceActions(word ? workspaceDownloadAction(word, '下载 Word')
+        : workspaceReadAction(files[0], /\.pdf$/i.test(files[0].name)
+          ? '阅读 PDF 报告' : `阅读 ${files[0].name}`, true)))
       const formats = workspaceDetails(`conversation-report:${files[0].resultKey}`, '其他格式与下载', false, 'workspaceReportFormats')
       for (const doc of files) {
         const row = wsNode('div', undefined, 'workspaceFileRow')
@@ -3209,6 +3221,8 @@ async function selectSession(session, urlMode = 'push') {
   sessionReadController.abort()
   sessionReadController = new AbortController()
   currentSessionId = session.id
+  taskEpoch++
+  renderTaskStrip([])
   for (const reset of sessionPollers) reset(false)
   conversationWorkspace.textContent = `工作空间 · ${currentAccountName ?? '当前账号'}`
   conversationModelStatus.textContent = ''
@@ -3218,6 +3232,7 @@ async function selectSession(session, urlMode = 'push') {
   renderModelPicker()
   renderCurrentSessionActions()
   previewActive = session.preview === true
+  taskLauncher.disabled = !researchReady || previewActive || sharedReadOnly()
   if (previewActive) {
     conversationModelSelect.replaceChildren(new Option('只读预览', ''))
     renderModelPicker()
@@ -3309,6 +3324,7 @@ async function selectSession(session, urlMode = 'push') {
     loadConversation(session.id, epoch),
     loadQuestion(session.id, epoch),
     loadApproval(session.id, epoch),
+    loadTasks(session.id),
   ])
   if (epoch !== conversationEpoch) return
   sendMessageButton.disabled = !researchReady || !!activeQuestion || previewActive || sharedReadOnly()
@@ -3554,24 +3570,131 @@ async function loadDatasets(more = false) {
 }
 dataMore.addEventListener('click', () => { void loadDatasets(dataItems.children.length > 0) })
 
-newSessionButton.addEventListener('click', async () => {
-  if (!researchReady || shareMode) return
-  newSessionButton.disabled = true
-  try {
+async function createPortalSession() {
     const response = await apiFetch('/api/sessions', { method: 'POST', credentials: 'same-origin',
       headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
-      body: JSON.stringify({ requestId: crypto.randomUUID() }) })
+      body: JSON.stringify({ requestId: pendingSessionRequestId }) })
     if (!response.ok) throw new Error('create failed')
     const { session } = await response.json()
     const listing = await apiFetch('/api/sessions', { credentials: 'same-origin', cache: 'no-store' })
     sessionListFilter = 'all'
     if (listing.ok) renderSessionList((await listing.json()).sessions)
     await selectSession(session)
+    pendingSessionRequestId = crypto.randomUUID()
     showMessage('')
+    return session
+}
+
+newSessionButton.addEventListener('click', async () => {
+  if (!researchReady || shareMode) return
+  newSessionButton.disabled = true
+  try {
+    await createPortalSession()
     conversationInput.focus()
   } catch { showMessage('新建会话暂时失败，请稍后重试。') }
   finally { newSessionButton.disabled = !researchReady }
 })
+
+function renderTaskStrip(tasks) {
+  taskStrip.replaceChildren()
+  taskStrip.hidden = !tasks.length
+  if (!tasks.length) return
+  const head = document.createElement('h2')
+  head.textContent = '本会话任务'
+  taskStrip.append(head)
+  const labels = { pending: '正在提交', uncertain: '送达状态不明', running: '进行中',
+    needs_file: '已回复，Word 尚未提供', responded: '已回复', delivered: '成果可下载' }
+  for (const task of tasks) {
+    const row = document.createElement('div')
+    row.className = 'taskStripItem'
+    const copy = document.createElement('div')
+    const title = document.createElement('strong')
+    title.textContent = task.title
+    const status = document.createElement('small')
+    status.textContent = labels[task.status] || '进行中'
+    copy.append(title, status)
+    row.append(copy)
+    for (const file of task.files ?? []) {
+      const label = /\.docx$/i.test(file.name) ? '下载 Word'
+        : /\.pdf$/i.test(file.name) ? '下载 PDF' : '下载文件'
+      const action = shareMode ? document.createElement('button') : document.createElement('a')
+      action.textContent = label
+      action.className = 'taskFileLink'
+      if (shareMode) action.addEventListener('click', () => void downloadWorkspaceDocument({
+        taskId: 'conversation', id: file.id, name: file.name, mediaType: file.mediaType }))
+      else { action.href = file.href; action.download = file.name }
+      row.append(action)
+    }
+    taskStrip.append(row)
+  }
+}
+
+async function loadTasks(sessionId) {
+  const epoch = taskEpoch
+  if (!sessionId || previewActive) { renderTaskStrip([]); return }
+  try {
+    const response = await apiFetch(`/api/sessions/${sessionId}/tasks`, { credentials: 'same-origin', cache: 'no-store' })
+    if (!response.ok) return
+    const data = await response.json()
+    if (currentSessionId === sessionId && epoch === taskEpoch) renderTaskStrip(data.tasks ?? [])
+  } catch { /* Keep the last confirmed view during a transient refresh failure. */ }
+}
+
+taskLauncher.addEventListener('click', () => {
+  if (!researchReady || previewActive || sharedReadOnly()) return
+  document.getElementById('taskError').textContent = ''
+  const kind = document.getElementById('taskKind')
+  kind.value = bankTaskAvailable ? 'bank-property-value' : 'custom'
+  kind.querySelector('option[value="bank-property-value"]').disabled = !bankTaskAvailable
+  kind.dispatchEvent(new Event('change'))
+  taskDialog.showModal()
+})
+document.getElementById('taskCancel').addEventListener('click', () => taskDialog.close())
+document.getElementById('taskKind').addEventListener('change', event => {
+  const bank = event.target.value === 'bank-property-value'
+  document.getElementById('bankTaskFields').hidden = !bank
+  document.getElementById('customTaskFields').hidden = bank
+  for (const id of ['taskCity', 'taskCommunity', 'taskArea']) document.getElementById(id).required = bank
+  document.getElementById('taskGoal').required = !bank
+  taskRequestId = crypto.randomUUID()
+})
+taskForm.addEventListener('input', () => { taskRequestId = crypto.randomUUID() })
+taskForm.addEventListener('submit', async event => {
+  event.preventDefault()
+  if (!researchReady || previewActive || sharedReadOnly()) return
+  const submit = document.getElementById('taskSubmit')
+  const error = document.getElementById('taskError')
+  submit.disabled = true
+  error.textContent = ''
+  try {
+    if (!currentSessionId) await createPortalSession()
+    const kind = document.getElementById('taskKind').value
+    const body = kind === 'bank-property-value' ? {
+      requestId: taskRequestId, kind,
+      city: document.getElementById('taskCity').value.trim(),
+      community: document.getElementById('taskCommunity').value.trim(),
+      area: Number(document.getElementById('taskArea').value),
+      branch: document.getElementById('taskBranch').value.trim(),
+      firm: document.getElementById('taskFirm').value.trim(),
+    } : { requestId: taskRequestId, kind, goal: document.getElementById('taskGoal').value.trim() }
+    const response = await apiFetch(`/api/sessions/${currentSessionId}/tasks`, { method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' }, body: JSON.stringify(body) })
+    if (!response.ok) {
+      const detail = await response.json().catch(() => ({}))
+      throw new Error(detail.error === 'TASK_DISPATCH_UNCERTAIN' ? '无法确认是否送达，请保持内容不变后重试。'
+        : detail.error === 'TASK_REQUEST_CONFLICT' ? '内容已更改，请重新提交。' : '任务提交失败，请重试。')
+    }
+    taskRequestId = crypto.randomUUID()
+    taskDialog.close()
+    selectView('conversation')
+    await loadTasks(currentSessionId)
+    await loadConversation(currentSessionId)
+  } catch (cause) { error.textContent = cause?.message || '任务提交失败，请重试。' }
+  finally { submit.disabled = false }
+})
+window.setInterval(() => {
+  if (currentSessionId && document.visibilityState === 'visible' && !previewActive) void loadTasks(currentSessionId)
+}, 8000)
 
 function mentionAtCursor() {
   const before = conversationInput.value.slice(0, conversationInput.selectionStart)
@@ -3945,11 +4068,13 @@ async function showAuthenticatedApp(data) {
   currentAccountName = data.user.accountName
   if (!shareMode) restoreSessionView()
   researchReady = data.researchReady === true
+  bankTaskAvailable = Array.isArray(data.taskKinds) && data.taskKinds.includes('bank-property-value')
   showMessage(shareMode ? `当前为${sharePermission === 'collaborate' ? '协作' : '只读'}分享链接 · 到期时间：${new Date(data.share.expiresAt).toLocaleString('zh-CN')}`
     : researchReady ? '' : '研究会话正在开通。')
   document.querySelector('.sessionSidebarHint').textContent = shareMode ? '通过分享链接访问的会话'
     : `${data.user.displayName} · ${data.user.accountName} 下的研究会话`
   newSessionButton.disabled = !researchReady || shareMode
+  taskLauncher.disabled = !researchReady || sharedReadOnly()
   document.getElementById('newSessionGroup').disabled = shareMode
   document.getElementById('newSessionHint').textContent = researchReady ? '点击创建空白研究会话' : '隔离研究环境开通后可新建'
   document.getElementById('newSessionHint').hidden = researchReady || shareMode

@@ -876,3 +876,27 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 /* Team tasks and delivered reports have their own visual focus. */
 .workspaceSection:is([data-active-tab="team"], [data-active-tab="results"]) .workspaceOverview { grid-template-columns: 1fr; grid-template-areas: "copy" "steps"; }
 .workspaceSection:is([data-active-tab="team"], [data-active-tab="results"]) .workspaceOverview .heroScene { display: none; }
+
+.taskLauncher { border: 1px solid #b9d2c4; border-radius: 12px; background: #eaf7ee; color: #195b38; padding: 9px 13px; font-weight: 700; cursor: pointer; }
+.taskLauncher:disabled { opacity: .5; cursor: not-allowed; }
+.taskStrip { margin: 12px 20px; padding: 14px 16px; border: 1px solid #d5e6da; border-radius: 16px; background: #f7fbf8; }
+.taskStrip h2 { margin: 0 0 8px; font-size: 15px; }
+.taskStripItem { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 8px 0; border-top: 1px solid #e1ece5; }
+.taskStripItem > div { display: grid; gap: 3px; min-width: 0; }
+.taskStripItem strong { overflow-wrap: anywhere; }
+.taskStripItem small { color: #60736a; }
+.taskFileLink { border: 0; border-radius: 9px; padding: 8px 12px; background: #1d7147; color: white; text-decoration: none; font: inherit; font-weight: 700; cursor: pointer; }
+.taskDialog { width: min(94vw, 520px); max-height: 90vh; border: 1px solid #d4e2d7; border-radius: 18px; padding: 24px; color: #1b3024; box-shadow: 0 18px 60px #17342133; }
+.taskDialog::backdrop { background: #10251a80; }
+.taskDialog h2 { margin: 0 0 8px; }
+.taskDialog p { color: #5b6a60; }
+.taskDialog form, .taskDialog #bankTaskFields, .taskDialog #customTaskFields { display: grid; gap: 12px; }
+.taskDialog [hidden] { display: none !important; }
+.taskDialog label { display: grid; gap: 5px; font-weight: 600; }
+.taskDialog input, .taskDialog select, .taskDialog textarea { width: 100%; box-sizing: border-box; border: 1px solid #bfcec3; border-radius: 9px; padding: 9px 10px; font: inherit; }
+.taskDialog textarea { resize: vertical; }
+.taskDialog #taskError { margin: 0; color: #a42e22; min-height: 1em; }
+.taskActions { display: flex; justify-content: flex-end; gap: 10px; }
+.taskActions button { padding: 9px 15px; border-radius: 9px; border: 1px solid #bacdc0; background: white; cursor: pointer; }
+.taskActions #taskSubmit { background: #1d7147; color: white; border-color: #1d7147; }
+@media (max-width: 650px) { .taskLauncher { padding: 7px 8px; font-size: 12px; } .taskStrip { margin: 8px; } }

@@ -48,6 +48,16 @@ export class AccountStore {
         created_at INTEGER NOT NULL, UNIQUE(account_id,request_id)
       );
       CREATE INDEX IF NOT EXISTS sessions_by_account ON research_sessions(account_id,created_at DESC);
+      CREATE TABLE IF NOT EXISTS session_tasks (
+        id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id),
+        session_id TEXT NOT NULL REFERENCES research_sessions(id), request_id TEXT NOT NULL,
+        kind TEXT NOT NULL CHECK(kind IN ('bank-property-value','custom')),
+        title TEXT NOT NULL, prompt TEXT NOT NULL, baseline_seq INTEGER NOT NULL DEFAULT -1,
+        reply_seen INTEGER NOT NULL DEFAULT 0 CHECK(reply_seen IN (0,1)),
+        dispatch_state TEXT NOT NULL DEFAULT 'pending' CHECK(dispatch_state IN ('pending','accepted','uncertain')),
+        created_at INTEGER NOT NULL, UNIQUE(account_id,session_id,request_id)
+      );
+      CREATE INDEX IF NOT EXISTS tasks_by_session ON session_tasks(account_id,session_id,created_at DESC);
       CREATE TABLE IF NOT EXISTS session_groups (
         id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id),
         name TEXT NOT NULL, created_at INTEGER NOT NULL,
@@ -76,6 +86,8 @@ export class AccountStore {
       this.db.exec('ALTER TABLE session_preferences ADD COLUMN archived INTEGER NOT NULL DEFAULT 0 CHECK(archived IN (0,1))')
     if (!this.db.prepare('PRAGMA table_info(session_preferences)').all().some(column => column.name === 'group_id'))
       this.db.exec('ALTER TABLE session_preferences ADD COLUMN group_id TEXT')
+    if (!this.db.prepare('PRAGMA table_info(session_tasks)').all().some(column => column.name === 'reply_seen'))
+      this.db.exec('ALTER TABLE session_tasks ADD COLUMN reply_seen INTEGER NOT NULL DEFAULT 0 CHECK(reply_seen IN (0,1))')
   }
 
   close() { this.db.close() }
@@ -203,6 +215,44 @@ export class AccountStore {
   getResearchSession(principal, id) {
     if (!this.resolveMember(principal)) return undefined
     return this.db.prepare('SELECT * FROM research_sessions WHERE id=? AND account_id=?').get(id, principal.accountId)
+  }
+
+  createSessionTask(principal, sessionId, { requestId, kind, title, prompt, baselineSeq = -1 }) {
+    if (!(principal?.shareId ? this.getSharedResearchSession(principal, sessionId) : this.getResearchSession(principal, sessionId)) || !text(requestId, 128)
+      || !['bank-property-value', 'custom'].includes(kind) || !text(title, 200)
+      || !text(prompt, 20_000) || !Number.isSafeInteger(baselineSeq)) throw new Error('invalid task')
+    const existing = this.db.prepare(`SELECT * FROM session_tasks WHERE account_id=? AND session_id=? AND request_id=?`)
+      .get(principal.accountId, sessionId, requestId)
+    if (existing) {
+      if (existing.kind !== kind || existing.title !== title || existing.prompt !== prompt) throw new Error('task request conflict')
+      return existing
+    }
+    const id = randomUUID()
+    this.db.prepare(`INSERT INTO session_tasks(id,account_id,session_id,request_id,kind,title,prompt,baseline_seq,created_at)
+      VALUES (?,?,?,?,?,?,?,?,?)`).run(id, principal.accountId, sessionId, requestId, kind, title, prompt, baselineSeq, Date.now())
+    return this.db.prepare('SELECT * FROM session_tasks WHERE id=?').get(id)
+  }
+
+  listSessionTasks(principal, sessionId) {
+    if (!(principal?.shareId ? this.getSharedResearchSession(principal, sessionId) : this.getResearchSession(principal, sessionId))) return []
+    return this.db.prepare(`SELECT id,session_id AS sessionId,request_id AS requestId,kind,title,baseline_seq AS baselineSeq,
+      reply_seen AS replySeen,
+      dispatch_state AS dispatchState,created_at AS createdAt FROM session_tasks
+      WHERE account_id=? AND session_id=? ORDER BY created_at DESC LIMIT 100`)
+      .all(principal.accountId, sessionId)
+  }
+
+  setSessionTaskDispatch(principal, sessionId, id, state) {
+    if (!['accepted', 'uncertain'].includes(state)
+      || !(principal?.shareId ? this.getSharedResearchSession(principal, sessionId) : this.getResearchSession(principal, sessionId))) return false
+    return this.db.prepare(`UPDATE session_tasks SET dispatch_state=? WHERE id=? AND account_id=? AND session_id=?`)
+      .run(state, id, principal.accountId, sessionId).changes === 1
+  }
+
+  markSessionTaskReplied(principal, sessionId, id) {
+    if (!(principal?.shareId ? this.getSharedResearchSession(principal, sessionId) : this.getResearchSession(principal, sessionId))) return false
+    return this.db.prepare(`UPDATE session_tasks SET reply_seen=1 WHERE id=? AND account_id=? AND session_id=?`)
+      .run(id, principal.accountId, sessionId).changes === 1
   }
 
   listResearchSessions(principal) {

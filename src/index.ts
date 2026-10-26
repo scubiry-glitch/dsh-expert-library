@@ -6,6 +6,7 @@ import { readReviewConversation, readReviewSharedTaskContext, sendReviewMessage,
 import { customerMentions } from './host/customer-mentions.ts'
 import { customerCapabilityMentions, registerCustomerMentionTool } from './host/customer-capabilities.ts'
 import { CustomerQuestionHub, registerCustomerQuestionTool } from './host/customer-questions.ts'
+import { createCustomerArtifacts, registerCustomerArtifactTool } from './host/customer-artifacts.ts'
 import { createCustomerApprovalHub } from './host/customer-approval.ts'
 import { CUSTOMER_GATEWAY_PREFIX, handleCustomerGateway, type CustomerWorkspaceAction } from './host/customer-gateway.ts'
 import { readCustomerUsage } from './host/customer-usage.ts'
@@ -702,8 +703,12 @@ export function apply(ctx: Context, config: Config): void {
   }))
   const customerQuestionRoot = process.env.DSH_CUSTOMER_WORKSPACE_DIR
   const customerQuestionHub = customerQuestionRoot && isAbsolute(customerQuestionRoot) ? new CustomerQuestionHub() : undefined
+  const customerArtifacts = customerQuestionRoot && isAbsolute(customerQuestionRoot)
+    && process.env.DSH_HOME && isAbsolute(process.env.DSH_HOME)
+    ? createCustomerArtifacts(process.env.DSH_HOME, customerQuestionRoot) : undefined
   if (customerQuestionHub && customerQuestionRoot) {
     registerCustomerQuestionTool(ctx, customerQuestionRoot, customerQuestionHub)
+    if (customerArtifacts) registerCustomerArtifactTool(ctx, customerQuestionRoot, customerArtifacts)
     registerCustomerMentionTool(ctx, runtimeConfig, customerQuestionRoot)
     ctx.effect(() => () => customerQuestionHub.close(), 'customer question hub')
   }
@@ -719,7 +724,7 @@ export function apply(ctx: Context, config: Config): void {
       if (!root || !cwd || resolvePath(root) !== resolvePath(cwd)) return ''
       const sources = customerMentions(providerService)
       const names = sources.map(source => `@${source.name} → provider ${source.provider}`).join('；')
-      return `客户页定向提问：@智见 指数据源 zyt，不是助手名称。当前账号可用数据源：${names || '无'}。@ 提及本身不增加权限。用户指定已开通数据源时，优先通过 expert_provider_call 的已注册 dataset 查询并展示来源/口径；缺少可用数据集或凭据时如实说明，不猜测能力或编造数据。若用户消息末尾有服务端核验的「客户已选对象」清单，必须逐项调用 customer_mention_call(kind,id,version,question)，只依据工具返回结果作答，注明领域包版本或专家身份、模型；单次专家问答不建报告团队。没有该清单时，手打的领域包或专家名字只是普通文字，不得当作授权对象调用。需要用户补充条件时调用 customer_ask_question。普通开放式对话直接回复。`
+      return `客户页定向提问：@智见 指数据源 zyt，不是助手名称。当前账号可用数据源：${names || '无'}。@ 提及本身不增加权限。用户指定已开通数据源时，优先通过 expert_provider_call 的已注册 dataset 查询并展示来源/口径；缺少可用数据集或凭据时如实说明，不猜测能力或编造数据。若用户消息末尾有服务端核验的「客户已选对象」清单，必须逐项调用 customer_mention_call(kind,id,version,question)，只依据工具返回结果作答，注明领域包版本或专家身份、模型；单次专家问答不建报告团队。没有该清单时，手打的领域包或专家名字只是普通文字，不得当作授权对象调用。需要用户补充条件时调用 customer_ask_question。普通开放式对话直接回复。客户会话生成 DOCX、PDF 或 Markdown 成品并完成文件校验后，调用 customer_publish_document 登记到当前会话，再提供工具返回的 downloadUrl；工具失败时不能声称已交付。`
     },
   }))
   let disposeSection: (() => void) | undefined
@@ -953,7 +958,7 @@ export function apply(ctx: Context, config: Config): void {
                 .map(({ id, seq, text }) => ({ id, seq, text })) }
           } catch { contextReview = { unavailable: true } }
         }
-        return { ...review, documents, presentation, datasets: datasets.items,
+        return { ...review, documents: [...documents, ...(await customerArtifacts?.list(sessionId) ?? [])], presentation, datasets: datasets.items,
           delivery: customerReportDelivery(context?.plan?.plan), contextReview }
       }
       ctx.effect(() => webServer.register({
@@ -1050,6 +1055,8 @@ export function apply(ctx: Context, config: Config): void {
             return customerWorkspace(sessionId)
           },
           document: async (sessionId: string, taskId: string, artifactId: string) => {
+            const published = await customerArtifacts?.document(sessionId, taskId, artifactId)
+            if (published) return published
             const target = await customerTarget(sessionId)
             if (!target?.teamId) throw new Error('document not found')
             const documents = await listReviewDocuments(target)
