@@ -36,12 +36,14 @@ const scrim = document.getElementById('scrim')
 const developerLogin = document.getElementById('developerLogin')
 const logoutButton = document.getElementById('logoutButton')
 const usageButton = document.getElementById('usageButton')
+const accountSettings = document.getElementById('accountSettings')
 const usageDialog = document.getElementById('usageDialog')
 const usageBody = document.getElementById('usageBody')
 const newSessionButton = document.getElementById('newSessionButton')
 const taskLauncher = document.getElementById('taskLauncher')
-const taskDialog = document.getElementById('taskDialog')
+const taskPanel = document.getElementById('taskPanel')
 const taskForm = document.getElementById('taskForm')
+const conversationCompose = document.getElementById('conversationCompose')
 const taskStrip = document.getElementById('taskStrip')
 const sendMessageButton = document.getElementById('sendMessageButton')
 const conversationInput = document.getElementById('conversationInput')
@@ -88,6 +90,7 @@ let bankTaskAvailable = false
 let pendingSessionRequestId = crypto.randomUUID()
 let taskRequestId = crypto.randomUUID()
 let taskEpoch = 0
+let taskSubmitting = false
 let sessionListFilter = 'all'
 let availableGroups = []
 let sessionGroupMode = 'time'
@@ -1772,7 +1775,7 @@ async function loadUsage() {
     }
   } catch { usageBody.textContent = '暂时无法读取用量，请稍后刷新。' }
 }
-usageButton.addEventListener('click', () => { usageDialog.showModal(); if (isCompact()) closeSidebar(); void loadUsage() })
+usageButton.addEventListener('click', () => { accountSettings.open = false; usageDialog.showModal(); if (isCompact()) closeSidebar(); void loadUsage() })
 document.getElementById('usageClose').addEventListener('click', () => usageDialog.close())
 document.getElementById('usageRefresh').addEventListener('click', () => { void loadUsage() })
 
@@ -3217,6 +3220,7 @@ conversationModelSelect.addEventListener('change', async () => {
 })
 
 async function selectSession(session, urlMode = 'push') {
+  if (!taskSubmitting) setTaskMode(false)
   if (currentSessionId) draftsBySession.set(currentSessionId, conversationInput.value)
   sessionReadController.abort()
   sessionReadController = new AbortController()
@@ -3640,6 +3644,13 @@ async function loadTasks(sessionId) {
   } catch { /* Keep the last confirmed view during a transient refresh failure. */ }
 }
 
+function setTaskMode(active, { returnFocus = false } = {}) {
+  taskPanel.hidden = !active
+  conversationCompose.classList.toggle('taskMode', active)
+  taskLauncher.setAttribute('aria-pressed', String(active))
+  if (returnFocus) taskLauncher.focus()
+}
+
 taskLauncher.addEventListener('click', () => {
   if (!researchReady || previewActive || sharedReadOnly()) return
   document.getElementById('taskError').textContent = ''
@@ -3647,9 +3658,10 @@ taskLauncher.addEventListener('click', () => {
   kind.value = bankTaskAvailable ? 'bank-property-value' : 'custom'
   kind.querySelector('option[value="bank-property-value"]').disabled = !bankTaskAvailable
   kind.dispatchEvent(new Event('change'))
-  taskDialog.showModal()
+  setTaskMode(true)
+  document.getElementById(bankTaskAvailable ? 'taskCity' : 'taskGoal').focus()
 })
-document.getElementById('taskCancel').addEventListener('click', () => taskDialog.close())
+document.getElementById('taskCancel').addEventListener('click', () => setTaskMode(false, { returnFocus: true }))
 document.getElementById('taskKind').addEventListener('change', event => {
   const bank = event.target.value === 'bank-property-value'
   document.getElementById('bankTaskFields').hidden = !bank
@@ -3661,23 +3673,31 @@ document.getElementById('taskKind').addEventListener('change', event => {
 taskForm.addEventListener('input', () => { taskRequestId = crypto.randomUUID() })
 taskForm.addEventListener('submit', async event => {
   event.preventDefault()
-  if (!researchReady || previewActive || sharedReadOnly()) return
+  if (!researchReady || previewActive || sharedReadOnly() || taskSubmitting) return
   const submit = document.getElementById('taskSubmit')
+  const cancel = document.getElementById('taskCancel')
   const error = document.getElementById('taskError')
-  submit.disabled = true
   error.textContent = ''
+  const kind = document.getElementById('taskKind').value
+  const body = kind === 'bank-property-value' ? {
+    requestId: taskRequestId, kind,
+    city: document.getElementById('taskCity').value.trim(),
+    community: document.getElementById('taskCommunity').value.trim(),
+    area: Number(document.getElementById('taskArea').value),
+    branch: document.getElementById('taskBranch').value.trim(),
+    firm: document.getElementById('taskFirm').value.trim(),
+  } : { requestId: taskRequestId, kind, goal: document.getElementById('taskGoal').value.trim() }
+  const fields = [...taskForm.querySelectorAll('input, select, textarea')]
+  const fieldStates = fields.map(field => field.disabled)
+  taskSubmitting = true
+  taskPanel.setAttribute('aria-busy', 'true')
+  submit.disabled = true
+  cancel.disabled = true
+  submit.textContent = '正在开始…'
+  fields.forEach(field => { field.disabled = true })
   try {
-    if (!currentSessionId) await createPortalSession()
-    const kind = document.getElementById('taskKind').value
-    const body = kind === 'bank-property-value' ? {
-      requestId: taskRequestId, kind,
-      city: document.getElementById('taskCity').value.trim(),
-      community: document.getElementById('taskCommunity').value.trim(),
-      area: Number(document.getElementById('taskArea').value),
-      branch: document.getElementById('taskBranch').value.trim(),
-      firm: document.getElementById('taskFirm').value.trim(),
-    } : { requestId: taskRequestId, kind, goal: document.getElementById('taskGoal').value.trim() }
-    const response = await apiFetch(`/api/sessions/${currentSessionId}/tasks`, { method: 'POST', credentials: 'same-origin',
+    const sessionId = currentSessionId ?? (await createPortalSession()).id
+    const response = await apiFetch(`/api/sessions/${sessionId}/tasks`, { method: 'POST', credentials: 'same-origin',
       headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' }, body: JSON.stringify(body) })
     if (!response.ok) {
       const detail = await response.json().catch(() => ({}))
@@ -3685,12 +3705,23 @@ taskForm.addEventListener('submit', async event => {
         : detail.error === 'TASK_REQUEST_CONFLICT' ? '内容已更改，请重新提交。' : '任务提交失败，请重试。')
     }
     taskRequestId = crypto.randomUUID()
-    taskDialog.close()
-    selectView('conversation')
-    await loadTasks(currentSessionId)
-    await loadConversation(currentSessionId)
+    taskForm.reset()
+    setTaskMode(false)
+    if (currentSessionId === sessionId) {
+      selectView('conversation')
+      await loadTasks(sessionId)
+      await loadConversation(sessionId)
+      if (!conversationInput.disabled) conversationInput.focus()
+    }
   } catch (cause) { error.textContent = cause?.message || '任务提交失败，请重试。' }
-  finally { submit.disabled = false }
+  finally {
+    fields.forEach((field, index) => { field.disabled = fieldStates[index] })
+    submit.disabled = false
+    cancel.disabled = false
+    submit.textContent = '开始任务'
+    taskPanel.removeAttribute('aria-busy')
+    taskSubmitting = false
+  }
 })
 window.setInterval(() => {
   if (currentSessionId && document.visibilityState === 'visible' && !previewActive) void loadTasks(currentSessionId)
