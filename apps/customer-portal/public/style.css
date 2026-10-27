@@ -630,16 +630,18 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
   .questionPreview { padding: 14px; }
   .conversationCompose { margin-top: 8px; padding: 8px 10px 7px; border-radius: 13px; }
   .conversationCompose textarea { max-height: 28dvh; font-size: 16px; }
-  .conversationComposeControls { display: grid; grid-template-columns: auto auto minmax(0,1fr) auto; align-items: center; gap: 6px 7px; padding-top: 5px; }
+  .conversationComposeControls { display: grid; grid-template-columns: auto minmax(0,1fr) auto auto; align-items: center; gap: 6px; padding-top: 5px; }
   .conversationModelRow { display: contents; }
-  .conversationModelRow #conversationWorkspace { grid-column: 1 / 3; grid-row: 1; min-width: 0; max-width: none; padding: 5px 8px; }
-  .conversationModelPicker { grid-column: 3 / 5; grid-row: 1; min-width: 0; }
-  .modelPickerTrigger { width: 100%; max-width: none; }
-  .attachmentButton { grid-column: 1; grid-row: 2; }
-  .taskLauncher { grid-column: 2; grid-row: 2; }
-  #conversationModelStatus { grid-column: 1 / -1; grid-row: 3; }
+  .conversationModelRow #conversationWorkspace { grid-column: 1; grid-row: 1; min-width: 0; max-width: none; padding: 5px 6px; font-size: 0; line-height: 18px; }
+  .conversationModelRow #conversationWorkspace::before { content: "工作空间"; font-size: 11px; }
+  .conversationModelPicker { grid-column: 2; grid-row: 1; min-width: 0; }
+  .modelPickerTrigger { width: 100%; max-width: none; gap: 3px; padding: 5px 6px; }
+  .modelPickerTriggerLabel { display: none; }
+  .modelPickerMenu { left: -64px; }
+  .attachmentButton { grid-column: 3; grid-row: 1; padding: 5px 6px; }
+  #conversationModelStatus { grid-column: 1 / -1; grid-row: 2; }
   #conversationModelStatus:empty { display: none; }
-  .conversationComposeControls > button { grid-column: 4; grid-row: 2; min-width: 60px; min-height: 34px; padding: 6px 10px; }
+  .conversationComposeControls > button { grid-column: 4; grid-row: 1; min-width: 54px; min-height: 34px; padding: 6px 8px; }
   .mentionMenu { left: 12px; width: calc(100% - 24px); }
   .conversationComposeFoot span { font-size: 10px; }
   .studioHero { grid-template-columns: 1fr; }
