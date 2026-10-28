@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url'
 
 // Report reviewers can carry several frozen artifact receipts in one DSH turn.
 // Keep an explicit per-request bound while allowing those authenticated calls.
-const MAX_BODY_BYTES = 4_000_000
+// Leave headroom for one oversized turn so the tenant's earlier compaction
+// threshold can recover an existing session that already crossed 4 MB.
+const MAX_BODY_BYTES = 8_000_000
 const MAX_OUTPUT_TOKENS = 8_192
 // Captain sessions use `session-<uuid>`; DSH continuable members use the bare UUID.
 const SESSION_ID = /^(?:session-)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i

@@ -155,9 +155,12 @@ test('authenticated reviewer requests above one megabyte remain bounded and mete
   assert.equal(allowed.status, 200)
   await allowed.text()
   assert.equal(ledger.totals('a').chargedTokens, 110)
-  const rejected = await request('x'.repeat(4_100_000))
+  const recoveryHeadroom = await request('x'.repeat(4_100_000))
+  assert.equal(recoveryHeadroom.status, 200)
+  await recoveryHeadroom.text()
+  const rejected = await request('x'.repeat(8_100_000))
   assert.equal(rejected.status, 400)
-  assert.equal(upstreamCalls, 1)
+  assert.equal(upstreamCalls, 2)
 })
 
 test('GLM and ZAI routes are account gated, model allowlisted, and included in the same quota', async t => {
