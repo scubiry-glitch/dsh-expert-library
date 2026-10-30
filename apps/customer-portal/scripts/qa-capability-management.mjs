@@ -39,10 +39,15 @@ const fixtures = {
   ] }, 'center-operations': [],
   'managed-experts': { ok: true, experts: [] }, 'managed-scenarios': { ok: true, scenarios: [] },
   experts: { experts: [{ id: 'expert-one', name: '研究专家', effective: { provider: 'openai', model: 'gpt-5' }, source: 'default' }] },
-  skills: { skills: [] },
+  skills: { skills: [{ id: 'skill-one', name: '报告复刻技能' }] },
   usage: { days: 7, asOf: Date.parse('2026-10-26T00:00:00Z'), firstEventAt: Date.parse('2026-10-25T00:00:00Z'),
     rankings: { expert: [{ id: 'expert-one', version: '1.0.0', calls: 3, sessions: 2 }],
-      skill: [{ id: 'skill-one', calls: 2, sessions: 1 }], pack: [], source: [{ id: 'zyt', calls: 4, sessions: 2 }] } },
+      skill: [{ id: 'skill-one', calls: 2, sessions: 1 }], pack: [
+        { id: 'zhijian-realestate', version: '1.0.0', calls: 2, sessions: 1 },
+        { id: 'mention-only-pack', version: '2.0.0', calls: 1, sessions: 1 },
+        { id: 'historical-pack', version: '1.0.0', name: '历史领域包', calls: 1, sessions: 1 },
+      ],
+      source: [{ id: 'zyt', calls: 4, sessions: 2 }, { id: 'localdb', calls: 1, sessions: 1 }] } },
 }
 const server = createServer(async (req, res) => {
   const path = new URL(req.url, 'http://localhost').pathname
@@ -61,6 +66,16 @@ const server = createServer(async (req, res) => {
     postedSettings.push(input)
     res.writeHead(200, { 'content-type': 'application/json' })
     res.end(json({ revision: input.revision + 1, value: input.value }))
+    return
+  }
+  if (path === '/api/mentions') {
+    res.writeHead(200, { 'content-type': 'application/json' })
+    res.end(json({ items: [
+      { kind: 'domain-pack', id: 'mention-only-pack', version: '2.0.0', name: '对话中的领域包' },
+      { kind: 'data-source', provider: 'zyt', name: '智见' },
+      { kind: 'data-source', provider: 'localdb', name: '数据-bank-industry' },
+      { kind: 'data-source', provider: 'localdb', name: '数据-city-economy' },
+    ] }))
     return
   }
   if (path === '/api/bootstrap' || path.startsWith('/api/capabilities/')) {
@@ -202,9 +217,15 @@ try {
     await page.locator('#tab-usage').click()
     await page.waitForFunction(() => document.getElementById('tab-usage').getAttribute('aria-selected') === 'true')
     assert.equal(await page.locator('#usage').isVisible(), true)
+    await page.locator('#usageCards .manageUsageCard').first().waitFor()
     assert.equal(await page.locator('#usageCards .manageUsageCard').count(), 4)
-    assert.match(await page.locator('#usageCards').innerText(), /expert-one/)
-    assert.match(await page.locator('#usageCards').innerText(), /政研通/)
+    assert.equal(await page.locator('#usageCards .manageUsageCard').nth(0).locator('.manageUsageItemMain strong').innerText(), '研究专家 · 1.0.0')
+    assert.equal(await page.locator('#usageCards .manageUsageCard').nth(1).locator('.manageUsageItemMain strong').innerText(), '报告复刻技能')
+    assert.equal(await page.locator('#usageCards .manageUsageCard').nth(2).locator('.manageUsageItemMain strong').first().innerText(), '智见房产 · 1.0.0')
+    assert.equal(await page.locator('#usageCards .manageUsageCard').nth(2).locator('.manageUsageItemMain strong').nth(1).innerText(), '对话中的领域包 · 2.0.0')
+    assert.equal(await page.locator('#usageCards .manageUsageCard').nth(2).locator('.manageUsageItemMain strong').nth(2).innerText(), '历史领域包 · 1.0.0')
+    assert.equal(await page.locator('#usageCards .manageUsageCard').nth(3).locator('.manageUsageItemMain strong').first().innerText(), '智见')
+    assert.equal(await page.locator('#usageCards .manageUsageCard').nth(3).locator('.manageUsageItemMain strong').nth(1).innerText(), '本地数据')
     await page.screenshot({ path: `/tmp/zhijian-manage-usage-${width}.png`, fullPage: true })
     await page.goBack()
     await page.waitForFunction(() => document.getElementById('tab-experts').getAttribute('aria-selected') === 'true')

@@ -40,6 +40,9 @@ const accountSettings = document.getElementById('accountSettings')
 const usageDialog = document.getElementById('usageDialog')
 const usageBody = document.getElementById('usageBody')
 const newSessionButton = document.getElementById('newSessionButton')
+const newSpaceButton = document.getElementById('newSpaceButton')
+const conversationPresetSelect = document.getElementById('conversationPresetSelect')
+const conversationSearchPolicy = document.getElementById('conversationSearchPolicy')
 const taskLauncher = document.getElementById('taskLauncher')
 const taskPanel = document.getElementById('taskPanel')
 const taskForm = document.getElementById('taskForm')
@@ -50,6 +53,7 @@ const conversationInput = document.getElementById('conversationInput')
 const attachmentButton = document.getElementById('attachmentButton')
 const attachmentInput = document.getElementById('attachmentInput')
 const conversationAttachments = document.getElementById('conversationAttachments')
+const conversationWorkspaceTrigger = document.getElementById('conversationWorkspaceTrigger')
 const conversationWorkspace = document.getElementById('conversationWorkspace')
 const conversationModelSelect = document.getElementById('conversationModelSelect')
 const conversationModelTrigger = document.getElementById('conversationModelTrigger')
@@ -65,6 +69,7 @@ conversationEarlier.className = 'conversationEarlier'
 conversationEarlier.textContent = '查看更早消息 ↑'
 const conversationActivity = document.getElementById('conversationActivity')
 const conversationSendStatus = document.getElementById('conversationSendStatus')
+const continueAfterLimit = document.getElementById('continueAfterLimit')
 const conversationLatest = document.getElementById('conversationLatest')
 const questionCard = document.getElementById('questionCard')
 const approvalCard = document.getElementById('approvalCard')
@@ -93,6 +98,9 @@ let taskEpoch = 0
 let taskSubmitting = false
 let sessionListFilter = 'all'
 let availableGroups = []
+let availableSpaces = []
+let availablePresets = []
+let defaultPresetId = ''
 let sessionGroupMode = 'time'
 let sessionDense = false
 let collapsedSessionGroups = new Set()
@@ -224,6 +232,7 @@ let questionLoading = false
 let questionSubmitting = false
 const pendingBySession = new Map()
 const failuresBySession = new Map()
+const latestFailureBySession = new Map()
 const draftsBySession = new Map()
 const attachmentsBySession = new Map()
 const selectedMentionsBySession = new Map()
@@ -1749,6 +1758,7 @@ logoutButton.addEventListener('click', async () => {
   }
 })
 const formatTokens = value => new Intl.NumberFormat('zh-CN').format(value)
+const formatPoints = cents => new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cents / 100)
 async function loadUsage() {
   usageBody.textContent = '正在读取用量…'
   try {
@@ -1759,17 +1769,22 @@ async function loadUsage() {
     usageBody.replaceChildren()
     add('p', `当前账号：${item.accountName} · ${item.day}（UTC）`, 'usageLead')
     const grid = add('div', '', 'usageGrid')
-    for (const [label, value] of [['今日已用', item.chargedTokens], ['每日额度', item.dailyQuota], ['今日剩余', item.remainingTokens]]) {
+    const points = item.points
+    const values = points
+      ? [['今日已用', points.chargedCents], ['每日额度', points.dailyQuotaCents], ['今日剩余', points.remainingCents]]
+      : [['今日已用', item.chargedTokens], ['每日额度', item.dailyQuota], ['今日剩余', item.remainingTokens]]
+    for (const [label, value] of values) {
       const cell = document.createElement('div'); const name = document.createElement('small'); const count = document.createElement('strong')
-      name.textContent = label; count.textContent = formatTokens(value); cell.append(name, count); grid.append(cell)
+      name.textContent = label; count.textContent = points ? `${formatPoints(value)} 积分` : `${formatTokens(value)} token`; cell.append(name, count); grid.append(cell)
     }
+    if (points) add('p', `当前换算：${formatTokens(points.tokensPerPoint)} token = 1 积分。积分按每日 token 总量折算，显示到小数点后两位；修改比例会重新折算历史展示。`, 'usageNote')
     add('p', `今日 ${formatTokens(item.calls)} 次模型调用。统计按账号汇总，包含专家协作；正在运行或缺少上游用量的调用按预留值计入。单轮所需预留量超过剩余额度时仍会被拦截。每日 00:00 UTC 重置。`, 'usageNote')
     if (item.days.length) {
       add('h3', '最近 7 天')
       const list = add('div', '', 'usageDays')
-      for (const day of item.days) {
+      for (const day of points ? points.days : item.days) {
         const row = document.createElement('div'); const date = document.createElement('span'); const total = document.createElement('strong')
-        date.textContent = day.day; total.textContent = `${formatTokens(day.chargedTokens)} token · ${formatTokens(day.calls)} 次`
+        date.textContent = day.day; total.textContent = `${points ? `${formatPoints(day.chargedCents)} 积分` : `${formatTokens(day.chargedTokens)} token`} · ${formatTokens(day.calls)} 次`
         row.append(date, total); list.append(row)
       }
     }
@@ -2028,7 +2043,7 @@ function saveSessionView() {
 function restoreSessionView() {
   try {
     const saved = JSON.parse(localStorage.getItem(`zhijian-session-view:${currentAccountName}`) || '{}')
-    sessionGroupMode = saved.mode === 'custom' ? 'custom' : 'time'
+    sessionGroupMode = ['time', 'custom', 'workspace'].includes(saved.mode) ? saved.mode : 'time'
     sessionDense = saved.dense === true
     collapsedSessionGroups = new Set(Array.isArray(saved.collapsed) ? saved.collapsed.filter(item => typeof item === 'string') : [])
   } catch { sessionGroupMode = 'time'; sessionDense = false; collapsedSessionGroups = new Set() }
@@ -2180,7 +2195,8 @@ function renderSessionList(sessions, saveCache = true) {
   document.getElementById('favoriteSessionCount').textContent = String(activeSessions.filter(session => session.favorite).length)
   document.getElementById('runningSessionCount').textContent = String(activeSessions.filter(session => session.running).length)
   document.getElementById('archivedSessionCount').textContent = String(sessions.length - activeSessions.length)
-  if (!sessions.length && !(sessionGroupMode === 'custom' && availableGroups.length)) {
+  if (!sessions.length && !(sessionGroupMode === 'custom' && availableGroups.length)
+    && !(sessionGroupMode === 'workspace' && availableSpaces.length)) {
     showSessionListState('还没有研究会话', '新建会话后，会从第一问开始留存。')
     return
   }
@@ -2189,7 +2205,10 @@ function renderSessionList(sessions, saveCache = true) {
     : sessionListFilter === 'running' ? activeSessions.filter(session => session.running) : activeSessions
   const query = sessionSearch.value.trim().toLocaleLowerCase()
   const visibleSessions = query ? filteredSessions.filter(session => (session.title || '').toLocaleLowerCase().includes(query)) : filteredSessions
-  if (!visibleSessions.length && (query || sessionListFilter !== 'all' || sessionGroupMode !== 'custom' || !availableGroups.length)) {
+  if (!visibleSessions.length && (query || sessionListFilter !== 'all'
+    || (sessionGroupMode === 'custom' && !availableGroups.length)
+    || (sessionGroupMode === 'workspace' && !availableSpaces.length)
+    || sessionGroupMode === 'time')) {
     if (query) showSessionListState('没有匹配的会话', '试试标题中的其他关键词。')
     else if (sessionListFilter === 'archive') showSessionListState('归档箱为空', '归档会话后，可在这里恢复。')
     else if (sessionListFilter === 'all') showSessionListState('没有未归档会话', '可从归档箱恢复，或新建一个会话。')
@@ -2203,7 +2222,15 @@ function renderSessionList(sessions, saveCache = true) {
   const rest = visibleSessions.filter(session => !pinned.includes(session))
   const groups = []
   if (pinned.length) groups.push({ key: 'pinned', name: '置顶', items: pinned })
-  if (sessionGroupMode === 'custom') {
+  if (sessionGroupMode === 'workspace') {
+    const rootItems = rest.filter(session => !session.spaceId || !availableSpaces.some(space => space.id === session.spaceId))
+    if (rootItems.length || sessionListFilter === 'all' && !query) groups.push({ key: 'space:root', name: '默认工作空间', items: rootItems })
+    for (const space of availableSpaces) {
+      const items = rest.filter(session => session.spaceId === space.id)
+      if (items.length || sessionListFilter === 'all' && !query)
+        groups.push({ key: `space:${space.id}`, name: space.relativePath.replace(/^spaces\//, ''), items })
+    }
+  } else if (sessionGroupMode === 'custom') {
     for (const group of availableGroups) {
       const items = rest.filter(session => session.groupId === group.id)
       if (items.length || sessionListFilter === 'all' && !query) groups.push({ key: `group:${group.id}`, name: group.name, items, group })
@@ -2304,7 +2331,7 @@ function renderSessionList(sessions, saveCache = true) {
     menu.className = 'sessionRowMenuBody'
     menu.append(
       sessionAction(session, 'pinned', session.pinned ? '取消置顶' : '置顶', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8l-1.5 5.5 2.5 2.5v2H7v-2l2.5-2.5L8 3ZM12 13v8"/></svg>', () => updateSessionMetadata(session, { pinned: !session.pinned })),
-      sessionAction(session, 'favorite', session.favorite ? '取消收藏' : '收藏', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2.5 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9L12 2.5Z"/></svg>', () => updateSessionMetadata(session, { favorite: !session.favorite })),
+      sessionAction(session, 'favorite', session.favorite ? '取消收藏' : '收藏', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5 14.9 8.4 21.4 9.3 16.7 13.9 17.8 20.4 12 17.3 6.2 20.4 7.3 13.9 2.6 9.3 9.1 8.4Z"/></svg>', () => updateSessionMetadata(session, { favorite: !session.favorite })),
       sessionAction(session, 'archived', session.archived ? '恢复会话' : '归档会话', session.archived
         ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v4H4zM6 8v12h12V8M12 16V9m-3 3 3-3 3 3"/></svg>'
         : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v4H4zM6 8v12h12V8M12 10v7m-3-3 3 3 3-3"/></svg>', () => toggleSessionArchive(session)),
@@ -2643,7 +2670,8 @@ function setReceipt(node, state) {
   node.dataset.state = state
   receipt.textContent = ({ sending: '正在发送…', accepted: '服务已接收 · 正在写入会话',
     recorded: '已送达 · 等待回复', replied: '智见小秘书已回复', uncertain: '尚未确认送达 · 可重试',
-    quota_exceeded: '本轮未完成 · 模型额度不足，可在设置与用量查看', failed: '本轮未完成 · 可重试' })[state]
+    quota_exceeded: '本轮未完成 · 模型额度不足，可在设置与用量查看', failed: '本轮未完成 · 可重试',
+    output_limit: '本轮达到输出上限 · 请继续未完成的回复' })[state]
 }
 
 function updateComposeStatus() {
@@ -2662,13 +2690,21 @@ function updateComposeStatus() {
       const rows = [...conversationMessages.querySelectorAll('.conversationMessage[data-seq]')]
       const lastUser = rows.findLast(row => row.classList.contains('user'))
       const lastAssistant = rows.findLast(row => row.classList.contains('assistant'))
-      if (lastUser) {
+      const lastVisibleSeq = Math.max(Number(lastUser?.dataset.seq ?? -1), Number(lastAssistant?.dataset.seq ?? -1))
+      const latestFailure = latestFailureBySession.get(currentSessionId)
+      if (latestFailure?.kind === 'output_limit' && latestFailure.seq > lastVisibleSeq) {
+        message = '上一轮达到模型输出上限，回复未完成。可点“继续未完成的回复”。'
+        kind = 'error'
+      } else if (lastUser) {
         const userSeq = Number(lastUser.dataset.seq)
-        if (lastAssistant && Number(lastAssistant.dataset.seq) > userSeq) {
+        const failure = failuresBySession.get(currentSessionId)?.get(userSeq)
+        if (failure === 'output_limit') {
+          message = '上一轮达到模型输出上限，回复未完成。可点“继续未完成的回复”。'
+          kind = 'error'
+        } else if (lastAssistant && Number(lastAssistant.dataset.seq) > userSeq) {
           message = '上一轮已回复'
           kind = 'success'
         } else {
-          const failure = failuresBySession.get(currentSessionId)?.get(userSeq)
           message = failure === 'quota_exceeded' ? '上一轮未完成 · 模型额度不足，可在设置与用量查看'
             : failure === 'failed' ? '上一轮未完成 · 可重试' : '已送达 · 等待回复'
           kind = failure ? 'error' : 'progress'
@@ -2678,6 +2714,12 @@ function updateComposeStatus() {
   }
   conversationSendStatus.textContent = message
   conversationSendStatus.dataset.kind = kind
+  const rows = [...conversationMessages.querySelectorAll('.conversationMessage[data-seq]')]
+  const lastVisibleSeq = rows.length ? Number(rows.at(-1).dataset.seq) : -1
+  const latestFailure = latestFailureBySession.get(currentSessionId)
+  continueAfterLimit.hidden = !researchReady || previewActive || sharedReadOnly() || !!latestPending()
+    || latestFailure?.kind !== 'output_limit' || latestFailure.seq <= lastVisibleSeq
+  continueAfterLimit.disabled = sendMessageButton.disabled || !!activeQuestion
 }
 
 function setComposeNotice(message, kind = 'info') {
@@ -2707,8 +2749,10 @@ function updateReceipts() {
   const failures = failuresBySession.get(currentSessionId)
   for (let i = 0; i < rows.length; i++) {
     if (!rows[i].classList.contains('user')) continue
-    if (rows.slice(i + 1).some(row => row.classList.contains('assistant'))) setReceipt(rows[i], 'replied')
-    else setReceipt(rows[i], failures?.get(Number(rows[i].dataset.seq)) ?? 'recorded')
+    const failure = failures?.get(Number(rows[i].dataset.seq))
+    if (failure === 'output_limit') setReceipt(rows[i], failure)
+    else if (rows.slice(i + 1).some(row => row.classList.contains('assistant'))) setReceipt(rows[i], 'replied')
+    else setReceipt(rows[i], failure ?? 'recorded')
   }
 }
 
@@ -2718,10 +2762,11 @@ function applyTurnFailures(events) {
   failuresBySession.set(currentSessionId, failures)
   const rows = [...conversationMessages.querySelectorAll('.conversationMessage[data-seq]')]
   for (const event of events) {
-    if (!Number.isSafeInteger(event?.seq) || !['quota_exceeded', 'failed'].includes(event.kind)) continue
+    if (!Number.isSafeInteger(event?.seq) || !['quota_exceeded', 'failed', 'output_limit'].includes(event.kind)) continue
+    latestFailureBySession.set(currentSessionId, { seq: event.seq, kind: event.kind })
     const user = rows.findLast(row => row.classList.contains('user') && Number(row.dataset.seq) < event.seq)
-    if (!user || rows.some(row => row.classList.contains('assistant')
-      && Number(row.dataset.seq) > Number(user.dataset.seq) && Number(row.dataset.seq) < event.seq)) continue
+    if (!user || (event.kind !== 'output_limit' && rows.some(row => row.classList.contains('assistant')
+      && Number(row.dataset.seq) > Number(user.dataset.seq) && Number(row.dataset.seq) < event.seq))) continue
     const userSeq = Number(user.dataset.seq)
     failures.set(userSeq, event.kind)
     for (const pending of pendingMessages()) if (pending.userSeq === userSeq) pending.state = 'failed'
@@ -2865,6 +2910,8 @@ conversationEarlier.addEventListener('click', () => { void loadEarlierConversati
 function showQuestion(question) {
   if (sharedReadOnly()) question = null
   activeQuestion = question
+  conversationSearchPolicy.disabled = !researchReady || previewActive || sharedReadOnly()
+    || question?.questions?.some(item => item.id === 'web_search_permission') === true
   questionCard.replaceChildren()
   questionCard.hidden = !question
   questionShortcut.hidden = !question
@@ -2912,15 +2959,17 @@ function showQuestion(question) {
       }
       fieldset.append(label)
     })
-    const customLabel = document.createElement('label')
-    customLabel.textContent = '其他 / 补充：'
-    const customInput = document.createElement('input')
-    customInput.type = 'text'
-    customInput.className = 'questionCustom'
-    customInput.placeholder = '输入你的要求（可选）'
-    customInput.maxLength = 2000
-    customLabel.append(customInput)
-    fieldset.append(customLabel)
+    if (item.id !== 'web_search_permission') {
+      const customLabel = document.createElement('label')
+      customLabel.textContent = '其他 / 补充：'
+      const customInput = document.createElement('input')
+      customInput.type = 'text'
+      customInput.className = 'questionCustom'
+      customInput.placeholder = '输入你的要求（可选）'
+      customInput.maxLength = 2000
+      customLabel.append(customInput)
+      fieldset.append(customLabel)
+    }
     questionCard.append(fieldset)
   })
   const actions = document.createElement('div')
@@ -3020,11 +3069,15 @@ questionCard.addEventListener('submit', async event => {
     const fieldset = questionCard.querySelectorAll('fieldset')[index]
     return { id: item.id,
       selected: [...fieldset.querySelectorAll('input:checked')].map(input => input.value),
-      custom: fieldset.querySelector('.questionCustom').value.trim() }
+      custom: fieldset.querySelector('.questionCustom')?.value.trim() ?? '' }
   })
   const status = questionCard.querySelector('.questionStatus')
   if (!answers.some(answer => answer.selected.length || answer.custom)) {
     status.textContent = '请至少选择一项或填写补充内容。'
+    return
+  }
+  if (activeQuestion.questions.some((item, index) => item.id === 'web_search_permission' && answers[index].selected.length !== 1)) {
+    status.textContent = '请选择是否开启联网搜索。'
     return
   }
   questionSubmitting = true
@@ -3038,6 +3091,7 @@ questionCard.addEventListener('submit', async event => {
     if (!response.ok || (await response.json()).accepted !== true) throw new Error(response.status === 409 ? 'stale' : 'failed')
     if (sessionId === currentSessionId && activeQuestion?.requestId === requestId) {
       showQuestion(null)
+      void loadWebSearchPolicy(sessionId)
       setComposeNotice('选择已提交，智见小秘书正在继续回复。', 'progress')
       await loadConversation(sessionId)
     }
@@ -3195,6 +3249,7 @@ conversationModelSelect.addEventListener('change', async () => {
   let provider, model
   try { [provider, model] = JSON.parse(conversationModelSelect.value) } catch { return }
   conversationModelSelect.disabled = true
+  delete conversationModelStatus.dataset.kind
   conversationModelStatus.textContent = '切换中…'
   renderModelPicker()
   try {
@@ -3206,7 +3261,15 @@ conversationModelSelect.addEventListener('change', async () => {
     if (currentSessionId !== sessionId) return
     currentModelValue = modelValue(data.selected)
     conversationModelSelect.value = currentModelValue
+    conversationModelStatus.dataset.kind = 'success'
     conversationModelStatus.textContent = '已用于当前会话'
+    const selectedValue = currentModelValue
+    setTimeout(() => {
+      if (currentSessionId === sessionId && currentModelValue === selectedValue && conversationModelStatus.textContent === '已用于当前会话') {
+        conversationModelStatus.textContent = ''
+        delete conversationModelStatus.dataset.kind
+      }
+    }, 2500)
   } catch {
     if (currentSessionId !== sessionId) return
     conversationModelSelect.value = currentModelValue
@@ -3228,7 +3291,13 @@ async function selectSession(session, urlMode = 'push') {
   taskEpoch++
   renderTaskStrip([])
   for (const reset of sessionPollers) reset(false)
-  conversationWorkspace.textContent = `工作空间 · ${currentAccountName ?? '当前账号'}`
+  const selectedSpace = availableSpaces.find(space => space.id === session.spaceId)
+  conversationWorkspace.textContent = selectedSpace?.relativePath.replace(/^spaces\//, '') ?? '默认'
+  conversationWorkspace.title = selectedSpace?.relativePath ?? '当前账号的默认工作空间'
+  conversationPresetSelect.replaceChildren(new Option('读取中…', ''))
+  conversationPresetSelect.disabled = true
+  conversationSearchPolicy.value = 'ask'
+  conversationSearchPolicy.disabled = true
   conversationModelStatus.textContent = ''
   conversationModelSelect.replaceChildren(new Option('读取中…', ''))
   conversationModelSelect.disabled = true
@@ -3329,6 +3398,8 @@ async function selectSession(session, urlMode = 'push') {
     loadQuestion(session.id, epoch),
     loadApproval(session.id, epoch),
     loadTasks(session.id),
+    loadSessionPreset(session.id, epoch),
+    loadWebSearchPolicy(session.id, epoch),
   ])
   if (epoch !== conversationEpoch) return
   sendMessageButton.disabled = !researchReady || !!activeQuestion || previewActive || sharedReadOnly()
@@ -3574,29 +3645,185 @@ async function loadDatasets(more = false) {
 }
 dataMore.addEventListener('click', () => { void loadDatasets(dataItems.children.length > 0) })
 
-async function createPortalSession() {
+const newSessionDialog = document.getElementById('newSessionDialog')
+const newSessionForm = document.getElementById('newSessionForm')
+const newSessionSpace = document.getElementById('newSessionSpace')
+const newSessionPreset = document.getElementById('newSessionPreset')
+const newSessionError = document.getElementById('newSessionError')
+const newSpaceDialog = document.getElementById('newSpaceDialog')
+const newSpaceForm = document.getElementById('newSpaceForm')
+const newSpaceParent = document.getElementById('newSpaceParent')
+const newSpaceName = document.getElementById('newSpaceName')
+const newSpaceError = document.getElementById('newSpaceError')
+
+function fillSpaceOptions(select, selected = '') {
+  select.replaceChildren(new Option('默认工作空间', ''))
+  for (const space of availableSpaces) select.append(new Option(space.relativePath.replace(/^spaces\//, ''), space.id))
+  select.value = selected
+}
+
+function fillPresetOptions(select, selected = '') {
+  select.replaceChildren()
+  if (!availablePresets.length) select.append(new Option('当前默认预设', ''))
+  for (const preset of availablePresets) select.append(new Option(preset.name || preset.id, preset.id))
+  select.value = availablePresets.some(preset => preset.id === selected) ? selected
+    : availablePresets.some(preset => preset.id === defaultPresetId) ? defaultPresetId : ''
+}
+
+async function loadPresetRoster() {
+  if (shareMode || !researchReady) return
+  try {
+    const response = await apiFetch('/api/presets', { credentials: 'same-origin', cache: 'no-store' })
+    if (!response.ok) throw new Error('unavailable')
+    const data = await response.json()
+    availablePresets = Array.isArray(data.presets) ? data.presets.filter(item => typeof item.id === 'string') : []
+    defaultPresetId = typeof data.defaultId === 'string' ? data.defaultId : ''
+    newSpaceButton.disabled = !availablePresets.length
+    if (currentSessionId) void loadSessionPreset(currentSessionId, conversationEpoch)
+  } catch { availablePresets = []; defaultPresetId = ''; newSpaceButton.disabled = true }
+}
+
+async function loadSessionPreset(id, epoch) {
+  if (!id || shareMode || previewActive) {
+    conversationPresetSelect.replaceChildren(new Option('只读会话', ''))
+    conversationPresetSelect.disabled = true
+    return
+  }
+  try {
+    const response = await apiFetch(`/api/sessions/${id}/preset`, { credentials: 'same-origin', cache: 'no-store' })
+    if (!response.ok) throw new Error('unavailable')
+    const item = await response.json()
+    if (id !== currentSessionId || epoch !== conversationEpoch) return
+    const session = currentSession()
+    if (session) session.presetId = item.presetId
+    fillPresetOptions(conversationPresetSelect, item.presetId)
+    if (!availablePresets.some(preset => preset.id === item.presetId))
+      conversationPresetSelect.replaceChildren(new Option(item.presetId || '未知预设', item.presetId || ''))
+    conversationPresetSelect.disabled = !item.canSwitch || availablePresets.length < 2
+    conversationPresetSelect.title = item.canSwitch ? '当前空白会话可切换预设' : '会话开始后预设固定；请新建会话切换'
+  } catch {
+    if (id !== currentSessionId || epoch !== conversationEpoch) return
+    conversationPresetSelect.replaceChildren(new Option('暂不可用', ''))
+    conversationPresetSelect.disabled = true
+  }
+}
+
+async function loadWebSearchPolicy(id = currentSessionId, epoch = conversationEpoch) {
+  if (!id || previewActive) { conversationSearchPolicy.disabled = true; return }
+  try {
+    const response = await apiFetch(`/api/sessions/${id}/web-search`, { credentials: 'same-origin', cache: 'no-store' })
+    if (!response.ok) throw new Error('unavailable')
+    const data = await response.json()
+    if (id !== currentSessionId || epoch !== conversationEpoch) return
+    if (!['ask', 'on', 'off'].includes(data.policy)) throw new Error('unavailable')
+    conversationSearchPolicy.value = data.policy
+    conversationSearchPolicy.disabled = !researchReady || sharedReadOnly()
+      || activeQuestion?.questions?.some(item => item.id === 'web_search_permission') === true
+    conversationSearchPolicy.title = '仅向 DeepSeek 发送公开搜索词；关闭后不再联网搜索'
+  } catch {
+    if (id === currentSessionId && epoch === conversationEpoch) {
+      conversationSearchPolicy.disabled = true
+      conversationSearchPolicy.title = '联网搜索状态暂不可用'
+    }
+  }
+}
+
+conversationSearchPolicy.addEventListener('change', async () => {
+  const id = currentSessionId, policy = conversationSearchPolicy.value
+  if (!id || sharedReadOnly() || !['ask', 'on', 'off'].includes(policy)) return
+  conversationSearchPolicy.disabled = true
+  try {
+    const response = await apiFetch(`/api/sessions/${id}/web-search`, { method: 'PUT', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
+      body: JSON.stringify({ policy }) })
+    if (!response.ok) throw new Error('联网搜索设置失败，请重试。')
+  } catch (error) { showMessage(error.message) }
+  finally { if (id === currentSessionId) void loadWebSearchPolicy(id, conversationEpoch) }
+})
+
+conversationPresetSelect.addEventListener('change', async () => {
+  const id = currentSessionId, presetId = conversationPresetSelect.value
+  if (!id || !presetId) return
+  conversationPresetSelect.disabled = true
+  try {
+    const response = await apiFetch(`/api/sessions/${id}/preset`, { method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
+      body: JSON.stringify({ presetId }) })
+    if (!response.ok) throw new Error(response.status === 409 ? '会话已开始，请新建会话切换预设。' : '预设切换失败，请重试。')
+    showMessage('当前会话预设已切换。')
+  } catch (error) { showMessage(error.message) }
+  finally { if (id === currentSessionId) void loadSessionPreset(id, conversationEpoch) }
+})
+
+async function createPortalSession({ spaceId = null, presetId = null } = {}) {
     const response = await apiFetch('/api/sessions', { method: 'POST', credentials: 'same-origin',
       headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
-      body: JSON.stringify({ requestId: pendingSessionRequestId }) })
+      body: JSON.stringify({ requestId: pendingSessionRequestId, spaceId, presetId }) })
     if (!response.ok) throw new Error('create failed')
     const { session } = await response.json()
     const listing = await apiFetch('/api/sessions', { credentials: 'same-origin', cache: 'no-store' })
     sessionListFilter = 'all'
-    if (listing.ok) renderSessionList((await listing.json()).sessions)
+    if (listing.ok) {
+      const data = await listing.json()
+      availableSpaces = Array.isArray(data.spaces) ? data.spaces : availableSpaces
+      renderSessionList(data.sessions)
+    }
     await selectSession(session)
     pendingSessionRequestId = crypto.randomUUID()
     showMessage('')
     return session
 }
 
-newSessionButton.addEventListener('click', async () => {
+newSessionButton.addEventListener('click', () => {
   if (!researchReady || shareMode) return
-  newSessionButton.disabled = true
+  fillSpaceOptions(newSessionSpace, currentSession()?.spaceId ?? '')
+  fillPresetOptions(newSessionPreset, currentSession()?.presetId ?? defaultPresetId)
+  newSessionError.textContent = ''
+  newSessionDialog.showModal()
+})
+conversationWorkspaceTrigger.addEventListener('click', () => newSessionButton.click())
+document.getElementById('newSessionCancel').addEventListener('click', () => newSessionDialog.close())
+newSessionForm.addEventListener('submit', async event => {
+  event.preventDefault()
+  const submit = newSessionForm.querySelector('[type="submit"]')
+  submit.disabled = true
   try {
-    await createPortalSession()
+    await createPortalSession({ spaceId: newSessionSpace.value || null, presetId: newSessionPreset.value || null })
+    newSessionDialog.close()
     conversationInput.focus()
-  } catch { showMessage('新建会话暂时失败，请稍后重试。') }
-  finally { newSessionButton.disabled = !researchReady }
+  } catch { newSessionError.textContent = '新建会话失败，请检查空间和预设后重试。' }
+  finally { submit.disabled = false }
+})
+newSpaceButton.addEventListener('click', () => {
+  if (!researchReady || shareMode) return
+  fillSpaceOptions(newSpaceParent, currentSession()?.spaceId ?? '')
+  newSpaceName.value = ''
+  newSpaceError.textContent = ''
+  newSpaceDialog.showModal()
+})
+document.getElementById('newSpaceCancel').addEventListener('click', () => newSpaceDialog.close())
+newSpaceForm.addEventListener('submit', async event => {
+  event.preventDefault()
+  const name = newSpaceName.value.trim()
+  if (!/^[\p{L}\p{N}_ -]{1,40}$/u.test(name)) { newSpaceError.textContent = '目录名称仅支持文字、数字、空格、横线和下划线。'; return }
+  const submit = newSpaceForm.querySelector('[type="submit"]')
+  submit.disabled = true
+  try {
+    const response = await apiFetch('/api/spaces', { method: 'POST', credentials: 'same-origin',
+      headers: { 'content-type': 'application/json', 'x-csrf-token': csrfToken() ?? '' },
+      body: JSON.stringify({ parentId: newSpaceParent.value || null, name }) })
+    if (!response.ok) throw new Error(response.status === 409 ? '同级目录已存在。' : '创建失败，请重试。')
+    const { space } = await response.json()
+    availableSpaces.push(space)
+    availableSpaces.sort((a, b) => a.relativePath.localeCompare(b.relativePath, 'zh-CN'))
+    sessionGroupMode = 'workspace'
+    sessionGroupModeSelect.value = 'workspace'
+    saveSessionView()
+    renderSessionList(availableSessions)
+    newSpaceDialog.close()
+    showMessage('空间已创建，可在新会话中选择。')
+  } catch (error) { newSpaceError.textContent = error.message }
+  finally { submit.disabled = false }
 })
 
 function renderTaskStrip(tasks) {
@@ -3983,6 +4210,10 @@ async function sendConversationMessage() {
     const result = await response.json()
     if (response.status === 400 && result.error === 'MENTION_UNAVAILABLE') throw new Error('mention_unavailable')
     if (!response.ok || result.accepted !== true) throw new Error('send failed')
+    if (currentSessionId === sessionId) {
+      conversationPresetSelect.disabled = true
+      conversationPresetSelect.title = '会话开始后预设固定；请新建会话切换'
+    }
     applyAutomaticSessionTitle(sessionId, result.sessionTitle)
     selectedMentionsBySession.delete(sessionId)
     removeSentAttachments(sessionId, pending.attachmentIds ?? [])
@@ -4023,6 +4254,15 @@ async function sendConversationMessage() {
   }
 }
 sendMessageButton.addEventListener('click', () => { void sendConversationMessage() })
+continueAfterLimit.addEventListener('click', () => {
+  if (conversationInput.value.trim()) {
+    setComposeNotice('请先发送或清空当前草稿，再继续上一轮。', 'error')
+    conversationInput.focus()
+    return
+  }
+  conversationInput.value = '上一轮回复因输出上限中断。请检查已经说过和做过的内容，从中断处继续完成原请求；不要重复已完成的外部写入或发布。请简短分段给出剩余结果，若已完成则直接给出验收结论。'
+  void sendConversationMessage()
+})
 function needsLiveUpdates() {
   if (!currentSessionId) return false
   if (latestPending() || activeQuestion || activeApproval
@@ -4059,6 +4299,7 @@ function startPoll(period, shouldRun, task) {
 }
 startPoll(() => needsLiveUpdates() ? 3000 : 6000, () => !!currentSessionId, () => loadConversation(currentSessionId))
 startPoll(() => needsLiveUpdates() ? 3000 : 6000, () => !!currentSessionId, () => loadQuestion(currentSessionId))
+startPoll(15000, () => !!currentSessionId && !previewActive, () => loadWebSearchPolicy(currentSessionId))
 startPoll(() => needsLiveUpdates() ? 3000 : 6000, () => !!currentSessionId, () => loadApproval(currentSessionId))
 startPoll(() => needsLiveUpdates() || workspaceState?.plan?.status === 'staged' ? 10000 : 20000,
   () => !!currentSessionId, () => loadWorkspace(currentSessionId))
@@ -4105,6 +4346,9 @@ async function showAuthenticatedApp(data) {
   document.querySelector('.sessionSidebarHint').textContent = shareMode ? '通过分享链接访问的会话'
     : `${data.user.displayName} · ${data.user.accountName} 下的研究会话`
   newSessionButton.disabled = !researchReady || shareMode
+  newSpaceButton.disabled = !researchReady || shareMode
+  newSpaceButton.hidden = shareMode
+  if (!shareMode) void loadPresetRoster()
   taskLauncher.disabled = !researchReady || sharedReadOnly()
   document.getElementById('newSessionGroup').disabled = shareMode
   document.getElementById('newSessionHint').textContent = researchReady ? '点击创建空白研究会话' : '隔离研究环境开通后可新建'
@@ -4128,7 +4372,8 @@ async function showAuthenticatedApp(data) {
     if (!response.ok) throw new Error('session_list_unavailable')
     const body = await response.json()
     if (!Array.isArray(body.sessions)) throw new Error('invalid_session_list')
-    return { sessions: body.sessions, groups: Array.isArray(body.groups) ? body.groups : [] }
+    return { sessions: body.sessions, groups: Array.isArray(body.groups) ? body.groups : [],
+      spaces: Array.isArray(body.spaces) ? body.spaces : [] }
   })().then(result => result, error => ({ error }))
   if (!shareMode) {
     const cached = await sessionCache.read(currentAccountName, 'sessions', '')
@@ -4145,6 +4390,7 @@ async function showAuthenticatedApp(data) {
     if (result.error) throw result.error
     sessions = result.sessions
     availableGroups = result.groups
+    availableSpaces = result.spaces
     renderSessionList(sessions)
   } catch {
     if (availableSessions.length) {

@@ -47,6 +47,12 @@ export class AccountStore {
         request_id TEXT NOT NULL, dsh_session_id TEXT UNIQUE, title TEXT NOT NULL,
         created_at INTEGER NOT NULL, UNIQUE(account_id,request_id)
       );
+      CREATE TABLE IF NOT EXISTS research_spaces (
+        id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id),
+        parent_id TEXT, name TEXT NOT NULL, relative_path TEXT NOT NULL,
+        created_at INTEGER NOT NULL, UNIQUE(account_id,parent_id,name), UNIQUE(account_id,relative_path)
+      );
+      CREATE INDEX IF NOT EXISTS research_spaces_by_account ON research_spaces(account_id,parent_id,created_at);
       CREATE INDEX IF NOT EXISTS sessions_by_account ON research_sessions(account_id,created_at DESC);
       CREATE TABLE IF NOT EXISTS session_tasks (
         id TEXT PRIMARY KEY, account_id TEXT NOT NULL REFERENCES accounts(id),
@@ -88,6 +94,10 @@ export class AccountStore {
       this.db.exec('ALTER TABLE session_preferences ADD COLUMN group_id TEXT')
     if (!this.db.prepare('PRAGMA table_info(session_tasks)').all().some(column => column.name === 'reply_seen'))
       this.db.exec('ALTER TABLE session_tasks ADD COLUMN reply_seen INTEGER NOT NULL DEFAULT 0 CHECK(reply_seen IN (0,1))')
+    if (!this.db.prepare('PRAGMA table_info(research_sessions)').all().some(column => column.name === 'space_id'))
+      this.db.exec('ALTER TABLE research_sessions ADD COLUMN space_id TEXT')
+    if (!this.db.prepare('PRAGMA table_info(research_sessions)').all().some(column => column.name === 'preset_id'))
+      this.db.exec('ALTER TABLE research_sessions ADD COLUMN preset_id TEXT')
   }
 
   close() { this.db.close() }
@@ -187,15 +197,46 @@ export class AccountStore {
     if (typeof token === 'string') this.db.prepare('DELETE FROM browser_sessions WHERE token_hash=?').run(digest(token))
   }
 
-  createResearchSession({ principal, requestId, title = '新会话' }) {
+  createResearchSession({ principal, requestId, title = '新会话', spaceId = null, presetId = null }) {
     if (!principal?.accountId || !text(requestId, 128) || !text(title)) throw new Error('invalid session request')
     if (!this.resolveMember(principal)) throw new Error('membership revoked')
     const existing = this.db.prepare('SELECT * FROM research_sessions WHERE account_id=? AND request_id=?').get(principal.accountId, requestId)
     if (existing) return existing
+    if (spaceId !== null && !this.getResearchSpace(principal, spaceId)) throw new Error('space unavailable')
     const id = randomUUID()
-    this.db.prepare('INSERT INTO research_sessions(id,account_id,request_id,title,created_at) VALUES (?,?,?,?,?)')
-      .run(id, principal.accountId, requestId, title, Date.now())
+    this.db.prepare('INSERT INTO research_sessions(id,account_id,request_id,title,created_at,space_id,preset_id) VALUES (?,?,?,?,?,?,?)')
+      .run(id, principal.accountId, requestId, title, Date.now(), spaceId, presetId)
     return this.getResearchSession(principal, id)
+  }
+
+  listResearchSpaces(principal) {
+    if (!this.resolveMember(principal)) return []
+    return this.db.prepare('SELECT id,parent_id AS parentId,name,relative_path AS relativePath FROM research_spaces WHERE account_id=? ORDER BY relative_path')
+      .all(principal.accountId)
+  }
+
+  getResearchSpace(principal, id) {
+    if (!this.resolveMember(principal)) return undefined
+    return this.db.prepare('SELECT id,parent_id AS parentId,name,relative_path AS relativePath FROM research_spaces WHERE account_id=? AND id=?')
+      .get(principal.accountId, id)
+  }
+
+  createResearchSpace(principal, { parentId = null, name, relativePath }) {
+    if (!this.resolveMember(principal) || !text(name, 40) || !/^[\p{L}\p{N}_ -]+$/u.test(name)
+      || !text(relativePath, 512)) throw new Error('invalid space')
+    const parent = parentId === null ? null : this.getResearchSpace(principal, parentId)
+    if (parentId !== null && !parent) throw new Error('space unavailable')
+    if (relativePath !== `${parent?.relativePath ?? 'spaces'}/${name}`) throw new Error('invalid space path')
+    const id = randomUUID()
+    this.db.prepare('INSERT INTO research_spaces(id,account_id,parent_id,name,relative_path,created_at) VALUES (?,?,?,?,?,?)')
+      .run(id, principal.accountId, parentId, name, relativePath, Date.now())
+    return { id, parentId, name, relativePath }
+  }
+
+  updateResearchSessionPreset(principal, id, presetId) {
+    if (!this.resolveMember(principal)) return false
+    return this.db.prepare('UPDATE research_sessions SET preset_id=? WHERE id=? AND account_id=?')
+      .run(presetId, id, principal.accountId).changes === 1
   }
 
   setAutomaticSessionTitle(principal, id, title) {
@@ -257,7 +298,7 @@ export class AccountStore {
 
   listResearchSessions(principal) {
     if (!this.resolveMember(principal)) return []
-    return this.db.prepare('SELECT id,title,created_at AS createdAt FROM research_sessions WHERE account_id=? AND dsh_session_id IS NOT NULL ORDER BY created_at DESC LIMIT 100')
+    return this.db.prepare('SELECT id,title,created_at AS createdAt,space_id AS spaceId,preset_id AS presetId FROM research_sessions WHERE account_id=? AND dsh_session_id IS NOT NULL ORDER BY created_at DESC LIMIT 100')
       .all(principal.accountId)
   }
 

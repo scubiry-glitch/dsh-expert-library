@@ -27,6 +27,7 @@ export * from './provider-runtime.ts'
 export * from './providers/wind.ts'
 export * from './providers/zyt.ts'
 export * from './providers/beike.ts'
+export * from './providers/cddataos.ts'
 export {
   buildZhijianDomainPack,
   zhijianMetaToExpertV2,

@@ -38,6 +38,14 @@ test('failed model turns expose a safe status without leaking provider details',
   assert.equal(JSON.stringify(first).includes('private provider detail'), false)
   assert.equal(projectConversation(events, first.nextCursor).turnFailures, undefined)
 })
+test('output limit after an interim assistant message remains visible as an unfinished turn', () => {
+  const events = [user(0, '请完成任务'), assistant(1, [text('正在处理')]),
+    { seq: 2, type: 'turn/end', data: { reason: { kind: 'max-tokens' } } }]
+  const page = projectConversation(events)
+  assert.deepEqual(page.messages.map(message => message.text), ['请完成任务', '正在处理'])
+  assert.deepEqual(page.turnFailures, [{ seq: 2, kind: 'output_limit' }])
+  assert.equal(page.nextCursor, 2)
+})
 test('cold session observation is released and inherited messages are excluded', async () => {
   let disposed = 0
   const ctx = { get: key => key === 'sessionQuery' ? { observeSession: async (id, options) => {

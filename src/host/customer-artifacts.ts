@@ -49,10 +49,13 @@ export function createCustomerArtifacts(home: string, workspace: string) {
     } catch { return undefined }
   }
   return {
-    async publish(sessionId: string, source: string, resultKey: string, resultLabel: string) {
+    async publish(sessionId: string, source: string, resultKey: string, resultLabel: string, sessionWorkspace = workspace) {
       if (!SESSION.test(sessionId) || !ID.test(resultKey) || !resultLabel.trim() || resultLabel.length > 120)
         throw new Error('INVALID_ARTIFACT_METADATA')
-      const root = await realpath(workspace)
+      const accountRoot = await realpath(workspace)
+      const root = await realpath(sessionWorkspace)
+      if (root !== accountRoot && !root.startsWith(join(accountRoot, 'spaces') + sep))
+        throw new Error('ARTIFACT_OUTSIDE_WORKSPACE')
       const file = await realpath(resolve(root, source))
       if (!file.startsWith(root + sep) || file.startsWith(join(root, 'customer-uploads') + sep))
         throw new Error('ARTIFACT_OUTSIDE_WORKSPACE')
@@ -117,9 +120,12 @@ export function registerCustomerArtifactTool(ctx: Context, workspace: string, ar
     } }, render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }] },
     async execute(args, exec) {
       const agent = exec.agent
+      const cwd = agent?.session.header.cwd
+      const root = await realpath(workspace)
+      const actual = cwd ? await realpath(cwd) : ''
       if (!agent || agent.session.header.origin === 'subagent'
-        || resolve(agent.session.header.cwd ?? '') !== resolve(workspace)) throw new Error('ARTIFACT_NOT_CUSTOMER_SESSION')
-      return artifacts.publish(agent.session.header.id, args.file, args.resultKey, args.resultLabel)
+        || (actual !== root && !actual.startsWith(join(root, 'spaces') + sep))) throw new Error('ARTIFACT_NOT_CUSTOMER_SESSION')
+      return artifacts.publish(agent.session.header.id, args.file, args.resultKey, args.resultLabel, actual)
     },
   }))
 }

@@ -97,3 +97,28 @@ test('session groups are account scoped and deleting a group keeps its sessions'
     assert.equal(store.listResearchSessions(principalA).length, 1)
   } finally { store.close() }
 })
+
+test('research spaces are nested under their own account and sessions retain space and preset', () => {
+  const store = new AccountStore()
+  try {
+    const a = store.provisionAccount({ slug: 'space-a' })
+    const b = store.provisionAccount({ slug: 'space-b' })
+    store.provisionMember({ accountId: a, issuer: 'https://issuer.test', subject: 'a', displayName: 'A' })
+    store.provisionMember({ accountId: b, issuer: 'https://issuer.test', subject: 'b', displayName: 'B' })
+    const pa = store.issueBrowserSession({ issuer: 'https://issuer.test', subject: 'a', accountId: a }).principal
+    const pb = store.issueBrowserSession({ issuer: 'https://issuer.test', subject: 'b', accountId: b }).principal
+    const root = store.createResearchSpace(pa, { name: '项目研究', relativePath: 'spaces/项目研究' })
+    const child = store.createResearchSpace(pa, { parentId: root.id, name: '财务', relativePath: 'spaces/项目研究/财务' })
+    assert.equal(store.getResearchSpace(pb, root.id), undefined)
+    assert.deepEqual(store.listResearchSpaces(pb), [])
+    assert.throws(() => store.createResearchSpace(pb, { parentId: root.id, name: '越权', relativePath: 'spaces/项目研究/越权' }))
+    assert.throws(() => store.createResearchSpace(pa, { parentId: root.id, name: '../escape', relativePath: 'spaces/项目研究/../escape' }))
+    assert.throws(() => store.createResearchSession({ principal: pb, requestId: 'foreign-space', spaceId: child.id }))
+    const session = store.createResearchSession({ principal: pa, requestId: 'my-space', spaceId: child.id, presetId: 'zhijian' })
+    store.bindDshSession(pa, session.id, `session-${session.id}`)
+    assert.equal(store.listResearchSessions(pa)[0].spaceId, child.id)
+    assert.equal(store.listResearchSessions(pa)[0].presetId, 'zhijian')
+    store.updateResearchSessionPreset(pa, session.id, 'standard')
+    assert.equal(store.listResearchSessions(pa)[0].presetId, 'standard')
+  } finally { store.close() }
+})

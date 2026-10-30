@@ -30,3 +30,13 @@ test('a typed expert name cannot select a capability or replay an old version', 
     version: expert.version, name: expert.name }]), [expert])
   assert.equal(verifyCustomerMentionSelections('@未知 请回答', [expert], []), undefined)
 })
+
+test('cddataos mention appears only with the provider grant and credential', () => {
+  const inventory = {
+    providers: ['cddataos'],
+    availableCredentials: () => ['CDDATAOS_CREDENTIALS'],
+    localDbDatabases: () => [],
+  }
+  assert.deepEqual(customerMentions(inventory), [{ name: '成都数据运营平台', kind: 'data-source', provider: 'cddataos' }])
+  assert.deepEqual(customerMentions({ ...inventory, availableCredentials: () => [] }), [])
+})

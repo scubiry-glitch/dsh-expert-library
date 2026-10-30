@@ -6,6 +6,21 @@
 .manageIntro h1 { font: 500 clamp(27px,3vw,38px)/1.2 var(--serif); margin: 6px 0; }
 .manageIntro p,.sectionTitle p { color: var(--muted); }
 .manageNav { position: sticky; top: 0; z-index: 3; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 5px; padding: 5px; background: var(--panel2); border: 1px solid var(--lineStrong); border-radius: 10px; box-shadow: 0 5px 18px #3a35220f; }
+.manageBilling { margin-bottom: 20px; }
+.manageBillingHeader { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+.manageBillingHeader h3 { margin-bottom: 2px; }
+.manageBillingBadge { padding: 5px 9px; border-radius: 5px; background: #e8eee1; color: var(--green); font-size: 12px; font-weight: 700; }
+.manageBillingMetrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin: 17px 0 11px; }
+.manageBillingMetric { min-width: 0; padding: 15px 16px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel2); }
+.manageBillingMetric span { display: block; margin-bottom: 7px; color: var(--muted); font-size: 12px; }
+.manageBillingMetric strong { font: 600 clamp(17px,2vw,24px) var(--serif); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.manageBillingHistory { margin-top: 20px; border-top: 1px solid var(--line); }
+.manageBillingHistory h4 { margin: 15px 0 7px; font-size: 13px; }
+.manageBillingDay { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 12px; font-variant-numeric: tabular-nums; }
+.manageBillingDay:first-child { border-top: 0; }
+.manageBillingDay strong { font-size: 13px; }
+.manageBillingDay small { color: var(--muted); text-align: right; }
+@media (max-width: 760px) { .manageBillingMetrics { grid-template-columns: 1fr; } .manageBillingDay { grid-template-columns: 1fr auto; } .manageBillingDay small { grid-column: 1 / -1; text-align: left; } }
 .manageUsageToolbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 17px 21px; margin-bottom: 14px; border: 1px solid var(--lineStrong); border-radius: 10px; background: var(--panel); }
 .manageUsageToolbar strong { font: 600 19px var(--serif); }
 .manageUsageToolbar p { margin: 5px 0 0; }

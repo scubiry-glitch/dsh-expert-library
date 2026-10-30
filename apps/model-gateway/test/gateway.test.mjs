@@ -1,11 +1,135 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { createModelGateway, UsageLedger } from '../server.mjs'
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { createModelGateway, readGatewayConfig, UsageLedger } from '../server.mjs'
 
 const digest = value => createHash('sha256').update(value).digest('hex')
 const tokens = { a: 'test-account-a-012345678901234567890123456789', b: 'test-account-b-012345678901234567890123456789' }
 const session = 'session-11111111-1111-4111-8111-111111111111'
+
+test('web search proxy requires a captain session and records successful results without exposing the upstream key', async t => {
+  const ledger = new UsageLedger()
+  t.after(() => ledger.close())
+  const calls = []
+  const gateway = createModelGateway({ upstreamKey: 'server-only-key', accounts: [
+    { id: 'a', tokenHash: digest(tokens.a), dailyQuota: 1000, webSearchEnabled: true },
+    { id: 'b', tokenHash: digest(tokens.b), dailyQuota: 1000 },
+  ] }, { ledger, upstreamFetch: async (url, request) => {
+    calls.push({ url, headers: request.headers, body: JSON.parse(request.body) })
+    if (url.endsWith('/fetch')) return Response.json({ title: '文章', content: '原文正文' })
+    return Response.json({ results: [{ title: '来源', url: 'https://example.com/one', summary: '摘要', content: 'private page body' }] })
+  } })
+  await new Promise(resolve => gateway.listen(0, '127.0.0.1', resolve))
+  t.after(() => new Promise(resolve => gateway.close(resolve)))
+  const base = `http://127.0.0.1:${gateway.address().port}`
+  const request = (headers, body) => fetch(`${base}/v1/tools/search`, { method: 'POST', headers, body: JSON.stringify(body) })
+  const body = { query: '公开政策', count: 5, need_content: false }
+  assert.equal((await request({}, body)).status, 401)
+  assert.equal((await request({ authorization: `Bearer ${tokens.a}` }, body)).status, 400)
+  const headers = { authorization: `Bearer ${tokens.a}`, 'x-deepseek-harness-session-id': session }
+  assert.equal((await request({ ...headers, authorization: `Bearer ${tokens.b}` }, body)).status, 403)
+  assert.equal((await request(headers, { ...body, need_content: true })).status, 400)
+  const response = await request(headers, body)
+  assert.equal(response.status, 200)
+  assert.deepEqual(await response.json(), { results: [{ title: '来源', url: 'https://example.com/one', summary: '摘要', site_name: null, date: null }] })
+  assert.equal(calls.length, 1)
+  assert.equal(calls[0].url, 'https://api.deepseek.com/v1/tools/search')
+  assert.equal(calls[0].headers.authorization, 'Bearer server-only-key')
+  assert.equal(ledger.db.prepare('SELECT result_count FROM web_search_calls WHERE account_id=? AND session_id=?').get('a', session).result_count, 1)
+  assert.equal((await request(headers, body)).status, 200)
+  const fetchPage = (url) => fetch(`${base}/v1/tools/fetch`, { method: 'POST', headers,
+    body: JSON.stringify({ url }) })
+  assert.equal((await fetchPage('http://127.0.0.1/private')).status, 400)
+  assert.equal((await fetchPage('https://example.com/?token=secret')).status, 400)
+  const fetched = await fetchPage('https://example.com/article')
+  assert.deepEqual(await fetched.json(), { title: '文章', content: '原文正文', truncated: false })
+  assert.equal(ledger.db.prepare('SELECT COUNT(*) AS count FROM web_fetch_calls WHERE account_id=?').get('a').count, 1)
+  for (let i = 0; i < 18; i++) ledger.recordSearch('a', session, 1)
+  assert.equal((await request(headers, body)).status, 429)
+  for (let i = 0; i < 9; i++) ledger.recordFetch('a', session)
+  assert.equal((await fetchPage('https://example.com/article')).status, 429)
+})
+
+test('backend point ratio must be a positive whole number per account', t => {
+  const dir = mkdtempSync(join(tmpdir(), 'model-gateway-points-'))
+  t.after(() => rmSync(dir, { recursive: true, force: true }))
+  const configPath = join(dir, 'accounts.json'), keyPath = join(dir, 'provider.key')
+  writeFileSync(keyPath, 'test-provider-key')
+  const env = { MODEL_GATEWAY_CONFIG: configPath, MODEL_GATEWAY_KEY_FILE: keyPath,
+    MODEL_GATEWAY_DB: join(dir, 'usage.sqlite'), MODEL_GATEWAY_PORT: '3190' }
+  const base = { id: 'a', tokenHash: digest(tokens.a), dailyQuota: 1000 }
+  for (const ratio of [0, -1, 1.5, '1000', null]) {
+    writeFileSync(configPath, JSON.stringify({ accounts: [{ ...base, tokensPerPoint: ratio }] }))
+    assert.throws(() => readGatewayConfig(env), /invalid model gateway account/)
+  }
+  writeFileSync(configPath, JSON.stringify({ accounts: [{ ...base, tokensPerPoint: 1000 }] }))
+  assert.equal(readGatewayConfig(env).accounts[0].tokensPerPoint, 1000)
+})
+
+test('output allowance is account scoped and bounded in configuration', async t => {
+  const dir = mkdtempSync(join(tmpdir(), 'model-gateway-output-'))
+  t.after(() => rmSync(dir, { recursive: true, force: true }))
+  const configPath = join(dir, 'accounts.json'), keyPath = join(dir, 'provider.key')
+  writeFileSync(keyPath, 'test-provider-key')
+  const env = { MODEL_GATEWAY_CONFIG: configPath, MODEL_GATEWAY_KEY_FILE: keyPath,
+    MODEL_GATEWAY_DB: join(dir, 'usage.sqlite'), MODEL_GATEWAY_PORT: '3190' }
+  const base = { id: 'a', tokenHash: digest(tokens.a), dailyQuota: 100_000 }
+  for (const maxOutputTokens of [0, -1, 1.5, '16384', 32_769, null]) {
+    writeFileSync(configPath, JSON.stringify({ accounts: [{ ...base, maxOutputTokens }] }))
+    assert.throws(() => readGatewayConfig(env), /invalid model gateway account/)
+  }
+  writeFileSync(configPath, JSON.stringify({ accounts: [{ ...base, maxOutputTokens: 16_384 }] }))
+  assert.equal(readGatewayConfig(env).accounts[0].maxOutputTokens, 16_384)
+  for (const maxOutputTokensByProvider of [null, [], { unknown: 12_288 },
+    { glm: 0 }, { zai: 32_769 }, { deepseek: '24576' }]) {
+    writeFileSync(configPath, JSON.stringify({ accounts: [{ ...base, maxOutputTokensByProvider }] }))
+    assert.throws(() => readGatewayConfig(env), /invalid model gateway account/)
+  }
+  writeFileSync(configPath, JSON.stringify({ accounts: [{ ...base,
+    maxOutputTokensByProvider: { deepseek: 24_576, glm: 12_288, zai: 12_288 } }] }))
+  assert.deepEqual(readGatewayConfig(env).accounts[0].maxOutputTokensByProvider,
+    { deepseek: 24_576, glm: 12_288, zai: 12_288 })
+
+  const ledger = new UsageLedger()
+  t.after(() => ledger.close())
+  const requests = []
+  const gateway = createModelGateway({ upstreamKey: 'test', glmKey: 'test-glm', zaiKey: 'test-zai', accounts: [
+    { ...base, maxOutputTokens: 16_384, maxOutputTokensByProvider: {
+      deepseek: 24_576, glm: 12_288, zai: 12_288,
+    }, glmEnabled: true },
+    { id: 'b', tokenHash: digest(tokens.b), dailyQuota: 100_000 },
+  ] }, { ledger, upstreamFetch: async (_url, request) => {
+    requests.push(JSON.parse(request.body))
+    return new Response('data: {"usage":{"prompt_tokens":2,"completion_tokens":1}}\n\ndata: [DONE]\n\n', { status: 200 })
+  } })
+  await new Promise(resolve => gateway.listen(0, '127.0.0.1', resolve))
+  t.after(() => new Promise(resolve => gateway.close(resolve)))
+  const send = (token, max_tokens) => fetch(`http://127.0.0.1:${gateway.address().port}/chat/completions`, {
+    method: 'POST', headers: { authorization: `Bearer ${token}` },
+    body: JSON.stringify({ model: 'deepseek-chat', messages: [], stream: true, ...(max_tokens ? { max_tokens } : {}) }),
+  })
+  for (const [token, requested] of [[tokens.a, undefined], [tokens.a, 99_999], [tokens.b, 99_999]]) {
+    const response = await send(token, requested)
+    assert.equal(response.status, 200)
+    await response.text()
+  }
+  const glm = await fetch(`http://127.0.0.1:${gateway.address().port}/glm/v1/messages`, {
+    method: 'POST', headers: { 'x-api-key': tokens.a },
+    body: JSON.stringify({ model: 'glm-5.3', messages: [], stream: true }),
+  })
+  assert.equal(glm.status, 200)
+  await glm.text()
+  const zai = await fetch(`http://127.0.0.1:${gateway.address().port}/zai/chat/completions`, {
+    method: 'POST', headers: { authorization: `Bearer ${tokens.a}` },
+    body: JSON.stringify({ model: 'glm-5.3', messages: [], stream: true, max_tokens: 99_999 }),
+  })
+  assert.equal(zai.status, 200)
+  await zai.text()
+  assert.deepEqual(requests.map(request => request.max_tokens), [24_576, 24_576, 8_192, 12_288, 12_288])
+})
 
 test('model gateway authenticates per account, accepts continuable members, meters provider usage and enforces quota', async t => {
   const ledger = new UsageLedger()
@@ -52,8 +176,8 @@ test('internal usage is read-only, authenticated and scoped to requested configu
   const ledger = new UsageLedger()
   t.after(() => ledger.close())
   const gateway = createModelGateway({ upstreamKey: 'test', usageToken: 'usage-reader-secret-01234567890123456789', accounts: [
-    { id: 'a', tokenHash: digest(tokens.a), dailyQuota: 1000 },
-    { id: 'b', tokenHash: digest(tokens.b), dailyQuota: 2000 },
+    { id: 'a', tokenHash: digest(tokens.a), dailyQuota: 1000, tokensPerPoint: 333 },
+    { id: 'b', tokenHash: digest(tokens.b), dailyQuota: 2000, tokensPerPoint: 1_000_000 },
   ] }, { ledger })
   await new Promise(resolve => gateway.listen(0, '127.0.0.1', resolve))
   t.after(() => new Promise(resolve => gateway.close(resolve)))
@@ -68,8 +192,12 @@ test('internal usage is read-only, authenticated and scoped to requested configu
   assert.equal((await fetch(`${base}/internal/usage?account_id=a&account_id=b`, { headers })).status, 404)
   const a = await (await fetch(`${base}${path}`, { headers })).json()
   assert.deepEqual([a.dailyQuota, a.chargedTokens, a.remainingTokens, a.calls], [1000, 10, 990, 1])
+  assert.deepEqual(a.points, { tokensPerPoint: 333, dailyQuotaCents: 301,
+    chargedCents: 4, remainingCents: 297, days: [{ day: a.day, chargedCents: 4, calls: 1 }] })
   const b = await (await fetch(`${base}/internal/usage?account_id=b`, { headers })).json()
   assert.deepEqual([b.dailyQuota, b.chargedTokens, b.remainingTokens, b.calls], [2000, 0, 2000, 0])
+  assert.deepEqual(b.points, { tokensPerPoint: 1_000_000, dailyQuotaCents: 1,
+    chargedCents: 0, remainingCents: 1, days: [] })
 })
 
 test('missing provider usage retains a conservative charge', async t => {

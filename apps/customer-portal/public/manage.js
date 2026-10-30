@@ -12,12 +12,97 @@ let selectedSource = 'wind'
 let modelCatalog = null
 let expertCatalog = []
 const sourceNames = { wind: '万得', zyt: '政研通', beike: '贝壳', localdb: '本地数据' }
-const usageKinds = [['expert', '专家'], ['skill', 'Skill'], ['pack', '领域包'], ['source', '数据源']]
+const usageSourceNames = { ...sourceNames, zyt: '智见', cddataos: '成都数据运营平台' }
+const usageKinds = [['expert', '专家'], ['skill', '技能'], ['pack', '领域包'], ['source', '数据源']]
+const knownPackNames = { 'builtin-library': '内置专家库' }
+const formatCount = value => new Intl.NumberFormat('zh-CN').format(value)
+const formatPoints = cents => new Intl.NumberFormat('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cents / 100)
+async function loadBillingSummary() {
+  $('billingPeriod').textContent = '正在读取模型用量…'
+  try {
+    const response = await fetch('/api/usage', { credentials: 'same-origin', cache: 'no-store' })
+    if (!response.ok) throw new Error('model usage unavailable')
+    const usage = await response.json()
+    if (!Array.isArray(usage.days)) throw new Error('invalid model usage')
+    const points = usage.points
+    const unit = points ? '积分' : 'token'
+    const format = points ? formatPoints : formatCount
+    $('billingPeriod').textContent = `${usage.accountName} · ${usage.day}（UTC）`
+    $('billingUnit').textContent = unit
+    $('billingUnit').hidden = false
+    $('billingMetrics').replaceChildren()
+    const metrics = points
+      ? [['今日已用', points.chargedCents], ['每日额度', points.dailyQuotaCents], ['今日剩余', points.remainingCents]]
+      : [['今日已用', usage.chargedTokens], ['每日额度', usage.dailyQuota], ['今日剩余', usage.remainingTokens]]
+    for (const [label, amount] of metrics) {
+      const cell = node('div', undefined, 'manageBillingMetric')
+      cell.append(node('span', label), node('strong', `${format(amount)} ${unit}`))
+      $('billingMetrics').append(cell)
+    }
+    $('billingRule').textContent = points
+      ? `当前换算：${formatCount(points.tokensPerPoint)} token = 1 积分；按账号每日模型 token 总量折算到 0.01 积分。比例由平台后台设置，修改后历史展示也会重新折算。每日 00:00 UTC 重置。`
+      : '当前账号按模型 token 计量。每日 00:00 UTC 重置。'
+    $('billingDays').replaceChildren()
+    const days = points ? points.days : usage.days
+    if (!days.length) $('billingDays').append(node('p', '暂无用量记录。', 'manageMuted'))
+    for (const day of days) {
+      const row = node('div', undefined, 'manageBillingDay')
+      row.append(node('span', day.day), node('strong', `${format(points ? day.chargedCents : day.chargedTokens)} ${unit}`),
+        node('small', `${formatCount(day.calls)} 次模型调用`))
+      $('billingDays').append(row)
+    }
+  } catch (error) {
+    $('billingPeriod').textContent = '模型用量暂时无法读取，请稍后刷新。'
+    $('billingUnit').hidden = true
+    $('billingMetrics').replaceChildren()
+    $('billingRule').textContent = ''
+    $('billingDays').replaceChildren()
+    throw error
+  }
+}
 async function loadUsage() {
   const days = $('usageDays').value === '30' ? 30 : 7
   $('usageAsOf').textContent = '正在读取调用记录…'
   try {
     const value = await api('usage', 'GET', undefined, `?days=${days}`)
+    const [expertResult, skillResult, packResult, mentionResult] = await Promise.allSettled([
+      api('experts'), api('skills'), api('packs'),
+      fetch('/api/mentions', { credentials: 'same-origin', cache: 'no-store' }).then(async response => {
+        if (!response.ok) throw new Error('mention catalog unavailable')
+        return response.json()
+      }),
+    ])
+    const expertItems = expertResult.status === 'fulfilled' && Array.isArray(expertResult.value.experts) ? expertResult.value.experts : []
+    const skillItems = skillResult.status === 'fulfilled' && Array.isArray(skillResult.value.skills) ? skillResult.value.skills : []
+    const packItems = packResult.status === 'fulfilled' && Array.isArray(packResult.value.packs) ? packResult.value.packs : []
+    const catalogNames = items => new Map(items
+      .filter(item => typeof item.id === 'string' && typeof item.name === 'string' && item.name.trim())
+      .map(item => [item.id, item.name.trim()]))
+    const names = {
+      expert: catalogNames(expertItems), skill: catalogNames(skillItems), pack: catalogNames(packItems),
+    }
+    const mentionItems = mentionResult.status === 'fulfilled' && Array.isArray(mentionResult.value.items)
+      ? mentionResult.value.items : []
+    const sourceMentionNames = new Map()
+    for (const item of mentionItems) {
+      if (item?.kind !== 'data-source' || typeof item.provider !== 'string'
+        || typeof item.name !== 'string' || !item.name.trim()) continue
+      if (!sourceMentionNames.has(item.provider)) sourceMentionNames.set(item.provider, new Set())
+      sourceMentionNames.get(item.provider).add(item.name.trim())
+    }
+    const sourceName = provider => {
+      if (provider === 'localdb') return usageSourceNames.localdb
+      const choices = sourceMentionNames.get(provider)
+      return choices?.size === 1 ? [...choices][0] : usageSourceNames[provider]
+    }
+    const mentionNames = new Map(mentionItems
+      .filter(item => ['domain-pack', 'expert'].includes(item?.kind)
+        && typeof item.id === 'string' && typeof item.version === 'string'
+        && typeof item.name === 'string' && item.name.trim())
+      .map(item => [`${item.kind}:${item.id}:${item.version}`, item.name.trim()]))
+    const mentionName = (kind, item) => mentionNames.get(`${kind === 'pack' ? 'domain-pack' : kind}:${item.id}:${item.version}`)
+      ?? mentionItems.find(candidate => candidate?.kind === (kind === 'pack' ? 'domain-pack' : kind)
+        && candidate.id === item.id && typeof candidate.name === 'string' && candidate.name.trim())?.name.trim()
     $('usageAsOf').textContent = `截至 ${new Date(value.asOf).toLocaleString('zh-CN')} · ${days} 天${value.firstEventAt ? ` · 本范围首条记录 ${new Date(value.firstEventAt).toLocaleDateString('zh-CN')}` : ''}`
     $('usageCards').replaceChildren()
     for (const [kind, title] of usageKinds) {
@@ -31,14 +116,22 @@ async function loadUsage() {
       items.forEach((item, index) => {
         const entry = node('div', undefined, 'manageUsageItem')
         const main = node('div', undefined, 'manageUsageItemMain')
-        const name = kind === 'source' ? sourceNames[item.id] ?? item.id : item.id
+        const recordedName = typeof item.name === 'string' && item.name.trim() ? item.name.trim() : undefined
+        const catalogName = kind === 'source' ? sourceName(item.id)
+          : kind === 'pack' ? recordedName ?? mentionName(kind, item) ?? names.pack.get(item.id) ?? knownPackNames[item.id]
+            : kind === 'expert' ? mentionName(kind, item) ?? names.expert.get(item.id)
+              : names[kind]?.get(item.id)
+        const missingName = !catalogName
+        const name = catalogName ?? `${title}（名称暂不可用）`
+        const nameElement = node('strong', `${name}${item.version ? ` · ${item.version}` : ''}`)
+        nameElement.title = item.id
         main.append(node('span', String(index + 1).padStart(2, '0'), 'manageUsageRank'),
-          node('strong', `${name}${item.version ? ` · ${item.version}` : ''}`), node('b', String(item.calls)))
+          nameElement, node('b', String(item.calls)))
         const track = node('div', undefined, 'manageUsageTrack')
         const bar = node('div', undefined, 'manageUsageBar')
         bar.style.width = `${Math.max(3, Math.round(100 * item.calls / max))}%`
         track.append(bar)
-        entry.append(main, track, node('small', `${item.sessions} 个会话`))
+        entry.append(main, track, node('small', `${item.sessions} 个会话${missingName ? ` · ID：${item.id}` : ''}`))
         card.append(entry)
       })
       $('usageCards').append(card)
@@ -569,7 +662,7 @@ async function activateTab() {
   notice('')
   requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'instant' }))
   const loader = { data: loadHealth, packs: loadPacks,
-    experts: () => Promise.all([loadExperts(), loadModels()]), usage: loadUsage }[id]
+    experts: () => Promise.all([loadExperts(), loadModels()]), usage: () => Promise.allSettled([loadBillingSummary(), loadUsage()]) }[id]
   const results = await Promise.allSettled([settingsLoad, loader()])
   if (request === tabRequest && (results[1].status === 'rejected' || (id !== 'usage' && results[0].status === 'rejected')))
     notice('当前分区有部分内容暂时无法读取，请稍后刷新页面。')

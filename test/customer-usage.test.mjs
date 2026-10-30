@@ -1,13 +1,13 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, readdir, rm, readFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readdir, rm, readFile, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { recordCustomerUsage, readCustomerUsage } from '../src/host/customer-usage.ts'
 
 test('customer usage records only its configured workspace, aggregates calls and deduplicates task receipts', async t => {
   const home = await mkdtemp(join(tmpdir(), 'customer-usage-'))
-  const own = join(home, 'own')
+  const own = join(home, 'workspace')
   const foreign = join(home, 'foreign')
   await Promise.all([mkdir(own), mkdir(foreign)])
   const previousHome = process.env.DSH_HOME
@@ -29,10 +29,20 @@ test('customer usage records only its configured workspace, aggregates calls and
   await recordCustomerUsage({ kind: 'expert', id: 'foreign', sessionId: two, workspace: foreign })
   await recordCustomerUsage({ kind: 'skill', id: 'skill-a', sessionId: one, workspace: own, occurrence: 'claim-1' })
   await recordCustomerUsage({ kind: 'skill', id: 'skill-a', sessionId: one, workspace: own, occurrence: 'claim-1' })
+  await recordCustomerUsage({ kind: 'pack', id: 'city-report', version: '1.0.0', sessionId: one, workspace: own })
+  await recordCustomerUsage({ kind: 'pack', id: 'city-report', version: '2.0.0', sessionId: two, workspace: own })
+  const oldPack = join(home, 'pack-center', 'inventory', 'releases', 'old', 'content')
+  const newPack = join(home, 'pack-center', 'inventory', 'releases', 'new', 'content')
+  await Promise.all([mkdir(oldPack, { recursive: true }), mkdir(newPack, { recursive: true })])
+  await writeFile(join(oldPack, 'pack.json'), JSON.stringify({ id: 'city-report', version: '1.0.0', name: '城市房价' }))
+  await writeFile(join(newPack, 'pack.json'), JSON.stringify({ id: 'city-report', version: '2.0.0', name: '城市月报' }))
   const view = await readCustomerUsage(home, 7)
   assert.deepEqual(view.rankings.expert, [{ id: 'expert-a', version: '1.0.0', calls: 3, sessions: 2 }])
   assert.deepEqual(view.rankings.skill, [{ id: 'skill-a', calls: 1, sessions: 1 }])
-  assert.deepEqual(view.rankings.pack, [])
+  assert.deepEqual(view.rankings.pack, [
+    { id: 'city-report', version: '1.0.0', calls: 1, sessions: 1, name: '城市房价' },
+    { id: 'city-report', version: '2.0.0', calls: 1, sessions: 1, name: '城市月报' },
+  ])
   const files = await readdir(join(home, 'customer-usage'))
   const raw = await readFile(join(home, 'customer-usage', files[0]), 'utf8')
   assert.ok(!raw.includes(own))

@@ -2,6 +2,7 @@ import { timingSafeEqual } from 'node:crypto'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { verifyCustomerMentionSelections, type CustomerMention, type CustomerMentionSelection } from './customer-mentions.ts'
 import type { CustomerQuestionAnswer, CustomerQuestionCard } from './customer-questions.ts'
+import type { WebSearchPolicy } from './customer-web-search.ts'
 import { CUSTOMER_UPLOAD_MAX_BYTES, validCustomerUpload } from './customer-uploads.ts'
 
 export const CUSTOMER_GATEWAY_PREFIX = '/plugins/dsh-expert-library/customer-gateway'
@@ -11,7 +12,11 @@ const SNAPSHOT_ID = /^\d{13}-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-
 
 export interface CustomerGatewayRuntime {
   token(): Promise<string>
-  createSession(sessionId: string): Promise<{ sessionId: string }>
+  presets?(): Promise<{ presets: { id: string; name?: string; description?: string; isDefault?: boolean }[]; defaultId: string }>
+  createSpace?(path: string): Promise<{ path: string }>
+  createSession(sessionId: string, spacePath?: string | null, presetId?: string | null): Promise<{ sessionId: string; presetId?: string }>
+  sessionPreset?(sessionId: string): Promise<{ presetId: string; canSwitch: boolean }>
+  selectSessionPreset?(sessionId: string, presetId: string): Promise<{ presetId: string; canSwitch: boolean }>
   ownsSession(sessionId: string): Promise<boolean>
   sendMessage(sessionId: string, text: string, requestId: string, mentions?: CustomerMentionSelection[]): Promise<{ accepted: true }>
   uploadAttachment?(sessionId: string, name: string, data: string): Promise<{ name: string; path: string; sizeBytes: number }>
@@ -30,6 +35,8 @@ export interface CustomerGatewayRuntime {
   mentions?(): Promise<CustomerMention[]>
   pendingQuestion?(sessionId: string): CustomerQuestionCard | null
   answerQuestion?(sessionId: string, requestId: string, answers: CustomerQuestionAnswer[]): boolean
+  webSearchPolicy?(sessionId: string): WebSearchPolicy
+  setWebSearchPolicy?(sessionId: string, policy: WebSearchPolicy): void
   pendingApproval?(sessionId: string): { id: string; toolName: string; reason: string } | null
   answerApproval?(sessionId: string, id: string, decision: 'allowed-once' | 'rejected'): boolean
   adminSettings?(): Promise<unknown>
@@ -90,6 +97,9 @@ const safeToken = (left: string, right: string): boolean => {
   return timingSafeEqual(presented, expected)
 }
 const loopback = (address?: string) => address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1'
+const PRESET_ID = /^[a-z][a-z0-9-]{0,63}$/u
+const spacePath = (value: unknown): value is string => typeof value === 'string' && value.length <= 512
+  && /^spaces(?:\/[\p{L}\p{N}_ -]{1,40}){1,5}$/u.test(value)
 
 async function jsonBody(req: IncomingMessage, limit = 24_000): Promise<Record<string, unknown> | undefined> {
   const chunks: Buffer[] = []
@@ -117,6 +127,19 @@ export async function handleCustomerGateway(req: IncomingMessage, res: ServerRes
   const suffix = url.pathname.slice(CUSTOMER_GATEWAY_PREFIX.length)
   if (!url.pathname.startsWith(CUSTOMER_GATEWAY_PREFIX) || (suffix && !suffix.startsWith('/'))) return send(res, 404, { error: 'NOT_FOUND' })
   if (suffix === '/health' && req.method === 'GET') return send(res, 200, { ok: true })
+  if (suffix === '/presets' && req.method === 'GET') {
+    try { return send(res, 200, await runtime.presets?.() ?? { presets: [], defaultId: '' }) }
+    catch { return send(res, 503, { error: 'PRESETS_UNAVAILABLE' }) }
+  }
+  if (suffix === '/spaces' && req.method === 'POST') {
+    if (!runtime.createSpace) return send(res, 503, { error: 'SPACE_UNAVAILABLE' })
+    const body = await jsonBody(req, 2_000)
+    if (!body || Object.keys(body).some(key => key !== 'path') || !spacePath(body.path))
+      return send(res, 400, { error: 'INVALID_SPACE' })
+    try { return send(res, 201, await runtime.createSpace(body.path)) }
+    catch (error) { return send(res, error instanceof Error && error.message === 'SPACE_EXISTS' ? 409 : 400,
+      { error: error instanceof Error && error.message === 'SPACE_EXISTS' ? 'SPACE_EXISTS' : 'INVALID_SPACE' }) }
+  }
   if (suffix === '/admin/settings') {
     if (req.method === 'GET') {
       try { return send(res, 200, await runtime.adminSettings?.() ?? { writable: false }) }
@@ -171,12 +194,32 @@ export async function handleCustomerGateway(req: IncomingMessage, res: ServerRes
   }
   if (suffix === '/sessions' && req.method === 'POST') {
     const body = await jsonBody(req)
-    if (!body || typeof body.sessionId !== 'string' || !SESSION_ID.test(body.sessionId)) return send(res, 400, { error: 'INVALID_REQUEST' })
+    if (!body || typeof body.sessionId !== 'string' || !SESSION_ID.test(body.sessionId)
+      || (body.spacePath !== undefined && body.spacePath !== null && !spacePath(body.spacePath))
+      || (body.presetId !== undefined && body.presetId !== null && (typeof body.presetId !== 'string' || !PRESET_ID.test(body.presetId)))
+      || Object.keys(body).some(key => !['sessionId', 'spacePath', 'presetId'].includes(key))) return send(res, 400, { error: 'INVALID_REQUEST' })
     try {
-      const created = await runtime.createSession(body.sessionId)
+      const created = await runtime.createSession(body.sessionId, body.spacePath as string | null | undefined, body.presetId as string | null | undefined)
       if (created.sessionId !== body.sessionId) throw new Error('session id mismatch')
-      return send(res, 200, { sessionId: created.sessionId })
-    } catch { return send(res, 503, { error: 'SESSION_UNAVAILABLE' }) }
+      return send(res, 200, { sessionId: created.sessionId, presetId: created.presetId })
+    } catch (error) { return send(res, error instanceof Error && error.message === 'INVALID_PRESET' ? 400 : 503,
+      { error: error instanceof Error && error.message === 'INVALID_PRESET' ? 'INVALID_PRESET' : 'SESSION_UNAVAILABLE' }) }
+  }
+  const presetMatch = /^\/sessions\/(session-[0-9a-f-]+)\/preset$/iu.exec(suffix)
+  if (presetMatch?.[1] && SESSION_ID.test(presetMatch[1])) {
+    if (!await runtime.ownsSession(presetMatch[1]).catch(() => false)) return send(res, 404, { error: 'NOT_FOUND' })
+    if (req.method === 'GET') {
+      try { return send(res, 200, await runtime.sessionPreset?.(presetMatch[1]) ?? { presetId: '', canSwitch: false }) }
+      catch { return send(res, 503, { error: 'PRESET_UNAVAILABLE' }) }
+    }
+    if (req.method !== 'POST') return send(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+    if (!runtime.selectSessionPreset) return send(res, 503, { error: 'PRESET_UNAVAILABLE' })
+    const body = await jsonBody(req, 1_000)
+    if (!body || Object.keys(body).some(key => key !== 'presetId')
+      || typeof body.presetId !== 'string' || !PRESET_ID.test(body.presetId)) return send(res, 400, { error: 'INVALID_PRESET' })
+    try { return send(res, 200, await runtime.selectSessionPreset(presetMatch[1], body.presetId)) }
+    catch (error) { return send(res, error instanceof Error && error.message === 'PRESET_LOCKED' ? 409 : 400,
+      { error: error instanceof Error && error.message === 'PRESET_LOCKED' ? 'PRESET_LOCKED' : 'INVALID_PRESET' }) }
   }
   const attachmentMatch = /^\/sessions\/(session-[0-9a-f-]+)\/attachments$/i.exec(suffix)
   if (attachmentMatch?.[1] && SESSION_ID.test(attachmentMatch[1])) {
@@ -292,6 +335,21 @@ export async function handleCustomerGateway(req: IncomingMessage, res: ServerRes
       if (!runtime.listDatasets) return send(res, 503, { error: 'DATA_UNAVAILABLE' })
       return send(res, 200, await runtime.listDatasets(sessionId, before))
     } catch { return send(res, 503, { error: 'DATA_UNAVAILABLE' }) }
+  }
+  const webSearchMatch = /^\/sessions\/(session-[0-9a-f-]+)\/web-search$/i.exec(suffix)
+  if (webSearchMatch?.[1] && SESSION_ID.test(webSearchMatch[1])) {
+    const sessionId = webSearchMatch[1]
+    if (!await runtime.ownsSession(sessionId).catch(() => false)) return send(res, 404, { error: 'NOT_FOUND' })
+    if (!runtime.webSearchPolicy || !runtime.setWebSearchPolicy) return send(res, 503, { error: 'WEB_SEARCH_UNAVAILABLE' })
+    if (req.method === 'GET') return send(res, 200, { policy: runtime.webSearchPolicy(sessionId) })
+    if (req.method === 'PUT') {
+      const body = await jsonBody(req, 200)
+      if (!body || Object.keys(body).length !== 1 || !['ask', 'on', 'off'].includes(String(body.policy)))
+        return send(res, 400, { error: 'INVALID_WEB_SEARCH_POLICY' })
+      runtime.setWebSearchPolicy(sessionId, body.policy as WebSearchPolicy)
+      return send(res, 200, { policy: runtime.webSearchPolicy(sessionId) })
+    }
+    return send(res, 405, { error: 'METHOD_NOT_ALLOWED' })
   }
   const questionMatch = /^\/sessions\/(session-[0-9a-f-]+)\/question$/i.exec(suffix)
   if (questionMatch?.[1] && SESSION_ID.test(questionMatch[1])) {

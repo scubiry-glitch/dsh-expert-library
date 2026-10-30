@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { DatabaseSync } from 'node:sqlite'
 import { fileURLToPath } from 'node:url'
+import { isIP } from 'node:net'
 
 // Report reviewers can carry several frozen artifact receipts in one DSH turn.
 // Keep an explicit per-request bound while allowing those authenticated calls.
@@ -14,6 +15,15 @@ const MAX_OUTPUT_TOKENS = 8_192
 const SESSION_ID = /^(?:session-)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 const dayOf = ms => new Date(ms).toISOString().slice(0, 10)
 const digest = value => createHash('sha256').update(value).digest('hex')
+// A point is a display/billing unit derived from the authoritative token ledger.
+// Convert aggregate daily usage once, so small calls do not each incur a rounding fee.
+const pointCents = (tokens, tokensPerPoint) => {
+  const numerator = BigInt(tokens) * 100n
+  const denominator = BigInt(tokensPerPoint)
+  const result = (numerator + denominator - 1n) / denominator
+  if (result > BigInt(Number.MAX_SAFE_INTEGER)) throw new Error('point amount exceeds safe integer')
+  return Number(result)
+}
 const deny = (res, status, code) => {
   res.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' })
   res.end(JSON.stringify({ error: { code, message: code } }))
@@ -31,7 +41,15 @@ export class UsageLedger {
         status TEXT NOT NULL CHECK(status IN ('pending','complete','upstream_error','interrupted'))
       );
       CREATE INDEX IF NOT EXISTS model_calls_by_account_day ON model_calls(account_id,day);
-      CREATE INDEX IF NOT EXISTS model_calls_by_session ON model_calls(account_id,session_id,created_at);`)
+      CREATE INDEX IF NOT EXISTS model_calls_by_session ON model_calls(account_id,session_id,created_at);
+      CREATE TABLE IF NOT EXISTS web_search_calls (
+        id TEXT PRIMARY KEY, account_id TEXT NOT NULL, session_id TEXT NOT NULL,
+        created_at INTEGER NOT NULL, result_count INTEGER NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS web_search_calls_by_account_day ON web_search_calls(account_id,created_at);`)
+    this.db.exec(`CREATE TABLE IF NOT EXISTS web_fetch_calls (
+      id TEXT PRIMARY KEY, account_id TEXT NOT NULL, session_id TEXT NOT NULL, created_at INTEGER NOT NULL
+    ); CREATE INDEX IF NOT EXISTS web_fetch_calls_by_account_day ON web_fetch_calls(account_id,created_at);`)
   }
   close() { this.db.close() }
   reserve({ accountId, sessionId, tokens, dailyQuota, now = Date.now() }) {
@@ -71,9 +89,76 @@ export class UsageLedger {
       COUNT(*) AS calls FROM model_calls WHERE account_id=? AND day>=?
       GROUP BY day ORDER BY day DESC`).all(accountId, sinceDay)
   }
+  recordSearch(accountId, sessionId, resultCount) {
+    this.db.prepare('INSERT INTO web_search_calls(id,account_id,session_id,created_at,result_count) VALUES (?,?,?,?,?)')
+      .run(randomUUID(), accountId, sessionId, Date.now(), resultCount)
+  }
+  recordFetch(accountId, sessionId) {
+    this.db.prepare('INSERT INTO web_fetch_calls(id,account_id,session_id,created_at) VALUES (?,?,?,?)')
+      .run(randomUUID(), accountId, sessionId, Date.now())
+  }
+  webCallsToday(accountId, sessionId, kind, now = Date.now()) {
+    const table = kind === 'fetch' ? 'web_fetch_calls' : 'web_search_calls'
+    const start = Date.parse(`${dayOf(now)}T00:00:00.000Z`)
+    return this.db.prepare(`SELECT COUNT(*) AS total FROM ${table} WHERE account_id=? AND session_id=? AND created_at>=?`)
+      .get(accountId, sessionId, start).total
+  }
 }
 
-async function bodyOf(req, { anthropic = false } = {}) {
+async function searchBodyOf(req) {
+  const chunks = []
+  let size = 0
+  for await (const chunk of req) {
+    size += chunk.length
+    if (size > 4096) return undefined
+    chunks.push(chunk)
+  }
+  try {
+    const body = JSON.parse(Buffer.concat(chunks).toString('utf8'))
+    return body && typeof body === 'object' && !Array.isArray(body)
+      && Object.keys(body).every(key => ['query', 'count', 'need_content'].includes(key))
+      && typeof body.query === 'string' && body.query.trim().length > 0
+      && [...body.query].length <= 128 && Number.isInteger(body.count) && body.count >= 1 && body.count <= 5
+      && body.need_content === false ? { query: body.query.trim(), count: body.count, need_content: false } : undefined
+  } catch { return undefined }
+}
+
+async function fetchBodyOf(req) {
+  const chunks = []
+  let size = 0
+  for await (const chunk of req) {
+    size += chunk.length
+    if (size > 9000) return undefined
+    chunks.push(chunk)
+  }
+  try {
+    const body = JSON.parse(Buffer.concat(chunks).toString('utf8'))
+    if (!body || typeof body !== 'object' || Array.isArray(body) || Object.keys(body).length !== 1
+      || typeof body.url !== 'string' || body.url.length > 8192) return undefined
+    const url = new URL(body.url)
+    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password || isIP(url.hostname)
+      || !url.hostname.includes('.') || url.hostname.endsWith('.local') || url.hostname.endsWith('.internal')
+      || url.port && !['80', '443'].includes(url.port)
+      || [...url.searchParams.keys()].some(key => /token|key|secret|password|signature|auth/iu.test(key))) return undefined
+    return { url: url.toString() }
+  } catch { return undefined }
+}
+
+async function boundedText(response, limit = 1_000_000) {
+  if (!response.body) return ''
+  const reader = response.body.getReader(), chunks = []
+  let size = 0
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) break
+    size += value.byteLength
+    if (size > limit) { await reader.cancel(); throw new Error('UPSTREAM_RESPONSE_TOO_LARGE') }
+    chunks.push(Buffer.from(value))
+  }
+  return Buffer.concat(chunks).toString('utf8')
+}
+
+async function bodyOf(req, { anthropic = false, maxOutputTokens = MAX_OUTPUT_TOKENS } = {}) {
   const chunks = []; let size = 0; let oversized = false
   for await (const chunk of req) {
     size += chunk.length
@@ -86,7 +171,7 @@ async function bodyOf(req, { anthropic = false } = {}) {
     if (!body || typeof body !== 'object' || Array.isArray(body) || !Array.isArray(body.messages)
       || typeof body.model !== 'string' || !body.model || body.stream !== true) return undefined
     if (!anthropic) body.stream_options = { include_usage: true }
-    body.max_tokens = Math.min(Number.isSafeInteger(body.max_tokens) && body.max_tokens > 0 ? body.max_tokens : MAX_OUTPUT_TOKENS, MAX_OUTPUT_TOKENS)
+    body.max_tokens = Math.min(Number.isSafeInteger(body.max_tokens) && body.max_tokens > 0 ? body.max_tokens : maxOutputTokens, maxOutputTokens)
     return body
   } catch { return undefined }
 }
@@ -130,14 +215,26 @@ export function createModelGateway(config, { ledger = new UsageLedger(), upstrea
       const totals = ledger.totals(accountId, day)
       const sinceDay = dayOf(Date.now() - 6 * 86_400_000)
       const days = ledger.recentDays(accountId, sinceDay)
+      const dailyQuotaCents = account.tokensPerPoint ? pointCents(account.dailyQuota, account.tokensPerPoint) : undefined
+      const chargedCents = account.tokensPerPoint ? pointCents(totals.chargedTokens, account.tokensPerPoint) : undefined
+      const points = account.tokensPerPoint ? {
+        tokensPerPoint: account.tokensPerPoint,
+        dailyQuotaCents,
+        chargedCents,
+        remainingCents: Math.max(0, dailyQuotaCents - chargedCents),
+        days: days.map(item => ({ day: item.day,
+          chargedCents: pointCents(item.chargedTokens, account.tokensPerPoint), calls: item.calls })),
+      } : undefined
       res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' })
       res.end(JSON.stringify({ day, timezone: 'UTC', dailyQuota: account.dailyQuota,
         chargedTokens: totals.chargedTokens, remainingTokens: Math.max(0, account.dailyQuota - totals.chargedTokens),
-        inputTokens: totals.inputTokens, cacheReadTokens: totals.cacheReadTokens,
+        ...(points ? { points } : {}), inputTokens: totals.inputTokens, cacheReadTokens: totals.cacheReadTokens,
         outputTokens: totals.outputTokens, calls: totals.calls, days }))
       return
     }
     const provider = req.method === 'POST' && req.url === '/chat/completions' ? 'deepseek'
+      : req.method === 'POST' && req.url === '/v1/tools/search' ? 'search'
+      : req.method === 'POST' && req.url === '/v1/tools/fetch' ? 'fetch'
       : req.method === 'POST' && (req.url === '/glm/v1/messages' || req.url === '/glm/v1/messages?beta=true') ? 'glm'
       : req.method === 'POST' && req.url === '/zai/chat/completions' ? 'zai' : undefined
     if (!provider) return deny(res, 404, 'NOT_FOUND')
@@ -146,7 +243,7 @@ export function createModelGateway(config, { ledger = new UsageLedger(), upstrea
       : provider === 'glm' && typeof req.headers['x-api-key'] === 'string' ? req.headers['x-api-key'] : ''
     const account = token.length >= 32 ? accounts.get(digest(token)) : undefined
     if (!account) return deny(res, 401, 'UNAUTHENTICATED')
-    if (provider !== 'deepseek' && !account.glmEnabled) return deny(res, 403, 'FORBIDDEN')
+    if ((provider === 'glm' || provider === 'zai') && !account.glmEnabled) return deny(res, 403, 'FORBIDDEN')
     const presentedSession = req.headers['x-deepseek-harness-session-id']
     // DSH child calls can omit the captain header. The account credential still
     // authenticates the request and the daily quota remains account-wide; mark
@@ -155,7 +252,38 @@ export function createModelGateway(config, { ledger = new UsageLedger(), upstrea
       return deny(res, 400, 'SESSION_REQUIRED')
     }
     const sessionId = presentedSession ?? `unattributed:${account.id}`
-    const body = await bodyOf(req, { anthropic: provider === 'glm' })
+    if (provider === 'search' || provider === 'fetch') {
+      // Web access is only available to the customer tool, which always supplies a captain session.
+      if (!account.webSearchEnabled) return deny(res, 403, 'FORBIDDEN')
+      if (!presentedSession?.startsWith('session-')) return deny(res, 400, 'SESSION_REQUIRED')
+      if (ledger.webCallsToday(account.id, sessionId, provider) >= (provider === 'search' ? 20 : 10))
+        return deny(res, 429, 'WEB_QUOTA_EXCEEDED')
+      const body = provider === 'search' ? await searchBodyOf(req) : await fetchBodyOf(req)
+      if (!body) return deny(res, 400, 'INVALID_REQUEST')
+      try {
+        const upstream = await upstreamFetch(`https://api.deepseek.com/v1/tools/${provider}`, {
+          method: 'POST', headers: { authorization: `Bearer ${config.upstreamKey}`, 'content-type': 'application/json' },
+          body: JSON.stringify(body), signal: AbortSignal.timeout(20_000),
+        })
+        if (!upstream.ok) return deny(res, upstream.status >= 400 && upstream.status < 600 ? upstream.status : 502, 'UPSTREAM_ERROR')
+        const raw = await boundedText(upstream)
+        const data = JSON.parse(raw)
+        if (provider === 'search' && !Array.isArray(data?.results)
+          || provider === 'fetch' && typeof data?.content !== 'string') return deny(res, 502, 'UPSTREAM_ERROR')
+        if (provider === 'search' && data.results.length) ledger.recordSearch(account.id, sessionId, data.results.length)
+        if (provider === 'fetch' && data.content.length) ledger.recordFetch(account.id, sessionId)
+        res.writeHead(200, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' })
+        res.end(JSON.stringify(provider === 'search' ? { results: data.results.slice(0, body.count).map(item => ({
+          title: String(item.title ?? '').slice(0, 300), url: String(item.url ?? '').slice(0, 2048),
+          summary: String(item.summary ?? item.snippet ?? '').slice(0, 1200),
+          site_name: item.site_name ?? null, date: item.date ?? null,
+        })) } : { title: String(data.title ?? '').slice(0, 300), content: data.content.slice(0, 30_000),
+          truncated: data.content.length > 30_000 }))
+      } catch { deny(res, 502, 'UPSTREAM_UNAVAILABLE') }
+      return
+    }
+    const body = await bodyOf(req, { anthropic: provider === 'glm',
+      maxOutputTokens: account.maxOutputTokensByProvider?.[provider] ?? account.maxOutputTokens ?? MAX_OUTPUT_TOKENS })
     if (!body) return deny(res, 400, 'INVALID_REQUEST')
     if (provider === 'glm' && !GLM_MODELS.has(body.model)
       || provider === 'zai' && !ZAI_MODELS.has(body.model)) return deny(res, 400, 'INVALID_MODEL')
@@ -221,8 +349,23 @@ export function readGatewayConfig(env = process.env) {
   const accounts = source.accounts.map(row => {
     if (!/^[a-z0-9][a-z0-9-]*$/.test(row.id) || !/^[0-9a-f]{64}$/.test(row.tokenHash)
       || !Number.isSafeInteger(row.dailyQuota) || row.dailyQuota < 1
-      || (row.glmEnabled !== undefined && typeof row.glmEnabled !== 'boolean')) throw new Error('invalid model gateway account')
-    return { id: row.id, tokenHash: row.tokenHash, dailyQuota: row.dailyQuota, glmEnabled: row.glmEnabled === true }
+      || (row.glmEnabled !== undefined && typeof row.glmEnabled !== 'boolean')
+      || (row.webSearchEnabled !== undefined && typeof row.webSearchEnabled !== 'boolean')
+      || (row.maxOutputTokens !== undefined && (!Number.isSafeInteger(row.maxOutputTokens)
+        || row.maxOutputTokens < 1 || row.maxOutputTokens > 32_768))
+      || (row.maxOutputTokensByProvider !== undefined && (
+        !row.maxOutputTokensByProvider || typeof row.maxOutputTokensByProvider !== 'object'
+        || Array.isArray(row.maxOutputTokensByProvider)
+        || Object.entries(row.maxOutputTokensByProvider).some(([provider, limit]) =>
+          !['deepseek', 'glm', 'zai'].includes(provider) || !Number.isSafeInteger(limit)
+          || limit < 1 || limit > 32_768)))
+      || (row.tokensPerPoint !== undefined && (!Number.isSafeInteger(row.tokensPerPoint) || row.tokensPerPoint < 1))) {
+      throw new Error('invalid model gateway account')
+    }
+    return { id: row.id, tokenHash: row.tokenHash, dailyQuota: row.dailyQuota,
+      glmEnabled: row.glmEnabled === true, webSearchEnabled: row.webSearchEnabled === true,
+      tokensPerPoint: row.tokensPerPoint, maxOutputTokens: row.maxOutputTokens,
+      maxOutputTokensByProvider: row.maxOutputTokensByProvider }
   })
   if (accounts.some(row => row.glmEnabled) && (!glmKey || !zaiKey)) throw new Error('GLM gateway unconfigured')
   if (new Set(accounts.map(row => row.id)).size !== accounts.length || new Set(accounts.map(row => row.tokenHash)).size !== accounts.length) throw new Error('duplicate model gateway account')

@@ -75,27 +75,31 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 
 /* Shell follows the existing review page: session drawer, centered view switch, and work area. */
 .appFrame { display: grid; grid-template-columns: 264px minmax(0,1fr); min-height: 100vh; align-items: start; }
-.sessionSidebar { position: sticky; top: 0; z-index: 30; display: flex; flex-direction: column; height: 100dvh; min-width: 0; padding: 28px 16px 18px; border-right: 1px solid #ab9b7e80; background: #f4eee2; box-shadow: 3px 0 14px #3a35220d; overflow-y: auto; }
-.sessionSidebarHead { display: flex; justify-content: space-between; align-items: start; gap: 8px; padding: 0 6px; }
+.sessionSidebar { position: sticky; top: 0; z-index: 30; display: flex; flex-direction: column; height: 100dvh; min-width: 0; padding: 12px 12px 14px; border-right: 1px solid #ab9b7e80; background: #f4eee2; box-shadow: 3px 0 14px #3a35220d; overflow-y: auto; }
+.sessionSidebarHead { display: flex; justify-content: space-between; align-items: center; gap: 5px; padding: 0 2px; }
+.sessionSidebarHead > div { display: flex; align-items: baseline; gap: 6px; min-width: 0; }
 .sessionSidebarHead small { font: 10px/1.4 system-ui,sans-serif; letter-spacing: .1em; color: #8a7d68; }
-.sessionSidebarHead h2 { margin: 5px 0 0; font: 600 21px/1.35 var(--serif); }
+.sessionSidebarHead h2 { margin: 0; font: 600 17px/1.35 var(--serif); white-space: nowrap; }
 .sessionSidebarHead button { display: none; width: 34px; height: 34px; padding: 0; border: 0; background: transparent; font-size: 23px; }
 .sessionSidebarHead .sessionNewButton { display: grid; place-items: center; margin-left: auto; border: 1px solid #7f9675; border-radius: 6px; background: #e9efdf; color: #405f43; font: 22px/1 system-ui,sans-serif; cursor: pointer; }
 .sessionSidebarHead .sessionNewButton:disabled { opacity: .45; cursor: not-allowed; }
-.sessionSidebarHint { margin: 12px 6px 18px; font: 11px/1.6 system-ui,sans-serif; color: var(--muted); }
-.sessionListControls { display: grid; gap: 7px; margin-bottom: 11px; }
+.sessionSidebarHint { display: none; }
+.sessionListControls { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 5px; margin: 7px 0 5px; }
 .sessionListControls input { min-width: 0; width: 100%; height: 36px; padding: 7px 10px; border: 1px solid #ab9b7e8a; border-radius: 6px; background: #fffaf0; color: var(--ink); font: 12px system-ui,sans-serif; }
+.sessionListViews,.sessionListOptions { grid-column: 1 / -1; }
 .sessionListOptions { display: grid; grid-template-columns: minmax(0,1fr) auto auto; gap: 5px; }
 .sessionListOptions select,.sessionListOptions button { min-width: 0; height: 32px; padding: 5px 7px; border: 1px solid #ab9b7e7d; border-radius: 5px; background: #fffaf0; color: var(--ink); font: 11px system-ui,sans-serif; cursor: pointer; }
 .sessionListOptions button[aria-pressed="true"] { background: #dfead8; border-color: #829774; color: #405f43; font-weight: 600; }
+.newSpaceButton { grid-column: 2; grid-row: 1; width: auto; height: 36px; margin: 0; padding: 6px 8px; border: 1px dashed #9aa88f; border-radius: 6px; background: #f1f5eb; color: #405f43; font: 11px system-ui,sans-serif; white-space: nowrap; cursor: pointer; }
+.newSpaceButton:disabled { opacity: .5; cursor: default; }
 .sessionListOptions :focus-visible,.sessionSidebarHead button:focus-visible { outline: 2px solid #526a51; outline-offset: 2px; }
-.sessionListViews { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 4px; margin: 0; padding: 3px; border: 1px solid #ab9b7e55; border-radius: 7px; background: #eae7dc; }
+.sessionListViews { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 4px; margin: 0; padding: 3px; border: 1px solid #ab9b7e55; border-radius: 7px; background: #eae7dc; }
 .sessionListViews button { min-width: 0; min-height: 32px; padding: 5px 7px; border: 0; border-radius: 5px; background: transparent; color: #756c5d; font-size: 11px; white-space: nowrap; cursor: pointer; }
 .sessionListViews button[aria-pressed="true"] { background: #fffaf0; color: var(--green); box-shadow: 0 1px 4px #3a35221c; font-weight: 600; }
 .sessionListViews button:focus-visible { outline: 2px solid #526a51; outline-offset: 2px; }
 .sessionListViews span { margin-left: 3px; color: var(--muted); font-size: 10px; }
-.sessionArchiveView { align-self: end; margin: -7px 2px 9px; padding: 3px 5px; border: 0; border-radius: 4px; background: transparent; color: #756c5d; font: 10.5px/1.4 system-ui,sans-serif; cursor: pointer; }
-.sessionArchiveView span { margin-left: 3px; }
+.sessionArchiveView { min-width: 0; margin: 0; padding: 5px 2px; font: 11px system-ui,sans-serif; }
+.sessionArchiveView span { margin-left: 1px; }
 .sessionArchiveView:hover,.sessionArchiveView[aria-pressed="true"] { background: #e7e9dc; color: var(--green); }
 .sessionArchiveView:focus-visible { outline: 2px solid #526a51; outline-offset: 2px; }
 .sessionList { display: grid; flex: 1 1 auto; align-content: start; gap: 8px; min-height: 0; overflow-y: auto; padding-right: 2px; }
@@ -184,6 +188,7 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .sessionRenameDialog h2 { margin: 0 0 18px; font: 600 22px/1.35 var(--serif); }
 .sessionRenameDialog label { display: block; margin-bottom: 7px; font-size: 12px; }
 .sessionRenameDialog input { width: 100%; min-height: 42px; padding: 8px 11px; border: 1px solid var(--lineStrong); border-radius: 6px; background: #fffdf7; color: var(--ink); font: 14px system-ui,sans-serif; }
+.sessionRenameDialog select { width: 100%; min-height: 42px; margin-bottom: 13px; padding: 8px 11px; border: 1px solid var(--lineStrong); border-radius: 6px; background: #fffdf7; color: var(--ink); font: 14px system-ui,sans-serif; }
 .sessionRenameDialog p { min-height: 18px; margin: 6px 0 12px; color: #a2543f; font-size: 11px; }
 .sessionRenameActions { display: flex; justify-content: flex-end; gap: 8px; }
 .sessionRenameActions button { min-height: 34px; padding: 6px 14px; border: 1px solid var(--lineStrong); border-radius: 6px; background: #fffdf7; color: var(--ink); cursor: pointer; }
@@ -374,9 +379,30 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .attachmentButton { flex: none; min-height: 32px; padding: 5px 9px; border: 1px solid #d2dacb; border-radius: 9px; background: #f8faf5; color: #456041; font-size: 11px; font-weight: 650; }
 .attachmentButton:not(:disabled):hover { background: #edf4e9; }
 .attachmentButton:disabled { opacity: .5; }
-.conversationComposeControls { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; min-width: 0; padding-top: 6px; border-top: 1px solid #d7ddcf; }
-.conversationModelRow { display: flex; flex: 1 1 auto; align-items: center; flex-wrap: wrap; gap: 6px 9px; min-width: 0; color: var(--muted); font-size: 11px; }
-.conversationModelRow #conversationWorkspace { display: block; max-width: 100%; overflow: hidden; padding: 6px 10px; border: 1px solid #d9dfd1; border-radius: 999px; background: #f1f4eb; color: #53694f; text-overflow: ellipsis; white-space: nowrap; }
+.conversationComposeControls { display: grid; gap: 5px; min-width: 0; padding-top: 6px; border-top: 1px solid #d7ddcf; }
+.conversationActionRow { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.conversationSettings { min-width: 0; }
+.conversationSettings summary { display: flex; align-items: center; gap: 8px; min-height: 27px; color: #53694f; cursor: pointer; list-style: none; }
+.conversationSettings summary::-webkit-details-marker { display: none; }
+.conversationSettings summary::marker { content: ''; }
+.conversationSettings summary span { flex: none; font-size: 11px; font-weight: 650; }
+.conversationSettings summary small { min-width: 0; overflow: hidden; color: #7a8573; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.conversationSettings summary b { margin-left: auto; font-size: 16px; font-weight: 400; transition: transform .16s ease; }
+.conversationSettings[open] summary b { transform: rotate(180deg); }
+.conversationSettingsBody { min-width: 0; padding: 8px 0 2px; border-top: 1px solid #e5e9df; }
+.conversationSettingsRow { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 7px; min-width: 0; }
+.conversationWorkspacePicker,.conversationSettingsRow .conversationPresetPicker,.conversationSettingsRow .modelPickerTrigger { display: grid; grid-template-columns: minmax(0,1fr) auto; grid-template-rows: auto auto; align-content: center; gap: 1px 4px; width: 100%; height: 42px; min-width: 0; max-width: none; margin: 0; padding: 4px 8px; border: 1px solid #d9dfd1; border-radius: 9px; background: #f8faf5; color: #405f43; text-align: left; font: 11px system-ui,sans-serif; }
+.conversationWorkspacePicker { cursor: pointer; }
+.conversationWorkspacePicker span,.conversationSettingsRow .modelPickerTriggerLabel { grid-column: 1; grid-row: 1; color: #71816b; font-size: 10px; font-weight: 650; }
+.conversationWorkspacePicker strong,.conversationSettingsRow .modelPickerTrigger strong { grid-column: 1; grid-row: 2; min-width: 0; overflow: hidden; font-size: 11px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+.conversationWorkspacePicker b,.conversationSettingsRow .modelPickerTrigger svg { grid-column: 2; grid-row: 1 / 3; align-self: center; flex: none; margin: 0; color: #71816b; font-size: 15px; font-weight: 400; }
+.conversationSettingsRow .conversationPresetPicker { display: flex; flex-direction: column; gap: 1px; overflow: hidden; color: #71816b; font-size: 10px; font-weight: 650; }
+.conversationSettingsRow .conversationPresetPicker select { width: 100%; max-width: none; min-width: 0; height: 19px; padding: 0; border: 0; background: transparent; color: #405f43; font-size: 11px; font-weight: 650; text-overflow: ellipsis; }
+.conversationSearchPicker { display: inline-flex; align-items: center; gap: 5px; padding: 5px 8px; border: 1px solid #d9dfd1; border-radius: 999px; background: #f1f4eb; color: #53694f; font: 11px system-ui,sans-serif; white-space: nowrap; }
+.conversationSearchPicker select { max-width: 110px; border: 0; background: transparent; color: #405f43; font: 600 11px system-ui,sans-serif; cursor: pointer; }
+.conversationSearchPicker select:disabled { cursor: default; }
+.conversationSettingsRow .conversationSearchPicker { display: flex; flex-direction: column; align-items: stretch; justify-content: center; gap: 1px; width: 100%; height: 42px; min-width: 0; margin: 0; padding: 4px 7px; border-radius: 9px; background: #f8faf5; color: #71816b; font-size: 10px; font-weight: 650; }
+.conversationSettingsRow .conversationSearchPicker select { width: 100%; max-width: none; min-width: 0; height: 19px; padding: 0; font-size: 11px; text-overflow: ellipsis; }
 .conversationModelPicker { position: relative; min-width: 0; }
 .modelPickerTrigger { display: flex; align-items: center; gap: 6px; max-width: 225px; min-height: 32px; padding: 5px 9px 5px 10px; border: 1px solid #d2dacb; border-radius: 9px; background: #f8faf5; color: var(--ink); text-align: left; box-shadow: 0 1px 0 #fff inset; }
 .modelPickerTrigger:not(:disabled):hover,.modelPickerTrigger[aria-expanded="true"] { border-color: #879b7d; background: #f0f5ec; }
@@ -399,8 +425,13 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .modelPickerCheck { display: grid; place-items: center; flex: none; width: 20px; height: 20px; margin-left: auto; border-radius: 50%; background: #54704d; color: white; font-size: 12px; font-weight: 700; opacity: 0; }
 .modelPickerOption[aria-selected="true"] .modelPickerCheck { opacity: 1; }
 #conversationModelStatus { color: #9b482d; }
-.conversationComposeControls > button { flex: none; min-width: 70px; min-height: 38px; padding: 7px 16px; border: 0; border-radius: 10px; background: #405b3d; color: #fffaf0; font-weight: 650; box-shadow: 0 3px 8px #344d3026; }
-.conversationComposeControls > button:not(:disabled):hover { background: #314b2f; }
+#conversationModelStatus[data-kind="success"] { color: #405f43; }
+.conversationSettingsRow .modelPickerTrigger { box-shadow: none; }
+.conversationSettingsRow .modelPickerMenu { right: 0; left: auto; }
+.conversationSettingsRow #conversationModelStatus { grid-column: 1 / -1; }
+.conversationSettingsRow #conversationModelStatus:empty { display: none; }
+.conversationActionRow > #sendMessageButton { flex: none; min-width: 70px; min-height: 38px; margin-left: auto; padding: 7px 16px; border: 0; border-radius: 10px; background: #405b3d; color: #fffaf0; font-weight: 650; box-shadow: 0 3px 8px #344d3026; }
+.conversationActionRow > #sendMessageButton:not(:disabled):hover { background: #314b2f; }
 .conversationComposeFoot { min-height: 0; margin: 0; }
 .conversationComposeFoot span { color: #8a8c7e; font-size: 10.5px; }
 .heroCopy button { min-height: 38px; padding: 7px 15px; border: 0; border-radius: 6px; background: var(--ink); color: #fffaf0; }
@@ -408,6 +439,8 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .conversationSendStatus[data-kind="success"] { background: #eaf0e4; color: #435d43; }
 .conversationSendStatus[data-kind="error"] { background: #f8e8de; color: #934e34; }
 .conversationSendStatus:empty { display: none; }
+.continueAfterLimit { margin: 0 0 9px 8px; padding: 5px 9px; border: 1px solid #a96749; border-radius: 6px; background: #fffaf3; color: #934e34; font: 600 11px/1.5 system-ui,sans-serif; cursor: pointer; }
+.continueAfterLimit:hover { background: #f8e8de; }
 .mentionMenu { position: absolute; z-index: 25; left: 15px; bottom: calc(100% - 42px); width: min(440px, calc(100% - 30px)); max-height: min(300px, 45dvh); overflow: auto; padding: 7px; border: 1px solid var(--lineStrong); border-radius: 12px; background: var(--panel); box-shadow: 0 14px 35px #473b2830; }
 .mentionMenuHeading { padding: 6px 10px 7px; color: var(--muted); font-size: 11px; font-weight: 600; }
 .mentionMenuHeader { position: sticky; top: -7px; z-index: 1; display: flex; align-items: center; gap: 8px; min-height: 39px; padding: 3px 7px 8px; border-bottom: 1px solid var(--line); background: var(--panel); font-weight: 700; }
@@ -630,18 +663,16 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
   .questionPreview { padding: 14px; }
   .conversationCompose { margin-top: 8px; padding: 8px 10px 7px; border-radius: 13px; }
   .conversationCompose textarea { max-height: 28dvh; font-size: 16px; }
-  .conversationComposeControls { display: grid; grid-template-columns: auto minmax(0,1fr) auto auto; align-items: center; gap: 6px; padding-top: 5px; }
-  .conversationModelRow { display: contents; }
-  .conversationModelRow #conversationWorkspace { grid-column: 1; grid-row: 1; min-width: 0; max-width: none; padding: 5px 6px; font-size: 0; line-height: 18px; }
-  .conversationModelRow #conversationWorkspace::before { content: "工作空间"; font-size: 11px; }
-  .conversationModelPicker { grid-column: 2; grid-row: 1; min-width: 0; }
-  .modelPickerTrigger { width: 100%; max-width: none; gap: 3px; padding: 5px 6px; }
-  .modelPickerTriggerLabel { display: none; }
-  .modelPickerMenu { left: -64px; }
-  .attachmentButton { grid-column: 3; grid-row: 1; padding: 5px 6px; }
-  #conversationModelStatus { grid-column: 1 / -1; grid-row: 2; }
-  #conversationModelStatus:empty { display: none; }
-  .conversationComposeControls > button { grid-column: 4; grid-row: 1; min-width: 54px; min-height: 34px; padding: 6px 8px; }
+  .conversationComposeControls { gap: 5px; padding-top: 5px; }
+  .conversationActionRow { gap: 6px; }
+  .conversationSettingsRow { gap: 5px; }
+  .conversationWorkspacePicker,.conversationSettingsRow .conversationPresetPicker,.conversationSettingsRow .modelPickerTrigger,.conversationSettingsRow .conversationSearchPicker { padding: 4px 5px; }
+  .conversationWorkspacePicker span { font-size: 9px; white-space: nowrap; }
+  .conversationWorkspacePicker b { font-size: 11px; }
+  .conversationSearchPicker { min-width: 0; padding: 5px 6px; }
+  .conversationSearchPicker select { max-width: 95px; }
+  .attachmentButton { padding: 5px 8px; }
+  .conversationActionRow > #sendMessageButton { min-width: 58px; min-height: 34px; padding: 6px 10px; }
   .mentionMenu { left: 12px; width: calc(100% - 24px); }
   .conversationComposeFoot span { font-size: 10px; }
   .studioHero { grid-template-columns: 1fr; }
@@ -900,7 +931,7 @@ button:disabled, input:disabled, textarea:disabled { cursor: not-allowed; opacit
 .taskStripItem small { color: #60736a; }
 .taskFileLink { border: 0; border-radius: 9px; padding: 8px 12px; background: #1d7147; color: white; text-decoration: none; font: inherit; font-weight: 700; cursor: pointer; }
 .conversationCompose.taskMode { border-color: #96b6a0; background: #f8fcf8; }
-.conversationCompose.taskMode > :is(#conversationInput,#mentionMenu,#conversationAttachments,.conversationComposeControls,.conversationComposeFoot,#questionShortcut,#conversationSendStatus) { display: none !important; }
+.conversationCompose.taskMode > :is(#conversationInput,#mentionMenu,#conversationAttachments,.conversationComposeControls,.conversationComposeFoot,#questionShortcut,#conversationSendStatus,#continueAfterLimit) { display: none !important; }
 .taskPanel form { display: grid; gap: 12px; }
 .taskModeHead { display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: 4px 16px; padding-bottom: 10px; border-bottom: 1px solid #dce9df; }
 .taskModeHead span { color: #477357; font-size: 11px; font-weight: 700; }

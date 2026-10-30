@@ -21,7 +21,13 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
     OIDC_ISSUER: 'https://id.example', OIDC_CLIENT_ID: 'portal', ACCOUNT_DB_PATH: '/tmp/injected-test.sqlite',
     DSH_GATEWAY_TOKEN_DIR: '/tmp/injected-tokens' })
   const calls = []
+  const searchPolicies = new Map()
   const gateway = {
+    webSearchPolicy: async (_runtime, sessionId) => ({ policy: searchPolicies.get(sessionId) ?? 'ask' }),
+    setWebSearchPolicy: async (_runtime, sessionId, policy) => {
+      searchPolicies.set(sessionId, policy)
+      return { policy }
+    },
     mentions: async runtime => { calls.push(['mentions', runtime.origin]); return { items: runtime.backendRef === 'a'
       ? [{ name: '智见', kind: 'data-source', provider: 'zyt' }] : [] } },
     createSession: async (runtime, sessionId) => { calls.push(['create', runtime.origin, sessionId]); return { sessionId } },
@@ -70,6 +76,16 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
   const create = await fetch(`${base}/api/sessions`, { method: 'POST', headers: as(loginA), body: JSON.stringify({ requestId: 'stable-request-1' }) })
   assert.equal(create.status, 201)
   const session = (await create.json()).session
+  const searchUrl = `${base}/api/sessions/${session.id}/web-search`
+  assert.equal((await fetch(searchUrl, { headers: as(loginB) })).status, 404)
+  assert.deepEqual(await (await fetch(searchUrl, { headers: as(loginA) })).json(), { policy: 'ask' })
+  assert.equal((await fetch(searchUrl, { method: 'PUT', headers: { cookie: as(loginA).cookie, origin: config.publicOrigin },
+    body: JSON.stringify({ policy: 'on' }) })).status, 403)
+  assert.equal((await fetch(searchUrl, { method: 'PUT', headers: as(loginA),
+    body: JSON.stringify({ policy: 'always' }) })).status, 400)
+  assert.deepEqual(await (await fetch(searchUrl, { method: 'PUT', headers: as(loginA),
+    body: JSON.stringify({ policy: 'on' }) })).json(), { policy: 'on' })
+  assert.deepEqual(await (await fetch(searchUrl, { headers: as(loginA) })).json(), { policy: 'on' })
   assert.equal((await fetch(`${base}/api/session-groups`, { method: 'POST', headers: as(loginB),
     body: JSON.stringify({ name: 'A 的分组' }) })).status, 201)
   assert.equal((await fetch(`${base}/api/session-groups`, { method: 'POST', headers: { cookie: as(loginA).cookie },
@@ -199,7 +215,7 @@ test('account A creates and asks in its DSH instance; account B cannot open or s
   assert.equal(unavailable.status, 400)
   assert.equal((await unavailable.json()).error, 'MENTION_UNAVAILABLE')
   assert.equal((await fetch(`${base}/api/sessions/${session.id}/messages`, { headers: as(loginA) })).status, 200)
-  assert.equal(calls.filter(call => call[0] === 'create').length, 2)
+  assert.equal(calls.filter(call => call[0] === 'create').length, 1)
   assert.deepEqual(calls.filter(call => ['message', 'upload', 'remove'].includes(call[0])).map(call => call[1]),
     ['http://127.0.0.1:3101', 'http://127.0.0.1:3101', 'http://127.0.0.1:3101'])
   assert.deepEqual(calls.filter(call => call[0] === 'read').map(call => call[1]), ['http://127.0.0.1:3101'])

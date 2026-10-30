@@ -115,8 +115,9 @@ export function registerCustomerMentionTool(ctx: Context, config: CapabilityConf
     } }, render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }] },
     async execute(args, exec) {
       const agent = exec.agent
+      const root = resolve(workspace), cwd = resolve(agent?.session.header.cwd ?? '')
       if (!agent || agent.session.header.origin === 'subagent'
-        || resolve(agent.session.header.cwd ?? '') !== resolve(workspace)) throw new Error('CUSTOMER_MENTION_SESSION_REQUIRED')
+        || (cwd !== root && !cwd.startsWith(join(root, 'spaces') + sep))) throw new Error('CUSTOMER_MENTION_SESSION_REQUIRED')
       if (typeof args.id !== 'string' || typeof args.version !== 'string' || typeof args.question !== 'string'
         || !args.question.trim() || args.question.length > 4000) throw new Error('CUSTOMER_MENTION_INVALID_REQUEST')
       const targets = await customerCapabilityTargets(ctx, config, workspace)

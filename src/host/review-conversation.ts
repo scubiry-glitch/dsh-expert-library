@@ -18,7 +18,7 @@ export interface ConversationMessage {
 }
 export interface ConversationPage {
   messages: ConversationMessage[]
-  turnFailures?: { seq: number; kind: 'quota_exceeded' | 'failed' }[]
+  turnFailures?: { seq: number; kind: 'quota_exceeded' | 'failed' | 'output_limit' }[]
   nextCursor: number
   hasMore: boolean
   hasEarlier?: boolean
@@ -39,9 +39,11 @@ export function projectConversation(events: readonly unknown[], after = -1, late
     if (seq >= before) continue
     if (event.surfaceOp !== undefined && event.surfaceOp !== 'append') { nextCursor = seq; continue }
     const data = event.data
-    if (event.type === 'turn/end' && record(data) && record(data.reason) && data.reason.kind === 'error') {
+    if (event.type === 'turn/end' && record(data) && record(data.reason)
+      && (data.reason.kind === 'error' || data.reason.kind === 'max-tokens')) {
       const code = record(data.reason.error) ? data.reason.error.code : undefined
-      turnFailures.push({ seq, kind: code === 'QUOTA' || code === 'QUOTA_EXCEEDED' ? 'quota_exceeded' : 'failed' })
+      turnFailures.push({ seq, kind: data.reason.kind === 'max-tokens' ? 'output_limit'
+        : code === 'QUOTA' || code === 'QUOTA_EXCEEDED' ? 'quota_exceeded' : 'failed' })
       if (turnFailures.length > PAGE_SIZE) turnFailures.shift()
       nextCursor = seq
       continue

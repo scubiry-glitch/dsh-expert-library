@@ -95,10 +95,11 @@ const PROVIDER_CALL_OUTPUT_SCHEMA = {
 type ProviderCallOutput = InferValue<typeof PROVIDER_CALL_OUTPUT_SCHEMA>
 
 const TOOL_DESCRIPTION = [
-  '调用专家库 provider 能力层（Wind 金融 / 政研通 zyt / 贝壳 beike / 本地 SQLite localdb）获取数据或执行受控操作。',
+  '调用专家库 provider 能力层（Wind 金融 / 政研通 zyt / 贝壳 beike / 成都数据运营平台 cddataos / 本地 SQLite localdb）获取数据或执行受控操作。',
   '优先 dataset-first 调用：传 dataset（已注册数据集 id，如 realestate.city.market、realestate.listing.search、realestate.policy、realestate.rent.market、financial.stock.quote、financial.macro，以及本地库 localdb.<库名>.query / localdb.<库名>.schema——动态注册，以 health/schema 列表为准），系统自动映射到版本钉扎的 capability 并校验必填口径；未注册 dataset、缺口径、凭据缺失、参数错误都不会触发安装或 key 猜测，只会返回结构化修正错误。',
   '直接传 capability 仍兼容（如 financial.stock.snapshot、realestate.indicators.timeseries、realestate.city.compare），但新增业务应优先走 dataset。',
   'input 为对应能力契约的参数 JSON 对象（字段以该能力契约为准，如 windcode/city/code）。',
+  'cddataos 在获准账号提供三个可能计费的数据集：realestate.cddataos.chengdu-transactions（start_date/end_date 均为 YYYY-MM-DD；2024-01-01 至 2026-10-20 已实测返回数据，但不能据此认定区间累计或不支持月度）、realestate.cddataos.enterprise-land（type=1–6；keyword=企业全名/注册号/统一社会信用代码，不是城市名；auth_authorizeFileCode=真实主体授权编号）、realestate.cddataos.property-risk（address=真实且精确到户的地址；auth_authorizeFileCode=真实主体授权编号；match_mode=1 可做模糊匹配）。fee=1 仅为计费标识，调用前核实计费授权。',
   '写/敏感操作（realestate.rent.appoint、realestate.sell.list、realestate.agent.contact 等）必须获得用户审批（allowed-once）后才执行；审批不可用或未批准时失败关闭（write-requires-approval / APPROVAL_REJECTED）。',
   '返回信封：ok / capability / dataset / provenance（含 caliber、unit）/ warnings / error；data 过大时截断并带 truncated 标记，provenance/warnings/error 完整保留。',
   '错误分流（retry:never 表示改参数重试而非原样重发）：DATASET_UNKNOWN=数据集 id 拼错；CALIBER_MISSING=调用前参数校验未通过，按 error.missing 补必填口径（请求未发出，不能据此判断通道健康）；CREDENTIAL_MISSING=配凭据不重装；INPUT_INVALID=修参数类型；DATA_QUALITY_INVALID=provenance 不全，结果禁止引用。',
@@ -206,8 +207,8 @@ export function resolveMemberCapabilityScope(team: TeamState | undefined, agentS
 /** Human correction for a provider denied by the durable member scope. */
 function capabilityScopeCorrection(provider: string, scope: CapabilityScope): string {
   const values = scope.allowedDataProviders ?? (scope.allowedProviders ?? []).filter((value) => (
-    value === 'wind' || value === 'zyt' || value === 'beike' || value === 'rongcheng'
-      || value.startsWith('wind-') || value.startsWith('zyt-') || value.startsWith('beike-') || value.startsWith('rongcheng-')
+    value === 'wind' || value === 'zyt' || value === 'beike' || value === 'rongcheng' || value === 'cddataos'
+      || value.startsWith('wind-') || value.startsWith('zyt-') || value.startsWith('beike-') || value.startsWith('rongcheng-') || value.startsWith('cddataos-')
   ))
   const allowed = values.length === 0 ? '无 provider' : values.join('、')
   return `成员 capability scope 不允许 provider「${provider}」；当前允许：${allowed}`

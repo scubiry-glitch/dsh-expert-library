@@ -65,6 +65,7 @@ import {
   DEFAULT_RONGCHENG_ADAPTER_URL,
   DEFAULT_RONGCHENG_ENGINE_URL,
 } from '../v2/providers/rongcheng.ts'
+import { CDDATAOS_OPERATIONS, buildCddataosManifest, cddataosCallPlan, normalizeCddataosResponse, parseCddataosCredential } from '../v2/providers/cddataos.ts'
 import {
   buildLocalDbManifest,
   defaultLocalDbRunnerPath,
@@ -99,6 +100,7 @@ export interface ProviderServiceOptions {
   readonly zyt?: { readonly baseUrl: string; readonly cliCommand?: string; readonly preferCli?: boolean }
   readonly beike?: { readonly baseUrl: string; readonly cliCommand?: string; readonly preferCli?: boolean }
   readonly rongcheng?: { readonly adapterBaseUrl: string; readonly engineBaseUrl: string; readonly v2BaseUrl?: string }
+  readonly cddataos?: { readonly baseUrl: string }
   /** Local SQLite databases (validated + deduped by {@link resolveProviderServiceOptions}). */
   readonly localdb?: { readonly databases: readonly LocalDbDatabase[]; readonly runnerPath: string }
   /** `toolExecution` settings overlays, keyed by provider id. */
@@ -125,6 +127,7 @@ export interface ProviderConfigInput {
     readonly zyt?: { readonly baseUrl?: string; readonly cliCommand?: string; readonly preferCli?: boolean }
     readonly beike?: { readonly baseUrl?: string; readonly cliCommand?: string; readonly preferCli?: boolean }
     readonly rongcheng?: { readonly adapterBaseUrl?: string; readonly engineBaseUrl?: string; readonly v2BaseUrl?: string }
+    readonly cddataos?: { readonly baseUrl?: string }
     /** 本地 SQLite 数据库灵活注册：显式列表 + 目录扫描（缺省关）。 */
     readonly localdb?: {
       readonly databases?: readonly {
@@ -188,7 +191,7 @@ export function resolveProviderServiceOptions(input: ProviderConfigInput): Provi
   // grant is deny-all even when credentials happen to be present in HOME.
   const customerMode = Boolean(process.env.DSH_CUSTOMER_WORKSPACE_DIR)
   const allowedProviders = customerMode
-    ? (process.env.DSH_CUSTOMER_ALLOWED_PROVIDERS ?? '').split(',').map(id => id.trim()).filter(id => /^(wind|zyt|beike|rongcheng|localdb)$/.test(id))
+    ? (process.env.DSH_CUSTOMER_ALLOWED_PROVIDERS ?? '').split(',').map(id => id.trim()).filter(id => /^(wind|zyt|beike|rongcheng|localdb|cddataos)$/.test(id))
     : undefined
   const windCliPath = windCliPathCandidate(input)
   const wind = windCliPath !== undefined && existsSync(windCliPath) ? { cliPath: windCliPath } : undefined
@@ -259,7 +262,8 @@ export function resolveProviderServiceOptions(input: ProviderConfigInput): Provi
     ? { databases: [...localdbDatabases.values()], runnerPath: defaultLocalDbRunnerPath(import.meta.url) }
     : undefined
 
-  return { wind, zyt, beike, rongcheng, localdb, overlays: input.toolExecution, ...(allowedProviders === undefined ? {} : { allowedProviders }) }
+  const cddataos = input.providers?.cddataos === undefined ? undefined : { baseUrl: input.providers.cddataos.baseUrl ?? 'https://yypt.cddataos.com:8091' }
+  return { wind, zyt, beike, rongcheng, cddataos, localdb, overlays: input.toolExecution, ...(allowedProviders === undefined ? {} : { allowedProviders }) }
 }
 
 /** Parse the optional `LOCALDB_DATABASES` env JSON (same shape as config). */
@@ -624,6 +628,26 @@ function createRongchengInvoker(manifest: ToolProviderManifest, transports: Prov
   }
 }
 
+function createCddataosInvoker(manifest: ToolProviderManifest, transports: ProviderTransports, credentials: CredentialFn): ProviderInvoker {
+  return {
+    providerId: 'cddataos',
+    async invoke(request: InvokeAdapterRequest): Promise<ProviderEnvelope> {
+      const transport = transportOf(manifest, request.transportId)
+      const entry = CDDATAOS_OPERATIONS[request.operation as keyof typeof CDDATAOS_OPERATIONS]
+      const provenance = { ...provenanceOf('cddataos', request.operation, transport.id, transportSourceOf(transport)), ...(entry === undefined ? {} : { caliber: entry.caliber }) }
+      const credential = parseCddataosCredential(credentials(transport.auth!) ?? '')
+      if (credential === undefined) return missingCredential('cddataos', request.operation, 'CDDATAOS_CREDENTIALS', transport.id)
+      let plan
+      try { plan = cddataosCallPlan(request.operation, request.input, credential) }
+      catch (error) { return planError(error, provenance) }
+      try {
+        const raw = await transports.run(transport, { operation: request.operation, input: plan, signal: request.signal, context: request.context })
+        return normalizeCddataosResponse(raw.status ?? 0, raw.body ?? '', credential, provenance)
+      } catch (error) { return transportError(error, provenance) }
+    },
+  }
+}
+
 function isRequestBody(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
@@ -856,6 +880,10 @@ export class ProviderTransportService {
         overlay('rongcheng'),
       )
       register(manifest, createRongchengInvoker(manifest, this.transports))
+    }
+    if (allowed('cddataos') && this.options.cddataos !== undefined) {
+      const manifest = applyToolExecutionOverlay(buildCddataosManifest(this.options.cddataos.baseUrl), overlay('cddataos'))
+      register(manifest, createCddataosInvoker(manifest, this.transports, this.credentials))
     }
     if (allowed('localdb') && this.options.localdb !== undefined && this.options.localdb.databases.length > 0) {
       const opts = this.options.localdb

@@ -39,10 +39,15 @@
         <div class="manageCard"><h3>管理权限</h3><p>当前账号的管理员可访问此页。所有修改都要求登录态与同源校验，并仅作用于该账号绑定的实例。</p><p class="manageMuted">服务凭据保留在服务器，不提供浏览器令牌设置。</p></div></div>
       </section>
       <section id="usage" class="manageSection" role="tabpanel" aria-labelledby="tab-usage" tabindex="0" hidden>
-        <div class="sectionTitle"><span>04 / USAGE</span><h2>使用分析</h2><p>当前账号的实际调用排行。仅统计启用采集后的成功调用，不回补历史。</p></div>
+        <div class="sectionTitle"><span>04 / USAGE</span><h2>使用分析</h2><p>查看当前账号的模型额度、积分用量和能力调用排行。</p></div>
+        <div class="manageCard manageBilling"><div class="manageBillingHeader"><div><h3>模型额度与用量</h3><p id="billingPeriod" class="manageMuted" role="status">正在读取…</p></div><span id="billingUnit" class="manageBillingBadge" hidden></span></div>
+          <div id="billingMetrics" class="manageBillingMetrics" aria-live="polite"></div>
+          <p id="billingRule" class="manageMuted"></p>
+          <div class="manageBillingHistory"><h4>最近 7 天</h4><div id="billingDays" class="manageBillingDays"></div></div>
+        </div>
         <div class="manageUsageToolbar"><div><strong>调用排行榜</strong><p id="usageAsOf" class="manageMuted" role="status">正在读取…</p></div><label>时间范围<select id="usageDays"><option value="7">最近 7 天</option><option value="30">最近 30 天</option></select></label></div>
         <div id="usageCards" class="manageUsageGrid" aria-live="polite"></div>
-        <p class="manageMuted">调用次数按成功执行计；会话数为使用过该能力的不同会话数。Skill 以任务材料成功交付计，领域包包含定向调用与领域 Skill 交付。版本单独列出。</p>
+        <p class="manageMuted">排行榜统计能力调用次数，与模型积分用量口径不同。仅统计启用采集后的成功调用，不回补历史；会话数为使用过该能力的不同会话数。技能以任务材料成功交付计，领域包包含定向调用与领域技能交付。版本单独列出。</p>
       </section>
     </div>
   </div>

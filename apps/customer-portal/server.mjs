@@ -66,9 +66,11 @@ const WORKSPACE_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace$/i
 const TASKS_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/tasks$/i
 const WORKSPACE_MODELS_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/models$/i
 const CONVERSATION_MODEL_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/model$/i
+const SESSION_PRESET_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/preset$/i
 const WORKSPACE_ACTION_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/action$/i
 const WORKSPACE_DOCUMENT_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/workspace\/documents\/([^/]+)\/([^/]+)(?:\/(preview|download))?$/i
 const QUESTION_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/question$/i
+const WEB_SEARCH_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/web-search$/i
 const APPROVAL_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/approval$/i
 const SESSION_METADATA_PATH = /^\/api\/sessions\/([0-9a-f-]{36})$/i
 const SESSION_GROUP_PATH = /^\/api\/session-groups\/([0-9a-f-]{36})$/i
@@ -421,24 +423,66 @@ export function createPortalServer(config, services = {}) {
           item.visible(principal) && await item.available() ? item.session : null))
         const sessions = [...store.listResearchSessions(principal), ...availablePreviews.filter(Boolean)]
         return json(res, 200, { sessions: sortSessions(sessions.map(session => decorateSession(store, principal, session))),
-          groups: store.listSessionGroups(principal) })
+          groups: store.listSessionGroups(principal), spaces: store.listResearchSpaces(principal) })
       }
       if (req.method !== 'POST') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
       if (principal.shareId) return json(res, 403, { error: 'SHARE_SCOPE_DENIED' })
       if (req.headers.origin !== config.publicOrigin || !store.verifyCsrf(token, req.headers['x-csrf-token'])) return json(res, 403, { error: 'CSRF_INVALID' })
       const body = await readJson(req, 4_000)
       if (!body || typeof body.requestId !== 'string' || !/^[A-Za-z0-9_-]{8,128}$/.test(body.requestId)
-        || (body.title !== undefined && (typeof body.title !== 'string' || !body.title.trim() || body.title.length > 200))) return json(res, 400, { error: 'INVALID_REQUEST' })
+        || (body.title !== undefined && (typeof body.title !== 'string' || !body.title.trim() || body.title.length > 200))
+        || (body.spaceId !== undefined && body.spaceId !== null && !/^[0-9a-f-]{36}$/i.test(body.spaceId))
+        || (body.presetId !== undefined && body.presetId !== null && !/^[a-z][a-z0-9-]{0,63}$/.test(body.presetId))
+        || Object.keys(body).some(key => !['requestId', 'title', 'spaceId', 'presetId'].includes(key))) return json(res, 400, { error: 'INVALID_REQUEST' })
       let runtime
       try { runtime = resolveAccountBackend(principal, config) } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
       try {
-        const row = store.createResearchSession({ principal, requestId: body.requestId, title: body.title ?? '新会话' })
+        const space = body.spaceId ? store.getResearchSpace(principal, body.spaceId) : null
+        if (body.spaceId && !space) return json(res, 404, { error: 'SPACE_NOT_FOUND' })
+        const row = store.createResearchSession({ principal, requestId: body.requestId, title: body.title ?? '新会话',
+          spaceId: space?.id ?? null, presetId: body.presetId ?? null })
+        if (row.space_id !== (space?.id ?? null) || (body.presetId && row.preset_id !== body.presetId))
+          return json(res, 409, { error: 'SESSION_REQUEST_CONFLICT' })
+        if (row.dsh_session_id) return json(res, 200, { session: { id: row.id, title: row.title,
+          createdAt: row.created_at, spaceId: row.space_id, presetId: row.preset_id } })
         const dshSessionId = `session-${row.id}`
-        const created = await gateway.createSession(runtime, dshSessionId)
+        const created = await gateway.createSession(runtime, dshSessionId,
+          { spacePath: space?.relativePath ?? null, presetId: body.presetId ?? null })
         if (created.sessionId !== dshSessionId) throw new Error('DSH session mismatch')
         store.bindDshSession(principal, row.id, dshSessionId)
-        return json(res, 201, { session: { id: row.id, title: row.title, createdAt: row.created_at } })
+        if (created.presetId) store.updateResearchSessionPreset(principal, row.id, created.presetId)
+        return json(res, 201, { session: { id: row.id, title: row.title, createdAt: row.created_at,
+          spaceId: row.space_id, presetId: created.presetId ?? row.preset_id } })
       } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
+    }
+    if (pathname === '/api/presets' || pathname === '/api/spaces') {
+      const token = cookieValue(req, '__Host-zhijian-session')
+      const principal = requestAccess(req)
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      if (principal.shareId) return json(res, 403, { error: 'SHARE_SCOPE_DENIED' })
+      if (pathname === '/api/spaces' && req.method === 'GET') return json(res, 200, { spaces: store.listResearchSpaces(principal) })
+      if (pathname === '/api/presets' && req.method === 'GET') {
+        try { return json(res, 200, await gateway.presets(resolveAccountBackend(principal, config))) }
+        catch { return json(res, 503, { error: 'PRESETS_UNAVAILABLE' }) }
+      }
+      if (pathname !== '/api/spaces' || req.method !== 'POST') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+      if (req.headers.origin !== config.publicOrigin || !store.verifyCsrf(token, req.headers['x-csrf-token'])) return json(res, 403, { error: 'CSRF_INVALID' })
+      const body = await readJson(req, 2_000)
+      const name = typeof body?.name === 'string' ? body.name.trim() : ''
+      const parentId = body?.parentId ?? null
+      if (!name || name.length > 40 || !/^[\p{L}\p{N}_ -]+$/u.test(name)
+        || (parentId !== null && !/^[0-9a-f-]{36}$/i.test(parentId))
+        || Object.keys(body ?? {}).some(key => !['name', 'parentId'].includes(key))) return json(res, 400, { error: 'INVALID_SPACE' })
+      const parent = parentId === null ? null : store.getResearchSpace(principal, parentId)
+      if (parentId !== null && !parent) return json(res, 404, { error: 'SPACE_NOT_FOUND' })
+      const path = `${parent?.relativePath ?? 'spaces'}/${name}`
+      if (path.split('/').length > 6) return json(res, 400, { error: 'SPACE_DEPTH_LIMIT' })
+      if (store.listResearchSpaces(principal).some(space => space.relativePath === path)) return json(res, 409, { error: 'SPACE_EXISTS' })
+      try {
+        await gateway.createSpace(resolveAccountBackend(principal, config), path)
+        return json(res, 201, { space: store.createResearchSpace(principal, { parentId, name, relativePath: path }) })
+      } catch (error) { const duplicate = error?.status === 409 || String(error).includes('UNIQUE constraint failed')
+        return json(res, duplicate ? 409 : 503, { error: duplicate ? 'SPACE_EXISTS' : 'SPACE_UNAVAILABLE' }) }
     }
     if (pathname === '/api/session-groups' || SESSION_GROUP_PATH.test(pathname)) {
       if (req.headers.authorization) return json(res, 403, { error: 'SHARE_SCOPE_DENIED' })
@@ -656,6 +700,31 @@ export function createPortalServer(config, services = {}) {
       }
       catch { return json(res, 503, { error: 'WORKSPACE_UNAVAILABLE' }) }
     }
+    const presetMatch = SESSION_PRESET_PATH.exec(pathname)
+    if (presetMatch) {
+      if (req.method !== 'GET' && req.method !== 'POST') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+      const principal = requestAccess(req)
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      const row = accessibleSession(principal, presetMatch[1])
+      if (!row?.dsh_session_id) return json(res, 404, { error: 'SESSION_NOT_FOUND' })
+      if (req.method === 'POST' && (principal.shareId || !canWrite(req, principal)))
+        return json(res, 403, { error: principal.shareId ? 'SHARE_SCOPE_DENIED' : 'CSRF_INVALID' })
+      let runtime
+      try { runtime = resolveAccountBackend(principal, config) } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
+      if (req.method === 'GET') {
+        try { return json(res, 200, await gateway.sessionPreset(runtime, row.dsh_session_id)) }
+        catch { return json(res, 503, { error: 'PRESET_UNAVAILABLE' }) }
+      }
+      const body = await readJson(req, 1_000)
+      if (!body || Object.keys(body).some(key => key !== 'presetId') || typeof body.presetId !== 'string'
+        || !/^[a-z][a-z0-9-]{0,63}$/.test(body.presetId)) return json(res, 400, { error: 'INVALID_PRESET' })
+      try {
+        const selected = await gateway.selectSessionPreset(runtime, row.dsh_session_id, body.presetId)
+        store.updateResearchSessionPreset(principal, row.id, selected.presetId)
+        return json(res, 200, selected)
+      } catch (error) { return json(res, error?.status === 409 ? 409 : 400,
+        { error: error?.status === 409 ? 'PRESET_LOCKED' : 'INVALID_PRESET' }) }
+    }
     const conversationModelMatch = CONVERSATION_MODEL_PATH.exec(pathname)
     if (conversationModelMatch) {
       if (req.method !== 'GET' && req.method !== 'POST') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
@@ -781,6 +850,28 @@ export function createPortalServer(config, services = {}) {
         if (before && !/^\d{13}-[0-9a-f-]{36}$/i.test(before)) return json(res, 400, { error: 'INVALID_CURSOR' })
         return json(res, 200, await gateway.listDatasets(runtime, row.dsh_session_id, before))
       } catch (error) { return json(res, error?.status === 404 ? 404 : 503, { error: error?.status === 404 ? 'DATA_NOT_FOUND' : 'DATA_UNAVAILABLE' }) }
+    }
+    const webSearchMatch = WEB_SEARCH_PATH.exec(pathname)
+    if (webSearchMatch) {
+      const principal = requestAccess(req)
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      const row = accessibleSession(principal, webSearchMatch[1])
+      if (!row?.dsh_session_id) return json(res, 404, { error: 'SESSION_NOT_FOUND' })
+      let runtime
+      try { runtime = resolveAccountBackend(principal, config) } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
+      if (req.method === 'GET') {
+        try { return json(res, 200, await gateway.webSearchPolicy(runtime, row.dsh_session_id)) }
+        catch { return json(res, 503, { error: 'WEB_SEARCH_UNAVAILABLE' }) }
+      }
+      if (req.method === 'PUT') {
+        if (!canWrite(req, principal)) return json(res, 403, { error: principal.shareId ? 'READ_ONLY_SHARE' : 'CSRF_INVALID' })
+        const body = await readJson(req, 200)
+        if (!body || Object.keys(body).length !== 1 || !['ask', 'on', 'off'].includes(body.policy))
+          return json(res, 400, { error: 'INVALID_WEB_SEARCH_POLICY' })
+        try { return json(res, 200, await gateway.setWebSearchPolicy(runtime, row.dsh_session_id, body.policy)) }
+        catch { return json(res, 503, { error: 'WEB_SEARCH_UNAVAILABLE' }) }
+      }
+      return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
     }
     const questionMatch = QUESTION_PATH.exec(pathname)
     if (questionMatch) {

@@ -7,10 +7,15 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   const owned = 'session-11111111-1111-4111-8111-111111111111'
   const foreign = 'session-22222222-2222-4222-8222-222222222222'
   const calls = []
+  let webSearchPolicy = 'ask'
   let mentionReads = 0
   const runtime = {
     token: async () => 'server-only-test-token-with-32-bytes-minimum',
-    createSession: async sessionId => { calls.push(['create', sessionId]); return { sessionId } },
+    createSession: async (sessionId, spacePath, presetId) => { calls.push(['create', sessionId, spacePath, presetId]); return { sessionId, presetId: presetId ?? 'zhijian' } },
+    presets: async () => ({ presets: [{ id: 'standard', name: '标准' }, { id: 'zhijian', name: '智见' }], defaultId: 'zhijian' }),
+    createSpace: async path => { calls.push(['space', path]); return { path } },
+    sessionPreset: async () => ({ presetId: 'zhijian', canSwitch: false }),
+    selectSessionPreset: async () => { throw new Error('PRESET_LOCKED') },
     ownsSession: async sessionId => sessionId === owned,
     sendMessage: async (sessionId, text, requestId) => { calls.push(['message', sessionId, text, requestId]); return { accepted: true } },
     uploadAttachment: async (sessionId, name, data) => { calls.push(['upload', sessionId, name, data]);
@@ -36,6 +41,8 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
       questions: [{ id: 'scope', question: '研究哪个范围？', options: [{ label: '贵阳' }], multiSelect: false }] } : null,
     answerQuestion: (sessionId, requestId, answers) => sessionId === owned
       && requestId === '11111111-1111-4111-8111-111111111111' && answers?.[0]?.selected?.[0] === '贵阳',
+    webSearchPolicy: () => webSearchPolicy,
+    setWebSearchPolicy: (_sessionId, policy) => { webSearchPolicy = policy },
     adminSettings: async () => ({ writable: true, revision: 3, value: { providers: {} } }),
     adminModels: async () => [{ provider: 'sample', model: 'sample-model', name: 'Sample', reasoningEfforts: [{ id: 'low', name: 'Low' }] }],
     adminUsage: async days => ({ days, rankings: { expert: [{ id: 'e', calls: 2, sessions: 1 }] } }),
@@ -49,6 +56,16 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   assert.equal((await fetch(`${base}/health`)).status, 401)
   assert.equal((await fetch(`${base}/health`, { headers: { authorization: 'Bearer wrong' } })).status, 401)
   assert.equal((await fetch(`${base}/health`, { headers: auth })).status, 200)
+  assert.equal((await fetch(`${base}/presets`)).status, 401)
+  assert.equal((await (await fetch(`${base}/presets`, { headers: auth })).json()).defaultId, 'zhijian')
+  assert.equal((await fetch(`${base}/spaces`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ path: 'spaces/../escape' }) })).status, 400)
+  assert.equal((await fetch(`${base}/spaces`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ path: 'spaces/研究/项目' }) })).status, 201)
+  assert.equal((await fetch(`${base}/sessions/${foreign}/preset`, { headers: auth })).status, 404)
+  assert.equal((await (await fetch(`${base}/sessions/${owned}/preset`, { headers: auth })).json()).canSwitch, false)
+  assert.equal((await fetch(`${base}/sessions/${owned}/preset`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ presetId: 'zhijian' }) })).status, 409)
   assert.equal((await fetch(`${base}/admin/settings`)).status, 401)
   assert.equal((await (await fetch(`${base}/admin/settings`, { headers: auth })).json()).revision, 3)
   assert.equal((await fetch(`${base}/admin/models`)).status, 401)
@@ -69,7 +86,10 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
     [{ name: '智见', kind: 'data-source', provider: 'zyt' }])
   const invalid = await fetch(`${base}/sessions`, { method: 'POST', headers: auth, body: JSON.stringify({ sessionId: '../other' }) })
   assert.equal(invalid.status, 400)
-  const created = await fetch(`${base}/sessions`, { method: 'POST', headers: auth, body: JSON.stringify({ sessionId: owned, workspace: '/other' }) })
+  assert.equal((await fetch(`${base}/sessions`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ sessionId: owned, workspace: '/other' }) })).status, 400)
+  const created = await fetch(`${base}/sessions`, { method: 'POST', headers: auth,
+    body: JSON.stringify({ sessionId: owned, spacePath: 'spaces/研究/项目', presetId: 'zhijian' }) })
   assert.equal(created.status, 200)
   assert.equal((await fetch(`${base}/sessions/${foreign}/messages`, { headers: auth })).status, 404)
   assert.equal((await fetch(`${base}/sessions/${foreign}/attachments`, { method: 'POST', headers: auth,
@@ -88,6 +108,12 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
     body: JSON.stringify({ path: `customer-uploads/${owned}/stored.txt` }) })).status, 200)
   assert.equal((await fetch(`${base}/sessions/${foreign}/datasets`, { headers: auth })).status, 404)
   assert.equal((await fetch(`${base}/sessions/${foreign}/question`, { headers: auth })).status, 404)
+  assert.equal((await fetch(`${base}/sessions/${foreign}/web-search`, { headers: auth })).status, 404)
+  assert.deepEqual(await (await fetch(`${base}/sessions/${owned}/web-search`, { headers: auth })).json(), { policy: 'ask' })
+  assert.equal((await fetch(`${base}/sessions/${owned}/web-search`, { method: 'PUT', headers: auth,
+    body: JSON.stringify({ policy: 'invalid' }) })).status, 400)
+  assert.deepEqual(await (await fetch(`${base}/sessions/${owned}/web-search`, { method: 'PUT', headers: auth,
+    body: JSON.stringify({ policy: 'on' }) })).json(), { policy: 'on' })
   assert.equal((await fetch(`${base}/sessions/${foreign}/workspace`, { headers: auth })).status, 404)
   assert.equal((await fetch(`${base}/sessions/${foreign}/activity`, { headers: auth })).status, 404)
   const batch = (sessionIds, headers = auth) => fetch(`${base}/sessions/activity-batch`, { method: 'POST', headers,
@@ -149,7 +175,7 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   assert.equal((await fetch(`${base}/sessions/${owned}/messages`, { method: 'POST', headers: auth,
     body: JSON.stringify({ text: '@智见 查询数据', requestId: 'request-33333333' }) })).status, 202)
   assert.equal(mentionReads, readsBeforePlainMessage + 2)
-  assert.deepEqual(calls, [['admin-settings', 'providers', {}, 3], ['admin-settings', 'runtime', { maxMembers: 4 }, 4], ['create', owned], ['upload', owned, 'notes.txt', 'aGVsbG8='], ['remove', owned, `customer-uploads/${owned}/stored.txt`], ['activity-batch', [owned]], ['select-model', owned, 'sample', 'sample-model'], ['workspace-action', owned, 'approve'], ['workspace-action', owned, 'sync-context'],
+  assert.deepEqual(calls, [['space', 'spaces/研究/项目'], ['admin-settings', 'providers', {}, 3], ['admin-settings', 'runtime', { maxMembers: 4 }, 4], ['create', owned, 'spaces/研究/项目', 'zhijian'], ['upload', owned, 'notes.txt', 'aGVsbG8='], ['remove', owned, `customer-uploads/${owned}/stored.txt`], ['activity-batch', [owned]], ['select-model', owned, 'sample', 'sample-model'], ['workspace-action', owned, 'approve'], ['workspace-action', owned, 'sync-context'],
     ['conversation', owned, -1, false, Number.MAX_SAFE_INTEGER], ['conversation', owned, -1, true, Number.MAX_SAFE_INTEGER], ['conversation', owned, -1, true, 12],
     ['message', owned, 'First question', 'request-11111111'], ['message', owned, '@智见 查询数据', 'request-33333333']])
 })

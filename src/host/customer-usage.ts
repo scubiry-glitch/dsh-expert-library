@@ -1,5 +1,5 @@
 import { createReadStream } from 'node:fs'
-import { appendFile, mkdir, readdir, realpath } from 'node:fs/promises'
+import { appendFile, lstat, mkdir, readFile, readdir, realpath } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
 import { join } from 'node:path'
 
@@ -8,6 +8,35 @@ const SESSION = /^session-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-
 const ID = /^[\p{L}\p{N}._:-]{1,128}$/u
 const DAY = /^\d{4}-\d{2}-\d{2}\.jsonl$/
 const KINDS: UsageKind[] = ['expert', 'skill', 'pack', 'source']
+
+/** Resolve historical pack versions from this account's installed manifests. */
+async function installedPackNames(home: string): Promise<Map<string, string>> {
+  const names = new Map<string, string>()
+  const roots = [
+    { path: join(home, 'workspace', 'domain-packs'), center: false },
+    { path: join(home, 'pack-center', 'inventory', 'releases'), center: true },
+  ]
+  for (const root of roots) {
+    let entries
+    try { entries = await readdir(root.path, { withFileTypes: true }) }
+    catch { continue }
+    for (const entry of entries.filter(item => item.isDirectory()).sort((a, b) => a.name.localeCompare(b.name))) {
+      const path = root.center ? join(root.path, entry.name, 'content', 'pack.json') : join(root.path, entry.name, 'pack.json')
+      let info
+      try { info = await lstat(path) }
+      catch { continue }
+      if (!info.isFile() || info.size > 64_000) continue
+      try {
+        const pack = JSON.parse(await readFile(path, 'utf8')) as Record<string, unknown>
+        if (typeof pack.id !== 'string' || !ID.test(pack.id)
+          || typeof pack.version !== 'string' || !ID.test(pack.version)
+          || typeof pack.name !== 'string' || !pack.name.trim() || pack.name.length > 128) continue
+        names.set(`${pack.id}\u0000${pack.version}`, pack.name.trim())
+      } catch { /* An unavailable or invalid manifest must not hide usage counts. */ }
+    }
+  }
+  return names
+}
 
 export interface CustomerUsageEvent {
   kind: UsageKind
@@ -79,6 +108,14 @@ export async function readCustomerUsage(home: string, days: 7 | 30 = 7, now = Da
   }
   const rankings = Object.fromEntries(KINDS.map(kind => [kind, [...groups[kind].values()]
     .map(row => ({ id: row.id, ...(row.version ? { version: row.version } : {}), calls: row.calls, sessions: row.sessions.size }))
-    .sort((a, b) => b.calls - a.calls || b.sessions - a.sessions || a.id.localeCompare(b.id, 'zh-CN')).slice(0, 20)]))
+    .sort((a, b) => b.calls - a.calls || b.sessions - a.sessions || a.id.localeCompare(b.id, 'zh-CN')).slice(0, 20)])) as
+    Record<UsageKind, Array<{ id: string; version?: string; calls: number; sessions: number; name?: string }>>
+  if (rankings.pack.length) {
+    const names = await installedPackNames(home)
+    rankings.pack = rankings.pack.map(row => {
+      const name = names.get(`${row.id}\u0000${row.version ?? ''}`)
+      return { ...row, ...(name ? { name } : {}) }
+    })
+  }
   return { days, asOf: now, firstEventAt, rankings }
 }

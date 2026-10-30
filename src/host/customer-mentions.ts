@@ -40,6 +40,7 @@ export function customerMentions(inventory: ProviderInventory | undefined): Cust
   if (providers.has('zyt') && credentials.has('ZYT_API_KEY')) targets.push({ name: '智见', kind: 'data-source', provider: 'zyt' })
   if (providers.has('beike') && credentials.has('BEIKE_MCP_API_KEY')) targets.push({ name: '贝壳', kind: 'data-source', provider: 'beike' })
   if (providers.has('wind') && credentials.has('WIND_API_KEY')) targets.push({ name: '万得', kind: 'data-source', provider: 'wind' })
+  if (providers.has('cddataos') && credentials.has('CDDATAOS_CREDENTIALS')) targets.push({ name: '成都数据运营平台', kind: 'data-source', provider: 'cddataos' })
   if (providers.has('localdb')) {
     for (const db of inventory.localDbDatabases()) {
       if (db.sensitivity !== 'internal') targets.push({ name: `数据-${db.id}`, kind: 'data-source', provider: 'localdb' })

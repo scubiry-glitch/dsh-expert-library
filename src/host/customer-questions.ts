@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto'
-import { resolve } from 'node:path'
+import { resolve, sep } from 'node:path'
 import type { Context } from '@deepseek-ai/cordis'
 import { defineTool } from '@deepseek-ai/dsh-tools'
 
@@ -130,8 +130,9 @@ export function registerCustomerQuestionTool(ctx: Context, workspaceRoot: string
     } }, render: (_args, value) => [{ type: 'text', text: JSON.stringify(value) }] },
     async execute(args, exec) {
       const agent = exec.agent
+      const root = resolve(workspaceRoot), cwd = resolve(agent?.session.header.cwd ?? '')
       if (!agent || agent.session.header.origin === 'subagent'
-        || resolve(agent.session.header.cwd ?? '') !== resolve(workspaceRoot)) throw new Error('QUESTION_NOT_CUSTOMER_SESSION')
+        || (cwd !== root && !cwd.startsWith(resolve(root, 'spaces') + sep))) throw new Error('QUESTION_NOT_CUSTOMER_SESSION')
       if (!validQuestions(args.questions)) throw new Error('INVALID_QUESTIONS')
       return hub.ask(agent.session.header.id, args.questions, exec.signal)
     },

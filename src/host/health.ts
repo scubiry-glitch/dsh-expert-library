@@ -29,6 +29,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { basename, join } from 'node:path'
 import { hashPackageTree } from '../v2/pack-loader.ts'
 import { extractZytApiKey } from '../v2/providers/zyt.ts'
+import { parseCddataosCredential } from '../v2/providers/cddataos.ts'
 import { createNodeFetchRunner, type FetchFn } from './provider-transports.ts'
 
 /* ------------------------------------------------------------------ *
@@ -36,10 +37,10 @@ import { createNodeFetchRunner, type FetchFn } from './provider-transports.ts'
  * ------------------------------------------------------------------ */
 
 /** Probe targets accepted by the health route. */
-export type HealthProbeTarget = 'wind' | 'zyt' | 'beike' | 'localdb' | 'packs' | 'all'
+export type HealthProbeTarget = 'wind' | 'zyt' | 'beike' | 'cddataos' | 'localdb' | 'packs' | 'all'
 
 /** Every valid probe target (route input validation). */
-export const HEALTH_PROBE_TARGETS: readonly HealthProbeTarget[] = ['wind', 'zyt', 'beike', 'localdb', 'packs', 'all']
+export const HEALTH_PROBE_TARGETS: readonly HealthProbeTarget[] = ['wind', 'zyt', 'beike', 'cddataos', 'localdb', 'packs', 'all']
 
 /** Wind probe result (filesystem-only; no network, no CLI execution). */
 export interface WindHealth {
@@ -118,6 +119,7 @@ export interface HealthReport {
     readonly wind: WindHealth
     readonly zyt: ZytHealth
     readonly beike: BeikeHealth
+    readonly cddataos: { readonly registered: boolean; readonly baseUrl: string; readonly keyPresent: boolean; readonly detail: string }
     readonly localdb: LocalDbHealth
   }
   readonly packs: readonly PackHealth[]
@@ -463,6 +465,7 @@ export interface HealthProbeInput {
     readonly wind?: { readonly cliPath?: string }
     readonly zyt?: { readonly baseUrl: string }
     readonly beike?: { readonly baseUrl: string }
+    readonly cddataos?: { readonly baseUrl: string }
     /** Registered database list (id/path/sensitivity only — no secrets exist here). */
     readonly localdb?: { readonly databases: readonly { readonly id: string; readonly path: string; readonly sensitivity?: string }[] }
   }
@@ -516,6 +519,15 @@ export async function runHealthProbe(target: HealthProbeTarget, input: HealthPro
     )
     : beikeBase
 
+  // The only safe health check is local registration + credential shape:
+  // the supplier call endpoint may bill any successful request.
+  const cddataos = {
+    registered: registered.has('cddataos'),
+    baseUrl: input.providers.cddataos?.baseUrl ?? '',
+    keyPresent: parseCddataosCredential(seams.readFile(join(seams.home(), '.config', 'cddataos', 'credentials.json')) ?? '') !== undefined,
+    detail: '本地检查；未执行可能计费的供应商请求，产品权限和出口 IP 白名单待实测',
+  }
+
   const packs = target === 'all' || target === 'packs'
     ? await Promise.all((input.packDirs ?? []).map((pack) => probePackHealth(pack.dir)))
     : []
@@ -538,7 +550,7 @@ export async function runHealthProbe(target: HealthProbeTarget, input: HealthPro
 
   return {
     checkedAt: new Date().toISOString(),
-    providers: { wind, zyt, beike, localdb },
+    providers: { wind, zyt, beike, cddataos, localdb },
     packs,
   }
 }

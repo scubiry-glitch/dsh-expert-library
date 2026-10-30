@@ -15,6 +15,15 @@ export function createModelUsageClient(config, fetchImpl = fetch) {
     const usage = await response.json()
     if (typeof usage?.day !== 'string' || !Number.isSafeInteger(usage.dailyQuota)
       || !Number.isSafeInteger(usage.chargedTokens) || !Array.isArray(usage.days)) throw new Error('invalid model usage')
+    if (usage.points) {
+      const validCents = value => Number.isSafeInteger(value) && value >= 0
+      if (!Number.isSafeInteger(usage.points.tokensPerPoint) || usage.points.tokensPerPoint < 1
+        || !validCents(usage.points.dailyQuotaCents) || !validCents(usage.points.chargedCents)
+        || !validCents(usage.points.remainingCents) || !Array.isArray(usage.points.days)
+        || usage.points.days.some(day => typeof day.day !== 'string' || !validCents(day.chargedCents))) {
+        throw new Error('invalid model usage points')
+      }
+    }
     return usage
   }
 }
