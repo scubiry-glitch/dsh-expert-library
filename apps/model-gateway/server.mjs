@@ -24,9 +24,37 @@ const pointCents = (tokens, tokensPerPoint) => {
   if (result > BigInt(Number.MAX_SAFE_INTEGER)) throw new Error('point amount exceeds safe integer')
   return Number(result)
 }
-const deny = (res, status, code) => {
-  res.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' })
+const deny = (res, status, code, headers = {}) => {
+  res.writeHead(status, { 'content-type': 'application/json', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', ...headers })
   res.end(JSON.stringify({ error: { code, message: code } }))
+}
+
+const RETRYABLE_UPSTREAM_STATUS = new Set([429, 502, 503, 504])
+const upstreamFailureCode = status => status === 429 ? 'UPSTREAM_RATE_LIMIT'
+  : status === 400 ? 'UPSTREAM_INVALID_REQUEST'
+    : status === 401 || status === 403 ? 'UPSTREAM_AUTH'
+      : status >= 500 ? 'UPSTREAM_UNAVAILABLE' : 'UPSTREAM_ERROR'
+
+function retryAfterMs(response) {
+  const value = response.headers.get('retry-after')
+  if (!value) return undefined
+  if (/^\d+$/.test(value)) return Number(value) * 1000
+  const date = Date.parse(value)
+  return Number.isNaN(date) ? undefined : Math.max(0, date - Date.now())
+}
+
+async function fetchWithBoundedRetry(fetcher, url, options, sleep) {
+  for (let attempt = 0; ; attempt++) {
+    // Only explicit HTTP rejection is retryable. A transport failure is
+    // ambiguous: the upstream may already have consumed this POST.
+    const response = await fetcher(url, options)
+    if (!RETRYABLE_UPSTREAM_STATUS.has(response.status) || attempt >= 2) return response
+    const retryAfter = retryAfterMs(response)
+    if (retryAfter !== undefined && retryAfter > 5000) return response
+    const delay = retryAfter ?? Math.min(250 * 2 ** attempt + Math.floor(Math.random() * 100), 5000)
+    await response.body?.cancel().catch(() => {})
+    await sleep(delay)
+  }
 }
 
 export class UsageLedger {
@@ -193,7 +221,8 @@ function usageFromEvent(event, anthropic, previous) {
 }
 
 /** Account-scoped, loopback-only model proxy. No arbitrary URL or provider path is accepted. */
-export function createModelGateway(config, { ledger = new UsageLedger(), upstreamFetch = fetch } = {}) {
+export function createModelGateway(config, { ledger = new UsageLedger(), upstreamFetch = fetch,
+  retrySleep = ms => new Promise(resolve => setTimeout(resolve, ms)) } = {}) {
   const accounts = new Map(config.accounts.map(account => [account.tokenHash, account]))
   const accountsById = new Map(config.accounts.map(account => [account.id, account]))
   return createServer(async (req, res) => {
@@ -261,11 +290,12 @@ export function createModelGateway(config, { ledger = new UsageLedger(), upstrea
       const body = provider === 'search' ? await searchBodyOf(req) : await fetchBodyOf(req)
       if (!body) return deny(res, 400, 'INVALID_REQUEST')
       try {
-        const upstream = await upstreamFetch(`https://api.deepseek.com/v1/tools/${provider}`, {
+        const upstream = await fetchWithBoundedRetry(upstreamFetch, `https://api.deepseek.com/v1/tools/${provider}`, {
           method: 'POST', headers: { authorization: `Bearer ${config.upstreamKey}`, 'content-type': 'application/json' },
           body: JSON.stringify(body), signal: AbortSignal.timeout(20_000),
-        })
-        if (!upstream.ok) return deny(res, upstream.status >= 400 && upstream.status < 600 ? upstream.status : 502, 'UPSTREAM_ERROR')
+        }, retrySleep)
+        if (!upstream.ok) return deny(res, upstream.status >= 400 && upstream.status < 600 ? upstream.status : 502,
+          upstreamFailureCode(upstream.status))
         const raw = await boundedText(upstream)
         const data = JSON.parse(raw)
         if (provider === 'search' && !Array.isArray(data?.results)
@@ -304,13 +334,16 @@ export function createModelGateway(config, { ledger = new UsageLedger(), upstrea
         upstreamHeaders['x-api-key'] = config.glmKey
         upstreamHeaders['anthropic-version'] = req.headers['anthropic-version'] || '2023-06-01'
       } else upstreamHeaders.authorization = `Bearer ${provider === 'zai' ? config.zaiKey : config.upstreamKey}`
-      const upstream = await upstreamFetch(upstreamUrl, {
+      const upstream = await fetchWithBoundedRetry(upstreamFetch, upstreamUrl, {
         method: 'POST', headers: upstreamHeaders,
         body: payload, signal: AbortSignal.timeout(300_000),
-      })
+      }, retrySleep)
       if (!upstream.ok || !upstream.body) {
         status = 'upstream_error'
-        return deny(res, upstream.status >= 400 && upstream.status < 600 ? upstream.status : 502, 'UPSTREAM_ERROR')
+        const retryAfter = upstream.headers.get('retry-after')
+        return deny(res, upstream.status >= 400 && upstream.status < 600 ? upstream.status : 502,
+          upstreamFailureCode(upstream.status),
+          retryAfter && /^\d{1,5}$/.test(retryAfter) ? { 'retry-after': retryAfter } : {})
       }
       res.writeHead(200, { 'content-type': 'text/event-stream; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' })
       const decoder = new TextDecoder()

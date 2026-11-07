@@ -59,6 +59,7 @@ const sessionCookie = (token, age) => `__Host-zhijian-session=${token}; Path=/; 
 const attemptCookie = (token, age) => `__Host-zhijian-login=${token}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${age}`
 const csrfCookie = (token, age) => `__Host-zhijian-csrf=${token}; Path=/; Secure; SameSite=Strict; Max-Age=${age}`
 const SESSION_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/messages$/i
+const RECOVERY_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/recovery$/i
 const ATTACHMENT_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/attachments$/i
 const MAX_ATTACHMENT_BYTES = 8 * 1024 * 1024
 const DATA_PATH = /^\/api\/sessions\/([0-9a-f-]{36})\/datasets(?:\/(\d{13}-[0-9a-f-]{36}))?$/i
@@ -201,6 +202,8 @@ export function createPortalServer(config, services = {}) {
     }
     return authReady ? store.resolveBrowserSession(cookieValue(req, '__Host-zhijian-session')) : undefined
   }
+  const canUsePackReview = principal => !!principal && !principal.shareId
+    && principal.role === 'admin' && principal.backendRef === 'zhijian-demo-c'
   function canWrite(req, access) {
     if (!access || req.headers.origin !== config.publicOrigin) return false
     if (access.shareId) return access.permission === 'collaborate' && !access.preview
@@ -259,7 +262,8 @@ export function createPortalServer(config, services = {}) {
         try { resolveAccountBackend(principal, config); researchReady = true } catch { /* not provisioned */ }
       }
       json(res, 200, { authenticated: !!principal, loginProviders: authReady ? ['developer-center'] : [],
-        phase, researchReady, taskKinds: principal?.backendRef === 'zhijian-demo-c'
+        phase, researchReady, packReviewAvailable: researchReady && canUsePackReview(principal),
+        taskKinds: principal?.backendRef === 'zhijian-demo-c'
           ? ['bank-property-value', 'custom'] : ['custom'], ...(principal ? { user: {
           displayName: principal.shareId ? '共享访客' : principal.displayName,
           accountName: principal.slug, role: principal.shareId ? 'guest' : principal.role,
@@ -311,6 +315,16 @@ export function createPortalServer(config, services = {}) {
         if (url.searchParams.size > 1 || !['7', '30'].includes(days)) return json(res, 400, { error: 'INVALID_RANGE' })
         try { return json(res, 200, await gateway.adminUsage(runtime, Number(days))) }
         catch { return json(res, 503, { error: 'USAGE_UNAVAILABLE' }) }
+      }
+      if (name === 'pack-review') {
+        if (req.method !== 'GET') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+        const params = new URL(req.url, config.publicOrigin).searchParams
+        const packId = params.get('packId')
+        if (params.size !== 1 || !packId || !/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(packId))
+          return json(res, 400, { error: 'INVALID_PACK_ID' })
+        try { return json(res, 200, await gateway.reviewPack(runtime, packId)) }
+        catch (error) { return json(res, error?.status === 404 ? 404 : 503,
+          { error: error?.status === 404 ? 'PACK_NOT_ACTIVE' : 'PACK_REVIEW_UNAVAILABLE' }) }
       }
       if (name === 'skills-install') {
         if (req.method !== 'POST') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
@@ -551,7 +565,11 @@ export function createPortalServer(config, services = {}) {
       if (principal.shareId && principal.permission !== 'collaborate') return json(res, 200, { items: [] })
       let runtime
       try { runtime = resolveAccountBackend(principal, config) } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
-      try { return json(res, 200, await gateway.mentions(runtime)) }
+      try {
+        const catalog = await gateway.mentions(runtime)
+        return json(res, 200, { items: catalog.items.filter(item => item.kind !== 'pack-review'
+          && (canUsePackReview(principal) || !(item.kind === 'expert' && item.id === 'host.domain-pack-assistant'))) })
+      }
       catch { return json(res, 503, { error: 'MENTIONS_UNAVAILABLE' }) }
     }
     const residentialFile = RESIDENTIAL_V2_FILE_PATH.exec(pathname)
@@ -921,6 +939,20 @@ export function createPortalServer(config, services = {}) {
       return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
     }
     const conversationMatch = SESSION_PATH.exec(pathname)
+    const recoveryMatch = RECOVERY_PATH.exec(pathname)
+    if (recoveryMatch) {
+      if (req.method !== 'GET') return json(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+      const principal = requestAccess(req)
+      if (!principal) return json(res, 401, { error: 'UNAUTHENTICATED' })
+      if (principal.shareId) return json(res, 404, { error: 'SESSION_NOT_FOUND' })
+      const row = accessibleSession(principal, recoveryMatch[1])
+      if (!row?.dsh_session_id) return json(res, 404, { error: 'SESSION_NOT_FOUND' })
+      let runtime
+      try { runtime = resolveAccountBackend(principal, config) } catch { return json(res, 503, { error: 'RESEARCH_UNAVAILABLE' }) }
+      try { return json(res, 200, await gateway.recovery(runtime, row.dsh_session_id)) }
+      catch (error) { return json(res, error?.status === 409 ? 409 : 503,
+        { error: error?.status === 409 ? 'RECOVERY_NOT_AVAILABLE' : 'RECOVERY_UNAVAILABLE' }) }
+    }
     const attachmentMatch = ATTACHMENT_PATH.exec(pathname)
     if (attachmentMatch) {
       if (req.method !== 'POST' && req.method !== 'DELETE') return send(res, 405, 'Method Not Allowed', 'text/plain; charset=utf-8')
@@ -1005,6 +1037,9 @@ export function createPortalServer(config, services = {}) {
           || typeof body.requestId !== 'string' || !/^[A-Za-z0-9_-]{8,128}$/.test(body.requestId)) return json(res, 400, { error: 'INVALID_REQUEST' })
         if (body.mentions !== undefined && (!Array.isArray(body.mentions) || body.mentions.length > 4))
           return json(res, 400, { error: 'MENTION_UNAVAILABLE' })
+        if (!canUsePackReview(principal) && body.mentions?.some(item => item?.kind === 'pack-review'
+          || (item?.kind === 'expert' && item?.id === 'host.domain-pack-assistant')))
+          return json(res, 403, { error: 'ADMIN_REQUIRED' })
         try {
           const result = await gateway.sendMessage(runtime, row.dsh_session_id, body.text, body.requestId, body.mentions ?? [])
           if (result.accepted === true && !principal.shareId) {

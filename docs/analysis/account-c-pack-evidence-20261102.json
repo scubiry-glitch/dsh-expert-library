@@ -1,0 +1,87 @@
+[
+  {
+    "sessionId": "case-001",
+    "category": "任务节点稳定",
+    "observation": "任务输入输出、依赖与状态交接需要显式约定。"
+  },
+  {
+    "sessionId": "case-002",
+    "category": "模板格式稳定",
+    "observation": "模板规范、生成脚本和渲染结果需要保持一致。"
+  },
+  {
+    "sessionId": "case-003",
+    "category": "模板格式稳定",
+    "observation": "模板规范、生成脚本和渲染结果需要保持一致。"
+  },
+  {
+    "sessionId": "case-004",
+    "category": "模板格式稳定",
+    "observation": "模板规范、生成脚本和渲染结果需要保持一致。"
+  },
+  {
+    "sessionId": "case-005",
+    "category": "任务节点稳定",
+    "observation": "任务输入输出、依赖与状态交接需要显式约定。"
+  },
+  {
+    "sessionId": "case-006",
+    "category": "门禁稳定",
+    "observation": "数据、结构与格式门禁需要可核验的执行回执。"
+  },
+  {
+    "sessionId": "case-007",
+    "category": "数据漂移",
+    "observation": "数据来源、统计口径、参数与时间窗需要显式绑定。"
+  },
+  {
+    "sessionId": "case-008",
+    "category": "任务节点稳定",
+    "observation": "任务输入输出、依赖与状态交接需要显式约定。"
+  },
+  {
+    "sessionId": "case-009",
+    "category": "数据漂移",
+    "observation": "数据来源、统计口径、参数与时间窗需要显式绑定。"
+  },
+  {
+    "sessionId": "case-010",
+    "category": "发布交付",
+    "observation": "审核、发布、安装、启用和下载状态需要分别核验。"
+  },
+  {
+    "sessionId": "case-011",
+    "category": "数据漂移",
+    "observation": "数据来源、统计口径、参数与时间窗需要显式绑定。"
+  },
+  {
+    "sessionId": "case-012",
+    "category": "数据漂移",
+    "observation": "数据来源、统计口径、参数与时间窗需要显式绑定。"
+  },
+  {
+    "sessionId": "case-013",
+    "category": "发布交付",
+    "observation": "审核、发布、安装、启用和下载状态需要分别核验。"
+  },
+  {
+    "sessionId": "case-014",
+    "category": "发布交付",
+    "observation": "审核、发布、安装、启用和下载状态需要分别核验。"
+  },
+  {
+    "sessionId": "case-015",
+    "category": "发布交付",
+    "observation": "审核、发布、安装、启用和下载状态需要分别核验。"
+  },
+  {
+    "sessionId": "case-016",
+    "category": "发布交付",
+    "observation": "审核、发布、安装、启用和下载状态需要分别核验。"
+  },
+  {
+    "sessionId": "case-017",
+    "category": "任务节点稳定",
+    "observation": "任务输入输出、依赖与状态交接需要显式约定。"
+  }
+]

@@ -25,12 +25,18 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
       calls.push(['conversation', sessionId, after, latest, before])
       return { messages: [{ role: 'assistant', text: sessionId }], nextCursor: 1, hasMore: false }
     },
+    recovery: async sessionId => ({ turn: 2, seq: 42, prompt: `继续 ${sessionId}` }),
     listDatasets: async sessionId => ({ items: [{ id: '1234567890123-11111111-1111-4111-8111-111111111111', sessionId }], hasMore: false }),
     readDataset: async (sessionId, id) => ({ sessionId, id, rows: [[1]] }),
     activity: async () => ({ running: true }),
     activityBatch: async sessionIds => { calls.push(['activity-batch', [...sessionIds]]);
       return { items: sessionIds.map(sessionId => ({ sessionId, running: true })) } },
     workspace: async sessionId => ({ sessionId, plan: null, team: null, documents: [] }),
+    reviewPack: async (packId) => {
+      calls.push(['pack-review', packId])
+      if (packId !== 'sample.pack') throw new Error('PACK_NOT_ACTIVE')
+      return { pack: { id: packId }, findings: [{ id: 'gate:format' }] }
+    },
     models: async () => [{ provider: 'sample', model: 'sample-model', name: 'Sample' }],
     conversationModel: async () => ({ selected: { provider: 'sample', model: 'sample-model' }, models: [{ provider: 'sample', model: 'sample-model' }] }),
     selectConversationModel: async (sessionId, provider, model) => { calls.push(['select-model', sessionId, provider, model]); return { selected: { provider, model } } },
@@ -75,6 +81,12 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   assert.equal((await fetch(`${base}/admin/usage?days=31`, { headers: auth })).status, 400)
   assert.deepEqual((await (await fetch(`${base}/admin/usage?days=30`, { headers: auth })).json()).rankings.expert,
     [{ id: 'e', calls: 2, sessions: 1 }])
+  const review = (packId, headers = auth) => fetch(`${base}/admin/pack-review?packId=${encodeURIComponent(packId)}`, { headers })
+  assert.equal((await review('sample.pack', {})).status, 401)
+  assert.equal((await review('../escape')).status, 400)
+  assert.equal((await review('missing.pack')).status, 404)
+  assert.equal((await (await review('sample.pack')).json()).findings[0].id, 'gate:format')
+  assert.deepEqual(calls.filter(call => call[0] === 'pack-review'), [['pack-review', 'missing.pack'], ['pack-review', 'sample.pack']])
   assert.equal((await fetch(`${base}/admin/settings`, { method: 'PUT', headers: auth,
     body: JSON.stringify({ section: 'arbitrary', value: {}, revision: 3 }) })).status, 400)
   assert.equal((await fetch(`${base}/admin/settings`, { method: 'PUT', headers: auth,
@@ -167,6 +179,9 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   assert.equal((await fetch(`${base}/sessions/${owned}/messages?latest=1&before=-1`, { headers: auth })).status, 400)
   assert.equal((await fetch(`${base}/sessions/${owned}/messages?latest=1&after=1`, { headers: auth })).status, 400)
   assert.equal((await fetch(`${base}/sessions/${foreign}/messages?latest=1`, { headers: auth })).status, 404)
+  assert.equal((await fetch(`${base}/sessions/${foreign}/recovery`, { headers: auth })).status, 404)
+  assert.equal((await fetch(`${base}/sessions/${owned}/recovery`, { method: 'POST', headers: auth })).status, 405)
+  assert.equal((await (await fetch(`${base}/sessions/${owned}/recovery`, { headers: auth })).json()).seq, 42)
   const readsBeforePlainMessage = mentionReads
   assert.equal((await fetch(`${base}/sessions/${owned}/messages`, { method: 'POST', headers: auth, body: JSON.stringify({ text: 'First question', requestId: 'request-11111111' }) })).status, 202)
   assert.equal(mentionReads, readsBeforePlainMessage)
@@ -175,7 +190,7 @@ test('customer service gateway rejects unauthenticated and foreign-session acces
   assert.equal((await fetch(`${base}/sessions/${owned}/messages`, { method: 'POST', headers: auth,
     body: JSON.stringify({ text: '@智见 查询数据', requestId: 'request-33333333' }) })).status, 202)
   assert.equal(mentionReads, readsBeforePlainMessage + 2)
-  assert.deepEqual(calls, [['space', 'spaces/研究/项目'], ['admin-settings', 'providers', {}, 3], ['admin-settings', 'runtime', { maxMembers: 4 }, 4], ['create', owned, 'spaces/研究/项目', 'zhijian'], ['upload', owned, 'notes.txt', 'aGVsbG8='], ['remove', owned, `customer-uploads/${owned}/stored.txt`], ['activity-batch', [owned]], ['select-model', owned, 'sample', 'sample-model'], ['workspace-action', owned, 'approve'], ['workspace-action', owned, 'sync-context'],
+  assert.deepEqual(calls, [['space', 'spaces/研究/项目'], ['pack-review', 'missing.pack'], ['pack-review', 'sample.pack'], ['admin-settings', 'providers', {}, 3], ['admin-settings', 'runtime', { maxMembers: 4 }, 4], ['create', owned, 'spaces/研究/项目', 'zhijian'], ['upload', owned, 'notes.txt', 'aGVsbG8='], ['remove', owned, `customer-uploads/${owned}/stored.txt`], ['activity-batch', [owned]], ['select-model', owned, 'sample', 'sample-model'], ['workspace-action', owned, 'approve'], ['workspace-action', owned, 'sync-context'],
     ['conversation', owned, -1, false, Number.MAX_SAFE_INTEGER], ['conversation', owned, -1, true, Number.MAX_SAFE_INTEGER], ['conversation', owned, -1, true, 12],
     ['message', owned, 'First question', 'request-11111111'], ['message', owned, '@智见 查询数据', 'request-33333333']])
 })

@@ -11,6 +11,8 @@ let installations = null
 let selectedSource = 'wind'
 let modelCatalog = null
 let expertCatalog = []
+let packReviewRequest = 0
+let packReviewAvailable = false
 const sourceNames = { wind: '万得', zyt: '政研通', beike: '贝壳', localdb: '本地数据' }
 const usageSourceNames = { ...sourceNames, zyt: '智见', cddataos: '成都数据运营平台' }
 const usageKinds = [['expert', '专家'], ['skill', '技能'], ['pack', '领域包'], ['source', '数据源']]
@@ -380,20 +382,55 @@ async function loadHealth() {
   selectDataSource(selectedSource)
 }
 
+async function showPackReview(pack, { preview = false, advice = true } = {}) {
+  const request = ++packReviewRequest
+  const card = $('packDiagnosticsCard')
+  const diagnostics = $('packDiagnostics')
+  card.hidden = false
+  diagnostics.replaceChildren(node('strong', `${pack.name}：正在检查…`))
+  card.scrollIntoView({ block: 'nearest' })
+  try {
+    const [shape, recommendation] = await Promise.allSettled([
+      preview ? api('pack-preview', 'GET', undefined, `?id=${encodeURIComponent(pack.id)}`) : Promise.resolve(null),
+      advice ? api('pack-review', 'GET', undefined, `?packId=${encodeURIComponent(pack.id)}`) : Promise.resolve(null),
+    ])
+    if (request !== packReviewRequest) return
+    const review = recommendation.status === 'fulfilled' ? recommendation.value : null
+    const structure = shape.status === 'fulfilled' ? shape.value : null
+    if (!review && !structure) throw new Error('检查服务不可用，请重试。')
+    const findings = Array.isArray(review?.findings) ? review.findings : []
+    const valid = structure?.ok ?? review?.schemaValid
+    diagnostics.replaceChildren(node('strong', `${pack.name}：${valid ? '结构有效' : '结构存在问题'}${advice ? ` · ${findings.length} 条优化建议` : ''}`))
+    for (const finding of structure?.diagnostics ?? []) if (finding.severity === 'error')
+      diagnostics.append(node('p', `${finding.code} · ${finding.path ?? ''} ${finding.message ?? ''}`))
+    if (advice && !review) diagnostics.append(node('p', '此包的优化建议当前不可用。'))
+    else if (advice && !findings.length) diagnostics.append(node('p', '本次静态检查未发现优化问题。'))
+    for (const finding of findings) {
+      const item = node('article', undefined, 'managePackReviewFinding')
+      item.append(node('h4', `${finding.priority} · ${finding.category} · ${finding.location}`),
+        node('p', finding.evidence), node('p', `建议：${finding.action}`),
+        node('small', `参考文档：第 ${finding.docSection} 节`))
+      diagnostics.append(item)
+    }
+    notice('检查结果已显示。')
+  } catch (error) {
+    if (request !== packReviewRequest) return
+    diagnostics.replaceChildren(node('p', `${pack.name}：检查失败，请重试。`))
+    notice(`操作失败：${error.message}`)
+  }
+}
+
 async function loadPacks() {
+  ++packReviewRequest
+  $('packDiagnosticsCard').hidden = true
+  $('packDiagnostics').replaceChildren()
   try {
     const local = await api('packs')
     $('localPacks').replaceChildren()
-    $('packDiagnostics').replaceChildren()
     for (const pack of local.packs ?? []) $('localPacks').append(row(`${pack.name} · ${pack.version}`,
-      `${pack.id} · ${pack.layer} · ${pack.ok ? '校验通过' : `${pack.errorCount} 项错误`}`, '查看校验', () => {
-        void run(async () => {
-          const result = await api('pack-preview', 'GET', undefined, `?id=${encodeURIComponent(pack.id)}`)
-          $('packDiagnostics').replaceChildren(node('strong', `${pack.name}：${result.ok ? '校验通过' : '校验未通过'}`))
-          for (const finding of result.diagnostics ?? []) $('packDiagnostics').append(node('p',
-            `${finding.severity} · ${finding.code} · ${finding.path ?? ''} ${finding.message ?? ''}`))
-        }, '校验结果已显示。')
-      }))
+      `${pack.id} · ${pack.layer} · ${pack.ok ? '校验通过' : `${pack.errorCount} 项错误`}`,
+      pack.layer === 'builtin' || !packReviewAvailable ? '查看校验' : '优化检查',
+      () => void showPackReview(pack, { preview: true, advice: packReviewAvailable && pack.layer !== 'builtin' })))
     if (!local.packs?.length) $('localPacks').append(node('p', '当前实例暂无领域包。', 'manageMuted'))
   } catch { $('localPacks').replaceChildren(node('p', '本地领域包暂时无法读取。', 'manageMuted')) }
   const outcomes = await Promise.allSettled(['center-connection', 'center-installations', 'center-updates', 'center-catalog', 'center-operations']
@@ -483,8 +520,16 @@ async function loadPacks() {
           button.addEventListener('click', () => void packOperation(kind, entry))
           actions.append(button)
         }
-        if (entry.installed) addAction(entry.active ? '停用' : active ? '切换到此版本' : '启用此版本',
-          entry.active ? 'disable' : 'enable', !canSwitch, entry.active)
+        if (entry.installed) {
+          if (entry.active && packReviewAvailable) {
+            const check = node('button', '优化检查', 'secondary')
+            check.type = 'button'
+            check.addEventListener('click', () => void showPackReview({ id: entry.packId, name: group.name }, { advice: true }))
+            actions.append(check)
+          }
+          addAction(entry.active ? '停用' : active ? '切换到此版本' : '启用此版本',
+            entry.active ? 'disable' : 'enable', !canSwitch, entry.active)
+        }
         else {
           const unavailable = !installable(entry)
           addAction('仅安装', 'install', unavailable, true)
@@ -687,6 +732,7 @@ try {
   else if (!bootstrap.researchReady) { $('accessState').textContent = '当前账号的研究实例尚未开通。'; }
   else {
     $('accountLabel').textContent = bootstrap.user.accountName
+    packReviewAvailable = bootstrap.packReviewAvailable === true
     $('accessState').hidden = true
     $('manageContent').hidden = false
     tabsReady = true

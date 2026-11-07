@@ -233,6 +233,7 @@ let questionSubmitting = false
 const pendingBySession = new Map()
 const failuresBySession = new Map()
 const latestFailureBySession = new Map()
+const latestTurnBySession = new Map()
 const draftsBySession = new Map()
 const attachmentsBySession = new Map()
 const selectedMentionsBySession = new Map()
@@ -244,15 +245,18 @@ let mentionChoices = [
   { name: '领域包', kind: '研究能力', available: false },
   { name: '专家', kind: '专家协作', available: false },
 ]
+let reviewTargets = []
 let mentionCatalogLoaded = false
 let mentionCatalogNextLoadAt = 0
 let mentionCatalogLoading = false
+let mentionCatalogFailures = 0
 const mentionGroups = [
   { key: 'data-source', label: '数据源', detail: '查询已接入的数据', unit: '个' },
   { key: 'domain-pack', label: '领域包', detail: '调用已部署的研究方法', unit: '个' },
-  { key: 'expert', label: '专家', detail: '按专家档案单独作答', unit: '位' },
+  { key: 'expert', label: '专家', detail: '专家问答与领域包优化检查', unit: '位' },
 ]
 let activeMentionGroup = null
+let activeReviewPicker = false
 
 async function loadMentionChoices() {
   if (!researchReady || sharedReadOnly() || mentionCatalogLoading) return
@@ -266,27 +270,44 @@ async function loadMentionChoices() {
     if (!Array.isArray(items)) throw new Error('invalid mention catalog')
     const sources = items.filter(item => item?.kind === 'data-source' && typeof item.name === 'string'
       && item.name.length > 0 && item.name.length <= 64).map(item => ({ name: item.name, kind: '数据源', available: true }))
-    const capabilities = items.filter(item => ['domain-pack', 'expert'].includes(item?.kind)
+    const capabilities = items.filter(item => ['domain-pack', 'expert', 'pack-review'].includes(item?.kind)
       && typeof item.id === 'string' && typeof item.version === 'string'
       && typeof item.name === 'string' && item.name.length > 0 && item.name.length <= 64)
       .map(item => ({ name: item.name, kind: item.kind === 'domain-pack' ? '领域包' : '专家',
         type: item.kind, id: item.id, version: item.version, description: item.description,
-        model: item.model, available: true }))
+        packName: item.packName, model: item.model, available: true }))
+    reviewTargets = capabilities.filter(item => item.type === 'pack-review').map(item => ({
+      ...item,
+      packName: item.packName || capabilities.find(pack => pack.type === 'domain-pack' && pack.id === item.id
+        && pack.version === item.version)?.name || item.id,
+    })).sort((left, right) => left.packName.localeCompare(right.packName, 'zh-CN'))
     mentionChoices = [
       ...sources,
-      ...capabilities,
+      ...capabilities.filter(item => item.type !== 'pack-review'),
+      ...(reviewTargets.length ? [{ name: '领域包优化顾问', kind: '专家', type: 'pack-review-picker',
+        description: '选择领域包，检查优化建议', available: true }] : []),
       ...(!sources.some(item => item.name === '智见') ? [{ name: '智见', kind: '数据源', available: false }] : []),
       ...(!capabilities.some(item => item.type === 'domain-pack') ? [{ name: '领域包', kind: '研究能力', available: false }] : []),
-      ...(!capabilities.some(item => item.type === 'expert') ? [{ name: '专家', kind: '专家协作', available: false }] : []),
+      ...(!capabilities.some(item => item.type === 'expert' || item.type === 'pack-review')
+        ? [{ name: '专家', kind: '专家协作', available: false }] : []),
     ]
     mentionCatalogLoaded = true
+    mentionCatalogFailures = 0
     mentionCatalogNextLoadAt = Date.now() + 5 * 60_000
   } catch {
-    if (!mentionCatalogLoaded) mentionChoices = [
-      { name: '智见', kind: '数据源', available: false },
-      { name: '领域包', kind: '研究能力', available: false },
-      { name: '专家', kind: '专家协作', available: false },
-    ]
+    mentionCatalogFailures++
+    mentionCatalogNextLoadAt = Date.now()
+    if (!mentionCatalogLoaded) {
+      reviewTargets = []
+      mentionChoices = [
+        { name: '智见', kind: '数据源', available: false },
+        { name: '领域包', kind: '研究能力', available: false },
+        { name: '专家', kind: '专家协作', available: false },
+      ]
+    }
+    if (mentionCatalogFailures === 1) window.setTimeout(() => {
+      if (mentionAtCursor() && !mentionCatalogLoading) void loadMentionChoices()
+    }, 2000)
   }
   mentionCatalogLoading = false
   updateMentionMenu()
@@ -2671,7 +2692,17 @@ function setReceipt(node, state) {
   receipt.textContent = ({ sending: '正在发送…', accepted: '服务已接收 · 正在写入会话',
     recorded: '已送达 · 等待回复', replied: '智见小秘书已回复', uncertain: '尚未确认送达 · 可重试',
     quota_exceeded: '本轮未完成 · 模型额度不足，可在设置与用量查看', failed: '本轮未完成 · 可重试',
-    output_limit: '本轮达到输出上限 · 请继续未完成的回复' })[state]
+    output_limit: '本轮达到输出上限 · 请继续未完成的回复',
+    interrupted: '本轮已中断 · 未完成', extension_failed: '本轮未完成 · 请求扩展准备失败',
+    upstream_rate_limited: '本轮未完成 · 上游限流', invalid_request: '本轮未完成 · 请求参数错误' })[state]
+}
+
+const terminalFailureMessage = {
+  quota_exceeded: '上一轮未完成 · 模型额度不足，可在设置与用量查看',
+  failed: '上一轮未完成 · 可重试', output_limit: '上一轮达到模型输出上限，回复未完成。可点“继续未完成的回复”。',
+  interrupted: '上一轮已中断，尚未完成。', extension_failed: '上一轮未完成 · 请求扩展准备失败，需检查服务日志。',
+  upstream_rate_limited: '上一轮未完成 · 上游限流，请稍后重试。',
+  invalid_request: '上一轮未完成 · 请求参数错误，原样重试通常无效。',
 }
 
 function updateComposeStatus() {
@@ -2692,22 +2723,37 @@ function updateComposeStatus() {
       const lastAssistant = rows.findLast(row => row.classList.contains('assistant'))
       const lastVisibleSeq = Math.max(Number(lastUser?.dataset.seq ?? -1), Number(lastAssistant?.dataset.seq ?? -1))
       const latestFailure = latestFailureBySession.get(currentSessionId)
-      if (latestFailure?.kind === 'output_limit' && latestFailure.seq > lastVisibleSeq) {
-        message = '上一轮达到模型输出上限，回复未完成。可点“继续未完成的回复”。'
+      const latestTurn = latestTurnBySession.get(currentSessionId)
+      const currentFailure = latestFailure && latestTurn?.seq === latestFailure.seq ? latestFailure : null
+      const liveRunning = availableSessions.find(session => session.id === currentSessionId)?.running
+      if (activeApproval && latestTurn?.kind === 'running') {
+        message = '上一轮等待操作审批。'
+        kind = 'progress'
+      } else if (latestTurn?.kind === 'running' && liveRunning === false
+        && Date.now() - (latestTurn.startedAt ?? 0) > 60_000) {
+        message = '上一轮失去运行状态，尚未完成。'
+        kind = 'error'
+      } else if (latestTurn?.kind === 'running' && latestTurn.seq > Number(lastUser?.dataset.seq ?? -1)) {
+        message = '正在处理上一轮请求…'
+        kind = 'progress'
+      } else if (currentFailure?.kind === 'output_limit' && currentFailure.seq > lastVisibleSeq) {
+        message = terminalFailureMessage.output_limit
         kind = 'error'
       } else if (lastUser) {
         const userSeq = Number(lastUser.dataset.seq)
-        const failure = failuresBySession.get(currentSessionId)?.get(userSeq)
-        if (failure === 'output_limit') {
-          message = '上一轮达到模型输出上限，回复未完成。可点“继续未完成的回复”。'
+        const failure = currentFailure?.seq > userSeq ? currentFailure.kind : undefined
+        if (failure) {
+          message = terminalFailureMessage[failure]
           kind = 'error'
         } else if (lastAssistant && Number(lastAssistant.dataset.seq) > userSeq) {
           message = '上一轮已回复'
           kind = 'success'
+        } else if (latestTurn?.kind === 'completed' && latestTurn.seq > userSeq) {
+          message = '上一轮已结束，未生成可见回复。'
+          kind = 'error'
         } else {
-          message = failure === 'quota_exceeded' ? '上一轮未完成 · 模型额度不足，可在设置与用量查看'
-            : failure === 'failed' ? '上一轮未完成 · 可重试' : '已送达 · 等待回复'
-          kind = failure ? 'error' : 'progress'
+          message = '已送达 · 等待回复'
+          kind = 'progress'
         }
       }
     }
@@ -2717,8 +2763,9 @@ function updateComposeStatus() {
   const rows = [...conversationMessages.querySelectorAll('.conversationMessage[data-seq]')]
   const lastVisibleSeq = rows.length ? Number(rows.at(-1).dataset.seq) : -1
   const latestFailure = latestFailureBySession.get(currentSessionId)
+  const latestTurn = latestTurnBySession.get(currentSessionId)
   continueAfterLimit.hidden = !researchReady || previewActive || sharedReadOnly() || !!latestPending()
-    || latestFailure?.kind !== 'output_limit' || latestFailure.seq <= lastVisibleSeq
+    || latestFailure?.kind !== 'output_limit' || latestTurn?.seq !== latestFailure.seq || latestFailure.seq <= lastVisibleSeq
   continueAfterLimit.disabled = sendMessageButton.disabled || !!activeQuestion
 }
 
@@ -2750,7 +2797,7 @@ function updateReceipts() {
   for (let i = 0; i < rows.length; i++) {
     if (!rows[i].classList.contains('user')) continue
     const failure = failures?.get(Number(rows[i].dataset.seq))
-    if (failure === 'output_limit') setReceipt(rows[i], failure)
+    if (failure) setReceipt(rows[i], failure)
     else if (rows.slice(i + 1).some(row => row.classList.contains('assistant'))) setReceipt(rows[i], 'replied')
     else setReceipt(rows[i], failure ?? 'recorded')
   }
@@ -2762,17 +2809,21 @@ function applyTurnFailures(events) {
   failuresBySession.set(currentSessionId, failures)
   const rows = [...conversationMessages.querySelectorAll('.conversationMessage[data-seq]')]
   for (const event of events) {
-    if (!Number.isSafeInteger(event?.seq) || !['quota_exceeded', 'failed', 'output_limit'].includes(event.kind)) continue
+    if (!Number.isSafeInteger(event?.seq) || !Object.hasOwn(terminalFailureMessage, event.kind)) continue
     latestFailureBySession.set(currentSessionId, { seq: event.seq, kind: event.kind })
     const user = rows.findLast(row => row.classList.contains('user') && Number(row.dataset.seq) < event.seq)
-    if (!user || (event.kind !== 'output_limit' && rows.some(row => row.classList.contains('assistant')
-      && Number(row.dataset.seq) > Number(user.dataset.seq) && Number(row.dataset.seq) < event.seq))) continue
+    if (!user) continue
     const userSeq = Number(user.dataset.seq)
     failures.set(userSeq, event.kind)
     for (const pending of pendingMessages()) if (pending.userSeq === userSeq) pending.state = 'failed'
   }
   updateReceipts()
   renderActivity()
+}
+
+function applyLatestTurn(turn) {
+  if (!turn || !Number.isSafeInteger(turn.seq) || !Number.isSafeInteger(turn.turn)) return
+  latestTurnBySession.set(currentSessionId, turn)
 }
 
 function appendConversationMessage(message, live) {
@@ -2845,6 +2896,7 @@ async function loadConversation(id = currentSessionId, epoch = conversationEpoch
         renderConversationEarlier()
       }
       applyTurnFailures(page.turnFailures)
+      applyLatestTurn(page.latestTurn)
       conversationCursor = page.nextCursor
       cacheMessages(id, [...(cachedMessagesBySession.get(id) ?? []), ...page.messages]
         .filter((message, index, all) => all.findLastIndex(item => item.seq === message.seq) === index))
@@ -3009,7 +3061,7 @@ function showApproval(approval) {
   activeApproval = approval
   approvalCard.replaceChildren()
   approvalCard.hidden = !approval
-  if (!approval) { renderActionCenter(); return }
+  if (!approval) { renderActionCenter(); updateComposeStatus(); return }
   const title = wsNode('strong', '生成报告需要确认')
   const detail = wsNode('p', approval.reason || '是否允许本次生成四份 Word 报告？')
   const actions = wsNode('div', undefined, 'approvalCardActions')
@@ -3021,6 +3073,7 @@ function showApproval(approval) {
   actions.append(wsNode('small', '', 'approvalStatus'))
   approvalCard.append(title, detail, actions)
   renderActionCenter()
+  updateComposeStatus()
 }
 
 async function loadApproval(id = currentSessionId, epoch = conversationEpoch) {
@@ -3963,6 +4016,7 @@ function mentionAtCursor() {
 function closeMentionMenu() {
   mentionMenu.hidden = true
   activeMentionGroup = null
+  activeReviewPicker = false
   conversationInput.setAttribute('aria-expanded', 'false')
   conversationInput.removeAttribute('aria-activedescendant')
 }
@@ -3971,11 +4025,27 @@ function chooseMention(choice) {
   if (!choice?.available) return
   const mention = mentionAtCursor()
   if (!mention) return
-  const insertion = `@${choice.name} `
-  conversationInput.setRangeText(insertion, mention.start, mention.end, 'end')
+  if (choice.type === 'pack-review-picker') {
+    activeReviewPicker = true
+    activeMentionGroup = 'expert'
+    updateMentionMenu()
+    mentionMenu.scrollTop = 0
+    return
+  }
+  const insertion = choice.type === 'pack-review'
+    ? `@${choice.name} 检查「${choice.packName}」 ` : `@${choice.name} `
+  const previousReviewTarget = choice.type === 'pack-review'
+    ? /^\s+检查「[^」]{1,80}」/u.exec(conversationInput.value.slice(mention.end)) : null
+  conversationInput.setRangeText(insertion, mention.start,
+    mention.end + (previousReviewTarget?.[0].length ?? 0), 'end')
   resizeConversationInput()
   if (choice.type && currentSessionId) {
     const selected = selectedMentionsBySession.get(currentSessionId) ?? []
+    if (choice.type === 'pack-review') {
+      // A single reviewer mention in the editor always refers to the latest selected pack.
+      for (let index = selected.length - 1; index >= 0; index--)
+        if (selected[index].kind === 'pack-review') selected.splice(index, 1)
+    }
     if (!selected.some(item => item.kind === choice.type && item.id === choice.id))
       selected.push({ kind: choice.type, id: choice.id, version: choice.version, name: choice.name })
     selectedMentionsBySession.set(currentSessionId, selected)
@@ -3984,9 +4054,22 @@ function chooseMention(choice) {
   conversationInput.focus()
 }
 
+function openPackReviewPicker() {
+  const match = /(?:^|\s)@领域包优化顾问(?=\s|[，。！？、,!?;；:：)）]|$)/u.exec(conversationInput.value)
+  if (!match) return false
+  const cursor = match.index + match[0].length
+  conversationInput.focus()
+  conversationInput.setSelectionRange(cursor, cursor)
+  activeMentionGroup = 'expert'
+  activeReviewPicker = true
+  updateMentionMenu()
+  mentionMenu.scrollTop = 0
+  return true
+}
+
 function mentionGroupKey(choice) {
   if (choice.type === 'domain-pack' || choice.name === '领域包') return 'domain-pack'
-  if (choice.type === 'expert' || choice.name === '专家') return 'expert'
+  if (choice.type === 'expert' || choice.type === 'pack-review-picker' || choice.name === '专家') return 'expert'
   return 'data-source'
 }
 
@@ -3999,6 +4082,8 @@ function mentionItems(group, query) {
 
 function mentionItemDetail(choice) {
   if (!choice.available) return '暂未接入'
+  if (choice.type === 'pack-review-picker') return choice.description
+  if (choice.type === 'pack-review') return choice.description || '只读检查当前启用的领域包'
   if (choice.type !== 'expert') return choice.description || choice.kind
   const labels = {
     'realestate.services': '居住服务',
@@ -4059,24 +4144,39 @@ function updateMentionMenu() {
     conversationInput.removeAttribute('aria-activedescendant')
     return
   }
+  if (!mentionCatalogLoaded && mentionCatalogFailures) {
+    const notice = document.createElement('div')
+    notice.className = 'mentionEmpty'
+    notice.textContent = mentionCatalogFailures === 1 ? '读取超时，正在重试可用对象…' : '读取可用对象失败，点击输入框重试。'
+    mentionMenu.append(notice)
+    mentionMenu.hidden = false
+    mentionMenu.setAttribute('aria-label', '可提及对象暂时无法读取')
+    conversationInput.setAttribute('aria-expanded', 'true')
+    conversationInput.removeAttribute('aria-activedescendant')
+    return
+  }
   if (group) {
     const header = document.createElement('div')
     header.className = 'mentionMenuHeader'
     const back = document.createElement('button')
     back.type = 'button'
     back.className = 'mentionBack'
-    back.setAttribute('aria-label', '返回对象分类')
+    back.setAttribute('aria-label', activeReviewPicker ? '返回专家列表' : '返回对象分类')
     back.textContent = '‹'
     back.addEventListener('mousedown', event => event.preventDefault())
-    back.addEventListener('click', () => { activeMentionGroup = null; updateMentionMenu() })
+    back.addEventListener('click', () => {
+      if (activeReviewPicker) activeReviewPicker = false
+      else activeMentionGroup = null
+      updateMentionMenu()
+    })
     const title = document.createElement('span')
-    title.textContent = group.label
+    title.textContent = activeReviewPicker ? '选择领域包' : group.label
     header.append(back, title)
     mentionMenu.append(header)
-    const items = mentionItems(group, mention.query)
+    const items = activeReviewPicker ? reviewTargets : mentionItems(group, mention.query)
     for (const choice of items) appendMentionOption({
-      label: `@${choice.name}`,
-      detail: mentionItemDetail(choice),
+      label: activeReviewPicker ? choice.packName : `@${choice.name}`,
+      detail: activeReviewPicker ? choice.description : mentionItemDetail(choice),
       aside: choice.available && choice.version ? `v${choice.version}` : '',
       disabled: !choice.available,
       onClick: () => chooseMention(choice),
@@ -4084,7 +4184,7 @@ function updateMentionMenu() {
     if (!items.length) {
       const empty = document.createElement('div')
       empty.className = 'mentionEmpty'
-      empty.textContent = `该分类中没有匹配“${mention.query}”的对象。`
+      empty.textContent = activeReviewPicker ? '当前没有可检查的领域包。' : `该分类中没有匹配“${mention.query}”的对象。`
       mentionMenu.append(empty)
     }
   } else {
@@ -4115,7 +4215,8 @@ function updateMentionMenu() {
     }
   }
   mentionMenu.hidden = false
-  mentionMenu.setAttribute('aria-label', group ? `可提及的${group.label}` : '可提及的对象类别')
+  mentionMenu.setAttribute('aria-label', activeReviewPicker ? '选择要检查的领域包'
+    : group ? `可提及的${group.label}` : '可提及的对象类别')
   conversationInput.setAttribute('aria-expanded', 'true')
   const first = mentionMenu.querySelector('.mentionOption:not(:disabled)')
   if (first) {
@@ -4152,7 +4253,8 @@ conversationInput.addEventListener('keydown', event => {
   const enabled = [...mentionMenu.querySelectorAll('.mentionOption:not(:disabled)')]
   if (event.key === 'Escape') {
     event.preventDefault()
-    if (activeMentionGroup) { activeMentionGroup = null; updateMentionMenu() }
+    if (activeReviewPicker) { activeReviewPicker = false; updateMentionMenu() }
+    else if (activeMentionGroup) { activeMentionGroup = null; updateMentionMenu() }
     else closeMentionMenu()
     return
   }
@@ -4182,6 +4284,18 @@ async function sendConversationMessage() {
   if (!researchReady || !currentSessionId || !text || sendMessageButton.disabled || previewActive || sharedReadOnly()) return
   const sessionId = currentSessionId
   const mentions = (selectedMentionsBySession.get(sessionId) ?? []).filter(item => text.includes(`@${item.name}`))
+  if (draftText.includes('@领域包助手') && !mentions.some(item => item.kind === 'expert'
+    && item.id === 'host.domain-pack-assistant')) {
+    setComposeNotice('请从 @ 菜单选择「领域包助手」后再发送。', 'error')
+    return
+  }
+  if (draftText.includes('@领域包优化顾问') && !mentions.some(item => item.kind === 'pack-review')) {
+    if (!reviewTargets.length) await loadMentionChoices()
+    if (reviewTargets.length && openPackReviewPicker()) {
+      setComposeNotice('请先选择要检查的领域包，再发送消息。')
+    } else setComposeNotice('领域包优化顾问暂不可用，请稍后重新打开 @ 菜单。', 'error')
+    return
+  }
   const existing = pendingMessages(sessionId).find(item => item.state === 'uncertain' && item.text === text && item.userSeq === undefined)
   const pending = existing ?? { text, draftText, attachmentIds: attachments.map(item => item.id), requestId: crypto.randomUUID(), afterSeq: conversationCursor, startedAt: Date.now() }
   pending.state = 'sending'
@@ -4233,7 +4347,13 @@ async function sendConversationMessage() {
       const index = queue.indexOf(pending)
       if (index !== -1) queue.splice(index, 1)
       pending.node?.remove()
-      if (currentSessionId === sessionId) setComposeNotice('该 @ 对象未开通或版本已变化，请从菜单重新选择。', 'error')
+      if (currentSessionId === sessionId) {
+        const reviewRejected = draftText.includes('@领域包优化顾问')
+        if (reviewRejected) selectedMentionsBySession.set(sessionId,
+          (selectedMentionsBySession.get(sessionId) ?? []).filter(item => item.kind !== 'pack-review'))
+        setComposeNotice(reviewRejected ? '领域包选择未通过核验，请重新选择要检查的领域包。'
+          : '该 @ 对象未开通或版本已变化，请从菜单重新选择。', 'error')
+      }
       void loadMentionChoices()
       return
     }
@@ -4254,14 +4374,31 @@ async function sendConversationMessage() {
   }
 }
 sendMessageButton.addEventListener('click', () => { void sendConversationMessage() })
-continueAfterLimit.addEventListener('click', () => {
+continueAfterLimit.addEventListener('click', async () => {
   if (conversationInput.value.trim()) {
     setComposeNotice('请先发送或清空当前草稿，再继续上一轮。', 'error')
     conversationInput.focus()
     return
   }
-  conversationInput.value = '上一轮回复因输出上限中断。请检查已经说过和做过的内容，从中断处继续完成原请求；不要重复已完成的外部写入或发布。请简短分段给出剩余结果，若已完成则直接给出验收结论。'
-  void sendConversationMessage()
+  const sessionId = currentSessionId, epoch = conversationEpoch
+  const draft = conversationInput.value
+  continueAfterLimit.disabled = true
+  try {
+    const response = await apiFetch(`/api/sessions/${sessionId}/recovery`, { credentials: 'same-origin', cache: 'no-store' })
+    if (!response.ok) throw new Error('RECOVERY_UNAVAILABLE')
+    const checkpoint = await response.json()
+    if (currentSessionId !== sessionId || conversationEpoch !== epoch
+      || typeof checkpoint.prompt !== 'string' || checkpoint.prompt.length > 5000) return
+    if (conversationInput.value !== draft) {
+      setComposeNotice('已保留新草稿，请先发送或清空后再继续上一轮。')
+      return
+    }
+    conversationInput.value = checkpoint.prompt
+    await sendConversationMessage()
+  } catch {
+    if (currentSessionId === sessionId && conversationEpoch === epoch)
+      setComposeNotice('无法读取上轮进度，请刷新会话后重试。', 'error')
+  } finally { if (currentSessionId === sessionId && conversationEpoch === epoch) updateComposeStatus() }
 })
 function needsLiveUpdates() {
   if (!currentSessionId) return false

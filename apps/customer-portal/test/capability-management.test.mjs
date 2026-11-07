@@ -56,7 +56,8 @@ test('capability API requires account admin and CSRF, without accepting share ac
     readable: name => ['health', 'pack-preview'].includes(name), writable: (name, method) => name === 'managed-experts' && method === 'PUT',
     call: async (runtime, method, name, body, id) => { calls.push([runtime.backendRef, method, name, id]); return { status: 200, data: { ok: true } } },
   }
-  const gateway = { adminSettings: async runtime => { calls.push([runtime.backendRef, 'GET', 'settings']); return { writable: true, revision: 2 } },
+  const gateway = { reviewPack: async (runtime, packId) => { calls.push([runtime.backendRef, 'GET', 'pack-review', packId]); return { pack: { id: packId }, findings: [] } },
+    adminSettings: async runtime => { calls.push([runtime.backendRef, 'GET', 'settings']); return { writable: true, revision: 2 } },
     adminModels: async runtime => { calls.push([runtime.backendRef, 'GET', 'models']); return { models: [{ provider: 'sample', model: 'sample-model' }] } },
     updateAdminSettings: async runtime => { calls.push([runtime.backendRef, 'PUT', 'settings']); return { revision: 3 } } }
   const server = createPortalServer(config, { store, oidc: {}, capabilityManagement, gateway })
@@ -65,10 +66,17 @@ test('capability API requires account admin and CSRF, without accepting share ac
   const base = `http://127.0.0.1:${server.address().port}`
   const headers = login => ({ cookie: `__Host-zhijian-session=${login.token}`, origin: config.publicOrigin,
     'x-csrf-token': login.csrf, 'content-type': 'application/json' })
+  assert.equal((await (await fetch(`${base}/api/bootstrap`, { headers: headers(admin) })).json()).packReviewAvailable, false)
   assert.equal((await fetch(`${base}/api/capabilities/health`)).status, 401)
   assert.equal((await fetch(`${base}/api/capabilities/health`, { headers: headers(member) })).status, 403)
   assert.equal((await fetch(`${base}/api/capabilities/health`, { headers: { authorization: `Bearer ${'a'.repeat(43)}` } })).status, 403)
   assert.equal((await fetch(`${base}/api/capabilities/health`, { headers: headers(admin) })).status, 200)
+  const review = `${base}/api/capabilities/pack-review?packId=sample.pack`
+  assert.equal((await fetch(review)).status, 401)
+  assert.equal((await fetch(review, { headers: headers(member) })).status, 403)
+  assert.equal((await fetch(review, { headers: { authorization: `Bearer ${'a'.repeat(43)}` } })).status, 403)
+  assert.equal((await fetch(`${base}/api/capabilities/pack-review?packId=../escape`, { headers: headers(admin) })).status, 400)
+  assert.equal((await (await fetch(review, { headers: headers(admin) })).json()).pack.id, 'sample.pack')
   assert.equal((await fetch(`${base}/api/capabilities/pack-preview`, { headers: headers(admin) })).status, 400)
   assert.equal((await fetch(`${base}/api/capabilities/pack-preview?id=one`, { headers: headers(admin) })).status, 200)
   assert.equal((await fetch(`${base}/api/capabilities/settings`, { headers: headers(admin) })).status, 200)
@@ -81,6 +89,6 @@ test('capability API requires account admin and CSRF, without accepting share ac
   assert.equal((await fetch(`${base}/api/capabilities/managed-experts`, { method: 'PUT', headers: headers(admin),
     body: JSON.stringify({ id: 'one' }) })).status, 200)
   assert.equal((await fetch(`${base}/api/capabilities/anything`, { headers: headers(admin) })).status, 404)
-  assert.deepEqual(calls, [['a', 'GET', 'health', undefined], ['a', 'GET', 'pack-preview', 'one'], ['a', 'GET', 'settings'], ['a', 'GET', 'models'],
+  assert.deepEqual(calls, [['a', 'GET', 'health', undefined], ['a', 'GET', 'pack-review', 'sample.pack'], ['a', 'GET', 'pack-preview', 'one'], ['a', 'GET', 'settings'], ['a', 'GET', 'models'],
     ['a', 'PUT', 'managed-experts', undefined]])
 })

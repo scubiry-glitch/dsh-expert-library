@@ -22,11 +22,13 @@ export interface CustomerGatewayRuntime {
   uploadAttachment?(sessionId: string, name: string, data: string): Promise<{ name: string; path: string; sizeBytes: number }>
   removeAttachment?(sessionId: string, path: string): Promise<void>
   conversation(sessionId: string, after: number, latest?: boolean, before?: number): Promise<unknown>
+  recovery?(sessionId: string): Promise<{ turn: number; seq: number; prompt: string } | undefined>
   listDatasets?(sessionId: string, before?: string): Promise<unknown>
   readDataset?(sessionId: string, datasetId: string, offset: number): Promise<unknown>
   activity?(sessionId: string): Promise<{ running: boolean }>
   activityBatch?(sessionIds: string[]): Promise<{ items: { sessionId: string; running: boolean }[] }>
   workspace?(sessionId: string): Promise<unknown>
+  reviewPack?(packId: string): Promise<unknown>
   workspaceAction?(sessionId: string, action: CustomerWorkspaceAction): Promise<unknown>
   models?(sessionId: string): Promise<unknown>
   conversationModel?(sessionId: string): Promise<unknown>
@@ -167,6 +169,16 @@ export async function handleCustomerGateway(req: IncomingMessage, res: ServerRes
     if (!runtime.adminUsage) return send(res, 503, { error: 'USAGE_UNAVAILABLE' })
     try { return send(res, 200, await runtime.adminUsage(Number(days) as 7 | 30)) }
     catch { return send(res, 503, { error: 'USAGE_UNAVAILABLE' }) }
+  }
+  if (suffix === '/admin/pack-review') {
+    if (req.method !== 'GET') return send(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+    const packId = url.searchParams.get('packId')
+    if (url.searchParams.size !== 1 || !packId || !/^[a-z0-9][a-z0-9._-]{0,63}$/i.test(packId))
+      return send(res, 400, { error: 'INVALID_PACK_ID' })
+    if (!runtime.reviewPack) return send(res, 503, { error: 'PACK_REVIEW_UNAVAILABLE' })
+    try { return send(res, 200, await runtime.reviewPack(packId)) }
+    catch (error) { return send(res, error instanceof Error && error.message === 'PACK_NOT_ACTIVE' ? 404 : 503,
+      { error: error instanceof Error && error.message === 'PACK_NOT_ACTIVE' ? 'PACK_NOT_ACTIVE' : 'PACK_REVIEW_UNAVAILABLE' }) }
   }
   if (suffix === '/mentions' && req.method === 'GET') {
     try { return send(res, 200, { items: await runtime.mentions?.() ?? [] }) }
@@ -364,6 +376,16 @@ export async function handleCustomerGateway(req: IncomingMessage, res: ServerRes
         ? send(res, 200, { accepted: true }) : send(res, 409, { error: 'QUESTION_NOT_PENDING' })
     }
     return send(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+  }
+  const recoveryMatch = /^\/sessions\/(session-[0-9a-f-]+)\/recovery$/i.exec(suffix)
+  if (recoveryMatch?.[1] && SESSION_ID.test(recoveryMatch[1])) {
+    const sessionId = recoveryMatch[1]
+    if (!await runtime.ownsSession(sessionId).catch(() => false)) return send(res, 404, { error: 'NOT_FOUND' })
+    if (req.method !== 'GET') return send(res, 405, { error: 'METHOD_NOT_ALLOWED' })
+    try {
+      const checkpoint = await runtime.recovery?.(sessionId)
+      return checkpoint ? send(res, 200, checkpoint) : send(res, 409, { error: 'RECOVERY_NOT_AVAILABLE' })
+    } catch { return send(res, 503, { error: 'RECOVERY_UNAVAILABLE' }) }
   }
   const match = /^\/sessions\/(session-[0-9a-f-]+)\/messages$/i.exec(suffix)
   if (!match?.[1] || !SESSION_ID.test(match[1])) return send(res, 404, { error: 'NOT_FOUND' })

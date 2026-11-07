@@ -333,3 +333,54 @@ test('GLM and ZAI routes are account gated, model allowlisted, and included in t
   assert.deepEqual({ ...ledger.totals('a') }, { chargedTokens: 31, inputTokens: 19, cacheReadTokens: 4, outputTokens: 8, calls: 3 })
   assert.equal(ledger.totals('b').calls, 0)
 })
+
+test('explicit upstream 429 is retried before streaming and charged once', async t => {
+  const ledger = new UsageLedger()
+  t.after(() => ledger.close())
+  let calls = 0
+  const sleeps = []
+  const gateway = createModelGateway({ upstreamKey: 'test', accounts: [
+    { id: 'a', tokenHash: digest(tokens.a), dailyQuota: 10_000 },
+  ] }, { ledger, retrySleep: async ms => { sleeps.push(ms) }, upstreamFetch: async () => {
+    if (++calls === 1) return new Response('busy', { status: 429, headers: { 'retry-after': '1' } })
+    return new Response('data: {"usage":{"prompt_tokens":2,"completion_tokens":1}}\n\ndata: [DONE]\n\n', { status: 200 })
+  } })
+  await new Promise(resolve => gateway.listen(0, '127.0.0.1', resolve))
+  t.after(() => new Promise(resolve => gateway.close(resolve)))
+  const response = await fetch(`http://127.0.0.1:${gateway.address().port}/chat/completions`, {
+    method: 'POST', headers: { authorization: `Bearer ${tokens.a}` },
+    body: JSON.stringify({ model: 'deepseek-chat', messages: [], stream: true }),
+  })
+  assert.equal(response.status, 200)
+  await response.text()
+  assert.equal(calls, 2)
+  assert.deepEqual(sleeps, [1000])
+  assert.equal(ledger.totals('a').calls, 1)
+})
+
+test('bad request and long Retry-After do not retry or hide the upstream class', async t => {
+  const ledger = new UsageLedger()
+  t.after(() => ledger.close())
+  let calls = 0
+  const gateway = createModelGateway({ upstreamKey: 'test', accounts: [
+    { id: 'a', tokenHash: digest(tokens.a), dailyQuota: 100_000 },
+  ] }, { ledger, retrySleep: async () => { throw Error('unexpected retry') }, upstreamFetch: async () => {
+    calls++
+    return calls === 1 ? new Response('bad', { status: 400 })
+      : new Response('busy', { status: 429, headers: { 'retry-after': '60' } })
+  } })
+  await new Promise(resolve => gateway.listen(0, '127.0.0.1', resolve))
+  t.after(() => new Promise(resolve => gateway.close(resolve)))
+  const send = () => fetch(`http://127.0.0.1:${gateway.address().port}/chat/completions`, {
+    method: 'POST', headers: { authorization: `Bearer ${tokens.a}` },
+    body: JSON.stringify({ model: 'deepseek-chat', messages: [], stream: true }),
+  })
+  const bad = await send()
+  assert.equal(bad.status, 400)
+  assert.equal((await bad.json()).error.code, 'UPSTREAM_INVALID_REQUEST')
+  const limited = await send()
+  assert.equal(limited.status, 429)
+  assert.equal(limited.headers.get('retry-after'), '60')
+  assert.equal((await limited.json()).error.code, 'UPSTREAM_RATE_LIMIT')
+  assert.equal(calls, 2)
+})

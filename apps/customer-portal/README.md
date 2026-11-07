@@ -10,6 +10,8 @@
 
 账号管理员从 `/app` 左下角进入 `/manage`，按智见数据、领域包、专家库三个分区管理当前账号的独立实例。管理 API 每次验证登录角色、实例绑定及写入 CSRF，分享链接不能使用。实现与部署见 [`CAPABILITY-MANAGEMENT-20261023.md`](../../docs/deployment/customer-portal/CAPABILITY-MANAGEMENT-20261023.md)。
 
+新增演示账号时，按[开通清单与故障排查](../../docs/deployment/customer-portal/DEMO-ACCOUNT-ONBOARDING-CHECKLIST-20261102.md)分别验收门户成员、隔离实例、用量、领域包中心绑定、首次安装和管理权限。
+
 ## 运行
 
 要求 Node.js 22+。从本目录执行：

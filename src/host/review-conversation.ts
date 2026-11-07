@@ -18,7 +18,8 @@ export interface ConversationMessage {
 }
 export interface ConversationPage {
   messages: ConversationMessage[]
-  turnFailures?: { seq: number; kind: 'quota_exceeded' | 'failed' | 'output_limit' }[]
+  turnFailures?: { seq: number; kind: TurnFailureKind }[]
+  latestTurn?: { turn: number; seq: number; kind: 'running' | 'completed' | TurnFailureKind; startedAt?: number; endedAt?: number }
   nextCursor: number
   hasMore: boolean
   hasEarlier?: boolean
@@ -26,11 +27,45 @@ export interface ConversationPage {
 const record = (value: unknown): value is Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value)
 const PAGE_SIZE = 30
 const MAX_TEXT = 100_000
+export type TurnFailureKind = 'quota_exceeded' | 'upstream_rate_limited' | 'extension_failed'
+  | 'invalid_request' | 'failed' | 'output_limit' | 'interrupted'
+
+function failureKind(reason: Record<string, unknown>): TurnFailureKind | undefined {
+  if (reason.kind === 'max-tokens') return 'output_limit'
+  if (reason.kind === 'interrupted' || reason.kind === 'aborted') return 'interrupted'
+  if (reason.kind !== 'error') return undefined
+  const code = record(reason.error) ? reason.error.code : undefined
+  if (code === 'QUOTA' || code === 'QUOTA_EXCEEDED') return 'quota_exceeded'
+  if (code === 'RATE_LIMIT') return 'upstream_rate_limited'
+  if (code === 'REQUEST_EXTENSION') return 'extension_failed'
+  if (code === 'INVALID_REQUEST') return 'invalid_request'
+  return 'failed'
+}
+
+export function projectLatestTurn(events: readonly unknown[]): ConversationPage['latestTurn'] {
+  let latest: ConversationPage['latestTurn']
+  for (const event of events) {
+    if (!record(event) || !Number.isSafeInteger(event.seq) || !record(event.data)) continue
+    const data = event.data
+    if (event.type === 'turn/start' && Number.isSafeInteger(data.turn)) {
+      latest = { turn: data.turn as number, seq: event.seq as number, kind: 'running',
+        ...(typeof event.time === 'number' ? { startedAt: event.time } : {}) }
+    } else if (event.type === 'turn/end' && record(data.reason) && Number.isSafeInteger(data.turn)) {
+      latest = { turn: data.turn as number, seq: event.seq as number,
+        kind: failureKind(data.reason) ?? 'completed',
+        ...(latest?.turn === data.turn && latest?.startedAt !== undefined ? { startedAt: latest.startedAt } : {}),
+        ...(typeof event.time === 'number' ? { endedAt: event.time } : {}) }
+    }
+  }
+  return latest
+}
 
 /** Never use the model surface: compaction replacements must not erase or duplicate the human transcript. */
 export function projectConversation(events: readonly unknown[], after = -1, latest = false, before = Number.MAX_SAFE_INTEGER): ConversationPage {
   const messages: ConversationMessage[] = []
   const turnFailures: NonNullable<ConversationPage['turnFailures']> = []
+  const latestTurn = projectLatestTurn(events)
+  const state = latestTurn ? { latestTurn } : {}
   let nextCursor = after
   let hasEarlier = false
   for (const event of events) {
@@ -39,11 +74,8 @@ export function projectConversation(events: readonly unknown[], after = -1, late
     if (seq >= before) continue
     if (event.surfaceOp !== undefined && event.surfaceOp !== 'append') { nextCursor = seq; continue }
     const data = event.data
-    if (event.type === 'turn/end' && record(data) && record(data.reason)
-      && (data.reason.kind === 'error' || data.reason.kind === 'max-tokens')) {
-      const code = record(data.reason.error) ? data.reason.error.code : undefined
-      turnFailures.push({ seq, kind: data.reason.kind === 'max-tokens' ? 'output_limit'
-        : code === 'QUOTA' || code === 'QUOTA_EXCEEDED' ? 'quota_exceeded' : 'failed' })
+    if (event.type === 'turn/end' && record(data) && record(data.reason) && failureKind(data.reason)) {
+      turnFailures.push({ seq, kind: failureKind(data.reason)! })
       if (turnFailures.length > PAGE_SIZE) turnFailures.shift()
       nextCursor = seq
       continue
@@ -58,7 +90,7 @@ export function projectConversation(events: readonly unknown[], after = -1, late
       .map(item => (item as { text: string }).text).join('\n').trim()
     if (!text) { nextCursor = seq; continue }
     if (messages.length === PAGE_SIZE) {
-      if (!latest) return { messages, nextCursor, hasMore: true, ...(turnFailures.length ? { turnFailures } : {}) }
+      if (!latest) return { messages, nextCursor, hasMore: true, ...state, ...(turnFailures.length ? { turnFailures } : {}) }
       messages.shift(); hasEarlier = true
     }
     messages.push({ id: typeof message.id === 'string' ? message.id : `event-${seq}`, seq, role,
@@ -68,7 +100,7 @@ export function projectConversation(events: readonly unknown[], after = -1, late
     })
     nextCursor = seq
   }
-  return { messages, nextCursor, hasMore: false, ...(hasEarlier ? { hasEarlier: true } : {}),
+  return { messages, nextCursor, hasMore: false, ...state, ...(hasEarlier ? { hasEarlier: true } : {}),
     ...(turnFailures.length ? { turnFailures } : {}) }
 }
 

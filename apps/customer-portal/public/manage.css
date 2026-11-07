@@ -93,6 +93,10 @@
 .manageRow strong { display: block; }
 .manageRow small { display: block; color: var(--muted); }
 .manageRow button { flex: none; }
+.managePackReviewFinding { margin-top: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 7px; background: #fffaf0; overflow-wrap: anywhere; }
+.managePackReviewFinding h4 { margin: 0 0 5px; font-size: 13px; }
+.managePackReviewFinding p { margin: 5px 0; font-size: 12px; line-height: 1.6; }
+.managePackReviewFinding small { color: var(--muted); }
 .manageStatus { display: inline-block; padding: 3px 7px; border-radius: 4px; background: #e8eee1; color: #405d3e; font-size: 11px; }
 .manageStatus.off { background: #f2e8db; color: #936b4b; }
 .manageVersionHeading { margin: 28px 0 10px; }

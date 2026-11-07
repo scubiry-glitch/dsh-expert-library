@@ -38,6 +38,23 @@ test('failed model turns expose a safe status without leaking provider details',
   assert.equal(JSON.stringify(first).includes('private provider detail'), false)
   assert.equal(projectConversation(events, first.nextCursor).turnFailures, undefined)
 })
+test('latest turn retains interrupted and open states across pagination', () => {
+  const events = [user(0, '问题'), { seq: 1, time: 1001, type: 'turn/start', data: { turn: 1 } },
+    assistant(2, [text('部分答复')]), { seq: 3, time: 1003, type: 'turn/end', data: { turn: 1, reason: { kind: 'interrupted' } } }]
+  const page = projectConversation(events)
+  assert.deepEqual(page.turnFailures, [{ seq: 3, kind: 'interrupted' }])
+  assert.deepEqual(page.latestTurn, { turn: 1, seq: 3, kind: 'interrupted', startedAt: 1001, endedAt: 1003 })
+  assert.deepEqual(projectConversation([...events, { seq: 4, time: 1004, type: 'turn/start', data: { turn: 2 } }]).latestTurn,
+    { turn: 2, seq: 4, kind: 'running', startedAt: 1004 })
+})
+test('request extension and upstream rate limit are separate from quota errors', () => {
+  const error = code => ({ kind: 'error', error: { code, message: 'private' } })
+  const events = [user(0, '问题'), { seq: 1, type: 'turn/end', data: { turn: 1, reason: error('REQUEST_EXTENSION') } },
+    { seq: 2, type: 'turn/end', data: { turn: 2, reason: error('RATE_LIMIT') } }]
+  assert.deepEqual(projectConversation(events).turnFailures, [
+    { seq: 1, kind: 'extension_failed' }, { seq: 2, kind: 'upstream_rate_limited' },
+  ])
+})
 test('output limit after an interim assistant message remains visible as an unfinished turn', () => {
   const events = [user(0, '请完成任务'), assistant(1, [text('正在处理')]),
     { seq: 2, type: 'turn/end', data: { reason: { kind: 'max-tokens' } } }]

@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { customerMentions, unavailableCustomerMention, verifyCustomerMentionSelections } from '../src/host/customer-mentions.ts'
+import { CUSTOMER_MENTION_CONTEXT_PREFIX, customerMentions, latestVerifiedCustomerMention,
+  unavailableCustomerMention, verifyCustomerMentionSelections } from '../src/host/customer-mentions.ts'
 
 test('customer mention catalog only offers providers with effective credentials', () => {
   const inventory = {
@@ -39,4 +40,26 @@ test('cddataos mention appears only with the provider grant and credential', () 
   }
   assert.deepEqual(customerMentions(inventory), [{ name: '成都数据运营平台', kind: 'data-source', provider: 'cddataos' }])
   assert.deepEqual(customerMentions({ ...inventory, availableCredentials: () => [] }), [])
+})
+
+test('pack review requires a server-attached selection in the latest user turn', () => {
+  const review = { kind: 'pack-review', id: 'city.pack', version: '2.5.1', name: '领域包优化顾问', packName: '城市月报' }
+  const otherReview = { kind: 'pack-review', id: 'policy.pack', version: '1.2.0',
+    name: review.name, packName: '政策月报' }
+  assert.deepEqual(verifyCustomerMentionSelections(`@${review.name} 检查「政策月报」`, [review, otherReview],
+    [{ kind: otherReview.kind, id: otherReview.id, version: otherReview.version, name: otherReview.name }]),
+  [otherReview])
+  assert.equal(verifyCustomerMentionSelections(`@${review.name} 检查「政策月报」`, [review, otherReview],
+    [{ kind: otherReview.kind, id: otherReview.id, version: '1.1.0', name: otherReview.name }]), undefined)
+  assert.deepEqual(verifyCustomerMentionSelections(`@${review.name} 检查`, [{ ...review, description: '检查' }], [review]),
+    [{ ...review, description: '检查' }])
+  const event = selected => ({ type: 'user/message', data: { source: { kind: 'user' }, content: [
+    { type: 'text', text: `@${review.name} 检查` },
+    { type: 'text', text: `${CUSTOMER_MENTION_CONTEXT_PREFIX}\n${JSON.stringify(selected)}` },
+  ] } })
+  assert.equal(latestVerifiedCustomerMention([event([review])], review), true)
+  assert.equal(latestVerifiedCustomerMention([event([review]), event([])], review), false)
+  assert.equal(latestVerifiedCustomerMention([{ type: 'user/message', data: { source: { kind: 'user' },
+    content: [{ type: 'text', text: `${CUSTOMER_MENTION_CONTEXT_PREFIX}\n${JSON.stringify([review])}` }] } }], review), false)
+  assert.equal(latestVerifiedCustomerMention([event([{ ...review, version: '2.5.0' }])], review), false)
 })
